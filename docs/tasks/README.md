@@ -16,7 +16,7 @@ derived from `../implementation-plan.md` and must remain consistent with
 
 | Task | Status | Purpose |
 | --- | --- | --- |
-| [BOB-001](BOB-001-nearby-star-map.md) | Ready | Deliver the 20-system astronomy map vertical slice. |
+| [BOB-001](BOB-001-nearby-star-map.md) | In progress | Deliver the 20-system astronomy map vertical slice. |
 
 ## Task requirements
 
@@ -34,4 +34,3 @@ Every task must contain:
 
 `Ready` means the task is implementable without recovering conversation history. It
 does not replace the requirement for explicit authorization from the Captain.
-

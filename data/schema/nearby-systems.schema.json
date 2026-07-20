@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bobiverse.local/schema/nearby-systems-1.0.0.json",
+  "type": "object",
+  "required": ["schema_version", "metadata", "systems"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "metadata": {
+      "type": "object",
+      "required": ["source", "generated_at", "coordinate_frame", "units"]
+    },
+    "systems": {
+      "type": "array",
+      "minItems": 21,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "alternates",
+          "position_pc",
+          "render_position",
+          "distance_from_sol_pc",
+          "components",
+          "provenance"
+        ],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "name": { "type": "string", "minLength": 1 },
+          "position_pc": {
+            "type": "object",
+            "required": ["xg", "yg", "zg"],
+            "properties": {
+              "xg": { "type": "number" },
+              "yg": { "type": "number" },
+              "zg": { "type": "number" }
+            }
+          },
+          "render_position": {
+            "type": "object",
+            "required": ["x", "y", "z"],
+            "properties": {
+              "x": { "type": "number" },
+              "y": { "type": "number" },
+              "z": { "type": "number" }
+            }
+          },
+          "components": { "type": "array" }
+        }
+      }
+    }
+  }
+}

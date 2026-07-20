@@ -1,6 +1,6 @@
 # BOB-001: nearby stellar-system map
 
-Status: Ready  
+Status: In progress
 Phase: 1A  
 Last updated: 2026-07-20
 
@@ -122,17 +122,24 @@ the physical separation between two systems.
 
 ## Validation commands
 
-The application foundation does not yet exist, so the implementation must establish
-and document stable npm commands for at least:
+```bash
+npm run format:check
+npm run lint
+npm run typecheck
+npm run data:refresh              # explicit networked source refresh only
+npm run data:generate
+npm run data:validate
+npm run test
+npm run test:e2e
+npm run build
+npm run dev
+npm run validate
+```
 
-- Formatting or formatting verification.
-- Linting and TypeScript checking.
-- Data generation or explicit source refresh.
-- Generated-data/schema validation.
-- Unit and component tests.
-- Playwright tests.
-- Production build.
-- Development server.
+`npm run validate` runs formatting, lint, TypeScript, generated-data validation,
+unit/component tests, and production build. Browser binaries are installed separately
+with `npx playwright install --with-deps chromium firefox webkit`; failure artifacts
+are retained under `test-results/`.
 
 The task must update this section with the exact commands before its status can become
 `Done`. CI is not required in this task; all validation must run locally on the
@@ -158,3 +165,19 @@ headless development server.
   state where possible.
 - Do not expand into narrative data while solving visual or schema questions.
 - Any need for runtime server state or a different coordinate frame requires an ADR.
+
+## Implementation evidence and remaining acceptance
+
+Automated evidence recorded on 2026-07-20:
+
+- `npm run validate` passes formatting, linting, strict TypeScript, generated-data
+  schema/referential validation, eight unit/component tests, and the production build.
+- `npm run test:e2e` passes the responsive selection, unit-toggle, and measurement
+  flow in Playwright Chromium, Firefox, and WebKit projects.
+- The generated runtime dataset contains Sol and exactly 20 non-Sol reviewed system
+  markers. The CNS5 input snapshot is committed separately from browser data.
+
+BOB-001 remains `In progress` pending the required trusted-LAN, real-browser visual
+review in Chrome, Firefox, Safari, and Edge where available, plus the Captain's
+acceptance of spatial legibility and the visual result. Any unavailable manual browser
+must be recorded as an explicit acceptance gap.

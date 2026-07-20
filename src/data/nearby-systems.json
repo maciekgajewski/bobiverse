@@ -1,0 +1,1082 @@
+{
+  "metadata": {
+    "coordinate_frame": "Sun-centered Galactic Cartesian",
+    "generated_at": "2026-07-20T13:53:41+00:00",
+    "render_mapping": "scene.x=Xg; scene.y=Zg; scene.z=-Yg",
+    "source": {
+      "acknowledgement": "This project uses the VizieR catalogue access tool, CDS, Strasbourg, France (DOI: 10.26093/cds/vizier).",
+      "catalogue": "CNS5 J/A+A/670/A19",
+      "release": "corrected 2023-12-13"
+    },
+    "units": "pc"
+  },
+  "schema_version": "1.0.0",
+  "systems": [
+    {
+      "alternates": ["Sun"],
+      "components": [],
+      "distance_from_sol_pc": 0.0,
+      "distance_uncertainty_pc": 0.0,
+      "id": "sol",
+      "name": "Sol",
+      "position_pc": {
+        "xg": 0.0,
+        "yg": 0.0,
+        "zg": 0.0
+      },
+      "provenance": {
+        "catalogue": "IAU conventional solar origin",
+        "source_object_ids": []
+      },
+      "render_position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": -0.0
+      }
+    },
+    {
+      "alternates": ["Rigil Kentaurus", "GJ 559"],
+      "components": [
+        {
+          "cns5_id": 3627,
+          "component": "AB",
+          "g_magnitude": null,
+          "gaia_dr3_id": null,
+          "gj": "559",
+          "hip_id": 71683,
+          "icrs": {
+            "dec_deg": -60.83514521897498,
+            "epoch_year": 1991.25,
+            "parallax_bibcode": "2007A&A...474..653V",
+            "parallax_error_mas": 4.11,
+            "parallax_mas": 754.8099975585938,
+            "position_bibcode": "2007A&A...474..653V",
+            "ra_deg": 219.9204081301028
+          },
+          "id": "cns5:3627"
+        },
+        {
+          "cns5_id": 3591,
+          "component": "C",
+          "g_magnitude": 8.984749,
+          "gaia_dr3_id": "5853498713190525696",
+          "gj": "551",
+          "hip_id": 70890,
+          "icrs": {
+            "dec_deg": -62.67607511676666,
+            "epoch_year": 2016.0,
+            "parallax_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.056201234,
+            "parallax_mas": 768.0665391873573,
+            "position_bibcode": "2020yCat.1350....0G",
+            "ra_deg": 217.39232147200883
+          },
+          "id": "cns5:3591"
+        }
+      ],
+      "distance_from_sol_pc": 1.32483671816,
+      "distance_uncertainty_pc": 0.007213840475,
+      "id": "alpha-centauri",
+      "name": "Alpha Centauri",
+      "position_pc": {
+        "xg": 0.948784452269,
+        "yg": -0.924526916065,
+        "zg": -0.015823223108
+      },
+      "provenance": {
+        "adopted_source_object_id": "cns5:3627",
+        "catalogue": "CNS5 J/A+A/670/A19",
+        "release": "corrected 2023-12-13",
+        "review_version": "1.0.0",
+        "source_object_ids": ["cns5:3627", "cns5:3591"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 0.948784452269,
+        "y": -0.015823223108,
+        "z": 0.924526916065
+      }
+    },
+    {
+      "alternates": ["GJ 699"],
+      "components": [
+        {
+          "cns5_id": 4449,
+          "component": null,
+          "g_magnitude": 8.1939745,
+          "gaia_dr3_id": "4472832130942575872",
+          "gj": "699",
+          "hip_id": 87937,
+          "icrs": {
+            "dec_deg": 4.739420051112412,
+            "epoch_year": 2016.0,
+            "parallax_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.045417666,
+            "parallax_mas": 547.0241867292879,
+            "position_bibcode": "2020yCat.1350....0G",
+            "ra_deg": 269.44850252543836
+          },
+          "id": "cns5:4449"
+        }
+      ],
+      "distance_from_sol_pc": 1.828072732906,
+      "distance_uncertainty_pc": 0.000151779023,
+      "id": "barnards-star",
+      "name": "Barnard's Star",
+      "position_pc": {
+        "xg": 1.519055614633,
+        "yg": 0.914525044057,
+        "zg": 0.444931343288
+      },
+      "provenance": {
+        "adopted_source_object_id": "cns5:4449",
+        "catalogue": "CNS5 J/A+A/670/A19",
+        "release": "corrected 2023-12-13",
+        "review_version": "1.0.0",
+        "source_object_ids": ["cns5:4449"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 1.519055614633,
+        "y": 0.444931343288,
+        "z": -0.914525044057
+      }
+    },
+    {
+      "alternates": ["GJ 406"],
+      "components": [
+        {
+          "cns5_id": 2674,
+          "component": null,
+          "g_magnitude": 11.038391,
+          "gaia_dr3_id": "3864972938605115520",
+          "gj": "406",
+          "hip_id": null,
+          "icrs": {
+            "dec_deg": 7.002726940984864,
+            "epoch_year": 2016.0,
+            "parallax_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.07644637,
+            "parallax_mas": 415.17941567802137,
+            "position_bibcode": "2020yCat.1350....0G",
+            "ra_deg": 164.10319030755974
+          },
+          "id": "cns5:2674"
+        }
+      ],
+      "distance_from_sol_pc": 2.408597252749,
+      "distance_uncertainty_pc": 0.00044349144,
+      "id": "wolf-359",
+      "name": "Wolf 359",
+      "position_pc": {
+        "xg": -0.587839619065,
+        "yg": -1.207986294086,
+        "zg": 1.999138419797
+      },
+      "provenance": {
+        "adopted_source_object_id": "cns5:2674",
+        "catalogue": "CNS5 J/A+A/670/A19",
+        "release": "corrected 2023-12-13",
+        "review_version": "1.0.0",
+        "source_object_ids": ["cns5:2674"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -0.587839619065,
+        "y": 1.999138419797,
+        "z": 1.207986294086
+      }
+    },
+    {
+      "alternates": ["GJ 411"],
+      "components": [
+        {
+          "cns5_id": 2696,
+          "component": null,
+          "g_magnitude": 6.551172,
+          "gaia_dr3_id": "762815470562110464",
+          "gj": "411",
+          "hip_id": 54035,
+          "icrs": {
+            "dec_deg": 35.948653032660104,
+            "epoch_year": 2016.0,
+            "parallax_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.036575083,
+            "parallax_mas": 392.784297437213,
+            "position_bibcode": "2020yCat.1350....0G",
+            "ra_deg": 165.83095967577933
+          },
+          "id": "cns5:2696"
+        }
+      ],
+      "distance_from_sol_pc": 2.545926623148,
+      "distance_uncertainty_pc": 0.000237070265,
+      "id": "lalande-21185",
+      "name": "Lalande 21185",
+      "position_pc": {
+        "xg": -1.054141625341,
+        "yg": -0.095368985585,
+        "zg": 2.315476745892
+      },
+      "provenance": {
+        "adopted_source_object_id": "cns5:2696",
+        "catalogue": "CNS5 J/A+A/670/A19",
+        "release": "corrected 2023-12-13",
+        "review_version": "1.0.0",
+        "source_object_ids": ["cns5:2696"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -1.054141625341,
+        "y": 2.315476745892,
+        "z": 0.095368985585
+      }
+    },
+    {
+      "alternates": ["GJ 244"],
+      "components": [
+        {
+          "cns5_id": 1675,
+          "component": "B",
+          "g_magnitude": 8.524133,
+          "gaia_dr3_id": "2947050466531873024",
+          "gj": "244",
+          "hip_id": null,
+          "icrs": {
+            "dec_deg": -16.720932526023173,
+            "epoch_year": 2016.0,
+            "parallax_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.26141906,
+            "parallax_mas": 374.5105905289588,
+            "position_bibcode": "2020yCat.1350....0G",
+            "ra_deg": 101.28662552099249
+          },
+          "id": "cns5:1675"
+        },
+        {
+          "cns5_id": 1676,
+          "component": "A",
+          "g_magnitude": null,
+          "gaia_dr3_id": null,
+          "gj": "244",
+          "hip_id": 32349,
+          "icrs": {
+            "dec_deg": -16.713143062644765,
+            "epoch_year": 1991.25,
+            "parallax_bibcode": "2007A&A...474..653V",
+            "parallax_error_mas": 1.58,
+            "parallax_mas": 379.2099914550781,
+            "position_bibcode": "2007A&A...474..653V",
+            "ra_deg": 101.2885410520664
+          },
+          "id": "cns5:1676"
+        }
+      ],
+      "distance_from_sol_pc": 2.67015145977,
+      "distance_uncertainty_pc": 0.001863841777,
+      "id": "sirius",
+      "name": "Sirius",
+      "position_pc": {
+        "xg": -1.791238525787,
+        "yg": -1.936696709296,
+        "zg": -0.412770175823
+      },
+      "provenance": {
+        "adopted_source_object_id": "cns5:1675",
+        "catalogue": "CNS5 J/A+A/670/A19",
+        "release": "corrected 2023-12-13",
+        "review_version": "1.0.0",
+        "source_object_ids": ["cns5:1675", "cns5:1676"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -1.791238525787,
+        "y": -0.412770175823,
+        "z": 1.936696709296
+      }
+    },
+    {
+      "alternates": ["GJ 65", "BL Ceti", "UV Ceti"],
+      "components": [
+        {
+          "cns5_id": 427,
+          "component": null,
+          "g_magnitude": 6.449255,
+          "gaia_dr3_id": "350664155368182656",
+          "gj": "65.1",
+          "hip_id": 7734,
+          "icrs": {
+            "dec_deg": 45.876760727613814,
+            "epoch_year": 2016.0,
+            "parallax_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.028134067,
+            "parallax_mas": 47.61637374168609,
+            "position_bibcode": "2020yCat.1350....0G",
+            "ra_deg": 24.901464121306226
+          },
+          "id": "cns5:427"
+        },
+        {
+          "cns5_id": 424,
+          "component": "A",
+          "g_magnitude": 10.507542,
+          "gaia_dr3_id": "5140693571158739840",
+          "gj": "65",
+          "hip_id": null,
+          "icrs": {
+            "dec_deg": -17.948299887129313,
+            "epoch_year": 2016.0,
+            "parallax_bibcode": "2018A&A...616A...1G",
+            "parallax_error_mas": 0.27,
+            "parallax_mas": 369.92999267578125,
+            "position_bibcode": "2020yCat.1350....0G",
+            "ra_deg": 24.771554293454546
+          },
+          "id": "cns5:424"
+        },
+        {
+          "cns5_id": 425,
+          "component": "B",
+          "g_magnitude": 10.817838,
+          "gaia_dr3_id": "5140693571158946048",
+          "gj": "65",
+          "hip_id": null,
+          "icrs": {
+            "dec_deg": -17.947682860008488,
+            "epoch_year": 2016.0,
+            "parallax_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.5584941,
+            "parallax_mas": 373.8443122683992,
+            "position_bibcode": "2020yCat.1350....0G",
+            "ra_deg": 24.771674208211856
+          },
+          "id": "cns5:425"
+        }
+      ],
+      "distance_from_sol_pc": 2.703214175112,
+      "distance_uncertainty_pc": 0.001972989057,
+      "id": "luyten-726-8",
+      "name": "Luyten 726-8",
+      "position_pc": {
+        "xg": -0.666247190205,
+        "yg": 0.052193824883,
+        "zg": -2.619304747965
+      },
+      "provenance": {
+        "adopted_source_object_id": "cns5:424",
+        "catalogue": "CNS5 J/A+A/670/A19",
+        "release": "corrected 2023-12-13",
+        "review_version": "1.0.0",
+        "source_object_ids": ["cns5:427", "cns5:424", "cns5:425"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -0.666247190205,
+        "y": -2.619304747965,
+        "z": -0.052193824883
+      }
+    },
+    {
+      "alternates": ["GJ 729"],
+      "components": [
+        {
+          "cns5_id": 4678,
+          "component": null,
+          "g_magnitude": 9.126414,
+          "gaia_dr3_id": "4075141768785646848",
+          "gj": "729",
+          "hip_id": 92403,
+          "icrs": {
+            "dec_deg": -23.83709744872712,
+            "epoch_year": 2016.0,
+            "parallax_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.035651777,
+            "parallax_mas": 336.079124666674,
+            "position_bibcode": "2020yCat.1350....0G",
+            "ra_deg": 282.4587890175222
+          },
+          "id": "cns5:4678"
+        }
+      ],
+      "distance_from_sol_pc": 2.975489777866,
+      "distance_uncertainty_pc": 0.000315644413,
+      "id": "ross-154",
+      "name": "Ross 154",
+      "position_pc": {
+        "xg": 2.870826024918,
+        "yg": 0.574045310906,
+        "zg": -0.531384356061
+      },
+      "provenance": {
+        "adopted_source_object_id": "cns5:4678",
+        "catalogue": "CNS5 J/A+A/670/A19",
+        "release": "corrected 2023-12-13",
+        "review_version": "1.0.0",
+        "source_object_ids": ["cns5:4678"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 2.870826024918,
+        "y": -0.531384356061,
+        "z": -0.574045310906
+      }
+    },
+    {
+      "alternates": ["GJ 905"],
+      "components": [
+        {
+          "cns5_id": 5844,
+          "component": null,
+          "g_magnitude": 10.379277,
+          "gaia_dr3_id": "1926461164913660160",
+          "gj": "905",
+          "hip_id": null,
+          "icrs": {
+            "dec_deg": 44.170375700747755,
+            "epoch_year": 2016.0,
+            "parallax_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.049608666,
+            "parallax_mas": 316.5352087815091,
+            "position_bibcode": "2020yCat.1350....0G",
+            "ra_deg": 355.4800152581559
+          },
+          "id": "cns5:5844"
+        }
+      ],
+      "distance_from_sol_pc": 3.159206218637,
+      "distance_uncertainty_pc": 0.000495123455,
+      "id": "ross-248",
+      "name": "Ross 248",
+      "position_pc": {
+        "xg": -1.033060674477,
+        "yg": 2.839954019336,
+        "zg": -0.920885846769
+      },
+      "provenance": {
+        "adopted_source_object_id": "cns5:5844",
+        "catalogue": "CNS5 J/A+A/670/A19",
+        "release": "corrected 2023-12-13",
+        "review_version": "1.0.0",
+        "source_object_ids": ["cns5:5844"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -1.033060674477,
+        "y": -0.920885846769,
+        "z": -2.839954019336
+      }
+    },
+    {
+      "alternates": ["GJ 144"],
+      "components": [
+        {
+          "cns5_id": 905,
+          "component": null,
+          "g_magnitude": 3.465752,
+          "gaia_dr3_id": "5164707970261890560",
+          "gj": "144.0",
+          "hip_id": 16537,
+          "icrs": {
+            "dec_deg": -9.458168216292322,
+            "epoch_year": 2016.0,
+            "parallax_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.15547387,
+            "parallax_mas": 310.5772928005821,
+            "position_bibcode": "2020yCat.1350....0G",
+            "ra_deg": 53.22829341517546
+          },
+          "id": "cns5:905"
+        }
+      ],
+      "distance_from_sol_pc": 3.21981040849,
+      "distance_uncertainty_pc": 0.00161182545,
+      "id": "epsilon-eridani",
+      "name": "Epsilon Eridani",
+      "position_pc": {
+        "xg": -2.070440380151,
+        "yg": -0.587485489724,
+        "zg": -2.394852082744
+      },
+      "provenance": {
+        "adopted_source_object_id": "cns5:905",
+        "catalogue": "CNS5 J/A+A/670/A19",
+        "release": "corrected 2023-12-13",
+        "review_version": "1.0.0",
+        "source_object_ids": ["cns5:905"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -2.070440380151,
+        "y": -2.394852082744,
+        "z": 0.587485489724
+      }
+    },
+    {
+      "alternates": ["GJ 887"],
+      "components": [
+        {
+          "cns5_id": 5688,
+          "component": null,
+          "g_magnitude": 6.5220323,
+          "gaia_dr3_id": "6553614253923452800",
+          "gj": "887",
+          "hip_id": 114046,
+          "icrs": {
+            "dec_deg": -35.8471642082214,
+            "epoch_year": 2016.0,
+            "parallax_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.022809435,
+            "parallax_mas": 304.1626511996916,
+            "position_bibcode": "2020yCat.1350....0G",
+            "ra_deg": 346.5039166796005
+          },
+          "id": "cns5:5688"
+        }
+      ],
+      "distance_from_sol_pc": 3.287714635757,
+      "distance_uncertainty_pc": 0.000246548723,
+      "id": "lacaille-9352",
+      "name": "Lacaille 9352",
+      "position_pc": {
+        "xg": 1.332588128543,
+        "yg": 0.118865503427,
+        "zg": -3.003189537464
+      },
+      "provenance": {
+        "adopted_source_object_id": "cns5:5688",
+        "catalogue": "CNS5 J/A+A/670/A19",
+        "release": "corrected 2023-12-13",
+        "review_version": "1.0.0",
+        "source_object_ids": ["cns5:5688"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 1.332588128543,
+        "y": -3.003189537464,
+        "z": -0.118865503427
+      }
+    },
+    {
+      "alternates": ["GJ 447"],
+      "components": [
+        {
+          "cns5_id": 2890,
+          "component": null,
+          "g_magnitude": 9.601,
+          "gaia_dr3_id": "3796072592206250624",
+          "gj": "447",
+          "hip_id": 57548,
+          "icrs": {
+            "dec_deg": 0.7991199702364985,
+            "epoch_year": 2016.0,
+            "parallax_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.03387585,
+            "parallax_mas": 296.3626809123856,
+            "position_bibcode": "2020yCat.1350....0G",
+            "ra_deg": 176.93768799004127
+          },
+          "id": "cns5:2890"
+        }
+      ],
+      "distance_from_sol_pc": 3.374244007111,
+      "distance_uncertainty_pc": 0.000385694256,
+      "id": "ross-128",
+      "name": "Ross 128",
+      "position_pc": {
+        "xg": 0.004682785795,
+        "yg": -1.709726805993,
+        "zg": 2.909009271197
+      },
+      "provenance": {
+        "adopted_source_object_id": "cns5:2890",
+        "catalogue": "CNS5 J/A+A/670/A19",
+        "release": "corrected 2023-12-13",
+        "review_version": "1.0.0",
+        "source_object_ids": ["cns5:2890"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 0.004682785795,
+        "y": 2.909009271197,
+        "z": 1.709726805993
+      }
+    },
+    {
+      "alternates": ["GJ 866"],
+      "components": [
+        {
+          "cns5_id": 5586,
+          "component": "ABC",
+          "g_magnitude": null,
+          "gaia_dr3_id": null,
+          "gj": "866",
+          "hip_id": null,
+          "icrs": {
+            "dec_deg": -15.28964705186,
+            "epoch_year": 2016.0,
+            "parallax_bibcode": "2010A&ARv..18...67T",
+            "parallax_error_mas": 0.9,
+            "parallax_mas": 293.6,
+            "position_bibcode": "2020yCat.1350....0G",
+            "ra_deg": 339.650693945
+          },
+          "id": "cns5:5586"
+        }
+      ],
+      "distance_from_sol_pc": 3.405994550409,
+      "distance_uncertainty_pc": 0.01044071899,
+      "id": "ez-aquarii",
+      "name": "EZ Aquarii",
+      "position_pc": {
+        "xg": 1.26341174146,
+        "yg": 1.359357903121,
+        "zg": -2.855999954513
+      },
+      "provenance": {
+        "adopted_source_object_id": "cns5:5586",
+        "catalogue": "CNS5 J/A+A/670/A19",
+        "release": "corrected 2023-12-13",
+        "review_version": "1.0.0",
+        "source_object_ids": ["cns5:5586"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 1.26341174146,
+        "y": -2.855999954513,
+        "z": -1.359357903121
+      }
+    },
+    {
+      "alternates": ["GJ 820"],
+      "components": [
+        {
+          "cns5_id": 5218,
+          "component": "B",
+          "g_magnitude": 5.4506445,
+          "gaia_dr3_id": "1872046574983497216",
+          "gj": "820",
+          "hip_id": 104217,
+          "icrs": {
+            "dec_deg": 38.75607277205679,
+            "epoch_year": 2016.0,
+            "parallax_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.033118717,
+            "parallax_mas": 286.0053518616485,
+            "position_bibcode": "2020yCat.1350....0G",
+            "ra_deg": 316.753662752556
+          },
+          "id": "cns5:5218"
+        },
+        {
+          "cns5_id": 5217,
+          "component": "A",
+          "g_magnitude": 4.766713,
+          "gaia_dr3_id": "1872046609345556480",
+          "gj": "820",
+          "hip_id": 104214,
+          "icrs": {
+            "dec_deg": 38.76386244649797,
+            "epoch_year": 2016.0,
+            "parallax_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.06864106,
+            "parallax_mas": 285.99494829578117,
+            "position_bibcode": "2020yCat.1350....0G",
+            "ra_deg": 316.7484792940004
+          },
+          "id": "cns5:5217"
+        }
+      ],
+      "distance_from_sol_pc": 3.496438068346,
+      "distance_uncertainty_pc": 0.000404878937,
+      "id": "61-cygni",
+      "name": "61 Cygni",
+      "position_pc": {
+        "xg": 0.463651225128,
+        "yg": 3.447310863193,
+        "zg": -0.35518237531
+      },
+      "provenance": {
+        "adopted_source_object_id": "cns5:5218",
+        "catalogue": "CNS5 J/A+A/670/A19",
+        "release": "corrected 2023-12-13",
+        "review_version": "1.0.0",
+        "source_object_ids": ["cns5:5218", "cns5:5217"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 0.463651225128,
+        "y": -0.35518237531,
+        "z": -3.447310863193
+      }
+    },
+    {
+      "alternates": ["GJ 280"],
+      "components": [
+        {
+          "cns5_id": 1895,
+          "component": null,
+          "g_magnitude": null,
+          "gaia_dr3_id": null,
+          "gj": "280.0",
+          "hip_id": 37279,
+          "icrs": {
+            "dec_deg": 5.227507577481227,
+            "epoch_year": 1991.25,
+            "parallax_bibcode": "2007A&A...474..653V",
+            "parallax_error_mas": 1.26,
+            "parallax_mas": 284.55999755859375,
+            "position_bibcode": "2007A&A...474..653V",
+            "ra_deg": 114.82724201808722
+          },
+          "id": "cns5:1895"
+        }
+      ],
+      "distance_from_sol_pc": 3.514197387474,
+      "distance_uncertainty_pc": 0.01556047493,
+      "id": "procyon",
+      "name": "Procyon",
+      "position_pc": {
+        "xg": -2.848440149455,
+        "yg": -1.89972587539,
+        "zg": 0.79184189803
+      },
+      "provenance": {
+        "adopted_source_object_id": "cns5:1895",
+        "catalogue": "CNS5 J/A+A/670/A19",
+        "release": "corrected 2023-12-13",
+        "review_version": "1.0.0",
+        "source_object_ids": ["cns5:1895"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -2.848440149455,
+        "y": 0.79184189803,
+        "z": 1.89972587539
+      }
+    },
+    {
+      "alternates": ["GJ 725"],
+      "components": [
+        {
+          "cns5_id": 4634,
+          "component": "B",
+          "g_magnitude": 8.524704,
+          "gaia_dr3_id": "2154880616774131712",
+          "gj": "725",
+          "hip_id": 91772,
+          "icrs": {
+            "dec_deg": 59.635145454818776,
+            "epoch_year": 2016.0,
+            "parallax_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.032414872,
+            "parallax_mas": 283.85911584457847,
+            "position_bibcode": "2020yCat.1350....0G",
+            "ra_deg": 280.68308624583415
+          },
+          "id": "cns5:4634"
+        },
+        {
+          "cns5_id": 4633,
+          "component": "A",
+          "g_magnitude": 7.854393,
+          "gaia_dr3_id": "2154880616774131840",
+          "gj": "725",
+          "hip_id": 91768,
+          "icrs": {
+            "dec_deg": 59.638357907754816,
+            "epoch_year": 2016.0,
+            "parallax_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.024943385,
+            "parallax_mas": 283.860076019069,
+            "position_bibcode": "2020yCat.1350....0G",
+            "ra_deg": 280.6830708352289
+          },
+          "id": "cns5:4633"
+        }
+      ],
+      "distance_from_sol_pc": 3.522874356261,
+      "distance_uncertainty_pc": 0.000402289428,
+      "id": "struve-2398",
+      "name": "Struve 2398",
+      "position_pc": {
+        "xg": 0.03969194928,
+        "yg": 3.212095105134,
+        "zg": 1.446206525618
+      },
+      "provenance": {
+        "adopted_source_object_id": "cns5:4634",
+        "catalogue": "CNS5 J/A+A/670/A19",
+        "release": "corrected 2023-12-13",
+        "review_version": "1.0.0",
+        "source_object_ids": ["cns5:4634", "cns5:4633"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 0.03969194928,
+        "y": 1.446206525618,
+        "z": -3.212095105134
+      }
+    },
+    {
+      "alternates": ["GJ 15"],
+      "components": [
+        {
+          "cns5_id": 89,
+          "component": "A",
+          "g_magnitude": 7.218567,
+          "gaia_dr3_id": "385334230892516480",
+          "gj": "15",
+          "hip_id": 1475,
+          "icrs": {
+            "dec_deg": 44.02478674398518,
+            "epoch_year": 2016.0,
+            "parallax_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.023075048,
+            "parallax_mas": 280.7411265779381,
+            "position_bibcode": "2020yCat.1350....0G",
+            "ra_deg": 4.613226257557736
+          },
+          "id": "cns5:89"
+        },
+        {
+          "cns5_id": 90,
+          "component": "B",
+          "g_magnitude": 9.686646,
+          "gaia_dr3_id": "385334196532776576",
+          "gj": "15",
+          "hip_id": null,
+          "icrs": {
+            "dec_deg": 44.02874451664357,
+            "epoch_year": 2016.0,
+            "parallax_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.031223621,
+            "parallax_mas": 280.74451904422403,
+            "position_bibcode": "2020yCat.1350....0G",
+            "ra_deg": 4.625300681217554
+          },
+          "id": "cns5:90"
+        }
+      ],
+      "distance_from_sol_pc": 3.562000381595,
+      "distance_uncertainty_pc": 0.000292772672,
+      "id": "groombridge-34",
+      "name": "Groombridge 34",
+      "position_pc": {
+        "xg": -1.517742782184,
+        "yg": 3.01892951699,
+        "zg": -1.12710608953
+      },
+      "provenance": {
+        "adopted_source_object_id": "cns5:89",
+        "catalogue": "CNS5 J/A+A/670/A19",
+        "release": "corrected 2023-12-13",
+        "review_version": "1.0.0",
+        "source_object_ids": ["cns5:89", "cns5:90"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -1.517742782184,
+        "y": -1.12710608953,
+        "z": -3.01892951699
+      }
+    },
+    {
+      "alternates": ["GJ 1111"],
+      "components": [
+        {
+          "cns5_id": 2093,
+          "component": null,
+          "g_magnitude": 12.167455,
+          "gaia_dr3_id": "703790044252850688",
+          "gj": "1111",
+          "hip_id": null,
+          "icrs": {
+            "dec_deg": 26.77328596508202,
+            "epoch_year": 2016.0,
+            "parallax_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.08000224,
+            "parallax_mas": 279.2596271009328,
+            "position_bibcode": "2020yCat.1350....0G",
+            "ra_deg": 127.45009240230564
+          },
+          "id": "cns5:2093"
+        }
+      ],
+      "distance_from_sol_pc": 3.580897139988,
+      "distance_uncertainty_pc": 0.001025854669,
+      "id": "dx-cancri",
+      "name": "DX Cancri",
+      "position_pc": {
+        "xg": -2.890603974827,
+        "yg": -0.884629657808,
+        "zg": 1.919547695791
+      },
+      "provenance": {
+        "adopted_source_object_id": "cns5:2093",
+        "catalogue": "CNS5 J/A+A/670/A19",
+        "release": "corrected 2023-12-13",
+        "review_version": "1.0.0",
+        "source_object_ids": ["cns5:2093"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -2.890603974827,
+        "y": 1.919547695791,
+        "z": 0.884629657808
+      }
+    },
+    {
+      "alternates": ["GJ 845"],
+      "components": [
+        {
+          "cns5_id": 5449,
+          "component": "A",
+          "g_magnitude": 4.322904,
+          "gaia_dr3_id": "6412595290592307840",
+          "gj": "845",
+          "hip_id": 108870,
+          "icrs": {
+            "dec_deg": -56.79725466122902,
+            "epoch_year": 2016.0,
+            "parallax_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.10964223,
+            "parallax_mas": 274.8431415216296,
+            "position_bibcode": "2020yCat.1350....0G",
+            "ra_deg": 330.8724078795965
+          },
+          "id": "cns5:5449"
+        },
+        {
+          "cns5_id": 5452,
+          "component": "B",
+          "g_magnitude": 18.056162,
+          "gaia_dr3_id": "6412596012146801152",
+          "gj": "845",
+          "hip_id": null,
+          "icrs": {
+            "dec_deg": -56.79381206688221,
+            "epoch_year": 2016.0,
+            "parallax_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.6972039,
+            "parallax_mas": 270.6580324694526,
+            "position_bibcode": "2020yCat.1350....0G",
+            "ra_deg": 331.07645259656397
+          },
+          "id": "cns5:5452"
+        }
+      ],
+      "distance_from_sol_pc": 3.638438981826,
+      "distance_uncertainty_pc": 0.00145146996,
+      "id": "epsilon-indi",
+      "name": "Epsilon Indi",
+      "position_pc": {
+        "xg": 2.224568275771,
+        "yg": -0.982746140411,
+        "zg": -2.706241717662
+      },
+      "provenance": {
+        "adopted_source_object_id": "cns5:5449",
+        "catalogue": "CNS5 J/A+A/670/A19",
+        "release": "corrected 2023-12-13",
+        "review_version": "1.0.0",
+        "source_object_ids": ["cns5:5449", "cns5:5452"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 2.224568275771,
+        "y": -2.706241717662,
+        "z": 0.982746140411
+      }
+    },
+    {
+      "alternates": ["GJ 71"],
+      "components": [
+        {
+          "cns5_id": 448,
+          "component": null,
+          "g_magnitude": 3.3003998,
+          "gaia_dr3_id": "2452378776434477184",
+          "gj": "71.0",
+          "hip_id": 8102,
+          "icrs": {
+            "dec_deg": -15.933680200693857,
+            "epoch_year": 2016.0,
+            "parallax_bibcode": "2007A&A...474..653V",
+            "parallax_error_mas": 0.17,
+            "parallax_mas": 273.9599914550781,
+            "position_bibcode": "2020yCat.1350....0G",
+            "ra_deg": 26.009055057160104
+          },
+          "id": "cns5:448"
+        }
+      ],
+      "distance_from_sol_pc": 3.650168021574,
+      "distance_uncertainty_pc": 0.00226503352,
+      "id": "tau-ceti",
+      "name": "Tau Ceti",
+      "position_pc": {
+        "xg": -1.032621754819,
+        "yg": 0.125467333748,
+        "zg": -3.498810775872
+      },
+      "provenance": {
+        "adopted_source_object_id": "cns5:448",
+        "catalogue": "CNS5 J/A+A/670/A19",
+        "release": "corrected 2023-12-13",
+        "review_version": "1.0.0",
+        "source_object_ids": ["cns5:448"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -1.032621754819,
+        "y": -3.498810775872,
+        "z": -0.125467333748
+      }
+    },
+    {
+      "alternates": ["LHS 1565"],
+      "components": [
+        {
+          "cns5_id": 919,
+          "component": null,
+          "g_magnitude": 10.995456,
+          "gaia_dr3_id": "4848140361962951552",
+          "gj": "1061",
+          "hip_id": null,
+          "icrs": {
+            "dec_deg": -44.51436231604776,
+            "epoch_year": 2016.0,
+            "parallax_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.03535391,
+            "parallax_mas": 272.18890083149853,
+            "position_bibcode": "2020yCat.1350....0G",
+            "ra_deg": 54.00339387736301
+          },
+          "id": "cns5:919"
+        }
+      ],
+      "distance_from_sol_pc": 3.673919094222,
+      "distance_uncertainty_pc": 0.000477195817,
+      "id": "gj-1061",
+      "name": "GJ 1061",
+      "position_pc": {
+        "xg": -0.689542653561,
+        "yg": -2.106064427796,
+        "zg": -2.930308015513
+      },
+      "provenance": {
+        "adopted_source_object_id": "cns5:919",
+        "catalogue": "CNS5 J/A+A/670/A19",
+        "release": "corrected 2023-12-13",
+        "review_version": "1.0.0",
+        "source_object_ids": ["cns5:919"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -0.689542653561,
+        "y": -2.930308015513,
+        "z": 2.106064427796
+      }
+    }
+  ]
+}

@@ -1,0 +1,146 @@
+{
+  "review_version": "1.0.0",
+  "catalogue": "CNS5 J/A+A/670/A19 (corrected 2023-12-13)",
+  "systems": [
+    {
+      "id": "alpha-centauri",
+      "name": "Alpha Centauri",
+      "alternates": ["Rigil Kentaurus", "GJ 559"],
+      "gj_selectors": ["559", "551"],
+      "adopt_gj": "559"
+    },
+    {
+      "id": "barnards-star",
+      "name": "Barnard's Star",
+      "alternates": ["GJ 699"],
+      "gj_selectors": ["699"],
+      "adopt_gj": "699"
+    },
+    {
+      "id": "wolf-359",
+      "name": "Wolf 359",
+      "alternates": ["GJ 406"],
+      "gj_selectors": ["406"],
+      "adopt_gj": "406"
+    },
+    {
+      "id": "lalande-21185",
+      "name": "Lalande 21185",
+      "alternates": ["GJ 411"],
+      "gj_selectors": ["411"],
+      "adopt_gj": "411"
+    },
+    {
+      "id": "sirius",
+      "name": "Sirius",
+      "alternates": ["GJ 244"],
+      "gj_selectors": ["244"],
+      "adopt_gj": "244"
+    },
+    {
+      "id": "luyten-726-8",
+      "name": "Luyten 726-8",
+      "alternates": ["GJ 65", "BL Ceti", "UV Ceti"],
+      "gj_selectors": ["65", "65.1"],
+      "adopt_gj": "65"
+    },
+    {
+      "id": "ross-154",
+      "name": "Ross 154",
+      "alternates": ["GJ 729"],
+      "gj_selectors": ["729"],
+      "adopt_gj": "729"
+    },
+    {
+      "id": "ross-248",
+      "name": "Ross 248",
+      "alternates": ["GJ 905"],
+      "gj_selectors": ["905"],
+      "adopt_gj": "905"
+    },
+    {
+      "id": "epsilon-eridani",
+      "name": "Epsilon Eridani",
+      "alternates": ["GJ 144"],
+      "gj_selectors": ["144.0"],
+      "adopt_gj": "144.0"
+    },
+    {
+      "id": "lacaille-9352",
+      "name": "Lacaille 9352",
+      "alternates": ["GJ 887"],
+      "gj_selectors": ["887"],
+      "adopt_gj": "887"
+    },
+    {
+      "id": "ross-128",
+      "name": "Ross 128",
+      "alternates": ["GJ 447"],
+      "gj_selectors": ["447"],
+      "adopt_gj": "447"
+    },
+    {
+      "id": "ez-aquarii",
+      "name": "EZ Aquarii",
+      "alternates": ["GJ 866"],
+      "gj_selectors": ["866"],
+      "adopt_gj": "866"
+    },
+    {
+      "id": "procyon",
+      "name": "Procyon",
+      "alternates": ["GJ 280"],
+      "gj_selectors": ["280.0"],
+      "adopt_gj": "280.0"
+    },
+    {
+      "id": "61-cygni",
+      "name": "61 Cygni",
+      "alternates": ["GJ 820"],
+      "gj_selectors": ["820"],
+      "adopt_gj": "820"
+    },
+    {
+      "id": "struve-2398",
+      "name": "Struve 2398",
+      "alternates": ["GJ 725"],
+      "gj_selectors": ["725"],
+      "adopt_gj": "725"
+    },
+    {
+      "id": "groombridge-34",
+      "name": "Groombridge 34",
+      "alternates": ["GJ 15"],
+      "gj_selectors": ["15"],
+      "adopt_gj": "15"
+    },
+    {
+      "id": "epsilon-indi",
+      "name": "Epsilon Indi",
+      "alternates": ["GJ 845"],
+      "gj_selectors": ["845"],
+      "adopt_gj": "845"
+    },
+    {
+      "id": "dx-cancri",
+      "name": "DX Cancri",
+      "alternates": ["GJ 1111"],
+      "gj_selectors": ["1111"],
+      "adopt_gj": "1111"
+    },
+    {
+      "id": "tau-ceti",
+      "name": "Tau Ceti",
+      "alternates": ["GJ 71"],
+      "gj_selectors": ["71.0"],
+      "adopt_gj": "71.0"
+    },
+    {
+      "id": "gj-1061",
+      "name": "GJ 1061",
+      "alternates": ["LHS 1565"],
+      "gj_selectors": ["1061"],
+      "adopt_gj": "1061"
+    }
+  ]
+}
