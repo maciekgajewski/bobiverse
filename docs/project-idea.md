@@ -64,7 +64,7 @@ There are 3 NPC AI characters that could be used as app assitants, clippy-style:
 
 1. Flesh out the idea, find answer to technical questions
 2. Phase 1: interactive map containing the 100 stars closest to the Sun
-3. Phase 3: get the first few chapters into JSON, add timeline and vizualisation
+3. Phase 2: get the first few chapters into JSON, add timeline and visualization
 4. Further phases: character list, star/planet list, search etc
 
 
