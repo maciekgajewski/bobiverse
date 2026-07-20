@@ -56,6 +56,8 @@ There are 3 NPC AI characters that could be used as app assitants, clippy-style:
   - major events
 - QUESTION - can e get a 3D coordinates of star systems from somewhere? Where to get them from? What coordinate system is used for stars?
 - QUESTION - can we automatically use LLM to convert book text into per-chapter JSON
+- Initially I want to host it locally QUESTION: dopes it need to be hosted, ius static page OK?
+- Eventually I may want to publish it. What are the hosting requirements?
 
 
 ## Plan
