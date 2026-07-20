@@ -43,7 +43,7 @@ There are 3 NPC AI characters that could be used as app assitants, clippy-style:
 - Jeeves - a butler serving coffee and other refreshments, looking like John Cleese
 - Spike, a cat
 
-### Technical details
+## Technical details
 
 - The UI must be usable in-browser.
 - The data is, generally, static. QUESTION: can the web app hols all the data, or is data server needed
@@ -54,8 +54,16 @@ There are 3 NPC AI characters that could be used as app assitants, clippy-style:
   - location (star system, planet or en-route)
   - list oif other characters appearing, providing a data point (time + location) to their history
   - major events
+- QUESTION - can e get a 3D coordinates of star systems from somewhere? Where to get them from? What coordinate system is used for stars?
+- QUESTION - can we automatically use LLM to convert book text into per-chapter JSON
 
 
+## Plan
+
+1. Flesh out the idea, find answer to technical questions
+2. Phase 1: interactive map containing the 100 stars closest to the Sun
+3. Phase 3: get the first few chapters into JSON, add timeline and vizualisation
+4. Further phases: character list, star/planet list, search etc
 
 
 
