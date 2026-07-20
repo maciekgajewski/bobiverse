@@ -21,4 +21,5 @@ test("directory selection, unit switch, and measurement survive a phone-sized vi
   await expect(page.getByLabel("Measured separation")).toContainText(
     "pc straight-line separation",
   );
+  await expect(page.getByTestId("map-scale-label")).toContainText("pc");
 });

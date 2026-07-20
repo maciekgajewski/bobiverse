@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { StarMap } from "./components/MapScene";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { StarMap, type MapScale } from "./components/MapScene";
 import { SystemDetails } from "./components/SystemDetails";
 import { SystemDirectory } from "./components/SystemDirectory";
 import { nearbySystems, nearbySystemsResult } from "./domain/data";
@@ -28,11 +28,23 @@ export default function App() {
     "checking",
   );
   const [resetToken, setResetToken] = useState(0);
+  const [mapScale, setMapScale] = useState<MapScale>({
+    label: "1 ly",
+    pixelWidth: 50,
+  });
   const systems = nearbySystems?.systems ?? [];
   const selected = systems.find((system) => system.id === selectedId) ?? null;
   const endpointA = systems.find((system) => system.id === measurement[0]);
   const endpointB = systems.find((system) => system.id === measurement[1]);
   const measuredDistance = measurementDistancePc(endpointA, endpointB);
+  const updateMapScale = useCallback((nextScale: MapScale) => {
+    setMapScale((current) =>
+      current.label === nextScale.label &&
+      current.pixelWidth === nextScale.pixelWidth
+        ? current
+        : nextScale,
+    );
+  }, []);
 
   useEffect(() => {
     const check = window.setTimeout(
@@ -41,6 +53,18 @@ export default function App() {
     );
     return () => window.clearTimeout(check);
   }, []);
+  useEffect(() => {
+    const update = window.setTimeout(
+      () =>
+        setMapScale((current) =>
+          current.label.endsWith(` ${unit}`)
+            ? current
+            : { label: `1 ${unit}`, pixelWidth: 50 },
+        ),
+      0,
+    );
+    return () => window.clearTimeout(update);
+  }, [unit]);
 
   const selectSystem = (id: string) => {
     setSelectedId(id);
@@ -149,11 +173,15 @@ export default function App() {
               resetToken={resetToken}
               onSelect={selectSystem}
               onReady={() => undefined}
+              onScaleChange={updateMapScale}
             />
           )}
           <div className="map-overlay">
-            <span className="scale-line" />
-            <span>1 pc · {formatDistance(1, unit, 2)}</span>
+            <span
+              className="scale-line"
+              style={{ width: `${mapScale.pixelWidth}px` }}
+            />
+            <span data-testid="map-scale-label">{mapScale.label}</span>
             <span className="orientation">
               Galactic plane · true linear scale
             </span>
