@@ -46,26 +46,39 @@ There are 3 NPC AI characters that could be used as app assitants, clippy-style:
 ## Technical details
 
 - The UI must be usable in-browser.
-- The data is, generally, static. QUESTION: can the web app hols all the data, or is data server needed
-- The ir no point for reach user accounts etc. Maybe in the future. But cookies should be used to remember visitor's last read chapter.
-- I imagine that the books can be distilled, so that each chapter is a JSON document containing:
+- The data is generally static and can be included in a static web application; an
+  application server and database are not needed initially.
+- There is no need for user accounts initially. Browser `localStorage` will remember
+  the visitor's last read chapter and preferences.
+- The books can be distilled into validated JSON. Chapter documents reference stable
+  character, location, and event identifiers rather than duplicating canonical data.
+  A chapter contains:
+
   - a date
   - a main character(s)
   - location (star system, planet or en-route)
-  - list oif other characters appearing, providing a data point (time + location) to their history
+  - list of other characters appearing, providing a data point (time + location) to their history
   - major events
-- QUESTION - can e get a 3D coordinates of star systems from somewhere? Where to get them from? What coordinate system is used for stars?
-- QUESTION - can we automatically use LLM to convert book text into per-chapter JSON
-- Initially I want to host it locally QUESTION: dopes it need to be hosted, ius static page OK?
-- Eventually I may want to publish it. What are the hosting requirements?
+- Real 3D coordinates will come from a reproducible offline astronomy pipeline using
+  CNS5 and Astropy. The application stores Sun-centered Galactic Cartesian coordinates
+  and renders them at true linear scale.
+- LLMs may later assist with per-chapter extraction, but only after a manually authored
+  schema is proven and with mandatory human review. Source book text is not published
+  or committed.
+- Local use requires only a static site served over HTTP. Development runs on the
+  headless server at trusted-LAN port 5173.
+- Eventual publication can use ordinary static hosting with HTTPS. Publication also
+  requires source attribution, original visual assets, accessibility and performance
+  review, and an intellectual-property review.
+
+The complete approved decisions are in [technical-design.md](technical-design.md).
 
 
 ## Plan
 
 1. Flesh out the idea, find answer to technical questions
-2. Phase 1: interactive map containing the 100 stars closest to the Sun
-3. Phase 2: get the first few chapters into JSON, add timeline and visualization
-4. Further phases: character list, star/planet list, search etc
-
-
+2. Phase 1A: complete interactive map experience using the 20 nearest stellar systems
+3. Phase 1B: expand the validated map pipeline toward 100 stellar systems
+4. Phase 2: get the first few chapters into JSON, add timeline and visualization
+5. Further phases: character list, star/planet list, search, histories, and genealogy
 
