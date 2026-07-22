@@ -41,6 +41,26 @@ is normative for the scalar types below.
       "pattern": "^[a-z][a-z0-9_]*:[a-z0-9][a-z0-9-]*$",
       "description": "Globally unique, type-prefixed entity identifier."
     },
+    "character_id": {
+      "type": "string",
+      "pattern": "^character:[a-z0-9][a-z0-9-]*$",
+      "description": "Globally unique reference to a character entity."
+    },
+    "species_id": {
+      "type": "string",
+      "pattern": "^species:[a-z0-9][a-z0-9-]*$",
+      "description": "Globally unique reference to a species entity."
+    },
+    "asset_id": {
+      "type": "string",
+      "pattern": "^asset:[a-z0-9][a-z0-9-]*$",
+      "description": "Globally unique reference to a manually curated asset."
+    },
+    "event_id": {
+      "type": "string",
+      "pattern": "^event:[a-z0-9][a-z0-9-]*$",
+      "description": "Globally unique reference to an event entity."
+    },
     "location_id": {
       "type": "string",
       "pattern": "^location:[a-z0-9][a-z0-9-]*$",
@@ -51,12 +71,89 @@ is normative for the scalar types below.
       "required": ["character_id", "role"],
       "properties": {
         "character_id": {
-          "type": "string",
-          "pattern": "^character:[a-z0-9][a-z0-9-]*$"
+          "$ref": "#/$defs/character_id"
         },
         "role": { "enum": ["lead", "other"] },
         "location_id": { "$ref": "#/$defs/location_id" }
       },
+      "additionalProperties": false
+    },
+    "character": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "$ref": "#/$defs/character_id" },
+        "name": { "type": "string", "minLength": 1 },
+        "gender": { "type": "string", "minLength": 1 },
+        "species_id": { "$ref": "#/$defs/species_id" },
+        "current_state": { "type": "string", "minLength": 1 },
+        "picture_id": { "$ref": "#/$defs/asset_id" },
+        "aliases": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "birth_date": { "$ref": "#/$defs/date" },
+        "death_date": { "$ref": "#/$defs/date" },
+        "death_event_id": { "$ref": "#/$defs/event_id" }
+      },
+      "additionalProperties": false
+    },
+    "character_update": {
+      "type": "object",
+      "required": ["entity_id"],
+      "properties": {
+        "entity_id": { "$ref": "#/$defs/character_id" },
+        "name": { "type": "string", "minLength": 1 },
+        "gender": { "type": ["string", "null"], "minLength": 1 },
+        "species_id": {
+          "anyOf": [
+            { "$ref": "#/$defs/species_id" },
+            { "type": "null" }
+          ]
+        },
+        "current_state": { "type": ["string", "null"], "minLength": 1 },
+        "picture_id": {
+          "anyOf": [
+            { "$ref": "#/$defs/asset_id" },
+            { "type": "null" }
+          ]
+        },
+        "aliases": {
+          "type": ["array", "null"],
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "birth_date": {
+          "anyOf": [
+            { "$ref": "#/$defs/date" },
+            { "type": "null" }
+          ]
+        },
+        "death_date": {
+          "anyOf": [
+            { "$ref": "#/$defs/date" },
+            { "type": "null" }
+          ]
+        },
+        "death_event_id": {
+          "anyOf": [
+            { "$ref": "#/$defs/event_id" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "anyOf": [
+        { "required": ["name"] },
+        { "required": ["gender"] },
+        { "required": ["species_id"] },
+        { "required": ["current_state"] },
+        { "required": ["picture_id"] },
+        { "required": ["aliases"] },
+        { "required": ["birth_date"] },
+        { "required": ["death_date"] },
+        { "required": ["death_event_id"] }
+      ],
       "additionalProperties": false
     },
     "chapter_source": {
@@ -233,8 +330,8 @@ There are exactly two sources of domain truth:
    changes, appearances, events, and chapter reveal order.
 
 The following are generated data and must never be edited manually: the stable entity
-registry, an entity's state at a selected chapter, location child lists, currently
-present character lists, events-at-location lists, character event histories, and the
+registry, an entity's state at a selected chapter, location child lists, character
+last-known sightings, events-at-location lists, character event histories, and the
 render-ready join of astronomy and narrative locations. Deterministic generated caches
 or checkpoints are permitted only as rebuildable optimizations.
 
@@ -356,8 +453,8 @@ adds the typed `introducing` and `updates` contracts.
   "updates": [
     {
       "entity_id": "character:alex",
-      "current_location_id": "location:earth-research-base",
       "current_state": "injured",
+      "aliases": ["Alex"],
       "picture_id": null
     }
   ],
@@ -411,18 +508,53 @@ or corrects detail.
 
 ## Entity and location schemas
 
-Each entity type has a dedicated versioned schema. The following table records the
-initial schema surface; type-specific fields such as character gender or species state
-remain to be defined before their records are authored.
+Each entity type has a dedicated versioned schema. The character contract is ratified
+below. The other type-specific fields remain to be defined before their records are
+authored.
 
 | Record | Required initial contract | Derived rather than authored |
 | --- | --- | --- |
-| `character` | `id`, type-required identity/state fields, and any known current location | current location occupants; event history |
-| `star_system` | `id`, `kind: "star_system"`, name, and `astronomy_object_id` when mapped | astronomical components and render facts; sublocations; occupants and events |
-| `planet`, `moon`, `locale`, `megastructure` | `id`, `kind`, name, and parent where non-root | sublocations; occupants and events |
+| `character` | `id`, `name`, and the optional fields in the ratified character contract | last-known sighting; event history |
+| `star_system` | `id`, `kind: "star_system"`, name, and `astronomy_object_id` when mapped | astronomical components and render facts; sublocations; last-known sightings and events |
+| `planet`, `moon`, `locale`, `megastructure` | `id`, `kind`, name, and parent where non-root | sublocations; last-known sightings and events |
 | `species` | `id`, name, and its type-required initial fields | members and other reverse links |
 | `event` | `id`, `location_id`, `participant_ids`; `date` is optional | location event list; participant event histories |
 | `asset` | `id`, file path, attribution, and validation metadata | no visible assignment; assignments are entity values |
+
+### Character
+
+A character introduction uses the `character` schema above. Its only required fields
+are a canonical `character:` ID and a nonempty reader-visible `name`.
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `id` | `character_id` | Immutable stable identifier. |
+| `name` | nonempty string | Reader-visible display name. |
+| `gender` | optional nonempty string | Reader-visible free text; no global gender vocabulary is imposed. |
+| `species_id` | optional `species_id` | Reference to an introduced species entity. |
+| `current_state` | optional nonempty string | The character's known mutable state at the enclosing chapter's story date. |
+| `picture_id` | optional `asset_id` | Chapter-controlled assignment of a manually curated image asset. |
+| `aliases` | optional array of unique nonempty strings | Additional reader-visible names that become searchable only when introduced or updated. |
+| `birth_date` | optional `date` | Known birth date at the available story-time precision. |
+| `death_date` | optional `date` | Known death date at the available story-time precision. |
+| `death_event_id` | optional `event_id` | Reference to the event that records the death. |
+
+The `character_update` schema permits every character field except `id`. `name` must
+remain a nonempty string; every optional field may be supplied with `null` to clear its
+prior value. A list supplied for `aliases` replaces the complete previous list. A
+character introduction or update must not use a reference until its target entity has
+been introduced. When both `death_date` and the referenced event's own `date` are
+present, their canonical values must be identical. No ordering comparison is imposed
+between `birth_date` and `death_date`.
+
+`current_state` does not establish a character location. A character location is only
+confirmed by an appearance with an effective location. From reader-visible appearances
+whose effective story dates are definitively at or before `viewChapter.date`, the
+generated projection may expose a `last_known_location` only when one appearance has a
+uniquely latest, definitively comparable story date. That generated value records the
+source chapter and story date of the sighting, is labelled as a last-known sighting, and
+must not be treated as current presence or used to position the character on the map.
+Tied or incomparable appearance dates produce no singular last-known location.
 
 Locations form a one-parent tree. A root has no `parent_location_id`; every non-root
 location has exactly one. `sublocations` are generated by resolving the reverse parent
@@ -457,6 +589,8 @@ layer. It rejects at least:
 - more than one update object for an entity in a chapter, or an update property not
   allowed by that entity type;
 - invalid update `null` use, invalid list replacement values, or invalid references;
+- an invalid character ID, name, aliases list, or typed species, asset, or death-event
+  reference; a character death date that conflicts with its referenced event date;
 - a chapter with no appearances or no `lead` appearance;
 - competing state writes that have equal or incomparable effective story dates, or a
   year-only selected chapter date that cannot determine a needed indexed transition;
