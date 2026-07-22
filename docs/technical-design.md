@@ -1,7 +1,7 @@
 # Bobiverse visual companion: technical design
 
 Status: Approved baseline  
-Last updated: 2026-07-20
+Last updated: 2026-07-22
 
 ## 1. Purpose
 
@@ -357,26 +357,44 @@ visual designs rather than an Admiral Ackbar or John Cleese likeness.
 ## 12. Narrative data and spoiler model
 
 Narrative features begin only after the astronomy vertical slice is accepted.
-Canonical authoring uses JSON validated by versioned JSON Schema. Chapter files
-reference stable IDs; they do not duplicate canonical character or location records.
+Canonical authoring uses JSON validated by versioned JSON Schema. Chapter records are
+the sole authored narrative source: they introduce complete minimum-valid entities,
+record visible updates, appearances, and events. The stable entity registry and every
+selected-chapter state are deterministic generated projections, never manually
+edited snapshots. ADR-0001 records this supersession of the earlier separate-registry
+approach.
 
 Spoiler safety has two independent dimensions:
 
 1. Reading order determines which claims the reader is permitted to know.
 2. Story time determines the in-universe moment represented by the selected chapter.
 
-Selecting a chapter therefore creates a reader-knowledge view of the universe at that
-chapter's story date. A fact first revealed later must not alter an earlier view, even
-if the fact was already true in-universe. Spoiler-sensitive attributes must be modeled
-as revealed claims or state transitions rather than mutable timeless fields.
+`furthestChapterRead` is a guarded reader-progress ceiling. `viewChapter` selects a
+chapter at or before that ceiling. Reader order first decides which facts the reader
+may know; story time then decides which of those facts form the represented world
+state at `viewChapter.date`. A future story-state change must not alter an earlier
+in-universe view merely because its chapter was read first. Conversely, a fact first
+revealed later must not alter an earlier reader-knowledge view, even if it was already
+true in-universe. ADR-0002 defines this two-stage projection and its temporal
+validation rules.
 
 All later views—map, search, characters, systems, paths, chronicles, and genealogy—use
 one shared visibility policy. A UI component may not implement an independent spoiler
 filter.
 
-Unknown or ambiguous book locations remain valid narrative entities with an explicit
-unmapped state. They may appear in timelines and lists but not at invented map
-coordinates.
+Locations form a one-parent tree: every non-root location has exactly one parent and
+child lists are generated. This supports systems, planets, moons, locales, and
+megastructures without fixing a shallow hierarchy. Transit locations are roots with
+explicit origin and destination references. Unknown or ambiguous book locations remain
+valid, explicitly unmapped narrative entities; they may appear in timelines and lists
+but not at invented map coordinates.
+
+Astronomy remains authoritative for physical positions, bodies, sizes, colours, and
+physical hierarchy. A narrative location may reference an astronomy node; mapped
+parent-child locations must agree with astronomy ancestry. The visual layer receives a
+generated join of the astronomy hierarchy and the selected narrative location tree.
+Book records must not duplicate astronomy render facts. Images are manually curated
+assets, but an entity's image assignment is chapter-controlled narrative state.
 
 ## 13. LLM-assisted extraction
 

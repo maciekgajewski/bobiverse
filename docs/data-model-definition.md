@@ -1,0 +1,466 @@
+# Narrative data-model definition
+
+Status: In progress
+Schema dialect: JSON Schema Draft 2020-12
+Last updated: 2026-07-22
+
+## Purpose and scope
+
+This document defines the canonical JSON vocabulary for future narrative data.
+Every record type will have a versioned JSON Schema and will reuse the scalar
+definitions in this document rather than redefine their syntax. The first
+definitions are `date` and `chapter`.
+
+This document does not add book-derived records or source text. It records only
+the data contract needed before those records are authored. ADR-0001 is binding for
+the chapter-authored source and generated-projection boundary.
+
+## Shared JSON Schema definitions
+
+Record schemas must use JSON Schema Draft 2020-12 and may import the following
+definitions from this document's eventual machine-readable schema. The fragment
+is normative for the scalar types below.
+
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bobiverse.local/schema/narrative-data-model-0.1.0.json",
+  "$defs": {
+    "date": {
+      "type": "string",
+      "pattern": "^[1-9][0-9]*(?:\\.(?:0|[1-9][0-9]*))?$",
+      "description": "Calendar year, optionally followed by a non-negative within-year ordering index."
+    },
+    "chapter": {
+      "type": "string",
+      "pattern": "^[1-9][0-9]*\\.[1-9][0-9]*$",
+      "description": "Visible chapter reference: positive book number followed by positive chapter number."
+    },
+    "entity_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*:[a-z0-9][a-z0-9-]*$",
+      "description": "Globally unique, type-prefixed entity identifier."
+    },
+    "location_id": {
+      "type": "string",
+      "pattern": "^location:[a-z0-9][a-z0-9-]*$",
+      "description": "Globally unique reference to a location entity."
+    },
+    "appearance": {
+      "type": "object",
+      "required": ["character_id", "role"],
+      "properties": {
+        "character_id": {
+          "type": "string",
+          "pattern": "^character:[a-z0-9][a-z0-9-]*$"
+        },
+        "role": { "enum": ["lead", "other"] },
+        "location_id": { "$ref": "#/$defs/location_id" }
+      },
+      "additionalProperties": false
+    },
+    "chapter_source": {
+      "type": "object",
+      "required": ["schema_version", "chapter", "date", "appearances"],
+      "properties": {
+        "schema_version": { "const": "1.0.0" },
+        "chapter": { "$ref": "#/$defs/chapter" },
+        "date": { "$ref": "#/$defs/date" },
+        "location_id": { "$ref": "#/$defs/location_id" },
+        "appearances": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/appearance" },
+          "contains": {
+            "type": "object",
+            "required": ["role"],
+            "properties": { "role": { "const": "lead" } }
+          },
+          "minContains": 1
+        }
+      }
+    },
+    "books_source": {
+      "type": "object",
+      "required": ["schema_version", "books"],
+      "properties": {
+        "schema_version": { "const": "1.0.0" },
+        "books": {
+          "type": "object",
+          "minProperties": 1,
+          "patternProperties": {
+            "^[1-9][0-9]*$": {
+              "type": "object",
+              "required": ["title"],
+              "properties": {
+                "title": { "type": "string", "minLength": 1 }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "chapter_manifest": {
+      "type": "object",
+      "required": ["schema_version", "chapters"],
+      "properties": {
+        "schema_version": { "const": "1.0.0" },
+        "chapters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["chapter", "path"],
+            "properties": {
+              "chapter": { "$ref": "#/$defs/chapter" },
+              "path": {
+                "type": "string",
+                "pattern": "^chapters/[1-9][0-9]*/[1-9][0-9]*\\.json$"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
+```
+
+Until the shared fragment is published as a schema file, a record schema may
+embed an identical definition in its own `$defs`. It must not change the pattern
+or semantics.
+
+## `date`
+
+### Meaning
+
+`date` represents a calendar year in the story universe. It is deliberately not
+an ISO 8601 timestamp and does not encode a month, day, clock time, timezone, or
+duration. Its optional index provides only a stable way to order multiple events
+known to occur within the same calendar year. The index is metadata and must
+never be shown in the user interface.
+
+### Canonical encoding
+
+The JSON value is always a string in one of two forms:
+
+| Form | Meaning | Valid examples |
+| --- | --- | --- |
+| `"<year>"` | A year is known; no within-year order is asserted. | `"2026"`, `"10000"` |
+| `"<year>.<index>"` | A year and within-year ordering index are known. | `"2026.0"`, `"2026.77"` |
+
+`year` is a positive base-10 integer with no leading zero. `index` is a
+non-negative base-10 integer with no leading zero except for the single value
+`0`. Therefore `"02026"`, `"0"`, `"2026.007"`, `"2026."`, and `2026.77`
+(a JSON number) are invalid.
+
+### Ordering rules
+
+1. Compare years numerically; an earlier year precedes a later year.
+2. If two values have the same year and both have an index, compare their indices
+   numerically. For example, `"2026.9"` precedes `"2026.10"`.
+3. A year-only value is less precise than an indexed value in that year. It is
+   intentionally unordered relative to every indexed value with the same year;
+   consumers must not normalize it to `"<year>.0"` or to a synthetic end-of-year
+   index.
+
+The resulting comparison is a partial order, not a total chronology. A consumer
+that needs a deterministic display order must use an explicit record-specific
+tie-breaker and must not present that tie-breaker as story chronology.
+
+## `chapter`
+
+### Meaning
+
+`chapter` identifies a visible position in the book series. Both components are
+mandatory and visible to readers. The first chapter of the first book is
+`"1.1"`.
+
+### Canonical encoding
+
+The JSON value is always the string `"<book>.<chapter>"`:
+
+- `book` is a positive base-10 integer with no leading zero.
+- `chapter` is a positive base-10 integer with no leading zero.
+- The separator is exactly one period (`.`).
+
+Consequently, `"1.1"` and `"12.34"` are valid; `"01.01"`, `"0.1"`,
+`"1.0"`, `"1"`, `"1.1.1"`, and `1.1` (a JSON number) are invalid.
+
+For series reading order, compare the two numeric components in order: book
+first, then chapter. Thus `"1.10"` follows `"1.9"`, and `"2.1"` follows all
+chapters in book 1. String lexicographic comparison is invalid for this purpose.
+
+## Story time and reader order
+
+`date` represents story time. `chapter` represents the reader-visible chapter
+reference and supports series reading order. They are independent dimensions:
+chapters may be non-chronological, and a date must not be used as a spoiler
+visibility key. Future revealed-claim and reader-progress schemas will use the
+reader-order model explicitly while retaining `date` for in-universe chronology.
+
+## Record-schema usage
+
+A later chapter record will define its own schema and reference these scalars;
+this is illustrative only, not a complete chapter schema:
+
+```json
+{
+  "type": "object",
+  "required": ["chapter", "date"],
+  "properties": {
+    "chapter": { "$ref": "narrative-data-model-0.1.0.json#/$defs/chapter" },
+    "date": { "$ref": "narrative-data-model-0.1.0.json#/$defs/date" }
+  }
+}
+```
+
+Future record definitions must state their schema version, stable identifier,
+required fields, allowed references, and spoiler-visibility behavior. They must
+not duplicate or loosen the scalar definitions above.
+
+## Authority and generated-data boundary
+
+There are exactly two sources of domain truth:
+
+1. The astronomy source owns physical facts: system and component identity,
+   coordinates, dimensions, colour, physical hierarchy, and other render facts.
+2. The chapter source owns narrative facts: entity introductions, visible state
+   changes, appearances, events, and chapter reveal order.
+
+The following are generated data and must never be edited manually: the stable entity
+registry, an entity's state at a selected chapter, location child lists, currently
+present character lists, events-at-location lists, character event histories, and the
+render-ready join of astronomy and narrative locations. Deterministic generated caches
+or checkpoints are permitted only as rebuildable optimizations.
+
+Image files are the sole manually curated non-generated content. They live in an asset
+registry with stable `asset:` IDs, paths, attribution, and validation metadata. Assets
+do not establish a third domain truth or entity state; their assignment to an entity is
+still a chapter-controlled narrative value such as `picture_id`.
+
+## Reader progress and projection
+
+The application keeps two separate global values:
+
+- `furthestChapterRead`: a guarded progress value. Advancing it requires an explicit
+  UX action so a reader cannot accidentally reveal later material.
+- `viewChapter`: the freely selected chapter from the chapter list. It may equal or
+  precede `furthestChapterRead`, but it must never exceed it.
+
+Projection has two independent stages:
+
+1. Reader order is the spoiler gate. Select only chapter records at or before
+   `viewChapter`, comparing the numeric components of `chapter`. Those records are
+   the facts the reader is allowed to know.
+2. Story time is the world-state gate. Every state-bearing property supplied by an
+   introduction or ordinary update has the effective story date of its enclosing
+   chapter. From the reader-visible records, apply only values whose effective date
+   is definitively at or before
+   `viewChapter.date`, then use the chronologically latest value for each entity
+   property.
+
+Reader order never breaks a story-time tie. Identical canonical date values are equal,
+so a state value dated exactly like `viewChapter.date` is eligible. A year-only date is
+otherwise unordered relative to an indexed date in the same year, so it cannot decide
+a state transition between them. Source data must supply an index whenever a state
+write or selected chapter requires that within-year ordering. Competing writes to one
+entity property with equal or incomparable effective dates are invalid.
+
+An event uses its own optional `date` for its in-universe occurrence. If it has no
+date, it remains reader-visible after its introduction but is not placed at a precise
+story-time point. Story `date` is never used to grant reader visibility.
+
+## Chapter-authored source records
+
+### Source layout and book catalogue
+
+The authored book and chapter source has this canonical layout:
+
+```text
+data/narrative/books.json
+data/narrative/chapters/<book>/<chapter>.json
+generated/narrative/chapter-manifest.json
+```
+
+`books.json` is the sole manually authored book catalogue. It uses a numeric-keyed
+object: each key is the canonical positive book number and each value initially
+contains only the nonempty `title`.
+
+```json
+{
+  "schema_version": "1.0.0",
+  "books": {
+    "1": { "title": "Book title" }
+  }
+}
+```
+
+Every chapter is a separate source JSON file. A chapter whose canonical reference is
+`"1.1"` must be at `data/narrative/chapters/1/1.json` and contains the canonical
+`"chapter": "1.1"` reference—not redundant `book` or `chapter_number` fields.
+
+The generator scans these source files, validates the path/reference/book-catalogue
+agreement, and emits the ordered chapter manifest. The manifest is generated and must
+not be edited by hand. Its entries intentionally contain only the canonical chapter
+reference and source path; it does not duplicate story dates or narrative metadata.
+
+```json
+{
+  "schema_version": "1.0.0",
+  "chapters": [
+    { "chapter": "1.1", "path": "chapters/1/1.json" }
+  ]
+}
+```
+
+The manifest is ordered by numeric `chapter` components, not JSON object order. The
+static runtime uses it to load the individual chapter source files needed for a view;
+it never relies on directory enumeration.
+
+Every chapter source record has its own versioned JSON Schema. It contains the required
+`chapter` and story `date` scalars, a nonempty `appearances` array with at least one
+`role: "lead"` entry, and zero or more `introducing` and `updates` sections. A root
+`location_id` is optional and supplies the default location for appearances in that
+chapter. The shared `chapter_source` fragment enforces the required chapter identity,
+story date, nonempty appearances, and lead requirement; the complete chapter schema
+adds the typed `introducing` and `updates` contracts.
+
+```json
+{
+  "schema_version": "1.0.0",
+  "chapter": "1.2",
+  "date": "2133.77",
+  "location_id": "location:earth",
+  "introducing": {
+    "locales": [
+      {
+        "id": "location:earth-research-base",
+        "kind": "locale",
+        "name": "Research Base",
+        "parent_location_id": "location:earth"
+      }
+    ],
+    "events": [
+      {
+        "id": "event:arrival-at-base",
+        "location_id": "location:earth-research-base",
+        "participant_ids": ["character:alex"]
+      }
+    ]
+  },
+  "updates": [
+    {
+      "entity_id": "character:alex",
+      "current_location_id": "location:earth-research-base",
+      "current_state": "injured",
+      "picture_id": null
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:alex",
+      "role": "lead",
+      "location_id": "location:earth-research-base"
+    }
+  ]
+}
+```
+
+The keys in `introducing` are typed plural collections, beginning with
+`characters`, `star_systems`, `planets`, `moons`, `locales`, `megastructures`,
+`species`, and `events`. New entity types add their own schema and collection key;
+they do not weaken an existing type schema. Every introduced record must have a
+globally unique, type-prefixed ID and must produce its complete minimum valid state at
+the end of its introducing chapter. An entity is introduced exactly once and remains
+part of reader-visible knowledge in every later view; its state-bearing properties
+contribute to temporal world state only when their effective story dates are at or
+before the selected chapter date.
+
+### Updates
+
+`updates` is deliberately human-readable rather than a generic patch language. An
+update object has `entity_id` plus one or more ordinary properties of that entity:
+
+- A chapter has at most one update object for a given entity.
+- An omitted property is unchanged.
+- A supplied scalar or object replaces its prior value.
+- A supplied list replaces the complete prior list.
+- `null` clears the prior value. It does not mean “unknown”; a field that supports
+  unknown must define an explicit type-specific value.
+- Semantic validation resolves `entity_id`, verifies that the entity was already
+  introduced, and permits only properties defined by that entity type's schema.
+
+### Appearances and events
+
+An appearance records `character_id`, `role`, and an optional location override.
+`role` is either `lead` or `other`; every chapter requires at least one `lead`, and
+multiple `lead` entries support a moot. If its location is absent, the appearance
+inherits the chapter's `location_id`. If neither is available, it must reference an
+explicit unmapped location entity rather than inventing or silently omitting a place.
+
+An event is a first-class `event:` entity introduced in a chapter. It has a required
+`location_id`, an explicit `participant_ids` list, and an optional story `date`.
+The enclosing chapter supplies its reveal chapter, so the event does not repeat that
+value. An event can later receive ordinary visible updates if a later chapter reveals
+or corrects detail.
+
+## Entity and location schemas
+
+Each entity type has a dedicated versioned schema. The following table records the
+initial schema surface; type-specific fields such as character gender or species state
+remain to be defined before their records are authored.
+
+| Record | Required initial contract | Derived rather than authored |
+| --- | --- | --- |
+| `character` | `id`, type-required identity/state fields, and any known current location | current location occupants; event history |
+| `star_system` | `id`, `kind: "star_system"`, name, and `astronomy_object_id` when mapped | astronomical components and render facts; sublocations; occupants and events |
+| `planet`, `moon`, `locale`, `megastructure` | `id`, `kind`, name, and parent where non-root | sublocations; occupants and events |
+| `species` | `id`, name, and its type-required initial fields | members and other reverse links |
+| `event` | `id`, `location_id`, `participant_ids`; `date` is optional | location event list; participant event histories |
+| `asset` | `id`, file path, attribution, and validation metadata | no visible assignment; assignments are entity values |
+
+Locations form a one-parent tree. A root has no `parent_location_id`; every non-root
+location has exactly one. `sublocations` are generated by resolving the reverse parent
+links, never authored as a second list. This supports structures such as
+star system → planet → moon → locale, star system → planet → locale, and star system
+→ megastructure without imposing a fixed depth.
+
+A transit location is a root with `origin_location_id` and `destination_location_id`.
+It has no containment parent because a journey is between places. An unmapped or
+ambiguous location is also valid; it has an explicit unmapped kind or state and no
+invented astronomy coordinate.
+
+Any narrative location may contain an optional `astronomy_object_id`. Mapped
+parent-child locations must agree with the astronomy source's ancestry whenever both
+ends have astronomy references. The generator joins that physical hierarchy with the
+visible narrative location tree to produce the renderer's system description. The
+chapter source must not copy physical components, positions, sizes, colours, or other
+astronomy render facts.
+
+## Schema and semantic validation
+
+JSON Schema validates the structural contract of every source record. Referential and
+temporal rules that require looking up another record are a mandatory second validation
+layer. It rejects at least:
+
+- unexpected schema versions, malformed scalar values, or non-canonical IDs;
+- malformed `books.json`, a chapter path that disagrees with its `chapter` value, a
+  chapter whose book is absent from `books.json`, or an incomplete/out-of-order
+  generated chapter manifest;
+- duplicate entity introductions or references to entities not yet introduced;
+- an introduction that lacks the complete minimum state for its type;
+- more than one update object for an entity in a chapter, or an update property not
+  allowed by that entity type;
+- invalid update `null` use, invalid list replacement values, or invalid references;
+- a chapter with no appearances or no `lead` appearance;
+- competing state writes that have equal or incomparable effective story dates, or a
+  year-only selected chapter date that cannot determine a needed indexed transition;
+- a broken location parent tree, invalid transit endpoints, or incompatible mapped
+  astronomy ancestry;
+- an appearance without an effective explicit location; and
+- a generated record or snapshot presented as editable source data.
