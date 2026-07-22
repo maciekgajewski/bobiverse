@@ -1,7 +1,7 @@
 # Implementation plan
 
 Status: Initial approved roadmap  
-Last updated: 2026-07-20
+Last updated: 2026-07-22
 
 ## 1. How to use this plan
 
@@ -117,11 +117,16 @@ navigation.
 
 Planned work:
 
-- Define versioned schemas for books, chapters, characters, locations, appearances,
-  events, and revealed claims.
+- Define versioned schemas for authored chapter records, introductions, updates,
+  appearances, events, locations, assets, and generated projections.
+- Store each authored chapter in its own validated source JSON file; derive the
+  ordered chapter manifest from those files and the minimal `books.json` catalogue.
 - Manually encode a small, representative chapter set.
-- Add stable entity IDs, aliases, cross-reference validation, and provenance notes.
-- Implement the shared reader-knowledge visibility service.
+- Generate stable entity registries and selected-chapter state exclusively from the
+  authored chapter source; add cross-reference, location-tree, and provenance
+  validation.
+- Implement guarded reader progress and the shared reader-knowledge visibility
+  service with a freely selectable earlier view chapter.
 - Add the book/chapter timeline and selected-chapter persistence in localStorage.
 - Highlight the selected chapter's visible locations, characters, and events.
 - Represent ambiguous locations as explicitly unmapped.

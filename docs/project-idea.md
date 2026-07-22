@@ -50,9 +50,10 @@ There are 3 NPC AI characters that could be used as app assitants, clippy-style:
   application server and database are not needed initially.
 - There is no need for user accounts initially. Browser `localStorage` will remember
   the visitor's last read chapter and preferences.
-- The books can be distilled into validated JSON. Chapter documents reference stable
-  character, location, and event identifiers rather than duplicating canonical data.
-  A chapter contains:
+- The books can be distilled into validated JSON. Chapters are the authored narrative
+  source: they introduce entities, record their visible updates, and reference stable
+  IDs after introduction. Entity registries and chapter-state datasets are generated
+  from that source and are never edited manually. A chapter contains:
 
   - a date
   - a main character(s)
@@ -81,4 +82,3 @@ The complete approved decisions are in [technical-design.md](technical-design.md
 3. Phase 1B: expand the validated map pipeline toward 100 stellar systems
 4. Phase 2: get the first few chapters into JSON, add timeline and visualization
 5. Further phases: character list, star/planet list, search, histories, and genealogy
-
