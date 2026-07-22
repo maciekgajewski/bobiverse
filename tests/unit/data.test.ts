@@ -32,6 +32,35 @@ describe("nearby-system runtime data", () => {
     expect(sirius?.distance_from_sol_pc).toBeCloseTo(2.67015145977, 10);
   });
 
+  it("keeps only the genuine GJ 65 components in Luyten 726-8", () => {
+    if (!nearbySystems) throw new Error("Fixture dataset failed validation");
+    const luyten = nearbySystems.systems.find(
+      (system) => system.id === "luyten-726-8",
+    );
+    expect(luyten?.components.map((component) => component.id)).toEqual([
+      "cns5:424",
+      "cns5:425",
+    ]);
+    expect(luyten?.components.map((component) => component.gj)).toEqual([
+      "65",
+      "65",
+    ]);
+  });
+
+  it("rejects the unrelated GJ 65.1 astrometry as a Luyten 726-8 component", () => {
+    if (!nearbySystems) throw new Error("Fixture dataset failed validation");
+    const altered = structuredClone(nearbySystems);
+    const luyten = altered.systems.find(
+      (system) => system.id === "luyten-726-8",
+    );
+    if (!luyten) throw new Error("Luyten 726-8 fixture is missing");
+    luyten.components[0]!.gj = "65.1";
+    luyten.components[0]!.icrs.parallax_mas = 47.61637374168609;
+    expect(() => validateNearbySystems(altered)).toThrow(
+      "Component distance mismatch for cns5:424 in luyten-726-8",
+    );
+  });
+
   it("requires sourced visual properties for every rendered component", () => {
     if (!nearbySystems) throw new Error("Fixture dataset failed validation");
     for (const system of nearbySystems.systems) {

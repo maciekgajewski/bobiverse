@@ -43,6 +43,8 @@ Exit criteria:
 
 ## 4. Phase 1A: 20-system astronomy map
 
+Status: Complete
+
 Goal: deliver the complete astronomy-only map experience using the 20 nearest stellar
 systems.
 
@@ -90,6 +92,11 @@ Exit criteria:
 - All BOB-001 acceptance criteria pass.
 - The Captain accepts the real-browser visual result.
 - No narrative or backend scope has entered the phase.
+
+Completion note: Windows Chrome, Firefox, and Edge plus mobile Chrome passed the
+available manual review on 2026-07-22, and the Captain accepted the visual result.
+Safari was unavailable without an Apple test workstation and remains an explicit
+pre-publication acceptance gap.
 
 ## 5. Phase 1B: catalogue expansion toward 100 systems
 

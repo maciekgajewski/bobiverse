@@ -34,6 +34,19 @@ def main() -> None:
             if component_id in component_ids:
                 raise ValueError(f"Duplicate component reference: {component_id}")
             component_ids.add(component_id)
+            parallax_mas = component["icrs"]["parallax_mas"]
+            if parallax_mas is not None:
+                component_distance_pc = 1000 / parallax_mas
+                allowed_distance_delta_pc = max(
+                    0.1, system["distance_from_sol_pc"] * 0.05
+                )
+                if (
+                    abs(component_distance_pc - system["distance_from_sol_pc"])
+                    > allowed_distance_delta_pc
+                ):
+                    raise ValueError(
+                        f"{component_id} is inconsistent with {system['id']} distance"
+                    )
             visual = component["visual"]
             if not math.isfinite(visual["radius_solar"]) or visual["radius_solar"] <= 0:
                 raise ValueError(f"{component_id} has an invalid visual radius")

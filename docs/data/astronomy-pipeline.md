@@ -25,7 +25,7 @@ Visual properties control only camera-facing marker glyphs. Radius is transforme
 through the fixed, bounded square-root mapping in `src/domain/star-visual.ts`:
 0.01–3 R_sun maps to a 0.065–0.16 map-space glyph radius. Multi-star offsets are
 deterministic decoration around the canonical system point, with a radial range of
-0.018–0.0288 map units and vertical range capped at 0.0108. They are not orbital data
+0.036–0.0576 map units and vertical range capped at 0.0216. They are not orbital data
 and never contribute to coordinates, focus, labels, or measurement.
 
 ## Source and acknowledgement
@@ -65,8 +65,10 @@ npm run data:validate
 ```
 
 Review the resulting snapshot checksum, component membership, adopted source record,
-system ranking, and generated JSON diff before committing. To regenerate from an
-already retrieved full CNS5 file without another network fetch:
+system ranking, and generated JSON diff before committing. `data:generate` also runs
+the repository's pinned Prettier version over the single generated runtime JSON file,
+so its output immediately satisfies the normal formatting validation. To regenerate
+from an already retrieved full CNS5 file without another network fetch:
 
 ```bash
 npm run data:refresh -- --source-file /path/to/cns5.dat
@@ -75,7 +77,8 @@ npm run data:refresh -- --source-file /path/to/cns5.dat
 The importer uses Astropy's ICRS-to-Galactic transform. Application code must not
 reimplement that astronomy conversion. `data:validate` rejects schema-version
 mismatches, non-finite values, duplicate systems/components, invalid render mapping,
-or any count other than Sol plus 20 non-Sol systems. It also rejects a component with
-a missing, non-positive, or non-finite visual radius, or missing source provenance for
-either radius or spectral class. The component-properties snapshot is edited only as a
-reviewed, cited source-data change; ordinary `data:refresh` does not replace it.
+component distances inconsistent with their adopted system, or any count other than
+Sol plus 20 non-Sol systems. It also rejects a component with a missing, non-positive,
+or non-finite visual radius, or missing source provenance for either radius or
+spectral class. The component-properties snapshot is edited only as a reviewed, cited
+source-data change; ordinary `data:refresh` does not replace it.

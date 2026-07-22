@@ -21,9 +21,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "data:refresh": "./.venv/bin/python scripts/refresh_cns5_snapshot.py",
-    "data:generate": "./.venv/bin/python scripts/generate_nearby_systems.py",
+    "data:generate": "./.venv/bin/python scripts/generate_nearby_systems.py && prettier --write src/data/nearby-systems.json",
     "data:validate": "./.venv/bin/python scripts/validate_data.py",
-    "test:e2e": "playwright test",
+    "test:e2e": "xvfb-run -a playwright test",
     "build": "npm run data:validate && tsc -b && vite build",
     "preview": "vite preview --host 0.0.0.0 --port 4173 --strictPort",
     "validate": "npm run format:check && npm run lint && npm run typecheck && npm run data:validate && npm run test && npm run build"

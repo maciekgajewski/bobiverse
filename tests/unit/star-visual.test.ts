@@ -5,10 +5,15 @@ import {
   COMPONENT_OFFSET_RADIUS_MIN,
   MARKER_RADIUS_MAX,
   MARKER_RADIUS_MIN,
+  STAR_DISTANCE_FADE_END,
+  STAR_DISTANCE_FADE_START,
+  STAR_DISTANCE_FAR_BRIGHTNESS,
+  STAR_SPRITE_FRAGMENT_SHADER,
   componentOffset,
   markerRadius,
   selectionFrameSegments,
   spectralColor,
+  starDistanceAttenuation,
 } from "../../src/domain/star-visual";
 import type { Component } from "../../src/domain/types";
 
@@ -57,6 +62,19 @@ describe("star visual encodings", () => {
     );
   });
 
+  it("attenuates additive sprite contribution exactly once", () => {
+    expect(starDistanceAttenuation(STAR_DISTANCE_FADE_START)).toBe(1);
+    expect(starDistanceAttenuation(STAR_DISTANCE_FADE_END)).toBeCloseTo(
+      STAR_DISTANCE_FAR_BRIGHTNESS,
+    );
+    expect(STAR_SPRITE_FRAGMENT_SHADER).toContain(
+      "gl_FragColor = vec4(uColor * (halo + core * 0.75), alpha);",
+    );
+    expect(STAR_SPRITE_FRAGMENT_SHADER).not.toContain(
+      "(halo + core * 0.75) * attenuation",
+    );
+  });
+
   it("keeps multi-star decorative offsets stable and non-zero", () => {
     const first = componentOffset(component("cns5:1"), 0, 2);
     expect(componentOffset(component("cns5:1"), 0, 2)).toEqual(first);
@@ -81,7 +99,7 @@ describe("star visual encodings", () => {
         first[1] - second[1],
         first[2] - second[2],
       ),
-    ).toBeLessThanOrEqual(0.052);
+    ).toBeLessThanOrEqual(0.104);
   });
 
   it("defines corner-only selection-frame segments in the billboard plane", () => {

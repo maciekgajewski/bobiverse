@@ -73,24 +73,6 @@
       "ra_deg": 280.6830708352289
     },
     {
-      "cns5_id": 427,
-      "component": null,
-      "component_count": null,
-      "dec_deg": 45.876760727613814,
-      "epoch_year": 2016.0,
-      "g_magnitude": 6.449255,
-      "gaia_dr3_id": "350664155368182656",
-      "gj": "65.1",
-      "gj_system_primary": null,
-      "hip_id": 7734,
-      "is_primary": false,
-      "parallax_bibcode": "2020yCat.1350....0G",
-      "parallax_error_mas": 0.028134067,
-      "parallax_mas": 47.61637374168609,
-      "position_bibcode": "2020yCat.1350....0G",
-      "ra_deg": 24.901464121306226
-    },
-    {
       "cns5_id": 5688,
       "component": null,
       "component_count": null,

@@ -222,9 +222,9 @@ Phase 1 markers are camera-facing shader sprites with a luminous core and soft r
 halo. Reviewed stellar class selects the base color. A multi-star system remains one
 canonical map node, but renders its component stars as a small deterministic,
 decorative cluster around that node. Its radial decorative offset is bounded to
-0.018–0.0288 map units and its vertical offset to 0.0108 map units, reducing the
-original cluster extent by five. Those offsets are not component positions or orbital
-data, and must never be used for labels, camera focus, or measurement.
+0.036–0.0576 map units and its vertical offset to 0.0216 map units. Those offsets are
+not component positions or orbital data, and must never be used for labels, camera
+focus, or measurement.
 
 The Phase 1 color mapping follows the conventional spectral sequence: O/B blue, A
 blue-white, F white, G yellow, K orange, M red, and white dwarfs cool-white. It is a

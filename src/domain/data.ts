@@ -90,6 +90,23 @@ export function validateNearbySystems(candidate: unknown): NearbySystemsData {
     ) {
       throw new Error(`Render mapping mismatch for ${system.id}.`);
     }
+    for (const systemComponent of system.components) {
+      const parallaxMas = systemComponent.icrs.parallax_mas;
+      if (parallaxMas === null) continue;
+      const componentDistancePc = 1000 / parallaxMas;
+      const allowedDistanceDeltaPc = Math.max(
+        0.1,
+        system.distance_from_sol_pc * 0.05,
+      );
+      if (
+        Math.abs(componentDistancePc - system.distance_from_sol_pc) >
+        allowedDistanceDeltaPc
+      ) {
+        throw new Error(
+          `Component distance mismatch for ${systemComponent.id} in ${system.id}.`,
+        );
+      }
+    }
   }
   return data;
 }

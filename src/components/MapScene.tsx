@@ -1,13 +1,25 @@
 import { Billboard, Html, Line, OrbitControls, Text } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AdditiveBlending, Color, DoubleSide, Vector3 } from "three";
+import {
+  AdditiveBlending,
+  Color,
+  DoubleSide,
+  PerspectiveCamera,
+  Vector3,
+} from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import type { DistanceUnit, StellarSystem } from "../domain/types";
 import { calculateMapScale, formatDistance } from "../domain/units";
-import { easeInOutQuad, focusDurationMs } from "../domain/camera-motion";
+import {
+  easeInOutQuad,
+  focusDurationMs,
+  perspectiveWorldWidthAtTarget,
+} from "../domain/camera-motion";
+import { GALACTIC_PLANE_SCENE_ROTATION } from "../domain/coordinates";
 import { closestMarkerSystemId } from "../domain/star-picking";
 import {
+  STAR_SPRITE_FRAGMENT_SHADER,
   componentOffset,
   markerRadius,
   selectionFrameSegments,
@@ -195,7 +207,7 @@ function StarMarker({
                   },
                 }}
                 vertexShader="varying vec2 vUv; varying float vCameraDistance; void main() { vUv = uv; vCameraDistance = length((modelViewMatrix * vec4(0.0, 0.0, 0.0, 1.0)).xyz); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }"
-                fragmentShader="uniform vec3 uColor; varying vec2 vUv; varying float vCameraDistance; void main() { float distanceFromCenter = length(vUv - 0.5) * 2.0; float halo = pow(max(1.0 - distanceFromCenter, 0.0), 2.2); float core = smoothstep(0.5, 0.0, distanceFromCenter); float attenuation = 1.0 - smoothstep(6.0, 45.0, vCameraDistance) * 0.65; float alpha = (halo * 0.7 + core * 0.3) * attenuation; gl_FragColor = vec4(uColor * (halo + core * 0.75) * attenuation, alpha); }"
+                fragmentShader={STAR_SPRITE_FRAGMENT_SHADER}
               />
             </mesh>
             {endpoint && (
@@ -338,23 +350,26 @@ function MeasurementLine({
 }
 
 function CameraScaleReporter({
-  selected,
   unit,
   onScaleChange,
 }: {
-  selected: StellarSystem | undefined;
   unit: DistanceUnit;
   onScaleChange: (scale: MapScale) => void;
 }) {
-  const { camera, size, viewport } = useThree();
+  const { camera, size } = useThree();
+  const controls = useThree(
+    (state) => state.controls as OrbitControlsImpl | null,
+  );
   const lastScale = useRef("");
   useFrame(() => {
-    const focus = selected?.render_position ?? { x: 0, y: 0, z: 0 };
-    const worldWidthPc = viewport.getCurrentViewport(camera, [
-      focus.x,
-      focus.y,
-      focus.z,
-    ]).width;
+    if (!(camera instanceof PerspectiveCamera)) return;
+    const focus = controls?.target ?? { x: 0, y: 0, z: 0 };
+    const worldWidthPc = perspectiveWorldWidthAtTarget(
+      camera.position,
+      focus,
+      camera.getEffectiveFOV(),
+      size.width / size.height,
+    );
     const { displayDistance, pixelWidth } = calculateMapScale(
       worldWidthPc,
       size.width,
@@ -390,7 +405,7 @@ function Scene({
       <ambientLight intensity={0.7} />
       <gridHelper
         args={[64, 64, "#152843", "#0a1423"]}
-        rotation={[Math.PI / 2, 0, 0]}
+        rotation={[...GALACTIC_PLANE_SCENE_ROTATION]}
       />
       <Text
         position={[16, 0.04, 0]}
@@ -433,11 +448,7 @@ function Scene({
       </group>
       <MeasurementLine systems={systems} ids={measurementIds} unit={unit} />
       <CameraController resetToken={resetToken} selected={selected} />
-      <CameraScaleReporter
-        selected={selected}
-        unit={unit}
-        onScaleChange={onScaleChange}
-      />
+      <CameraScaleReporter unit={unit} onScaleChange={onScaleChange} />
     </>
   );
 }

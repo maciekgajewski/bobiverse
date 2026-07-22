@@ -71,21 +71,6 @@
       }
     },
     {
-      "cns5_id": 427,
-      "radius_solar": 0.16,
-      "spectral_class": "M5.5V",
-      "radius_provenance": {
-        "catalogue": "TESS Input Catalog",
-        "release": "8.2",
-        "record_id": "GJ 65.1",
-        "reference": "Stassun et al. 2019"
-      },
-      "spectral_class_provenance": {
-        "catalogue": "SIMBAD",
-        "record_id": "GJ 65.1"
-      }
-    },
-    {
       "cns5_id": 448,
       "radius_solar": 0.79,
       "spectral_class": "G8V",

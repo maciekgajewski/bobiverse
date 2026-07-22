@@ -1,8 +1,8 @@
 # BOB-001: nearby stellar-system map
 
-Status: In progress
+Status: Done
 Phase: 1A  
-Last updated: 2026-07-20
+Last updated: 2026-07-22
 
 ## Objective
 
@@ -221,29 +221,36 @@ headless development server.
 - Marker glyph size may be screen-relative for legibility, but position and
   measurement may not be altered.
 - Decorative offsets for multi-star component markers are stable presentation-only
-  values. Their radial extent is 0.018–0.0288 map units, one-fifth of the original
-  maximum, with vertical extent capped at 0.0108 map units. They must not be
-  represented as orbital data, used for focus framing, or used for measurement.
+  values. Their radial extent is 0.036–0.0576 map units, with vertical extent capped
+  at 0.0216 map units. They must not be represented as orbital data, used for focus
+  framing, or used for measurement.
 - Pixel snapshots are not authoritative across GPU environments. Assert domain and UI
   state where possible.
 - Do not expand into narrative data while solving visual or schema questions.
 - Any need for runtime server state or a different coordinate frame requires an ADR.
 
-## Implementation evidence and remaining acceptance
+## Implementation and acceptance evidence
 
-Automated evidence recorded on 2026-07-20:
+Automated evidence recorded on 2026-07-22:
 
 - `npm run validate` passes formatting, linting, strict TypeScript, generated-data
-  schema/referential validation, 18 unit/component tests, and the production build.
+  schema/referential validation, 26 unit/component tests, and the production build.
 - `npm run test:e2e` passes responsive selection, unit-toggle, measurement, and
   empty-map deselection while preserving endpoints in Playwright Chromium, Firefox,
   and WebKit projects.
 - The generated runtime dataset contains Sol and exactly 20 non-Sol reviewed system
   markers. The CNS5 input snapshot and reviewed component visual-properties snapshot
-  are committed separately from browser data; validation confirms all 29 rendered
+  are committed separately from browser data; validation confirms all 28 rendered
   components have sourced radius and spectral-class properties.
 
-BOB-001 remains `In progress` pending the required trusted-LAN, real-browser visual
-review in Chrome, Firefox, Safari, and Edge where available, plus the Captain's
-acceptance of spatial legibility and the visual result. Any unavailable manual browser
-must be recorded as an explicit acceptance gap.
+Manual acceptance recorded on 2026-07-22:
+
+- Current Chrome, Firefox, and Edge passed manual and visual testing on Windows.
+- Mobile Chrome remained functional. Its navigation is imperfect but accepted for
+  this desktop-first phase and deferred from the current scope.
+- Safari was unavailable because no Apple test workstation was available. This is an
+  explicit acceptance gap and remains required before publication.
+- The Captain accepted the spatial legibility and visual result.
+
+All locally available BOB-001 acceptance criteria are complete. The Safari publication
+gap does not block completion of the local Phase 1A vertical slice.

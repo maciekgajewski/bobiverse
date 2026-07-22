@@ -41,7 +41,7 @@
       "id": "luyten-726-8",
       "name": "Luyten 726-8",
       "alternates": ["GJ 65", "BL Ceti", "UV Ceti"],
-      "gj_selectors": ["65", "65.1"],
+      "gj_selectors": ["65"],
       "adopt_gj": "65"
     },
     {
