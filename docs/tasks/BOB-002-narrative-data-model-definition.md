@@ -6,9 +6,10 @@ Last updated: 2026-07-22
 
 ## Objective
 
-Define the versioned, JSON-Schema-backed data model that later Phase 2 narrative
-records will use, beginning with shared scalar types. This is documentation-only
-design work; it does not add book-derived data, a timeline, or runtime behavior.
+Define the versioned, JSON-Schema-backed data model for the zero-state Solar-System
+baseline and later Phase 2 narrative records, beginning with shared scalar types. This
+is documentation-only design work; it does not add book-derived data, a timeline, or
+runtime behavior.
 
 ## Binding references
 
@@ -16,14 +17,15 @@ design work; it does not add book-derived data, a timeline, or runtime behavior.
 - `../implementation-plan.md`, Phase 2
 - `../adrs/0001-chapter-authored-narrative-state.md`
 - `../adrs/0002-reader-order-visibility-and-story-time-projection.md`
+- `../adrs/0003-zero-state-solar-system-baseline.md`
 - `../../AGENTS.md`
 
 ## Scope
 
 - Document reusable scalar types and their JSON Schema definitions.
 - Define canonical encodings, validation rules, comparison semantics, and examples.
-- Define the chapter-authored source records: introductions, updates, appearances,
-  events, locations, and image-asset references.
+- Define the zero-state Solar-System source and chapter-authored records:
+  introductions, updates, appearances, events, locations, and image-asset references.
 - Define the `books.json` catalogue, one-file-per-chapter source layout, and generated
   minimal chapter manifest.
 - Define generated entity state, location children, reverse relationship lists, and
@@ -54,8 +56,9 @@ design work; it does not add book-derived data, a timeline, or runtime behavior.
 - Every chapter schema requires one or more appearances and at least one `lead`.
 - Temporal validation rejects state writes whose effective dates cannot be ordered
   without inventing story chronology.
-- Chapter source owns introductions and updates; entity registries and all visible
-  state are generated and explicitly prohibited from manual editing.
+- The zero-state source owns the pre-book Solar-System location tree; chapters own
+  later introductions and patches. Entity registries and all visible state are
+  generated and explicitly prohibited from manual editing.
 - Locations have one optional parent link, derived children, explicit unmapped
   locations, root transit locations, and optional validated astronomy-node links.
 - The document distinguishes authored assets from their chapter-controlled picture
@@ -63,8 +66,10 @@ design work; it does not add book-derived data, a timeline, or runtime behavior.
 - `books.json` contains only numeric-keyed book titles; every chapter has a separate
   canonical source file, and the generator emits an ordered manifest containing only
   chapter references and source paths.
-- ADR-0001 and directly affected integrated design documents reflect the same
-  authority boundary.
+- The nested zero-state source supplies a stable local child order without copying
+  measured astronomy render facts; chapters cannot re-introduce seeded IDs.
+- ADR-0003 and directly affected integrated design documents reflect the same
+  three-source authority boundary.
 - The task index reflects this documentation work without changing BOB-001.
 
 ## Validation commands
@@ -76,9 +81,10 @@ rg -n 'effective story date|role: "lead"|minContains' \
   docs/data-model-definition.md
 rg -n 'books.json|chapter-manifest|chapters/<book>/<chapter>.json' \
   docs/data-model-definition.md
-rg -n 'chapter-authored|generated|one-parent|furthestChapterRead|story-time' \
+rg -n 'zero-state|chapter-authored|generated|one-parent|furthestChapterRead|story-time' \
   docs/adrs/0001-chapter-authored-narrative-state.md \
   docs/adrs/0002-reader-order-visibility-and-story-time-projection.md \
+  docs/adrs/0003-zero-state-solar-system-baseline.md \
   docs/technical-design.md docs/data-model-definition.md
 ```
 

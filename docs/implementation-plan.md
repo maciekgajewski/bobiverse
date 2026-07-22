@@ -128,14 +128,16 @@ navigation.
 
 Planned work:
 
-- Define versioned schemas for authored chapter records, introductions, updates,
-  appearances, events, locations, assets, and generated projections.
-- Store each authored chapter in its own validated source JSON file; derive the
-  ordered chapter manifest from those files and the minimal `books.json` catalogue.
+- Define versioned schemas for the zero-state Solar-System source, authored chapter
+  records, introductions, updates, appearances, events, locations, assets, and
+  generated projections.
+- Store the zero-state Solar-System tree and each authored chapter in validated source
+  JSON; derive the ordered chapter manifest from chapter files and the minimal
+  `books.json` catalogue.
 - Manually encode a small, representative chapter set.
-- Generate stable entity registries and selected-chapter state exclusively from the
-  authored chapter source; add cross-reference, location-tree, and provenance
-  validation.
+- Generate stable entity registries and selected-chapter state from the zero-state
+  source plus authored chapter patches; add cross-reference, location-tree, child-order,
+  and provenance validation.
 - Implement guarded reader progress and the shared reader-knowledge visibility
   service with a freely selectable earlier view chapter.
 - Add the book/chapter timeline and selected-chapter persistence in localStorage.

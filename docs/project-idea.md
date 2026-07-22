@@ -50,10 +50,11 @@ There are 3 NPC AI characters that could be used as app assitants, clippy-style:
   application server and database are not needed initially.
 - There is no need for user accounts initially. Browser `localStorage` will remember
   the visitor's last read chapter and preferences.
-- The books can be distilled into validated JSON. Chapters are the authored narrative
-  source: they introduce entities, record their visible updates, and reference stable
-  IDs after introduction. Entity registries and chapter-state datasets are generated
-  from that source and are never edited manually. A chapter contains:
+- The reader-visible world begins with a validated zero-state Solar-System location
+  source, then book chapters act as ordered patches: they introduce book-specific
+  entities, record visible updates to seeded or previously introduced entities, and
+  reference stable IDs. Entity registries and chapter-state datasets are generated from
+  those inputs and are never edited manually. A chapter contains:
 
   - a date
   - a main character(s)

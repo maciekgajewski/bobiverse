@@ -156,6 +156,105 @@ is normative for the scalar types below.
       ],
       "additionalProperties": false
     },
+    "species": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "$ref": "#/$defs/species_id" },
+        "name": { "type": "string", "minLength": 1 },
+        "description": { "type": "string", "minLength": 1 },
+        "picture_id": { "$ref": "#/$defs/asset_id" },
+        "homeworld_id": { "$ref": "#/$defs/location_id" }
+      },
+      "additionalProperties": false
+    },
+    "species_update": {
+      "type": "object",
+      "required": ["entity_id"],
+      "properties": {
+        "entity_id": { "$ref": "#/$defs/species_id" },
+        "name": { "type": "string", "minLength": 1 },
+        "description": { "type": ["string", "null"], "minLength": 1 },
+        "picture_id": {
+          "anyOf": [
+            { "$ref": "#/$defs/asset_id" },
+            { "type": "null" }
+          ]
+        },
+        "homeworld_id": {
+          "anyOf": [
+            { "$ref": "#/$defs/location_id" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "anyOf": [
+        { "required": ["name"] },
+        { "required": ["description"] },
+        { "required": ["picture_id"] },
+        { "required": ["homeworld_id"] }
+      ],
+      "additionalProperties": false
+    },
+    "event": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "$ref": "#/$defs/event_id" },
+        "name": { "type": "string", "minLength": 1 },
+        "location_id": { "$ref": "#/$defs/location_id" },
+        "picture_id": { "$ref": "#/$defs/asset_id" },
+        "date": { "$ref": "#/$defs/date" },
+        "description": { "type": "string", "minLength": 1 },
+        "participant_ids": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/character_id" },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "event_update": {
+      "type": "object",
+      "required": ["entity_id"],
+      "properties": {
+        "entity_id": { "$ref": "#/$defs/event_id" },
+        "name": { "type": "string", "minLength": 1 },
+        "location_id": {
+          "anyOf": [
+            { "$ref": "#/$defs/location_id" },
+            { "type": "null" }
+          ]
+        },
+        "picture_id": {
+          "anyOf": [
+            { "$ref": "#/$defs/asset_id" },
+            { "type": "null" }
+          ]
+        },
+        "date": {
+          "anyOf": [
+            { "$ref": "#/$defs/date" },
+            { "type": "null" }
+          ]
+        },
+        "description": { "type": ["string", "null"], "minLength": 1 },
+        "participant_ids": {
+          "type": ["array", "null"],
+          "items": { "$ref": "#/$defs/character_id" },
+          "uniqueItems": true
+        }
+      },
+      "anyOf": [
+        { "required": ["name"] },
+        { "required": ["location_id"] },
+        { "required": ["picture_id"] },
+        { "required": ["date"] },
+        { "required": ["description"] },
+        { "required": ["participant_ids"] }
+      ],
+      "additionalProperties": false
+    },
     "chapter_source": {
       "type": "object",
       "required": ["schema_version", "chapter", "date", "appearances"],
@@ -322,12 +421,17 @@ not duplicate or loosen the scalar definitions above.
 
 ## Authority and generated-data boundary
 
-There are exactly two sources of domain truth:
+There are exactly three sources of domain truth:
 
-1. The astronomy source owns physical facts: system and component identity,
-   coordinates, dimensions, colour, physical hierarchy, and other render facts.
-2. The chapter source owns narrative facts: entity introductions, visible state
-   changes, appearances, events, and chapter reveal order.
+1. The astronomy source owns stellar and interstellar physical facts: system and
+   component identity, coordinates, dimensions, colour, and measured render facts.
+2. The zero-state source owns the reader-visible, pre-book Solar-System location tree.
+   Its nested child order is a deliberately non-metric local rendering order; it must
+   not contain coordinates, distances, sizes, colours, or other measured astronomy
+   facts.
+3. The chapter source owns book revelations: new entities, visible state changes to
+   seeded or previously introduced entities, appearances, events, and chapter reveal
+   order.
 
 The following are generated data and must never be edited manually: the stable entity
 registry, an entity's state at a selected chapter, location child lists, character
@@ -335,10 +439,11 @@ last-known sightings, events-at-location lists, character event histories, and t
 render-ready join of astronomy and narrative locations. Deterministic generated caches
 or checkpoints are permitted only as rebuildable optimizations.
 
-Image files are the sole manually curated non-generated content. They live in an asset
-registry with stable `asset:` IDs, paths, attribution, and validation metadata. Assets
-do not establish a third domain truth or entity state; their assignment to an entity is
-still a chapter-controlled narrative value such as `picture_id`.
+Image files are the sole manually curated non-generated content besides the zero-state
+source. They live in an asset registry with stable `asset:` IDs, paths, attribution,
+and validation metadata. Assets do not establish an additional domain truth or entity
+state; their assignment to an entity is still a chapter-controlled narrative value such
+as `picture_id`.
 
 ## Reader progress and projection
 
@@ -349,7 +454,9 @@ The application keeps two separate global values:
 - `viewChapter`: the freely selected chapter from the chapter list. It may equal or
   precede `furthestChapterRead`, but it must never exceed it.
 
-Projection has two independent stages:
+Projection begins with the zero-state source. Before a reader selects a chapter, the
+generated world is that baseline alone. A chapter view applies the following two
+independent stages to the baseline:
 
 1. Reader order is the spoiler gate. Select only chapter records at or before
    `viewChapter`, comparing the numeric components of `chapter`. Those records are
@@ -368,21 +475,31 @@ a state transition between them. Source data must supply an index whenever a sta
 write or selected chapter requires that within-year ordering. Competing writes to one
 entity property with equal or incomparable effective dates are invalid.
 
-An event uses its own optional `date` for its in-universe occurrence. If it has no
-date, it remains reader-visible after its introduction but is not placed at a precise
-story-time point. Story `date` is never used to grant reader visibility.
+An event uses its projected optional `date` for its in-universe occurrence. If that
+value is absent, it remains reader-visible after its introduction but is not placed at
+a precise story-time point. Story `date` is never used to grant reader visibility.
 
-## Chapter-authored source records
+## Zero-state and chapter-authored source records
 
 ### Source layout and book catalogue
 
-The authored book and chapter source has this canonical layout:
+The authored zero-state, book, and chapter source has this canonical layout:
 
 ```text
+data/narrative/baseline/solar-system.json
 data/narrative/books.json
 data/narrative/chapters/<book>/<chapter>.json
 generated/narrative/chapter-manifest.json
 ```
+
+`baseline/solar-system.json` is the small, manually authored root snapshot of the
+known Solar System. It is nested: a child's position in its parent's array supplies
+the stable local rendering order. The generator flattens that authoring form into
+parent links and derives runtime child lists; the source does not author a second
+`sublocations` field. It contains location identity, names, kinds, and hierarchy only;
+it must not copy astronomy measurements or chapter-derived facts. Its entities are
+visible in the zero state and may later be patched by chapter updates, but their IDs
+must never be introduced again in a chapter.
 
 `books.json` is the sole manually authored book catalogue. It uses a numeric-keyed
 object: each key is the canonical positive book number and each value initially
@@ -425,7 +542,8 @@ Every chapter source record has its own versioned JSON Schema. It contains the r
 `location_id` is optional and supplies the default location for appearances in that
 chapter. The shared `chapter_source` fragment enforces the required chapter identity,
 story date, nonempty appearances, and lead requirement; the complete chapter schema
-adds the typed `introducing` and `updates` contracts.
+adds the typed `introducing` and `updates` contracts. A chapter may update a baseline
+entity but must not introduce an ID already supplied by the baseline.
 
 ```json
 {
@@ -445,6 +563,7 @@ adds the typed `introducing` and `updates` contracts.
     "events": [
       {
         "id": "event:arrival-at-base",
+        "name": "Arrival at Base",
         "location_id": "location:earth-research-base",
         "participant_ids": ["character:alex"]
       }
@@ -473,10 +592,11 @@ The keys in `introducing` are typed plural collections, beginning with
 `species`, and `events`. New entity types add their own schema and collection key;
 they do not weaken an existing type schema. Every introduced record must have a
 globally unique, type-prefixed ID and must produce its complete minimum valid state at
-the end of its introducing chapter. An entity is introduced exactly once and remains
-part of reader-visible knowledge in every later view; its state-bearing properties
-contribute to temporal world state only when their effective story dates are at or
-before the selected chapter date.
+the end of its introducing chapter. A seeded entity is present before chapter 1; a
+non-seeded entity is introduced exactly once and remains part of reader-visible
+knowledge in every later view. Their state-bearing properties contribute to temporal
+world state only when their effective story dates are at or before the selected chapter
+date.
 
 ### Updates
 
@@ -492,6 +612,11 @@ update object has `entity_id` plus one or more ordinary properties of that entit
 - Semantic validation resolves `entity_id`, verifies that the entity was already
   introduced, and permits only properties defined by that entity type's schema.
 
+Unless an entity schema explicitly records an exception, this is the default update
+policy for every introduced narrative entity: its `id` is immutable, every other
+schema-defined field may be supplied by a later chapter update, and an optional field
+may be cleared with `null`.
+
 ### Appearances and events
 
 An appearance records `character_id`, `role`, and an optional location override.
@@ -500,11 +625,9 @@ multiple `lead` entries support a moot. If its location is absent, the appearanc
 inherits the chapter's `location_id`. If neither is available, it must reference an
 explicit unmapped location entity rather than inventing or silently omitting a place.
 
-An event is a first-class `event:` entity introduced in a chapter. It has a required
-`location_id`, an explicit `participant_ids` list, and an optional story `date`.
-The enclosing chapter supplies its reveal chapter, so the event does not repeat that
-value. An event can later receive ordinary visible updates if a later chapter reveals
-or corrects detail.
+An event is a first-class `event:` entity introduced in a chapter. Its complete
+contract is defined below. The enclosing chapter supplies its reveal chapter, so the
+event does not repeat that value.
 
 ## Entity and location schemas
 
@@ -517,8 +640,8 @@ authored.
 | `character` | `id`, `name`, and the optional fields in the ratified character contract | last-known sighting; event history |
 | `star_system` | `id`, `kind: "star_system"`, name, and `astronomy_object_id` when mapped | astronomical components and render facts; sublocations; last-known sightings and events |
 | `planet`, `moon`, `locale`, `megastructure` | `id`, `kind`, name, and parent where non-root | sublocations; last-known sightings and events |
-| `species` | `id`, name, and its type-required initial fields | members and other reverse links |
-| `event` | `id`, `location_id`, `participant_ids`; `date` is optional | location event list; participant event histories |
+| `species` | `id`, `name`, and the optional fields in the ratified species contract | members and other reverse links |
+| `event` | `id`, `name`, and the optional fields in the ratified event contract | location event list; participant event histories |
 | `asset` | `id`, file path, attribution, and validation metadata | no visible assignment; assignments are entity values |
 
 ### Character
@@ -556,9 +679,54 @@ source chapter and story date of the sighting, is labelled as a last-known sight
 must not be treated as current presence or used to position the character on the map.
 Tied or incomparable appearance dates produce no singular last-known location.
 
+### Species
+
+A species introduction uses the `species` schema above. Its only required fields are a
+canonical `species:` ID and a nonempty reader-visible `name`.
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `id` | `species_id` | Immutable stable identifier. |
+| `name` | nonempty string | Reader-visible display name. |
+| `description` | optional nonempty string | Original reader-visible summary; it must not copy book text. |
+| `picture_id` | optional `asset_id` | Chapter-controlled assignment of a manually curated image asset. |
+| `homeworld_id` | optional `location_id` | Reference to an introduced, non-transit narrative location; an explicitly unmapped location remains valid. |
+
+The `species_update` schema permits every species field except `id`. `name` must remain
+a nonempty string; `description`, `picture_id`, and `homeworld_id` may be supplied with
+`null` to clear their prior values. A supplied homeworld reference must resolve to an
+already introduced non-transit location.
+
+### Event
+
+An event introduction uses the `event` schema above. Its only required fields are a
+canonical `event:` ID and a nonempty reader-visible `name`.
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `id` | `event_id` | Immutable stable identifier. |
+| `name` | nonempty string | Reader-visible event name. |
+| `location_id` | optional `location_id` | Reference to any introduced narrative location, including transit or explicitly unmapped locations. |
+| `picture_id` | optional `asset_id` | Chapter-controlled assignment of a manually curated image asset. |
+| `date` | optional `date` | Story-time occurrence date; when absent, the event remains chronologically unplaced. |
+| `description` | optional nonempty string | Original reader-visible summary; it must not copy book text. |
+| `participant_ids` | optional array of unique `character_id` values | Named character participants. Omission asserts no participant information; `[]` states that no named character participates. |
+
+The `event_update` schema permits every event field except `id`; optional fields may be
+supplied with `null` to clear their prior values. A supplied list replaces the complete
+previous `participant_ids` list. Each supplied location, asset, or character reference
+must resolve to an already introduced entity of the matching type.
+
+An event's effective occurrence date is its currently projected `date`. If that value
+is absent, the event remains reader-visible but has no precise story-time placement. A
+later reader-visible update may therefore reveal, correct, or clear an event date.
+Event visibility remains governed by reader order; the occurrence date places an
+already visible event in story time and never grants spoiler visibility.
+
 Locations form a one-parent tree. A root has no `parent_location_id`; every non-root
 location has exactly one. `sublocations` are generated by resolving the reverse parent
-links, never authored as a second list. This supports structures such as
+links, never authored as a second list. The zero-state source's nested authoring form
+is flattened into those links before this derivation. This supports structures such as
 star system → planet → moon → locale, star system → planet → locale, and star system
 → megastructure without imposing a fixed depth.
 
@@ -569,10 +737,10 @@ invented astronomy coordinate.
 
 Any narrative location may contain an optional `astronomy_object_id`. Mapped
 parent-child locations must agree with the astronomy source's ancestry whenever both
-ends have astronomy references. The generator joins that physical hierarchy with the
-visible narrative location tree to produce the renderer's system description. The
-chapter source must not copy physical components, positions, sizes, colours, or other
-astronomy render facts.
+ends have astronomy references. The generator joins stellar astronomy data with the
+zero-state and visible narrative location trees to produce the renderer's system
+description. The zero-state and chapter sources must not copy physical components,
+positions, sizes, colours, or other astronomy render facts.
 
 ## Schema and semantic validation
 
@@ -581,16 +749,24 @@ temporal rules that require looking up another record are a mandatory second val
 layer. It rejects at least:
 
 - unexpected schema versions, malformed scalar values, or non-canonical IDs;
-- malformed `books.json`, a chapter path that disagrees with its `chapter` value, a
-  chapter whose book is absent from `books.json`, or an incomplete/out-of-order
-  generated chapter manifest;
-- duplicate entity introductions or references to entities not yet introduced;
+- malformed zero-state source or `books.json`, a chapter path that disagrees with its
+  `chapter` value, a chapter whose book is absent from `books.json`, or an
+  incomplete/out-of-order generated chapter manifest;
+- a broken zero-state location tree or local child order, duplicate IDs across the
+  baseline and chapter sources, or a chapter introduction that repeats a seeded ID;
+- duplicate entity introductions or references to entities not yet introduced or
+  seeded;
 - an introduction that lacks the complete minimum state for its type;
 - more than one update object for an entity in a chapter, or an update property not
   allowed by that entity type;
 - invalid update `null` use, invalid list replacement values, or invalid references;
 - an invalid character ID, name, aliases list, or typed species, asset, or death-event
   reference; a character death date that conflicts with its referenced event date;
+- an invalid species ID, name, description, picture, or homeworld reference, including
+  a homeworld that is transit or has not been introduced;
+- an invalid event ID, name, description, picture, date, location, or participant
+  reference; duplicate participant IDs; or a participant list that is not a complete
+  replacement when updated;
 - a chapter with no appearances or no `lead` appearance;
 - competing state writes that have equal or incomparable effective story dates, or a
   year-only selected chapter date that cannot determine a needed indexed transition;

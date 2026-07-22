@@ -357,12 +357,13 @@ visual designs rather than an Admiral Ackbar or John Cleese likeness.
 ## 12. Narrative data and spoiler model
 
 Narrative features begin only after the astronomy vertical slice is accepted.
-Canonical authoring uses JSON validated by versioned JSON Schema. Chapter records are
-the sole authored narrative source: they introduce complete minimum-valid entities,
-record visible updates, appearances, and events. The stable entity registry and every
-selected-chapter state are deterministic generated projections, never manually
-edited snapshots. ADR-0001 records this supersession of the earlier separate-registry
-approach.
+Canonical authoring uses JSON validated by versioned JSON Schema. A zero-state
+Solar-System location source is the initial commit of the reader-visible world before
+any book chapter is selected. Chapter records then introduce book-specific entities and
+record ordered visible patches, appearances, and events. The stable entity registry and
+every selected-chapter state are deterministic generated projections, never manually
+edited snapshots. ADR-0001 establishes chapter-authored patches; ADR-0003 supersedes
+its sole-source boundary with the zero-state baseline.
 
 Spoiler safety has two independent dimensions:
 
@@ -384,17 +385,23 @@ filter.
 
 Locations form a one-parent tree: every non-root location has exactly one parent and
 child lists are generated. This supports systems, planets, moons, locales, and
-megastructures without fixing a shallow hierarchy. Transit locations are roots with
-explicit origin and destination references. Unknown or ambiguous book locations remain
-valid, explicitly unmapped narrative entities; they may appear in timelines and lists
-but not at invented map coordinates.
+megastructures without fixing a shallow hierarchy. The zero-state Solar-System source
+uses nested JSON to seed this tree and its stable local child order; later chapter
+records use `parent_location_id` to add locations beneath existing parents. The
+generator flattens the baseline authoring tree before deriving runtime child lists.
+Transit locations are roots with explicit origin and destination references. Unknown or
+ambiguous book locations remain valid, explicitly unmapped narrative entities; they
+may appear in timelines and lists but not at invented map coordinates.
 
-Astronomy remains authoritative for physical positions, bodies, sizes, colours, and
-physical hierarchy. A narrative location may reference an astronomy node; mapped
-parent-child locations must agree with astronomy ancestry. The visual layer receives a
-generated join of the astronomy hierarchy and the selected narrative location tree.
-Book records must not duplicate astronomy render facts. Images are manually curated
-assets, but an entity's image assignment is chapter-controlled narrative state.
+Astronomy remains authoritative for stellar and interstellar physical positions,
+components, sizes, colours, and measured render facts. The zero-state source owns the
+known Solar-System location topology and a deliberately non-metric local render order;
+it must not contain coordinates, radii, distances, colours, or other measured astronomy
+facts. A location may reference an astronomy node; mapped parent-child locations must
+agree with astronomy ancestry. The visual layer receives a generated join of stellar
+astronomy data, the zero-state location tree, and selected narrative patches. Images
+are manually curated assets, but an entity's image assignment is chapter-controlled
+narrative state.
 
 ## 13. LLM-assisted extraction
 
