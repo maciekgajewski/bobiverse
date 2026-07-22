@@ -23,3 +23,20 @@ test("directory selection, unit switch, and measurement survive a phone-sized vi
   );
   await expect(page.getByTestId("map-scale-label")).toContainText("pc");
 });
+
+test("empty map clicks clear inspection selection without clearing endpoints", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Measure" }).click();
+  await expect(page.getByText("Choose endpoint A")).toBeVisible();
+  await page.getByRole("button", { name: "Sol" }).click();
+  await expect(page.getByText("Choose endpoint B")).toBeVisible();
+  await page.getByRole("button", { name: "Barnard's Star" }).click();
+  await expect(page.getByLabel("Measured separation")).toBeVisible();
+  await page.getByTestId("star-map-canvas").click({ position: { x: 8, y: 8 } });
+  await expect(
+    page.getByText("Select a stellar system to inspect its catalogue facts."),
+  ).toBeVisible();
+  await expect(page.getByLabel("Measured separation")).toBeVisible();
+});

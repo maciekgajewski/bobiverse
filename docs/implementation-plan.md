@@ -97,7 +97,11 @@ Goal: expand the accepted Phase 1A pipeline without redesigning the map.
 
 Planned work:
 
-- Increase the reviewed system set from 20 toward 100 nearest systems.
+- Increase the reviewed system set from 20 to 100 nearest systems.
+- Replace the fixed 20-system validation and fixture count with one documented,
+  easily modifiable catalogue-size parameter. The parameter must still make Sol
+  explicit and preserve the reviewed system-count invariant across generation,
+  validation, runtime schema checks, and tests.
 - Reconcile additional multi-star membership, aliases, and uncertain source records.
 - Measure rendering, labeling, picking, and search performance at the expanded size.
 - Introduce label-density rules without changing true positions.

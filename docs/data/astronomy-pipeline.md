@@ -13,6 +13,20 @@ retrieval timestamp, full-download SHA-256, and catalogue acknowledgement.
 `data/source/system-review.json` is the deliberate system/component grouping layer.
 One reviewed record is adopted per interstellar system marker; components remain
 references within that marker and are not rendered as separate interstellar nodes.
+`data/source/component-visual-properties.json` is a separate, reviewed component-level
+visual-properties snapshot. Every CNS5 component has an adopted physical radius in
+solar radii, an MK spectral class, stable join evidence, and property-level source
+provenance. TIC v8.2 and SIMBAD are preferred sources where they identify a component
+separately; close binaries, white dwarfs, and other catalogue gaps retain their
+component-specific literature source. Sol is an explicit generated G2V, 1 R_sun
+component with IAU reference provenance.
+
+Visual properties control only camera-facing marker glyphs. Radius is transformed
+through the fixed, bounded square-root mapping in `src/domain/star-visual.ts`:
+0.01–3 R_sun maps to a 0.065–0.16 map-space glyph radius. Multi-star offsets are
+deterministic decoration around the canonical system point, with a radial range of
+0.018–0.0288 map units and vertical range capped at 0.0108. They are not orbital data
+and never contribute to coordinates, focus, labels, or measurement.
 
 ## Source and acknowledgement
 
@@ -25,6 +39,19 @@ The source is the published Fifth Catalogue of Nearby Stars (CNS5), VizieR catal
 
 Required acknowledgement: “This project uses the VizieR catalogue access tool, CDS,
 Strasbourg, France (DOI: 10.26093/cds/vizier).”
+
+## Component visual-property sources
+
+The reviewed component-properties snapshot is pinned alongside CNS5 rather than
+queried by the application. Its preferred catalogue inputs are:
+
+- TIC v8.2 radius data: <https://mast.stsci.edu/api/v0/_t_i_cfields.html>
+- SIMBAD MK spectral types: <https://simbad.cds.unistra.fr/Pages/guide/chD.htx>
+
+The snapshot records the exact source identifier and any component-specific literature
+reference with each property. This is necessary because target catalogues can merge or
+omit close binaries and white dwarfs, whereas the map deliberately renders reviewed
+CNS5 components as separate decorative orbs.
 
 ## Refreshing data
 
@@ -48,4 +75,7 @@ npm run data:refresh -- --source-file /path/to/cns5.dat
 The importer uses Astropy's ICRS-to-Galactic transform. Application code must not
 reimplement that astronomy conversion. `data:validate` rejects schema-version
 mismatches, non-finite values, duplicate systems/components, invalid render mapping,
-or any count other than Sol plus 20 non-Sol systems.
+or any count other than Sol plus 20 non-Sol systems. It also rejects a component with
+a missing, non-positive, or non-finite visual radius, or missing source provenance for
+either radius or spectral class. The component-properties snapshot is edited only as a
+reviewed, cited source-data change; ordinary `data:refresh` does not replace it.

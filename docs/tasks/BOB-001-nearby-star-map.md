@@ -37,7 +37,12 @@ the physical separation between two systems.
 - Generated, validated, deterministic static JSON with provenance.
 - True-scale Galactic Cartesian rendering with Sol at the origin.
 - Galactic plane, orientation labels, scale indication, and repeatable camera reset.
-- Rotate, zoom, pan, focus, and selection interactions.
+- Rotate, zoom, pan, smooth focus, and selection interactions.
+- Reviewed stellar visual metadata: component stellar class and physical size, with
+  source provenance.
+- Camera-facing shader-sprite markers with fuzzy glowing cores and halos. Multi-star
+  systems render their components as a small deterministic decorative cluster around
+  the one canonical system position.
 - DOM-based basic system details and alternate designations.
 - Light-years by default and a parsec toggle.
 - Two-system straight-line measurement.
@@ -79,11 +84,65 @@ the physical separation between two systems.
 11. A responsive layout retains system selection and details on a phone-sized
     viewport, even if desktop remains the preferred 3D experience.
 12. Reduced-motion preference removes nonessential animated camera transitions.
+13. Selecting a system moves the camera smoothly to its focus framing; reduced-motion
+    preference makes that transition immediate.
+14. Each component marker uses its reviewed stellar class for color and its physical
+    size for non-linear visual scale. These marker choices and decorative component
+    offsets must not affect canonical coordinates or measurements.
+15. Focus moves retain the current camera viewing angle and zoom: translate the
+    camera and focus target together so the selected system's canonical position is
+    centered, without automatic zooming.
+16. Focus-transition duration is distance-aware and bounded from 300 to 850 ms with
+    ease-in-out interpolation.
+17. Marker base colors follow conventional stellar spectral classes: O/B blue, A
+    blue-white, F white, G yellow, K orange, M red, and white dwarfs cool-white.
+18. Marker scale uses a square-root transform of reviewed physical radius with
+    documented readability bounds; it is not a literal diameter scale.
+19. Generated data and validation fail if any rendered component lacks a usable reviewed
+    radius or SIMBAD spectral class; the map must not silently invent or omit a
+    component visual encoding.
+20. Any manual orbit, pan, or zoom input immediately cancels an in-progress automatic
+    focus transition.
+21. A new selection during a focus transition immediately retargets the animation
+    from its current interpolated position to the latest selected system.
+22. The square-root marker-scale transform uses fixed, documented map-space minimum
+    and maximum glyph radii, calibrated once against the pinned dataset and stable
+    across future source refreshes.
+23. Sol has an explicit generated component with G2V class, one solar radius, and
+    solar-reference provenance so it uses the same marker pipeline as catalogue stars.
+24. No system is selected initially. Clicking empty map space clears only the current
+    inspection selection and preserves any measurement endpoints.
+25. The selection treatment is a non-obscuring corner frame around the selected system
+    with its name positioned to the frame's right, rather than a marker-covering ring.
+26. Sol alone has a persistent, slightly offset map label. It uses a normal selection
+    frame only after explicit selection. Other labels appear only for selection or
+    measurement state.
+27. Hovering a marker shows a screen-size-stable tooltip with its name and, when a
+    system is selected, canonical straight-line separation from that selected system.
+28. The Galactic plane is substantially larger than the displayed star field and
+    faint enough to read as an effectively infinite orientation aid. Axis labels are
+    distant, smaller, and lower prominence; no standalone `+Yg` marker is shown.
+29. The Clear endpoints action uses the same first-class button treatment and sizing
+    as the other measurement controls.
+30. The persistent Sol name is plain, slightly offset text with no label box or frame.
+31. Star-sprite brightness attenuates from 100% at or nearer than 6 map units to
+    35% at or beyond 45 map units, without changing marker geometry, labels, or
+    measurement.
+32. Selection decoration must not capture pointer hits. Every star marker, including
+    the selected one, remains hoverable and selectable. When glyphs overlap,
+    selecting from the canvas chooses the closest one to the camera.
 
 ## Data requirements
 
 - Preserve source ICRS values, units, epoch, identifiers, and uncertainty when the
   source supplies them.
+- Preserve reviewed stellar-class and physical-size values for each rendered
+  component, including their source provenance and units.
+- Acquire visual properties from a pinned, reviewed component-properties snapshot.
+  Each CNS5 component receives its own radius, MK spectral class, stable join evidence,
+  and property-level provenance. TIC and SIMBAD are preferred inputs where they
+  identify that component, with component-specific catalogue or literature values for
+  cases they cannot represent separately.
 - Store derived Galactic `Xg/Yg/Zg` coordinates canonically in parsecs.
 - Emit the explicit Three.js render mapping specified by the technical design without
   using scene coordinates as domain truth.
@@ -161,6 +220,10 @@ headless development server.
   ranking.
 - Marker glyph size may be screen-relative for legibility, but position and
   measurement may not be altered.
+- Decorative offsets for multi-star component markers are stable presentation-only
+  values. Their radial extent is 0.018–0.0288 map units, one-fifth of the original
+  maximum, with vertical extent capped at 0.0108 map units. They must not be
+  represented as orbital data, used for focus framing, or used for measurement.
 - Pixel snapshots are not authoritative across GPU environments. Assert domain and UI
   state where possible.
 - Do not expand into narrative data while solving visual or schema questions.
@@ -171,11 +234,14 @@ headless development server.
 Automated evidence recorded on 2026-07-20:
 
 - `npm run validate` passes formatting, linting, strict TypeScript, generated-data
-  schema/referential validation, eight unit/component tests, and the production build.
-- `npm run test:e2e` passes the responsive selection, unit-toggle, and measurement
-  flow in Playwright Chromium, Firefox, and WebKit projects.
+  schema/referential validation, 18 unit/component tests, and the production build.
+- `npm run test:e2e` passes responsive selection, unit-toggle, measurement, and
+  empty-map deselection while preserving endpoints in Playwright Chromium, Firefox,
+  and WebKit projects.
 - The generated runtime dataset contains Sol and exactly 20 non-Sol reviewed system
-  markers. The CNS5 input snapshot is committed separately from browser data.
+  markers. The CNS5 input snapshot and reviewed component visual-properties snapshot
+  are committed separately from browser data; validation confirms all 29 rendered
+  components have sourced radius and spectral-class properties.
 
 BOB-001 remains `In progress` pending the required trusted-LAN, real-browser visual
 review in Chrome, Firefox, Safari, and Edge where available, plus the Captain's

@@ -214,9 +214,46 @@ offers a parsec toggle. Unit conversion occurs only at presentation boundaries.
 
 System positions use a single linear scene scale. Camera projection can affect visual
 perspective, but no logarithmic or piecewise distance compression is permitted.
-Marker glyphs may have a minimum screen-readable size and are therefore not literal
-stellar diameters; this presentation exception must not affect positions or
-measurements.
+Marker glyphs may have a minimum screen-readable size and use a non-linear visual
+scale derived from reviewed stellar physical size. They are not literal stellar
+diameters; this presentation exception must not affect positions or measurements.
+
+Phase 1 markers are camera-facing shader sprites with a luminous core and soft radial
+halo. Reviewed stellar class selects the base color. A multi-star system remains one
+canonical map node, but renders its component stars as a small deterministic,
+decorative cluster around that node. Its radial decorative offset is bounded to
+0.018–0.0288 map units and its vertical offset to 0.0108 map units, reducing the
+original cluster extent by five. Those offsets are not component positions or orbital
+data, and must never be used for labels, camera focus, or measurement.
+
+The Phase 1 color mapping follows the conventional spectral sequence: O/B blue, A
+blue-white, F white, G yellow, K orange, M red, and white dwarfs cool-white. It is a
+visual classification aid, not a calibrated temperature display. Late L/T/Y
+substellar classes share the red end of that palette rather than using a neutral
+fallback color.
+
+Marker scale uses a square-root transform of reviewed physical radius with explicit
+minimum and maximum readability bounds. The transform makes visual variation legible
+without representing literal stellar diameter or altering map geometry.
+Those map-space bounds are calibrated once against the pinned dataset, documented,
+and remain fixed across source refreshes.
+
+Star-sprite brightness smoothly attenuates from 100% at 6 map units to 35% at
+45 map units as a presentation aid. This does not affect marker position,
+physical-size encoding, labels, or measurement.
+
+Selection frames do not participate in raycasting, but every star-marker glyph,
+including the selected one, does. Canvas picking explicitly resolves the closest
+marker hit to the camera; this preserves selected-star tooltips and re-selection while
+ensuring an overlapping closer system is selected instead of the decorative frame.
+
+Every rendered component must have a usable reviewed radius and MK spectral class.
+Generation and validation fail on missing or invalid visual properties; the browser
+does not substitute a neutral marker or silently omit the component.
+
+Sol is represented by an explicit generated component with G2V class, one solar
+radius, and solar-reference provenance. It uses the same marker pipeline as catalogue
+components rather than a rendering exception.
 
 ### 8.5 Stellar-system model
 
@@ -229,21 +266,31 @@ Phase 1 fields include:
 - Canonical and render coordinates.
 - Distance from Sol.
 - Basic display properties supported by source data.
+- Reviewed stellar class and physical size for each rendered component, with source
+  provenance and units.
 - Component references.
 - Provenance.
 
 Most systems intentionally have only basic data. Rich descriptions and planets are
 added selectively when story relevance or product needs justify them.
 
+Component visual properties are imported from a pinned, reviewed component-properties
+snapshot and joined to CNS5 component records through documented stable identifiers.
+Each component has property-level radius and MK spectral-class provenance. TIC and
+SIMBAD are preferred inputs where they separately identify the component; where they
+do not, the snapshot records a component-specific catalogue or literature source. The
+generated browser data retains the joined provenance; no browser request may resolve
+or refresh visual properties at runtime.
+
 ## 9. Phase 1 interaction design
 
 The map must provide:
 
-- Rotate, zoom, pan, focus, and reset controls.
+- Rotate, zoom, pan, smooth focus, and reset controls.
 - Sol as a visible origin reference.
 - A visible Galactic plane and labeled orientation references.
 - A persistent scale indication.
-- Selection of a system and a basic detail panel.
+- Selection of a system and a basic detail panel; no system is selected initially.
 - Light-year and parsec display modes.
 - A two-system measurement mode.
 - Clear empty, loading, unsupported-WebGL, and error states.
@@ -254,7 +301,30 @@ display unit. The UI distinguishes straight-line separation from any later route
 travel-path length.
 
 Camera controls must not modify domain coordinates. A reset returns to a documented,
-repeatable orientation so readers can regain spatial context.
+repeatable orientation so readers can regain spatial context. Selection and other
+programmatic focus changes interpolate both camera position and controls target;
+reduced-motion preference makes these nonessential transitions immediate. A selection
+focus retains the reader's current viewing angle and zoom by translating the camera
+and target together until the selected system's canonical coordinate is centered; it
+does not automatically reframe around decorative component markers. Focus duration is
+distance-aware, uses ease-in-out interpolation, and is bounded from 300 to 850 ms.
+Any manual orbit, pan, or zoom input immediately cancels a focus transition. A new
+selection immediately retargets an in-flight transition from its current interpolated
+position to the newly selected system.
+
+Clicking empty map space clears the current inspection selection without altering
+measurement endpoints. Selection uses a non-obscuring corner frame and an adjacent
+name label; it must not recolor or cover the component-marker sprites. Sol has the
+only persistent, slightly offset marker label in Phase 1 and uses a normal selection
+frame only when explicitly selected. Hovering a marker reveals a screen-size-stable
+tooltip with its name and, when there is a selected system, the Euclidean canonical
+separation from that system.
+
+The Galactic plane is a faint orientation aid several times larger than the displayed
+star field so it reads as effectively infinite. Its labels sit well beyond the star
+field in smaller, lower-prominence type; the standalone `+Yg` marker is omitted.
+Measurement actions, including Clear endpoints, use the same first-class button
+treatment and sizing.
 
 ## 10. Responsive and accessible behavior
 

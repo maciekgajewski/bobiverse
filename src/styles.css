@@ -216,6 +216,37 @@ h2 {
   margin-top: 0.1rem;
   color: #93b6d8;
 }
+.sol-label,
+.selection-label,
+.map-tooltip {
+  min-width: max-content;
+  color: #ebf7ff;
+  font-size: 0.68rem;
+  text-shadow: 0 2px 8px #000;
+}
+.sol-label {
+  color: #ffe4a5;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.selection-label {
+  color: #e5f8ff;
+  font-weight: 650;
+}
+.map-tooltip {
+  padding: 0.26rem 0.42rem;
+  border: 1px solid #365573;
+  border-radius: 0.24rem;
+  background: rgb(4 10 20 / 92%);
+  box-shadow: 0 3px 15px rgb(0 0 0 / 35%);
+}
+.map-tooltip small {
+  display: block;
+  margin-top: 0.12rem;
+  color: #9bb8d6;
+}
 .details {
   border-bottom: 1px solid #243a5b;
   padding-bottom: 1rem;

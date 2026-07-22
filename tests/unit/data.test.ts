@@ -31,4 +31,21 @@ describe("nearby-system runtime data", () => {
     expect(barnard?.distance_from_sol_pc).toBeCloseTo(1.828072732906, 10);
     expect(sirius?.distance_from_sol_pc).toBeCloseTo(2.67015145977, 10);
   });
+
+  it("requires sourced visual properties for every rendered component", () => {
+    if (!nearbySystems) throw new Error("Fixture dataset failed validation");
+    for (const system of nearbySystems.systems) {
+      for (const component of system.components) {
+        expect(component.visual.radius_solar).toBeGreaterThan(0);
+        expect(component.visual.spectral_class).not.toEqual("");
+        expect(component.visual.provenance.radius.catalogue).not.toEqual("");
+        expect(
+          component.visual.provenance.spectral_class.catalogue,
+        ).not.toEqual("");
+      }
+    }
+    expect(nearbySystems.systems[0]?.components).toMatchObject([
+      { id: "solar:sol", visual: { spectral_class: "G2V", radius_solar: 1 } },
+    ]);
+  });
 });

@@ -34,6 +34,15 @@ def main() -> None:
             if component_id in component_ids:
                 raise ValueError(f"Duplicate component reference: {component_id}")
             component_ids.add(component_id)
+            visual = component["visual"]
+            if not math.isfinite(visual["radius_solar"]) or visual["radius_solar"] <= 0:
+                raise ValueError(f"{component_id} has an invalid visual radius")
+            for property_name in ("spectral_class", "radius"):
+                provenance = visual["provenance"][property_name]
+                if not provenance["catalogue"] or not provenance["record_id"]:
+                    raise ValueError(
+                        f"{component_id} lacks {property_name} visual provenance"
+                    )
     print(f"Validated {len(systems)} systems and {len(component_ids)} component references")
 
 

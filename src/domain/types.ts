@@ -12,6 +12,13 @@ export interface RenderPosition {
   z: number;
 }
 
+export interface PropertyProvenance {
+  catalogue: string;
+  release?: string;
+  record_id: string;
+  reference?: string;
+}
+
 export interface Component {
   id: string;
   cns5_id: number;
@@ -28,6 +35,14 @@ export interface Component {
     parallax_error_mas: number | null;
     position_bibcode: string | null;
     parallax_bibcode: string | null;
+  };
+  visual: {
+    spectral_class: string;
+    radius_solar: number;
+    provenance: {
+      spectral_class: PropertyProvenance;
+      radius: PropertyProvenance;
+    };
   };
 }
 

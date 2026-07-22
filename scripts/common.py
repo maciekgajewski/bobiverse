@@ -10,6 +10,7 @@ SOURCE_DIR = ROOT / "data" / "source"
 GENERATED_PATH = ROOT / "src" / "data" / "nearby-systems.json"
 REVIEW_PATH = SOURCE_DIR / "system-review.json"
 SNAPSHOT_PATH = SOURCE_DIR / "cns5-nearest-components.json"
+VISUAL_PROPERTIES_PATH = SOURCE_DIR / "component-visual-properties.json"
 
 
 def write_json(path: Path, value: Any) -> None:

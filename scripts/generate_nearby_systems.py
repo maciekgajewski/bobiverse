@@ -6,7 +6,14 @@ from typing import Any
 import astropy.units as u
 from astropy.coordinates import ICRS, SkyCoord
 
-from common import GENERATED_PATH, REVIEW_PATH, SNAPSHOT_PATH, read_json, write_json
+from common import (
+    GENERATED_PATH,
+    REVIEW_PATH,
+    SNAPSHOT_PATH,
+    VISUAL_PROPERTIES_PATH,
+    read_json,
+    write_json,
+)
 
 
 def finite(value: float | None, label: str) -> float:
@@ -34,7 +41,7 @@ def distance(position: dict[str, float]) -> float:
     return round(math.sqrt(sum(value**2 for value in position.values())), 12)
 
 
-def component(record: dict[str, Any]) -> dict[str, Any]:
+def component(record: dict[str, Any], visual: dict[str, Any]) -> dict[str, Any]:
     return {
         "id": f"cns5:{record['cns5_id']}",
         "cns5_id": record["cns5_id"],
@@ -52,13 +59,33 @@ def component(record: dict[str, Any]) -> dict[str, Any]:
             "parallax_bibcode": record["parallax_bibcode"],
         },
         "g_magnitude": record["g_magnitude"],
+        "visual": {
+            "spectral_class": visual["spectral_class"],
+            "radius_solar": visual["radius_solar"],
+            "provenance": {
+                "spectral_class": visual["spectral_class_provenance"],
+                "radius": visual["radius_provenance"],
+            },
+        },
     }
 
 
 def main() -> None:
     review = read_json(REVIEW_PATH)
     snapshot = read_json(SNAPSHOT_PATH)
+    visual_snapshot = read_json(VISUAL_PROPERTIES_PATH)
     records = snapshot["records"]
+    visual_by_cns5_id = {
+        visual["cns5_id"]: visual for visual in visual_snapshot["components"]
+    }
+    source_ids = {record["cns5_id"] for record in records}
+    if source_ids != set(visual_by_cns5_id):
+        missing = sorted(source_ids - set(visual_by_cns5_id))
+        unexpected = sorted(set(visual_by_cns5_id) - source_ids)
+        raise ValueError(
+            "Component visual-property snapshot must exactly match CNS5 records: "
+            f"missing={missing}, unexpected={unexpected}"
+        )
     systems: list[dict[str, Any]] = [
         {
             "id": "sol",
@@ -68,7 +95,41 @@ def main() -> None:
             "render_position": {"x": 0.0, "y": 0.0, "z": -0.0},
             "distance_from_sol_pc": 0.0,
             "distance_uncertainty_pc": 0.0,
-            "components": [],
+            "components": [
+                {
+                    "id": "solar:sol",
+                    "cns5_id": 0,
+                    "gj": None,
+                    "component": None,
+                    "gaia_dr3_id": None,
+                    "hip_id": None,
+                    "g_magnitude": None,
+                    "icrs": {
+                        "ra_deg": None,
+                        "dec_deg": None,
+                        "epoch_year": None,
+                        "parallax_mas": None,
+                        "parallax_error_mas": None,
+                        "position_bibcode": None,
+                        "parallax_bibcode": None,
+                    },
+                    "visual": {
+                        "spectral_class": "G2V",
+                        "radius_solar": 1.0,
+                        "provenance": {
+                            "spectral_class": {
+                                "catalogue": "IAU conventional solar classification",
+                                "record_id": "Sol",
+                            },
+                            "radius": {
+                                "catalogue": "IAU nominal solar radius",
+                                "record_id": "R_sun",
+                                "reference": "IAU 2015 Resolution B3",
+                            },
+                        },
+                    },
+                }
+            ],
             "provenance": {"catalogue": "IAU conventional solar origin", "source_object_ids": []},
         }
     ]
@@ -91,7 +152,10 @@ def main() -> None:
                 "render_position": {"x": position["xg"], "y": position["zg"], "z": -position["yg"]},
                 "distance_from_sol_pc": distance(position),
                 "distance_uncertainty_pc": uncertainty,
-                "components": [component(record) for record in matches],
+                "components": [
+                    component(record, visual_by_cns5_id[record["cns5_id"]])
+                    for record in matches
+                ],
                 "provenance": {
                     "catalogue": snapshot["source"]["catalogue"],
                     "release": snapshot["source"]["release"],

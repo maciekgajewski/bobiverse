@@ -15,6 +15,11 @@ describe("atlas shell", () => {
   it("keeps DOM-based selection available when WebGL is unavailable", async () => {
     const user = userEvent.setup();
     render(<App />);
+    expect(
+      screen.getByText(
+        "Select a stellar system to inspect its catalogue facts.",
+      ),
+    ).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Alpha Centauri" }));
     expect(
       screen.getByRole("heading", { name: "Alpha Centauri" }),
@@ -34,6 +39,9 @@ describe("atlas shell", () => {
     await user.click(screen.getByRole("button", { name: "pc" }));
     expect(screen.getByLabelText("Measured separation")).toHaveTextContent(
       "pc straight-line separation",
+    );
+    expect(screen.getByRole("button", { name: "Clear endpoints" })).toHaveClass(
+      "button",
     );
   });
 });

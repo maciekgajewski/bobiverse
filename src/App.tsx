@@ -19,7 +19,7 @@ function canRenderWebgl(): boolean {
 
 export default function App() {
   const [unit, setUnit] = useState<DistanceUnit>("ly");
-  const [selectedId, setSelectedId] = useState<string | null>("sol");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [measurement, setMeasurement] = useState<
     [string | null, string | null]
   >([null, null]);
@@ -172,6 +172,7 @@ export default function App() {
               unit={unit}
               resetToken={resetToken}
               onSelect={selectSystem}
+              onDeselect={() => setSelectedId(null)}
               onReady={() => undefined}
               onScaleChange={updateMapScale}
             />
@@ -225,7 +226,7 @@ export default function App() {
               </p>
             )}
             <button
-              className="link-button"
+              className="button"
               onClick={() => setMeasurement([null, null])}
             >
               Clear endpoints

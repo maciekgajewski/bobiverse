@@ -14,7 +14,41 @@
   "systems": [
     {
       "alternates": ["Sun"],
-      "components": [],
+      "components": [
+        {
+          "cns5_id": 0,
+          "component": null,
+          "g_magnitude": null,
+          "gaia_dr3_id": null,
+          "gj": null,
+          "hip_id": null,
+          "icrs": {
+            "dec_deg": null,
+            "epoch_year": null,
+            "parallax_bibcode": null,
+            "parallax_error_mas": null,
+            "parallax_mas": null,
+            "position_bibcode": null,
+            "ra_deg": null
+          },
+          "id": "solar:sol",
+          "visual": {
+            "provenance": {
+              "radius": {
+                "catalogue": "IAU nominal solar radius",
+                "record_id": "R_sun",
+                "reference": "IAU 2015 Resolution B3"
+              },
+              "spectral_class": {
+                "catalogue": "IAU conventional solar classification",
+                "record_id": "Sol"
+              }
+            },
+            "radius_solar": 1.0,
+            "spectral_class": "G2V"
+          }
+        }
+      ],
       "distance_from_sol_pc": 0.0,
       "distance_uncertainty_pc": 0.0,
       "id": "sol",
@@ -53,7 +87,22 @@
             "position_bibcode": "2007A&A...474..653V",
             "ra_deg": 219.9204081301028
           },
-          "id": "cns5:3627"
+          "id": "cns5:3627",
+          "visual": {
+            "provenance": {
+              "radius": {
+                "catalogue": "Nearby-star literature review",
+                "record_id": "Alpha Centauri A",
+                "reference": "Kervella et al. 2017"
+              },
+              "spectral_class": {
+                "catalogue": "SIMBAD",
+                "record_id": "Alpha Cen"
+              }
+            },
+            "radius_solar": 1.22,
+            "spectral_class": "G2V"
+          }
         },
         {
           "cns5_id": 3591,
@@ -71,7 +120,22 @@
             "position_bibcode": "2020yCat.1350....0G",
             "ra_deg": 217.39232147200883
           },
-          "id": "cns5:3591"
+          "id": "cns5:3591",
+          "visual": {
+            "provenance": {
+              "radius": {
+                "catalogue": "Nearby-star literature review",
+                "record_id": "Proxima Centauri",
+                "reference": "Kervella et al. 2017"
+              },
+              "spectral_class": {
+                "catalogue": "SIMBAD",
+                "record_id": "Proxima"
+              }
+            },
+            "radius_solar": 0.154,
+            "spectral_class": "M5.5V"
+          }
         }
       ],
       "distance_from_sol_pc": 1.32483671816,
@@ -116,7 +180,23 @@
             "position_bibcode": "2020yCat.1350....0G",
             "ra_deg": 269.44850252543836
           },
-          "id": "cns5:4449"
+          "id": "cns5:4449",
+          "visual": {
+            "provenance": {
+              "radius": {
+                "catalogue": "TESS Input Catalog",
+                "record_id": "HIP 87937",
+                "reference": "Stassun et al. 2019",
+                "release": "8.2"
+              },
+              "spectral_class": {
+                "catalogue": "SIMBAD",
+                "record_id": "GJ 699"
+              }
+            },
+            "radius_solar": 0.2,
+            "spectral_class": "M4V"
+          }
         }
       ],
       "distance_from_sol_pc": 1.828072732906,
@@ -161,7 +241,23 @@
             "position_bibcode": "2020yCat.1350....0G",
             "ra_deg": 164.10319030755974
           },
-          "id": "cns5:2674"
+          "id": "cns5:2674",
+          "visual": {
+            "provenance": {
+              "radius": {
+                "catalogue": "TESS Input Catalog",
+                "record_id": "GJ 406",
+                "reference": "Stassun et al. 2019",
+                "release": "8.2"
+              },
+              "spectral_class": {
+                "catalogue": "SIMBAD",
+                "record_id": "Wolf 359"
+              }
+            },
+            "radius_solar": 0.14,
+            "spectral_class": "M6V"
+          }
         }
       ],
       "distance_from_sol_pc": 2.408597252749,
@@ -206,7 +302,23 @@
             "position_bibcode": "2020yCat.1350....0G",
             "ra_deg": 165.83095967577933
           },
-          "id": "cns5:2696"
+          "id": "cns5:2696",
+          "visual": {
+            "provenance": {
+              "radius": {
+                "catalogue": "TESS Input Catalog",
+                "record_id": "HIP 54035",
+                "reference": "Stassun et al. 2019",
+                "release": "8.2"
+              },
+              "spectral_class": {
+                "catalogue": "SIMBAD",
+                "record_id": "GJ 411"
+              }
+            },
+            "radius_solar": 0.39,
+            "spectral_class": "M2V"
+          }
         }
       ],
       "distance_from_sol_pc": 2.545926623148,
@@ -251,7 +363,22 @@
             "position_bibcode": "2020yCat.1350....0G",
             "ra_deg": 101.28662552099249
           },
-          "id": "cns5:1675"
+          "id": "cns5:1675",
+          "visual": {
+            "provenance": {
+              "radius": {
+                "catalogue": "Nearby-star literature review",
+                "record_id": "Sirius B",
+                "reference": "Holberg et al. 2012"
+              },
+              "spectral_class": {
+                "catalogue": "SIMBAD",
+                "record_id": "Sirius B"
+              }
+            },
+            "radius_solar": 0.0084,
+            "spectral_class": "DA2"
+          }
         },
         {
           "cns5_id": 1676,
@@ -269,7 +396,23 @@
             "position_bibcode": "2007A&A...474..653V",
             "ra_deg": 101.2885410520664
           },
-          "id": "cns5:1676"
+          "id": "cns5:1676",
+          "visual": {
+            "provenance": {
+              "radius": {
+                "catalogue": "TESS Input Catalog",
+                "record_id": "HIP 32349",
+                "reference": "Stassun et al. 2019",
+                "release": "8.2"
+              },
+              "spectral_class": {
+                "catalogue": "SIMBAD",
+                "record_id": "Sirius"
+              }
+            },
+            "radius_solar": 1.71,
+            "spectral_class": "A1V"
+          }
         }
       ],
       "distance_from_sol_pc": 2.67015145977,
@@ -314,7 +457,23 @@
             "position_bibcode": "2020yCat.1350....0G",
             "ra_deg": 24.901464121306226
           },
-          "id": "cns5:427"
+          "id": "cns5:427",
+          "visual": {
+            "provenance": {
+              "radius": {
+                "catalogue": "TESS Input Catalog",
+                "record_id": "GJ 65.1",
+                "reference": "Stassun et al. 2019",
+                "release": "8.2"
+              },
+              "spectral_class": {
+                "catalogue": "SIMBAD",
+                "record_id": "GJ 65.1"
+              }
+            },
+            "radius_solar": 0.16,
+            "spectral_class": "M5.5V"
+          }
         },
         {
           "cns5_id": 424,
@@ -332,7 +491,23 @@
             "position_bibcode": "2020yCat.1350....0G",
             "ra_deg": 24.771554293454546
           },
-          "id": "cns5:424"
+          "id": "cns5:424",
+          "visual": {
+            "provenance": {
+              "radius": {
+                "catalogue": "TESS Input Catalog",
+                "record_id": "GJ 65 A",
+                "reference": "Stassun et al. 2019",
+                "release": "8.2"
+              },
+              "spectral_class": {
+                "catalogue": "SIMBAD",
+                "record_id": "GJ 65 A"
+              }
+            },
+            "radius_solar": 0.17,
+            "spectral_class": "M5.5V"
+          }
         },
         {
           "cns5_id": 425,
@@ -350,7 +525,23 @@
             "position_bibcode": "2020yCat.1350....0G",
             "ra_deg": 24.771674208211856
           },
-          "id": "cns5:425"
+          "id": "cns5:425",
+          "visual": {
+            "provenance": {
+              "radius": {
+                "catalogue": "TESS Input Catalog",
+                "record_id": "GJ 65 B",
+                "reference": "Stassun et al. 2019",
+                "release": "8.2"
+              },
+              "spectral_class": {
+                "catalogue": "SIMBAD",
+                "record_id": "GJ 65 B"
+              }
+            },
+            "radius_solar": 0.16,
+            "spectral_class": "M6V"
+          }
         }
       ],
       "distance_from_sol_pc": 2.703214175112,
@@ -395,7 +586,23 @@
             "position_bibcode": "2020yCat.1350....0G",
             "ra_deg": 282.4587890175222
           },
-          "id": "cns5:4678"
+          "id": "cns5:4678",
+          "visual": {
+            "provenance": {
+              "radius": {
+                "catalogue": "TESS Input Catalog",
+                "record_id": "HIP 92403",
+                "reference": "Stassun et al. 2019",
+                "release": "8.2"
+              },
+              "spectral_class": {
+                "catalogue": "SIMBAD",
+                "record_id": "GJ 729"
+              }
+            },
+            "radius_solar": 0.2,
+            "spectral_class": "M3.5V"
+          }
         }
       ],
       "distance_from_sol_pc": 2.975489777866,
@@ -440,7 +647,23 @@
             "position_bibcode": "2020yCat.1350....0G",
             "ra_deg": 355.4800152581559
           },
-          "id": "cns5:5844"
+          "id": "cns5:5844",
+          "visual": {
+            "provenance": {
+              "radius": {
+                "catalogue": "TESS Input Catalog",
+                "record_id": "GJ 905",
+                "reference": "Stassun et al. 2019",
+                "release": "8.2"
+              },
+              "spectral_class": {
+                "catalogue": "SIMBAD",
+                "record_id": "GJ 905"
+              }
+            },
+            "radius_solar": 0.17,
+            "spectral_class": "M5.5V"
+          }
         }
       ],
       "distance_from_sol_pc": 3.159206218637,
@@ -485,7 +708,23 @@
             "position_bibcode": "2020yCat.1350....0G",
             "ra_deg": 53.22829341517546
           },
-          "id": "cns5:905"
+          "id": "cns5:905",
+          "visual": {
+            "provenance": {
+              "radius": {
+                "catalogue": "TESS Input Catalog",
+                "record_id": "HIP 16537",
+                "reference": "Stassun et al. 2019",
+                "release": "8.2"
+              },
+              "spectral_class": {
+                "catalogue": "SIMBAD",
+                "record_id": "eps Eri"
+              }
+            },
+            "radius_solar": 0.74,
+            "spectral_class": "K2V"
+          }
         }
       ],
       "distance_from_sol_pc": 3.21981040849,
@@ -530,7 +769,23 @@
             "position_bibcode": "2020yCat.1350....0G",
             "ra_deg": 346.5039166796005
           },
-          "id": "cns5:5688"
+          "id": "cns5:5688",
+          "visual": {
+            "provenance": {
+              "radius": {
+                "catalogue": "TESS Input Catalog",
+                "record_id": "HIP 114046",
+                "reference": "Stassun et al. 2019",
+                "release": "8.2"
+              },
+              "spectral_class": {
+                "catalogue": "SIMBAD",
+                "record_id": "GJ 887"
+              }
+            },
+            "radius_solar": 0.47,
+            "spectral_class": "M2V"
+          }
         }
       ],
       "distance_from_sol_pc": 3.287714635757,
@@ -575,7 +830,23 @@
             "position_bibcode": "2020yCat.1350....0G",
             "ra_deg": 176.93768799004127
           },
-          "id": "cns5:2890"
+          "id": "cns5:2890",
+          "visual": {
+            "provenance": {
+              "radius": {
+                "catalogue": "TESS Input Catalog",
+                "record_id": "HIP 57548",
+                "reference": "Stassun et al. 2019",
+                "release": "8.2"
+              },
+              "spectral_class": {
+                "catalogue": "SIMBAD",
+                "record_id": "GJ 447"
+              }
+            },
+            "radius_solar": 0.2,
+            "spectral_class": "M4V"
+          }
         }
       ],
       "distance_from_sol_pc": 3.374244007111,
@@ -620,7 +891,23 @@
             "position_bibcode": "2020yCat.1350....0G",
             "ra_deg": 339.650693945
           },
-          "id": "cns5:5586"
+          "id": "cns5:5586",
+          "visual": {
+            "provenance": {
+              "radius": {
+                "catalogue": "TESS Input Catalog",
+                "record_id": "GJ 866",
+                "reference": "Stassun et al. 2019",
+                "release": "8.2"
+              },
+              "spectral_class": {
+                "catalogue": "SIMBAD",
+                "record_id": "GJ 866"
+              }
+            },
+            "radius_solar": 0.2,
+            "spectral_class": "M5V"
+          }
         }
       ],
       "distance_from_sol_pc": 3.405994550409,
@@ -665,7 +952,23 @@
             "position_bibcode": "2020yCat.1350....0G",
             "ra_deg": 316.753662752556
           },
-          "id": "cns5:5218"
+          "id": "cns5:5218",
+          "visual": {
+            "provenance": {
+              "radius": {
+                "catalogue": "TESS Input Catalog",
+                "record_id": "HIP 104217",
+                "reference": "Stassun et al. 2019",
+                "release": "8.2"
+              },
+              "spectral_class": {
+                "catalogue": "SIMBAD",
+                "record_id": "GJ 820 B"
+              }
+            },
+            "radius_solar": 0.6,
+            "spectral_class": "K7V"
+          }
         },
         {
           "cns5_id": 5217,
@@ -683,7 +986,23 @@
             "position_bibcode": "2020yCat.1350....0G",
             "ra_deg": 316.7484792940004
           },
-          "id": "cns5:5217"
+          "id": "cns5:5217",
+          "visual": {
+            "provenance": {
+              "radius": {
+                "catalogue": "TESS Input Catalog",
+                "record_id": "HIP 104214",
+                "reference": "Stassun et al. 2019",
+                "release": "8.2"
+              },
+              "spectral_class": {
+                "catalogue": "SIMBAD",
+                "record_id": "GJ 820 A"
+              }
+            },
+            "radius_solar": 0.67,
+            "spectral_class": "K5V"
+          }
         }
       ],
       "distance_from_sol_pc": 3.496438068346,
@@ -728,7 +1047,23 @@
             "position_bibcode": "2007A&A...474..653V",
             "ra_deg": 114.82724201808722
           },
-          "id": "cns5:1895"
+          "id": "cns5:1895",
+          "visual": {
+            "provenance": {
+              "radius": {
+                "catalogue": "TESS Input Catalog",
+                "record_id": "TIC 280310048",
+                "reference": "Stassun et al. 2019",
+                "release": "8.2"
+              },
+              "spectral_class": {
+                "catalogue": "SIMBAD",
+                "record_id": "Procyon"
+              }
+            },
+            "radius_solar": 2.13,
+            "spectral_class": "F5IV-V"
+          }
         }
       ],
       "distance_from_sol_pc": 3.514197387474,
@@ -773,7 +1108,23 @@
             "position_bibcode": "2020yCat.1350....0G",
             "ra_deg": 280.68308624583415
           },
-          "id": "cns5:4634"
+          "id": "cns5:4634",
+          "visual": {
+            "provenance": {
+              "radius": {
+                "catalogue": "TESS Input Catalog",
+                "record_id": "HIP 91772",
+                "reference": "Stassun et al. 2019",
+                "release": "8.2"
+              },
+              "spectral_class": {
+                "catalogue": "SIMBAD",
+                "record_id": "GJ 725 B"
+              }
+            },
+            "radius_solar": 0.3,
+            "spectral_class": "M3.5V"
+          }
         },
         {
           "cns5_id": 4633,
@@ -791,7 +1142,23 @@
             "position_bibcode": "2020yCat.1350....0G",
             "ra_deg": 280.6830708352289
           },
-          "id": "cns5:4633"
+          "id": "cns5:4633",
+          "visual": {
+            "provenance": {
+              "radius": {
+                "catalogue": "TESS Input Catalog",
+                "record_id": "HIP 91768",
+                "reference": "Stassun et al. 2019",
+                "release": "8.2"
+              },
+              "spectral_class": {
+                "catalogue": "SIMBAD",
+                "record_id": "GJ 725 A"
+              }
+            },
+            "radius_solar": 0.35,
+            "spectral_class": "M3V"
+          }
         }
       ],
       "distance_from_sol_pc": 3.522874356261,
@@ -836,7 +1203,23 @@
             "position_bibcode": "2020yCat.1350....0G",
             "ra_deg": 4.613226257557736
           },
-          "id": "cns5:89"
+          "id": "cns5:89",
+          "visual": {
+            "provenance": {
+              "radius": {
+                "catalogue": "TESS Input Catalog",
+                "record_id": "GJ 15 A",
+                "reference": "Stassun et al. 2019",
+                "release": "8.2"
+              },
+              "spectral_class": {
+                "catalogue": "SIMBAD",
+                "record_id": "GJ 15 A"
+              }
+            },
+            "radius_solar": 0.39,
+            "spectral_class": "M1V"
+          }
         },
         {
           "cns5_id": 90,
@@ -854,7 +1237,23 @@
             "position_bibcode": "2020yCat.1350....0G",
             "ra_deg": 4.625300681217554
           },
-          "id": "cns5:90"
+          "id": "cns5:90",
+          "visual": {
+            "provenance": {
+              "radius": {
+                "catalogue": "TESS Input Catalog",
+                "record_id": "GJ 15 B",
+                "reference": "Stassun et al. 2019",
+                "release": "8.2"
+              },
+              "spectral_class": {
+                "catalogue": "SIMBAD",
+                "record_id": "GJ 15 B"
+              }
+            },
+            "radius_solar": 0.15,
+            "spectral_class": "M3.5V"
+          }
         }
       ],
       "distance_from_sol_pc": 3.562000381595,
@@ -899,7 +1298,23 @@
             "position_bibcode": "2020yCat.1350....0G",
             "ra_deg": 127.45009240230564
           },
-          "id": "cns5:2093"
+          "id": "cns5:2093",
+          "visual": {
+            "provenance": {
+              "radius": {
+                "catalogue": "TESS Input Catalog",
+                "record_id": "GJ 1111",
+                "reference": "Stassun et al. 2019",
+                "release": "8.2"
+              },
+              "spectral_class": {
+                "catalogue": "SIMBAD",
+                "record_id": "DX Cnc"
+              }
+            },
+            "radius_solar": 0.12,
+            "spectral_class": "M6.5V"
+          }
         }
       ],
       "distance_from_sol_pc": 3.580897139988,
@@ -944,7 +1359,23 @@
             "position_bibcode": "2020yCat.1350....0G",
             "ra_deg": 330.8724078795965
           },
-          "id": "cns5:5449"
+          "id": "cns5:5449",
+          "visual": {
+            "provenance": {
+              "radius": {
+                "catalogue": "TESS Input Catalog",
+                "record_id": "HIP 108870",
+                "reference": "Stassun et al. 2019",
+                "release": "8.2"
+              },
+              "spectral_class": {
+                "catalogue": "SIMBAD",
+                "record_id": "eps Ind A"
+              }
+            },
+            "radius_solar": 0.7,
+            "spectral_class": "K4.5V"
+          }
         },
         {
           "cns5_id": 5452,
@@ -962,7 +1393,22 @@
             "position_bibcode": "2020yCat.1350....0G",
             "ra_deg": 331.07645259656397
           },
-          "id": "cns5:5452"
+          "id": "cns5:5452",
+          "visual": {
+            "provenance": {
+              "radius": {
+                "catalogue": "Nearby-star literature review",
+                "record_id": "Epsilon Indi Ba",
+                "reference": "King et al. 2010"
+              },
+              "spectral_class": {
+                "catalogue": "SIMBAD",
+                "record_id": "eps Ind B"
+              }
+            },
+            "radius_solar": 0.1,
+            "spectral_class": "T1V"
+          }
         }
       ],
       "distance_from_sol_pc": 3.638438981826,
@@ -1007,7 +1453,23 @@
             "position_bibcode": "2020yCat.1350....0G",
             "ra_deg": 26.009055057160104
           },
-          "id": "cns5:448"
+          "id": "cns5:448",
+          "visual": {
+            "provenance": {
+              "radius": {
+                "catalogue": "TESS Input Catalog",
+                "record_id": "HIP 8102",
+                "reference": "Stassun et al. 2019",
+                "release": "8.2"
+              },
+              "spectral_class": {
+                "catalogue": "SIMBAD",
+                "record_id": "tau Cet"
+              }
+            },
+            "radius_solar": 0.79,
+            "spectral_class": "G8V"
+          }
         }
       ],
       "distance_from_sol_pc": 3.650168021574,
@@ -1052,7 +1514,23 @@
             "position_bibcode": "2020yCat.1350....0G",
             "ra_deg": 54.00339387736301
           },
-          "id": "cns5:919"
+          "id": "cns5:919",
+          "visual": {
+            "provenance": {
+              "radius": {
+                "catalogue": "TESS Input Catalog",
+                "record_id": "GJ 1061",
+                "reference": "Stassun et al. 2019",
+                "release": "8.2"
+              },
+              "spectral_class": {
+                "catalogue": "SIMBAD",
+                "record_id": "GJ 1061"
+              }
+            },
+            "radius_solar": 0.15,
+            "spectral_class": "M5.5V"
+          }
         }
       ],
       "distance_from_sol_pc": 3.673919094222,

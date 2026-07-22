@@ -6,6 +6,12 @@ import type { NearbySystemsData } from "./types";
 const finite = z.number().refine(Number.isFinite, "must be finite");
 const position = z.object({ xg: finite, yg: finite, zg: finite });
 const renderPosition = z.object({ x: finite, y: finite, z: finite });
+const propertyProvenance = z.object({
+  catalogue: z.string().min(1),
+  release: z.string().optional(),
+  record_id: z.string().min(1),
+  reference: z.string().optional(),
+});
 const component = z.object({
   id: z.string().min(1),
   cns5_id: z.number().int(),
@@ -22,6 +28,14 @@ const component = z.object({
     parallax_error_mas: finite.nullable(),
     position_bibcode: z.string().nullable(),
     parallax_bibcode: z.string().nullable(),
+  }),
+  visual: z.object({
+    spectral_class: z.string().min(1),
+    radius_solar: finite.positive(),
+    provenance: z.object({
+      spectral_class: propertyProvenance,
+      radius: propertyProvenance,
+    }),
   }),
 });
 

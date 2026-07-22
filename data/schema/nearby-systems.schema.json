@@ -45,7 +45,46 @@
               "z": { "type": "number" }
             }
           },
-          "components": { "type": "array" }
+          "components": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "visual"],
+              "properties": {
+                "id": { "type": "string", "minLength": 1 },
+                "visual": {
+                  "type": "object",
+                  "required": ["spectral_class", "radius_solar", "provenance"],
+                  "properties": {
+                    "spectral_class": { "type": "string", "minLength": 1 },
+                    "radius_solar": { "type": "number", "exclusiveMinimum": 0 },
+                    "provenance": {
+                      "type": "object",
+                      "required": ["spectral_class", "radius"],
+                      "properties": {
+                        "spectral_class": {
+                          "type": "object",
+                          "required": ["catalogue", "record_id"],
+                          "properties": {
+                            "catalogue": { "type": "string", "minLength": 1 },
+                            "record_id": { "type": "string", "minLength": 1 }
+                          }
+                        },
+                        "radius": {
+                          "type": "object",
+                          "required": ["catalogue", "record_id"],
+                          "properties": {
+                            "catalogue": { "type": "string", "minLength": 1 },
+                            "record_id": { "type": "string", "minLength": 1 }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }
