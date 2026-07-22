@@ -371,12 +371,13 @@ Spoiler safety has two independent dimensions:
 2. Story time determines the in-universe moment represented by the selected chapter.
 
 `furthestChapterRead` is a guarded reader-progress ceiling. `viewChapter` selects a
-chapter at or before that ceiling. Reader order first decides which facts the reader
-may know; story time then decides which of those facts form the represented world
-state at `viewChapter.date`. A future story-state change must not alter an earlier
-in-universe view merely because its chapter was read first. Conversely, a fact first
-revealed later must not alter an earlier reader-knowledge view, even if it was already
-true in-universe. ADR-0002 defines this two-stage projection and its temporal
+chapter at or before that ceiling. Both are absent before the reader selects a chapter,
+when the zero-state baseline is rendered. Reader order first decides which facts the
+reader may know; story time then decides which of those facts form the represented
+world state at `viewChapter.date`. A future story-state change must not alter an
+earlier in-universe view merely because its chapter was read first. Conversely, a fact
+first revealed later must not alter an earlier reader-knowledge view, even if it was
+already true in-universe. ADR-0002 defines this two-stage projection and its temporal
 validation rules.
 
 All later views—map, search, characters, systems, paths, chronicles, and genealogy—use

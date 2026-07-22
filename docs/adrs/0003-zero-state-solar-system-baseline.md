@@ -38,7 +38,7 @@ megastructure.
 - Chapter files remain flat and additive: later chapters introduce locations beneath
   existing parents through `parent_location_id` and patch seeded locations through the
   normal update rules. Seeded location IDs cannot be introduced again by a chapter.
-- Generated registries and selected-state projections remain the only editable runtime
+- Generated registries and selected-state projections remain non-editable runtime
   outputs. The baseline and chapter source files are both validated authored inputs.
 
 ## Consequences

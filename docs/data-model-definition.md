@@ -447,16 +447,19 @@ as `picture_id`.
 
 ## Reader progress and projection
 
-The application keeps two separate global values:
+The application keeps two optional global values:
 
 - `furthestChapterRead`: a guarded progress value. Advancing it requires an explicit
-  UX action so a reader cannot accidentally reveal later material.
+  UX action so a reader cannot accidentally reveal later material. It is absent before
+  the reader marks any chapter as read.
 - `viewChapter`: the freely selected chapter from the chapter list. It may equal or
-  precede `furthestChapterRead`, but it must never exceed it.
+  precede `furthestChapterRead`, but it must never exceed it. It is absent before a
+  chapter is selected.
 
 Projection begins with the zero-state source. Before a reader selects a chapter, the
-generated world is that baseline alone. A chapter view applies the following two
-independent stages to the baseline:
+generated world is that baseline alone; neither optional progress value is required for
+that result. A chapter view applies the following two independent stages to the
+baseline:
 
 1. Reader order is the spoiler gate. Select only chapter records at or before
    `viewChapter`, comparing the numeric components of `chapter`. Those records are
@@ -610,7 +613,8 @@ update object has `entity_id` plus one or more ordinary properties of that entit
 - `null` clears the prior value. It does not mean “unknown”; a field that supports
   unknown must define an explicit type-specific value.
 - Semantic validation resolves `entity_id`, verifies that the entity was already
-  introduced, and permits only properties defined by that entity type's schema.
+  seeded or introduced, and permits only properties defined by that entity type's
+  schema.
 
 Unless an entity schema explicitly records an exception, this is the default update
 policy for every introduced narrative entity: its `id` is immutable, every other
@@ -666,9 +670,9 @@ The `character_update` schema permits every character field except `id`. `name` 
 remain a nonempty string; every optional field may be supplied with `null` to clear its
 prior value. A list supplied for `aliases` replaces the complete previous list. A
 character introduction or update must not use a reference until its target entity has
-been introduced. When both `death_date` and the referenced event's own `date` are
-present, their canonical values must be identical. No ordering comparison is imposed
-between `birth_date` and `death_date`.
+been seeded or introduced. When both `death_date` and the referenced event's own
+`date` are present, their canonical values must be identical. No ordering comparison is
+imposed between `birth_date` and `death_date`.
 
 `current_state` does not establish a character location. A character location is only
 confirmed by an appearance with an effective location. From reader-visible appearances
@@ -690,12 +694,12 @@ canonical `species:` ID and a nonempty reader-visible `name`.
 | `name` | nonempty string | Reader-visible display name. |
 | `description` | optional nonempty string | Original reader-visible summary; it must not copy book text. |
 | `picture_id` | optional `asset_id` | Chapter-controlled assignment of a manually curated image asset. |
-| `homeworld_id` | optional `location_id` | Reference to an introduced, non-transit narrative location; an explicitly unmapped location remains valid. |
+| `homeworld_id` | optional `location_id` | Reference to a seeded or introduced, non-transit narrative location; an explicitly unmapped location remains valid. |
 
 The `species_update` schema permits every species field except `id`. `name` must remain
 a nonempty string; `description`, `picture_id`, and `homeworld_id` may be supplied with
 `null` to clear their prior values. A supplied homeworld reference must resolve to an
-already introduced non-transit location.
+already seeded or introduced non-transit location.
 
 ### Event
 
@@ -706,7 +710,7 @@ canonical `event:` ID and a nonempty reader-visible `name`.
 | --- | --- | --- |
 | `id` | `event_id` | Immutable stable identifier. |
 | `name` | nonempty string | Reader-visible event name. |
-| `location_id` | optional `location_id` | Reference to any introduced narrative location, including transit or explicitly unmapped locations. |
+| `location_id` | optional `location_id` | Reference to any seeded or introduced narrative location, including transit or explicitly unmapped locations. |
 | `picture_id` | optional `asset_id` | Chapter-controlled assignment of a manually curated image asset. |
 | `date` | optional `date` | Story-time occurrence date; when absent, the event remains chronologically unplaced. |
 | `description` | optional nonempty string | Original reader-visible summary; it must not copy book text. |
@@ -715,7 +719,7 @@ canonical `event:` ID and a nonempty reader-visible `name`.
 The `event_update` schema permits every event field except `id`; optional fields may be
 supplied with `null` to clear their prior values. A supplied list replaces the complete
 previous `participant_ids` list. Each supplied location, asset, or character reference
-must resolve to an already introduced entity of the matching type.
+must resolve to an already seeded or introduced entity of the matching type.
 
 An event's effective occurrence date is its currently projected `date`. If that value
 is absent, the event remains reader-visible but has no precise story-time placement. A
@@ -763,7 +767,7 @@ layer. It rejects at least:
 - an invalid character ID, name, aliases list, or typed species, asset, or death-event
   reference; a character death date that conflicts with its referenced event date;
 - an invalid species ID, name, description, picture, or homeworld reference, including
-  a homeworld that is transit or has not been introduced;
+  a homeworld that is transit or has not been seeded or introduced;
 - an invalid event ID, name, description, picture, date, location, or participant
   reference; duplicate participant IDs; or a participant list that is not a complete
   replacement when updated;
