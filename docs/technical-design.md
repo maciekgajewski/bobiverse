@@ -26,8 +26,8 @@ book-derived content is introduced. The same pipeline can later expand the map t
 - Support later chapter timelines, character histories, travel paths, system
   chronicles, and Bob genealogy.
 - Enforce a reader-position spoiler boundary consistently across all later tools.
-- Remain usable from current desktop browsers, with a responsive reduced layout for
-  phones and tablets.
+- Provide first-class exploration, lookup, timeline navigation, and detail reading
+  on phones and tablets through the same responsive React application as desktop.
 
 ## 3. Non-goals for the initial delivery
 
@@ -327,6 +327,13 @@ Measurement actions, including Clear endpoints, use the same first-class button
 treatment and sizing.
 
 ## 10. Responsive and accessible behavior
+
+Desktop provides the richest layout and may present the browser, map, details, and
+timeline simultaneously. Mobile is a first-class interface for exploration, lookup,
+timeline navigation, and reading details, but must not attempt to present all of
+those surfaces at once. Layout composition changes by viewport: it selects an
+appropriate focused arrangement of the same domain state and UI components rather
+than creating a separate mobile application or a parallel feature stack.
 
 Phase 1 is desktop-first and targets current Chrome, Firefox, Safari, and Edge.
 Automated browser projects cover the Chromium, Firefox, and WebKit engines; manual
