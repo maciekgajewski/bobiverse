@@ -94,6 +94,33 @@ is normative for the scalar types below.
       "pattern": "^location:[a-z0-9][a-z0-9-]*$",
       "description": "Globally unique reference to a location entity."
     },
+    "location_kind": {
+      "enum": [
+        "star_system",
+        "star",
+        "planet",
+        "dwarf_planet",
+        "moon",
+        "asteroid_belt",
+        "kuiper_belt",
+        "oort_cloud",
+        "locale",
+        "megastructure",
+        "transit"
+      ]
+    },
+    "parent_relation": {
+      "enum": ["member_of_system", "orbits", "located_on", "contained_in"]
+    },
+    "astronomy_object_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Canonical ID of a reviewed astronomy-system record."
+    },
+    "unmapped_map_status": {
+      "const": "unmapped",
+      "description": "Explicitly states that no map placement is known."
+    },
     "appearance": {
       "type": "object",
       "required": ["character_id", "role"],
@@ -304,25 +331,11 @@ is normative for the scalar types below.
       "properties": {
         "id": { "$ref": "#/$defs/location_id" },
         "name": { "type": "string", "minLength": 1 },
-        "kind": {
-          "enum": [
-            "star_system",
-            "star",
-            "planet",
-            "dwarf_planet",
-            "moon",
-            "asteroid_belt",
-            "kuiper_belt",
-            "oort_cloud",
-            "locale"
-          ]
-        },
+        "kind": { "$ref": "#/$defs/location_kind" },
         "description": { "$ref": "#/$defs/description" },
         "state": { "$ref": "#/$defs/state" },
-        "astronomy_object_id": { "type": "string", "minLength": 1 },
-        "parent_relation": {
-          "enum": ["member_of_system", "orbits", "located_on"]
-        },
+        "astronomy_object_id": { "$ref": "#/$defs/astronomy_object_id" },
+        "parent_relation": { "$ref": "#/$defs/parent_relation" },
         "children": {
           "type": "array",
           "minItems": 1,
@@ -520,13 +533,196 @@ is normative for the scalar types below.
     "zero_state_solar_system": {
       "$ref": "#/$defs/baseline_location"
     },
+    "location": {
+      "type": "object",
+      "required": ["id", "name", "kind"],
+      "properties": {
+        "id": { "$ref": "#/$defs/location_id" },
+        "name": { "type": "string", "minLength": 1 },
+        "kind": { "$ref": "#/$defs/location_kind" },
+        "description": { "$ref": "#/$defs/description" },
+        "state": { "$ref": "#/$defs/state" },
+        "map_status": { "$ref": "#/$defs/unmapped_map_status" },
+        "parent_location_id": { "$ref": "#/$defs/location_id" },
+        "parent_relation": { "$ref": "#/$defs/parent_relation" },
+        "astronomy_object_id": { "$ref": "#/$defs/astronomy_object_id" },
+        "origin_location_id": { "$ref": "#/$defs/location_id" },
+        "destination_location_id": { "$ref": "#/$defs/location_id" }
+      },
+      "allOf": [
+        {
+          "if": { "required": ["parent_location_id"] },
+          "then": { "required": ["parent_relation"] }
+        },
+        {
+          "if": { "required": ["parent_relation"] },
+          "then": { "required": ["parent_location_id"] }
+        },
+        {
+          "if": { "required": ["map_status"] },
+          "then": { "not": { "required": ["astronomy_object_id"] } }
+        },
+        {
+          "if": {
+            "required": ["kind"],
+            "properties": { "kind": { "const": "star_system" } }
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                { "required": ["parent_location_id"] },
+                { "required": ["parent_relation"] },
+                { "required": ["origin_location_id"] },
+                { "required": ["destination_location_id"] }
+              ]
+            },
+            "if": { "required": ["map_status"] },
+            "then": { "not": { "required": ["astronomy_object_id"] } },
+            "else": { "required": ["astronomy_object_id"] }
+          }
+        },
+        {
+          "if": {
+            "required": ["kind"],
+            "properties": { "kind": { "const": "transit" } }
+          },
+          "then": {
+            "required": ["map_status", "origin_location_id", "destination_location_id"],
+            "not": {
+              "anyOf": [
+                { "required": ["parent_location_id"] },
+                { "required": ["parent_relation"] },
+                { "required": ["astronomy_object_id"] }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "required": ["kind"],
+            "properties": {
+              "kind": {
+                "not": { "enum": ["star_system", "transit"] }
+              }
+            }
+          },
+          "then": {
+            "anyOf": [
+              { "required": ["map_status"] },
+              { "required": ["parent_location_id", "parent_relation"] }
+            ],
+            "not": {
+              "anyOf": [
+                { "required": ["astronomy_object_id"] },
+                { "required": ["origin_location_id"] },
+                { "required": ["destination_location_id"] }
+              ]
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "location_update": {
+      "type": "object",
+      "required": ["entity_id"],
+      "properties": {
+        "entity_id": { "$ref": "#/$defs/location_id" },
+        "name": { "type": "string", "minLength": 1 },
+        "kind": { "$ref": "#/$defs/location_kind" },
+        "description": {
+          "anyOf": [
+            { "$ref": "#/$defs/description" },
+            { "type": "null" }
+          ]
+        },
+        "state": {
+          "anyOf": [
+            { "$ref": "#/$defs/state" },
+            { "type": "null" }
+          ]
+        },
+        "map_status": {
+          "anyOf": [
+            { "$ref": "#/$defs/unmapped_map_status" },
+            { "type": "null" }
+          ]
+        },
+        "parent_location_id": {
+          "anyOf": [
+            { "$ref": "#/$defs/location_id" },
+            { "type": "null" }
+          ]
+        },
+        "parent_relation": {
+          "anyOf": [
+            { "$ref": "#/$defs/parent_relation" },
+            { "type": "null" }
+          ]
+        },
+        "astronomy_object_id": {
+          "anyOf": [
+            { "$ref": "#/$defs/astronomy_object_id" },
+            { "type": "null" }
+          ]
+        },
+        "origin_location_id": {
+          "anyOf": [
+            { "$ref": "#/$defs/location_id" },
+            { "type": "null" }
+          ]
+        },
+        "destination_location_id": {
+          "anyOf": [
+            { "$ref": "#/$defs/location_id" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "anyOf": [
+        { "required": ["name"] },
+        { "required": ["kind"] },
+        { "required": ["description"] },
+        { "required": ["state"] },
+        { "required": ["map_status"] },
+        { "required": ["parent_location_id"] },
+        { "required": ["parent_relation"] },
+        { "required": ["astronomy_object_id"] },
+        { "required": ["origin_location_id"] },
+        { "required": ["destination_location_id"] }
+      ],
+      "additionalProperties": false
+    },
+    "introduced_entity": {
+      "oneOf": [
+        { "$ref": "#/$defs/character" },
+        { "$ref": "#/$defs/species" },
+        { "$ref": "#/$defs/event" },
+        { "$ref": "#/$defs/location" }
+      ]
+    },
+    "entity_update": {
+      "oneOf": [
+        { "$ref": "#/$defs/character_update" },
+        { "$ref": "#/$defs/species_update" },
+        { "$ref": "#/$defs/event_update" },
+        { "$ref": "#/$defs/location_update" }
+      ]
+    },
     "chapter_source": {
       "type": "object",
-      "required": ["chapter", "date", "appearances"],
+      "required": ["chapter", "title", "summary", "date", "location_id"],
       "properties": {
         "chapter": { "$ref": "#/$defs/chapter" },
+        "title": { "type": "string", "minLength": 1 },
+        "summary": { "$ref": "#/$defs/description" },
         "date": { "$ref": "#/$defs/date" },
         "location_id": { "$ref": "#/$defs/location_id" },
+        "introducing": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/introduced_entity" }
+        },
         "appearances": {
           "type": "array",
           "minItems": 1,
@@ -537,8 +733,14 @@ is normative for the scalar types below.
             "properties": { "role": { "const": "lead" } }
           },
           "minContains": 1
+        },
+        "updates": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/entity_update" }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "books_source": {
       "type": "object",
@@ -674,8 +876,8 @@ reader-order model explicitly while retaining `date` for in-universe chronology.
 
 ## Record-schema usage
 
-A later chapter record will define its own schema and reference these scalars;
-this is illustrative only, not a complete chapter schema:
+A chapter source record uses these scalar references as part of its complete contract;
+this compact fragment illustrates the shared references:
 
 ```json
 {
@@ -789,10 +991,10 @@ with `kind: "star_system"` and `astronomy_object_id: "sol"`. It has exactly one 
 `astronomy_object_id`.
 
 Every baseline location requires a canonical `location:` ID, a nonempty `name`, and
-one of these closed `kind` values: `star_system`, `star`, `planet`, `dwarf_planet`,
-`moon`, `asteroid_belt`, `kuiper_belt`, `oort_cloud`, or `locale`. A nested location
-also requires `parent_relation`. Leaves omit `children`; when supplied, `children` is
-nonempty. The permitted containment pairs are:
+the shared closed `location_kind` vocabulary used by later chapter locations. The
+Solar-System completeness check limits this actual seed to its agreed subset. A nested
+location also requires `parent_relation`. Leaves omit `children`; when supplied,
+`children` is nonempty. The baseline's permitted containment pairs are:
 
 | Parent | Child | Required `parent_relation` |
 | --- | --- | --- |
@@ -873,38 +1075,45 @@ static runtime uses it to load the individual chapter source files needed for a 
 it never relies on directory enumeration.
 
 Every chapter source record validates against the shared Draft 2020-12 schema contract.
-It contains the required `chapter` and story `date` scalars, a nonempty `appearances`
-array with at least one `role: "lead"` entry, and zero or more `introducing` and
-`updates` sections. A root
-`location_id` is optional and supplies the default location for appearances in that
-chapter. The shared `chapter_source` fragment enforces the required chapter identity,
-story date, nonempty appearances, and lead requirement; the complete chapter schema
-adds the typed `introducing` and `updates` contracts. A chapter may update a baseline
-entity but must not introduce an ID already supplied by the baseline.
+It requires the canonical `chapter` reference, nonempty reader-visible `title`,
+original plain-text `summary`, story `date`, and a default `location_id`. The default
+location may resolve to the baseline, an earlier chapter, or a location introduced in
+the same chapter. It must never be an invented coordinate or an implicit unknown.
+
+`introducing`, `appearances`, and `updates` are optional. An absent array means that
+the chapter supplies none of that category; an authored array is always nonempty. When
+`appearances` is present, it contains at least one `role: "lead"` entry. There is no
+top-level `events` array: an event is introduced as an ordinary item or amended through
+an ordinary update.
+
+`introducing` is one ordered heterogeneous array. Each object is selected by its
+type-prefixed ID and validates as a character, species, event, or location. An entry
+may reference a seeded entity or an earlier item in the same array, never a later item;
+this makes references deterministic and forbids introduction cycles. A chapter may not
+introduce an ID already supplied by the baseline or an earlier chapter.
 
 ```json
 {
   "chapter": "1.2",
+  "title": "A new base",
+  "summary": "The crew reaches a newly established research base on Earth.",
   "date": "2133.77",
   "location_id": "location:earth",
-  "introducing": {
-    "locales": [
-      {
-        "id": "location:earth-research-base",
-        "kind": "locale",
-        "name": "Research Base",
-        "parent_location_id": "location:earth"
-      }
-    ],
-    "events": [
-      {
-        "id": "event:arrival-at-base",
-        "name": "Arrival at Base",
-        "location_id": "location:earth-research-base",
-        "participant_ids": ["character:alex"]
-      }
-    ]
-  },
+  "introducing": [
+    {
+      "id": "location:earth-research-base",
+      "kind": "locale",
+      "name": "Research Base",
+      "parent_location_id": "location:earth",
+      "parent_relation": "located_on"
+    },
+    {
+      "id": "event:arrival-at-base",
+      "name": "Arrival at Base",
+      "location_id": "location:earth-research-base",
+      "participant_ids": ["character:alex"]
+    }
+  ],
   "updates": [
     {
       "entity_id": "character:alex",
@@ -923,16 +1132,12 @@ entity but must not introduce an ID already supplied by the baseline.
 }
 ```
 
-The keys in `introducing` are typed plural collections, beginning with
-`characters`, `star_systems`, `planets`, `moons`, `locales`, `megastructures`,
-`species`, and `events`. New entity types add their own schema and collection key;
-they do not weaken an existing type schema. Every introduced record must have a
-globally unique, type-prefixed ID and must produce its complete minimum valid state at
-the end of its introducing chapter. A seeded entity is present before chapter 1; a
-non-seeded entity is introduced exactly once and remains part of reader-visible
-knowledge in every later view. Their state-bearing properties contribute to temporal
-world state only when their effective story dates are at or before the selected chapter
-date.
+Every introduced record must have a globally unique, type-prefixed ID and must produce
+its complete minimum valid state at the end of its introducing chapter. A seeded entity
+is present before chapter 1; a non-seeded entity is introduced exactly once and remains
+part of reader-visible knowledge in every later view. Their state-bearing properties
+contribute to temporal world state only when their effective story dates are at or
+before the selected chapter date.
 
 ### Updates
 
@@ -945,9 +1150,9 @@ update object has `entity_id` plus one or more ordinary properties of that entit
 - A supplied list replaces the complete prior list.
 - `null` clears the prior value. It does not mean “unknown”; a field that supports
   unknown must define an explicit type-specific value.
-- Semantic validation resolves `entity_id`, verifies that the entity was already
-  seeded or introduced, and permits only properties defined by that entity type's
-  schema.
+- Semantic validation resolves `entity_id`, verifies that the entity was seeded or was
+  introduced by an earlier chapter (never the current chapter), and permits only
+  properties defined by that entity type's schema.
 
 Unless an entity schema explicitly records an exception, this is the default update
 policy for every introduced narrative entity: its `id` is immutable, every other
@@ -956,9 +1161,9 @@ may be cleared with `null`.
 
 ### Appearances and events
 
-An appearance records `character_id`, `role`, and an optional location override.
-`role` is either `lead` or `other`; every chapter requires at least one `lead`, and
-multiple `lead` entries support a moot. If its location is absent, the appearance
+An appearance records `character_id`, `role`, and an optional location override. An
+appearance array, when present, requires at least one `lead`; multiple `lead` entries
+support a moot. If its location is absent, the appearance
 inherits the chapter's `location_id`. If neither is available, it must reference an
 explicit unmapped location entity rather than inventing or silently omitting a place.
 
@@ -968,8 +1173,9 @@ event does not repeat that value.
 
 ## Entity and location schemas
 
-Each entity type has a dedicated schema. The character contract is ratified below. The
-other type-specific fields remain to be defined before their records are authored.
+Each entity type has a dedicated schema. The ratified contracts below cover characters,
+species, events, assets, and locations; later entity types must add their own contract
+before records of that type are authored.
 
 | Record | Required initial contract | Derived rather than authored |
 | --- | --- | --- |
@@ -995,6 +1201,44 @@ System, while later chapter location schemas remain able to represent fictional 
 megastructures, transit roots, and explicitly unmapped locations. The generator
 derives `parent_location_id` for every nested baseline child; it does not persist or
 ask authors to duplicate that link.
+
+### Chapter-introduced locations
+
+All chapter locations use the same shared `location_kind` vocabulary as the baseline:
+`star_system`, `star`, `planet`, `dwarf_planet`, `moon`, `asteroid_belt`,
+`kuiper_belt`, `oort_cloud`, `locale`, `megastructure`, and `transit`. Each requires
+an `id`, `name`, and `kind`; optional `description` and `state` use the shared plain
+text types.
+
+`map_status` is omitted for a mapped location and set only to `"unmapped"` when no map
+placement is known. A mapped `star_system` is a root and requires an
+`astronomy_object_id`; no other location carries that direct reference, because its
+mapping context is inherited from its system ancestor. An unmapped location has no
+astronomy reference. It may be a root or a child, but every descendant below an
+unmapped location must explicitly be `"unmapped"` as well.
+
+Every non-root location requires both `parent_location_id` and `parent_relation`.
+Roots are `star_system`, `transit`, and explicitly unmapped locations. The shared
+semantic parent table is:
+
+| Parent kind | Child kind | Required `parent_relation` |
+| --- | --- | --- |
+| `star_system` | `star` | `member_of_system` |
+| `star` | `planet`, `dwarf_planet`, `asteroid_belt`, `kuiper_belt`, `oort_cloud` | `orbits` |
+| `star` | `megastructure` | `orbits` or `located_on` |
+| `planet`, `dwarf_planet` | `moon` | `orbits` |
+| `planet`, `dwarf_planet`, `moon`, `asteroid_belt`, `kuiper_belt`, `oort_cloud` | `megastructure` | `orbits` or `located_on` |
+| `planet`, `dwarf_planet`, `moon` | `locale` | `located_on` |
+| `megastructure` | `locale`, `megastructure` | `contained_in` |
+| `locale` | `locale` | `contained_in` |
+
+`transit` is always an unmapped root. It requires `origin_location_id` and
+`destination_location_id`, each resolving to a distinct non-transit location; it has
+neither a containment parent nor an astronomy reference. The second validation layer
+checks all table pairs, parent-tree acyclicity, mapped-system ancestry, unmapped
+propagation, and the final projected location after a location update. A
+`location_update` permits every location property except `id`; after applying it, the
+result must still satisfy these rules.
 
 ### Asset
 
@@ -1083,24 +1327,17 @@ later reader-visible update may therefore reveal, correct, or clear an event dat
 Event visibility remains governed by reader order; the occurrence date places an
 already visible event in story time and never grants spoiler visibility.
 
-Locations form a one-parent tree. A root has no `parent_location_id`; every non-root
-location has exactly one. `sublocations` are generated by resolving the reverse parent
-links, never authored as a second list. The zero-state source's nested authoring form
-is flattened into those links before this derivation. This supports structures such as
-star system → planet → moon → locale, star system → planet → locale, and star system
-→ megastructure without imposing a fixed depth.
+Locations form a one-parent tree. `sublocations` are generated by resolving reverse
+parent links, never authored as a second list. The zero-state source's nested authoring
+form is flattened into those links before this derivation; chapter locations author the
+same hierarchy directly through `parent_location_id` and `parent_relation`.
 
-A transit location is a root with `origin_location_id` and `destination_location_id`.
-It has no containment parent because a journey is between places. An unmapped or
-ambiguous location is also valid; it has an explicit unmapped kind or state and no
-invented astronomy coordinate.
-
-Any narrative location may contain an optional `astronomy_object_id`. Mapped
-parent-child locations must agree with the astronomy source's ancestry whenever both
-ends have astronomy references. The generator joins stellar astronomy data with the
-zero-state and visible narrative location trees to produce the renderer's system
-description. The zero-state and chapter sources must not copy physical components,
-positions, sizes, colours, or other astronomy render facts.
+Only a mapped `star_system` references a reviewed astronomy-system ID. The generator
+joins that system context with descendant narrative locations; it must reject an
+incompatible mapped ancestry and must never invent a coordinate. An explicitly
+unmapped location remains valid but cannot receive a map placement. The zero-state and
+chapter sources must not copy physical components, positions, sizes, colours, or other
+astronomy render facts.
 
 ## Schema and semantic validation
 
@@ -1121,11 +1358,13 @@ layer. It rejects at least:
   sources, a child array whose orbital subsequence is not inner-to-outer, more than
   four moons under one planet, an incomplete or misordered required Solar inventory,
   or a chapter introduction that repeats a seeded ID;
-- duplicate entity introductions or references to entities not yet introduced or
-  seeded;
+- duplicate entity introductions; an introduction reference that does not resolve to a
+  seeded entity or an earlier item in the same `introducing` array; or a chapter default
+  location that is neither previously available nor introduced in that chapter;
 - an introduction that lacks the complete minimum state for its type;
-- more than one update object for an entity in a chapter, or an update property not
-  allowed by that entity type;
+- more than one update object for an entity in a chapter; an update targeting an entity
+  introduced by the same chapter; or an update property not allowed by that entity
+  type;
 - invalid update `null` use, invalid list replacement values, or invalid references;
 - an invalid character ID, name, aliases list, or typed species, asset, or death-event
   reference; a character death date that conflicts with its referenced event date;
@@ -1134,10 +1373,13 @@ layer. It rejects at least:
 - an invalid event ID, name, description, picture, date, location, or participant
   reference; duplicate participant IDs; or a participant list that is not a complete
   replacement when updated;
-- a chapter with no appearances or no `lead` appearance;
+- a chapter missing its required title, summary, date, or default location; an empty
+  authored optional array; or an appearance array with no `lead` appearance;
 - competing state writes that have equal or incomparable effective story dates, or a
   year-only selected chapter date that cannot determine a needed indexed transition;
-- a broken location parent tree, invalid transit endpoints, or incompatible mapped
-  astronomy ancestry;
+- a broken location parent tree; a parent/child/relation combination outside the shared
+  location table; invalid transit endpoints; an unmapped descendant without explicit
+  status; a forbidden or missing mapped-system astronomy reference; or incompatible
+  mapped astronomy ancestry;
 - an appearance without an effective explicit location; and
 - a generated record or snapshot presented as editable source data.

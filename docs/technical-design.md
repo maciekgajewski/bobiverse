@@ -393,21 +393,25 @@ uses nested JSON to seed this tree and its stable local child order; later chapt
 records use `parent_location_id` to add locations beneath existing parents. The
 generator flattens the baseline authoring tree before deriving runtime child lists. Its
 fixed root is the mapped `location:solar-system`, with one `location:sol` star child.
-Nested baseline locations declare whether they are members of the system, orbit their
-parent, or are located on it; only the authored order of orbital siblings asserts
-inner-to-outer order. Leaves omit `children`, and a planet has at most four curated
-moon children. Transit locations are roots with explicit origin and destination
-references. Unknown or ambiguous book locations remain valid, explicitly unmapped
-narrative entities; they may appear in timelines and lists but not at invented map
-coordinates.
+Baseline and chapter locations share one closed kind vocabulary and explicit parent
+relations. Nested baseline locations declare whether they are members of the system,
+orbit their parent, or are located on it; only the authored order of orbital siblings
+asserts inner-to-outer order. Leaves omit `children`, and a planet has at most four
+curated moon children. Chapter locations author the same relation directly, with
+additional containment support for locales and megastructures. Transit locations are
+explicitly unmapped roots with origin and destination references. Unknown or ambiguous
+book locations remain valid only when explicitly unmapped; they may appear in timelines
+and lists but not at invented map coordinates.
 
 Astronomy remains authoritative for stellar and interstellar physical positions,
 components, sizes, colours, and measured render facts. The zero-state source owns the
 known Solar-System location topology and a deliberately non-metric local render order;
 it must not contain coordinates, radii, distances, colours, or other measured astronomy
-facts. A location may reference an astronomy node; mapped parent-child locations must
-agree with astronomy ancestry. The visual layer receives a generated join of stellar
-astronomy data, the zero-state location tree, and selected narrative patches. Images
+facts. A mapped narrative star system may reference an astronomy node; mapped
+parent-child locations must agree with astronomy ancestry. Only mapped narrative star
+systems carry that direct reference; descendants inherit the system context. The visual
+layer receives a generated join of stellar astronomy data, the zero-state location
+tree, and selected narrative patches. Images
 are manually curated assets, but an entity's image assignment is chapter-controlled
 narrative state. The zero-state source contains no assets; its optional `description`
 and `state` values are original plain text, not measured astronomy data or rich text.

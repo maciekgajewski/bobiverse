@@ -54,14 +54,18 @@ runtime behavior.
   date value a spoiler-visibility key.
 - The document defines guarded `furthestChapterRead`, selectable `viewChapter`, and
   their visibility constraint, then applies story time independently to project state.
-- Every chapter schema requires one or more appearances and at least one `lead`.
+- Every chapter requires canonical `chapter`, title, original plain-text summary, story
+  date, and default location. Its optional `introducing`, `appearances`, and `updates`
+  arrays are omitted when empty and nonempty when present; an appearance array contains
+  at least one `lead`.
 - Temporal validation rejects state writes whose effective dates cannot be ordered
   without inventing story chronology.
 - The zero-state source owns the pre-book Solar-System location tree; chapters own
   later introductions and patches. Entity registries and all visible state are
   generated and explicitly prohibited from manual editing.
-- Locations have one optional parent link, derived children, explicit unmapped
-  locations, root transit locations, and optional validated astronomy-node links.
+- Baseline and chapter locations share one closed kind vocabulary. Chapter locations
+  have explicit parent relations, map-status and root rules, root transit locations,
+  inherited mapped-system context, and no invented coordinates.
 - The document distinguishes authored assets from their chapter-controlled picture
   assignments and prohibits copied astronomy render facts.
 - `data/narrative/assets.json` is an unversioned direct registry that may be empty;
@@ -79,6 +83,9 @@ runtime behavior.
 - Separate semantic validation checks the eight-planet-through-Neptune Solar
   inventory, ordered asteroid/Kuiper/Oort regions, and the maximum of four curated
   moons per planet.
+- `introducing` is a heterogeneous ordered array; entries may reference seeded
+  entities or earlier entries only. Updates target seeded or earlier-chapter entities,
+  never entities introduced by the current chapter.
 - Every present or future narrative `description` or `state` field is an optional,
   nonempty plain string, without Markdown or a controlled vocabulary.
 - Narrative source records and generated narrative outputs contain no `schema_version`
@@ -92,7 +99,7 @@ runtime behavior.
 ```bash
 git diff --check
 rg -n '"date"|"chapter"|story time|reader order' docs/data-model-definition.md
-rg -n 'effective story date|role: "lead"|minContains' \
+rg -n 'effective story date|role: "lead"|minContains|introducing|parent_relation|map_status' \
   docs/data-model-definition.md
 rg -n 'books.json|chapter-manifest|chapters/<book>/<chapter>.json' \
   docs/data-model-definition.md
