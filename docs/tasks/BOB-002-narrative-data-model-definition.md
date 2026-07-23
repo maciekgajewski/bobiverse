@@ -2,11 +2,11 @@
 
 Status: In progress
 Phase: 2 (design preparation)
-Last updated: 2026-07-22
+Last updated: 2026-07-23
 
 ## Objective
 
-Define the versioned, JSON-Schema-backed data model for the zero-state Solar-System
+Define the unversioned, JSON-Schema-backed data model for the zero-state Solar-System
 baseline and later Phase 2 narrative records, beginning with shared scalar types. This
 is documentation-only design work; it does not add book-derived data, a timeline, or
 runtime behavior.
@@ -18,6 +18,7 @@ runtime behavior.
 - `../adrs/0001-chapter-authored-narrative-state.md`
 - `../adrs/0002-reader-order-visibility-and-story-time-projection.md`
 - `../adrs/0003-zero-state-solar-system-baseline.md`
+- `../adrs/0004-unversioned-narrative-schema-contract.md`
 - `../../AGENTS.md`
 
 ## Scope
@@ -77,8 +78,10 @@ runtime behavior.
   moons per planet.
 - Every present or future narrative `description` or `state` field is an optional,
   nonempty plain string, without Markdown or a controlled vocabulary.
-- ADR-0003 and directly affected integrated design documents reflect the same
-  three-source authority boundary.
+- Narrative source records and generated narrative outputs contain no `schema_version`
+  field; the shared schema declares Draft 2020-12 and has one unversioned stable `$id`.
+- ADR-0003, ADR-0004, and directly affected integrated design documents reflect the
+  same three-source authority boundary and unversioned schema contract.
 - The task index reflects this documentation work without changing BOB-001.
 
 ## Validation commands
@@ -97,6 +100,8 @@ rg -n 'zero-state|chapter-authored|generated|one-parent|furthestChapterRead|stor
   docs/technical-design.md docs/data-model-definition.md
 awk 'BEGIN{inside=0; seen=0} /^```json$/{if(!inside && !seen){inside=1; seen=1; next}} /^```$/{if(inside){exit}} inside{print}' \
   docs/data-model-definition.md | jq empty
+! rg -n '"schema_version"[[:space:]]*:|required.*schema_version|versioned JSON Schema|narrative-data-model-[0-9]' \
+  docs/data-model-definition.md docs/technical-design.md docs/implementation-plan.md
 ```
 
 ## Completion boundary

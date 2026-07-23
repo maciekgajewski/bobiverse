@@ -1,7 +1,7 @@
 # Implementation plan
 
 Status: Initial approved roadmap  
-Last updated: 2026-07-22
+Last updated: 2026-07-23
 
 ## 1. How to use this plan
 
@@ -128,9 +128,9 @@ navigation.
 
 Planned work:
 
-- Define versioned schemas for the zero-state Solar-System source, authored chapter
-  records, introductions, updates, appearances, events, locations, assets, and
-  generated projections.
+- Define JSON Schema Draft 2020-12 contracts for the zero-state Solar-System source,
+  authored chapter records, introductions, updates, appearances, events, locations,
+  assets, and generated projections.
 - Store the zero-state Solar-System tree and each authored chapter in validated source
   JSON; derive the ordered chapter manifest from chapter files and the minimal
   `books.json` catalogue.

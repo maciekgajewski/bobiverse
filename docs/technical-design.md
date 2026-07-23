@@ -1,7 +1,7 @@
 # Bobiverse visual companion: technical design
 
 Status: Approved baseline  
-Last updated: 2026-07-22
+Last updated: 2026-07-23
 
 ## 1. Purpose
 
@@ -82,7 +82,7 @@ and synchronization boundaries.
 
 - Python for catalogue ingestion and reproducible data generation.
 - Astropy for coordinate frames, transformations, and units.
-- Versioned JSON Schema for astronomy and book-data validation.
+- JSON Schema Draft 2020-12 for astronomy and book-data validation.
 - Generated static JSON for browser consumption.
 
 The Python environment and source catalogue versions must be pinned when the importer
@@ -357,13 +357,15 @@ visual designs rather than an Admiral Ackbar or John Cleese likeness.
 ## 12. Narrative data and spoiler model
 
 Narrative features begin only after the astronomy vertical slice is accepted.
-Canonical authoring uses JSON validated by versioned JSON Schema. A zero-state
+Canonical authoring uses JSON validated by JSON Schema Draft 2020-12, without
+source-level schema-version fields or a compatibility contract. A zero-state
 Solar-System location source is the initial commit of the reader-visible world before
 any book chapter is selected. Chapter records then introduce book-specific entities and
 record ordered visible patches, appearances, and events. The stable entity registry and
 every selected-chapter state are deterministic generated projections, never manually
 edited snapshots. ADR-0001 establishes chapter-authored patches; ADR-0003 supersedes
-its sole-source boundary with the zero-state baseline.
+its sole-source boundary with the zero-state baseline; ADR-0004 establishes the
+unversioned narrative schema contract.
 
 Spoiler safety has two independent dimensions:
 

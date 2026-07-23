@@ -2,14 +2,14 @@
 
 Status: In progress
 Schema dialect: JSON Schema Draft 2020-12
-Last updated: 2026-07-22
+Last updated: 2026-07-23
 
 ## Purpose and scope
 
 This document defines the canonical JSON vocabulary for future narrative data.
-Every record type will have a versioned JSON Schema and will reuse the scalar
-definitions in this document rather than redefine their syntax. The first
-definitions are `date` and `chapter`.
+Every record type uses JSON Schema Draft 2020-12 and reuses the scalar definitions in
+this document rather than redefining their syntax. The first definitions are `date` and
+`chapter`.
 
 This document does not add book-derived records or source text. It records only
 the data contract needed before those records are authored. ADR-0001 is binding for
@@ -24,7 +24,7 @@ is normative for the scalar types below.
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://bobiverse.local/schema/narrative-data-model-0.1.0.json",
+  "$id": "https://bobiverse.local/schema/narrative-data-model.json",
   "$defs": {
     "date": {
       "type": "string",
@@ -504,9 +504,8 @@ is normative for the scalar types below.
     },
     "chapter_source": {
       "type": "object",
-      "required": ["schema_version", "chapter", "date", "appearances"],
+      "required": ["chapter", "date", "appearances"],
       "properties": {
-        "schema_version": { "const": "1.0.0" },
         "chapter": { "$ref": "#/$defs/chapter" },
         "date": { "$ref": "#/$defs/date" },
         "location_id": { "$ref": "#/$defs/location_id" },
@@ -525,9 +524,8 @@ is normative for the scalar types below.
     },
     "books_source": {
       "type": "object",
-      "required": ["schema_version", "books"],
+      "required": ["books"],
       "properties": {
-        "schema_version": { "const": "1.0.0" },
         "books": {
           "type": "object",
           "minProperties": 1,
@@ -548,9 +546,8 @@ is normative for the scalar types below.
     },
     "chapter_manifest": {
       "type": "object",
-      "required": ["schema_version", "chapters"],
+      "required": ["chapters"],
       "properties": {
-        "schema_version": { "const": "1.0.0" },
         "chapters": {
           "type": "array",
           "items": {
@@ -656,15 +653,15 @@ this is illustrative only, not a complete chapter schema:
   "type": "object",
   "required": ["chapter", "date"],
   "properties": {
-    "chapter": { "$ref": "narrative-data-model-0.1.0.json#/$defs/chapter" },
-    "date": { "$ref": "narrative-data-model-0.1.0.json#/$defs/date" }
+    "chapter": { "$ref": "https://bobiverse.local/schema/narrative-data-model.json#/$defs/chapter" },
+    "date": { "$ref": "https://bobiverse.local/schema/narrative-data-model.json#/$defs/date" }
   }
 }
 ```
 
-Future record definitions must state their schema version, stable identifier,
-required fields, allowed references, and spoiler-visibility behavior. They must
-not duplicate or loosen the scalar definitions above.
+Future record definitions must state their stable identifier, required fields, allowed
+references, and spoiler-visibility behavior. They must not duplicate or loosen the
+scalar definitions above.
 
 ## Authority and generated-data boundary
 
@@ -747,8 +744,9 @@ known Solar System. It is nested: a child's position in its parent's array suppl
 the stable local rendering order. The generator flattens that authoring form into
 parent links and derives runtime child lists; the source does not author a second
 `sublocations` field. It validates against the externally selected
-`zero_state_solar_system` schema and deliberately has no embedded `schema_version`
-field. It contains location identity, names, kinds, hierarchy, and optional plain-text
+`zero_state_solar_system` schema. Like every narrative source file, it deliberately has
+no embedded `schema_version` field. It contains location identity, names, kinds,
+hierarchy, and optional plain-text
 `description` and `state` values only; it must not copy astronomy measurements,
 assets, or chapter-derived facts. Its entities are visible in the zero state and may
 later be patched by chapter updates, but their IDs must never be introduced again in a
@@ -793,7 +791,6 @@ contains only the nonempty `title`.
 
 ```json
 {
-  "schema_version": "1.0.0",
   "books": {
     "1": { "title": "Book title" }
   }
@@ -811,7 +808,6 @@ reference and source path; it does not duplicate story dates or narrative metada
 
 ```json
 {
-  "schema_version": "1.0.0",
   "chapters": [
     { "chapter": "1.1", "path": "chapters/1/1.json" }
   ]
@@ -822,9 +818,10 @@ The manifest is ordered by numeric `chapter` components, not JSON object order. 
 static runtime uses it to load the individual chapter source files needed for a view;
 it never relies on directory enumeration.
 
-Every chapter source record has its own versioned JSON Schema. It contains the required
-`chapter` and story `date` scalars, a nonempty `appearances` array with at least one
-`role: "lead"` entry, and zero or more `introducing` and `updates` sections. A root
+Every chapter source record validates against the shared Draft 2020-12 schema contract.
+It contains the required `chapter` and story `date` scalars, a nonempty `appearances`
+array with at least one `role: "lead"` entry, and zero or more `introducing` and
+`updates` sections. A root
 `location_id` is optional and supplies the default location for appearances in that
 chapter. The shared `chapter_source` fragment enforces the required chapter identity,
 story date, nonempty appearances, and lead requirement; the complete chapter schema
@@ -833,7 +830,6 @@ entity but must not introduce an ID already supplied by the baseline.
 
 ```json
 {
-  "schema_version": "1.0.0",
   "chapter": "1.2",
   "date": "2133.77",
   "location_id": "location:earth",
@@ -918,9 +914,8 @@ event does not repeat that value.
 
 ## Entity and location schemas
 
-Each entity type has a dedicated versioned schema. The character contract is ratified
-below. The other type-specific fields remain to be defined before their records are
-authored.
+Each entity type has a dedicated schema. The character contract is ratified below. The
+other type-specific fields remain to be defined before their records are authored.
 
 | Record | Required initial contract | Derived rather than authored |
 | --- | --- | --- |
@@ -1051,7 +1046,7 @@ JSON Schema validates the structural contract of every source record. Referentia
 temporal rules that require looking up another record are a mandatory second validation
 layer. It rejects at least:
 
-- unexpected schema versions, malformed scalar values, or non-canonical IDs;
+- malformed scalar values or non-canonical IDs;
 - malformed zero-state source or `books.json`, a chapter path that disagrees with its
   `chapter` value, a chapter whose book is absent from `books.json`, or an
   incomplete/out-of-order generated chapter manifest;
