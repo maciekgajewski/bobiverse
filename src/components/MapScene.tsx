@@ -9,6 +9,8 @@ import {
   Vector3,
 } from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
+import { GalacticPlaneGrid } from "./GalacticPlaneGrid";
+import { GalacticStarfield } from "./GalacticStarfield";
 import type { DistanceUnit, StellarSystem } from "../domain/types";
 import { calculateMapScale, formatDistance } from "../domain/units";
 import {
@@ -16,7 +18,6 @@ import {
   focusDurationMs,
   perspectiveWorldWidthAtTarget,
 } from "../domain/camera-motion";
-import { GALACTIC_PLANE_SCENE_ROTATION } from "../domain/coordinates";
 import { closestMarkerSystemId } from "../domain/star-picking";
 import {
   STAR_SPRITE_FRAGMENT_SHADER,
@@ -316,11 +317,9 @@ function Scene({
   return (
     <>
       <color attach="background" args={["#050812"]} />
+      <GalacticStarfield />
       <ambientLight intensity={0.7} />
-      <gridHelper
-        args={[64, 64, "#152843", "#0a1423"]}
-        rotation={[...GALACTIC_PLANE_SCENE_ROTATION]}
-      />
+      <GalacticPlaneGrid />
       <Text
         position={[16, 0.04, 0]}
         fontSize={0.13}
@@ -366,6 +365,7 @@ export function StarMap({ onDeselect, ...props }: MapSceneProps) {
       dpr={[1, 1.8]}
       onPointerMissed={onDeselect}
       data-testid="star-map-canvas"
+      data-galactic-starfield="permanent"
     >
       <Scene {...props} />
     </Canvas>

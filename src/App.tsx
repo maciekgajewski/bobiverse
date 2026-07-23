@@ -3,6 +3,10 @@ import { StarMap, type MapScale } from "./components/MapScene";
 import { SystemDetails } from "./components/SystemDetails";
 import { SystemDirectory } from "./components/SystemDirectory";
 import { nearbySystems, nearbySystemsResult } from "./domain/data";
+import {
+  GALACTIC_STARFIELD_SOURCE_URL,
+  GALACTIC_STARFIELD_UI_CREDIT,
+} from "./domain/galactic-starfield";
 import type { DistanceUnit } from "./domain/types";
 import "./styles.css";
 
@@ -246,6 +250,13 @@ export default function App() {
           {nearbySystems.metadata.source.release}
         </span>
         <span>{nearbySystems.metadata.source.acknowledgement}</span>
+        <a
+          href={GALACTIC_STARFIELD_SOURCE_URL}
+          target="_blank"
+          rel="noreferrer"
+        >
+          {GALACTIC_STARFIELD_UI_CREDIT}
+        </a>
       </footer>
     </main>
   );

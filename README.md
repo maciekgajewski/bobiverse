@@ -6,7 +6,11 @@ understand the relative orientation and distances of nearby stellar systems. Lat
 phases connect that map to chapters, characters, travel, events, and Bob genealogy.
 
 The current implementation maps the 20 nearest reviewed stellar systems plus Sol,
-with true-scale Galactic geometry, selection, and distance-unit display.
+with true-scale Galactic geometry, selection, distance-unit display, and a permanent
+local Deep Star Maps 2020 Galactic backdrop. The application makes no runtime
+astronomy or image-host request; see the [backdrop provenance and attribution
+record](docs/data/galactic-starfield-backdrop.md) for its retained source, exact
+conversion command, and required manual orientation check.
 
 ## Project documentation
 

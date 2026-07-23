@@ -113,6 +113,10 @@ Planned work:
 - Introduce label-density rules without changing true positions.
 - Add richer component and planet details only to selected systems.
 - Record catalogue acknowledgements and refresh instructions.
+- Add the BOB-005 permanent Galactic-coordinate starfield backdrop as a separate
+  visual refinement: use a documented, locally derived real-sky texture with required
+  attribution, preserve the canonical coordinate frame and all interaction behavior,
+  and do not distort geometry or introduce runtime astronomy requests.
 
 Exit criteria:
 
