@@ -64,6 +64,9 @@ runtime behavior.
   locations, root transit locations, and optional validated astronomy-node links.
 - The document distinguishes authored assets from their chapter-controlled picture
   assignments and prohibits copied astronomy render facts.
+- `data/narrative/assets.json` is an unversioned direct registry that may be empty;
+  each asset has a unique stable ID and path, a nonempty source note, and an existing
+  safe static file beneath `public/assets/`. Asset metadata is not chapter chronology.
 - `books.json` contains only numeric-keyed book titles; every chapter has a separate
   canonical source file, and the generator emits an ordered manifest containing only
   chapter references and source paths.
@@ -97,9 +100,11 @@ rg -n 'zero-state|chapter-authored|generated|one-parent|furthestChapterRead|stor
   docs/adrs/0001-chapter-authored-narrative-state.md \
   docs/adrs/0002-reader-order-visibility-and-story-time-projection.md \
   docs/adrs/0003-zero-state-solar-system-baseline.md \
+  docs/adrs/0004-unversioned-narrative-schema-contract.md \
   docs/technical-design.md docs/data-model-definition.md
 awk 'BEGIN{inside=0; seen=0} /^```json$/{if(!inside && !seen){inside=1; seen=1; next}} /^```$/{if(inside){exit}} inside{print}' \
   docs/data-model-definition.md | jq empty
+jq empty data/narrative/assets.json
 ! rg -n '"schema_version"[[:space:]]*:|required.*schema_version|versioned JSON Schema|narrative-data-model-[0-9]' \
   docs/data-model-definition.md docs/technical-design.md docs/implementation-plan.md
 ```

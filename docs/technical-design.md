@@ -411,6 +411,10 @@ astronomy data, the zero-state location tree, and selected narrative patches. Im
 are manually curated assets, but an entity's image assignment is chapter-controlled
 narrative state. The zero-state source contains no assets; its optional `description`
 and `state` values are original plain text, not measured astronomy data or rich text.
+The direct, unversioned asset registry maps each stable asset ID to one safe static path
+below `public/assets/` and a plain-text provenance note; its metadata is not chapter
+chronology, while `picture_id` assignments remain subject to the shared visibility
+policy.
 
 ## 13. LLM-assisted extraction
 

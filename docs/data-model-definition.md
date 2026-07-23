@@ -66,6 +66,24 @@ is normative for the scalar types below.
       "pattern": "^asset:[a-z0-9][a-z0-9-]*$",
       "description": "Globally unique reference to a manually curated asset."
     },
+    "asset": {
+      "type": "object",
+      "required": ["id", "path", "source"],
+      "properties": {
+        "id": { "$ref": "#/$defs/asset_id" },
+        "path": {
+          "type": "string",
+          "pattern": "^assets/(?:[A-Za-z0-9][A-Za-z0-9._-]*/)*[A-Za-z0-9][A-Za-z0-9._-]*$",
+          "description": "Safe static path below public/assets, relative to public."
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Plain-text provenance or rights note for this static file."
+        }
+      },
+      "additionalProperties": false
+    },
     "event_id": {
       "type": "string",
       "pattern": "^event:[a-z0-9][a-z0-9-]*$",
@@ -544,6 +562,17 @@ is normative for the scalar types below.
       },
       "additionalProperties": false
     },
+    "assets_source": {
+      "type": "object",
+      "required": ["assets"],
+      "properties": {
+        "assets": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/asset" }
+        }
+      },
+      "additionalProperties": false
+    },
     "chapter_manifest": {
       "type": "object",
       "required": ["chapters"],
@@ -684,8 +713,8 @@ render-ready join of astronomy and narrative locations. Deterministic generated 
 or checkpoints are permitted only as rebuildable optimizations.
 
 Image files are the sole manually curated non-generated content besides the zero-state
-source. They live in an asset registry with stable `asset:` IDs, paths, attribution,
-and validation metadata. Assets do not establish an additional domain truth or entity
+source. They live in an asset registry with stable `asset:` IDs, safe static paths, and
+plain-text source notes. Assets do not establish an additional domain truth or entity
 state; their assignment to an entity is still a chapter-controlled narrative value such
 as `picture_id`.
 
@@ -730,10 +759,11 @@ a precise story-time point. Story `date` is never used to grant reader visibilit
 
 ### Source layout and book catalogue
 
-The authored zero-state, book, and chapter source has this canonical layout:
+The authored zero-state, asset, book, and chapter source has this canonical layout:
 
 ```text
 data/narrative/baseline/solar-system.json
+data/narrative/assets.json
 data/narrative/books.json
 data/narrative/chapters/<book>/<chapter>.json
 generated/narrative/chapter-manifest.json
@@ -784,6 +814,30 @@ Jupiter, then the Kuiper belt and Oort cloud after Neptune. It rejects a seeded
 `dwarf_planet`, Kuiper-belt objects, duplicate IDs, or more than four moons under any
 planet. Each planet's up-to-four moon entries are a deliberately curated subset rather
 than a physical-astronomy-derived definition of "major".
+
+`assets.json` is the sole direct registry of reusable static picture files. It has an
+unversioned root object with an `assets` array, which may be empty until the project
+adds its first image:
+
+```json
+{
+  "assets": []
+}
+```
+
+Each entry requires an immutable `asset:` ID, a unique `path`, and a nonempty plain-text
+`source` provenance or rights note. `path` is relative to `public`, begins with
+`assets/`, and may use nested directories such as `assets/characters/bob.webp`. It is
+not a URL: absolute paths, `.` or `..` path segments, query strings, and fragments are
+invalid. The schema intentionally accepts any filename extension. A registered path
+must name one existing regular file below `public/assets/`; the project does not create
+that directory until it adds its first asset.
+
+Asset registry metadata is maintained directly in `assets.json`, outside chapter
+chronology. Its `path` and `source` may be corrected there, while the `id` remains
+stable. A chapter-controlled entity `picture_id` references an asset ID, so assigning
+or changing a visible image remains spoiler-safe narrative state. Multiple entities may
+reference one asset ID, but no two asset IDs may register the same static path.
 
 `books.json` is the sole manually authored book catalogue. It uses a numeric-keyed
 object: each key is the canonical positive book number and each value initially
@@ -924,7 +978,7 @@ other type-specific fields remain to be defined before their records are authore
 | `planet`, `moon`, `locale`, `megastructure` | `id`, `kind`, name, and parent where non-root | sublocations; last-known sightings and events |
 | `species` | `id`, `name`, and the optional fields in the ratified species contract | members and other reverse links |
 | `event` | `id`, `name`, and the optional fields in the ratified event contract | location event list; participant event histories |
-| `asset` | `id`, file path, attribution, and validation metadata | no visible assignment; assignments are entity values |
+| `asset` | `id`, path, and source | no visible assignment; assignments are entity values |
 
 Every present or future `description` and `state` field uses the shared schema types:
 an optional, nonempty plain string. `description` is an original reader-visible
@@ -941,6 +995,14 @@ System, while later chapter location schemas remain able to represent fictional 
 megastructures, transit roots, and explicitly unmapped locations. The generator
 derives `parent_location_id` for every nested baseline child; it does not persist or
 ask authors to duplicate that link.
+
+### Asset
+
+An asset is a direct `assets.json` registry record using the shared `asset` schema. Its
+required `id` is a stable `asset:` identifier; `path` and `source` are required direct
+metadata, not chapter updates. The registry contains no rendering dimensions, alt text,
+or external URLs. Image assignment belongs solely to an entity's optional
+chapter-controlled `picture_id` field.
 
 ### Character
 
@@ -1050,6 +1112,9 @@ layer. It rejects at least:
 - malformed zero-state source or `books.json`, a chapter path that disagrees with its
   `chapter` value, a chapter whose book is absent from `books.json`, or an
   incomplete/out-of-order generated chapter manifest;
+- a malformed asset registry, duplicate asset ID or path, an unsafe static asset path,
+  a missing or non-regular registered file under `public/assets/`, or a `picture_id`
+  that does not resolve to a registered asset;
 - a zero-state source whose fixed Solar-System root, Sol child, location kind,
   parent-relation pair, leaf representation, or astronomy reference is invalid;
 - a broken zero-state location tree, duplicate IDs across the baseline and chapter
