@@ -4,5 +4,6 @@ test-results/
 playwright-report/
 blob-report/
 .venv/
+.venv
 __pycache__/
 *.pyc

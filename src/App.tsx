@@ -1,11 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { StarMap, type MapScale } from "./components/MapScene";
 import { SystemDetails } from "./components/SystemDetails";
 import { SystemDirectory } from "./components/SystemDirectory";
 import { nearbySystems, nearbySystemsResult } from "./domain/data";
-import { measurementDistancePc } from "./domain/measurement";
 import type { DistanceUnit } from "./domain/types";
-import { formatDistance } from "./domain/units";
 import "./styles.css";
 
 function canRenderWebgl(): boolean {
@@ -20,10 +18,11 @@ function canRenderWebgl(): boolean {
 export default function App() {
   const [unit, setUnit] = useState<DistanceUnit>("ly");
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [measurement, setMeasurement] = useState<
-    [string | null, string | null]
-  >([null, null]);
-  const [measurementMode, setMeasurementMode] = useState(false);
+  const [mobilePanel, setMobilePanel] = useState<
+    "browser" | "inspector" | null
+  >(null);
+  const browserButton = useRef<HTMLButtonElement>(null);
+  const inspectorButton = useRef<HTMLButtonElement>(null);
   const [webgl, setWebgl] = useState<"checking" | "ready" | "unsupported">(
     "checking",
   );
@@ -34,9 +33,6 @@ export default function App() {
   });
   const systems = nearbySystems?.systems ?? [];
   const selected = systems.find((system) => system.id === selectedId) ?? null;
-  const endpointA = systems.find((system) => system.id === measurement[0]);
-  const endpointB = systems.find((system) => system.id === measurement[1]);
-  const measuredDistance = measurementDistancePc(endpointA, endpointB);
   const updateMapScale = useCallback((nextScale: MapScale) => {
     setMapScale((current) =>
       current.label === nextScale.label &&
@@ -66,28 +62,25 @@ export default function App() {
     return () => window.clearTimeout(update);
   }, [unit]);
 
+  useEffect(() => {
+    const close = (event: KeyboardEvent) => {
+      if (event.key !== "Escape" || !mobilePanel) return;
+      const invoker =
+        mobilePanel === "browser" ? browserButton : inspectorButton;
+      setMobilePanel(null);
+      window.setTimeout(() => invoker.current?.focus(), 0);
+    };
+    window.addEventListener("keydown", close);
+    return () => window.removeEventListener("keydown", close);
+  }, [mobilePanel]);
   const selectSystem = (id: string) => {
     setSelectedId(id);
-    if (!measurementMode) return;
-    setMeasurement(([first, second]) =>
-      !first || (first && second)
-        ? [id, null]
-        : first === id
-          ? [null, null]
-          : [first, id],
-    );
+    if (
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(max-width: 1199px)").matches
+    )
+      setMobilePanel("inspector");
   };
-  const status = useMemo(
-    () =>
-      measurementMode
-        ? measurement[0]
-          ? measurement[1]
-            ? "Measurement locked"
-            : "Choose endpoint B"
-          : "Choose endpoint A"
-        : "Navigation mode",
-    [measurement, measurementMode],
-  );
 
   if (nearbySystemsResult.error || !nearbySystems)
     return (
@@ -108,12 +101,33 @@ export default function App() {
 
   return (
     <main className="app-shell">
+      <a className="skip-link" href="#map-stage">
+        Skip to star map
+      </a>
       <header className="topbar">
         <div>
           <p className="eyebrow">Bobiverse · astronomy atlas</p>
           <h1>Near-star tactical map</h1>
         </div>
         <div className="topbar-actions">
+          <button
+            ref={browserButton}
+            className="button mobile-command"
+            aria-expanded={mobilePanel === "browser"}
+            onClick={() => setMobilePanel("browser")}
+          >
+            Browse systems
+          </button>
+          {selected && (
+            <button
+              ref={inspectorButton}
+              className="button mobile-command inspect-command"
+              aria-expanded={mobilePanel === "inspector"}
+              onClick={() => setMobilePanel("inspector")}
+            >
+              Inspect selection
+            </button>
+          )}
           <div className="unit-switch" aria-label="Distance unit">
             <button
               className={unit === "ly" ? "active" : ""}
@@ -136,8 +150,8 @@ export default function App() {
           </button>
         </div>
       </header>
-      <section className="atlas-grid">
-        <aside className="left-rail">
+      <section className="atlas-grid" aria-label="Astronomy atlas workspace">
+        <aside className="left-rail" aria-label="System browser">
           <div className="rail-heading">
             <p className="eyebrow">21 markers</p>
             <h2>Local volume</h2>
@@ -149,6 +163,7 @@ export default function App() {
           />
         </aside>
         <section
+          id="map-stage"
           className="map-frame"
           aria-label="Interactive three dimensional nearby stellar-system map"
         >
@@ -168,7 +183,6 @@ export default function App() {
             <StarMap
               systems={systems}
               selectedId={selectedId}
-              measurementIds={measurement}
               unit={unit}
               resetToken={resetToken}
               onSelect={selectSystem}
@@ -190,50 +204,42 @@ export default function App() {
         </section>
         <aside className="right-rail">
           <SystemDetails system={selected} unit={unit} />
-          <section className="measurement-panel">
-            <div className="measurement-header">
-              <div>
-                <p className="eyebrow">Straight-line tool</p>
-                <h2>Measure systems</h2>
-              </div>
-              <button
-                className={
-                  measurementMode ? "button active-measurement" : "button"
-                }
-                aria-pressed={measurementMode}
-                onClick={() => setMeasurementMode((active) => !active)}
-              >
-                {measurementMode ? "Stop" : "Measure"}
-              </button>
-            </div>
-            <p className="measurement-status">{status}</p>
-            <div className="endpoints">
-              <span>
-                <b>A</b> {endpointA?.name ?? "—"}
-              </span>
-              <span>
-                <b>B</b> {endpointB?.name ?? "—"}
-              </span>
-            </div>
-            {measuredDistance !== null ? (
-              <output aria-label="Measured separation">
-                {formatDistance(measuredDistance, unit)} straight-line
-                separation
-              </output>
-            ) : (
-              <p className="hint">
-                In measure mode, select two systems from the map or directory.
-              </p>
-            )}
-            <button
-              className="button"
-              onClick={() => setMeasurement([null, null])}
-            >
-              Clear endpoints
-            </button>
-          </section>
+          <p className="shell-reserve">
+            Narrative inspection will appear here as chapters are introduced.
+          </p>
         </aside>
       </section>
+      {mobilePanel && (
+        <div
+          className={`mobile-panel ${mobilePanel}`}
+          role="dialog"
+          aria-modal="true"
+          aria-label={
+            mobilePanel === "browser" ? "System browser" : "Selected system"
+          }
+        >
+          <button
+            className="button close-panel"
+            onClick={() => {
+              const invoker =
+                mobilePanel === "browser" ? browserButton : inspectorButton;
+              setMobilePanel(null);
+              window.setTimeout(() => invoker.current?.focus(), 0);
+            }}
+          >
+            Close
+          </button>
+          {mobilePanel === "browser" ? (
+            <SystemDirectory
+              systems={systems}
+              selectedId={selectedId}
+              onSelect={selectSystem}
+            />
+          ) : (
+            <SystemDetails system={selected} unit={unit} />
+          )}
+        </div>
+      )}
       <footer>
         <span>
           {nearbySystems.metadata.source.catalogue} ·{" "}

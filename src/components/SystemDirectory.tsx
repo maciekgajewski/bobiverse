@@ -15,6 +15,7 @@ export function SystemDirectory({
         <button
           key={system.id}
           className={selectedId === system.id ? "selected" : ""}
+          data-item-type="stellar-system"
           aria-pressed={selectedId === system.id}
           onClick={() => onSelect(system.id)}
         >

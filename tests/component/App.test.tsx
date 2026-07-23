@@ -27,21 +27,13 @@ describe("atlas shell", () => {
     expect(screen.getByText(/WebGL unavailable/i)).toBeInTheDocument();
   });
 
-  it("measures between two directory-selected systems and toggles presentation units", async () => {
+  it("keeps unit controls and removes the measurement tool", async () => {
     const user = userEvent.setup();
     render(<App />);
-    await user.click(screen.getByRole("button", { name: "Measure" }));
-    await user.click(screen.getByRole("button", { name: "Sol" }));
-    await user.click(screen.getByRole("button", { name: "Barnard's Star" }));
-    expect(screen.getByLabelText("Measured separation")).toHaveTextContent(
-      "ly straight-line separation",
-    );
     await user.click(screen.getByRole("button", { name: "pc" }));
-    expect(screen.getByLabelText("Measured separation")).toHaveTextContent(
-      "pc straight-line separation",
-    );
-    expect(screen.getByRole("button", { name: "Clear endpoints" })).toHaveClass(
-      "button",
-    );
+    expect(screen.getByTestId("map-scale-label")).toHaveTextContent("pc");
+    expect(
+      screen.queryByRole("button", { name: "Measure" }),
+    ).not.toBeInTheDocument();
   });
 });

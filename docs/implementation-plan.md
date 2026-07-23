@@ -76,12 +76,7 @@ Workstreams:
    - Add selection and a DOM-based system detail panel.
    - Add WebGL capability and error states.
 
-5. Measurement
-   - Add an explicit measurement mode and two-system endpoint selection.
-   - Render the measurement connection without changing geometry.
-   - Display straight-line separation in the active unit.
-
-6. Quality and documentation
+5. Quality and documentation
    - Add unit, component, and Playwright coverage.
    - Retain Playwright failure artifacts on the headless server.
    - Verify supported desktop browsers manually from the remote workstation.
@@ -97,6 +92,10 @@ Completion note: Windows Chrome, Firefox, and Edge plus mobile Chrome passed the
 available manual review on 2026-07-22, and the Captain accepted the visual result.
 Safari was unavailable without an Apple test workstation and remains an explicit
 pre-publication acceptance gap.
+
+Rebaseline note: BOB-003 retires the two-system distance-measurement user interface
+after this completed slice. BOB-001 remains the historical record of its former
+acceptance; later work must not restore the tool without a new approved task.
 
 ## 5. Phase 1B: catalogue expansion toward 100 systems
 
@@ -117,7 +116,7 @@ Planned work:
 
 Exit criteria:
 
-- Expanded data passes the same provenance, coordinate, and measurement validations.
+- Expanded data passes the same provenance and coordinate validations.
 - The map remains legible and responsive on supported hardware.
 - Any level-of-detail optimization preserves canonical positions.
 

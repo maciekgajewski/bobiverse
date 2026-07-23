@@ -4,6 +4,10 @@ Status: Done
 Phase: 1A  
 Last updated: 2026-07-22
 
+> Historical scope note: BOB-001 accepted a two-system measurement feature on
+> 2026-07-22. BOB-003 later retires that feature from the current product. The
+> requirements and evidence below remain an accurate record of this completed slice.
+
 ## Objective
 
 Deliver an astronomy-only static web application that lets a reader explore the 20

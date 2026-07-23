@@ -11,7 +11,7 @@ distance of nearby stellar systems and, in later phases, connect that geography 
 characters, travel, events, and reading progress without revealing future facts.
 
 The initial delivery is an astronomy-only vertical slice containing the 20 nearest
-stellar systems. It establishes the complete map interaction and data pipeline before
+stellar systems. It establishes the map interaction and data pipeline before
 book-derived content is introduced. The same pipeline can later expand the map toward
 100 systems.
 
@@ -19,8 +19,8 @@ book-derived content is introduced. The same pipeline can later expand the map t
 
 - Display nearby stellar systems in an interactive, rotatable, zoomable 3D map.
 - Preserve true relative orientation and linear interstellar distance.
-- Make distance understandable through orientation aids, a persistent scale, unit
-  selection, and an explicit two-system measurement tool.
+- Make distance understandable through orientation aids, a persistent scale, and unit
+  selection without distorting canonical geometry.
 - Run as a static site with no application server or database.
 - Produce astronomy data through a reproducible, offline import pipeline.
 - Support later chapter timelines, character histories, travel paths, system
@@ -91,8 +91,8 @@ audit each value.
 
 ### 5.3 Verification
 
-- Unit tests for coordinate transforms, unit conversions, measurements, visibility
-  rules, and other domain logic.
+- Unit tests for coordinate transforms, unit conversions, visibility rules, and other
+  domain logic.
 - Component tests for selection and coordinated UI state.
 - Playwright for critical browser interactions and responsive behavior.
 - Manual visual review in real remote-workstation browsers.
@@ -292,13 +292,7 @@ The map must provide:
 - A persistent scale indication.
 - Selection of a system and a basic detail panel; no system is selected initially.
 - Light-year and parsec display modes.
-- A two-system measurement mode.
 - Clear empty, loading, unsupported-WebGL, and error states.
-
-Measurement is a domain operation: select endpoints A and B, compute Euclidean 3D
-separation from canonical Galactic coordinates, and format the result in the active
-display unit. The UI distinguishes straight-line separation from any later route or
-travel-path length.
 
 Camera controls must not modify domain coordinates. A reset returns to a documented,
 repeatable orientation so readers can regain spatial context. Selection and other
@@ -312,9 +306,9 @@ Any manual orbit, pan, or zoom input immediately cancels a focus transition. A n
 selection immediately retargets an in-flight transition from its current interpolated
 position to the newly selected system.
 
-Clicking empty map space clears the current inspection selection without altering
-measurement endpoints. Selection uses a non-obscuring corner frame and an adjacent
-name label; it must not recolor or cover the component-marker sprites. Sol has the
+Clicking empty map space clears the current inspection selection. Selection uses a
+non-obscuring corner frame and an adjacent name label; it must not recolor or cover
+the component-marker sprites. Sol has the
 only persistent, slightly offset marker label in Phase 1 and uses a normal selection
 frame only when explicitly selected. Hovering a marker reveals a screen-size-stable
 tooltip with its name and, when there is a selected system, the Euclidean canonical
@@ -323,8 +317,6 @@ separation from that system.
 The Galactic plane is a faint orientation aid several times larger than the displayed
 star field so it reads as effectively infinite. Its labels sit well beyond the star
 field in smaller, lower-prominence type; the standalone `+Yg` marker is omitted.
-Measurement actions, including Clear endpoints, use the same first-class button
-treatment and sizing.
 
 ## 10. Responsive and accessible behavior
 
@@ -333,7 +325,9 @@ timeline simultaneously. Mobile is a first-class interface for exploration, look
 timeline navigation, and reading details, but must not attempt to present all of
 those surfaces at once. Layout composition changes by viewport: it selects an
 appropriate focused arrangement of the same domain state and UI components rather
-than creating a separate mobile application or a parallel feature stack.
+than creating a separate mobile application or a parallel feature stack. The
+application shell uses a map-first phone composition: the browser opens from a command
+bar control and a selected item's inspector opens as a non-animated bottom panel.
 
 Phase 1 is desktop-first and targets current Chrome, Firefox, Safari, and Edge.
 Automated browser projects cover the Chromium, Firefox, and WebKit engines; manual
@@ -344,8 +338,11 @@ trackpad interaction on a larger display provide the primary experience.
 
 Phones and tablets must still provide a usable responsive layout. At minimum, system
 selection and details must not depend exclusively on precise 3D picking. Controls need
-accessible labels, visible keyboard focus, sufficient contrast, and non-color-only
-state cues. Reduced-motion preferences must disable nonessential camera animation.
+accessible labels, visible keyboard focus, sufficient contrast, 44-by-44 CSS-pixel
+phone targets, and non-color-only state cues. Reduced-motion preferences must disable
+nonessential camera animation. UI and display typography are bundled open-licensed
+Noto Sans resources with Latin Extended, Greek, and Cyrillic coverage; no runtime font
+service or browser fallback is the localization strategy for those scripts.
 
 The application must expose selected system facts through ordinary DOM content so
 screen readers and automated tests are not forced to interpret the canvas.

@@ -1,6 +1,6 @@
 import { Billboard, Html, Line, OrbitControls, Text } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   AdditiveBlending,
   Color,
@@ -29,7 +29,6 @@ import {
 interface MapSceneProps {
   systems: StellarSystem[];
   selectedId: string | null;
-  measurementIds: [string | null, string | null];
   unit: DistanceUnit;
   resetToken: number;
   onSelect: (id: string) => void;
@@ -154,19 +153,15 @@ function StarMarker({
   system,
   selected,
   selectedSystem,
-  endpoint,
   unit,
 }: {
   system: StellarSystem;
   selected: boolean;
   selectedSystem: StellarSystem | undefined;
-  endpoint: "a" | "b" | null;
   unit: DistanceUnit;
 }) {
   const [hovered, setHovered] = useState(false);
   const position = system.render_position;
-  const highlightColor =
-    endpoint === "a" ? "#72e7ff" : endpoint === "b" ? "#ffb970" : "#d8f3ff";
   const selectedDistance = selectedSystem
     ? Math.hypot(
         system.position_pc.xg - selectedSystem.position_pc.xg,
@@ -210,32 +205,10 @@ function StarMarker({
                 fragmentShader={STAR_SPRITE_FRAGMENT_SHADER}
               />
             </mesh>
-            {endpoint && (
-              <mesh userData={{ systemId: system.id }}>
-                <ringGeometry args={[radius * 1.08, radius * 1.15, 28]} />
-                <meshBasicMaterial
-                  color={highlightColor}
-                  transparent
-                  opacity={0.92}
-                  depthWrite={false}
-                />
-              </mesh>
-            )}
           </Billboard>
         );
       })}
       {selected && <SelectionFrame name={system.name} />}
-      {endpoint && !selected && (
-        <Html distanceFactor={12} center style={{ pointerEvents: "none" }}>
-          <div className="map-label">
-            {`${endpoint.toUpperCase()} · `}
-            {system.name}
-            <small>
-              {formatDistance(system.distance_from_sol_pc, unit, 1)}
-            </small>
-          </div>
-        </Html>
-      )}
       {system.id === "sol" && !selected && (
         <Billboard position={[0.34, 0.18, 0]} follow>
           <Html center style={{ pointerEvents: "none" }}>
@@ -291,64 +264,6 @@ function SelectionFrame({ name }: { name: string }) {
   );
 }
 
-function MeasurementLine({
-  systems,
-  ids,
-  unit,
-}: {
-  systems: StellarSystem[];
-  ids: [string | null, string | null];
-  unit: DistanceUnit;
-}) {
-  const measurement = useMemo(() => {
-    const a = systems.find((system) => system.id === ids[0]);
-    const b = systems.find((system) => system.id === ids[1]);
-    if (!a || !b) return null;
-    const points = [
-      [a.render_position.x, a.render_position.y, a.render_position.z],
-      [b.render_position.x, b.render_position.y, b.render_position.z],
-    ] as [number, number, number][];
-    return {
-      points,
-      midpoint: points[0].map(
-        (value, index) => (value + points[1][index]) / 2,
-      ) as [number, number, number],
-      distancePc: Math.hypot(
-        a.position_pc.xg - b.position_pc.xg,
-        a.position_pc.yg - b.position_pc.yg,
-        a.position_pc.zg - b.position_pc.zg,
-      ),
-    };
-  }, [ids, systems]);
-  if (!measurement) return null;
-  return (
-    <>
-      <line>
-        <bufferGeometry>
-          <bufferAttribute
-            attach="attributes-position"
-            args={[new Float32Array(measurement.points.flat()), 3]}
-          />
-        </bufferGeometry>
-        <lineBasicMaterial color="#72e7ff" linewidth={2} />
-      </line>
-      <Text
-        position={[
-          measurement.midpoint[0],
-          measurement.midpoint[1] + 0.18,
-          measurement.midpoint[2],
-        ]}
-        fontSize={0.2}
-        color="#dffaff"
-        anchorX="center"
-        anchorY="middle"
-      >
-        {formatDistance(measurement.distancePc, unit)}
-      </Text>
-    </>
-  );
-}
-
 function CameraScaleReporter({
   unit,
   onScaleChange,
@@ -390,7 +305,6 @@ function CameraScaleReporter({
 function Scene({
   systems,
   selectedId,
-  measurementIds,
   unit,
   resetToken,
   onSelect,
@@ -435,18 +349,10 @@ function Scene({
             system={system}
             selected={selectedId === system.id}
             selectedSystem={selected}
-            endpoint={
-              measurementIds[0] === system.id
-                ? "a"
-                : measurementIds[1] === system.id
-                  ? "b"
-                  : null
-            }
             unit={unit}
           />
         ))}
       </group>
-      <MeasurementLine systems={systems} ids={measurementIds} unit={unit} />
       <CameraController resetToken={resetToken} selected={selected} />
       <CameraScaleReporter unit={unit} onScaleChange={onScaleChange} />
     </>

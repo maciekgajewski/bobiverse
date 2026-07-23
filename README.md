@@ -5,8 +5,8 @@ Taylor. Its central feature is a true-scale, interactive 3D map that helps reade
 understand the relative orientation and distances of nearby stellar systems. Later
 phases connect that map to chapters, characters, travel, events, and Bob genealogy.
 
-The Phase 1A implementation maps the 20 nearest reviewed stellar systems plus Sol,
-with true-scale Galactic geometry, selection, and point-to-point measurement.
+The current implementation maps the 20 nearest reviewed stellar systems plus Sol,
+with true-scale Galactic geometry, selection, and distance-unit display.
 
 ## Project documentation
 

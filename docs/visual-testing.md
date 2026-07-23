@@ -19,8 +19,9 @@ dependency.
 For manual acceptance, start `npm run dev` and open
 `http://<development-host>:5173` from a trusted-LAN workstation. Test current Chrome,
 Firefox, Safari, and Edge where available. Check rotate, zoom, pan, marker picking,
-directory selection, reset, unit conversion, two-endpoint measurement, and the
-phone-sized layout. Verify reduced-motion behavior with the operating-system setting.
+directory selection, reset, unit conversion, command-bar browser opening,
+selected-system inspector behavior, and the phone-sized layout. Verify reduced-motion
+behavior with the operating-system setting.
 
 The headless development environment cannot substitute for manual GPU/browser review.
 Record each unavailable browser explicitly as an acceptance gap before publication.
@@ -34,6 +35,14 @@ unavailable because no Apple test workstation was available, so Safari remains a
 explicit required check before publication. The Captain accepted the Phase 1A visual
 result and spatial legibility.
 
+## BOB-003 manual acceptance
+
+On 2026-07-23, the Captain accepted the visual-system and application-shell review.
+The review covered the desktop framed shell, responsive map visibility, compact
+browser and inspector panels, selected-system details, and the visible VizieR
+attribution footer. Chrome, Firefox, and WebKit automated coverage also passed; the
+existing Safari real-browser publication gap remains unchanged.
+
 ## Default and reset camera
 
 The repeatable default camera pose is expressed in Three.js scene coordinates:
@@ -45,6 +54,5 @@ The repeatable default camera pose is expressed in Three.js scene coordinates:
 
 Reset cancels any in-progress automatic focus motion and restores both the camera
 position and controls target to this pose. It does not change the selected system,
-measurement endpoints, or active distance unit. During manual acceptance, move and
-rotate the camera, press Reset view, and confirm that Sol is targeted from this same
-repeatable orientation.
+or active distance unit. During manual acceptance, move and rotate the camera, press
+Reset view, and confirm that Sol is targeted from this same repeatable orientation.

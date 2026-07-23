@@ -18,6 +18,7 @@ derived from `../implementation-plan.md` and must remain consistent with
 | --- | --- | --- |
 | [BOB-001](BOB-001-nearby-star-map.md) | Done | Deliver the 20-system astronomy map vertical slice. |
 | [BOB-002](BOB-002-narrative-data-model-definition.md) | In progress | Define the Phase 2 narrative JSON data model. |
+| [BOB-003](BOB-003-visual-system-and-application-shell.md) | Done | Establish the responsive visual system and application shell. |
 
 ## Task requirements
 
