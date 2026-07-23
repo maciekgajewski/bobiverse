@@ -36,6 +36,16 @@ is normative for the scalar types below.
       "pattern": "^[1-9][0-9]*\\.[1-9][0-9]*$",
       "description": "Visible chapter reference: positive book number followed by positive chapter number."
     },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Original, reader-visible plain-text summary; never copied book text or Markdown."
+    },
+    "state": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Reader-visible plain-text current state; no controlled vocabulary is imposed."
+    },
     "entity_id": {
       "type": "string",
       "pattern": "^[a-z][a-z0-9_]*:[a-z0-9][a-z0-9-]*$",
@@ -86,7 +96,7 @@ is normative for the scalar types below.
         "name": { "type": "string", "minLength": 1 },
         "gender": { "type": "string", "minLength": 1 },
         "species_id": { "$ref": "#/$defs/species_id" },
-        "current_state": { "type": "string", "minLength": 1 },
+        "current_state": { "$ref": "#/$defs/state" },
         "picture_id": { "$ref": "#/$defs/asset_id" },
         "aliases": {
           "type": "array",
@@ -112,7 +122,12 @@ is normative for the scalar types below.
             { "type": "null" }
           ]
         },
-        "current_state": { "type": ["string", "null"], "minLength": 1 },
+        "current_state": {
+          "anyOf": [
+            { "$ref": "#/$defs/state" },
+            { "type": "null" }
+          ]
+        },
         "picture_id": {
           "anyOf": [
             { "$ref": "#/$defs/asset_id" },
@@ -162,7 +177,7 @@ is normative for the scalar types below.
       "properties": {
         "id": { "$ref": "#/$defs/species_id" },
         "name": { "type": "string", "minLength": 1 },
-        "description": { "type": "string", "minLength": 1 },
+        "description": { "$ref": "#/$defs/description" },
         "picture_id": { "$ref": "#/$defs/asset_id" },
         "homeworld_id": { "$ref": "#/$defs/location_id" }
       },
@@ -174,7 +189,12 @@ is normative for the scalar types below.
       "properties": {
         "entity_id": { "$ref": "#/$defs/species_id" },
         "name": { "type": "string", "minLength": 1 },
-        "description": { "type": ["string", "null"], "minLength": 1 },
+        "description": {
+          "anyOf": [
+            { "$ref": "#/$defs/description" },
+            { "type": "null" }
+          ]
+        },
         "picture_id": {
           "anyOf": [
             { "$ref": "#/$defs/asset_id" },
@@ -205,7 +225,7 @@ is normative for the scalar types below.
         "location_id": { "$ref": "#/$defs/location_id" },
         "picture_id": { "$ref": "#/$defs/asset_id" },
         "date": { "$ref": "#/$defs/date" },
-        "description": { "type": "string", "minLength": 1 },
+        "description": { "$ref": "#/$defs/description" },
         "participant_ids": {
           "type": "array",
           "items": { "$ref": "#/$defs/character_id" },
@@ -238,7 +258,12 @@ is normative for the scalar types below.
             { "type": "null" }
           ]
         },
-        "description": { "type": ["string", "null"], "minLength": 1 },
+        "description": {
+          "anyOf": [
+            { "$ref": "#/$defs/description" },
+            { "type": "null" }
+          ]
+        },
         "participant_ids": {
           "type": ["array", "null"],
           "items": { "$ref": "#/$defs/character_id" },
@@ -254,6 +279,228 @@ is normative for the scalar types below.
         { "required": ["participant_ids"] }
       ],
       "additionalProperties": false
+    },
+    "baseline_location": {
+      "type": "object",
+      "required": ["id", "name", "kind"],
+      "properties": {
+        "id": { "$ref": "#/$defs/location_id" },
+        "name": { "type": "string", "minLength": 1 },
+        "kind": {
+          "enum": [
+            "star_system",
+            "star",
+            "planet",
+            "dwarf_planet",
+            "moon",
+            "asteroid_belt",
+            "kuiper_belt",
+            "oort_cloud",
+            "locale"
+          ]
+        },
+        "description": { "$ref": "#/$defs/description" },
+        "state": { "$ref": "#/$defs/state" },
+        "astronomy_object_id": { "type": "string", "minLength": 1 },
+        "parent_relation": {
+          "enum": ["member_of_system", "orbits", "located_on"]
+        },
+        "children": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/baseline_location" }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": ["kind"],
+            "properties": { "kind": { "const": "star_system" } }
+          },
+          "then": {
+            "required": ["astronomy_object_id", "children"],
+            "properties": {
+              "id": { "const": "location:solar-system" },
+              "name": { "const": "Solar System" },
+              "astronomy_object_id": { "const": "sol" },
+              "children": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 1,
+                "items": { "$ref": "#/$defs/sol_star" }
+              }
+            },
+            "not": { "required": ["parent_relation"] }
+          }
+        },
+        {
+          "if": {
+            "required": ["kind"],
+            "properties": { "kind": { "const": "star" } }
+          },
+          "then": {
+            "required": ["parent_relation", "children"],
+            "properties": {
+              "id": { "const": "location:sol" },
+              "name": { "const": "Sol" },
+              "parent_relation": { "const": "member_of_system" },
+              "children": {
+                "type": "array",
+                "minItems": 1,
+                "items": { "$ref": "#/$defs/solar_orbital_body" }
+              }
+            },
+            "not": { "required": ["astronomy_object_id"] }
+          }
+        },
+        {
+          "if": {
+            "required": ["kind"],
+            "properties": {
+              "kind": { "enum": ["planet", "dwarf_planet"] }
+            }
+          },
+          "then": {
+            "required": ["parent_relation"],
+            "properties": {
+              "parent_relation": { "const": "orbits" },
+              "children": {
+                "type": "array",
+                "minItems": 1,
+                "items": { "$ref": "#/$defs/planetary_child" },
+                "contains": {
+                  "required": ["kind"],
+                  "properties": { "kind": { "const": "moon" } }
+                },
+                "minContains": 0,
+                "maxContains": 4
+              }
+            },
+            "not": { "required": ["astronomy_object_id"] }
+          }
+        },
+        {
+          "if": {
+            "required": ["kind"],
+            "properties": { "kind": { "const": "moon" } }
+          },
+          "then": {
+            "required": ["parent_relation"],
+            "properties": {
+              "parent_relation": { "const": "orbits" },
+              "children": {
+                "type": "array",
+                "minItems": 1,
+                "items": { "$ref": "#/$defs/surface_locale" }
+              }
+            },
+            "not": { "required": ["astronomy_object_id"] }
+          }
+        },
+        {
+          "if": {
+            "required": ["kind"],
+            "properties": {
+              "kind": {
+                "enum": ["asteroid_belt", "kuiper_belt", "oort_cloud"]
+              }
+            }
+          },
+          "then": {
+            "required": ["parent_relation"],
+            "properties": { "parent_relation": { "const": "orbits" } },
+            "not": {
+              "anyOf": [
+                { "required": ["astronomy_object_id"] },
+                { "required": ["children"] }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "required": ["kind"],
+            "properties": { "kind": { "const": "locale" } }
+          },
+          "then": {
+            "required": ["parent_relation"],
+            "properties": { "parent_relation": { "const": "located_on" } },
+            "not": {
+              "anyOf": [
+                { "required": ["astronomy_object_id"] },
+                { "required": ["children"] }
+              ]
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "sol_star": {
+      "allOf": [
+        { "$ref": "#/$defs/baseline_location" },
+        {
+          "required": ["id", "name", "kind", "parent_relation"],
+          "properties": {
+            "id": { "const": "location:sol" },
+            "name": { "const": "Sol" },
+            "kind": { "const": "star" },
+            "parent_relation": { "const": "member_of_system" }
+          }
+        }
+      ]
+    },
+    "solar_orbital_body": {
+      "allOf": [
+        { "$ref": "#/$defs/baseline_location" },
+        {
+          "required": ["kind", "parent_relation"],
+          "properties": {
+            "kind": {
+              "enum": [
+                "planet",
+                "dwarf_planet",
+                "asteroid_belt",
+                "kuiper_belt",
+                "oort_cloud"
+              ]
+            },
+            "parent_relation": { "const": "orbits" }
+          }
+        }
+      ]
+    },
+    "planetary_child": {
+      "oneOf": [
+        {
+          "allOf": [
+            { "$ref": "#/$defs/baseline_location" },
+            {
+              "required": ["kind", "parent_relation"],
+              "properties": {
+                "kind": { "const": "moon" },
+                "parent_relation": { "const": "orbits" }
+              }
+            }
+          ]
+        },
+        { "$ref": "#/$defs/surface_locale" }
+      ]
+    },
+    "surface_locale": {
+      "allOf": [
+        { "$ref": "#/$defs/baseline_location" },
+        {
+          "required": ["kind", "parent_relation"],
+          "properties": {
+            "kind": { "const": "locale" },
+            "parent_relation": { "const": "located_on" }
+          }
+        }
+      ]
+    },
+    "zero_state_solar_system": {
+      "$ref": "#/$defs/baseline_location"
     },
     "chapter_source": {
       "type": "object",
@@ -499,10 +746,46 @@ generated/narrative/chapter-manifest.json
 known Solar System. It is nested: a child's position in its parent's array supplies
 the stable local rendering order. The generator flattens that authoring form into
 parent links and derives runtime child lists; the source does not author a second
-`sublocations` field. It contains location identity, names, kinds, and hierarchy only;
-it must not copy astronomy measurements or chapter-derived facts. Its entities are
-visible in the zero state and may later be patched by chapter updates, but their IDs
-must never be introduced again in a chapter.
+`sublocations` field. It validates against the externally selected
+`zero_state_solar_system` schema and deliberately has no embedded `schema_version`
+field. It contains location identity, names, kinds, hierarchy, and optional plain-text
+`description` and `state` values only; it must not copy astronomy measurements,
+assets, or chapter-derived facts. Its entities are visible in the zero state and may
+later be patched by chapter updates, but their IDs must never be introduced again in a
+chapter.
+
+The schema fixes this baseline's root to `location:solar-system`, named `Solar System`,
+with `kind: "star_system"` and `astronomy_object_id: "sol"`. It has exactly one child:
+`location:sol`, named `Sol`, with `kind: "star"` and
+`parent_relation: "member_of_system"`. No other baseline object may carry an
+`astronomy_object_id`.
+
+Every baseline location requires a canonical `location:` ID, a nonempty `name`, and
+one of these closed `kind` values: `star_system`, `star`, `planet`, `dwarf_planet`,
+`moon`, `asteroid_belt`, `kuiper_belt`, `oort_cloud`, or `locale`. A nested location
+also requires `parent_relation`. Leaves omit `children`; when supplied, `children` is
+nonempty. The permitted containment pairs are:
+
+| Parent | Child | Required `parent_relation` |
+| --- | --- | --- |
+| `star_system` | `star` | `member_of_system` |
+| `star` | `planet`, `dwarf_planet`, `asteroid_belt`, `kuiper_belt`, `oort_cloud` | `orbits` |
+| `planet`, `dwarf_planet` | `moon` | `orbits` |
+| `planet`, `dwarf_planet`, `moon` | `locale` | `located_on` |
+
+The source preserves every authored child-array order. Among a parent's children whose
+relation is `orbits`, that order asserts inner-to-outer order; it contains no distances
+or other measured orbital facts. A planet or dwarf planet may have at most four moon
+children. Non-orbital children, such as Las Vegas beneath Earth, retain their authored
+order but have no orbital-order meaning.
+
+The Solar-System completeness check is separate from JSON Schema structure validation.
+It requires Sol's child array to contain, in inner-to-outer order, exactly the eight
+planet IDs from Mercury through Neptune, plus the asteroid belt between Mars and
+Jupiter, then the Kuiper belt and Oort cloud after Neptune. It rejects a seeded
+`dwarf_planet`, Kuiper-belt objects, duplicate IDs, or more than four moons under any
+planet. Each planet's up-to-four moon entries are a deliberately curated subset rather
+than a physical-astronomy-derived definition of "major".
 
 `books.json` is the sole manually authored book catalogue. It uses a numeric-keyed
 object: each key is the canonical positive book number and each value initially
@@ -648,6 +931,22 @@ authored.
 | `event` | `id`, `name`, and the optional fields in the ratified event contract | location event list; participant event histories |
 | `asset` | `id`, file path, attribution, and validation metadata | no visible assignment; assignments are entity values |
 
+Every present or future `description` and `state` field uses the shared schema types:
+an optional, nonempty plain string. `description` is an original reader-visible
+summary, never copied book text or Markdown. `state` is reader-visible free text with
+no global controlled vocabulary. Both may be changed or cleared under the ordinary
+per-entity update rules unless a record type explicitly says otherwise.
+
+### Zero-state Solar-System locations
+
+The recursive `baseline_location` and `zero_state_solar_system` definitions above are
+the complete source contract for `baseline/solar-system.json`. They are intentionally
+stricter than later chapter-introduced locations: the baseline is one known Solar
+System, while later chapter location schemas remain able to represent fictional systems,
+megastructures, transit roots, and explicitly unmapped locations. The generator
+derives `parent_location_id` for every nested baseline child; it does not persist or
+ask authors to duplicate that link.
+
 ### Character
 
 A character introduction uses the `character` schema above. Its only required fields
@@ -756,8 +1055,12 @@ layer. It rejects at least:
 - malformed zero-state source or `books.json`, a chapter path that disagrees with its
   `chapter` value, a chapter whose book is absent from `books.json`, or an
   incomplete/out-of-order generated chapter manifest;
-- a broken zero-state location tree or local child order, duplicate IDs across the
-  baseline and chapter sources, or a chapter introduction that repeats a seeded ID;
+- a zero-state source whose fixed Solar-System root, Sol child, location kind,
+  parent-relation pair, leaf representation, or astronomy reference is invalid;
+- a broken zero-state location tree, duplicate IDs across the baseline and chapter
+  sources, a child array whose orbital subsequence is not inner-to-outer, more than
+  four moons under one planet, an incomplete or misordered required Solar inventory,
+  or a chapter introduction that repeats a seeded ID;
 - duplicate entity introductions or references to entities not yet introduced or
   seeded;
 - an introduction that lacks the complete minimum state for its type;

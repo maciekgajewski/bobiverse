@@ -389,10 +389,15 @@ child lists are generated. This supports systems, planets, moons, locales, and
 megastructures without fixing a shallow hierarchy. The zero-state Solar-System source
 uses nested JSON to seed this tree and its stable local child order; later chapter
 records use `parent_location_id` to add locations beneath existing parents. The
-generator flattens the baseline authoring tree before deriving runtime child lists.
-Transit locations are roots with explicit origin and destination references. Unknown or
-ambiguous book locations remain valid, explicitly unmapped narrative entities; they
-may appear in timelines and lists but not at invented map coordinates.
+generator flattens the baseline authoring tree before deriving runtime child lists. Its
+fixed root is the mapped `location:solar-system`, with one `location:sol` star child.
+Nested baseline locations declare whether they are members of the system, orbit their
+parent, or are located on it; only the authored order of orbital siblings asserts
+inner-to-outer order. Leaves omit `children`, and a planet has at most four curated
+moon children. Transit locations are roots with explicit origin and destination
+references. Unknown or ambiguous book locations remain valid, explicitly unmapped
+narrative entities; they may appear in timelines and lists but not at invented map
+coordinates.
 
 Astronomy remains authoritative for stellar and interstellar physical positions,
 components, sizes, colours, and measured render facts. The zero-state source owns the
@@ -402,7 +407,8 @@ facts. A location may reference an astronomy node; mapped parent-child locations
 agree with astronomy ancestry. The visual layer receives a generated join of stellar
 astronomy data, the zero-state location tree, and selected narrative patches. Images
 are manually curated assets, but an entity's image assignment is chapter-controlled
-narrative state.
+narrative state. The zero-state source contains no assets; its optional `description`
+and `state` values are original plain text, not measured astronomy data or rich text.
 
 ## 13. LLM-assisted extraction
 

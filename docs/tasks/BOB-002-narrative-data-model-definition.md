@@ -68,6 +68,15 @@ runtime behavior.
   chapter references and source paths.
 - The nested zero-state source supplies a stable local child order without copying
   measured astronomy render facts; chapters cannot re-introduce seeded IDs.
+- The zero-state schema fixes the mapped Solar-System root and its single Sol child;
+  validates its closed location-kind and parent-relation vocabulary; uses authored
+  orbital sibling order without storing distances; and permits no assets or embedded
+  source-version field.
+- Separate semantic validation checks the eight-planet-through-Neptune Solar
+  inventory, ordered asteroid/Kuiper/Oort regions, and the maximum of four curated
+  moons per planet.
+- Every present or future narrative `description` or `state` field is an optional,
+  nonempty plain string, without Markdown or a controlled vocabulary.
 - ADR-0003 and directly affected integrated design documents reflect the same
   three-source authority boundary.
 - The task index reflects this documentation work without changing BOB-001.
@@ -86,6 +95,8 @@ rg -n 'zero-state|chapter-authored|generated|one-parent|furthestChapterRead|stor
   docs/adrs/0002-reader-order-visibility-and-story-time-projection.md \
   docs/adrs/0003-zero-state-solar-system-baseline.md \
   docs/technical-design.md docs/data-model-definition.md
+awk 'BEGIN{inside=0; seen=0} /^```json$/{if(!inside && !seen){inside=1; seen=1; next}} /^```$/{if(inside){exit}} inside{print}' \
+  docs/data-model-definition.md | jq empty
 ```
 
 ## Completion boundary
