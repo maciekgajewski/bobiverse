@@ -26,6 +26,27 @@ behavior with the operating-system setting.
 The headless development environment cannot substitute for manual GPU/browser review.
 Record each unavailable browser explicitly as an acceptance gap before publication.
 
+## BOB-005 Galactic starfield backdrop
+
+At desktop, compact, and phone widths, confirm that the permanent backdrop remains
+subordinate to markers, labels, selected frames, the Galactic plane, orientation
+aids, and the scale. The Galactic-plane grid should stay readable near the camera and
+smoothly vanish in the distance rather than building visual density against the
+backdrop. Orbit, pan, zoom, select, focus, reset, and switch both units; the
+background and grid must not pick, obscure, clip, show a seam, or develop parallax.
+At the documented reset pose, verify manually that the bright Galactic-centre feature
+is in the `+Xg` direction. Verify the visible text-only source credit can receive
+keyboard focus and opens the NASA source page. The backdrop does not animate, so
+reduced-motion behaviour is unchanged.
+
+## BOB-005 manual acceptance
+
+On 2026-07-23, the Captain accepted manual desktop and mobile browser verification of
+the Galactic backdrop. The review covered the Galactic-centre direction, visual
+hierarchy, distant-grid fade, selection and camera interactions, and the visible
+source credit. The existing Safari real-browser pre-publication gap remains unchanged
+because no Apple test workstation is available.
+
 ## Phase 1A manual acceptance
 
 Manual and visual testing passed on 2026-07-22 in current Windows Chrome, Firefox,

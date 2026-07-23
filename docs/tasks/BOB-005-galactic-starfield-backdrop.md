@@ -1,6 +1,6 @@
 # BOB-005: Galactic starfield backdrop
 
-Status: Ready
+Status: Done
 Phase: 1B (map enhancement)
 Last updated: 2026-07-23
 
@@ -216,3 +216,28 @@ artifacts under `test-results/` and `playwright-report/`.
   compact UI credit is necessarily shorter.
 - Avoid blending the background into the stars strongly enough that readers mistake
   it for nearby-system markers or the Galactic plane aid.
+
+## Implementation evidence
+
+Automated evidence recorded on 2026-07-23:
+
+- `npm run validate` passes formatting, linting, strict TypeScript, astronomy-data
+  validation, 35 unit/component tests, and the production build. The bundle contains
+  the one local 2048 × 1024 AVIF texture and no source EXR.
+- `npm run test:e2e` passes all 18 desktop, compact, and phone interaction flows in
+  Chromium, Firefox, and WebKit. The new flow confirms the permanent backdrop marker,
+  source-credit link, local-only runtime resources, and continued directory selection.
+- Orientation and provenance tests cover the three cardinal Galactic mappings, the
+  source image's left-increasing longitude, camera-position-only ownership, retained
+  source/output hashes, attribution, conversion record, and usage acknowledgement.
+- The non-pickable Galactic-plane grid keeps its one-unit spacing and canonical
+  orientation, remains fully visible through 10 scene units of planar camera distance,
+  then smoothly fades to zero by 28 scene units.
+
+Manual acceptance recorded on 2026-07-23:
+
+- The Captain completed desktop and mobile browser verification, including the
+  Galactic-centre direction, subdued distant grid fade, backdrop hierarchy, map
+  interactions, and source credit, and accepted the result.
+- Safari remains the existing explicit pre-publication review gap because no Apple
+  test workstation is available.

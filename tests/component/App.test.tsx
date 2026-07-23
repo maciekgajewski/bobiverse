@@ -36,4 +36,13 @@ describe("atlas shell", () => {
       screen.queryByRole("button", { name: "Measure" }),
     ).not.toBeInTheDocument();
   });
+
+  it("always exposes the accessible text-only backdrop credit", () => {
+    render(<App />);
+    expect(
+      screen.getByRole("link", {
+        name: /Astronomy backdrop: NASA\/Goddard Space Flight Center/i,
+      }),
+    ).toHaveAttribute("href", "https://svs.gsfc.nasa.gov/4851/");
+  });
 });

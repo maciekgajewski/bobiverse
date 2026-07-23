@@ -62,3 +62,36 @@ test("desktop footer remains within the viewport", async ({ page }) => {
     );
   expect(bounds?.bottom).toBeLessThanOrEqual(700);
 });
+
+test("the permanent local backdrop preserves responsive map interaction", async ({
+  page,
+}) => {
+  for (const viewport of [
+    { width: 1280, height: 700 },
+    { width: 900, height: 700 },
+    { width: 390, height: 844 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+    await expect(page.getByTestId("star-map-canvas")).toHaveAttribute(
+      "data-galactic-starfield",
+      "permanent",
+    );
+    await expect(
+      page.getByRole("link", { name: /Astronomy backdrop:/ }),
+    ).toBeVisible();
+  }
+  const resourceOrigins = await page.evaluate(() =>
+    performance
+      .getEntriesByType("resource")
+      .map((entry) => new URL(entry.name).origin),
+  );
+  expect(
+    resourceOrigins.every((origin) => origin === new URL(page.url()).origin),
+  ).toBe(true);
+  await page.getByRole("button", { name: "Browse systems" }).click();
+  await page.getByRole("button", { name: "Alpha Centauri" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Alpha Centauri" }),
+  ).toBeVisible();
+});

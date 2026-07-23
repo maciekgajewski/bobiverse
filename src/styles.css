@@ -484,6 +484,13 @@ footer {
 footer span:last-child {
   text-align: right;
 }
+footer a {
+  color: #93dce9;
+  text-decoration-color: rgb(147 220 233 / 55%);
+}
+footer a:hover {
+  color: var(--accent-cyan);
+}
 @media (max-width: 900px) {
   .atlas-grid {
     grid-template-columns: 180px minmax(0, 1fr);
