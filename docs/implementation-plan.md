@@ -127,13 +127,18 @@ navigation.
 
 Planned work:
 
+- Materialize the Draft 2020-12 schema, a shared TypeScript validator/projector, and
+  the complete zero-state Solar-System source before authoring book chapters. The
+  zero-state alone is a valid pre-book world; `books.json` may remain empty until a
+  chapter is authored.
 - Define JSON Schema Draft 2020-12 contracts for the zero-state Solar-System source,
   authored chapter records, introductions, updates, appearances, events, locations,
   assets, and generated projections.
 - Store the zero-state Solar-System tree and each authored chapter in validated source
   JSON; derive the ordered chapter manifest from chapter files and the minimal
   `books.json` catalogue.
-- Manually encode a small, representative chapter set.
+- Manually encode a small, representative chapter set in a later task, using the
+  already-proven validation and projection path.
 - Generate stable entity registries and selected-chapter state from the zero-state
   source plus authored chapter patches; add cross-reference, location-tree, child-order,
   and provenance validation.
@@ -212,12 +217,12 @@ Exit criteria:
 
 ## 10. Cross-cutting risks
 
-| Risk | Mitigation |
-| --- | --- |
-| Catalogue objects are mistaken for systems | Maintain a reviewed component-to-system layer and system-level fixtures. |
-| Rendering distorts reader understanding | Preserve canonical linear positions and calculate measurements outside the scene. |
-| 3D canvas is hard to test headlessly | Separate domain tests from rendering; retain Playwright artifacts; perform remote manual review. |
-| Narrative dates and reveal order are conflated | Model story time and reading-order visibility independently. |
-| LLM output invents or merges facts | Schema constraints, evidence, entity resolution, validation, and mandatory review. |
-| Public fan project copies protected expression | Use original summaries and assets; exclude source text; conduct publication review. |
-| Static architecture accumulates accidental backend assumptions | Keep all runtime data local and require an ADR before adding server dependencies. |
+| Risk                                                           | Mitigation                                                                                       |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Catalogue objects are mistaken for systems                     | Maintain a reviewed component-to-system layer and system-level fixtures.                         |
+| Rendering distorts reader understanding                        | Preserve canonical linear positions and calculate measurements outside the scene.                |
+| 3D canvas is hard to test headlessly                           | Separate domain tests from rendering; retain Playwright artifacts; perform remote manual review. |
+| Narrative dates and reveal order are conflated                 | Model story time and reading-order visibility independently.                                     |
+| LLM output invents or merges facts                             | Schema constraints, evidence, entity resolution, validation, and mandatory review.               |
+| Public fan project copies protected expression                 | Use original summaries and assets; exclude source text; conduct publication review.              |
+| Static architecture accumulates accidental backend assumptions | Keep all runtime data local and require an ADR before adding server dependencies.                |

@@ -5,6 +5,7 @@
     "lib": ["ES2023"],
     "module": "ESNext",
     "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
@@ -16,6 +17,7 @@
     "vite.config.ts",
     "vitest.config.ts",
     "playwright.config.ts",
-    "eslint.config.js"
+    "eslint.config.js",
+    "scripts"
   ]
 }

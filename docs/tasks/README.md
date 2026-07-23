@@ -14,11 +14,12 @@ derived from `../implementation-plan.md` and must remain consistent with
 
 ## Index
 
-| Task | Status | Purpose |
-| --- | --- | --- |
-| [BOB-001](BOB-001-nearby-star-map.md) | Done | Deliver the 20-system astronomy map vertical slice. |
-| [BOB-002](BOB-002-narrative-data-model-definition.md) | Done | Define the Phase 2 narrative JSON data model. |
-| [BOB-003](BOB-003-visual-system-and-application-shell.md) | Done | Establish the responsive visual system and application shell. |
+| Task                                                      | Status | Purpose                                                               |
+| --------------------------------------------------------- | ------ | --------------------------------------------------------------------- |
+| [BOB-001](BOB-001-nearby-star-map.md)                     | Done   | Deliver the 20-system astronomy map vertical slice.                   |
+| [BOB-002](BOB-002-narrative-data-model-definition.md)     | Done   | Define the Phase 2 narrative JSON data model.                         |
+| [BOB-003](BOB-003-visual-system-and-application-shell.md) | Done   | Establish the responsive visual system and application shell.         |
+| [BOB-004](BOB-004-narrative-zero-state-and-projection.md) | Done   | Validate the zero state and generate reader-safe chapter projections. |
 
 ## Task requirements
 

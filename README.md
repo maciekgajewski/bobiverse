@@ -55,3 +55,24 @@ Then open `http://<development-host-ip>:4173`. Do not open the built files with 
 Run `npm run validate` for the normal local verification set. See
 [astronomy pipeline](docs/data/astronomy-pipeline.md) for catalogue refresh and
 [visual testing](docs/visual-testing.md) for the remote-browser acceptance procedure.
+
+## Narrative authoring
+
+The pre-book zero-state is a valid narrative corpus even before any chapters exist.
+Validate it, or a future chapter corpus, with:
+
+```bash
+npm run narrative:validate
+```
+
+Generate an uncommitted projection for the pre-book state or a selected chapter:
+
+```bash
+npm run narrative:generate -- --output /tmp/bobiverse-world.json
+npm run narrative:generate -- --chapter 1.1 --output /tmp/bobiverse-world-1.1.json
+```
+
+The CLI only reads authored narrative sources. It writes the requested output and
+never treats generated state as editable source data.
+
+Convenience shell wrappers and the same examples are in [bin/README.md](bin/README.md).

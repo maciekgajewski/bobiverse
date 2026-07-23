@@ -1,0 +1,82 @@
+{
+  "id": "location:solar-system",
+  "name": "Solar System",
+  "kind": "star_system",
+  "astronomy_object_id": "sol",
+  "children": [
+    {
+      "id": "location:sol",
+      "name": "Sol",
+      "kind": "star",
+      "parent_relation": "member_of_system",
+      "children": [
+        {
+          "id": "location:mercury",
+          "name": "Mercury",
+          "kind": "planet",
+          "parent_relation": "orbits"
+        },
+        {
+          "id": "location:venus",
+          "name": "Venus",
+          "kind": "planet",
+          "parent_relation": "orbits"
+        },
+        {
+          "id": "location:earth",
+          "name": "Earth",
+          "kind": "planet",
+          "parent_relation": "orbits"
+        },
+        {
+          "id": "location:mars",
+          "name": "Mars",
+          "kind": "planet",
+          "parent_relation": "orbits"
+        },
+        {
+          "id": "location:asteroid-belt",
+          "name": "Asteroid Belt",
+          "kind": "asteroid_belt",
+          "parent_relation": "orbits"
+        },
+        {
+          "id": "location:jupiter",
+          "name": "Jupiter",
+          "kind": "planet",
+          "parent_relation": "orbits"
+        },
+        {
+          "id": "location:saturn",
+          "name": "Saturn",
+          "kind": "planet",
+          "parent_relation": "orbits"
+        },
+        {
+          "id": "location:uranus",
+          "name": "Uranus",
+          "kind": "planet",
+          "parent_relation": "orbits"
+        },
+        {
+          "id": "location:neptune",
+          "name": "Neptune",
+          "kind": "planet",
+          "parent_relation": "orbits"
+        },
+        {
+          "id": "location:kuiper-belt",
+          "name": "Kuiper Belt",
+          "kind": "kuiper_belt",
+          "parent_relation": "orbits"
+        },
+        {
+          "id": "location:oort-cloud",
+          "name": "Oort Cloud",
+          "kind": "oort_cloud",
+          "parent_relation": "orbits"
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # Narrative data-model definition
 
-Status: In progress
+Status: Done
 Schema dialect: JSON Schema Draft 2020-12
 Last updated: 2026-07-23
 
@@ -18,9 +18,9 @@ generated-projection boundary.
 
 ## Shared JSON Schema definitions
 
-Record schemas must use JSON Schema Draft 2020-12 and may import the following
-definitions from this document's eventual machine-readable schema. The fragment
-is normative for the scalar types below.
+The canonical machine-readable schema is
+`data/schema/narrative-data-model.schema.json`. It uses JSON Schema Draft 2020-12;
+the identical listing below documents its shared definitions.
 
 ```json
 {
@@ -163,22 +163,13 @@ is normative for the scalar types below.
         "name": { "type": "string", "minLength": 1 },
         "gender": { "type": ["string", "null"], "minLength": 1 },
         "species_id": {
-          "anyOf": [
-            { "$ref": "#/$defs/species_id" },
-            { "type": "null" }
-          ]
+          "anyOf": [{ "$ref": "#/$defs/species_id" }, { "type": "null" }]
         },
         "current_state": {
-          "anyOf": [
-            { "$ref": "#/$defs/state" },
-            { "type": "null" }
-          ]
+          "anyOf": [{ "$ref": "#/$defs/state" }, { "type": "null" }]
         },
         "picture_id": {
-          "anyOf": [
-            { "$ref": "#/$defs/asset_id" },
-            { "type": "null" }
-          ]
+          "anyOf": [{ "$ref": "#/$defs/asset_id" }, { "type": "null" }]
         },
         "aliases": {
           "type": ["array", "null"],
@@ -186,22 +177,13 @@ is normative for the scalar types below.
           "uniqueItems": true
         },
         "birth_date": {
-          "anyOf": [
-            { "$ref": "#/$defs/date" },
-            { "type": "null" }
-          ]
+          "anyOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }]
         },
         "death_date": {
-          "anyOf": [
-            { "$ref": "#/$defs/date" },
-            { "type": "null" }
-          ]
+          "anyOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }]
         },
         "death_event_id": {
-          "anyOf": [
-            { "$ref": "#/$defs/event_id" },
-            { "type": "null" }
-          ]
+          "anyOf": [{ "$ref": "#/$defs/event_id" }, { "type": "null" }]
         }
       },
       "anyOf": [
@@ -236,22 +218,13 @@ is normative for the scalar types below.
         "entity_id": { "$ref": "#/$defs/species_id" },
         "name": { "type": "string", "minLength": 1 },
         "description": {
-          "anyOf": [
-            { "$ref": "#/$defs/description" },
-            { "type": "null" }
-          ]
+          "anyOf": [{ "$ref": "#/$defs/description" }, { "type": "null" }]
         },
         "picture_id": {
-          "anyOf": [
-            { "$ref": "#/$defs/asset_id" },
-            { "type": "null" }
-          ]
+          "anyOf": [{ "$ref": "#/$defs/asset_id" }, { "type": "null" }]
         },
         "homeworld_id": {
-          "anyOf": [
-            { "$ref": "#/$defs/location_id" },
-            { "type": "null" }
-          ]
+          "anyOf": [{ "$ref": "#/$defs/location_id" }, { "type": "null" }]
         }
       },
       "anyOf": [
@@ -287,28 +260,16 @@ is normative for the scalar types below.
         "entity_id": { "$ref": "#/$defs/event_id" },
         "name": { "type": "string", "minLength": 1 },
         "location_id": {
-          "anyOf": [
-            { "$ref": "#/$defs/location_id" },
-            { "type": "null" }
-          ]
+          "anyOf": [{ "$ref": "#/$defs/location_id" }, { "type": "null" }]
         },
         "picture_id": {
-          "anyOf": [
-            { "$ref": "#/$defs/asset_id" },
-            { "type": "null" }
-          ]
+          "anyOf": [{ "$ref": "#/$defs/asset_id" }, { "type": "null" }]
         },
         "date": {
-          "anyOf": [
-            { "$ref": "#/$defs/date" },
-            { "type": "null" }
-          ]
+          "anyOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }]
         },
         "description": {
-          "anyOf": [
-            { "$ref": "#/$defs/description" },
-            { "type": "null" }
-          ]
+          "anyOf": [{ "$ref": "#/$defs/description" }, { "type": "null" }]
         },
         "participant_ids": {
           "type": ["array", "null"],
@@ -605,7 +566,11 @@ is normative for the scalar types below.
             "properties": { "kind": { "const": "transit" } }
           },
           "then": {
-            "required": ["map_status", "origin_location_id", "destination_location_id"],
+            "required": [
+              "map_status",
+              "origin_location_id",
+              "destination_location_id"
+            ],
             "not": {
               "anyOf": [
                 { "required": ["parent_location_id"] },
@@ -649,16 +614,10 @@ is normative for the scalar types below.
         "name": { "type": "string", "minLength": 1 },
         "kind": { "$ref": "#/$defs/location_kind" },
         "description": {
-          "anyOf": [
-            { "$ref": "#/$defs/description" },
-            { "type": "null" }
-          ]
+          "anyOf": [{ "$ref": "#/$defs/description" }, { "type": "null" }]
         },
         "state": {
-          "anyOf": [
-            { "$ref": "#/$defs/state" },
-            { "type": "null" }
-          ]
+          "anyOf": [{ "$ref": "#/$defs/state" }, { "type": "null" }]
         },
         "map_status": {
           "anyOf": [
@@ -667,16 +626,10 @@ is normative for the scalar types below.
           ]
         },
         "parent_location_id": {
-          "anyOf": [
-            { "$ref": "#/$defs/location_id" },
-            { "type": "null" }
-          ]
+          "anyOf": [{ "$ref": "#/$defs/location_id" }, { "type": "null" }]
         },
         "parent_relation": {
-          "anyOf": [
-            { "$ref": "#/$defs/parent_relation" },
-            { "type": "null" }
-          ]
+          "anyOf": [{ "$ref": "#/$defs/parent_relation" }, { "type": "null" }]
         },
         "astronomy_object_id": {
           "anyOf": [
@@ -685,16 +638,10 @@ is normative for the scalar types below.
           ]
         },
         "origin_location_id": {
-          "anyOf": [
-            { "$ref": "#/$defs/location_id" },
-            { "type": "null" }
-          ]
+          "anyOf": [{ "$ref": "#/$defs/location_id" }, { "type": "null" }]
         },
         "destination_location_id": {
-          "anyOf": [
-            { "$ref": "#/$defs/location_id" },
-            { "type": "null" }
-          ]
+          "anyOf": [{ "$ref": "#/$defs/location_id" }, { "type": "null" }]
         }
       },
       "anyOf": [
@@ -766,7 +713,6 @@ is normative for the scalar types below.
       "properties": {
         "books": {
           "type": "object",
-          "minProperties": 1,
           "patternProperties": {
             "^[1-9][0-9]*$": {
               "type": "object",
@@ -819,9 +765,8 @@ is normative for the scalar types below.
 }
 ```
 
-Until the shared fragment is published as a schema file, a record schema may
-embed an identical definition in its own `$defs`. It must not change the pattern
-or semantics.
+Record schemas must import these shared definitions from the published schema. They
+must not duplicate, loosen, or replace the shared scalar semantics.
 
 ## `date`
 
@@ -837,10 +782,10 @@ never be shown in the user interface.
 
 The JSON value is always a string in one of two forms:
 
-| Form | Meaning | Valid examples |
-| --- | --- | --- |
-| `"<year>"` | A year is known; no within-year order is asserted. | `"2026"`, `"10000"` |
-| `"<year>.<index>"` | A year and within-year ordering index are known. | `"2026.0"`, `"2026.77"` |
+| Form               | Meaning                                            | Valid examples          |
+| ------------------ | -------------------------------------------------- | ----------------------- |
+| `"<year>"`         | A year is known; no within-year order is asserted. | `"2026"`, `"10000"`     |
+| `"<year>.<index>"` | A year and within-year ordering index are known.   | `"2026.0"`, `"2026.77"` |
 
 `year` is a positive base-10 integer with no leading zero. `index` is a
 non-negative base-10 integer with no leading zero except for the single value
@@ -902,8 +847,12 @@ this compact fragment illustrates the shared references:
   "type": "object",
   "required": ["chapter", "date"],
   "properties": {
-    "chapter": { "$ref": "https://bobiverse.local/schema/narrative-data-model.json#/$defs/chapter" },
-    "date": { "$ref": "https://bobiverse.local/schema/narrative-data-model.json#/$defs/date" }
+    "chapter": {
+      "$ref": "https://bobiverse.local/schema/narrative-data-model.json#/$defs/chapter"
+    },
+    "date": {
+      "$ref": "https://bobiverse.local/schema/narrative-data-model.json#/$defs/date"
+    }
   }
 }
 ```
@@ -1021,12 +970,12 @@ Solar-System completeness check limits this actual seed to its agreed subset. A 
 location also requires `parent_relation`. Leaves omit `children`; when supplied,
 `children` is nonempty. The baseline's permitted containment pairs are:
 
-| Parent | Child | Required `parent_relation` |
-| --- | --- | --- |
-| `star_system` | `star` | `member_of_system` |
-| `star` | `planet`, `dwarf_planet`, `asteroid_belt`, `kuiper_belt`, `oort_cloud` | `orbits` |
-| `planet`, `dwarf_planet` | `moon` | `orbits` |
-| `planet`, `dwarf_planet`, `moon` | `locale` | `located_on` |
+| Parent                           | Child                                                                  | Required `parent_relation` |
+| -------------------------------- | ---------------------------------------------------------------------- | -------------------------- |
+| `star_system`                    | `star`                                                                 | `member_of_system`         |
+| `star`                           | `planet`, `dwarf_planet`, `asteroid_belt`, `kuiper_belt`, `oort_cloud` | `orbits`                   |
+| `planet`, `dwarf_planet`         | `moon`                                                                 | `orbits`                   |
+| `planet`, `dwarf_planet`, `moon` | `locale`                                                               | `located_on`               |
 
 The source preserves every authored child-array order. Among a parent's children whose
 relation is `orbits`, that order asserts inner-to-outer order; it contains no distances
@@ -1068,7 +1017,8 @@ reference one asset ID, but no two asset IDs may register the same static path.
 
 `books.json` is the sole manually authored book catalogue. It uses a numeric-keyed
 object: each key is the canonical positive book number and each value initially
-contains only the nonempty `title`.
+contains only the nonempty `title`. The catalogue may be empty while the zero-state is
+the only authored narrative source; once a chapter is added, its book key is required.
 
 ```json
 {
@@ -1089,9 +1039,7 @@ reference and source path; it does not duplicate story dates or narrative metada
 
 ```json
 {
-  "chapters": [
-    { "chapter": "1.1", "path": "chapters/1/1.json" }
-  ]
+  "chapters": [{ "chapter": "1.1", "path": "chapters/1/1.json" }]
 }
 ```
 
@@ -1202,14 +1150,14 @@ Each entity type has a dedicated schema. The ratified contracts below cover char
 species, events, assets, and locations; later entity types must add their own contract
 before records of that type are authored.
 
-| Record | Required initial contract | Derived rather than authored |
-| --- | --- | --- |
-| `character` | `id`, `name`, and the optional fields in the ratified character contract | last-known sighting; event history |
-| `star_system` | `id`, `kind: "star_system"`, name, and `astronomy_object_id` when mapped | astronomical components and render facts; sublocations; last-known sightings and events |
-| `planet`, `moon`, `locale`, `megastructure` | `id`, `kind`, name, and parent where non-root | sublocations; last-known sightings and events |
-| `species` | `id`, `name`, and the optional fields in the ratified species contract | members and other reverse links |
-| `event` | `id`, `name`, and the optional fields in the ratified event contract | location event list; participant event histories |
-| `asset` | `id`, path, and source | no visible assignment; assignments are entity values |
+| Record                                      | Required initial contract                                                | Derived rather than authored                                                            |
+| ------------------------------------------- | ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
+| `character`                                 | `id`, `name`, and the optional fields in the ratified character contract | last-known sighting; event history                                                      |
+| `star_system`                               | `id`, `kind: "star_system"`, name, and `astronomy_object_id` when mapped | astronomical components and render facts; sublocations; last-known sightings and events |
+| `planet`, `moon`, `locale`, `megastructure` | `id`, `kind`, name, and parent where non-root                            | sublocations; last-known sightings and events                                           |
+| `species`                                   | `id`, `name`, and the optional fields in the ratified species contract   | members and other reverse links                                                         |
+| `event`                                     | `id`, `name`, and the optional fields in the ratified event contract     | location event list; participant event histories                                        |
+| `asset`                                     | `id`, path, and source                                                   | no visible assignment; assignments are entity values                                    |
 
 Every present or future `description` and `state` field uses the shared schema types:
 an optional, nonempty plain string. `description` is an original reader-visible
@@ -1246,16 +1194,16 @@ Every non-root location requires both `parent_location_id` and `parent_relation`
 Roots are `star_system`, `transit`, and explicitly unmapped locations. The shared
 semantic parent table is:
 
-| Parent kind | Child kind | Required `parent_relation` |
-| --- | --- | --- |
-| `star_system` | `star` | `member_of_system` |
-| `star` | `planet`, `dwarf_planet`, `asteroid_belt`, `kuiper_belt`, `oort_cloud` | `orbits` |
-| `star` | `megastructure` | `orbits` or `located_on` |
-| `planet`, `dwarf_planet` | `moon` | `orbits` |
-| `planet`, `dwarf_planet`, `moon`, `asteroid_belt`, `kuiper_belt`, `oort_cloud` | `megastructure` | `orbits` or `located_on` |
-| `planet`, `dwarf_planet`, `moon` | `locale` | `located_on` |
-| `megastructure` | `locale`, `megastructure` | `contained_in` |
-| `locale` | `locale` | `contained_in` |
+| Parent kind                                                                    | Child kind                                                             | Required `parent_relation` |
+| ------------------------------------------------------------------------------ | ---------------------------------------------------------------------- | -------------------------- |
+| `star_system`                                                                  | `star`                                                                 | `member_of_system`         |
+| `star`                                                                         | `planet`, `dwarf_planet`, `asteroid_belt`, `kuiper_belt`, `oort_cloud` | `orbits`                   |
+| `star`                                                                         | `megastructure`                                                        | `orbits` or `located_on`   |
+| `planet`, `dwarf_planet`                                                       | `moon`                                                                 | `orbits`                   |
+| `planet`, `dwarf_planet`, `moon`, `asteroid_belt`, `kuiper_belt`, `oort_cloud` | `megastructure`                                                        | `orbits` or `located_on`   |
+| `planet`, `dwarf_planet`, `moon`                                               | `locale`                                                               | `located_on`               |
+| `megastructure`                                                                | `locale`, `megastructure`                                              | `contained_in`             |
+| `locale`                                                                       | `locale`                                                               | `contained_in`             |
 
 `transit` is always an unmapped root. It requires `origin_location_id` and
 `destination_location_id`, each resolving to a distinct non-transit location; it has
@@ -1278,18 +1226,18 @@ chapter-controlled `picture_id` field.
 A character introduction uses the `character` schema above. Its only required fields
 are a canonical `character:` ID and a nonempty reader-visible `name`.
 
-| Field | Type | Meaning |
-| --- | --- | --- |
-| `id` | `character_id` | Immutable stable identifier. |
-| `name` | nonempty string | Reader-visible display name. |
-| `gender` | optional nonempty string | Reader-visible free text; no global gender vocabulary is imposed. |
-| `species_id` | optional `species_id` | Reference to an introduced species entity. |
-| `current_state` | optional nonempty string | The character's known mutable state at the enclosing chapter's story date. |
-| `picture_id` | optional `asset_id` | Chapter-controlled assignment of a manually curated image asset. |
-| `aliases` | optional array of unique nonempty strings | Additional reader-visible names that become searchable only when introduced or updated. |
-| `birth_date` | optional `date` | Known birth date at the available story-time precision. |
-| `death_date` | optional `date` | Known death date at the available story-time precision. |
-| `death_event_id` | optional `event_id` | Reference to the event that records the death. |
+| Field            | Type                                      | Meaning                                                                                 |
+| ---------------- | ----------------------------------------- | --------------------------------------------------------------------------------------- |
+| `id`             | `character_id`                            | Immutable stable identifier.                                                            |
+| `name`           | nonempty string                           | Reader-visible display name.                                                            |
+| `gender`         | optional nonempty string                  | Reader-visible free text; no global gender vocabulary is imposed.                       |
+| `species_id`     | optional `species_id`                     | Reference to an introduced species entity.                                              |
+| `current_state`  | optional nonempty string                  | The character's known mutable state at the enclosing chapter's story date.              |
+| `picture_id`     | optional `asset_id`                       | Chapter-controlled assignment of a manually curated image asset.                        |
+| `aliases`        | optional array of unique nonempty strings | Additional reader-visible names that become searchable only when introduced or updated. |
+| `birth_date`     | optional `date`                           | Known birth date at the available story-time precision.                                 |
+| `death_date`     | optional `date`                           | Known death date at the available story-time precision.                                 |
+| `death_event_id` | optional `event_id`                       | Reference to the event that records the death.                                          |
 
 The `character_update` schema permits every character field except `id`. `name` must
 remain a nonempty string; every optional field may be supplied with `null` to clear its
@@ -1313,13 +1261,13 @@ map. Tied or incomparable appearance dates produce no singular last-known locati
 A species introduction uses the `species` schema above. Its only required fields are a
 canonical `species:` ID and a nonempty reader-visible `name`.
 
-| Field | Type | Meaning |
-| --- | --- | --- |
-| `id` | `species_id` | Immutable stable identifier. |
-| `name` | nonempty string | Reader-visible display name. |
-| `description` | optional nonempty string | Original reader-visible summary; it must not copy book text. |
-| `picture_id` | optional `asset_id` | Chapter-controlled assignment of a manually curated image asset. |
-| `homeworld_id` | optional `location_id` | Reference to a seeded or introduced, non-transit narrative location; an explicitly unmapped location remains valid. |
+| Field          | Type                     | Meaning                                                                                                             |
+| -------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| `id`           | `species_id`             | Immutable stable identifier.                                                                                        |
+| `name`         | nonempty string          | Reader-visible display name.                                                                                        |
+| `description`  | optional nonempty string | Original reader-visible summary; it must not copy book text.                                                        |
+| `picture_id`   | optional `asset_id`      | Chapter-controlled assignment of a manually curated image asset.                                                    |
+| `homeworld_id` | optional `location_id`   | Reference to a seeded or introduced, non-transit narrative location; an explicitly unmapped location remains valid. |
 
 The `species_update` schema permits every species field except `id`. `name` must remain
 a nonempty string; `description`, `picture_id`, and `homeworld_id` may be supplied with
@@ -1331,14 +1279,14 @@ already seeded or introduced non-transit location.
 An event introduction uses the `event` schema above. Its only required fields are a
 canonical `event:` ID and a nonempty reader-visible `name`.
 
-| Field | Type | Meaning |
-| --- | --- | --- |
-| `id` | `event_id` | Immutable stable identifier. |
-| `name` | nonempty string | Reader-visible event name. |
-| `location_id` | optional `location_id` | Reference to any seeded or introduced narrative location, including transit or explicitly unmapped locations. |
-| `picture_id` | optional `asset_id` | Chapter-controlled assignment of a manually curated image asset. |
-| `date` | optional `date` | Story-time occurrence date; when absent, the event remains chronologically unplaced. |
-| `description` | optional nonempty string | Original reader-visible summary; it must not copy book text. |
+| Field             | Type                                           | Meaning                                                                                                                      |
+| ----------------- | ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `id`              | `event_id`                                     | Immutable stable identifier.                                                                                                 |
+| `name`            | nonempty string                                | Reader-visible event name.                                                                                                   |
+| `location_id`     | optional `location_id`                         | Reference to any seeded or introduced narrative location, including transit or explicitly unmapped locations.                |
+| `picture_id`      | optional `asset_id`                            | Chapter-controlled assignment of a manually curated image asset.                                                             |
+| `date`            | optional `date`                                | Story-time occurrence date; when absent, the event remains chronologically unplaced.                                         |
+| `description`     | optional nonempty string                       | Original reader-visible summary; it must not copy book text.                                                                 |
 | `participant_ids` | optional array of unique `character_id` values | Named character participants. Omission asserts no participant information; `[]` states that no named character participates. |
 
 The `event_update` schema permits every event field except `id`; optional fields may be
