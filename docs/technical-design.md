@@ -365,7 +365,8 @@ record ordered visible patches, appearances, and events. The stable entity regis
 every selected-chapter state are deterministic generated projections, never manually
 edited snapshots. ADR-0001 establishes chapter-authored patches; ADR-0003 supersedes
 its sole-source boundary with the zero-state baseline; ADR-0004 establishes the
-unversioned narrative schema contract.
+unversioned narrative schema contract; and ADR-0005 refines the chapter, location, and
+date-projection contracts.
 
 Spoiler safety has two independent dimensions:
 
@@ -379,8 +380,8 @@ reader may know; story time then decides which of those facts form the represent
 world state at `viewChapter.date`. A future story-state change must not alter an
 earlier in-universe view merely because its chapter was read first. Conversely, a fact
 first revealed later must not alter an earlier reader-knowledge view, even if it was
-already true in-universe. ADR-0002 defines this two-stage projection and its temporal
-validation rules.
+already true in-universe. ADR-0002, as refined by ADR-0005, defines this two-stage
+projection and its temporal validation rules.
 
 A future date-exploration component may use an arbitrary requested story date for the
 second stage, rather than `viewChapter.date`. It must retain the first stage's

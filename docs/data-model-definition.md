@@ -12,8 +12,9 @@ this document rather than redefining their syntax. The first definitions are `da
 `chapter`.
 
 This document does not add book-derived records or source text. It records only
-the data contract needed before those records are authored. ADR-0001 is binding for
-the chapter-authored source and generated-projection boundary.
+the data contract needed before those records are authored. ADR-0001, as refined by
+ADR-0003 and ADR-0005, is binding for the chapter-authored source and
+generated-projection boundary.
 
 ## Shared JSON Schema definitions
 
@@ -531,7 +532,24 @@ is normative for the scalar types below.
       ]
     },
     "zero_state_solar_system": {
-      "$ref": "#/$defs/baseline_location"
+      "allOf": [
+        { "$ref": "#/$defs/baseline_location" },
+        {
+          "required": ["id", "name", "kind", "astronomy_object_id", "children"],
+          "properties": {
+            "id": { "const": "location:solar-system" },
+            "name": { "const": "Solar System" },
+            "kind": { "const": "star_system" },
+            "astronomy_object_id": { "const": "sol" },
+            "children": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 1,
+              "items": { "$ref": "#/$defs/sol_star" }
+            }
+          }
+        }
+      ]
     },
     "location": {
       "type": "object",
@@ -954,11 +972,11 @@ result is therefore the world state inferred from the reader's selected chapter
 knowledge, not an assertion of the complete in-universe state at that date.
 
 Reader order never breaks a story-time tie. Identical canonical date values are equal,
-so a state value dated exactly like `viewChapter.date` is eligible. A year-only date is
-otherwise unordered relative to an indexed date in the same year, so it cannot decide
-a state transition between them. Source data must supply an index whenever a state
-write or selected chapter requires that within-year ordering. Competing writes to one
-entity property with equal or incomparable effective dates are invalid.
+so a state value dated exactly like the requested display date is eligible. A year-only
+date is otherwise unordered relative to an indexed date in the same year, so it cannot
+decide a state transition between them. Source data must supply an index whenever a
+state write or requested display date requires that within-year ordering. Competing
+writes to one entity property with equal or incomparable effective dates are invalid.
 
 An event uses its projected optional `date` for its in-universe occurrence. If that
 value is absent, it remains reader-visible after its introduction but is not placed at
@@ -1144,7 +1162,7 @@ its complete minimum valid state at the end of its introducing chapter. A seeded
 is present before chapter 1; a non-seeded entity is introduced exactly once and remains
 part of reader-visible knowledge in every later view. Their state-bearing properties
 contribute to temporal world state only when their effective story dates are at or
-before the selected chapter date.
+before the requested display date.
 
 ### Updates
 
@@ -1283,12 +1301,12 @@ imposed between `birth_date` and `death_date`.
 
 `current_state` does not establish a character location. A character location is only
 confirmed by an appearance with an effective location. From reader-visible appearances
-whose effective story dates are definitively at or before `viewChapter.date`, the
-generated projection may expose a `last_known_location` only when one appearance has a
-uniquely latest, definitively comparable story date. That generated value records the
-source chapter and story date of the sighting, is labelled as a last-known sighting, and
-must not be treated as current presence or used to position the character on the map.
-Tied or incomparable appearance dates produce no singular last-known location.
+whose effective story dates are definitively at or before the requested display date,
+the generated projection may expose a `last_known_location` only when one appearance
+has a uniquely latest, definitively comparable story date. That generated value records
+the source chapter and story date of the sighting, is labelled as a last-known sighting,
+and must not be treated as current presence or used to position the character on the
+map. Tied or incomparable appearance dates produce no singular last-known location.
 
 ### Species
 
@@ -1383,7 +1401,7 @@ layer. It rejects at least:
 - a chapter missing its required title, summary, date, or default location; an empty
   authored optional array; or an appearance array with no `lead` appearance;
 - competing state writes that have equal or incomparable effective story dates, or a
-  year-only selected chapter date that cannot determine a needed indexed transition;
+  year-only requested display date that cannot determine a needed indexed transition;
 - a broken location parent tree; a parent/child/relation combination outside the shared
   location table; invalid transit endpoints; an unmapped descendant without explicit
   status; a forbidden or missing mapped-system astronomy reference; or incompatible

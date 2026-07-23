@@ -19,6 +19,7 @@ runtime behavior.
 - `../adrs/0002-reader-order-visibility-and-story-time-projection.md`
 - `../adrs/0003-zero-state-solar-system-baseline.md`
 - `../adrs/0004-unversioned-narrative-schema-contract.md`
+- `../adrs/0005-chapter-location-and-date-projection-refinements.md`
 - `../../AGENTS.md`
 
 ## Scope
@@ -92,8 +93,9 @@ runtime behavior.
   nonempty plain string, without Markdown or a controlled vocabulary.
 - Narrative source records and generated narrative outputs contain no `schema_version`
   field; the shared schema declares Draft 2020-12 and has one unversioned stable `$id`.
-- ADR-0003, ADR-0004, and directly affected integrated design documents reflect the
-  same three-source authority boundary and unversioned schema contract.
+- ADR-0003 through ADR-0005 and directly affected integrated design documents reflect
+  the same three-source authority boundary, unversioned schema contract, and
+  spoiler-safe projection rules.
 - The task index reflects this documentation work without changing BOB-001.
 
 ## Validation commands
@@ -110,6 +112,7 @@ rg -n 'zero-state|chapter-authored|generated|one-parent|furthestChapterRead|stor
   docs/adrs/0002-reader-order-visibility-and-story-time-projection.md \
   docs/adrs/0003-zero-state-solar-system-baseline.md \
   docs/adrs/0004-unversioned-narrative-schema-contract.md \
+  docs/adrs/0005-chapter-location-and-date-projection-refinements.md \
   docs/technical-design.md docs/data-model-definition.md
 awk 'BEGIN{inside=0; seen=0} /^```json$/{if(!inside && !seen){inside=1; seen=1; next}} /^```$/{if(inside){exit}} inside{print}' \
   docs/data-model-definition.md | jq empty
