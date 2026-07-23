@@ -942,9 +942,16 @@ baseline:
 2. Story time is the world-state gate. Every state-bearing property supplied by an
    introduction or ordinary update has the effective story date of its enclosing
    chapter. From the reader-visible records, apply only values whose effective date
-   is definitively at or before
-   `viewChapter.date`, then use the chronologically latest value for each entity
-   property.
+   is definitively at or before the requested display date, then use the
+   chronologically latest value for each entity property. A normal chapter view uses
+   `viewChapter.date` as that date.
+
+A future date-exploration UI may request any valid story date in place of
+`viewChapter.date`, including a date earlier or later than the selected chapter. It
+must reuse the same reader-visible chapter set chosen in stage 1; it must not load or
+infer a later chapter merely because that chapter has an earlier effective date. Its
+result is therefore the world state inferred from the reader's selected chapter
+knowledge, not an assertion of the complete in-universe state at that date.
 
 Reader order never breaks a story-time tie. Identical canonical date values are equal,
 so a state value dated exactly like `viewChapter.date` is eligible. A year-only date is

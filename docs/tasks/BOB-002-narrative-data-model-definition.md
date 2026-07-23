@@ -54,6 +54,8 @@ runtime behavior.
   date value a spoiler-visibility key.
 - The document defines guarded `furthestChapterRead`, selectable `viewChapter`, and
   their visibility constraint, then applies story time independently to project state.
+- A future date-exploration projection may use any requested story date, but derives
+  only from the reader-visible chapter state and never gains facts from later chapters.
 - Every chapter requires canonical `chapter`, title, original plain-text summary, story
   date, and default location. Its optional `introducing`, `appearances`, and `updates`
   arrays are omitted when empty and nonempty when present; an appearance array contains

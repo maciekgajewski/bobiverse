@@ -382,6 +382,13 @@ first revealed later must not alter an earlier reader-knowledge view, even if it
 already true in-universe. ADR-0002 defines this two-stage projection and its temporal
 validation rules.
 
+A future date-exploration component may use an arbitrary requested story date for the
+second stage, rather than `viewChapter.date`. It must retain the first stage's
+reader-visible chapter set: no later chapter becomes available merely because its
+story date precedes the requested date. The result is explicitly the state inferred
+from selected reader knowledge at that date, not a claim about unrevealed in-universe
+facts.
+
 All later views—map, search, characters, systems, paths, chronicles, and genealogy—use
 one shared visibility policy. A UI component may not implement an independent spoiler
 filter.
