@@ -1,6 +1,6 @@
 # BOB-002: narrative data-model definition
 
-Status: In progress
+Status: Done
 Phase: 2 (design preparation)
 Last updated: 2026-07-23
 
@@ -121,8 +121,9 @@ jq empty data/narrative/assets.json
   docs/data-model-definition.md docs/technical-design.md docs/implementation-plan.md
 ```
 
-## Completion boundary
+## Completion
 
-This task remains in progress while additional scalar and record definitions are
-being ratified. It may be marked `Done` only after the agreed narrative record
-schemas and their cross-reference rules are documented and reviewed.
+Completed on 2026-07-23 after the agreed narrative record schemas and their
+cross-reference rules were documented, independently reviewed, and validated. Future
+record-specific contracts, such as revealed claims, require their own task and must
+reuse this shared contract.
