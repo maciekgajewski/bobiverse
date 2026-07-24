@@ -1,12 +1,15 @@
 import { useFrame } from "@react-three/fiber";
 import { useRef } from "react";
-import { ShaderMaterial, Vector3 } from "three";
+import { DoubleSide, ShaderMaterial, Vector3 } from "three";
 import {
   GALACTIC_GRID_FADE_END,
   GALACTIC_GRID_FADE_START,
 } from "../domain/galactic-plane-grid";
 
 const GRID_SIZE = 128;
+
+/** The plane remains visible when the reader orbits to either Galactic hemisphere. */
+export const GALACTIC_GRID_MATERIAL_SIDE = DoubleSide;
 
 const VERTEX_SHADER = `
   varying vec3 vWorldPosition;
@@ -56,6 +59,7 @@ export function GalacticPlaneGrid() {
         ref={material}
         transparent
         depthWrite={false}
+        side={GALACTIC_GRID_MATERIAL_SIDE}
         uniforms={{ uCameraPosition: { value: new Vector3() } }}
         vertexShader={VERTEX_SHADER}
         fragmentShader={FRAGMENT_SHADER}

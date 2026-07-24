@@ -4,8 +4,14 @@ import {
   GALACTIC_GRID_FADE_START,
   galacticGridOpacityAtPlanarDistance,
 } from "../../src/domain/galactic-plane-grid";
+import { GALACTIC_GRID_MATERIAL_SIDE } from "../../src/components/GalacticPlaneGrid";
+import { DoubleSide } from "three";
 
 describe("Galactic-plane grid distance fade", () => {
+  it("renders both the upper and lower Galactic-plane faces", () => {
+    expect(GALACTIC_GRID_MATERIAL_SIDE).toBe(DoubleSide);
+  });
+
   it("is fully visible close to the camera and absent at the far boundary", () => {
     expect(galacticGridOpacityAtPlanarDistance(0)).toBe(1);
     expect(galacticGridOpacityAtPlanarDistance(GALACTIC_GRID_FADE_START)).toBe(

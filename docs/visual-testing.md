@@ -66,14 +66,18 @@ existing Safari real-browser publication gap remains unchanged.
 
 ## Default and reset camera
 
-The repeatable default camera pose is expressed in Three.js scene coordinates:
+The repeatable default camera pose preserves the documented Three.js viewing
+direction while calculating its distance from the current static system catalogue and
+canvas aspect ratio:
 
-- Position: `(10.5, 8, 12)`.
+- Viewing direction: from `(10.5, 8, 12)` toward the Sol-centred scene origin.
+- Framing: all known system positions fit within a 10% margin at every screen edge.
 - Controls target: `(0, 0, 0)`, the Sol-centered scene origin.
 - Up direction: scene `+Y`, which is canonical Galactic `+Zg` (Galactic north).
 - Perspective field of view: 47 degrees.
 
-Reset cancels any in-progress automatic focus motion and restores both the camera
-position and controls target to this pose. It does not change the selected system,
-or active distance unit. During manual acceptance, move and rotate the camera, press
-Reset view, and confirm that Sol is targeted from this same repeatable orientation.
+Reset cancels any in-progress automatic focus motion and restores both the fitted
+camera position and controls target to this pose. It does not change the selected
+system, or active distance unit. During manual acceptance, move and rotate the
+camera, press Reset view, and confirm that Sol is targeted from this same repeatable
+orientation with every known system visible.

@@ -14,6 +14,7 @@ import { GalacticStarfield } from "./GalacticStarfield";
 import type { DistanceUnit, StellarSystem } from "../domain/types";
 import { calculateMapScale, formatDistance } from "../domain/units";
 import {
+  cameraPositionForFraming,
   easeInOutQuad,
   focusDurationMs,
   perspectiveWorldWidthAtTarget,
@@ -45,7 +46,8 @@ export interface MapScale {
   pixelWidth: number;
 }
 
-const DEFAULT_CAMERA: [number, number, number] = [10.5, 8, 12];
+const DEFAULT_CAMERA_DIRECTION: [number, number, number] = [10.5, 8, 12];
+const MAP_CAMERA_FOV_DEGREES = 47;
 
 const ignoreRaycast = () => undefined;
 
@@ -73,11 +75,13 @@ function useReducedMotion(): boolean {
 function CameraController({
   resetToken,
   selected,
+  systems,
 }: {
   resetToken: number;
   selected: StellarSystem | undefined;
+  systems: StellarSystem[];
 }) {
-  const { camera } = useThree();
+  const { camera, size } = useThree();
   const controls = useRef<OrbitControlsImpl>(null);
   const motion = useRef<CameraMotion | null>(null);
   const reducedMotion = useReducedMotion();
@@ -108,11 +112,21 @@ function CameraController({
   );
   useEffect(() => {
     motion.current = null;
-    camera.position.set(...DEFAULT_CAMERA);
+    const position = cameraPositionForFraming(
+      systems.map((system) => system.render_position),
+      {
+        x: DEFAULT_CAMERA_DIRECTION[0],
+        y: DEFAULT_CAMERA_DIRECTION[1],
+        z: DEFAULT_CAMERA_DIRECTION[2],
+      },
+      MAP_CAMERA_FOV_DEGREES,
+      size.width / size.height,
+    );
+    camera.position.set(position.x, position.y, position.z);
     camera.lookAt(0, 0, 0);
     controls.current?.target.set(0, 0, 0);
     controls.current?.update();
-  }, [camera, resetToken]);
+  }, [camera, resetToken, size.height, size.width, systems]);
   useEffect(() => {
     if (!selected) return;
     const { x, y, z } = selected.render_position;
@@ -352,7 +366,11 @@ function Scene({
           />
         ))}
       </group>
-      <CameraController resetToken={resetToken} selected={selected} />
+      <CameraController
+        resetToken={resetToken}
+        selected={selected}
+        systems={systems}
+      />
       <CameraScaleReporter unit={unit} onScaleChange={onScaleChange} />
     </>
   );
@@ -361,7 +379,10 @@ function Scene({
 export function StarMap({ onDeselect, ...props }: MapSceneProps) {
   return (
     <Canvas
-      camera={{ position: DEFAULT_CAMERA, fov: 47 }}
+      camera={{
+        position: DEFAULT_CAMERA_DIRECTION,
+        fov: MAP_CAMERA_FOV_DEGREES,
+      }}
       dpr={[1, 1.8]}
       onPointerMissed={onDeselect}
       data-testid="star-map-canvas"
