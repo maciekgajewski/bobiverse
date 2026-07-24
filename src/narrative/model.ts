@@ -44,7 +44,7 @@ function createAjv(): Ajv2020 {
   // The documented schema intentionally uses `required` inside conditional `not`
   // branches. That is valid Draft 2020-12, but Ajv's optional strictRequired lint
   // cannot infer the enclosing branch properties.
-  return new Ajv2020({ allErrors: true, strict: false });
+  return new Ajv2020({ allErrors: true, strict: false, verbose: true });
 }
 
 function errorMessage(errors: ErrorObject[] | null | undefined): string {
@@ -76,6 +76,16 @@ function assertSchema(
       `${label} fails JSON Schema validation: ${errorMessage(validator.errors)}`,
     );
   }
+}
+
+/** Evaluates one authored source against its named JSON Schema definition. */
+export function narrativeSchemaErrors(
+  definition: string,
+  candidate: unknown,
+): ErrorObject[] {
+  const validator = validatorFor(definition);
+  if (validator(candidate)) return [];
+  return [...(validator.errors ?? [])];
 }
 
 function asRecord(value: unknown, label: string): NarrativeRecord {

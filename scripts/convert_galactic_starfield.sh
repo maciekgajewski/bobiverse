@@ -1,6 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+if [[ "${1:-}" == "--help" ]]; then
+  cat <<'EOF'
+Usage: convert_galactic_starfield.sh
+
+Convert the verified downloaded NASA galactic-starfield source asset into the
+runtime AVIF asset. See the script comments for the required source download.
+EOF
+  exit 0
+fi
+
 # BOB-005 is an explicit operator action. Download the source first with:
 # curl -L --fail --show-error --output source-assets/galactic-starfield/milkyway_2020_4k_gal.exr \
 #   https://svs.gsfc.nasa.gov/vis/a000000/a004800/a004851/milkyway_2020_4k_gal.exr

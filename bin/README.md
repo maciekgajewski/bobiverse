@@ -9,17 +9,17 @@ Validate the canonical narrative corpus:
 ./bin/narrative-validate.sh
 ```
 
-Generate the valid pre-book world state to an uncommitted file:
+Generate the valid pre-book world state as JSON on standard output:
 
 ```bash
-./bin/narrative-generate.sh --output /tmp/bobiverse-world.json
+./bin/narrative-generate.sh
 ```
 
 After chapters are authored, generate the reader-safe state for one chapter:
 
 ```bash
-./bin/narrative-generate.sh --chapter 1.1 --output /tmp/bobiverse-world-1.1.json
+./bin/narrative-generate.sh --chapter 1.1
 ```
 
-The generation script requires `--output`; it never creates or edits authored
-narrative source data.
+Redirect standard output to save a projection, or pass optional `--output <file>` to
+have the script write it. It never creates or edits authored narrative source data.

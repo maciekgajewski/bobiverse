@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import math
 from typing import Any
 
@@ -71,6 +72,10 @@ def component(record: dict[str, Any], visual: dict[str, Any]) -> dict[str, Any]:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Generate the nearby-star runtime dataset from reviewed source snapshots."
+    )
+    parser.parse_args()
     review = read_json(REVIEW_PATH)
     snapshot = read_json(SNAPSHOT_PATH)
     visual_snapshot = read_json(VISUAL_PROPERTIES_PATH)

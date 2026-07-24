@@ -82,6 +82,14 @@ accepted ADR without saying so explicitly.
 - Avoid fragile pixel-perfect assertions for the 3D canvas across different GPU and
   software-rendering environments. Test domain state and interactions separately.
 
+## User-facing scripts
+
+- Every user-facing script in `scripts/` must implement `--help`: print concise
+  usage information to standard output and exit successfully without performing its
+  normal side effect. Internal helper modules are excluded.
+- Direct script invocation is the current contract. Forwarding `--help` through npm
+  package-script wrappers is deferred until explicitly adopted.
+
 ## Validation and completion
 
 - Every task must list its validation commands. Do not claim commands that do not

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import math
 
 from jsonschema import Draft202012Validator
@@ -8,6 +9,10 @@ from common import GENERATED_PATH, ROOT, read_json
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Validate the generated nearby-star runtime dataset."
+    )
+    parser.parse_args()
     document = read_json(GENERATED_PATH)
     schema = read_json(ROOT / "data" / "schema" / "nearby-systems.schema.json")
     errors = sorted(Draft202012Validator(schema).iter_errors(document), key=lambda error: list(error.path))

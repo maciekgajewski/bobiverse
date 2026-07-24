@@ -60,9 +60,10 @@ and generates a deterministic world state for a selected chapter.
    whose book is absent from that catalogue is rejected.
 4. `npm run narrative:validate` validates the actual zero-state corpus, including the
    empty asset registry and known astronomy system IDs.
-5. `npm run narrative:generate -- --output <file>` emits the deterministic pre-book
-   world state; a supplied `--chapter <book.chapter>` emits that selected projection
-   after validation. Generated output is never committed or treated as authored input.
+5. `./bin/narrative-generate.sh` emits the deterministic pre-book world state as JSON
+   on standard output; optional `--output <file>` writes it to a selected path. A
+   supplied `--chapter <book.chapter>` emits that selected projection after validation.
+   Generated output is never committed or treated as authored input.
 6. The shared module is independent of Node filesystem APIs; the CLI is its thin Node
    wrapper and the future browser uses the same validation/projection implementation.
 7. The validator rejects malformed schema records, invalid zero-state topology,
@@ -80,14 +81,15 @@ npm run format:check
 npm run lint
 npm run typecheck
 npm run narrative:validate
-npm run narrative:generate -- --output /tmp/bobiverse-world.json
+./bin/narrative-generate.sh > /tmp/bobiverse-world.json
 npm run test
 npm run build
 git diff --check
 ```
 
-The normal build runs narrative validation. The generated file is an operator-selected
-artifact and must be written outside version control (for example, under `/tmp`).
+The normal build runs narrative validation. Generation streams JSON to standard output
+unless an operator selects a file, which must be outside version control (for example,
+under `/tmp`).
 
 ## Completion evidence
 

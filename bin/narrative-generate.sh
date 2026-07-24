@@ -4,4 +4,4 @@ set -euo pipefail
 repository_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repository_root"
 
-exec npm run narrative:generate -- "$@"
+exec ./node_modules/.bin/tsx scripts/narrative-cli.ts generate "$@"

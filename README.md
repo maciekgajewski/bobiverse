@@ -69,14 +69,19 @@ Validate it, or a future chapter corpus, with:
 npm run narrative:validate
 ```
 
-Generate an uncommitted projection for the pre-book state or a selected chapter:
+Validation errors use the IDE-clickable format
+`path/to/source.json:line:column: error: message`, with one reported error per line.
+
+Generate an uncommitted projection for the pre-book state or a selected chapter. The
+wrapper writes JSON to standard output by default, so it can be redirected or piped:
 
 ```bash
-npm run narrative:generate -- --output /tmp/bobiverse-world.json
-npm run narrative:generate -- --chapter 1.1 --output /tmp/bobiverse-world-1.1.json
+./bin/narrative-generate.sh > /tmp/bobiverse-world.json
+./bin/narrative-generate.sh --chapter 1.1 > /tmp/bobiverse-world-1.1.json
 ```
 
-The CLI only reads authored narrative sources. It writes the requested output and
-never treats generated state as editable source data.
+Pass optional `--output <file>` to have the CLI write a file itself. The CLI only
+reads authored narrative sources and never treats generated state as editable source
+data.
 
 Convenience shell wrappers and the same examples are in [bin/README.md](bin/README.md).
