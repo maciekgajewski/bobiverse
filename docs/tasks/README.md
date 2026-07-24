@@ -21,7 +21,7 @@ derived from `../implementation-plan.md` and must remain consistent with
 | [BOB-003](BOB-003-visual-system-and-application-shell.md) | Done   | Establish the responsive visual system and application shell.         |
 | [BOB-004](BOB-004-narrative-zero-state-and-projection.md) | Done   | Validate the zero state and generate reader-safe chapter projections. |
 | [BOB-005](BOB-005-galactic-starfield-backdrop.md) | Done | Add an aligned, permanent real-sky backdrop to the map. |
-| [BOB-006](BOB-006-generalized-narrative-zero-state.md) | Ready | Generalize the zero state beyond the Solar-System location tree. |
+| [BOB-006](BOB-006-generalized-narrative-zero-state.md) | Done | Generalize the zero state beyond the Solar-System location tree. |
 
 ## Task requirements
 

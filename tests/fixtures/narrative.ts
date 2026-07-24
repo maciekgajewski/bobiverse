@@ -1,11 +1,11 @@
-import baseline from "../../data/narrative/baseline/solar-system.json";
+import zeroState from "../../data/narrative/baseline/zero-state.json";
 import type { NarrativeCorpus } from "../../src/narrative/model";
 
 /** Deliberately fictional source records used only to test the chapter pipeline. */
 export function createNarrativeFixtureCorpus(): NarrativeCorpus {
   return {
     assets: { assets: [] },
-    baseline: structuredClone(baseline),
+    zeroState: structuredClone(zeroState),
     books: { books: { "1": { title: "Fixture volume" } } },
     chapters: [
       {

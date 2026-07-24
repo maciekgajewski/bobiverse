@@ -1,6 +1,6 @@
 # BOB-006: generalized narrative zero state
 
-Status: Ready
+Status: Done
 Phase: 2 (narrative foundation)
 Last updated: 2026-07-24
 

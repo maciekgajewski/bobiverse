@@ -6,11 +6,6 @@
   "location_id": "location:las-vegas",
   "introducing": [
     {
-      "id": "species:human",
-      "name": "Human",
-      "homeworld_id": "location:earth"
-    },
-    {
       "id": "location:las-vegas",
       "name": "Las Vegas",
       "kind": "locale",

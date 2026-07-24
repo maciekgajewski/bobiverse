@@ -1,7 +1,7 @@
 # Bobiverse visual companion: technical design
 
 Status: Approved baseline  
-Last updated: 2026-07-23
+Last updated: 2026-07-24
 
 ## 1. Purpose
 
@@ -362,15 +362,16 @@ visual designs rather than an Admiral Ackbar or John Cleese likeness.
 
 Narrative features begin only after the astronomy vertical slice is accepted.
 Canonical authoring uses JSON validated by JSON Schema Draft 2020-12, without
-source-level schema-version fields or a compatibility contract. A zero-state
-Solar-System location source is the initial commit of the reader-visible world before
-any book chapter is selected. Chapter records then introduce book-specific entities and
-record ordered visible patches, appearances, and events. The stable entity registry and
-every selected-chapter state are deterministic generated projections, never manually
-edited snapshots. ADR-0001 establishes chapter-authored patches; ADR-0003 supersedes
-its sole-source boundary with the zero-state baseline; ADR-0004 establishes the
-unversioned narrative schema contract; and ADR-0005 refines the chapter, location, and
-date-projection contracts.
+source-level schema-version fields or a compatibility contract. One generalized
+zero-state source is the atomic, reader-visible entity registry before any book chapter
+is selected: it contains the nested Solar-System location tree and any pre-book
+characters, species, or events. Chapter records then introduce book-specific entities
+and record ordered visible patches, appearances, and events. The stable entity registry
+and every selected-chapter state are deterministic generated projections, never
+manually edited snapshots. ADR-0001 establishes chapter-authored patches; ADR-0003
+supersedes its sole-source boundary with the zero state; ADR-0004 establishes the
+unversioned narrative schema contract; ADR-0005 refines the chapter, location, and
+date-projection contracts; and ADR-0006 generalizes the zero-state record.
 
 Spoiler safety has two independent dimensions:
 
@@ -379,7 +380,7 @@ Spoiler safety has two independent dimensions:
 
 `furthestChapterRead` is a guarded reader-progress ceiling. `viewChapter` selects a
 chapter at or before that ceiling. Both are absent before the reader selects a chapter,
-when the zero-state baseline is rendered. Reader order first decides which facts the
+when the zero state is rendered. Reader order first decides which facts the
 reader may know; story time then decides which of those facts form the represented
 world state at `viewChapter.date`. A future story-state change must not alter an
 earlier in-universe view merely because its chapter was read first. Conversely, a fact
@@ -400,13 +401,14 @@ filter.
 
 Locations form a one-parent tree: every non-root location has exactly one parent and
 child lists are generated. This supports systems, planets, moons, locales, and
-megastructures without fixing a shallow hierarchy. The zero-state Solar-System source
+megastructures without fixing a shallow hierarchy. The zero-state `locations` branch
 uses nested JSON to seed this tree and its stable local child order; later chapter
 records use `parent_location_id` to add locations beneath existing parents. The
-generator flattens the baseline authoring tree before deriving runtime child lists. Its
-fixed root is the mapped `location:solar-system`, with one `location:sol` star child.
-Baseline and chapter locations share one closed kind vocabulary and explicit parent
-relations. Nested baseline locations declare whether they are members of the system,
+generator flattens the zero-state location authoring tree before deriving runtime child
+lists. Its fixed root is the mapped `location:solar-system`, with one `location:sol`
+star child.
+Zero-state and chapter locations share one closed kind vocabulary and explicit parent
+relations. Nested zero-state locations declare whether they are members of the system,
 orbit their parent, or are located on it; only the authored order of orbital siblings
 asserts inner-to-outer order. Leaves omit `children`, and a planet has at most four
 curated moon children. Chapter locations author the same relation directly, with
@@ -417,16 +419,18 @@ and lists but not at invented map coordinates.
 
 Astronomy remains authoritative for stellar and interstellar physical positions,
 components, sizes, colours, and measured render facts. The zero-state source owns the
-known Solar-System location topology and a deliberately non-metric local render order;
-it must not contain coordinates, radii, distances, colours, or other measured astronomy
-facts. A mapped narrative star system may reference an astronomy node; mapped
+known Solar-System location topology and its pre-book character, species, and event
+registry; its locations use a deliberately non-metric local render order and must not
+contain coordinates, radii, distances, colours, or other measured astronomy facts. A
+mapped narrative star system may reference an astronomy node; mapped
 parent-child locations must agree with astronomy ancestry. Only mapped narrative star
 systems carry that direct reference; descendants inherit the system context. The visual
-layer receives a generated join of stellar astronomy data, the zero-state location
-tree, and selected narrative patches. Images
-are manually curated assets, but an entity's image assignment is chapter-controlled
-narrative state. The zero-state source contains no assets; its optional `description`
-and `state` values are original plain text, not measured astronomy data or rich text.
+layer receives a generated join of stellar astronomy data, the zero-state registry,
+and selected narrative patches. Images are manually curated assets, while an entity's
+`picture_id` assignment is zero-state or chapter-controlled narrative state and remains
+subject to the shared visibility policy. The zero-state source contains no asset files;
+any zero-state `description` or `state` value is original plain text, not measured
+astronomy data or rich text.
 The direct, unversioned asset registry maps each stable asset ID to one safe static path
 below `public/assets/` and a plain-text provenance note; its metadata is not chapter
 chronology, while `picture_id` assignments remain subject to the shared visibility

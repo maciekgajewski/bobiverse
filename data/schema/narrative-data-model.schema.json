@@ -633,13 +633,30 @@
       ],
       "additionalProperties": false
     },
-    "introduced_entity": {
+    "non_location_introduced_entity": {
       "oneOf": [
         { "$ref": "#/$defs/character" },
         { "$ref": "#/$defs/species" },
-        { "$ref": "#/$defs/event" },
+        { "$ref": "#/$defs/event" }
+      ]
+    },
+    "introduced_entity": {
+      "oneOf": [
+        { "$ref": "#/$defs/non_location_introduced_entity" },
         { "$ref": "#/$defs/location" }
       ]
+    },
+    "zero_state_source": {
+      "type": "object",
+      "required": ["locations", "entities"],
+      "properties": {
+        "locations": { "$ref": "#/$defs/zero_state_solar_system" },
+        "entities": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/non_location_introduced_entity" }
+        }
+      },
+      "additionalProperties": false
     },
     "entity_update": {
       "oneOf": [

@@ -162,8 +162,8 @@ async function assertAssetFiles(assetsSource: LoadedJson): Promise<void> {
 async function loadCorpus(rootArgument: string): Promise<LoadedCorpus> {
   const root = path.resolve(repositoryRoot, rootArgument);
   if (!nearbySystems) throw new Error("Nearby astronomy data is invalid.");
-  const [baseline, assets, books, chapters] = await Promise.all([
-    readJson(path.join(root, "baseline", "solar-system.json")),
+  const [zeroState, assets, books, chapters] = await Promise.all([
+    readJson(path.join(root, "baseline", "zero-state.json")),
     readJson(path.join(root, "assets.json")),
     readJson(path.join(root, "books.json")),
     readChapters(root),
@@ -171,14 +171,14 @@ async function loadCorpus(rootArgument: string): Promise<LoadedCorpus> {
   await assertAssetFiles(assets);
   return {
     corpus: {
-      baseline: baseline.value,
+      zeroState: zeroState.value,
       assets: assets.value,
       books: books.value,
       chapters: chapters.map((chapter) => chapter.value),
       knownAstronomyObjectIds: nearbySystems.systems.map((system) => system.id),
     },
     sources: [
-      { ...baseline, definition: "zero_state_solar_system" },
+      { ...zeroState, definition: "zero_state_source" },
       { ...assets, definition: "assets_source" },
       { ...books, definition: "books_source" },
       ...chapters.map((chapter) => ({

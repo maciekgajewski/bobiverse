@@ -11,8 +11,8 @@ async function createZeroStateCorpus(): Promise<string> {
   const root = await mkdtemp(path.join(tmpdir(), "bobiverse-narrative-cli-"));
   await mkdir(path.join(root, "baseline"));
   await cp(
-    path.join(repositoryRoot, "data/narrative/baseline/solar-system.json"),
-    path.join(root, "baseline/solar-system.json"),
+    path.join(repositoryRoot, "data/narrative/baseline/zero-state.json"),
+    path.join(root, "baseline/zero-state.json"),
   );
   await cp(
     path.join(repositoryRoot, "data/narrative/assets.json"),

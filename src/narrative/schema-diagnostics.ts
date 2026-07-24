@@ -71,14 +71,21 @@ const entityProperties = {
   ]),
 } as const;
 
-function isRelevantIntroducedEntityError(
+function isRelevantEntityError(
   error: ErrorObject,
   candidate: unknown,
 ): boolean {
   const pointer = errorPointer(error);
-  const itemMatch = /^\/introducing\/(\d+)(?:\/([^/]+))?/.exec(pointer);
+  const itemMatch = /^\/(?:introducing|entities)\/(\d+)(?:\/([^/]+))?/.exec(
+    pointer,
+  );
   if (!itemMatch) return true;
-  const item = valueAtPointer(candidate, `/introducing/${itemMatch[1]}`);
+  const item = valueAtPointer(
+    candidate,
+    pointer.startsWith("/entities/")
+      ? `/entities/${itemMatch[1]}`
+      : `/introducing/${itemMatch[1]}`,
+  );
   const id =
     item && typeof item === "object"
       ? (item as Record<string, unknown>).id
@@ -107,7 +114,7 @@ export function actionableSchemaErrors(
   return errors.filter(
     (error) =>
       !["oneOf", "anyOf", "if", "not"].includes(error.keyword) &&
-      isRelevantIntroducedEntityError(error, candidate),
+      isRelevantEntityError(error, candidate),
   );
 }
 
@@ -133,7 +140,9 @@ function editDistance(left: string, right: string): number {
 }
 
 function knownProperties(error: ErrorObject, candidate: unknown): string[] {
-  const itemMatch = /^\/introducing\/(\d+)/.exec(error.instancePath);
+  const itemMatch = /^\/(?:introducing|entities)\/(\d+)/.exec(
+    error.instancePath,
+  );
   if (itemMatch) {
     const item = valueAtPointer(candidate, itemMatch[0]);
     const id =

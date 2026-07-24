@@ -39,4 +39,46 @@ describe("narrative schema diagnostics", () => {
       },
     ]);
   });
+
+  it("uses the shared entity diagnostics for zero-state entities", () => {
+    const document = parseJsonDocument(`{
+  "locations": {
+    "id": "location:solar-system",
+    "name": "Solar System",
+    "kind": "star_system",
+    "astronomy_object_id": "sol",
+    "children": [{
+      "id": "location:sol",
+      "name": "Sol",
+      "kind": "star",
+      "parent_relation": "member_of_system",
+      "children": [{
+        "id": "location:earth",
+        "name": "Earth",
+        "kind": "planet",
+        "parent_relation": "orbits"
+      }]
+    }]
+  },
+  "entities": [
+    {
+      "id": "species:fixture",
+      "name": "Fixture species",
+      "homeworld_location_id": "location:earth"
+    }
+  ]
+}`);
+
+    const diagnostics = formatSchemaDiagnostics(
+      narrativeSchemaErrors("zero_state_source", document.value),
+      document.value,
+      document.locations,
+    );
+
+    expect(diagnostics).toContainEqual({
+      location: { line: 24, column: 32 },
+      message:
+        '/entities/0/homeworld_location_id: unexpected property "homeworld_location_id"; did you mean: homeworld_id, description, picture_id',
+    });
+  });
 });

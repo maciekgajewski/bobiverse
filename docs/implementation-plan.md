@@ -132,13 +132,13 @@ navigation.
 Planned work:
 
 - Materialize the Draft 2020-12 schema, a shared TypeScript validator/projector, and
-  the complete zero-state Solar-System source before authoring book chapters. The
+  the complete generalized zero-state source before authoring book chapters. The
   zero-state alone is a valid pre-book world; `books.json` may remain empty until a
   chapter is authored.
-- Define JSON Schema Draft 2020-12 contracts for the zero-state Solar-System source,
+- Define JSON Schema Draft 2020-12 contracts for the generalized zero-state source,
   authored chapter records, introductions, updates, appearances, events, locations,
   assets, and generated projections.
-- Store the zero-state Solar-System tree and each authored chapter in validated source
+- Store the zero-state Solar-System tree and pre-book entities, plus each authored chapter, in validated source
   JSON; derive the ordered chapter manifest from chapter files and the minimal
   `books.json` catalogue.
 - Manually encode a small, representative chapter set in a later task, using the

@@ -6,7 +6,7 @@ export type NarrativeRecord = Record<string, unknown>;
 
 export interface NarrativeCorpus {
   assets: NarrativeRecord;
-  baseline: NarrativeRecord;
+  zeroState: NarrativeRecord;
   books: NarrativeRecord;
   chapters: NarrativeRecord[];
   knownAstronomyObjectIds: readonly string[];
@@ -133,12 +133,12 @@ export function compareNarrativeDates(
   return Number(leftIndexText) - Number(rightIndexText);
 }
 
-function flattenBaseline(
+function flattenZeroStateLocation(
   location: NarrativeRecord,
   parentLocationId: string | null,
   result: NarrativeEntity[],
 ): void {
-  const id = asString(location.id, "Baseline location ID");
+  const id = asString(location.id, "Zero-state location ID");
   const flattened: NarrativeEntity = {
     ...structuredClone(location),
     id,
@@ -150,29 +150,49 @@ function flattenBaseline(
   const children = location.children;
   if (!children) return;
   if (!Array.isArray(children))
-    throw new Error(`Baseline children for ${id} must be an array.`);
+    throw new Error(`Zero-state children for ${id} must be an array.`);
   for (const child of children) {
-    flattenBaseline(asRecord(child, `Baseline child of ${id}`), id, result);
+    flattenZeroStateLocation(
+      asRecord(child, `Zero-state child of ${id}`),
+      id,
+      result,
+    );
   }
 }
 
-function assertBaselineSemantics(
-  baseline: NarrativeRecord,
+function assertZeroStateSemantics(
+  zeroState: NarrativeRecord,
   knownAstronomyObjectIds: readonly string[],
 ): NarrativeEntity[] {
   const flattened: NarrativeEntity[] = [];
-  flattenBaseline(baseline, null, flattened);
+  flattenZeroStateLocation(
+    asRecord(zeroState.locations, "Zero-state locations"),
+    null,
+    flattened,
+  );
+  const seededEntities = zeroState.entities;
+  if (!Array.isArray(seededEntities))
+    throw new Error("Zero-state entities must be an array.");
+  for (const candidate of seededEntities) {
+    const entity = asRecord(candidate, "Zero-state entity");
+    const id = asString(entity.id, "Zero-state entity ID");
+    flattened.push({
+      ...structuredClone(entity),
+      id,
+      entity_type: entityType(id),
+    });
+  }
   const byId = new Map<string, NarrativeEntity>();
-  for (const location of flattened) {
-    if (byId.has(location.id))
-      throw new Error(`Duplicate baseline entity ID: ${location.id}.`);
-    byId.set(location.id, location);
+  for (const entity of flattened) {
+    if (byId.has(entity.id))
+      throw new Error(`Duplicate zero-state entity ID: ${entity.id}.`);
+    byId.set(entity.id, entity);
   }
   const sol = byId.get("location:sol");
-  if (!sol) throw new Error("Zero-state baseline must contain location:sol.");
+  if (!sol) throw new Error("Zero-state source must contain location:sol.");
   if (!knownAstronomyObjectIds.includes("sol")) {
     throw new Error(
-      "Known astronomy data must contain sol for the zero-state baseline.",
+      "Known astronomy data must contain sol for the zero-state source.",
     );
   }
   const rootChildren = flattened.filter(
@@ -300,15 +320,11 @@ function assertTemporalWrites(chapters: NarrativeRecord[]): void {
 
 /** Validates the complete authored corpus, including rules that require cross-record knowledge. */
 export function validateNarrativeCorpus(corpus: NarrativeCorpus): void {
-  assertSchema(
-    "zero_state_solar_system",
-    corpus.baseline,
-    "Zero-state baseline",
-  );
+  assertSchema("zero_state_source", corpus.zeroState, "Zero-state source");
   assertSchema("assets_source", corpus.assets, "Asset registry");
   assertSchema("books_source", corpus.books, "Book catalogue");
-  const baselineEntities = assertBaselineSemantics(
-    corpus.baseline,
+  const zeroStateEntities = assertZeroStateSemantics(
+    corpus.zeroState,
     corpus.knownAstronomyObjectIds,
   );
   const assets = corpus.assets.assets;
@@ -324,7 +340,15 @@ export function validateNarrativeCorpus(corpus: NarrativeCorpus): void {
     assetIds.add(id);
     assetPaths.add(assetPath);
   }
-  const availableIds = new Set(baselineEntities.map((entity) => entity.id));
+  const availableIds = new Set(zeroStateEntities.map((entity) => entity.id));
+  for (const entity of zeroStateEntities) {
+    assertReferencesResolve(
+      entity,
+      availableIds,
+      assetIds,
+      `Zero-state entity ${entity.id}`,
+    );
+  }
   const books = asRecord(corpus.books.books, "Book catalogue books");
   const chapters = [...corpus.chapters].sort((left, right) =>
     compareChapter(chapterId(left), chapterId(right)),
@@ -478,8 +502,8 @@ export function generateNarrativeWorld(
     throw new Error(`Requested chapter does not exist: ${selectedChapterId}.`);
   }
   const displayDate = selectedChapter ? chapterDate(selectedChapter) : null;
-  const entities = assertBaselineSemantics(
-    corpus.baseline,
+  const entities = assertZeroStateSemantics(
+    corpus.zeroState,
     corpus.knownAstronomyObjectIds,
   ).map((entity) => structuredClone(entity));
   const byId = new Map(entities.map((entity) => [entity.id, entity]));

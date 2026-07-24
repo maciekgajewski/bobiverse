@@ -2,7 +2,7 @@
 
 Status: Done
 Schema dialect: JSON Schema Draft 2020-12
-Last updated: 2026-07-23
+Last updated: 2026-07-24
 
 ## Purpose and scope
 
@@ -13,7 +13,7 @@ this document rather than redefining their syntax. The first definitions are `da
 
 This document does not add book-derived records or source text. It records only
 the data contract needed before those records are authored. ADR-0001, as refined by
-ADR-0003 and ADR-0005, is binding for the chapter-authored source and
+ADR-0003, ADR-0005, and ADR-0006, is binding for the chapter-authored source and
 generated-projection boundary.
 
 ## Shared JSON Schema definitions
@@ -658,13 +658,30 @@ the identical listing below documents its shared definitions.
       ],
       "additionalProperties": false
     },
-    "introduced_entity": {
+    "non_location_introduced_entity": {
       "oneOf": [
         { "$ref": "#/$defs/character" },
         { "$ref": "#/$defs/species" },
-        { "$ref": "#/$defs/event" },
+        { "$ref": "#/$defs/event" }
+      ]
+    },
+    "introduced_entity": {
+      "oneOf": [
+        { "$ref": "#/$defs/non_location_introduced_entity" },
         { "$ref": "#/$defs/location" }
       ]
+    },
+    "zero_state_source": {
+      "type": "object",
+      "required": ["locations", "entities"],
+      "properties": {
+        "locations": { "$ref": "#/$defs/zero_state_solar_system" },
+        "entities": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/non_location_introduced_entity" }
+        }
+      },
+      "additionalProperties": false
     },
     "entity_update": {
       "oneOf": [
@@ -899,9 +916,9 @@ The application keeps two optional global values:
   chapter is selected.
 
 Projection begins with the zero-state source. Before a reader selects a chapter, the
-generated world is that baseline alone; neither optional progress value is required for
-that result. A chapter view applies the following two independent stages to the
-baseline:
+generated world is that complete snapshot alone; neither optional progress value is
+required for that result. A chapter view applies the following two independent stages
+to the zero state:
 
 1. Reader order is the spoiler gate. Select only chapter records at or before
    `viewChapter`, comparing the numeric components of `chapter`. Those records are
@@ -938,37 +955,40 @@ a precise story-time point. Story `date` is never used to grant reader visibilit
 The authored zero-state, asset, book, and chapter source has this canonical layout:
 
 ```text
-data/narrative/baseline/solar-system.json
+data/narrative/baseline/zero-state.json
 data/narrative/assets.json
 data/narrative/books.json
 data/narrative/chapters/<book>/<chapter>.json
 generated/narrative/chapter-manifest.json
 ```
 
-`baseline/solar-system.json` is the small, manually authored root snapshot of the
-known Solar System. It is nested: a child's position in its parent's array supplies
-the stable local rendering order. The generator flattens that authoring form into
-parent links and derives runtime child lists; the source does not author a second
-`sublocations` field. It validates against the externally selected
-`zero_state_solar_system` schema. Like every narrative source file, it deliberately has
-no embedded `schema_version` field. It contains location identity, names, kinds,
-hierarchy, and optional plain-text
-`description` and `state` values only; it must not copy astronomy measurements,
-assets, or chapter-derived facts. Its entities are visible in the zero state and may
-later be patched by chapter updates, but their IDs must never be introduced again in a
-chapter.
+`baseline/zero-state.json` is the small, manually authored pre-book snapshot. Its
+closed root object has exactly two required fields: `locations`, the nested Solar-System
+root, and `entities`, an array of direct character, species, and event records. A
+child's position in a location parent's array supplies stable local rendering order.
+The generator flattens that authoring form into parent links and derives runtime child
+lists; the source does not author a second `sublocations` field or a second flat
+location form. It validates against `zero_state_source`. Like every narrative source
+file, it deliberately has no embedded `schema_version` field. It must not copy
+astronomy measurements, assets, book/chapter metadata, or chapter-derived facts.
 
-The schema fixes this baseline's root to `location:solar-system`, named `Solar System`,
+The complete zero-state record is one atomic initial registry. Its entity references
+resolve against every nested location and every `entities` member regardless of array
+order; `picture_id` continues to resolve through `assets.json`. A seeded entity is
+visible before a chapter is selected, cannot be introduced again by a chapter, and may
+be targeted by ordinary later chapter updates.
+
+The nested `locations` root is fixed to `location:solar-system`, named `Solar System`,
 with `kind: "star_system"` and `astronomy_object_id: "sol"`. It has exactly one child:
 `location:sol`, named `Sol`, with `kind: "star"` and
-`parent_relation: "member_of_system"`. No other baseline object may carry an
-`astronomy_object_id`.
+`parent_relation: "member_of_system"`. No other nested zero-state location may carry
+an `astronomy_object_id`.
 
-Every baseline location requires a canonical `location:` ID, a nonempty `name`, and
+Every nested zero-state location requires a canonical `location:` ID, a nonempty `name`, and
 the shared closed `location_kind` vocabulary used by later chapter locations. The
 Solar-System completeness check limits this actual seed to its agreed subset. A nested
 location also requires `parent_relation`. Leaves omit `children`; when supplied,
-`children` is nonempty. The baseline's permitted containment pairs are:
+`children` is nonempty. The nested location tree's permitted containment pairs are:
 
 | Parent                           | Child                                                                  | Required `parent_relation` |
 | -------------------------------- | ---------------------------------------------------------------------- | -------------------------- |
@@ -990,6 +1010,11 @@ Jupiter, then the Kuiper belt and Oort cloud after Neptune. It rejects a seeded
 `dwarf_planet`, Kuiper-belt objects, duplicate IDs, or more than four moons under any
 planet. Each planet's up-to-four moon entries are a deliberately curated subset rather
 than a physical-astronomy-derived definition of "major".
+
+The initial `entities` array contains exactly `species:human`, named `Human`, with
+`homeworld_id: "location:earth"`. It does not contain Robert Johansson, Las Vegas, or
+his death event; chapter 1.1 introduces those records while resolving Robert's
+`species_id` to the seeded Human entity.
 
 `assets.json` is the sole direct registry of reusable static picture files. It has an
 unversioned root object with an `assets` array, which may be empty until the project
@@ -1050,7 +1075,7 @@ it never relies on directory enumeration.
 Every chapter source record validates against the shared Draft 2020-12 schema contract.
 It requires the canonical `chapter` reference, nonempty reader-visible `title`,
 original plain-text `summary`, story `date`, and a default `location_id`. The default
-location may resolve to the baseline, an earlier chapter, or a location introduced in
+location may resolve to the zero state, an earlier chapter, or a location introduced in
 the same chapter. It must never be an invented coordinate or an implicit unknown.
 
 `introducing`, `appearances`, and `updates` are optional. An absent array means that
@@ -1063,7 +1088,7 @@ an ordinary update.
 type-prefixed ID and validates as a character, species, event, or location. An entry
 may reference a seeded entity or an earlier item in the same array, never a later item;
 this makes references deterministic and forbids introduction cycles. A chapter may not
-introduce an ID already supplied by the baseline or an earlier chapter.
+introduce an ID already supplied by the zero state or an earlier chapter.
 
 ```json
 {
@@ -1165,19 +1190,19 @@ summary, never copied book text or Markdown. `state` is reader-visible free text
 no global controlled vocabulary. Both may be changed or cleared under the ordinary
 per-entity update rules unless a record type explicitly says otherwise.
 
-### Zero-state Solar-System locations
+### Zero-state nested Solar-System locations
 
-The recursive `baseline_location` and `zero_state_solar_system` definitions above are
-the complete source contract for `baseline/solar-system.json`. They are intentionally
-stricter than later chapter-introduced locations: the baseline is one known Solar
-System, while later chapter location schemas remain able to represent fictional systems,
-megastructures, transit roots, and explicitly unmapped locations. The generator
-derives `parent_location_id` for every nested baseline child; it does not persist or
-ask authors to duplicate that link.
+The recursive `baseline_location` and `zero_state_solar_system` definitions form the
+`locations` branch of `baseline/zero-state.json`. They are intentionally stricter than
+later chapter-introduced locations: this branch is one known Solar System, while later
+chapter location schemas remain able to represent fictional systems, megastructures,
+transit roots, and explicitly unmapped locations. The generator derives
+`parent_location_id` for every nested zero-state child; it does not persist or ask
+authors to duplicate that link.
 
 ### Chapter-introduced locations
 
-All chapter locations use the same shared `location_kind` vocabulary as the baseline:
+All chapter locations use the same shared `location_kind` vocabulary as the zero state:
 `star_system`, `star`, `planet`, `dwarf_planet`, `moon`, `asteroid_belt`,
 `kuiper_belt`, `oort_cloud`, `locale`, `megastructure`, and `transit`. Each requires
 an `id`, `name`, and `kind`; optional `description` and `state` use the shared plain
@@ -1327,10 +1352,11 @@ layer. It rejects at least:
   that does not resolve to a registered asset;
 - a zero-state source whose fixed Solar-System root, Sol child, location kind,
   parent-relation pair, leaf representation, or astronomy reference is invalid;
-- a broken zero-state location tree, duplicate IDs across the baseline and chapter
-  sources, a child array whose orbital subsequence is not inner-to-outer, more than
-  four moons under one planet, an incomplete or misordered required Solar inventory,
-  or a chapter introduction that repeats a seeded ID;
+- a broken zero-state location tree; duplicate IDs across its nested locations,
+  entities, and chapter sources; unresolved whole-snapshot references; a child array
+  whose orbital subsequence is not inner-to-outer; more than four moons under one
+  planet; an incomplete or misordered required Solar inventory; or a chapter
+  introduction that repeats a seeded ID;
 - duplicate entity introductions; an introduction reference that does not resolve to a
   seeded entity or an earlier item in the same `introducing` array; or a chapter default
   location that is neither previously available nor introduced in that chapter;
