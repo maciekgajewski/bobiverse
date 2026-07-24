@@ -46,12 +46,20 @@ If that ADR conflicts with any binding reference, stop and resolve the conflict.
 - The zero-state record is pre-book reader-visible state, not a staging area for later
   revelations. A seeded entity is visible before any chapter and cannot subsequently
   be introduced by a chapter.
-- The record supports the reader-visible narrative entity types only: locations,
-  species, characters, and events. Assets remain in `data/narrative/assets.json` and
-  book and chapter metadata remain in their existing sources.
-- Locations retain their nested authoring form and the fixed Solar-System topology.
-  Species, characters, and events use their existing direct type-specific entity
-  contracts rather than a generic patch format.
+- The record has exactly two required fields: `locations`, one nested Solar-System root
+  object, and `entities`, an array of zero-state species, characters, and events.
+  Assets remain in `data/narrative/assets.json`; book and chapter metadata remain in
+  their existing sources.
+- `locations` retains its nested authoring form and the fixed Solar-System topology.
+  `entities` uses the same direct character, species, and event contracts as chapter
+  introductions. Factor those three contracts into one shared non-location definition;
+  the chapter's `introduced_entity` definition composes that definition with its flat
+  chapter-location branch. The zero-state record does not use the chapter-only field
+  name `introducing` and does not permit a second flat location form.
+- The entire zero-state record is one atomic initial snapshot. References from a
+  zero-state entity may resolve to the nested location tree or any zero-state entity,
+  regardless of `entities` array order; `picture_id` references continue to resolve
+  through the separate asset registry.
 - Seeded entities may be targets of normal later chapter updates, subject to the
   existing reader-order and story-time rules.
 - Seed `species:human` with name `Human` and `homeworld_id: "location:earth"`.
@@ -60,9 +68,9 @@ If that ADR conflicts with any binding reference, stop and resolve the conflict.
 
 ## In scope
 
-- Define a generalized zero-state source schema with closed, typed collections for
-  locations, species, characters, and events, plus semantic validation of unique IDs,
-  valid references, and the existing fixed Solar-System location topology.
+- Define a generalized zero-state source schema with exactly the required `locations`
+  root and `entities` array, plus semantic validation of unique IDs, whole-snapshot
+  references, and the existing fixed Solar-System location topology.
 - Migrate the canonical source path, loader, validator, generator, test fixtures, and
   diagnostics from the Solar-System-only baseline to the generalized record.
 - Seed Human as a zero-state species and adjust chapter 1.1 so all cross-record
@@ -97,10 +105,12 @@ If that ADR conflicts with any binding reference, stop and resolve the conflict.
 2. `data/narrative/baseline/zero-state.json` is the sole canonical zero-state source.
    The retired `solar-system.json` path is absent from runtime loading and canonical
    source validation.
-3. The schema accepts only the closed zero-state record shape and the existing
-   type-specific contracts for `locations`, `species`, `characters`, and `events`.
-   It rejects unsupported collections, malformed entities, duplicate IDs, invalid
-   references, and invalid Solar-System topology.
+3. The schema accepts only a closed zero-state object with required `locations` and
+   `entities` fields. `locations` is exactly one nested Solar-System root; `entities`
+   accepts only the shared character, species, and event introduction contracts. It
+   rejects unsupported fields, malformed entities, and a second flat location form;
+   corpus validation rejects duplicate IDs, unresolved whole-snapshot references, and
+   invalid Solar-System topology.
 4. The zero state retains the complete validated Solar-System location tree and adds
    exactly the canonical Human species record with `homeworld_id: "location:earth"`.
    It contains no assets, book/chapter metadata, updates, appearances, or copied book
@@ -113,9 +123,10 @@ If that ADR conflicts with any binding reference, stop and resolve the conflict.
 7. The shared browser-safe projection module, Node CLI, schema diagnostics, and test
    fixtures use the generalized source consistently. No Node filesystem API leaks into
    the shared module.
-8. Regression tests prove each supported seeded entity type, cross-record references,
-   duplicate-introduction rejection, and the chapter-1 Human migration. Generated
-   projections remain non-authored, non-committed outputs.
+8. Regression tests prove each supported seeded entity type, order-independent
+   whole-snapshot references, asset references, duplicate-introduction rejection, and
+   the chapter-1 Human migration. Generated projections remain non-authored,
+   non-committed outputs.
 9. The normal validation path validates the migrated canonical corpus, and all
    documented validation commands pass.
 
