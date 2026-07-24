@@ -1,0 +1,38 @@
+{
+  "chapter": "1.1",
+  "title": "Bob Version 1.0",
+  "summary": "Robert Johansson, while visiting The Vortex SF convention in Las Vegas, signs up with CryoEterna, a company promising to cryogenically preserve his body after his death. Ironically, very shortly after signing the contract, he dies in a car accident.",
+  "date": "2016",
+  "location_id": "location:las-vegas",
+  "introducing": [
+    {
+      "id": "species:human",
+      "name": "Human",
+      "homeworld_id": "location:earth"
+    },
+    {
+      "id": "location:las-vegas",
+      "name": "Las Vegas",
+      "kind": "locale",
+      "parent_location_id": "location:earth",
+      "parent_relation": "located_on"
+    },
+    {
+      "id": "character:robert-johansson",
+      "name": "Robert Johansson",
+      "species_id": "species:human",
+      "current_state": "Dead, cryogenically preserved"
+    },
+    {
+      "id": "event:robert-johansson-dies",
+      "name": "Robert Johansson dies",
+      "location_id": "location:las-vegas"
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:robert-johansson",
+      "role": "lead"
+    }
+  ]
+}
