@@ -1,7 +1,7 @@
 {
   "chapter": "1.1",
-  "title": "Bob Version 1.0",
-  "summary": "Robert Johansson, while visiting The Vortex SF convention in Las Vegas, signs up with CryoEterna, a company promising to cryogenically preserve his body after his death. Ironically, very shortly after signing the contract, he dies in a car accident.",
+  "title": "1 - Bob Version 1.0",
+  "summary": "Newly financially secure after selling his software business, Bob Johansson attends a science-fiction convention in Las Vegas and signs a cryonics agreement. Conversations with former colleagues and family touch on the breakup he is recovering from and the prospect of self-replicating space probes. Later, a car bears down on him in a crosswalk; pain, medical voices, and his fading awareness strongly indicate a fatal collision.",
   "date": "2016",
   "location_id": "location:las-vegas",
   "introducing": [
@@ -13,21 +13,44 @@
       "parent_relation": "located_on"
     },
     {
+      "id": "event:bob-road-incident",
+      "name": "Bob's Road Incident",
+      "location_id": "location:las-vegas",
+      "date": "2016",
+      "description": "While Bob crosses a Las Vegas street, a car approaches, he experiences sudden pain, and medical and legal voices accompany his fading awareness. The sequence strongly suggests a collision and death, although neither is stated directly."
+    },
+    {
       "id": "character:robert-johansson",
       "name": "Robert Johansson",
       "species_id": "species:human",
-      "current_state": "Dead, cryogenically preserved"
+      "current_state": "Presumed dead after the road incident.",
+      "aliases": ["Bob"]
     },
     {
-      "id": "event:robert-johansson-dies",
-      "name": "Robert Johansson dies",
-      "location_id": "location:las-vegas"
+      "id": "organization:cryoeterna",
+      "name": "CryoEterna Inc.",
+      "description": "A cryonics provider that contracts with Bob for post-death preservation."
+    },
+    {
+      "id": "organization:intergator-software",
+      "name": "InterGator Software",
+      "description": "Bob's software company, built around a successful engineering application and sold after attracting a large acquisition offer.",
+      "current_state": "Sold."
+    },
+    {
+      "id": "event:the-vortex",
+      "name": "The Vortex",
+      "location_id": "location:las-vegas",
+      "date": "2016",
+      "description": "A three-day science-fiction convention where Bob attends discussions about extraterrestrial life and self-replicating interstellar probes.",
+      "participant_ids": ["character:robert-johansson"]
     }
   ],
   "appearances": [
     {
       "character_id": "character:robert-johansson",
-      "role": "lead"
+      "role": "lead",
+      "location_id": "location:las-vegas"
     }
   ]
 }

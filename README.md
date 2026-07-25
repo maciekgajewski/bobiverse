@@ -85,3 +85,9 @@ reads authored narrative sources and never treats generated state as editable so
 data.
 
 Convenience shell wrappers and the same examples are in [bin/README.md](bin/README.md).
+
+### Chapter extraction
+
+Use the repository-local Codex skill to turn one plaintext chapter into a reviewed
+candidate chapter object. See [chapter extraction](docs/chapter-extraction.md) for
+the one-line invocation and approval workflow.
