@@ -1,0 +1,61 @@
+{
+  "chapter": "1.2",
+  "title": "2 - Bob Version 2.0",
+  "summary": "Bob awakens without a body in a future laboratory and learns that he is a computer simulation made by destructively scanning Robert Johansson's frozen brain. Dr. Landers explains the theocratic society that now claims cryonics patients as property, the competing replicant program, and Bob's place among five candidates for a one-replicant project. Realizing that failure could mean insanity, storage, menial service, or deactivation, Bob resolves to compete while Landers limits his simulated panic and ends the first session.",
+  "date": "2133",
+  "location_id": "location:new-handeltown",
+  "introducing": [
+    {
+      "id": "location:new-handeltown",
+      "name": "New Handeltown",
+      "kind": "locale",
+      "map_status": "unmapped"
+    },
+    {
+      "id": "character:bob-replicant",
+      "name": "Bob",
+      "current_state": "A computer simulation made from a copy of Robert Johansson's mind."
+    },
+    {
+      "id": "character:dr-landers",
+      "name": "Dr. Landers"
+    },
+    {
+      "id": "organization:free-american-independent-theocratic-hegemony",
+      "name": "Free American Independent Theocratic Hegemony",
+      "description": "A theocratic U.S. government that makes criticism a felony and permits the deactivation of machine persons for it."
+    },
+    {
+      "id": "organization:applied-synergetics",
+      "name": "Applied Synergetics Inc.",
+      "description": "A company that owns Bob as property and develops replicant-controlled machinery."
+    },
+    {
+      "id": "technology:guppi-interface",
+      "name": "GUPPI interface",
+      "description": "An interface that offloads tasks for replicants while retaining their human limits on multitasking."
+    },
+    {
+      "id": "event:replicant-candidate-selection",
+      "name": "Replicant candidate selection",
+      "location_id": "location:new-handeltown",
+      "date": "2133",
+      "description": "Five activated replicant candidates compete for a project that requires only one.",
+      "participant_ids": [
+        "character:bob-replicant"
+      ]
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead",
+      "location_id": "location:new-handeltown"
+    },
+    {
+      "character_id": "character:dr-landers",
+      "role": "other",
+      "location_id": "location:new-handeltown"
+    }
+  ]
+}
