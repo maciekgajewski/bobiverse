@@ -47,6 +47,9 @@ const entityProperties = {
     "death_event_id",
   ]),
   species: new Set(["id", "name", "description", "picture_id", "homeworld_id"]),
+  technology: new Set(["id", "name", "description"]),
+  organization: new Set(["id", "name", "description", "current_state"]),
+  vessel_type: new Set(["id", "name", "description"]),
   event: new Set([
     "id",
     "name",

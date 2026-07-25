@@ -138,6 +138,9 @@ Planned work:
 - Define JSON Schema Draft 2020-12 contracts for the generalized zero-state source,
   authored chapter records, introductions, updates, appearances, events, locations,
   assets, and generated projections.
+- Extend the direct entity union only through accepted ADR-backed contracts; the
+  current foundation includes character, species, technology, organization,
+  vessel-type, event, and location entities.
 - Store the zero-state Solar-System tree and pre-book entities, plus each authored chapter, in validated source
   JSON; derive the ordered chapter manifest from chapter files and the minimal
   `books.json` catalogue.

@@ -14,7 +14,14 @@ export interface NarrativeCorpus {
 
 export interface NarrativeEntity extends NarrativeRecord {
   id: string;
-  entity_type: "character" | "event" | "location" | "species";
+  entity_type:
+    | "character"
+    | "event"
+    | "location"
+    | "organization"
+    | "species"
+    | "technology"
+    | "vessel_type";
 }
 
 export interface NarrativeWorld {
@@ -106,7 +113,10 @@ function entityType(id: string): NarrativeEntity["entity_type"] {
     prefix !== "character" &&
     prefix !== "event" &&
     prefix !== "location" &&
-    prefix !== "species"
+    prefix !== "organization" &&
+    prefix !== "species" &&
+    prefix !== "technology" &&
+    prefix !== "vessel_type"
   ) {
     throw new Error(`Unsupported narrative entity ID: ${id}.`);
   }

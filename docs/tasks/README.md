@@ -22,7 +22,7 @@ derived from `../implementation-plan.md` and must remain consistent with
 | [BOB-004](BOB-004-narrative-zero-state-and-projection.md) | Done   | Validate the zero state and generate reader-safe chapter projections. |
 | [BOB-005](BOB-005-galactic-starfield-backdrop.md) | Done | Add an aligned, permanent real-sky backdrop to the map. |
 | [BOB-006](BOB-006-generalized-narrative-zero-state.md) | Done | Generalize the zero state beyond the Solar-System location tree. |
-| [BOB-007](BOB-007-additional-narrative-entity-types.md) | Ready | Add technology, organization, and vessel-type narrative entities. |
+| [BOB-007](BOB-007-additional-narrative-entity-types.md) | Done | Add technology, organization, and vessel-type narrative entities. |
 
 ## Task requirements
 

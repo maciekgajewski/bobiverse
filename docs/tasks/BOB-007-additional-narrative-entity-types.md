@@ -1,6 +1,6 @@
 # BOB-007: additional narrative entity types
 
-Status: Ready
+Status: Done
 Phase: 2 (narrative foundation)
 Last updated: 2026-07-25
 
@@ -148,3 +148,14 @@ git diff --check
 - This changes the entity identity union across schema, semantic validation, and
   projection. Implement it as one cohesive migration; partial prefix support would
   make valid source data fail at a later layer.
+
+## Completion evidence
+
+Completed on 2026-07-25. ADR-0007 established the expanded direct-entity union; the
+schema, validator, projection, diagnostics, documentation, and focused regression
+coverage were updated as one migration. The canonical corpus remains unchanged.
+
+Validation passed: `npm ci`, `npm run format:check`, `npm run lint`,
+`npm run typecheck`, `npm run narrative:validate`, `npm run test`, `npm run build`,
+and `git diff --check`. The fresh task-review closure recorded no open blocking
+findings in `docs/reviews/BOB-007-review-results.md`.

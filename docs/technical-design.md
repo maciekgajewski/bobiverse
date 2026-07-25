@@ -365,13 +365,14 @@ Canonical authoring uses JSON validated by JSON Schema Draft 2020-12, without
 source-level schema-version fields or a compatibility contract. One generalized
 zero-state source is the atomic, reader-visible entity registry before any book chapter
 is selected: it contains the nested Solar-System location tree and any pre-book
-characters, species, or events. Chapter records then introduce book-specific entities
+characters, species, technologies, organizations, vessel types, or events. Chapter records then introduce book-specific entities
 and record ordered visible patches, appearances, and events. The stable entity registry
 and every selected-chapter state are deterministic generated projections, never
 manually edited snapshots. ADR-0001 establishes chapter-authored patches; ADR-0003
 supersedes its sole-source boundary with the zero state; ADR-0004 establishes the
 unversioned narrative schema contract; ADR-0005 refines the chapter, location, and
-date-projection contracts; and ADR-0006 generalizes the zero-state record.
+date-projection contracts; ADR-0006 generalizes the zero-state record; and ADR-0007
+expands the direct narrative entity union.
 
 Spoiler safety has two independent dimensions:
 
@@ -419,7 +420,8 @@ and lists but not at invented map coordinates.
 
 Astronomy remains authoritative for stellar and interstellar physical positions,
 components, sizes, colours, and measured render facts. The zero-state source owns the
-known Solar-System location topology and its pre-book character, species, and event
+known Solar-System location topology and its pre-book character, species, technology,
+organization, vessel-type, and event
 registry; its locations use a deliberately non-metric local render order and must not
 contain coordinates, radii, distances, colours, or other measured astronomy facts. A
 mapped narrative star system may reference an astronomy node; mapped

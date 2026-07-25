@@ -3,6 +3,7 @@ import canonicalChapter from "../../data/narrative/chapters/1/1.json";
 import {
   compareNarrativeDates,
   generateNarrativeWorld,
+  narrativeSchemaErrors,
   validateNarrativeCorpus,
 } from "../../src/narrative/model";
 import { createNarrativeFixtureCorpus } from "../fixtures/narrative";
@@ -79,8 +80,38 @@ describe("narrative corpus validation and projection", () => {
         homeworld_id: "location:earth",
         picture_id: "asset:fixture-portrait",
       },
+      {
+        id: "technology:fixture-drive",
+        name: "Fixture drive",
+        description: "A fictional test technology.",
+      },
+      {
+        id: "organization:fixture-fleet",
+        name: "Fixture fleet",
+        current_state: "Active in the fixture.",
+      },
+      {
+        id: "vessel_type:fixture-probe",
+        name: "Fixture probe",
+        description: "A fictional test vessel classification.",
+      },
     ];
     corpus.chapters[0]!.introducing = undefined;
+    corpus.chapters[1]!.updates = [
+      { entity_id: "character:fixture-alex", current_state: "later state" },
+      {
+        entity_id: "technology:fixture-drive",
+        description: "Later fictional technology description.",
+      },
+      {
+        entity_id: "organization:fixture-fleet",
+        current_state: "Later active state.",
+      },
+      {
+        entity_id: "vessel_type:fixture-probe",
+        description: "Later fictional vessel-type description.",
+      },
+    ];
 
     expect(() => validateNarrativeCorpus(corpus)).not.toThrow();
     expect(generateNarrativeWorld(corpus).entities).toEqual(
@@ -97,7 +128,201 @@ describe("narrative corpus validation and projection", () => {
           id: "species:fixture-human",
           entity_type: "species",
         }),
+        expect.objectContaining({
+          id: "technology:fixture-drive",
+          entity_type: "technology",
+        }),
+        expect.objectContaining({
+          id: "organization:fixture-fleet",
+          entity_type: "organization",
+        }),
+        expect.objectContaining({
+          id: "vessel_type:fixture-probe",
+          entity_type: "vessel_type",
+        }),
       ]),
+    );
+    expect(generateNarrativeWorld(corpus, "1.2").entities).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "technology:fixture-drive",
+          description: "Later fictional technology description.",
+        }),
+        expect.objectContaining({
+          id: "organization:fixture-fleet",
+          current_state: "Later active state.",
+        }),
+        expect.objectContaining({
+          id: "vessel_type:fixture-probe",
+          description: "Later fictional vessel-type description.",
+        }),
+      ]),
+    );
+  });
+
+  it("projects direct entity introductions and later optional-field updates", () => {
+    const corpus = createNarrativeFixtureCorpus();
+    const introductions = corpus.chapters[0]!.introducing as Array<
+      Record<string, unknown>
+    >;
+    introductions.push(
+      {
+        id: "technology:fixture-drive",
+        name: "Fixture drive",
+        description: "Initial fictional technology description.",
+      },
+      {
+        id: "organization:fixture-fleet",
+        name: "Fixture fleet",
+        description: "Initial fictional organization description.",
+        current_state: "Initially active.",
+      },
+      {
+        id: "vessel_type:fixture-probe",
+        name: "Fixture probe",
+        description: "Initial fictional vessel-type description.",
+      },
+    );
+    corpus.chapters[1]!.updates = [
+      { entity_id: "technology:fixture-drive", description: null },
+      { entity_id: "organization:fixture-fleet", current_state: null },
+      {
+        entity_id: "vessel_type:fixture-probe",
+        description: "Later fictional vessel-type description.",
+      },
+    ];
+
+    const beforeLaterChapter = generateNarrativeWorld(corpus, "1.1");
+    expect(beforeLaterChapter.entities).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "technology:fixture-drive",
+          description: "Initial fictional technology description.",
+        }),
+        expect.objectContaining({
+          id: "organization:fixture-fleet",
+          current_state: "Initially active.",
+        }),
+      ]),
+    );
+
+    const afterLaterChapter = generateNarrativeWorld(corpus, "1.2");
+    expect(
+      afterLaterChapter.entities.find(
+        (entity) => entity.id === "technology:fixture-drive",
+      )?.description,
+    ).toBeNull();
+    expect(
+      afterLaterChapter.entities.find(
+        (entity) => entity.id === "organization:fixture-fleet",
+      )?.current_state,
+    ).toBeNull();
+    expect(
+      afterLaterChapter.entities.find(
+        (entity) => entity.id === "vessel_type:fixture-probe",
+      )?.description,
+    ).toBe("Later fictional vessel-type description.");
+
+    const readerVisibleEarlierStoryTime = generateNarrativeWorld(corpus, "1.3");
+    expect(
+      readerVisibleEarlierStoryTime.entities.find(
+        (entity) => entity.id === "technology:fixture-drive",
+      )?.description,
+    ).toBe("Initial fictional technology description.");
+    expect(
+      readerVisibleEarlierStoryTime.entities.find(
+        (entity) => entity.id === "organization:fixture-fleet",
+      )?.current_state,
+    ).toBe("Initially active.");
+    expect(
+      readerVisibleEarlierStoryTime.entities.find(
+        (entity) => entity.id === "vessel_type:fixture-probe",
+      )?.description,
+    ).toBe("Initial fictional vessel-type description.");
+  });
+
+  it("keeps later direct entity introductions hidden by reader order", () => {
+    const corpus = createNarrativeFixtureCorpus();
+    corpus.chapters[1]!.introducing = [
+      {
+        id: "technology:fixture-drive",
+        name: "Fixture drive",
+      },
+      {
+        id: "organization:fixture-fleet",
+        name: "Fixture fleet",
+      },
+      {
+        id: "vessel_type:fixture-probe",
+        name: "Fixture probe",
+      },
+    ];
+
+    expect(
+      generateNarrativeWorld(corpus, "1.1").entities.map((entity) => entity.id),
+    ).not.toEqual(
+      expect.arrayContaining([
+        "technology:fixture-drive",
+        "organization:fixture-fleet",
+        "vessel_type:fixture-probe",
+      ]),
+    );
+    expect(
+      generateNarrativeWorld(corpus, "1.2").entities.map((entity) => entity.id),
+    ).toEqual(
+      expect.arrayContaining([
+        "technology:fixture-drive",
+        "organization:fixture-fleet",
+        "vessel_type:fixture-probe",
+      ]),
+    );
+  });
+
+  it("rejects wrong IDs, extra fields, unsupported updates, and unknown entity prefixes", () => {
+    for (const [definition, candidate] of [
+      ["technology", { id: "organization:wrong", name: "Wrong ID" }],
+      [
+        "organization",
+        { id: "organization:wrong-field", name: "Wrong field", members: [] },
+      ],
+      ["vessel_type", { id: "vessel_type:wrong", name: "Wrong", owner: "x" }],
+      [
+        "technology_update",
+        { entity_id: "technology:wrong-update", current_state: "unsupported" },
+      ],
+      [
+        "organization_update",
+        { entity_id: "technology:wrong-prefix", name: "Wrong" },
+      ],
+      ["vessel_type_update", { entity_id: "vessel:unknown", name: "Wrong" }],
+      [
+        "non_location_introduced_entity",
+        { id: "unknown:entity", name: "Unknown" },
+      ],
+    ] as const) {
+      expect(narrativeSchemaErrors(definition, candidate)).not.toEqual([]);
+    }
+
+    const duplicate = createNarrativeFixtureCorpus();
+    duplicate.zeroState.entities = [
+      { id: "technology:fixture-drive", name: "Fixture drive" },
+    ];
+    duplicate.chapters[0]!.introducing = [
+      { id: "technology:fixture-drive", name: "Duplicate drive" },
+    ];
+    expect(() => validateNarrativeCorpus(duplicate)).toThrow(
+      "Chapter 1.1 introduces an existing entity: technology:fixture-drive",
+    );
+
+    const sameChapterUpdate = createNarrativeFixtureCorpus();
+    sameChapterUpdate.chapters[0]!.introducing = [
+      { id: "organization:fixture-fleet", name: "Fixture fleet" },
+    ];
+    sameChapterUpdate.chapters[0]!.updates = [
+      { entity_id: "organization:fixture-fleet", current_state: "Invalid" },
+    ];
+    expect(() => validateNarrativeCorpus(sameChapterUpdate)).toThrow(
+      "Chapter 1.1 cannot update its own introduction: organization:fixture-fleet",
     );
   });
 

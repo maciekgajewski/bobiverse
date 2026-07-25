@@ -13,7 +13,7 @@ this document rather than redefining their syntax. The first definitions are `da
 
 This document does not add book-derived records or source text. It records only
 the data contract needed before those records are authored. ADR-0001, as refined by
-ADR-0003, ADR-0005, and ADR-0006, is binding for the chapter-authored source and
+ADR-0003, ADR-0005, ADR-0006, and ADR-0007, is binding for the chapter-authored source and
 generated-projection boundary.
 
 ## Shared JSON Schema definitions
@@ -61,6 +61,21 @@ the identical listing below documents its shared definitions.
       "type": "string",
       "pattern": "^species:[a-z0-9][a-z0-9-]*$",
       "description": "Globally unique reference to a species entity."
+    },
+    "technology_id": {
+      "type": "string",
+      "pattern": "^technology:[a-z0-9][a-z0-9-]*$",
+      "description": "Globally unique reference to a technology entity."
+    },
+    "organization_id": {
+      "type": "string",
+      "pattern": "^organization:[a-z0-9][a-z0-9-]*$",
+      "description": "Globally unique reference to an organization entity."
+    },
+    "vessel_type_id": {
+      "type": "string",
+      "pattern": "^vessel_type:[a-z0-9][a-z0-9-]*$",
+      "description": "Globally unique reference to a vessel-type entity."
     },
     "asset_id": {
       "type": "string",
@@ -233,6 +248,83 @@ the identical listing below documents its shared definitions.
         { "required": ["picture_id"] },
         { "required": ["homeworld_id"] }
       ],
+      "additionalProperties": false
+    },
+    "technology": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "$ref": "#/$defs/technology_id" },
+        "name": { "type": "string", "minLength": 1 },
+        "description": { "$ref": "#/$defs/description" }
+      },
+      "additionalProperties": false
+    },
+    "technology_update": {
+      "type": "object",
+      "required": ["entity_id"],
+      "properties": {
+        "entity_id": { "$ref": "#/$defs/technology_id" },
+        "name": { "type": "string", "minLength": 1 },
+        "description": {
+          "anyOf": [{ "$ref": "#/$defs/description" }, { "type": "null" }]
+        }
+      },
+      "anyOf": [{ "required": ["name"] }, { "required": ["description"] }],
+      "additionalProperties": false
+    },
+    "organization": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "$ref": "#/$defs/organization_id" },
+        "name": { "type": "string", "minLength": 1 },
+        "description": { "$ref": "#/$defs/description" },
+        "current_state": { "$ref": "#/$defs/state" }
+      },
+      "additionalProperties": false
+    },
+    "organization_update": {
+      "type": "object",
+      "required": ["entity_id"],
+      "properties": {
+        "entity_id": { "$ref": "#/$defs/organization_id" },
+        "name": { "type": "string", "minLength": 1 },
+        "description": {
+          "anyOf": [{ "$ref": "#/$defs/description" }, { "type": "null" }]
+        },
+        "current_state": {
+          "anyOf": [{ "$ref": "#/$defs/state" }, { "type": "null" }]
+        }
+      },
+      "anyOf": [
+        { "required": ["name"] },
+        { "required": ["description"] },
+        { "required": ["current_state"] }
+      ],
+      "additionalProperties": false
+    },
+    "vessel_type": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "$ref": "#/$defs/vessel_type_id" },
+        "name": { "type": "string", "minLength": 1 },
+        "description": { "$ref": "#/$defs/description" }
+      },
+      "additionalProperties": false
+    },
+    "vessel_type_update": {
+      "type": "object",
+      "required": ["entity_id"],
+      "properties": {
+        "entity_id": { "$ref": "#/$defs/vessel_type_id" },
+        "name": { "type": "string", "minLength": 1 },
+        "description": {
+          "anyOf": [{ "$ref": "#/$defs/description" }, { "type": "null" }]
+        }
+      },
+      "anyOf": [{ "required": ["name"] }, { "required": ["description"] }],
       "additionalProperties": false
     },
     "event": {
@@ -662,6 +754,9 @@ the identical listing below documents its shared definitions.
       "oneOf": [
         { "$ref": "#/$defs/character" },
         { "$ref": "#/$defs/species" },
+        { "$ref": "#/$defs/technology" },
+        { "$ref": "#/$defs/organization" },
+        { "$ref": "#/$defs/vessel_type" },
         { "$ref": "#/$defs/event" }
       ]
     },
@@ -687,6 +782,9 @@ the identical listing below documents its shared definitions.
       "oneOf": [
         { "$ref": "#/$defs/character_update" },
         { "$ref": "#/$defs/species_update" },
+        { "$ref": "#/$defs/technology_update" },
+        { "$ref": "#/$defs/organization_update" },
+        { "$ref": "#/$defs/vessel_type_update" },
         { "$ref": "#/$defs/event_update" },
         { "$ref": "#/$defs/location_update" }
       ]
@@ -964,7 +1062,8 @@ generated/narrative/chapter-manifest.json
 
 `baseline/zero-state.json` is the small, manually authored pre-book snapshot. Its
 closed root object has exactly two required fields: `locations`, the nested Solar-System
-root, and `entities`, an array of direct character, species, and event records. A
+root, and `entities`, an array of direct character, species, technology, organization,
+vessel-type, and event records. A
 child's position in a location parent's array supplies stable local rendering order.
 The generator flattens that authoring form into parent links and derives runtime child
 lists; the source does not author a second `sublocations` field or a second flat
@@ -1085,7 +1184,8 @@ top-level `events` array: an event is introduced as an ordinary item or amended 
 an ordinary update.
 
 `introducing` is one ordered heterogeneous array. Each object is selected by its
-type-prefixed ID and validates as a character, species, event, or location. An entry
+type-prefixed ID and validates as a character, species, technology, organization,
+vessel type, event, or location. An entry
 may reference a seeded entity or an earlier item in the same array, never a later item;
 this makes references deterministic and forbids introduction cycles. A chapter may not
 introduce an ID already supplied by the zero state or an earlier chapter.
@@ -1172,8 +1272,8 @@ event does not repeat that value.
 ## Entity and location schemas
 
 Each entity type has a dedicated schema. The ratified contracts below cover characters,
-species, events, assets, and locations; later entity types must add their own contract
-before records of that type are authored.
+species, technologies, organizations, vessel types, events, assets, and locations;
+later entity types must add their own contract before records of that type are authored.
 
 | Record                                      | Required initial contract                                                | Derived rather than authored                                                            |
 | ------------------------------------------- | ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
@@ -1181,6 +1281,9 @@ before records of that type are authored.
 | `star_system`                               | `id`, `kind: "star_system"`, name, and `astronomy_object_id` when mapped | astronomical components and render facts; sublocations; last-known sightings and events |
 | `planet`, `moon`, `locale`, `megastructure` | `id`, `kind`, name, and parent where non-root                            | sublocations; last-known sightings and events                                           |
 | `species`                                   | `id`, `name`, and the optional fields in the ratified species contract   | members and other reverse links                                                         |
+| `technology`                                | `id`, `name`, and optional original plain-text `description`             | no relationships, ownership, physical, or rendering facts                              |
+| `organization`                              | `id`, `name`, optional original plain-text `description` and `current_state` | no membership, ownership, location, or asset facts                                  |
+| `vessel_type`                               | `id`, `name`, and optional original plain-text `description`             | no vessel instances, ownership, physical, or rendering facts                          |
 | `event`                                     | `id`, `name`, and the optional fields in the ratified event contract     | location event list; participant event histories                                        |
 | `asset`                                     | `id`, path, and source                                                   | no visible assignment; assignments are entity values                                    |
 
@@ -1299,6 +1402,32 @@ a nonempty string; `description`, `picture_id`, and `homeworld_id` may be suppli
 `null` to clear their prior values. A supplied homeworld reference must resolve to an
 already seeded or introduced non-transit location.
 
+### Technology
+
+A technology introduction uses the `technology` schema. Its required fields are a
+canonical `technology:` ID and a nonempty reader-visible `name`; its only optional
+field is original plain-text `description`. `technology_update` permits `name` or
+`description`, never `id`; `description` may be `null` to clear it. A technology has
+no relationship, ownership, location, asset, physical, or rendering fields.
+
+### Organization
+
+An organization introduction uses the `organization` schema. Its required fields are a
+canonical `organization:` ID and a nonempty reader-visible `name`; its optional fields
+are original plain-text `description` and reader-visible `current_state`.
+`organization_update` permits `name`, `description`, or `current_state`, never `id`;
+either optional field may be `null` to clear it. Organizations do not imply membership,
+ownership, location, assets, or other relationships.
+
+### Vessel type
+
+A vessel-type introduction uses the `vessel_type` schema. Its required fields are a
+canonical `vessel_type:` ID and a nonempty reader-visible `name`; its only optional
+field is original plain-text `description`. `vessel_type_update` permits `name` or
+`description`, never `id`; `description` may be `null` to clear it. A vessel type is a
+classification, not an individual vessel, and carries no ownership, asset, physical,
+or rendering facts.
+
 ### Event
 
 An event introduction uses the `event` schema above. Its only required fields are a
@@ -1369,6 +1498,9 @@ layer. It rejects at least:
   reference; a character death date that conflicts with its referenced event date;
 - an invalid species ID, name, description, picture, or homeworld reference, including
   a homeworld that is transit or has not been seeded or introduced;
+- an invalid technology, organization, or vessel-type ID; a cross-type ID; an empty
+  name; an unsupported field; or an update that attempts to change immutable `id` or
+  write a field not owned by that direct entity type;
 - an invalid event ID, name, description, picture, date, location, or participant
   reference; duplicate participant IDs; or a participant list that is not a complete
   replacement when updated;

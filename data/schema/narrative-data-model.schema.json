@@ -37,6 +37,21 @@
       "pattern": "^species:[a-z0-9][a-z0-9-]*$",
       "description": "Globally unique reference to a species entity."
     },
+    "technology_id": {
+      "type": "string",
+      "pattern": "^technology:[a-z0-9][a-z0-9-]*$",
+      "description": "Globally unique reference to a technology entity."
+    },
+    "organization_id": {
+      "type": "string",
+      "pattern": "^organization:[a-z0-9][a-z0-9-]*$",
+      "description": "Globally unique reference to an organization entity."
+    },
+    "vessel_type_id": {
+      "type": "string",
+      "pattern": "^vessel_type:[a-z0-9][a-z0-9-]*$",
+      "description": "Globally unique reference to a vessel-type entity."
+    },
     "asset_id": {
       "type": "string",
       "pattern": "^asset:[a-z0-9][a-z0-9-]*$",
@@ -208,6 +223,83 @@
         { "required": ["picture_id"] },
         { "required": ["homeworld_id"] }
       ],
+      "additionalProperties": false
+    },
+    "technology": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "$ref": "#/$defs/technology_id" },
+        "name": { "type": "string", "minLength": 1 },
+        "description": { "$ref": "#/$defs/description" }
+      },
+      "additionalProperties": false
+    },
+    "technology_update": {
+      "type": "object",
+      "required": ["entity_id"],
+      "properties": {
+        "entity_id": { "$ref": "#/$defs/technology_id" },
+        "name": { "type": "string", "minLength": 1 },
+        "description": {
+          "anyOf": [{ "$ref": "#/$defs/description" }, { "type": "null" }]
+        }
+      },
+      "anyOf": [{ "required": ["name"] }, { "required": ["description"] }],
+      "additionalProperties": false
+    },
+    "organization": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "$ref": "#/$defs/organization_id" },
+        "name": { "type": "string", "minLength": 1 },
+        "description": { "$ref": "#/$defs/description" },
+        "current_state": { "$ref": "#/$defs/state" }
+      },
+      "additionalProperties": false
+    },
+    "organization_update": {
+      "type": "object",
+      "required": ["entity_id"],
+      "properties": {
+        "entity_id": { "$ref": "#/$defs/organization_id" },
+        "name": { "type": "string", "minLength": 1 },
+        "description": {
+          "anyOf": [{ "$ref": "#/$defs/description" }, { "type": "null" }]
+        },
+        "current_state": {
+          "anyOf": [{ "$ref": "#/$defs/state" }, { "type": "null" }]
+        }
+      },
+      "anyOf": [
+        { "required": ["name"] },
+        { "required": ["description"] },
+        { "required": ["current_state"] }
+      ],
+      "additionalProperties": false
+    },
+    "vessel_type": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "$ref": "#/$defs/vessel_type_id" },
+        "name": { "type": "string", "minLength": 1 },
+        "description": { "$ref": "#/$defs/description" }
+      },
+      "additionalProperties": false
+    },
+    "vessel_type_update": {
+      "type": "object",
+      "required": ["entity_id"],
+      "properties": {
+        "entity_id": { "$ref": "#/$defs/vessel_type_id" },
+        "name": { "type": "string", "minLength": 1 },
+        "description": {
+          "anyOf": [{ "$ref": "#/$defs/description" }, { "type": "null" }]
+        }
+      },
+      "anyOf": [{ "required": ["name"] }, { "required": ["description"] }],
       "additionalProperties": false
     },
     "event": {
@@ -637,6 +729,9 @@
       "oneOf": [
         { "$ref": "#/$defs/character" },
         { "$ref": "#/$defs/species" },
+        { "$ref": "#/$defs/technology" },
+        { "$ref": "#/$defs/organization" },
+        { "$ref": "#/$defs/vessel_type" },
         { "$ref": "#/$defs/event" }
       ]
     },
@@ -662,6 +757,9 @@
       "oneOf": [
         { "$ref": "#/$defs/character_update" },
         { "$ref": "#/$defs/species_update" },
+        { "$ref": "#/$defs/technology_update" },
+        { "$ref": "#/$defs/organization_update" },
+        { "$ref": "#/$defs/vessel_type_update" },
         { "$ref": "#/$defs/event_update" },
         { "$ref": "#/$defs/location_update" }
       ]
