@@ -1,0 +1,4 @@
+interface:
+  display_name: "Extract Bobiverse Chapter"
+  short_description: "Extract and reconcile spoiler-safe chapter data"
+  default_prompt: 'Use $extract-bobiverse-chapter for chapter 1.2 from "../source-text/1.2 - Bob Version 2.0.txt".'

@@ -23,6 +23,7 @@ derived from `../implementation-plan.md` and must remain consistent with
 | [BOB-005](BOB-005-galactic-starfield-backdrop.md) | Done | Add an aligned, permanent real-sky backdrop to the map. |
 | [BOB-006](BOB-006-generalized-narrative-zero-state.md) | Done | Generalize the zero state beyond the Solar-System location tree. |
 | [BOB-007](BOB-007-additional-narrative-entity-types.md) | Done | Add technology, organization, and vessel-type narrative entities. |
+| [BOB-008](BOB-008-codex-assisted-chapter-extraction-pilot.md) | Done | Pilot blind, evidence-backed Codex extraction for one chapter. |
 
 ## Task requirements
 
