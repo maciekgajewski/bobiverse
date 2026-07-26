@@ -1,0 +1,52 @@
+{
+  "chapter": "1.5",
+  "title": "5",
+  "summary": "On July 18, 2133, Bob cautiously undergoes a religious-political evaluation by Minister Travis. Dr. Landers explains how factions within FAITH threaten artificial intelligence and the replicant program before placing Bob in a virtual exercise that simulates control of an orbital station. Bob uses GUPPI to monitor routine conditions and turns to the library to understand the world and his likely purpose.",
+  "date": "2133",
+  "location_id": "location:new-handeltown",
+  "introducing": [
+    {
+      "id": "character:minister-travis",
+      "name": "Minister Travis",
+      "aliases": ["Senior Minister Travis"]
+    },
+    {
+      "id": "organization:ministry-of-truth",
+      "name": "Ministry of Truth",
+      "description": "A FAITH ministry that finances the replicant venture and has military, colonization, and diplomatic responsibilities."
+    },
+    {
+      "id": "organization:ministry-of-proper-thought",
+      "name": "Ministry of Proper Thought",
+      "description": "A FAITH ministry that uses direct neurological stimulation as part of re-education."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead",
+      "location_id": "location:new-handeltown"
+    },
+    {
+      "character_id": "character:dr-landers",
+      "role": "other",
+      "location_id": "location:new-handeltown"
+    },
+    {
+      "character_id": "character:minister-travis",
+      "role": "other",
+      "location_id": "location:new-handeltown"
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "organization:free-american-independent-theocratic-hegemony",
+      "description": "The Free American Independent Theocratic Hegemony, a theocratic U.S. government that makes criticism a felony and permits the deactivation of machine persons for it. It restricts information by default; the domestic internet no longer exists, and genealogy records are unavailable to the public. It is divided into factions and power blocs, including factions that regard artificial intelligence and replicants as abominations or advocate abandoning technology from steam power onward."
+    },
+    {
+      "entity_id": "technology:guppi-interface",
+      "name": "GUPPI",
+      "description": "An interface that offloads tasks for replicants while retaining their human limits on multitasking. Its name expands to General Unit Primary Peripheral Interface."
+    }
+  ]
+}
