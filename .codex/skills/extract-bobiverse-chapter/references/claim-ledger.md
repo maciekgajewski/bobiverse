@@ -13,7 +13,7 @@ Pass 1 writes a draft JSON object outside the repository:
     "location_mentions": ["mention:example-place-1"],
     "date_claims": ["claim:003"]
   },
-  "mentions": [
+  "source_mentions": [
     {
       "mention_id": "mention:protagonist-1",
       "kind": "character",
@@ -42,7 +42,10 @@ Pass 1 writes a draft JSON object outside the repository:
 }
 ```
 
-Use stable, ordered `claim:NNN` and source-local `mention:*` IDs. Use only these
+Use stable, ordered `claim:NNN` and source-local `mention:*` IDs in
+`source_mentions`. These source-local identity anchors are distinct from a reviewed
+canonical chapter `mentions` array, whose entries are stable narrative entity IDs and
+record only important non-redundant references. Use only these
 confidence values:
 
 - `high`: explicit and unambiguous in the source;

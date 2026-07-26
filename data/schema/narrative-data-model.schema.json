@@ -27,6 +27,18 @@
       "pattern": "^[a-z][a-z0-9_]*:[a-z0-9][a-z0-9-]*$",
       "description": "Globally unique, type-prefixed entity identifier."
     },
+    "mention_target_id": {
+      "anyOf": [
+        { "$ref": "#/$defs/character_id" },
+        { "$ref": "#/$defs/event_id" },
+        { "$ref": "#/$defs/location_id" },
+        { "$ref": "#/$defs/organization_id" },
+        { "$ref": "#/$defs/species_id" },
+        { "$ref": "#/$defs/technology_id" },
+        { "$ref": "#/$defs/vessel_type_id" }
+      ],
+      "description": "A supported direct narrative entity or location that may be an important chapter mention."
+    },
     "character_id": {
       "type": "string",
       "pattern": "^character:[a-z0-9][a-z0-9-]*$",
@@ -793,6 +805,12 @@
           "type": "array",
           "minItems": 1,
           "items": { "$ref": "#/$defs/entity_update" }
+        },
+        "mentions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/mention_target_id" }
         }
       },
       "additionalProperties": false
@@ -847,6 +865,63 @@
             },
             "additionalProperties": false
           }
+        }
+      },
+      "additionalProperties": false
+    },
+    "narrative_activity_reason": {
+      "enum": [
+        "introduction",
+        "update",
+        "appearance",
+        "appearance_location",
+        "chapter_location",
+        "event",
+        "event_participant",
+        "event_location",
+        "mention",
+        "mapped_system_ancestry"
+      ]
+    },
+    "narrative_activity": {
+      "type": "object",
+      "required": ["entity_id", "source_chapter", "effective_date", "reasons"],
+      "properties": {
+        "entity_id": { "$ref": "#/$defs/mention_target_id" },
+        "source_chapter": { "$ref": "#/$defs/chapter" },
+        "effective_date": {
+          "anyOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }]
+        },
+        "reasons": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/narrative_activity_reason" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "narrative_world": {
+      "type": "object",
+      "required": ["entities", "view", "activity"],
+      "properties": {
+        "entities": { "type": "array", "items": { "type": "object" } },
+        "view": {
+          "type": "object",
+          "required": ["chapter", "display_date"],
+          "properties": {
+            "chapter": {
+              "anyOf": [{ "$ref": "#/$defs/chapter" }, { "type": "null" }]
+            },
+            "display_date": {
+              "anyOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }]
+            }
+          },
+          "additionalProperties": false
+        },
+        "activity": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/narrative_activity" }
         }
       },
       "additionalProperties": false

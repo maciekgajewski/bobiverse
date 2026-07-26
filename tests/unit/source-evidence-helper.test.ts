@@ -124,6 +124,8 @@ describe("blind Pass 1 boundary", () => {
     expect(blindMaterials).toContain(
       "Always run Pass 1 in a fresh isolated Codex context.",
     );
+    expect(blindMaterials).toContain("source_mentions");
+    expect(blindMaterials).not.toContain('"mentions": [');
     expect(blindMaterials).toContain(
       "Do not stage the narrative schema, canonical corpus",
     );

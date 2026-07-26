@@ -218,6 +218,10 @@ function sourceForSemanticError(
   return loaded.sources[0]!;
 }
 
+function pointerForSemanticError(error: Error): string {
+  return /Chapter \d+\.\d+ (\/[^:]+):/.exec(error.message)?.[1] ?? "";
+}
+
 async function main(): Promise<void> {
   const [command, ...argumentsList] = process.argv.slice(2);
   if (command === "--help" || argumentsList.includes("--help")) {
@@ -237,7 +241,11 @@ async function main(): Promise<void> {
     validateNarrativeCorpus(loaded.corpus);
   } catch (error) {
     const cause = error instanceof Error ? error : new Error("Unknown failure");
-    throw errorAt(sourceForSemanticError(cause, loaded), "", cause.message);
+    throw errorAt(
+      sourceForSemanticError(cause, loaded),
+      pointerForSemanticError(cause),
+      cause.message,
+    );
   }
   if (command === "validate") {
     console.log(

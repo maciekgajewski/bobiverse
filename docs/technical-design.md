@@ -433,10 +433,15 @@ filter.
 
 The generator also emits read-only narrative activity derived from introductions,
 updates, appearances, chapter and event locations, event participation, important
-mentions, and mapped stellar-system ancestry. Activity supports Chapter-mode
-reader-order recency and Date-mode story-time recency. It is not a source of entity
-state, relationships, continuous presence, or coordinates, and UI code must not
-reconstruct it independently.
+mentions, and mapped stellar-system ancestry. Each record preserves its target, source
+chapter, nullable comparable effective date, and one or more controlled reasons.
+Reasons coalesce only for the same target, chapter, and effective date; unplaced event
+activity remains available in Chapter mode but is never date-positioned. Activity
+supports Chapter-mode reader-order recency and Date-mode story-time recency. It is not
+a source of entity state, relationships, continuous presence, or coordinates, and UI
+code must not reconstruct it independently. Important mentions target only an already
+visible direct narrative entity or location not structurally represented in that chapter;
+they do not assert presence, participation, ownership, membership, location, or use.
 
 Locations form a one-parent tree: every non-root location has exactly one parent and
 child lists are generated. This supports systems, planets, moons, locales, and

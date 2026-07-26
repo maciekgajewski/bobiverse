@@ -421,4 +421,140 @@ describe("narrative corpus validation and projection", () => {
     expect(compareNarrativeDates("2200", "2200.0")).toBeNull();
     expect(compareNarrativeDates("2200.1", "2200.2")).toBeLessThan(0);
   });
+
+  it("accepts important mentions for every direct entity type without changing world state", () => {
+    const corpus = createNarrativeFixtureCorpus();
+    corpus.zeroState.entities = [
+      { id: "character:fixture-known", name: "Known fixture character" },
+      { id: "event:fixture-known", name: "Known fixture event" },
+      { id: "species:fixture-known", name: "Known fixture species" },
+      { id: "technology:fixture-known", name: "Known fixture technology" },
+      { id: "organization:fixture-known", name: "Known fixture organization" },
+      { id: "vessel_type:fixture-known", name: "Known fixture vessel type" },
+    ];
+    corpus.chapters[0]!.mentions = [
+      "character:fixture-known",
+      "event:fixture-known",
+      "location:mars",
+      "organization:fixture-known",
+      "species:fixture-known",
+      "technology:fixture-known",
+      "vessel_type:fixture-known",
+    ];
+
+    const withoutMentions = structuredClone(corpus);
+    delete withoutMentions.chapters[0]!.mentions;
+    const mentionedWorld = generateNarrativeWorld(corpus, "1.1");
+    const ordinaryWorld = generateNarrativeWorld(withoutMentions, "1.1");
+
+    expect(mentionedWorld.entities).toEqual(ordinaryWorld.entities);
+    expect(mentionedWorld.activity).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          entity_id: "character:fixture-known",
+          source_chapter: "1.1",
+          effective_date: "2200.0",
+          reasons: ["mention"],
+        }),
+        expect.objectContaining({
+          entity_id: "location:mars",
+          reasons: ["mention"],
+        }),
+        expect.objectContaining({
+          entity_id: "location:solar-system",
+          reasons: ["mapped_system_ancestry"],
+        }),
+      ]),
+    );
+  });
+
+  it("rejects unknown, later, and structurally redundant important mentions", () => {
+    expect(
+      narrativeSchemaErrors("chapter_source", {
+        chapter: "1.1",
+        title: "Fixture duplicate mention",
+        summary: "A fictional schema-validation fixture.",
+        date: "2200",
+        location_id: "location:earth",
+        mentions: ["technology:fixture", "technology:fixture"],
+      }),
+    ).not.toEqual([]);
+
+    const unknown = createNarrativeFixtureCorpus();
+    unknown.chapters[0]!.mentions = ["technology:missing"];
+    expect(() => validateNarrativeCorpus(unknown)).toThrow(
+      "Chapter 1.1 /mentions/0: important mention target is unknown: technology:missing.",
+    );
+
+    const later = createNarrativeFixtureCorpus();
+    later.chapters[1]!.introducing = [
+      { id: "technology:future", name: "Future fixture technology" },
+    ];
+    later.chapters[0]!.mentions = ["technology:future"];
+    expect(() => validateNarrativeCorpus(later)).toThrow(
+      "Chapter 1.1 /mentions/0: important mention target is introduced later in chapter 1.2: technology:future.",
+    );
+
+    const structural = createNarrativeFixtureCorpus();
+    structural.chapters[0]!.mentions = ["character:fixture-alex"];
+    expect(() => validateNarrativeCorpus(structural)).toThrow(
+      "Chapter 1.1 /mentions/0: important mention target is already represented structurally in this chapter: character:fixture-alex.",
+    );
+  });
+
+  it("coalesces same-date reasons while retaining distinct and unplaced event dates", () => {
+    const corpus = createNarrativeFixtureCorpus();
+    const introductions = corpus.chapters[0]!.introducing as Array<
+      Record<string, unknown>
+    >;
+    introductions.push(
+      {
+        id: "event:fixture-dated",
+        name: "Fixture dated event",
+        date: "2199",
+        location_id: "location:mars",
+        participant_ids: ["character:fixture-alex"],
+      },
+      {
+        id: "event:fixture-unplaced",
+        name: "Fixture unplaced event",
+        location_id: "location:mars",
+      },
+    );
+
+    const activity = generateNarrativeWorld(corpus, "1.3").activity;
+    expect(activity).toContainEqual({
+      entity_id: "character:fixture-alex",
+      source_chapter: "1.1",
+      effective_date: "2200.0",
+      reasons: ["introduction", "appearance"],
+    });
+    expect(activity).toContainEqual({
+      entity_id: "character:fixture-alex",
+      source_chapter: "1.1",
+      effective_date: "2199",
+      reasons: ["event_participant"],
+    });
+    expect(
+      activity.filter(
+        (record) => record.entity_id === "event:fixture-unplaced",
+      ),
+    ).toEqual([
+      {
+        entity_id: "event:fixture-unplaced",
+        source_chapter: "1.1",
+        effective_date: null,
+        reasons: ["event"],
+      },
+    ]);
+    expect(activity.map((record) => record.source_chapter)).toEqual(
+      [...activity.map((record) => record.source_chapter)].sort(
+        (left, right) => {
+          const [leftBook, leftChapter] = left.split(".").map(Number);
+          const [rightBook, rightChapter] = right.split(".").map(Number);
+          return leftBook - rightBook || leftChapter - rightChapter;
+        },
+      ),
+    );
+  });
 });

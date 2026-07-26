@@ -19,11 +19,14 @@ untitled chapter uses `1.3.txt`; a titled chapter uses
 
 ## What Codex does
 
-1. Extracts source-backed claims in an isolated first pass.
+1. Extracts source-backed claims in an isolated first pass, using `source_mentions`
+   only as source-local identity anchors.
 2. Seals the evidence, then compares it only with the reader-visible state before
    that chapter.
 3. Builds and validates a temporary candidate outside the canonical corpus.
 4. Shows the candidate, evidence, open questions, validation result, and exact diff.
+   A proposed canonical `mentions` entry is separately classified as an important,
+   non-redundant reference, with sealed evidence and an explicit human-review row.
 
 ## Approve a candidate
 

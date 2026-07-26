@@ -1,6 +1,6 @@
 # BOB-010: important mentions and narrative activity
 
-Status: Ready
+Status: Done
 Phase: 2 (narrative foundation and chapter timeline)
 Last updated: 2026-07-26
 
@@ -144,6 +144,18 @@ git diff --check
 
 Use redacted temporary extraction fixtures for skill validation. Do not place source
 book text or evidence excerpts in the repository.
+
+## Validation status
+
+The Captain explicitly authorized whitespace-only formatting of canonical chapter data
+on 2026-07-26. `data/narrative/chapters/1/2.json` now uses the repository's Prettier
+layout without any semantic change. This is an explicit, recorded deviation from the
+byte-for-byte portion of acceptance criterion 11; mechanical JSON formatting of chapter
+data is permitted when it changes no narrative value.
+
+The 2026-07-26 defect-first review found and corrected event activity that could have
+been incorrectly date-positioned when an event had no own story date. A fresh review
+then reported `No findings.` All documented validation commands pass.
 
 ## Risks and cautions
 

@@ -52,6 +52,18 @@ the identical listing below documents its shared definitions.
       "pattern": "^[a-z][a-z0-9_]*:[a-z0-9][a-z0-9-]*$",
       "description": "Globally unique, type-prefixed entity identifier."
     },
+    "mention_target_id": {
+      "anyOf": [
+        { "$ref": "#/$defs/character_id" },
+        { "$ref": "#/$defs/event_id" },
+        { "$ref": "#/$defs/location_id" },
+        { "$ref": "#/$defs/organization_id" },
+        { "$ref": "#/$defs/species_id" },
+        { "$ref": "#/$defs/technology_id" },
+        { "$ref": "#/$defs/vessel_type_id" }
+      ],
+      "description": "A supported direct narrative entity or location that may be an important chapter mention."
+    },
     "character_id": {
       "type": "string",
       "pattern": "^character:[a-z0-9][a-z0-9-]*$",
@@ -818,6 +830,12 @@ the identical listing below documents its shared definitions.
           "type": "array",
           "minItems": 1,
           "items": { "$ref": "#/$defs/entity_update" }
+        },
+        "mentions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/mention_target_id" }
         }
       },
       "additionalProperties": false
@@ -872,6 +890,63 @@ the identical listing below documents its shared definitions.
             },
             "additionalProperties": false
           }
+        }
+      },
+      "additionalProperties": false
+    },
+    "narrative_activity_reason": {
+      "enum": [
+        "introduction",
+        "update",
+        "appearance",
+        "appearance_location",
+        "chapter_location",
+        "event",
+        "event_participant",
+        "event_location",
+        "mention",
+        "mapped_system_ancestry"
+      ]
+    },
+    "narrative_activity": {
+      "type": "object",
+      "required": ["entity_id", "source_chapter", "effective_date", "reasons"],
+      "properties": {
+        "entity_id": { "$ref": "#/$defs/mention_target_id" },
+        "source_chapter": { "$ref": "#/$defs/chapter" },
+        "effective_date": {
+          "anyOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }]
+        },
+        "reasons": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/narrative_activity_reason" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "narrative_world": {
+      "type": "object",
+      "required": ["entities", "view", "activity"],
+      "properties": {
+        "entities": { "type": "array", "items": { "type": "object" } },
+        "view": {
+          "type": "object",
+          "required": ["chapter", "display_date"],
+          "properties": {
+            "chapter": {
+              "anyOf": [{ "$ref": "#/$defs/chapter" }, { "type": "null" }]
+            },
+            "display_date": {
+              "anyOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }]
+            }
+          },
+          "additionalProperties": false
+        },
+        "activity": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/narrative_activity" }
         }
       },
       "additionalProperties": false
@@ -987,14 +1062,50 @@ There are exactly three sources of domain truth:
    not contain coordinates, distances, sizes, colours, or other measured astronomy
    facts.
 3. The chapter source owns book revelations: new entities, visible state changes to
-   seeded or previously introduced entities, appearances, events, and chapter reveal
-   order.
+   seeded or previously introduced entities, appearances, events, optional important
+   `mentions`, and chapter reveal order. A mention is a curated reference, not a
+   relationship or state assertion.
 
 The following are generated data and must never be edited manually: the stable entity
 registry, an entity's state at a selected chapter, location child lists, character
 last-known sightings, events-at-location lists, character event histories, and the
-render-ready join of astronomy and narrative locations. Deterministic generated caches
-or checkpoints are permitted only as rebuildable optimizations.
+render-ready join of astronomy and narrative locations, and the narrative-activity
+index. Deterministic generated caches or checkpoints are permitted only as rebuildable
+optimizations.
+
+## Important mentions and narrative activity
+
+`chapter_source.mentions`, when present, is a nonempty, duplicate-free array of stable
+IDs. Its targets may be locations and the direct character, event, species, technology,
+organization, and vessel-type entity forms; assets are not valid targets. An author uses
+it only for an important source-supported reference not already captured by the same
+chapter's introduction, update, appearance, default location, event participant, or
+event location. The target must already be reader-visible before the chapter or be a
+valid previously seeded entity; a target introduced later is invalid. It does not assert
+presence, participation, ownership, membership, location, use, relationship, or state.
+
+The generated world contains an `activity` array of `narrative_activity` records. Each
+record has an `entity_id`, `source_chapter`, nullable `effective_date`, and one or more
+sorted controlled `reasons`. The generator coalesces reasons only when entity, source
+chapter, and effective date are identical; distinct effective dates remain separate
+records. Its controlled reasons are `introduction`, `update`, `appearance`,
+`appearance_location`, `chapter_location`, `event`, `event_participant`,
+`event_location`, `mention`, and `mapped_system_ancestry`.
+
+Non-event introductions and updates, appearances, default chapter locations, important
+mentions, and their mapped-system ancestry use the enclosing chapter date. Event
+introductions and updates use the event's own date when it is known; otherwise they
+remain chronologically unplaced with `effective_date: null`. Event locations and
+participants use that same effective event date. Every active narrative location also
+activates its mapped narrative star-system ancestor, if one exists, without copying
+astronomy identity or physical facts into the narrative record.
+
+Chapter-mode consumers use source chapter reader order. Date-mode consumers consider
+only records with a comparable effective date at or before the requested display date;
+unplaced records remain available to chapter context but are not date-positioned.
+Activity is a read-only presentation index. It never changes entity visibility, world
+state, relationships, coordinates, or the eligible-appearance calculation for a
+character's **Last seen** location.
 
 Image files are the sole manually curated non-generated content besides the zero-state
 source. They live in an asset registry with stable `asset:` IDs, safe static paths, and
@@ -1275,17 +1386,17 @@ Each entity type has a dedicated schema. The ratified contracts below cover char
 species, technologies, organizations, vessel types, events, assets, and locations;
 later entity types must add their own contract before records of that type are authored.
 
-| Record                                      | Required initial contract                                                | Derived rather than authored                                                            |
-| ------------------------------------------- | ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
-| `character`                                 | `id`, `name`, and the optional fields in the ratified character contract | last-known sighting; event history                                                      |
-| `star_system`                               | `id`, `kind: "star_system"`, name, and `astronomy_object_id` when mapped | astronomical components and render facts; sublocations; last-known sightings and events |
-| `planet`, `moon`, `locale`, `megastructure` | `id`, `kind`, name, and parent where non-root                            | sublocations; last-known sightings and events                                           |
-| `species`                                   | `id`, `name`, and the optional fields in the ratified species contract   | members and other reverse links                                                         |
-| `technology`                                | `id`, `name`, and optional original plain-text `description`             | no relationships, ownership, physical, or rendering facts                              |
-| `organization`                              | `id`, `name`, optional original plain-text `description` and `current_state` | no membership, ownership, location, or asset facts                                  |
-| `vessel_type`                               | `id`, `name`, and optional original plain-text `description`             | no vessel instances, ownership, physical, or rendering facts                          |
-| `event`                                     | `id`, `name`, and the optional fields in the ratified event contract     | location event list; participant event histories                                        |
-| `asset`                                     | `id`, path, and source                                                   | no visible assignment; assignments are entity values                                    |
+| Record                                      | Required initial contract                                                    | Derived rather than authored                                                            |
+| ------------------------------------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `character`                                 | `id`, `name`, and the optional fields in the ratified character contract     | last-known sighting; event history                                                      |
+| `star_system`                               | `id`, `kind: "star_system"`, name, and `astronomy_object_id` when mapped     | astronomical components and render facts; sublocations; last-known sightings and events |
+| `planet`, `moon`, `locale`, `megastructure` | `id`, `kind`, name, and parent where non-root                                | sublocations; last-known sightings and events                                           |
+| `species`                                   | `id`, `name`, and the optional fields in the ratified species contract       | members and other reverse links                                                         |
+| `technology`                                | `id`, `name`, and optional original plain-text `description`                 | no relationships, ownership, physical, or rendering facts                               |
+| `organization`                              | `id`, `name`, optional original plain-text `description` and `current_state` | no membership, ownership, location, or asset facts                                      |
+| `vessel_type`                               | `id`, `name`, and optional original plain-text `description`                 | no vessel instances, ownership, physical, or rendering facts                            |
+| `event`                                     | `id`, `name`, and the optional fields in the ratified event contract         | location event list; participant event histories                                        |
+| `asset`                                     | `id`, path, and source                                                       | no visible assignment; assignments are entity values                                    |
 
 Every present or future `description` and `state` field uses the shared schema types:
 an optional, nonempty plain string. `description` is an original reader-visible
@@ -1506,6 +1617,8 @@ layer. It rejects at least:
   replacement when updated;
 - a chapter missing its required title, summary, date, or default location; an empty
   authored optional array; or an appearance array with no `lead` appearance;
+- a malformed, duplicate, unresolved, later-introduced, or structurally redundant
+  important mention target; or an asset/non-direct entity ID in `mentions`;
 - competing state writes that have equal or incomparable effective story dates, or a
   year-only requested display date that cannot determine a needed indexed transition;
 - a broken location parent tree; a parent/child/relation combination outside the shared
@@ -1513,4 +1626,6 @@ layer. It rejects at least:
   status; a forbidden or missing mapped-system astronomy reference; or incompatible
   mapped astronomy ancestry;
 - an appearance without an effective explicit location; and
-- a generated record or snapshot presented as editable source data.
+- a generated activity record that does not match its controlled reason, source
+  chapter, effective-date, or target contract; or a generated record or snapshot
+  presented as editable source data.

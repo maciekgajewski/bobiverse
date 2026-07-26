@@ -105,7 +105,8 @@ Run `source_evidence.py manifest`, then read every bounded source chunk exactly 
 with `source_evidence.py chunk`. Track chunk IDs and account for overlap. Never infer
 that collapsed lines or missing paragraph breaks mark semantic boundaries.
 
-Extract source claims, not canonical introductions or updates. Use source-local mention
+Extract source claims, not canonical introductions or updates. Use source-local
+`source_mentions`
 IDs such as `mention:protagonist-1`. Capture:
 
 - source-provided chapter metadata;
@@ -140,11 +141,12 @@ immediately before the target chapter:
 - otherwise, generate the preceding chapter projection;
 - never use later chapters to resolve an earlier chapter.
 
-Resolve source-local mentions against known entities and aliases. Classify each claim:
+Resolve `source_mentions` against known entities and aliases. Classify each claim:
 
 - `introducing`;
 - `update`;
 - `appearance`;
+- `important-mention`;
 - `already-known`;
 - `not-modeled`;
 - `unsupported`;
@@ -170,6 +172,13 @@ violating ordering or inventing a workaround.
 
 Ask the Captain one question at a time for material ambiguities. Keep the sealed source
 claim unchanged; record the reconciliation decision separately.
+
+Promote a claim to `important-mention` only when it is a source-supported reference to
+an already visible direct narrative entity or location, and no chapter introduction,
+update, appearance, default location, event participant, or event location already
+records that relevance. Do not infer presence, participation, ownership, membership,
+location, use, or state from this classification. Each proposed canonical `mentions`
+entry requires sealed evidence and its own explicit row in the human-review table.
 
 ## Assemble and validate the candidate
 
@@ -206,6 +215,8 @@ Present:
 - source fingerprint and chapter/title derivation;
 - the candidate JSON;
 - a claim-to-classification table;
+- every proposed canonical important mention, its resolved stable ID, redundancy
+  decision, classification, and sealed evidence ID;
 - evidence IDs with bounded excerpts rendered by `source_evidence.py review`;
 - unresolved or low-confidence items;
 - validation output;

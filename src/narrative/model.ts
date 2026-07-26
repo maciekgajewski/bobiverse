@@ -24,8 +24,31 @@ export interface NarrativeEntity extends NarrativeRecord {
     | "vessel_type";
 }
 
+export const narrativeActivityReasons = [
+  "introduction",
+  "update",
+  "appearance",
+  "appearance_location",
+  "chapter_location",
+  "event",
+  "event_participant",
+  "event_location",
+  "mention",
+  "mapped_system_ancestry",
+] as const;
+
+export type NarrativeActivityReason = (typeof narrativeActivityReasons)[number];
+
+export interface NarrativeActivity {
+  entity_id: string;
+  source_chapter: string;
+  effective_date: string | null;
+  reasons: NarrativeActivityReason[];
+}
+
 export interface NarrativeWorld {
   entities: NarrativeEntity[];
+  activity: NarrativeActivity[];
   view: {
     chapter: string | null;
     display_date: string | null;
@@ -277,6 +300,14 @@ function chapterDate(chapter: NarrativeRecord): string {
   return asString(chapter.date, `Chapter ${chapterId(chapter)} date`);
 }
 
+function chapterSemanticError(
+  chapter: string,
+  pointer: string,
+  message: string,
+): Error {
+  return new Error(`Chapter ${chapter} ${pointer}: ${message}`);
+}
+
 function sourceProperties(
   record: NarrativeRecord,
   excludes: readonly string[],
@@ -363,6 +394,20 @@ export function validateNarrativeCorpus(corpus: NarrativeCorpus): void {
   const chapters = [...corpus.chapters].sort((left, right) =>
     compareChapter(chapterId(left), chapterId(right)),
   );
+  const introductionChapters = new Map<string, string>();
+  for (const chapter of chapters) {
+    for (const candidate of (chapter.introducing as unknown[] | undefined) ??
+      []) {
+      const introduced = asRecord(
+        candidate,
+        `Introduction in ${chapterId(chapter)}`,
+      );
+      introductionChapters.set(
+        asString(introduced.id, `Introduction ID in ${chapterId(chapter)}`),
+        chapterId(chapter),
+      );
+    }
+  }
   const chapterIds = new Set<string>();
   for (const chapter of chapters) {
     assertSchema("chapter_source", chapter, `Chapter ${chapterId(chapter)}`);
@@ -459,6 +504,61 @@ export function validateNarrativeCorpus(corpus: NarrativeCorpus): void {
         `Appearance in ${id}`,
       );
     }
+    const structuralMentionTargets = new Set<string>([
+      ...introducedThisChapter,
+      ...updatedIds,
+      defaultLocationId,
+    ]);
+    for (const appearance of (chapter.appearances as unknown[] | undefined) ??
+      []) {
+      const record = asRecord(appearance, `Appearance in ${id}`);
+      const characterId = record.character_id;
+      if (typeof characterId === "string")
+        structuralMentionTargets.add(characterId);
+    }
+    for (const candidate of [...introductions, ...updates]) {
+      const record = asRecord(candidate, `Event source in ${id}`);
+      const eventId = record.id ?? record.entity_id;
+      if (typeof eventId !== "string" || !eventId.startsWith("event:"))
+        continue;
+      structuralMentionTargets.add(eventId);
+      if (typeof record.location_id === "string")
+        structuralMentionTargets.add(record.location_id);
+      if (Array.isArray(record.participant_ids)) {
+        for (const participantId of record.participant_ids) {
+          if (typeof participantId === "string")
+            structuralMentionTargets.add(participantId);
+        }
+      }
+    }
+    for (const [index, target] of (
+      (chapter.mentions as unknown[] | undefined) ?? []
+    ).entries()) {
+      const pointer = `/mentions/${index}`;
+      if (typeof target !== "string") continue;
+      if (!availableAfterIntroductions.has(target)) {
+        const introducedIn = introductionChapters.get(target);
+        if (introducedIn && compareChapter(introducedIn, id) > 0) {
+          throw chapterSemanticError(
+            id,
+            pointer,
+            `important mention target is introduced later in chapter ${introducedIn}: ${target}.`,
+          );
+        }
+        throw chapterSemanticError(
+          id,
+          pointer,
+          `important mention target is unknown: ${target}.`,
+        );
+      }
+      if (structuralMentionTargets.has(target)) {
+        throw chapterSemanticError(
+          id,
+          pointer,
+          `important mention target is already represented structurally in this chapter: ${target}.`,
+        );
+      }
+    }
     for (const entityId of introducedThisChapter) availableIds.add(entityId);
   }
   assertTemporalWrites(chapters);
@@ -494,6 +594,208 @@ function deriveLocationChildren(entities: NarrativeEntity[]): void {
     const parent = locations.get(parentId);
     if (parent) (parent.child_ids as string[]).push(location.id);
   }
+}
+
+function applySourceRecord(
+  entity: NarrativeEntity,
+  source: NarrativeRecord,
+  excludes: readonly string[],
+): void {
+  for (const property of sourceProperties(source, excludes)) {
+    entity[property] = structuredClone(source[property]);
+  }
+}
+
+function activityDateOrder(left: string | null, right: string | null): number {
+  if (left === right) return 0;
+  if (left === null) return 1;
+  if (right === null) return -1;
+  return compareNarrativeDates(left, right) ?? left.localeCompare(right);
+}
+
+function mappedSystemForLocation(
+  locations: ReadonlyMap<string, NarrativeEntity>,
+  locationId: string,
+): string | null {
+  const visited = new Set<string>();
+  let current = locations.get(locationId);
+  while (current && !visited.has(current.id)) {
+    visited.add(current.id);
+    if (
+      current.kind === "star_system" &&
+      typeof current.astronomy_object_id === "string"
+    ) {
+      return current.id;
+    }
+    const parentId = current.parent_location_id;
+    current =
+      typeof parentId === "string" ? locations.get(parentId) : undefined;
+  }
+  return null;
+}
+
+function generateNarrativeActivity(
+  zeroState: NarrativeRecord,
+  chapters: readonly NarrativeRecord[],
+  knownAstronomyObjectIds: readonly string[],
+): NarrativeActivity[] {
+  const entities = assertZeroStateSemantics(
+    zeroState,
+    knownAstronomyObjectIds,
+  ).map((entity) => structuredClone(entity));
+  const byId = new Map(entities.map((entity) => [entity.id, entity]));
+  const activityByKey = new Map<string, NarrativeActivity>();
+  const reasonOrder = new Map(
+    narrativeActivityReasons.map((reason, index) => [reason, index]),
+  );
+  const add = (
+    entityId: string,
+    sourceChapter: string,
+    effectiveDate: string | null,
+    reason: NarrativeActivityReason,
+  ) => {
+    const key = `${entityId}\u0000${sourceChapter}\u0000${effectiveDate ?? ""}`;
+    const existing = activityByKey.get(key);
+    if (existing) {
+      if (!existing.reasons.includes(reason)) existing.reasons.push(reason);
+      return;
+    }
+    activityByKey.set(key, {
+      entity_id: entityId,
+      source_chapter: sourceChapter,
+      effective_date: effectiveDate,
+      reasons: [reason],
+    });
+  };
+  const addLocationActivity = (
+    locationId: string,
+    sourceChapter: string,
+    effectiveDate: string | null,
+    reason: NarrativeActivityReason,
+  ) => {
+    add(locationId, sourceChapter, effectiveDate, reason);
+    const locations = new Map(
+      [...byId.values()]
+        .filter((entity) => entity.entity_type === "location")
+        .map((entity) => [entity.id, entity]),
+    );
+    const mappedSystem = mappedSystemForLocation(locations, locationId);
+    if (mappedSystem)
+      add(mappedSystem, sourceChapter, effectiveDate, "mapped_system_ancestry");
+  };
+  const addEventActivity = (event: NarrativeEntity, sourceChapter: string) => {
+    const effectiveDate = typeof event.date === "string" ? event.date : null;
+    add(event.id, sourceChapter, effectiveDate, "event");
+    if (typeof event.location_id === "string") {
+      addLocationActivity(
+        event.location_id,
+        sourceChapter,
+        effectiveDate,
+        "event_location",
+      );
+    }
+    if (Array.isArray(event.participant_ids)) {
+      for (const participantId of event.participant_ids) {
+        if (typeof participantId === "string")
+          add(participantId, sourceChapter, effectiveDate, "event_participant");
+      }
+    }
+  };
+
+  for (const chapter of chapters) {
+    const sourceChapter = chapterId(chapter);
+    const date = chapterDate(chapter);
+    const eventIds = new Set<string>();
+    for (const candidate of (chapter.introducing as unknown[] | undefined) ??
+      []) {
+      const introduced = asRecord(
+        candidate,
+        `Introduction in ${sourceChapter}`,
+      );
+      const id = asString(introduced.id, `Introduction ID in ${sourceChapter}`);
+      const entity: NarrativeEntity = {
+        ...structuredClone(introduced),
+        id,
+        entity_type: entityType(id),
+      };
+      byId.set(id, entity);
+      if (entity.entity_type === "event") {
+        eventIds.add(id);
+      } else {
+        add(id, sourceChapter, date, "introduction");
+      }
+    }
+    for (const candidate of (chapter.updates as unknown[] | undefined) ?? []) {
+      const update = asRecord(candidate, `Update in ${sourceChapter}`);
+      const id = asString(
+        update.entity_id,
+        `Update target in ${sourceChapter}`,
+      );
+      const entity = byId.get(id);
+      if (!entity) continue;
+      applySourceRecord(entity, update, ["entity_id"]);
+      if (entity.entity_type === "event") {
+        eventIds.add(id);
+        add(
+          id,
+          sourceChapter,
+          typeof entity.date === "string" ? entity.date : null,
+          "update",
+        );
+      } else {
+        add(id, sourceChapter, date, "update");
+      }
+    }
+    for (const candidate of (chapter.appearances as unknown[] | undefined) ??
+      []) {
+      const appearance = asRecord(candidate, `Appearance in ${sourceChapter}`);
+      const characterId = asString(
+        appearance.character_id,
+        `Appearance character in ${sourceChapter}`,
+      );
+      add(characterId, sourceChapter, date, "appearance");
+      const locationId = appearance.location_id ?? chapter.location_id;
+      if (typeof locationId === "string")
+        addLocationActivity(
+          locationId,
+          sourceChapter,
+          date,
+          "appearance_location",
+        );
+    }
+    const chapterLocation = asString(
+      chapter.location_id,
+      `Chapter ${sourceChapter} default location`,
+    );
+    addLocationActivity(
+      chapterLocation,
+      sourceChapter,
+      date,
+      "chapter_location",
+    );
+    for (const target of (chapter.mentions as unknown[] | undefined) ?? []) {
+      if (typeof target === "string")
+        add(target, sourceChapter, date, "mention");
+    }
+    for (const eventId of eventIds) {
+      const event = byId.get(eventId);
+      if (event?.entity_type === "event")
+        addEventActivity(event, sourceChapter);
+    }
+  }
+  return [...activityByKey.values()]
+    .map((activity) => ({
+      ...activity,
+      reasons: [...activity.reasons].sort(
+        (left, right) => reasonOrder.get(left)! - reasonOrder.get(right)!,
+      ),
+    }))
+    .sort(
+      (left, right) =>
+        compareChapter(left.source_chapter, right.source_chapter) ||
+        activityDateOrder(left.effective_date, right.effective_date) ||
+        left.entity_id.localeCompare(right.entity_id),
+    );
 }
 
 /** Builds the reader-safe world state for a selected chapter, or the pre-book zero state. */
@@ -555,11 +857,18 @@ export function generateNarrativeWorld(
     }
   }
   deriveLocationChildren(entities);
-  return {
+  const world: NarrativeWorld = {
     entities,
+    activity: generateNarrativeActivity(
+      corpus.zeroState,
+      readerVisible,
+      corpus.knownAstronomyObjectIds,
+    ),
     view: {
       chapter: selectedChapterId,
       display_date: displayDate,
     },
   };
+  assertSchema("narrative_world", world, "Generated narrative world");
+  return world;
 }
