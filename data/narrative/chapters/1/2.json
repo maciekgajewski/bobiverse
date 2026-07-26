@@ -55,5 +55,10 @@
       "role": "other",
       "location_id": "location:new-handeltown"
     }
+  ],
+  "mentions": [
+    "character:robert-johansson",
+    "event:bob-road-incident",
+    "organization:cryoeterna"
   ]
 }
