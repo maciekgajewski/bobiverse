@@ -24,6 +24,7 @@ Book timeline will be a list of book chapters, grouped by books. A user of an ap
 ### Other tools
 
 Additional tools should be available
+
 - list of characters (with a search box)
 - list of star systems and planets (with a search box)
 - a chronicle and path of a character among stars
@@ -36,9 +37,10 @@ All these tools should respect viewer currently set chapter, to not reveal any s
 
 I imagine visuals to be in the style of Stellaris
 
-### Helpful assitants 
+### Helpful assitants
 
 There are 3 NPC AI characters that could be used as app assitants, clippy-style:
+
 - GUPPY - an assistant AI, looking like Admiral Ackbar from Star Wars
 - Jeeves - a butler serving coffee and other refreshments, looking like John Cleese
 - Spike, a cat
@@ -61,6 +63,7 @@ There are 3 NPC AI characters that could be used as app assitants, clippy-style:
   - location (star system, planet or en-route)
   - list of other characters appearing, providing a data point (time + location) to their history
   - major events
+
 - Real 3D coordinates will come from a reproducible offline astronomy pipeline using
   CNS5 and Astropy. The application stores Sun-centered Galactic Cartesian coordinates
   and renders them at true linear scale.
@@ -75,11 +78,12 @@ There are 3 NPC AI characters that could be used as app assitants, clippy-style:
 
 The complete approved decisions are in [technical-design.md](technical-design.md).
 
-
 ## Plan
 
 1. Flesh out the idea, find answer to technical questions
 2. Phase 1A: complete interactive map experience using the 20 nearest stellar systems
-3. Phase 1B: expand the validated map pipeline toward 100 stellar systems
-4. Phase 2: get the first few chapters into JSON, add timeline and visualization
-5. Further phases: character list, star/planet list, search, histories, and genealogy
+3. Phase 1B: expand the validated map pipeline beyond the initial nearby systems
+4. Phase 2: get the first chapters into JSON; add guarded chapter/date navigation, a
+   grouped searchable object browser, inspectors, narrative map states, and guaranteed
+   local astronomy context
+5. Further phases: histories, travel paths, system chronicles, and genealogy

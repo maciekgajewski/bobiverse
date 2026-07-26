@@ -1,7 +1,7 @@
 # Implementation plan
 
 Status: Initial approved roadmap  
-Last updated: 2026-07-23
+Last updated: 2026-07-26
 
 ## 1. How to use this plan
 
@@ -97,19 +97,27 @@ Rebaseline note: BOB-003 retires the two-system distance-measurement user interf
 after this completed slice. BOB-001 remains the historical record of its former
 acceptance; later work must not restore the tool without a new approved task.
 
-## 5. Phase 1B: catalogue expansion toward 100 systems
+## 5. Phase 1B: catalogue expansion and contextual coverage
 
-Goal: expand the accepted Phase 1A pipeline without redesigning the map.
+Status: Rebaselined; delivery owned by BOB-013
+
+Goal: expand the accepted Phase 1A pipeline without weakening system identity,
+provenance, true geometry, or offline reproducibility.
+
+The former fixed target of the 100 nearest systems and its fixed-count invariant are
+superseded. Phase 2 needs guaranteed catalogue neighbourhoods around every mapped
+narrative stellar-system anchor, not an arbitrary Sol-centred count. BOB-013 owns the
+source decision and implementation of that coverage model.
 
 Planned work:
 
-- Increase the reviewed system set from 20 to 100 nearest systems.
-- Replace the fixed 20-system validation and fixture count with one documented,
-  easily modifiable catalogue-size parameter. The parameter must still make Sol
-  explicit and preserve the reviewed system-count invariant across generation,
-  validation, runtime schema checks, and tests.
+- Replace the fixed 20-system validation and fixture count with a documented,
+  validated context-radius configuration that defaults to 20 light-years.
+- Generate the deduplicated union of every source-available system within that radius
+  of each mapped narrative anchor.
+- Fail rather than silently present incomplete neighbourhoods at a source boundary.
 - Reconcile additional multi-star membership, aliases, and uncertain source records.
-- Measure rendering, labeling, picking, and search performance at the expanded size.
+- Measure rendering, labeling, picking, and search performance at the generated size.
 - Introduce label-density rules without changing true positions.
 - Add richer component and planet details only to selected systems.
 - Record catalogue acknowledgements and refresh instructions.
@@ -121,13 +129,21 @@ Planned work:
 Exit criteria:
 
 - Expanded data passes the same provenance and coordinate validations.
+- Every mapped narrative anchor passes the accepted source-coverage guarantee.
 - The map remains legible and responsive on supported hardware.
 - Any level-of-detail optimization preserves canonical positions.
 
 ## 6. Phase 2: narrative foundation and chapter timeline
 
+Status: In progress
+
 Goal: manually encode a representative set of early chapters and prove spoiler-safe
 navigation.
+
+The approved desktop interaction design is
+`docs/design/phase-2-desktop-ui.md`. BOB-010 through BOB-015 deliver the desktop
+workspace; BOB-016 later designs and implements the corresponding first-class mobile
+composition.
 
 Planned work:
 
@@ -152,7 +168,21 @@ Planned work:
 - Implement guarded reader progress and the shared reader-knowledge visibility
   service with a freely selectable earlier view chapter.
 - Add the book/chapter timeline and selected-chapter persistence in localStorage.
+- Keep `furthestChapterRead`, `viewChapter`, and requested story date separate. Add
+  explicit **Read through** progress, reading-order Chapter mode, and meaningful-date
+  Date mode with a linear calendar-year axis.
+- Add optional important chapter `mentions` and generate one cross-type narrative
+  activity index for browser recency, map emphasis, and inspector context.
+- Add the Phase 2 searchable grouped object browser. Groups appear progressively for
+  eligible characters, events, star systems, other locations, species, technologies,
+  organizations, and vessel types, and sort by mode-appropriate recent activity.
+- Add type-aware selected-object inspectors and coordinated selection across browser,
+  map, and inspector.
 - Highlight the selected chapter's visible locations, characters, and events.
+- Mark narrative-known and active stellar systems without altering spectral markers
+  or true geometry. Render searchable, astronomy-only context within one explicit,
+  configurable radius around each mapped known system; the offline catalogue must
+  guarantee the source-available neighbourhood.
 - Represent ambiguous locations as explicitly unmapped.
 - Add regression fixtures for non-chronological chapters and later revelations about
   earlier events.
@@ -162,6 +192,9 @@ Exit criteria:
 - Selecting a chapter cannot expose any fact first revealed later.
 - Earlier views remain stable when later data is added.
 - Timeline, map, and details use the same visibility result.
+- Browser ordering, map activity, and inspector recency use the same generated
+  activity result.
+- Story-date spacing and interstellar geometry both remain linear and truthful.
 - Original book text is absent from the repository and built assets.
 
 ## 7. Phase 3: exploration tools
@@ -170,8 +203,8 @@ Goal: build reader tools on the same entities and spoiler boundary.
 
 Candidate slices, each requiring its own task:
 
-- Searchable character list and character history.
-- Searchable stellar-system and planet list.
+- Character history using the Phase 2 searchable object browser.
+- Stellar-system and planet chronicle using the Phase 2 searchable object browser.
 - Character travel path and per-leg measurements.
 - System chronicle.
 - Bob genealogical tree.

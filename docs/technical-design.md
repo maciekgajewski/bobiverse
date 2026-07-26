@@ -1,7 +1,7 @@
 # Bobiverse visual companion: technical design
 
 Status: Approved baseline  
-Last updated: 2026-07-24
+Last updated: 2026-07-26
 
 ## 1. Purpose
 
@@ -12,8 +12,9 @@ characters, travel, events, and reading progress without revealing future facts.
 
 The initial delivery is an astronomy-only vertical slice containing the 20 nearest
 stellar systems. It establishes the map interaction and data pipeline before
-book-derived content is introduced. The same pipeline can later expand the map toward
-100 systems.
+book-derived content is introduced. Later expansion uses guaranteed configurable
+neighbourhoods around mapped narrative stellar systems rather than an arbitrary fixed
+system count.
 
 ## 2. Goals
 
@@ -282,6 +283,16 @@ do not, the snapshot records a component-specific catalogue or literature source
 generated browser data retains the joined provenance; no browser request may resolve
 or refresh visual properties at runtime.
 
+Phase 2 replaces a fixed nearest-system presentation with contextual neighbourhoods.
+The offline pipeline must guarantee every source-available stellar system within one
+configured Euclidean radius of every mapped narrative stellar-system anchor in the
+canonical corpus. The default radius is 20 light-years. One explicit validated static
+configuration record owns that value for generation, validation, runtime filtering,
+tests, and relevant UI wording; it is not an end-user preference. Overlapping
+neighbourhoods deduplicate by stable system identity. A source boundary must not be
+silently presented as complete, and the browser still makes no runtime catalogue
+request.
+
 ## 9. Phase 1 interaction design
 
 The map must provide:
@@ -347,6 +358,14 @@ service or browser fallback is the localization strategy for those scripts.
 The application must expose selected system facts through ordinary DOM content so
 screen readers and automated tests are not forced to interpret the canvas.
 
+Phase 2's approved desktop workspace is specified in
+`design/phase-2-desktop-ui.md`. At `>= 1200px`, it presents the progressive grouped
+object browser, true-scale map, selected-object inspector, and chapter/date timeline
+dock together. Search lives at the top of the browser. The map remains the largest
+surface, and the attribution footer remains visible. The shared application state and
+components are later recomposed for mobile by BOB-016; desktop implementation must not
+create a parallel domain or spoiler model.
+
 ## 11. Visual language
 
 The visual direction is an original strategic-space interface: dark layered space,
@@ -365,40 +384,59 @@ Canonical authoring uses JSON validated by JSON Schema Draft 2020-12, without
 source-level schema-version fields or a compatibility contract. One generalized
 zero-state source is the atomic, reader-visible entity registry before any book chapter
 is selected: it contains the nested Solar-System location tree and any pre-book
-characters, species, technologies, organizations, vessel types, or events. Chapter records then introduce book-specific entities
-and record ordered visible patches, appearances, and events. The stable entity registry
+characters, species, technologies, organizations, vessel types, or events. Chapter
+records then introduce book-specific entities and record ordered visible patches,
+appearances, events, and optional important references in `mentions`. A mention
+creates no relationship or state change. The stable entity registry
 and every selected-chapter state are deterministic generated projections, never
 manually edited snapshots. ADR-0001 establishes chapter-authored patches; ADR-0003
 supersedes its sole-source boundary with the zero state; ADR-0004 establishes the
 unversioned narrative schema contract; ADR-0005 refines the chapter, location, and
 date-projection contracts; ADR-0006 generalizes the zero-state record; and ADR-0007
-expands the direct narrative entity union.
+expands the direct narrative entity union. ADR-0008 defines important mentions and
+the generated narrative-activity index.
 
 Spoiler safety has two independent dimensions:
 
 1. Reading order determines which claims the reader is permitted to know.
 2. Story time determines the in-universe moment represented by the selected chapter.
 
-`furthestChapterRead` is a guarded reader-progress ceiling. `viewChapter` selects a
-chapter at or before that ceiling. Both are absent before the reader selects a chapter,
-when the zero state is rendered. Reader order first decides which facts the
-reader may know; story time then decides which of those facts form the represented
-world state at `viewChapter.date`. A future story-state change must not alter an
+`furthestChapterRead` is a guarded reader-progress ceiling. Advancing it requires an
+explicit confirmation. `viewChapter`, labelled **Knowledge through** in the Phase 2
+UI, selects a chapter at or before that ceiling. Both are absent before the reader
+selects a chapter, when the zero state is rendered. Reader order first decides which
+facts the reader may know; story time then decides which of those facts form the
+represented world state at `viewChapter.date`. A future story-state change must not alter an
 earlier in-universe view merely because its chapter was read first. Conversely, a fact
 first revealed later must not alter an earlier reader-knowledge view, even if it was
 already true in-universe. ADR-0002, as refined by ADR-0005, defines this two-stage
 projection and its temporal validation rules.
 
-A future date-exploration component may use an arbitrary requested story date for the
-second stage, rather than `viewChapter.date`. It must retain the first stage's
-reader-visible chapter set: no later chapter becomes available merely because its
-story date precedes the requested date. The result is explicitly the state inferred
-from selected reader knowledge at that date, not a claim about unrevealed in-universe
-facts.
+The first confirmed **Read through** choice initializes `viewChapter` to that same
+chapter and uses its story date, so onboarding moves from zero state to one complete
+chapter view in one deliberate action. Later increases to `furthestChapterRead` do not
+change an already valid `viewChapter`; lowering the ceiling below it clamps
+`viewChapter` to the new ceiling and recomputes the projection.
+
+Phase 2 Date mode may use a meaningful requested story date for the second stage,
+rather than `viewChapter.date`. It retains the first stage's reader-visible chapter
+set: no later chapter becomes available merely because its story date precedes the
+requested date. The result is explicitly the state inferred from selected reader
+knowledge at that date, not a claim about unrevealed in-universe facts. The UI exposes
+only determinate dates derived from the permitted knowledge set; it does not provide
+arbitrary date entry or expose within-year ordering indices. Its year axis preserves
+linear elapsed-year scale.
 
 All later views—map, search, characters, systems, paths, chronicles, and genealogy—use
 one shared visibility policy. A UI component may not implement an independent spoiler
 filter.
+
+The generator also emits read-only narrative activity derived from introductions,
+updates, appearances, chapter and event locations, event participation, important
+mentions, and mapped stellar-system ancestry. Activity supports Chapter-mode
+reader-order recency and Date-mode story-time recency. It is not a source of entity
+state, relationships, continuous presence, or coordinates, and UI code must not
+reconstruct it independently.
 
 Locations form a one-parent tree: every non-root location has exactly one parent and
 child lists are generated. This supports systems, planets, moons, locales, and
