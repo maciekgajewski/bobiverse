@@ -180,6 +180,24 @@ export function compareNarrativeDates(
   return Number(leftIndexText) - Number(rightIndexText);
 }
 
+interface StateWriteMoment {
+  date: string;
+  sourceChapter: string;
+}
+
+function compareStateWriteMoments(
+  left: StateWriteMoment,
+  right: StateWriteMoment,
+): number | null {
+  const dateOrdering = compareNarrativeDates(left.date, right.date);
+  if (dateOrdering === null || dateOrdering !== 0) return dateOrdering;
+  const bothYearOnly = !left.date.includes(".") && !right.date.includes(".");
+  if (bothYearOnly) {
+    return compareChapter(left.sourceChapter, right.sourceChapter);
+  }
+  return 0;
+}
+
 function flattenZeroStateLocation(
   location: NarrativeRecord,
   parentLocationId: string | null,
@@ -330,10 +348,10 @@ function sourceProperties(
 }
 
 function assertTemporalWrites(chapters: NarrativeRecord[]): void {
-  const writes = new Map<string, string[]>();
+  const writes = new Map<string, StateWriteMoment[]>();
   const addWrites = (
     record: NarrativeRecord,
-    date: string,
+    moment: StateWriteMoment,
     excludes: readonly string[],
   ) => {
     const id = asString(
@@ -342,31 +360,33 @@ function assertTemporalWrites(chapters: NarrativeRecord[]): void {
     );
     for (const property of sourceProperties(record, excludes)) {
       const key = `${id}\u0000${property}`;
-      const previousDates = writes.get(key) ?? [];
-      for (const previousDate of previousDates) {
-        const ordering = compareNarrativeDates(previousDate, date);
+      const previousMoments = writes.get(key) ?? [];
+      for (const previousMoment of previousMoments) {
+        const ordering = compareStateWriteMoments(previousMoment, moment);
         if (ordering === null || ordering === 0) {
           throw new Error(
-            `State writes for ${id}.${property} have equal or incomparable dates (${previousDate}, ${date}).`,
+            `State writes for ${id}.${property} have equal or incomparable moments (${previousMoment.date} @ ${previousMoment.sourceChapter}, ${moment.date} @ ${moment.sourceChapter}).`,
           );
         }
       }
-      previousDates.push(date);
-      writes.set(key, previousDates);
+      previousMoments.push(moment);
+      writes.set(key, previousMoments);
     }
   };
   for (const chapter of chapters) {
     const date = chapterDate(chapter);
+    const sourceChapter = chapterId(chapter);
+    const moment = { date, sourceChapter };
     for (const introduced of (chapter.introducing as unknown[] | undefined) ??
       []) {
       addWrites(
-        asRecord(introduced, `Introduction in ${chapterId(chapter)}`),
-        date,
+        asRecord(introduced, `Introduction in ${sourceChapter}`),
+        moment,
         ["id"],
       );
     }
     for (const update of (chapter.updates as unknown[] | undefined) ?? []) {
-      addWrites(asRecord(update, `Update in ${chapterId(chapter)}`), date, [
+      addWrites(asRecord(update, `Update in ${sourceChapter}`), moment, [
         "entity_id",
       ]);
     }
@@ -581,16 +601,19 @@ export function validateNarrativeCorpus(corpus: NarrativeCorpus): void {
 function applyProperties(
   entity: NarrativeEntity,
   write: NarrativeRecord,
-  date: string,
-  latestDates: Map<string, string>,
+  moment: StateWriteMoment,
+  latestMoments: Map<string, StateWriteMoment>,
   excludes: readonly string[],
 ): void {
   for (const property of sourceProperties(write, excludes)) {
     const key = `${entity.id}\u0000${property}`;
-    const priorDate = latestDates.get(key);
-    if (!priorDate || (compareNarrativeDates(priorDate, date) ?? -1) < 0) {
+    const priorMoment = latestMoments.get(key);
+    if (
+      !priorMoment ||
+      (compareStateWriteMoments(priorMoment, moment) ?? -1) < 0
+    ) {
       entity[property] = structuredClone(write[property]);
-      latestDates.set(key, date);
+      latestMoments.set(key, moment);
     }
   }
 }
@@ -913,7 +936,7 @@ export function generateNarrativeWorld(
     corpus.knownAstronomyObjectIds,
   ).map((entity) => structuredClone(entity));
   const byId = new Map(entities.map((entity) => [entity.id, entity]));
-  const latestDates = new Map<string, string>();
+  const latestMoments = new Map<string, StateWriteMoment>();
   const readerVisible = selectedChapter
     ? chapters.filter(
         (chapter) =>
@@ -922,6 +945,7 @@ export function generateNarrativeWorld(
     : [];
   for (const chapter of readerVisible) {
     const date = chapterDate(chapter);
+    const sourceChapter = chapterId(chapter);
     for (const candidate of (chapter.introducing as unknown[] | undefined) ??
       []) {
       const introduced = asRecord(
@@ -945,7 +969,13 @@ export function generateNarrativeWorld(
           : date;
       if (!isDateAtOrBefore(effectiveDate, displayDate)) continue;
       const entity: NarrativeEntity = { id, entity_type: type };
-      applyProperties(entity, introduced, effectiveDate, latestDates, ["id"]);
+      applyProperties(
+        entity,
+        introduced,
+        { date: effectiveDate, sourceChapter },
+        latestMoments,
+        ["id"],
+      );
       byId.set(id, entity);
       entities.push(entity);
     }
@@ -973,9 +1003,13 @@ export function generateNarrativeWorld(
               : date
           : date;
       if (!isDateAtOrBefore(effectiveDate, displayDate)) continue;
-      applyProperties(target, update, effectiveDate, latestDates, [
-        "entity_id",
-      ]);
+      applyProperties(
+        target,
+        update,
+        { date: effectiveDate, sourceChapter },
+        latestMoments,
+        ["entity_id"],
+      );
     }
   }
   deriveLocationChildren(entities);

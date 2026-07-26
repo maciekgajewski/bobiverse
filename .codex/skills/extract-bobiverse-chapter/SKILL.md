@@ -171,6 +171,11 @@ ordering, reference ordering, update ownership, unknown-location behavior, astro
 ownership, and original-summary requirements. Do not invent an ID, chronology,
 coordinate, relationship, or missing field.
 
+For competing state-property writes, follow the canonical temporal contract: different
+years use year order; two indexed dates use their explicit indices; two equal
+year-only dates use canonical chapter order; and mixed indexed/year-only precision in
+one year remains incomparable. Do not add a date index merely to force validation.
+
 An entity introduced in the target chapter must contain its reader-visible
 end-of-chapter state in that introduction. Do not also place it in `updates`; updates
 are only for entities visible before the chapter. Order introductions so every

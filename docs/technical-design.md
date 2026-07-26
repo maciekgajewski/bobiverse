@@ -418,7 +418,8 @@ supersedes its sole-source boundary with the zero state; ADR-0004 establishes th
 unversioned narrative schema contract; ADR-0005 refines the chapter, location, and
 date-projection contracts; ADR-0006 generalizes the zero-state record; and ADR-0007
 expands the direct narrative entity union. ADR-0008 defines important mentions and
-the generated narrative-activity index.
+the generated narrative-activity index. ADR-0009 defines chapter ordering for
+competing state-property writes whose effective dates are both year-only and equal.
 
 Spoiler safety has two independent dimensions:
 
@@ -433,8 +434,16 @@ facts the reader may know; story time then decides which of those facts form the
 represented world state at `viewChapter.date`. A future story-state change must not alter an
 earlier in-universe view merely because its chapter was read first. Conversely, a fact
 first revealed later must not alter an earlier reader-knowledge view, even if it was
-already true in-universe. ADR-0002, as refined by ADR-0005, defines this two-stage
-projection and its temporal validation rules.
+already true in-universe. ADR-0002, as refined by ADR-0005 and ADR-0009, defines this
+two-stage projection and its temporal validation rules.
+
+State-property projection compares an effective story date together with its source
+chapter. Different years use year order. Two indexed dates in one year use their
+explicit indices, and an equal explicit index remains invalid. Two equal year-only
+dates use canonical numeric chapter order. A year-only date and an indexed date in the
+same year remain incomparable. This chapter fallback applies only to competing
+state-property writes; generic dates, event occurrence, narrative activity, and
+requested display-date comparison retain the partial date order.
 
 The first confirmed **Read through** choice initializes `viewChapter` to that same
 chapter and uses its story date, so onboarding moves from zero state to one complete

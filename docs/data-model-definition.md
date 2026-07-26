@@ -2,7 +2,7 @@
 
 Status: Done
 Schema dialect: JSON Schema Draft 2020-12
-Last updated: 2026-07-24
+Last updated: 2026-07-26
 
 ## Purpose and scope
 
@@ -13,8 +13,8 @@ this document rather than redefining their syntax. The first definitions are `da
 
 This document does not add book-derived records or source text. It records only
 the data contract needed before those records are authored. ADR-0001, as refined by
-ADR-0003, ADR-0005, ADR-0006, and ADR-0007, is binding for the chapter-authored source and
-generated-projection boundary.
+ADR-0003, ADR-0005, ADR-0006, ADR-0007, and ADR-0009, is binding for the
+chapter-authored source and generated-projection boundary.
 
 ## Shared JSON Schema definitions
 
@@ -1146,12 +1146,19 @@ infer a later chapter merely because that chapter has an earlier effective date.
 result is therefore the world state inferred from the reader's selected chapter
 knowledge, not an assertion of the complete in-universe state at that date.
 
-Reader order never breaks a story-time tie. Identical canonical date values are equal,
-so a state value dated exactly like the requested display date is eligible. A year-only
-date is otherwise unordered relative to an indexed date in the same year, so it cannot
-decide a state transition between them. Source data must supply an index whenever a
-state write or requested display date requires that within-year ordering. Competing
-writes to one entity property with equal or incomparable effective dates are invalid.
+State-property writes compare an ordering moment made from the effective story date and
+source chapter. Different years use numeric year order. Two indexed values in one year
+use their explicit indices; equal explicit indices remain an invalid tie. Two
+year-only values in one year use canonical numeric chapter order. A year-only value
+remains unordered relative to an indexed value in the same year, so mixed-precision
+competing writes are invalid. Once one competing write requires an explicit index,
+every competing write for that property in that year requires comparable indexed
+precision.
+
+The chapter fallback does not change the generic `date` partial order. Identical dates
+remain equal when deciding whether a state value is eligible at a requested display
+date. Event occurrence, narrative activity, and arbitrary display-date consumers do
+not acquire story chronology from chapter order.
 
 An event uses its projected optional `date` for its in-universe occurrence. If that
 value is absent, it remains reader-visible after its introduction but is not placed at
@@ -1625,8 +1632,9 @@ layer. It rejects at least:
   authored optional array; or an appearance array with no `lead` appearance;
 - a malformed, duplicate, unresolved, later-introduced, or structurally redundant
   important mention target; or an asset/non-direct entity ID in `mentions`;
-- competing state writes that have equal or incomparable effective story dates, or a
-  year-only requested display date that cannot determine a needed indexed transition;
+- competing state writes with equal indexed moments, the same source chapter, or
+  incomparable mixed-precision effective dates; or a year-only requested display date
+  that cannot determine a needed indexed transition;
 - a broken location parent tree; a parent/child/relation combination outside the shared
   location table; invalid transit endpoints; an unmapped descendant without explicit
   status; a forbidden or missing mapped-system astronomy reference; or incompatible

@@ -1,0 +1,25 @@
+{
+  "chapter": "1.4",
+  "title": "4",
+  "summary": "On July 15, 2133, Bob returns from standby and learns that an unnamed competitor has suffered an unrecoverable loop, leaving four contestants. He seeks study and genealogy access, but Dr. Landers explains that the domestic internet is gone and FAITH restricts information. Unable to reconnect with descendants and frustrated by endocrine controls that blunt his grief, Bob resolves to conceal his discontent, stay sane, and win.",
+  "date": "2133",
+  "location_id": "location:new-handeltown",
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead",
+      "location_id": "location:new-handeltown"
+    },
+    {
+      "character_id": "character:dr-landers",
+      "role": "other",
+      "location_id": "location:new-handeltown"
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "organization:free-american-independent-theocratic-hegemony",
+      "description": "The Free American Independent Theocratic Hegemony, a theocratic U.S. government that makes criticism a felony and permits the deactivation of machine persons for it. It restricts information by default; the domestic internet no longer exists, and genealogy records are unavailable to the public."
+    }
+  ]
+}

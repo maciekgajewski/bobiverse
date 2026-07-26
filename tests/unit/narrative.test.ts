@@ -460,12 +460,43 @@ describe("narrative corpus validation and projection", () => {
     );
   });
 
-  it("rejects equal or incomparable writes instead of using reader order as a tie-breaker", () => {
+  it("orders equal year-only state writes by canonical chapter", () => {
+    const corpus = createNarrativeFixtureCorpus();
+    for (const chapter of corpus.chapters) chapter.date = "2200";
+
+    expect(() => validateNarrativeCorpus(corpus)).not.toThrow();
+    expect(
+      generateNarrativeWorld(corpus, "1.3").entities.find(
+        (entity) => entity.id === "character:fixture-alex",
+      ),
+    ).toMatchObject({ current_state: "middle state" });
+  });
+
+  it("keeps explicit state-write indices authoritative over chapter order", () => {
+    const corpus = createNarrativeFixtureCorpus();
+
+    expect(
+      generateNarrativeWorld(corpus, "1.3", "2200.2").entities.find(
+        (entity) => entity.id === "character:fixture-alex",
+      ),
+    ).toMatchObject({ current_state: "later state" });
+  });
+
+  it("rejects equal indexed state-write moments", () => {
+    const corpus = createNarrativeFixtureCorpus();
+    corpus.chapters[2]!.date = "2200.2";
+
+    expect(() => validateNarrativeCorpus(corpus)).toThrow(
+      "equal or incomparable moments",
+    );
+  });
+
+  it("rejects mixed year-only and indexed state-write moments", () => {
     const corpus = createNarrativeFixtureCorpus();
     corpus.chapters[2]!.date = "2200";
 
     expect(() => validateNarrativeCorpus(corpus)).toThrow(
-      "equal or incomparable dates",
+      "equal or incomparable moments",
     );
   });
 
