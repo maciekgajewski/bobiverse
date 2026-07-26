@@ -1,13 +1,30 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StarMap, type MapScale } from "./components/MapScene";
 import { SystemDetails } from "./components/SystemDetails";
 import { SystemDirectory } from "./components/SystemDirectory";
+import { TimelineDock } from "./components/TimelineDock";
 import { nearbySystems, nearbySystemsResult } from "./domain/data";
 import {
   GALACTIC_STARFIELD_SOURCE_URL,
   GALACTIC_STARFIELD_UI_CREDIT,
 } from "./domain/galactic-starfield";
 import type { DistanceUnit } from "./domain/types";
+import {
+  generateNarrativeWorld,
+  meaningfulNarrativeDates,
+} from "./narrative/model";
+import {
+  confirmReadThrough,
+  loadReaderProgress,
+  normalizeReaderProgress,
+  persistReaderProgress,
+  returnToZeroState,
+  selectDisplayDate,
+  selectKnowledgeChapter,
+  setTimelineViewport,
+  type ReaderProgress,
+} from "./narrative/progress";
+import { narrativeChapters, narrativeCorpus } from "./narrative/runtime";
 import "./styles.css";
 
 function canRenderWebgl(): boolean {
@@ -31,11 +48,41 @@ export default function App() {
     "checking",
   );
   const [resetToken, setResetToken] = useState(0);
+  const [progress, setProgress] = useState<ReaderProgress>(() => {
+    const preliminary = loadReaderProgress(narrativeChapters, []);
+    const dates = preliminary.viewChapter
+      ? meaningfulNarrativeDates(narrativeCorpus, preliminary.viewChapter)
+      : [];
+    return loadReaderProgress(narrativeChapters, dates);
+  });
+  const [pendingReadThrough, setPendingReadThrough] = useState<string | null>(
+    null,
+  );
   const [mapScale, setMapScale] = useState<MapScale>({
     label: "1 ly",
     pixelWidth: 50,
   });
   const systems = nearbySystems?.systems ?? [];
+  const meaningfulDates = useMemo(
+    () =>
+      progress.viewChapter
+        ? meaningfulNarrativeDates(narrativeCorpus, progress.viewChapter)
+        : [],
+    [progress.viewChapter],
+  );
+  const narrativeWorld = useMemo(
+    () =>
+      generateNarrativeWorld(
+        narrativeCorpus,
+        progress.viewChapter,
+        progress.mode === "date" ? progress.displayDate : null,
+      ),
+    [progress.displayDate, progress.mode, progress.viewChapter],
+  );
+  const viewStatus =
+    progress.viewChapter && progress.displayDate
+      ? `Universe in ${progress.displayDate.split(".", 1)[0]} · Knowledge through Chapter ${progress.viewChapter}`
+      : "Pre-book zero state";
   const selected = systems.find((system) => system.id === selectedId) ?? null;
   const updateMapScale = useCallback((nextScale: MapScale) => {
     setMapScale((current) =>
@@ -67,6 +114,10 @@ export default function App() {
   }, [unit]);
 
   useEffect(() => {
+    persistReaderProgress(progress);
+  }, [progress]);
+
+  useEffect(() => {
     const close = (event: KeyboardEvent) => {
       if (event.key !== "Escape" || !mobilePanel) return;
       const invoker =
@@ -85,6 +136,18 @@ export default function App() {
     )
       setMobilePanel("inspector");
   };
+  const updateProgress = (next: ReaderProgress) => {
+    const dates = next.viewChapter
+      ? meaningfulNarrativeDates(narrativeCorpus, next.viewChapter)
+      : [];
+    setProgress(normalizeReaderProgress(next, narrativeChapters, dates));
+  };
+  const selectKnowledge = (chapter: string) =>
+    updateProgress(
+      selectKnowledgeChapter(progress, chapter, narrativeChapters),
+    );
+  const selectDate = (date: string) =>
+    updateProgress(selectDisplayDate(progress, date, meaningfulDates));
 
   if (nearbySystemsResult.error || !nearbySystems)
     return (
@@ -114,6 +177,9 @@ export default function App() {
           <h1>Near-star tactical map</h1>
         </div>
         <div className="topbar-actions">
+          <p className="view-status" aria-live="polite">
+            {viewStatus}
+          </p>
           <button
             ref={browserButton}
             className="button mobile-command"
@@ -204,6 +270,14 @@ export default function App() {
             <span className="orientation">
               Galactic plane · true linear scale
             </span>
+            <span className="map-narrative-badge" aria-live="polite">
+              {viewStatus}
+            </span>
+            <span className="narrative-projection-status">
+              {narrativeWorld.view.chapter
+                ? `${narrativeWorld.entities.length} projected narrative records`
+                : "Pre-book projection"}
+            </span>
           </div>
         </section>
         <aside className="right-rail">
@@ -213,6 +287,57 @@ export default function App() {
           </p>
         </aside>
       </section>
+      <TimelineDock
+        chapters={narrativeChapters}
+        progress={progress}
+        meaningfulDates={meaningfulDates}
+        pendingReadThrough={pendingReadThrough}
+        onReadThroughChoice={setPendingReadThrough}
+        onConfirmReadThrough={() => {
+          if (pendingReadThrough === null) return;
+          updateProgress(
+            pendingReadThrough === ""
+              ? returnToZeroState()
+              : confirmReadThrough(
+                  progress,
+                  pendingReadThrough,
+                  narrativeChapters,
+                ),
+          );
+          setPendingReadThrough(null);
+        }}
+        onCancelReadThrough={() => setPendingReadThrough(null)}
+        onKnowledgeChapter={selectKnowledge}
+        onDate={selectDate}
+        onChapterMode={() => {
+          if (!progress.viewChapter) return;
+          updateProgress(
+            selectKnowledgeChapter(
+              { ...progress, mode: "chapter" },
+              progress.viewChapter,
+              narrativeChapters,
+            ),
+          );
+        }}
+        onZoom={(delta) =>
+          updateProgress(
+            setTimelineViewport(
+              progress,
+              progress.timelineZoom + delta,
+              progress.timelinePan,
+            ),
+          )
+        }
+        onPan={(delta) =>
+          updateProgress(
+            setTimelineViewport(
+              progress,
+              progress.timelineZoom,
+              progress.timelinePan + delta,
+            ),
+          )
+        }
+      />
       {mobilePanel && (
         <div
           className={`mobile-panel ${mobilePanel}`}

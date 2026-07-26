@@ -146,10 +146,14 @@ function entityType(id: string): NarrativeEntity["entity_type"] {
   return prefix;
 }
 
-function compareChapter(left: string, right: string): number {
+export function compareNarrativeChapters(left: string, right: string): number {
   const [leftBook, leftChapter] = left.split(".").map(Number);
   const [rightBook, rightChapter] = right.split(".").map(Number);
   return leftBook - rightBook || leftChapter - rightChapter;
+}
+
+function compareChapter(left: string, right: string): number {
+  return compareNarrativeChapters(left, right);
 }
 
 /** Returns null when the date values cannot be ordered without inventing chronology. */
@@ -606,6 +610,12 @@ function applySourceRecord(
   }
 }
 
+function isDateAtOrBefore(date: string, displayDate: string | null): boolean {
+  if (!displayDate) return true;
+  const ordering = compareNarrativeDates(date, displayDate);
+  return ordering !== null && ordering <= 0;
+}
+
 function activityDateOrder(left: string | null, right: string | null): number {
   if (left === right) return 0;
   if (left === null) return 1;
@@ -802,6 +812,7 @@ function generateNarrativeActivity(
 export function generateNarrativeWorld(
   corpus: NarrativeCorpus,
   selectedChapterId: string | null = null,
+  requestedDisplayDate: string | null = null,
 ): NarrativeWorld {
   validateNarrativeCorpus(corpus);
   const chapters = [...corpus.chapters].sort((left, right) =>
@@ -813,7 +824,23 @@ export function generateNarrativeWorld(
   if (selectedChapterId && !selectedChapter) {
     throw new Error(`Requested chapter does not exist: ${selectedChapterId}.`);
   }
-  const displayDate = selectedChapter ? chapterDate(selectedChapter) : null;
+  if (requestedDisplayDate && !selectedChapter) {
+    throw new Error("A requested display date requires a knowledge chapter.");
+  }
+  if (
+    requestedDisplayDate &&
+    selectedChapterId &&
+    !meaningfulNarrativeDates(corpus, selectedChapterId).includes(
+      requestedDisplayDate,
+    )
+  ) {
+    throw new Error(
+      `Requested display date is not meaningful and projection-safe: ${requestedDisplayDate}.`,
+    );
+  }
+  const displayDate = selectedChapter
+    ? (requestedDisplayDate ?? chapterDate(selectedChapter))
+    : null;
   const entities = assertZeroStateSemantics(
     corpus.zeroState,
     corpus.knownAstronomyObjectIds,
@@ -828,8 +855,6 @@ export function generateNarrativeWorld(
     : [];
   for (const chapter of readerVisible) {
     const date = chapterDate(chapter);
-    if (displayDate && (compareNarrativeDates(date, displayDate) ?? 1) > 0)
-      continue;
     for (const candidate of (chapter.introducing as unknown[] | undefined) ??
       []) {
       const introduced = asRecord(
@@ -840,8 +865,20 @@ export function generateNarrativeWorld(
         introduced.id,
         `Introduction ID in ${chapterId(chapter)}`,
       );
-      const entity: NarrativeEntity = { id, entity_type: entityType(id) };
-      applyProperties(entity, introduced, date, latestDates, ["id"]);
+      const type = entityType(id);
+      if (
+        type === "event" &&
+        typeof introduced.date !== "string" &&
+        requestedDisplayDate
+      )
+        continue;
+      const effectiveDate =
+        type === "event" && typeof introduced.date === "string"
+          ? introduced.date
+          : date;
+      if (!isDateAtOrBefore(effectiveDate, displayDate)) continue;
+      const entity: NarrativeEntity = { id, entity_type: type };
+      applyProperties(entity, introduced, effectiveDate, latestDates, ["id"]);
       byId.set(id, entity);
       entities.push(entity);
     }
@@ -852,8 +889,26 @@ export function generateNarrativeWorld(
         `Update target in ${chapterId(chapter)}`,
       );
       const target = byId.get(targetId);
-      if (target)
-        applyProperties(target, update, date, latestDates, ["entity_id"]);
+      if (!target) continue;
+      if (
+        target.entity_type === "event" &&
+        typeof update.date !== "string" &&
+        typeof target.date !== "string" &&
+        requestedDisplayDate
+      )
+        continue;
+      const effectiveDate =
+        target.entity_type === "event"
+          ? typeof update.date === "string"
+            ? update.date
+            : typeof target.date === "string"
+              ? target.date
+              : date
+          : date;
+      if (!isDateAtOrBefore(effectiveDate, displayDate)) continue;
+      applyProperties(target, update, effectiveDate, latestDates, [
+        "entity_id",
+      ]);
     }
   }
   deriveLocationChildren(entities);
@@ -871,4 +926,54 @@ export function generateNarrativeWorld(
   };
   assertSchema("narrative_world", world, "Generated narrative world");
   return world;
+}
+
+/**
+ * Returns only reader-visible dates for which the story-state projection has a
+ * determinate answer. Date-mode callers must use this rather than inventing a
+ * calendar position or comparing year-only and indexed values themselves.
+ */
+export function meaningfulNarrativeDates(
+  corpus: NarrativeCorpus,
+  knowledgeChapterId: string,
+): string[] {
+  validateNarrativeCorpus(corpus);
+  const chapters = [...corpus.chapters]
+    .sort((left, right) => compareChapter(chapterId(left), chapterId(right)))
+    .filter(
+      (chapter) => compareChapter(chapterId(chapter), knowledgeChapterId) <= 0,
+    );
+  if (!chapters.some((chapter) => chapterId(chapter) === knowledgeChapterId)) {
+    throw new Error(`Requested chapter does not exist: ${knowledgeChapterId}.`);
+  }
+  const candidates = new Set<string>(chapters.map(chapterDate));
+  for (const activity of generateNarrativeActivity(
+    corpus.zeroState,
+    chapters,
+    corpus.knownAstronomyObjectIds,
+  )) {
+    if (activity.effective_date) candidates.add(activity.effective_date);
+  }
+  const stateDates = chapters.flatMap((chapter) => {
+    const date = chapterDate(chapter);
+    const writes = [
+      ...((chapter.introducing as unknown[] | undefined) ?? []),
+      ...((chapter.updates as unknown[] | undefined) ?? []),
+    ].filter((candidate) => {
+      const record = asRecord(candidate, "Narrative state write");
+      const id = record.id ?? record.entity_id;
+      return typeof id !== "string" || !id.startsWith("event:");
+    });
+    return writes.length === 0 ? [] : [date];
+  });
+  return [...candidates]
+    .filter((candidate) =>
+      stateDates.every(
+        (stateDate) => compareNarrativeDates(stateDate, candidate) !== null,
+      ),
+    )
+    .sort((left, right) => {
+      const ordering = compareNarrativeDates(left, right);
+      return ordering ?? left.localeCompare(right);
+    });
 }

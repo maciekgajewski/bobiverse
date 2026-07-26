@@ -84,6 +84,23 @@ Pass optional `--output <file>` to have the CLI write a file itself. The CLI onl
 reads authored narrative sources and never treats generated state as editable source
 data.
 
+### Reader progress and timeline
+
+The desktop bottom dock keeps spoiler knowledge separate from story time. Use **Read
+through** to set the confirmed reading ceiling; the application asks for confirmation
+before it reveals that chapter. **Knowledge through** may then revisit any chapter at
+or before that ceiling. Chapter mode represents the selected chapter's story year;
+Date mode keeps the same knowledge chapter but offers only meaningful, determinate
+dates already revealed by it. Reader progress, selected mode, timeline zoom, and pan
+are stored in the versioned `bobiverse.app-state.v1` localStorage record.
+
+The ignored runtime manifest is generated, never hand-edited. Normal `npm run dev`,
+`npm run build`, and test paths create it. To generate it explicitly, run:
+
+```bash
+npm run narrative:manifest
+```
+
 Convenience shell wrappers and the same examples are in [bin/README.md](bin/README.md).
 
 ### Chapter extraction

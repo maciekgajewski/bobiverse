@@ -13,7 +13,7 @@
     "npm": "10.9.8"
   },
   "scripts": {
-    "dev": "vite --host 0.0.0.0 --port 5173 --strictPort",
+    "dev": "npm run narrative:manifest && vite --host 0.0.0.0 --port 5173 --strictPort",
     "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\" \"tests/**/*.{ts,tsx}\" \"data/**/*.json\" \"*.{js,json,ts}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json}\" \"tests/**/*.{ts,tsx}\" \"data/**/*.json\" \"*.{js,json,ts}\"",
     "lint": "eslint .",
@@ -24,9 +24,11 @@
     "data:generate": "./.venv/bin/python scripts/generate_nearby_systems.py && prettier --write src/data/nearby-systems.json",
     "data:validate": "./.venv/bin/python scripts/validate_data.py",
     "narrative:validate": "tsx scripts/narrative-cli.ts validate",
+    "narrative:manifest": "tsx scripts/narrative-cli.ts manifest",
     "narrative:generate": "tsx scripts/narrative-cli.ts generate",
-    "test:e2e": "xvfb-run -a playwright test",
-    "build": "npm run data:validate && npm run narrative:validate && tsc -b && vite build",
+    "pretest": "npm run narrative:manifest",
+    "test:e2e": "npm run narrative:manifest && xvfb-run -a playwright test",
+    "build": "npm run data:validate && npm run narrative:manifest && npm run narrative:validate && tsc -b && vite build",
     "preview": "vite preview --host 0.0.0.0 --port 4173 --strictPort",
     "validate": "npm run format:check && npm run lint && npm run typecheck && npm run data:validate && npm run test && npm run build"
   },

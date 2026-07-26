@@ -64,6 +64,30 @@ browser and inspector panels, selected-system details, and the visible VizieR
 attribution footer. Chrome, Firefox, and WebKit automated coverage also passed; the
 existing Safari real-browser publication gap remains unchanged.
 
+## BOB-011 reader progress and temporal navigation
+
+At a desktop width of at least 1200 CSS pixels, begin with a cleared
+`bobiverse.app-state.v1` localStorage record. Confirm that the map badge says
+**Pre-book zero state** and no chapter title, story year, chronology indicator, or
+other chapter metadata is visible. Choose **Read through**, verify that a confirmation
+appears immediately when the selector changes, then confirm Chapter 1. Check that Chapter mode selects the same chapter,
+shows its year, and updates the badge. Advance the ceiling while viewing an earlier
+chapter and verify that the view, date, and mode remain unchanged; lower it again and
+verify that no later knowledge, date, or selection remains. Select **Pre-book zero
+state** in both the spoiler-limit selector and the chapter-dot timeline; confirm that
+the confirmation hides every chapter-derived fact.
+
+In Chapter mode, use both the selector and chapter buttons with a keyboard. Confirm
+that locked entries expose only book/chapter identity and cannot change knowledge.
+Verify that the chapter timeline is one horizontal reading-order line of dots. In Date
+mode, use the mouse wheel to zoom and drag to pan; confirm the focused axis also accepts
+`+`/`−` and arrow keys. Verify that the year axis has linear spacing (a 100-year
+interval is visibly ten times a 10-year interval at one zoom),
+same-year choices share one year position without displaying their ordering index, and
+returning to Chapter mode restores the selected chapter's story year. At 200% browser
+zoom, record the current desktop/compact behaviour as an acceptance gap until BOB-015
+implements its approved reflow control.
+
 ## Default and reset camera
 
 The repeatable default camera pose preserves the documented Three.js viewing

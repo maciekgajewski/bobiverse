@@ -9,6 +9,7 @@ describe("atlas shell", () => {
     vi.restoreAllMocks();
   });
   beforeEach(() => {
+    window.localStorage.clear();
     vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(null);
   });
 

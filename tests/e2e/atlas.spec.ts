@@ -95,3 +95,35 @@ test("the permanent local backdrop preserves responsive map interaction", async 
     page.getByRole("heading", { name: "Alpha Centauri" }),
   ).toBeVisible();
 });
+
+test("reader progress is confirmed before chapter data is unlocked", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/");
+  await expect(page.locator(".map-narrative-badge")).toHaveText(
+    "Pre-book zero state",
+  );
+  await expect(page.getByText("1 - Bob Version 1.0")).toHaveCount(0);
+  await page.getByLabel("Read through").selectOption("1.1");
+  await expect(
+    page.getByRole("dialog", { name: "Confirm read progress" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Confirm read through" }).click();
+  await expect(page.getByText("1 - Bob Version 1.0")).toBeVisible();
+  await expect(page.locator(".map-narrative-badge")).toContainText(
+    "Universe in 2016",
+  );
+  await expect(
+    page.getByRole("button", { name: "Book 1, Chapter 2, locked" }),
+  ).toBeDisabled();
+  await expect(page.locator(".chapter-track")).toHaveCSS("display", "flex");
+  await expect(
+    page.getByRole("button", { name: "Set read progress" }),
+  ).toHaveCount(0);
+  await page.getByLabel("Read through").selectOption("");
+  await page.getByRole("button", { name: "Confirm read through" }).click();
+  await expect(page.locator(".map-narrative-badge")).toHaveText(
+    "Pre-book zero state",
+  );
+});

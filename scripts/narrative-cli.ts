@@ -13,6 +13,7 @@ import {
   generateNarrativeWorld,
   narrativeSchemaErrors,
   type NarrativeCorpus,
+  type NarrativeRecord,
   validateNarrativeCorpus,
 } from "../src/narrative/model";
 import {
@@ -40,7 +41,7 @@ interface LoadedCorpus {
 }
 
 const usageText =
-  "Usage: narrative-cli.ts <validate|generate> [--root data/narrative] [--chapter 1.1] [--output /tmp/world.json]\n\nGenerate writes JSON to standard output by default. --output writes to a file instead.";
+  "Usage: narrative-cli.ts <validate|generate|manifest> [--root data/narrative] [--chapter 1.1] [--output /tmp/world.json]\n\nGenerate writes JSON to standard output by default. manifest writes generated/narrative/chapter-manifest.json unless --output is supplied.";
 
 function usage(): never {
   throw new Error(usageText);
@@ -189,6 +190,48 @@ async function loadCorpus(rootArgument: string): Promise<LoadedCorpus> {
   };
 }
 
+function chapterManifest(loaded: LoadedCorpus): NarrativeRecord {
+  const chapters = loaded.sources
+    .filter((source) => source.definition === "chapter_source")
+    .map((source) => {
+      const chapter = source.value.chapter;
+      if (typeof chapter !== "string")
+        throw new Error(`Invalid chapter source: ${displayPath(source.filePath)}.`);
+      const [book, number] = chapter.split(".");
+      return { chapter, path: `chapters/${book}/${number}.json` };
+    })
+    .sort((left, right) => {
+      const [leftBook, leftChapter] = left.chapter.split(".").map(Number);
+      const [rightBook, rightChapter] = right.chapter.split(".").map(Number);
+      return leftBook! - rightBook! || leftChapter! - rightChapter!;
+    });
+  return { chapters };
+}
+
+async function assertCanonicalManifest(
+  rootArgument: string,
+  loaded: LoadedCorpus,
+): Promise<void> {
+  if (path.resolve(repositoryRoot, rootArgument) !== path.join(repositoryRoot, "data/narrative"))
+    return;
+  const manifestPath = path.join(repositoryRoot, "generated/narrative/chapter-manifest.json");
+  let candidate: unknown;
+  try {
+    candidate = JSON.parse(await readFile(manifestPath, "utf8"));
+  } catch {
+    throw new Error(
+      "generated/narrative/chapter-manifest.json is missing or invalid. Run npm run narrative:manifest.",
+    );
+  }
+  const expected = `${JSON.stringify(chapterManifest(loaded))}\n`;
+  const actual = `${JSON.stringify(candidate)}\n`;
+  if (actual !== expected) {
+    throw new Error(
+      "generated/narrative/chapter-manifest.json is stale, out of order, or path-inconsistent. Run npm run narrative:manifest.",
+    );
+  }
+}
+
 function schemaErrorLines(loaded: LoadedCorpus): string[] {
   return loaded.sources.flatMap((source) =>
     formatSchemaDiagnostics(
@@ -228,7 +271,8 @@ async function main(): Promise<void> {
     printUsage();
     return;
   }
-  if (command !== "validate" && command !== "generate") usage();
+  if (command !== "validate" && command !== "generate" && command !== "manifest")
+    usage();
   const root = option(argumentsList, "--root") ?? "data/narrative";
   const loaded = await loadCorpus(root);
   const schemaErrors = schemaErrorLines(loaded);
@@ -247,6 +291,17 @@ async function main(): Promise<void> {
       cause.message,
     );
   }
+  if (command === "manifest") {
+    const outputPath = path.resolve(
+      repositoryRoot,
+      option(argumentsList, "--output") ?? "generated/narrative/chapter-manifest.json",
+    );
+    await mkdir(path.dirname(outputPath), { recursive: true });
+    await writeFile(outputPath, `${JSON.stringify(chapterManifest(loaded), null, 2)}\n`);
+    console.log(`Generated chapter manifest at ${outputPath}.`);
+    return;
+  }
+  await assertCanonicalManifest(root, loaded);
   if (command === "validate") {
     console.log(
       `Narrative corpus is valid: zero state and ${loaded.corpus.chapters.length} chapter source file(s).`,

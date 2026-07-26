@@ -111,6 +111,11 @@ record `bobiverse.app-state.v1`. A future incompatible shape uses a new versione
 and an explicit migration or safe reset. Cookies are not used because there is no
 server consumer and cookies would be sent unnecessarily with HTTP requests.
 
+The current compatible extension stores optional `furthestChapterRead`, `viewChapter`,
+and `displayDate`, plus mode, timeline zoom, and timeline pan. Malformed or stale values
+safely reset to the pre-book zero state; `viewChapter` is always clamped to the
+confirmed ceiling before projection.
+
 Opening the application directly with a `file:` URL is unsupported. Development and
 local production use must serve the files over HTTP so modules, asset loading,
 routing, and localStorage have consistent origins.
@@ -442,6 +447,13 @@ a source of entity state, relationships, continuous presence, or coordinates, an
 code must not reconstruct it independently. Important mentions target only an already
 visible direct narrative entity or location not structurally represented in that chapter;
 they do not assert presence, participation, ownership, membership, location, or use.
+
+The normal development, test, and build paths first generate the ignored
+`generated/narrative/chapter-manifest.json` from authored chapter paths. The manifest
+contains only ordered chapter references and paths. The static runtime resolves bundled
+source modules through it and rejects a missing, stale, out-of-order, or
+path-inconsistent manifest with an actionable diagnostic. Selected world projections
+remain deterministic in memory and are never committed as per-chapter snapshots.
 
 Locations form a one-parent tree: every non-root location has exactly one parent and
 child lists are generated. This supports systems, planets, moons, locales, and

@@ -1,6 +1,6 @@
 # BOB-011: reader progress and temporal navigation
 
-Status: Ready
+Status: In progress
 Phase: 2 (narrative foundation and chapter timeline)
 Last updated: 2026-07-26
 
@@ -29,13 +29,16 @@ revealed by a chosen chapter.
 ## Decisions
 
 - **Read through** controls `furthestChapterRead` and advances only through an
-  explicit confirmation.
+  explicit confirmation shown immediately after its spoiler-safe selector changes;
+  the selector also offers the pre-book zero state.
 - **Knowledge through** selects any chapter at or before that ceiling.
 - Chapter mode sets the display date to the knowledge chapter's story date.
 - Date mode keeps the knowledge chapter fixed and selects only meaningful,
   projection-safe dates revealed by that knowledge set.
 - Chronological horizontal position is linear by calendar-year distance.
 - Internal within-year indices are never displayed or converted to elapsed time.
+- Chapter mode is a horizontal reading-order dot timeline. Date mode uses mouse-wheel
+  zoom and drag pan, with equivalent keyboard controls on the focused timeline.
 
 ## In scope
 
@@ -139,6 +142,7 @@ Chapter <chapter>`.
 ## Validation commands
 
 ```bash
+npm run narrative:manifest
 npm run narrative:validate
 npm run format:check
 npm run lint
@@ -149,10 +153,23 @@ npm run test:e2e
 git diff --check
 ```
 
-No user-facing manifest generation/freshness command exists yet. Implementation must
-add that command to the normal development/build path and replace this paragraph with
-its exact validation invocation before the task can become `Done`; do not claim a
-nonexistent command in advance.
+`npm run narrative:manifest` deterministically writes the ignored
+`generated/narrative/chapter-manifest.json`; `dev`, `test`, `test:e2e`, and `build`
+run it before browser consumption. `narrative:validate` verifies the checked runtime
+manifest and fails with an actionable generation command when it is missing, stale,
+out of order, or path-inconsistent.
+
+## Completion evidence
+
+Automated implementation completed 2026-07-26; Captain manual/visual acceptance is
+still pending. The runtime projection remains centralized in
+`src/narrative/model.ts`; the versioned progress reducer clamps restored/direct values
+before projecting; `TimelineDock` supplies confirmation-gated progress, synchronized
+chapter navigation, and a meaningful-date linear axis. Runtime output is limited to
+the ignored manifest at `generated/narrative/chapter-manifest.json`; no selected-world
+snapshot is committed. Automated validation and fresh defect-first review are required
+before the task becomes `Done`; remote real-browser visual acceptance remains the
+Captain's manual step.
 
 ## Dependencies and cautions
 

@@ -1279,8 +1279,13 @@ reference and source path; it does not duplicate story dates or narrative metada
 ```
 
 The manifest is ordered by numeric `chapter` components, not JSON object order. The
-static runtime uses it to load the individual chapter source files needed for a view;
-it never relies on directory enumeration.
+static runtime resolves its bundled individual chapter source modules through this
+manifest; it never relies on browser directory enumeration. Normal development, test,
+and build paths generate `generated/narrative/chapter-manifest.json` before browser
+consumption, and validation rejects a missing, stale, out-of-order, or
+path-inconsistent copy with an actionable `npm run narrative:manifest` diagnostic.
+The manifest is runtime routing metadata only; selected world projections are
+deterministic in-memory/build output and are not committed snapshots.
 
 Every chapter source record validates against the shared Draft 2020-12 schema contract.
 It requires the canonical `chapter` reference, nonempty reader-visible `title`,
