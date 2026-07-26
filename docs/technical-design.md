@@ -113,8 +113,9 @@ server consumer and cookies would be sent unnecessarily with HTTP requests.
 
 The current compatible extension stores optional `furthestChapterRead`, `viewChapter`,
 and `displayDate`, plus mode, timeline zoom, and timeline pan. Malformed or stale values
-safely reset to the pre-book zero state; `viewChapter` is always clamped to the
-confirmed ceiling before projection.
+safely reset to the pre-book zero state; a null `viewChapter` may intentionally select
+the zero-state knowledge projection while retaining `furthestChapterRead`, and every
+non-null view chapter is clamped to that confirmed ceiling before projection.
 
 Opening the application directly with a `file:` URL is unsupported. Development and
 local production use must serve the files over HTTP so modules, asset loading,

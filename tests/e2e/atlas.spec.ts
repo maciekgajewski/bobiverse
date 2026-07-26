@@ -109,6 +109,17 @@ test("reader progress is confirmed before chapter data is unlocked", async ({
   await expect(
     page.getByRole("dialog", { name: "Confirm read progress" }),
   ).toBeVisible();
+  await expect(page.locator(".confirmation-layer")).toHaveCSS(
+    "z-index",
+    "2147483647",
+  );
+  await expect(page.locator(".confirmation-backdrop")).toBeVisible();
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("button", { name: "Cancel" })).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(
+    page.getByRole("button", { name: "Confirm read through" }),
+  ).toBeFocused();
   await page.getByRole("button", { name: "Confirm read through" }).click();
   await expect(page.getByText("1 - Bob Version 1.0")).toBeVisible();
   await expect(page.locator(".map-narrative-badge")).toContainText(
@@ -121,9 +132,72 @@ test("reader progress is confirmed before chapter data is unlocked", async ({
   await expect(
     page.getByRole("button", { name: "Set read progress" }),
   ).toHaveCount(0);
+  const dockHeight = await page
+    .locator(".timeline-dock")
+    .evaluate((dock) => dock.getBoundingClientRect().height);
+  await page.getByRole("button", { name: "Date mode" }).click();
+  await expect
+    .poll(() =>
+      page
+        .locator(".timeline-dock")
+        .evaluate((dock) => dock.getBoundingClientRect().height),
+    )
+    .toBe(dockHeight);
+  await page.getByRole("button", { name: "Chapter mode" }).click();
+  await page.getByRole("button", { name: "Zero state" }).click();
+  await expect(
+    page.getByRole("dialog", { name: "Confirm read progress" }),
+  ).toHaveCount(0);
+  await expect(page.locator(".map-narrative-badge")).toHaveText(
+    "Pre-book zero state",
+  );
+  await expect(page.getByLabel("Read through")).toHaveValue("1.1");
+  await expect(page.getByLabel("Knowledge through")).toHaveValue("");
   await page.getByLabel("Read through").selectOption("");
   await page.getByRole("button", { name: "Confirm read through" }).click();
   await expect(page.locator(".map-narrative-badge")).toHaveText(
     "Pre-book zero state",
+  );
+  await page.getByLabel("Read through").selectOption("1.2");
+  await page.getByRole("button", { name: "Confirm read through" }).click();
+  const chapterDotTops = await page
+    .locator(".chapter-track .chapter-dot")
+    .evaluateAll((dots) => dots.map((dot) => dot.getBoundingClientRect().top));
+  expect(
+    Math.max(...chapterDotTops) - Math.min(...chapterDotTops),
+  ).toBeLessThan(1);
+  const selectedChapter = page.locator(
+    ".chapter-track-entry button[aria-current='true']",
+  );
+  const above = await selectedChapter.locator(".chapter-above").boundingBox();
+  const dot = await selectedChapter.locator(".chapter-dot").boundingBox();
+  const details = await selectedChapter
+    .locator(".chapter-details")
+    .boundingBox();
+  expect(
+    above && dot && above.y + above.height / 2 < dot.y + dot.height / 2,
+  ).toBe(true);
+  expect(
+    dot && details && dot.y + dot.height / 2 < details.y + details.height / 2,
+  ).toBe(true);
+  const readThroughWidth = await page
+    .locator(".spoiler-limit")
+    .evaluate((element) => element.getBoundingClientRect().width);
+  expect(readThroughWidth).toBeLessThan(210);
+  const chapterModeBox = await page
+    .getByRole("button", { name: "Chapter mode" })
+    .boundingBox();
+  const dateModeBox = await page
+    .getByRole("button", { name: "Date mode" })
+    .boundingBox();
+  expect(
+    chapterModeBox &&
+      dateModeBox &&
+      dateModeBox.y >= chapterModeBox.y + chapterModeBox.height,
+  ).toBe(true);
+  await page.getByRole("button", { name: "Date mode" }).click();
+  await page.getByRole("button", { name: "2016" }).click();
+  await expect(page.locator(".map-narrative-badge")).toContainText(
+    "Universe in 2016",
   );
 });

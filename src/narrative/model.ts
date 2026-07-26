@@ -46,6 +46,11 @@ export interface NarrativeActivity {
   reasons: NarrativeActivityReason[];
 }
 
+export interface MeaningfulNarrativeDate {
+  date: string;
+  source_chapters: string[];
+}
+
 export interface NarrativeWorld {
   entities: NarrativeEntity[];
   activity: NarrativeActivity[];
@@ -933,10 +938,10 @@ export function generateNarrativeWorld(
  * determinate answer. Date-mode callers must use this rather than inventing a
  * calendar position or comparing year-only and indexed values themselves.
  */
-export function meaningfulNarrativeDates(
+export function meaningfulNarrativeDateOptions(
   corpus: NarrativeCorpus,
   knowledgeChapterId: string,
-): string[] {
+): MeaningfulNarrativeDate[] {
   validateNarrativeCorpus(corpus);
   const chapters = [...corpus.chapters]
     .sort((left, right) => compareChapter(chapterId(left), chapterId(right)))
@@ -946,13 +951,23 @@ export function meaningfulNarrativeDates(
   if (!chapters.some((chapter) => chapterId(chapter) === knowledgeChapterId)) {
     throw new Error(`Requested chapter does not exist: ${knowledgeChapterId}.`);
   }
-  const candidates = new Set<string>(chapters.map(chapterDate));
+  const candidates = new Map<string, Set<string>>();
+  const addCandidate = (date: string, sourceChapter: string) => {
+    const sources = candidates.get(date) ?? new Set<string>();
+    sources.add(sourceChapter);
+    candidates.set(date, sources);
+  };
+  for (const chapter of chapters) {
+    addCandidate(chapterDate(chapter), chapterId(chapter));
+  }
   for (const activity of generateNarrativeActivity(
     corpus.zeroState,
     chapters,
     corpus.knownAstronomyObjectIds,
   )) {
-    if (activity.effective_date) candidates.add(activity.effective_date);
+    if (activity.effective_date) {
+      addCandidate(activity.effective_date, activity.source_chapter);
+    }
   }
   const stateDates = chapters.flatMap((chapter) => {
     const date = chapterDate(chapter);
@@ -966,14 +981,27 @@ export function meaningfulNarrativeDates(
     });
     return writes.length === 0 ? [] : [date];
   });
-  return [...candidates]
-    .filter((candidate) =>
+  return [...candidates.entries()]
+    .filter(([candidate]) =>
       stateDates.every(
         (stateDate) => compareNarrativeDates(stateDate, candidate) !== null,
       ),
     )
-    .sort((left, right) => {
+    .sort(([left], [right]) => {
       const ordering = compareNarrativeDates(left, right);
       return ordering ?? left.localeCompare(right);
-    });
+    })
+    .map(([date, sourceChapters]) => ({
+      date,
+      source_chapters: [...sourceChapters].sort(compareChapter),
+    }));
+}
+
+export function meaningfulNarrativeDates(
+  corpus: NarrativeCorpus,
+  knowledgeChapterId: string,
+): string[] {
+  return meaningfulNarrativeDateOptions(corpus, knowledgeChapterId).map(
+    ({ date }) => date,
+  );
 }

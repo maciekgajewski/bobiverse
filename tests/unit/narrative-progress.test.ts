@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   generateNarrativeWorld,
+  meaningfulNarrativeDateOptions,
   meaningfulNarrativeDates,
 } from "../../src/narrative/model";
 import {
@@ -9,6 +10,7 @@ import {
   normalizeReaderProgress,
   persistReaderProgress,
   selectKnowledgeChapter,
+  selectZeroKnowledgeView,
   setTimelineViewport,
   type NarrativeChapterSummary,
   type ReaderProgress,
@@ -97,6 +99,23 @@ describe("reader progress", () => {
     });
   });
 
+  it("shows zero-state knowledge without lowering the confirmed reading ceiling", () => {
+    const confirmed = confirmReadThrough(empty, "1.2", chapters);
+    const zeroView = selectZeroKnowledgeView(confirmed);
+    expect(zeroView).toMatchObject({
+      furthestChapterRead: "1.2",
+      viewChapter: null,
+      displayDate: null,
+      mode: "chapter",
+    });
+    expect(normalizeReaderProgress(zeroView, chapters, [])).toEqual(zeroView);
+    expect(confirmReadThrough(zeroView, "1.1", chapters)).toMatchObject({
+      furthestChapterRead: "1.1",
+      viewChapter: null,
+      displayDate: null,
+    });
+  });
+
   it("keeps later-revealed earlier state unavailable until its knowledge chapter", () => {
     const corpus = createNarrativeFixtureCorpus();
     expect(generateNarrativeWorld(corpus, "1.1", "2200.0").entities).toEqual(
@@ -144,6 +163,10 @@ describe("reader progress", () => {
     corpus.chapters[1]!.updates = undefined;
     corpus.chapters[2]!.updates = undefined;
     expect(meaningfulNarrativeDates(corpus, "1.3")).toContain("2200.1");
+    expect(meaningfulNarrativeDateOptions(corpus, "1.3")).toContainEqual({
+      date: "2200.1",
+      source_chapters: ["1.1", "1.3"],
+    });
     expect(generateNarrativeWorld(corpus, "1.3", "2200.1").entities).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ id: "event:fixture-indexed-event" }),

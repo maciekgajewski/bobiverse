@@ -28,14 +28,25 @@ function chronologyDirection(
   return "Same story year";
 }
 
+function ShieldIcon() {
+  return (
+    <svg className="shield-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 2.5 20 6v5.6c0 4.7-3.2 8.7-8 9.9-4.8-1.2-8-5.2-8-9.9V6l8-3.5Z" />
+      <path d="m8.5 12 2.1 2.1 4.9-4.9" />
+    </svg>
+  );
+}
+
 interface TimelineDockProps {
   chapters: readonly NarrativeChapterSummary[];
   progress: ReaderProgress;
   meaningfulDates: readonly string[];
+  meaningfulDateSources: ReadonlyMap<string, readonly string[]>;
   pendingReadThrough: string | null;
   onReadThroughChoice: (chapter: string) => void;
   onConfirmReadThrough: () => void;
   onCancelReadThrough: () => void;
+  onReturnToZeroState: () => void;
   onKnowledgeChapter: (chapter: string) => void;
   onDate: (date: string) => void;
   onChapterMode: () => void;
@@ -45,6 +56,7 @@ interface TimelineDockProps {
 
 function DateAxis({
   meaningfulDates,
+  meaningfulDateSources,
   unlocked,
   progress,
   onDate,
@@ -52,12 +64,18 @@ function DateAxis({
   onPan,
 }: Pick<
   TimelineDockProps,
-  "meaningfulDates" | "progress" | "onDate" | "onZoom" | "onPan"
+  | "meaningfulDates"
+  | "meaningfulDateSources"
+  | "progress"
+  | "onDate"
+  | "onZoom"
+  | "onPan"
 > & { unlocked: NarrativeChapterSummary[] }) {
   const drag = useRef<{ pointerId: number; clientX: number } | null>(null);
   const viewport = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
   const [viewportWidth, setViewportWidth] = useState(0);
+  const [expandedYear, setExpandedYear] = useState<string | null>(null);
   useEffect(() => {
     const measure = () => setViewportWidth(viewport.current?.clientWidth ?? 0);
     measure();
@@ -78,7 +96,17 @@ function DateAxis({
     entries.push(date);
     byYear.set(year(date), entries);
   }
-  const width = Math.max(160, span * baseScale * progress.timelineZoom + 120);
+  const width = Math.max(
+    160,
+    ...[...byYear.values()].map((dates) => {
+      const position =
+        linearYearOffset(dates[0]!, firstDate) *
+        baseScale *
+        progress.timelineZoom;
+      const choiceSpace = dates.length > 1 ? dates.length * 196 + 8 : 120;
+      return position + choiceSpace;
+    }),
+  );
   const panDistance = Math.max(0, width - viewportWidth);
 
   return (
@@ -145,6 +173,12 @@ function DateAxis({
               linearYearOffset(dates[0]!, firstDate) *
               baseScale *
               progress.timelineZoom;
+            const multipleStates = dates.length > 1;
+            const expanded = expandedYear === calendarYear;
+            const selected = dates.some(
+              (date) => date === progress.displayDate,
+            );
+            const choiceListId = `story-year-${calendarYear}-choices`;
             return (
               <div
                 className="year-cluster"
@@ -152,31 +186,71 @@ function DateAxis({
                 style={{ left: `${position}px` }}
                 data-year-position={position}
               >
-                <span>{calendarYear}</span>
-                <ul
-                  aria-label={`${calendarYear}, ${dates.length} meaningful date${dates.length === 1 ? "" : "s"}`}
+                <button
+                  className={`year-marker ${selected ? "selected" : ""}`}
+                  aria-label={
+                    multipleStates
+                      ? `${calendarYear}, ${dates.length} story states`
+                      : calendarYear
+                  }
+                  aria-pressed={selected}
+                  aria-expanded={multipleStates ? expanded : undefined}
+                  aria-controls={multipleStates ? choiceListId : undefined}
+                  onPointerDown={(event) => event.stopPropagation()}
+                  onClick={() => {
+                    if (multipleStates) {
+                      setExpandedYear(expanded ? null : calendarYear);
+                    } else {
+                      onDate(dates[0]!);
+                    }
+                  }}
                 >
-                  {dates.map((date) => {
-                    const source = unlocked.find(
-                      (chapter) => chapter.date === date,
-                    );
-                    return (
-                      <li key={date}>
-                        <button
-                          className={
-                            date === progress.displayDate ? "selected" : ""
-                          }
-                          aria-pressed={date === progress.displayDate}
-                          onClick={() => onDate(date)}
-                        >
-                          {source
-                            ? `Chapter ${source.chapter}`
-                            : `Known date ${calendarYear}`}
-                        </button>
-                      </li>
-                    );
-                  })}
-                </ul>
+                  <span className="year-value">{calendarYear}</span>
+                  {multipleStates && (
+                    <span className="year-state-count">
+                      {dates.length} states
+                    </span>
+                  )}
+                </button>
+                {multipleStates && expanded && (
+                  <ul
+                    id={choiceListId}
+                    className="year-state-choices"
+                    aria-label={`${calendarYear} story states`}
+                  >
+                    {dates.map((date, index) => {
+                      const source = unlocked.find(
+                        (chapter) => chapter.date === date,
+                      );
+                      const sourceChapters =
+                        meaningfulDateSources.get(date) ?? [];
+                      const sourceContext =
+                        sourceChapters.length === 1
+                          ? `revealed in Chapter ${sourceChapters[0]}`
+                          : sourceChapters.length > 1
+                            ? `revealed in Chapters ${sourceChapters.join(", ")}`
+                            : "reader-visible source";
+                      const fallback = `Story state ${index + 1} of ${dates.length} · ${sourceContext}`;
+                      return (
+                        <li key={date}>
+                          <button
+                            className={
+                              date === progress.displayDate ? "selected" : ""
+                            }
+                            aria-pressed={date === progress.displayDate}
+                            onPointerDown={(event) => event.stopPropagation()}
+                            onClick={() => {
+                              onDate(date);
+                              setExpandedYear(null);
+                            }}
+                          >
+                            {source ? `Chapter ${source.chapter}` : fallback}
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
               </div>
             );
           })}
@@ -190,10 +264,12 @@ export function TimelineDock({
   chapters,
   progress,
   meaningfulDates,
+  meaningfulDateSources,
   pendingReadThrough,
   onReadThroughChoice,
   onConfirmReadThrough,
   onCancelReadThrough,
+  onReturnToZeroState,
   onKnowledgeChapter,
   onDate,
   onChapterMode,
@@ -211,6 +287,12 @@ export function TimelineDock({
     : [];
   const selectedReadThrough =
     pendingReadThrough ?? progress.furthestChapterRead ?? "";
+  const confirmButton = useRef<HTMLButtonElement>(null);
+  const confirmationDialog = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (pendingReadThrough !== null) confirmButton.current?.focus();
+  }, [pendingReadThrough]);
 
   return (
     <section
@@ -218,7 +300,10 @@ export function TimelineDock({
       aria-label="Reader progress and temporal navigation"
     >
       <div className="progress-control spoiler-limit">
-        <label htmlFor="read-through">Read through</label>
+        <label htmlFor="read-through">
+          <ShieldIcon />
+          Read through
+        </label>
         <select
           id="read-through"
           value={selectedReadThrough}
@@ -233,8 +318,7 @@ export function TimelineDock({
           ))}
         </select>
         <p>
-          <strong>Spoiler-free limit.</strong> Choose the furthest chapter you
-          have read; confirmation appears before this limit changes.
+          <strong>Spoiler-free limit.</strong> Confirm before revealing more.
         </p>
       </div>
 
@@ -266,22 +350,26 @@ export function TimelineDock({
 
       {progress.mode === "chapter" ? (
         <div className="chapter-navigation">
-          <label htmlFor="knowledge-through">Knowledge through</label>
-          <select
-            id="knowledge-through"
-            value={progress.viewChapter ?? ""}
-            disabled={!progress.viewChapter}
-            onChange={(event) => onKnowledgeChapter(event.target.value)}
-          >
-            {!progress.viewChapter && (
-              <option value="">No chapter selected</option>
-            )}
-            {unlocked.map((chapter) => (
-              <option key={chapter.chapter} value={chapter.chapter}>
-                Chapter {chapter.chapter}
-              </option>
-            ))}
-          </select>
+          <div className="knowledge-control">
+            <label htmlFor="knowledge-through">Knowledge through</label>
+            <select
+              id="knowledge-through"
+              value={progress.viewChapter ?? ""}
+              disabled={!progress.furthestChapterRead}
+              onChange={(event) =>
+                event.target.value
+                  ? onKnowledgeChapter(event.target.value)
+                  : onReturnToZeroState()
+              }
+            >
+              <option value="">Zero state</option>
+              {unlocked.map((chapter) => (
+                <option key={chapter.chapter} value={chapter.chapter}>
+                  Chapter {chapter.chapter}
+                </option>
+              ))}
+            </select>
+          </div>
           <ol
             className="chapter-track"
             aria-label="Reading-order chapter timeline"
@@ -290,10 +378,12 @@ export function TimelineDock({
               <button
                 className={!progress.viewChapter ? "selected" : ""}
                 aria-current={!progress.viewChapter ? "true" : undefined}
-                onClick={() => onReadThroughChoice("")}
+                aria-label="Zero state"
+                onClick={onReturnToZeroState}
               >
+                <span className="chapter-above">Zero state</span>
                 <span className="chapter-dot" />
-                <span>Zero state</span>
+                <span className="chapter-details">Pre-book view</span>
               </button>
             </li>
             {chapters.map((chapter, index) => {
@@ -317,7 +407,7 @@ export function TimelineDock({
                       className="chapter-book-divider"
                       key={`book-${chapter.chapter.split(".")[0]}`}
                     >
-                      Book {chapter.chapter.split(".")[0]}
+                      <span>Book {chapter.chapter.split(".")[0]}</span>
                     </li>
                   )}
                   <li key={chapter.chapter} className="chapter-track-entry">
@@ -332,21 +422,25 @@ export function TimelineDock({
                       }
                       onClick={() => onKnowledgeChapter(chapter.chapter)}
                     >
+                      <span className="chapter-above">
+                        Chapter {chapter.chapter}
+                      </span>
                       <span className="chapter-dot" />
-                      <span>Chapter {chapter.chapter}</span>
-                      {!locked && (
-                        <span className="chapter-title">{chapter.title}</span>
-                      )}
-                      {!locked && (
-                        <span className="chapter-year">
-                          {year(chapter.date)}
-                        </span>
-                      )}
-                      {!locked && direction && (
-                        <span className="chronology-indicator">
-                          {direction}
-                        </span>
-                      )}
+                      <span className="chapter-details">
+                        {!locked && (
+                          <span className="chapter-title">{chapter.title}</span>
+                        )}
+                        {!locked && (
+                          <span className="chapter-year">
+                            {year(chapter.date)}
+                          </span>
+                        )}
+                        {!locked && direction && (
+                          <span className="chronology-indicator">
+                            {direction}
+                          </span>
+                        )}
+                      </span>
                     </button>
                   </li>
                 </Fragment>
@@ -357,6 +451,7 @@ export function TimelineDock({
       ) : (
         <DateAxis
           meaningfulDates={meaningfulDates}
+          meaningfulDateSources={meaningfulDateSources}
           unlocked={unlocked}
           progress={progress}
           onDate={onDate}
@@ -366,24 +461,56 @@ export function TimelineDock({
       )}
 
       {pendingReadThrough !== null && (
-        <div
-          className="confirmation-dialog"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="read-through-confirmation"
-        >
-          <h2 id="read-through-confirmation">Confirm read progress</h2>
-          <p>
-            {pendingReadThrough
-              ? `Set spoiler progress through Chapter ${pendingReadThrough}? This reveals its chapter information.`
-              : "Return to the pre-book zero state? This hides every chapter-derived fact."}
-          </p>
-          <button className="button" onClick={onConfirmReadThrough}>
-            Confirm read through
-          </button>
-          <button className="button quiet" onClick={onCancelReadThrough}>
-            Cancel
-          </button>
+        <div className="confirmation-layer">
+          <div className="confirmation-backdrop" aria-hidden="true" />
+          <div
+            ref={confirmationDialog}
+            className="confirmation-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="read-through-confirmation"
+            onKeyDown={(event) => {
+              if (event.key === "Escape") {
+                onCancelReadThrough();
+                return;
+              }
+              if (event.key !== "Tab") return;
+              const buttons =
+                confirmationDialog.current?.querySelectorAll<HTMLButtonElement>(
+                  "button:not(:disabled)",
+                );
+              if (!buttons?.length) return;
+              const first = buttons[0]!;
+              const last = buttons[buttons.length - 1]!;
+              if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault();
+                last.focus();
+              } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault();
+                first.focus();
+              }
+            }}
+          >
+            <div className="confirmation-heading">
+              <ShieldIcon />
+              <h2 id="read-through-confirmation">Confirm read progress</h2>
+            </div>
+            <p>
+              {pendingReadThrough
+                ? `Set spoiler progress through Chapter ${pendingReadThrough}? This reveals its chapter information.`
+                : "Return to the pre-book zero state? This hides every chapter-derived fact."}
+            </p>
+            <button
+              ref={confirmButton}
+              className="button"
+              onClick={onConfirmReadThrough}
+            >
+              Confirm read through
+            </button>
+            <button className="button quiet" onClick={onCancelReadThrough}>
+              Cancel
+            </button>
+          </div>
         </div>
       )}
     </section>

@@ -74,19 +74,35 @@ appears immediately when the selector changes, then confirm Chapter 1. Check tha
 shows its year, and updates the badge. Advance the ceiling while viewing an earlier
 chapter and verify that the view, date, and mode remain unchanged; lower it again and
 verify that no later knowledge, date, or selection remains. Select **Pre-book zero
-state** in both the spoiler-limit selector and the chapter-dot timeline; confirm that
-the confirmation hides every chapter-derived fact.
+state** in the spoiler-limit selector and confirm that the confirmation hides every
+chapter-derived fact. Return to zero through the chapter-dot timeline and verify that
+it clears the chapter-derived facts immediately, without a confirmation, while the
+**Read through** selector retains its confirmed chapter and **Knowledge through** shows
+**Zero state**.
+
+When confirmation is visible, verify that it is centered above a blurred, noninteractive
+page backdrop: map labels and every other page surface remain behind it. The shield mark
+appears beside both **Read through** and the confirmation heading.
 
 In Chapter mode, use both the selector and chapter buttons with a keyboard. Confirm
 that locked entries expose only book/chapter identity and cannot change knowledge.
 Verify that the chapter timeline is one horizontal reading-order line of dots. In Date
 mode, use the mouse wheel to zoom and drag to pan; confirm the focused axis also accepts
 `+`/`−` and arrow keys. Verify that the year axis has linear spacing (a 100-year
-interval is visibly ten times a 10-year interval at one zoom),
-same-year choices share one year position without displaying their ordering index, and
-returning to Chapter mode restores the selected chapter's story year. At 200% browser
-zoom, record the current desktop/compact behaviour as an acceptance gap until BOB-015
-implements its approved reflow control.
+interval is visibly ten times a 10-year interval at one zoom). Click a year marker
+with one story state and confirm that it selects that year directly. For a year with
+multiple states, confirm that the marker opens a compact choice list at the shared year
+position. Confirm that each choice has unique, reader-visible source-chapter context,
+the latest year's full list remains reachable by panning, and no canonical internal
+ordering index is displayed. Returning to Chapter mode restores the selected chapter's
+story year. At 200% browser zoom, record the current desktop/compact behaviour as an
+acceptance gap until BOB-015 implements its approved reflow control.
+
+The dock remains one compact, fixed-height desktop row while switching between Chapter
+and Date modes; no mode change should move the map or footer vertically. The
+spoiler-limit card stays narrow, the mode controls stack vertically, and the chapter
+rail uses one uninterrupted central line with references above and unlocked metadata
+below.
 
 ## Default and reset camera
 

@@ -60,18 +60,24 @@ export function normalizeReaderProgress(
   if (!furthest) return { ...defaultProgress };
   const requestedView = knownChapter(chapters, record.viewChapter);
   const view =
-    requestedView && compareNarrativeChapters(requestedView, furthest) <= 0
-      ? requestedView
-      : furthest;
-  const mode: TimelineMode = record.mode === "date" ? "date" : "chapter";
+    record.viewChapter === null
+      ? null
+      : requestedView && compareNarrativeChapters(requestedView, furthest) <= 0
+        ? requestedView
+        : furthest;
+  const mode: TimelineMode =
+    view && record.mode === "date" ? "date" : "chapter";
   const requestedDate =
     typeof record.displayDate === "string" ? record.displayDate : null;
-  const displayDate =
-    mode === "date" && requestedDate && meaningfulDates.includes(requestedDate)
+  const displayDate = view
+    ? mode === "date" &&
+      requestedDate &&
+      meaningfulDates.includes(requestedDate)
       ? requestedDate
       : mode === "date" && meaningfulDates[0]
         ? meaningfulDates[0]
-        : chapterDate(chapters, view);
+        : chapterDate(chapters, view)
+    : null;
   const zoom =
     typeof record.timelineZoom === "number" &&
     Number.isFinite(record.timelineZoom) &&
@@ -126,17 +132,20 @@ export function confirmReadThrough(
     compareNarrativeChapters(chapter, current.furthestChapterRead) < 0
   ) {
     const view =
-      current.viewChapter &&
-      compareNarrativeChapters(current.viewChapter, chapter) <= 0
-        ? current.viewChapter
-        : chapter;
+      current.viewChapter === null
+        ? null
+        : compareNarrativeChapters(current.viewChapter, chapter) <= 0
+          ? current.viewChapter
+          : chapter;
     return {
       ...current,
       furthestChapterRead: chapter,
       viewChapter: view,
       displayDate:
         current.mode === "chapter"
-          ? chapterDate(chapters, view)
+          ? view
+            ? chapterDate(chapters, view)
+            : null
           : current.displayDate,
     };
   }
@@ -154,6 +163,17 @@ export function confirmReadThrough(
 
 export function returnToZeroState(): ReaderProgress {
   return { ...defaultProgress };
+}
+
+export function selectZeroKnowledgeView(
+  current: ReaderProgress,
+): ReaderProgress {
+  return {
+    ...current,
+    viewChapter: null,
+    displayDate: null,
+    mode: "chapter",
+  };
 }
 
 export function selectKnowledgeChapter(

@@ -1,6 +1,6 @@
 # BOB-011: reader progress and temporal navigation
 
-Status: In progress
+Status: Done
 Phase: 2 (narrative foundation and chapter timeline)
 Last updated: 2026-07-26
 
@@ -37,8 +37,19 @@ revealed by a chosen chapter.
   projection-safe dates revealed by that knowledge set.
 - Chronological horizontal position is linear by calendar-year distance.
 - Internal within-year indices are never displayed or converted to elapsed time.
+- The Date-mode year marker is the primary selection control. A year with one story
+  state selects directly; a year with multiple states opens a compact spoiler-safe
+  choice list. Same-year choices use unique reader-visible source-chapter context
+  while keeping canonical internal indices hidden.
 - Chapter mode is a horizontal reading-order dot timeline. Date mode uses mouse-wheel
   zoom and drag pan, with equivalent keyboard controls on the focused timeline.
+- The desktop dock keeps its major controls in one compact, fixed-height row. Its
+  chapter-timeline zero-state dot selects the pre-book knowledge view without changing
+  the confirmed reading ceiling; the spoiler-limit selector remains confirmation-gated.
+- The chapter rail is built around one continuous fixed centerline. Chapter references
+  sit above their dots; unlocked title, year, and chronology metadata sit below.
+- Confirmation is a blocking, blurred modal above every map label and panel. The
+  spoiler-limit control and modal heading use the owned shield motif.
 
 ## In scope
 
@@ -161,15 +172,15 @@ out of order, or path-inconsistent.
 
 ## Completion evidence
 
-Automated implementation completed 2026-07-26; Captain manual/visual acceptance is
-still pending. The runtime projection remains centralized in
-`src/narrative/model.ts`; the versioned progress reducer clamps restored/direct values
-before projecting; `TimelineDock` supplies confirmation-gated progress, synchronized
-chapter navigation, and a meaningful-date linear axis. Runtime output is limited to
-the ignored manifest at `generated/narrative/chapter-manifest.json`; no selected-world
-snapshot is committed. Automated validation and fresh defect-first review are required
-before the task becomes `Done`; remote real-browser visual acceptance remains the
-Captain's manual step.
+Implementation and Captain manual/visual acceptance completed 2026-07-26. The runtime
+projection remains centralized in `src/narrative/model.ts`; the versioned progress
+reducer clamps restored/direct values before projecting; `TimelineDock` supplies
+confirmation-gated progress, synchronized chapter navigation, and a meaningful-date
+linear axis. Runtime output is limited to the ignored manifest at
+`generated/narrative/chapter-manifest.json`; no selected-world snapshot is committed.
+`npm run validate` passed 82 unit/component tests and the production build;
+`npm run test:e2e` passed all 21 Chromium, Firefox, and WebKit flows. The final fresh
+defect-first review returned `No findings.`
 
 ## Dependencies and cautions
 

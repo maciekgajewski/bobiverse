@@ -91,8 +91,10 @@ through** to set the confirmed reading ceiling; the application asks for confirm
 before it reveals that chapter. **Knowledge through** may then revisit any chapter at
 or before that ceiling. Chapter mode represents the selected chapter's story year;
 Date mode keeps the same knowledge chapter but offers only meaningful, determinate
-dates already revealed by it. Reader progress, selected mode, timeline zoom, and pan
-are stored in the versioned `bobiverse.app-state.v1` localStorage record.
+dates already revealed by it. Click a year marker to select its only story state; if
+several story states share that year, the marker opens a compact spoiler-safe choice
+list. Reader progress, selected mode, timeline zoom, and pan are stored in the
+versioned `bobiverse.app-state.v1` localStorage record.
 
 The ignored runtime manifest is generated, never hand-edited. Normal `npm run dev`,
 `npm run build`, and test paths create it. To generate it explicitly, run:

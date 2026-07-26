@@ -11,6 +11,7 @@ import {
 import type { DistanceUnit } from "./domain/types";
 import {
   generateNarrativeWorld,
+  meaningfulNarrativeDateOptions,
   meaningfulNarrativeDates,
 } from "./narrative/model";
 import {
@@ -21,6 +22,7 @@ import {
   returnToZeroState,
   selectDisplayDate,
   selectKnowledgeChapter,
+  selectZeroKnowledgeView,
   setTimelineViewport,
   type ReaderProgress,
 } from "./narrative/progress";
@@ -63,12 +65,26 @@ export default function App() {
     pixelWidth: 50,
   });
   const systems = nearbySystems?.systems ?? [];
-  const meaningfulDates = useMemo(
+  const meaningfulDateOptions = useMemo(
     () =>
       progress.viewChapter
-        ? meaningfulNarrativeDates(narrativeCorpus, progress.viewChapter)
+        ? meaningfulNarrativeDateOptions(narrativeCorpus, progress.viewChapter)
         : [],
     [progress.viewChapter],
+  );
+  const meaningfulDates = useMemo(
+    () => meaningfulDateOptions.map(({ date }) => date),
+    [meaningfulDateOptions],
+  );
+  const meaningfulDateSources = useMemo(
+    () =>
+      new Map(
+        meaningfulDateOptions.map(({ date, source_chapters }) => [
+          date,
+          source_chapters,
+        ]),
+      ),
+    [meaningfulDateOptions],
   );
   const narrativeWorld = useMemo(
     () =>
@@ -291,6 +307,7 @@ export default function App() {
         chapters={narrativeChapters}
         progress={progress}
         meaningfulDates={meaningfulDates}
+        meaningfulDateSources={meaningfulDateSources}
         pendingReadThrough={pendingReadThrough}
         onReadThroughChoice={setPendingReadThrough}
         onConfirmReadThrough={() => {
@@ -307,6 +324,10 @@ export default function App() {
           setPendingReadThrough(null);
         }}
         onCancelReadThrough={() => setPendingReadThrough(null)}
+        onReturnToZeroState={() => {
+          updateProgress(selectZeroKnowledgeView(progress));
+          setPendingReadThrough(null);
+        }}
         onKnowledgeChapter={selectKnowledge}
         onDate={selectDate}
         onChapterMode={() => {
