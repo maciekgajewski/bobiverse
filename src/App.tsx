@@ -1,14 +1,16 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StarMap, type MapScale } from "./components/MapScene";
-import { SystemDetails } from "./components/SystemDetails";
-import { SystemDirectory } from "./components/SystemDirectory";
+import { ObjectBrowser } from "./components/ObjectBrowser";
+import { ObjectInspector } from "./components/ObjectInspector";
 import { TimelineDock } from "./components/TimelineDock";
 import { nearbySystems, nearbySystemsResult } from "./domain/data";
 import {
   GALACTIC_STARFIELD_SOURCE_URL,
   GALACTIC_STARFIELD_UI_CREDIT,
 } from "./domain/galactic-starfield";
+import type { SelectionIdentity } from "./domain/selection";
 import type { DistanceUnit } from "./domain/types";
+import { buildNarrativeBrowserGroups } from "./narrative/browser";
 import {
   generateNarrativeWorld,
   meaningfulNarrativeDateOptions,
@@ -40,7 +42,9 @@ function canRenderWebgl(): boolean {
 
 export default function App() {
   const [unit, setUnit] = useState<DistanceUnit>("ly");
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selection, setSelection] = useState<SelectionIdentity | null>(null);
+  const [browserQuery, setBrowserQuery] = useState("");
+  const [selectionStatus, setSelectionStatus] = useState("");
   const [mobilePanel, setMobilePanel] = useState<
     "browser" | "inspector" | null
   >(null);
@@ -95,11 +99,26 @@ export default function App() {
       ),
     [progress.displayDate, progress.mode, progress.viewChapter],
   );
+  const allBrowserGroups = useMemo(
+    () => buildNarrativeBrowserGroups(narrativeWorld, progress.mode),
+    [narrativeWorld, progress.mode],
+  );
+  const visibleBrowserGroups = useMemo(
+    () =>
+      buildNarrativeBrowserGroups(narrativeWorld, progress.mode, browserQuery),
+    [browserQuery, narrativeWorld, progress.mode],
+  );
   const viewStatus =
     progress.viewChapter && progress.displayDate
       ? `Universe in ${progress.displayDate.split(".", 1)[0]} · Knowledge through Chapter ${progress.viewChapter}`
       : "Pre-book zero state";
-  const selected = systems.find((system) => system.id === selectedId) ?? null;
+  const selectedNarrativeItem =
+    selection?.kind === "narrative"
+      ? (allBrowserGroups
+          .flatMap((group) => group.items)
+          .find((item) => item.entity.id === selection.id) ?? null)
+      : null;
+  const selectedMapId = selection?.kind === "astronomy" ? selection.id : null;
   const updateMapScale = useCallback((nextScale: MapScale) => {
     setMapScale((current) =>
       current.label === nextScale.label &&
@@ -144,8 +163,15 @@ export default function App() {
     window.addEventListener("keydown", close);
     return () => window.removeEventListener("keydown", close);
   }, [mobilePanel]);
-  const selectSystem = (id: string) => {
-    setSelectedId(id);
+  const selectObject = (nextSelection: SelectionIdentity) => {
+    setSelection(nextSelection);
+    const name =
+      nextSelection.kind === "astronomy"
+        ? systems.find((system) => system.id === nextSelection.id)?.name
+        : narrativeWorld.entities.find(
+            (entity) => entity.id === nextSelection.id,
+          )?.name;
+    setSelectionStatus(`${String(name ?? "Object")} selected.`);
     if (
       typeof window.matchMedia === "function" &&
       window.matchMedia("(max-width: 1199px)").matches
@@ -156,7 +182,21 @@ export default function App() {
     const dates = next.viewChapter
       ? meaningfulNarrativeDates(narrativeCorpus, next.viewChapter)
       : [];
-    setProgress(normalizeReaderProgress(next, narrativeChapters, dates));
+    const normalized = normalizeReaderProgress(next, narrativeChapters, dates);
+    if (selection?.kind === "narrative") {
+      const nextWorld = generateNarrativeWorld(
+        narrativeCorpus,
+        normalized.viewChapter,
+        normalized.mode === "date" ? normalized.displayDate : null,
+      );
+      if (!nextWorld.entities.some((entity) => entity.id === selection.id)) {
+        setSelection(null);
+        setSelectionStatus(
+          "Selection cleared because the object is not eligible in this view.",
+        );
+      }
+    }
+    setProgress(normalized);
   };
   const selectKnowledge = (chapter: string) =>
     updateProgress(
@@ -164,6 +204,14 @@ export default function App() {
     );
   const selectDate = (date: string) =>
     updateProgress(selectDisplayDate(progress, date, meaningfulDates));
+  const toggleBrowserGroup = (group: keyof ReaderProgress["browserGroups"]) =>
+    setProgress((current) => ({
+      ...current,
+      browserGroups: {
+        ...current.browserGroups,
+        [group]: !current.browserGroups[group],
+      },
+    }));
 
   if (nearbySystemsResult.error || !nearbySystems)
     return (
@@ -202,9 +250,9 @@ export default function App() {
             aria-expanded={mobilePanel === "browser"}
             onClick={() => setMobilePanel("browser")}
           >
-            Browse systems
+            Browse objects
           </button>
-          {selected && (
+          {selection && (
             <button
               ref={inspectorButton}
               className="button mobile-command inspect-command"
@@ -236,16 +284,25 @@ export default function App() {
           </button>
         </div>
       </header>
-      <section className="atlas-grid" aria-label="Astronomy atlas workspace">
-        <aside className="left-rail" aria-label="System browser">
+      <p className="selection-status" role="status" aria-live="polite">
+        {selectionStatus}
+      </p>
+      <section className="atlas-grid" aria-label="Narrative atlas workspace">
+        <aside className="left-rail" aria-label="Object browser">
           <div className="rail-heading">
-            <p className="eyebrow">21 markers</p>
-            <h2>Local volume</h2>
+            <p className="eyebrow">Spoiler-safe projection</p>
+            <h2>Object browser</h2>
           </div>
-          <SystemDirectory
-            systems={systems}
-            selectedId={selectedId}
-            onSelect={selectSystem}
+          <ObjectBrowser
+            groups={visibleBrowserGroups}
+            mode={progress.mode}
+            query={browserQuery}
+            idPrefix="desktop"
+            expanded={progress.browserGroups}
+            selection={selection}
+            onQuery={setBrowserQuery}
+            onToggle={toggleBrowserGroup}
+            onSelect={selectObject}
           />
         </aside>
         <section
@@ -268,11 +325,14 @@ export default function App() {
           {webgl === "ready" && (
             <StarMap
               systems={systems}
-              selectedId={selectedId}
+              selectedId={selectedMapId}
               unit={unit}
               resetToken={resetToken}
-              onSelect={selectSystem}
-              onDeselect={() => setSelectedId(null)}
+              onSelect={(id) => selectObject({ kind: "astronomy", id })}
+              onDeselect={() => {
+                setSelection(null);
+                setSelectionStatus("Selection cleared.");
+              }}
               onReady={() => undefined}
               onScaleChange={updateMapScale}
             />
@@ -296,11 +356,17 @@ export default function App() {
             </span>
           </div>
         </section>
-        <aside className="right-rail">
-          <SystemDetails system={selected} unit={unit} />
-          <p className="shell-reserve">
-            Narrative inspection will appear here as chapters are introduced.
-          </p>
+        <aside className="right-rail" aria-label="Object inspector">
+          <ObjectInspector
+            selection={selection}
+            narrativeItem={selectedNarrativeItem}
+            world={narrativeWorld}
+            systems={systems}
+            assets={narrativeCorpus.assets}
+            unit={unit}
+            headingId="desktop-object-details-heading"
+            onSelect={selectObject}
+          />
         </aside>
       </section>
       <TimelineDock
@@ -314,7 +380,7 @@ export default function App() {
           if (pendingReadThrough === null) return;
           updateProgress(
             pendingReadThrough === ""
-              ? returnToZeroState()
+              ? returnToZeroState(progress)
               : confirmReadThrough(
                   progress,
                   pendingReadThrough,
@@ -365,7 +431,7 @@ export default function App() {
           role="dialog"
           aria-modal="true"
           aria-label={
-            mobilePanel === "browser" ? "System browser" : "Selected system"
+            mobilePanel === "browser" ? "Object browser" : "Selected object"
           }
         >
           <button
@@ -380,13 +446,28 @@ export default function App() {
             Close
           </button>
           {mobilePanel === "browser" ? (
-            <SystemDirectory
-              systems={systems}
-              selectedId={selectedId}
-              onSelect={selectSystem}
+            <ObjectBrowser
+              groups={visibleBrowserGroups}
+              mode={progress.mode}
+              query={browserQuery}
+              idPrefix="compact"
+              expanded={progress.browserGroups}
+              selection={selection}
+              onQuery={setBrowserQuery}
+              onToggle={toggleBrowserGroup}
+              onSelect={selectObject}
             />
           ) : (
-            <SystemDetails system={selected} unit={unit} />
+            <ObjectInspector
+              selection={selection}
+              narrativeItem={selectedNarrativeItem}
+              world={narrativeWorld}
+              systems={systems}
+              assets={narrativeCorpus.assets}
+              unit={unit}
+              headingId="compact-object-details-heading"
+              onSelect={selectObject}
+            />
           )}
         </div>
       )}

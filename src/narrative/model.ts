@@ -22,6 +22,11 @@ export interface NarrativeEntity extends NarrativeRecord {
     | "species"
     | "technology"
     | "vessel_type";
+  last_known_location?: {
+    location_id: string;
+    source_chapter: string;
+    effective_date: string;
+  };
 }
 
 export const narrativeActivityReasons = [
@@ -605,6 +610,63 @@ function deriveLocationChildren(entities: NarrativeEntity[]): void {
   }
 }
 
+interface EligibleAppearance {
+  location_id: string;
+  source_chapter: string;
+  effective_date: string;
+}
+
+function deriveLastKnownLocations(
+  entities: NarrativeEntity[],
+  chapters: readonly NarrativeRecord[],
+  displayDate: string | null,
+): void {
+  const byId = new Map(entities.map((entity) => [entity.id, entity]));
+  const appearances = new Map<string, EligibleAppearance[]>();
+  for (const chapter of chapters) {
+    const effectiveDate = chapterDate(chapter);
+    if (!isDateAtOrBefore(effectiveDate, displayDate)) continue;
+    const sourceChapter = chapterId(chapter);
+    for (const candidate of (chapter.appearances as unknown[] | undefined) ??
+      []) {
+      const appearance = asRecord(candidate, `Appearance in ${sourceChapter}`);
+      const characterId = asString(
+        appearance.character_id,
+        `Appearance character in ${sourceChapter}`,
+      );
+      const locationId = asString(
+        appearance.location_id ?? chapter.location_id,
+        `Appearance location in ${sourceChapter}`,
+      );
+      if (!byId.has(characterId) || !byId.has(locationId)) continue;
+      const eligible = appearances.get(characterId) ?? [];
+      eligible.push({
+        location_id: locationId,
+        source_chapter: sourceChapter,
+        effective_date: effectiveDate,
+      });
+      appearances.set(characterId, eligible);
+    }
+  }
+  for (const [characterId, candidates] of appearances) {
+    const uniquelyLatest = candidates.filter((candidate, candidateIndex) =>
+      candidates.every((other, otherIndex) => {
+        if (candidateIndex === otherIndex) return true;
+        const ordering = compareNarrativeDates(
+          other.effective_date,
+          candidate.effective_date,
+        );
+        return ordering !== null && ordering < 0;
+      }),
+    );
+    if (uniquelyLatest.length !== 1) continue;
+    const character = byId.get(characterId);
+    if (character?.entity_type === "character") {
+      character.last_known_location = uniquelyLatest[0];
+    }
+  }
+}
+
 function applySourceRecord(
   entity: NarrativeEntity,
   source: NarrativeRecord,
@@ -917,6 +979,7 @@ export function generateNarrativeWorld(
     }
   }
   deriveLocationChildren(entities);
+  deriveLastKnownLocations(entities, readerVisible, displayDate);
   const world: NarrativeWorld = {
     entities,
     activity: generateNarrativeActivity(

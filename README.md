@@ -7,8 +7,10 @@ phases connect that map to chapters, characters, travel, events, and Bob genealo
 
 The current implementation maps the 20 nearest reviewed stellar systems plus Sol,
 with true-scale Galactic geometry, selection, distance-unit display, and a permanent
-local Deep Star Maps 2020 Galactic backdrop. The application makes no runtime
-astronomy or image-host request; see the [backdrop provenance and attribution
+local Deep Star Maps 2020 Galactic backdrop. A spoiler-safe projected-object browser,
+search, and type-aware inspector expose narrative objects allowed by the selected
+knowledge chapter and story date. The application makes no runtime astronomy or
+image-host request; see the [backdrop provenance and attribution
 record](docs/data/galactic-starfield-backdrop.md) for its retained source, exact
 conversion command, and required manual orientation check.
 
@@ -95,6 +97,29 @@ dates already revealed by it. Click a year marker to select its only story state
 several story states share that year, the marker opens a compact spoiler-safe choice
 list. Reader progress, selected mode, timeline zoom, and pan are stored in the
 versioned `bobiverse.app-state.v1` localStorage record.
+
+### Object browser and inspector
+
+The desktop left rail groups only eligible projected objects in this fixed order:
+Characters, Events, Star Systems, Other Locations, Species, Technologies,
+Organizations, and Vessel Types. Empty groups stay hidden. Group headings show
+visible and active counts, and each group can be collapsed independently. Collapse
+preferences share the versioned `bobiverse.app-state.v1` record with reader progress.
+
+Search matches only the projected name and currently known aliases, ignoring case and
+diacritics. It temporarily expands matching groups and restores the saved arrangement
+when cleared. Results and recency ordering use the same generated activity index as
+the selected world: Chapter mode prioritizes selected-chapter activity, while Date
+mode uses comparable story-time activity at or before the represented date.
+
+Selecting a narrative result opens a sparse, type-aware inspector. Relationships are
+links only when their targets are eligible in the same projection; unmapped and
+chronologically unplaced states remain explicit. Character location context is
+labelled **Last seen** and never treated as current presence. Each group heading has
+an original type-specific SVG icon, and each object row uses a shared SVG bullet.
+Astronomy catalogue systems are currently selected from the map; BOB-014 adds the
+final query-only **Nearby astronomy** search without restoring the legacy full
+catalogue list.
 
 The ignored runtime manifest is generated, never hand-edited. Normal `npm run dev`,
 `npm run build`, and test paths create it. To generate it explicitly, run:

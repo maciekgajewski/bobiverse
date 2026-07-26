@@ -10,21 +10,29 @@ test("phone browser opens, selection opens inspector, and units remain available
       .getByTestId("star-map-canvas")
       .evaluate((canvas) => canvas.clientHeight),
   ).toBeGreaterThan(0);
-  await page.getByRole("button", { name: "Browse systems" }).click();
-  await page.getByRole("button", { name: "Alpha Centauri" }).click();
+  await page.getByRole("button", { name: "Browse objects" }).click();
+  await page.getByRole("button", { name: "Solar System" }).click();
   await expect(
-    page.getByRole("heading", { name: "Alpha Centauri" }),
+    page.getByRole("heading", { name: "Solar System" }),
   ).toBeVisible();
   await page.getByRole("button", { name: "pc" }).click();
   await expect(page.getByTestId("map-scale-label")).toContainText("pc");
 });
 
 test("empty map clicks clear inspection selection", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  await page.getByRole("button", { name: "Alpha Centauri" }).click();
-  await page.getByTestId("star-map-canvas").click({ position: { x: 8, y: 8 } });
+  await page.getByRole("button", { name: "Solar System" }).click();
   await expect(
-    page.getByText("Select a stellar system to inspect its catalogue facts."),
+    page.getByRole("heading", { name: "Solar System" }),
+  ).toBeVisible();
+  await page
+    .getByTestId("star-map-canvas")
+    .click({ position: { x: 100, y: 40 } });
+  await expect(
+    page.getByText(
+      "Select a map marker or browser item to inspect its reader-safe details.",
+    ),
   ).toBeVisible();
   await expect(page.getByRole("button", { name: "Measure" })).toHaveCount(0);
 });
@@ -32,8 +40,8 @@ test("empty map clicks clear inspection selection", async ({ page }) => {
 test("compact inspector stays inside the viewport", async ({ page }) => {
   await page.setViewportSize({ width: 900, height: 700 });
   await page.goto("/");
-  await page.getByRole("button", { name: "Browse systems" }).click();
-  await page.getByRole("button", { name: "Alpha Centauri" }).click();
+  await page.getByRole("button", { name: "Browse objects" }).click();
+  await page.getByRole("button", { name: "Solar System" }).click();
   await expect(page.locator(".mobile-panel.inspector")).toBeVisible();
   const bounds = await page
     .locator(".mobile-panel.inspector")
@@ -89,10 +97,10 @@ test("the permanent local backdrop preserves responsive map interaction", async 
   expect(
     resourceOrigins.every((origin) => origin === new URL(page.url()).origin),
   ).toBe(true);
-  await page.getByRole("button", { name: "Browse systems" }).click();
-  await page.getByRole("button", { name: "Alpha Centauri" }).click();
+  await page.getByRole("button", { name: "Browse objects" }).click();
+  await page.getByRole("button", { name: "Solar System" }).click();
   await expect(
-    page.getByRole("heading", { name: "Alpha Centauri" }),
+    page.getByRole("heading", { name: "Solar System" }),
   ).toBeVisible();
 });
 
@@ -196,8 +204,64 @@ test("reader progress is confirmed before chapter data is unlocked", async ({
       dateModeBox.y >= chapterModeBox.y + chapterModeBox.height,
   ).toBe(true);
   await page.getByRole("button", { name: "Date mode" }).click();
-  await page.getByRole("button", { name: "2016" }).click();
+  await page.getByRole("button", { name: "2016", exact: true }).click();
   await expect(page.locator(".map-narrative-badge")).toContainText(
     "Universe in 2016",
   );
+});
+
+test("progressive browser search preserves collapse state and inspects unmapped objects", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/");
+  await expect(
+    page.getByRole("button", { name: "Star Systems, 1 visible" }),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: /Characters,/ })).toHaveCount(
+    0,
+  );
+  await expect(page.getByText("Astronomy systems")).toHaveCount(0);
+
+  await page.getByLabel("Read through").selectOption("1.2");
+  await page.getByRole("button", { name: "Confirm read through" }).click();
+  await expect(
+    page.getByRole("dialog", { name: "Confirm read progress" }),
+  ).toHaveCount(0);
+  const groupLabels = await page
+    .locator(".browser-group h3 button")
+    .evaluateAll((buttons) =>
+      buttons.map((button) => button.getAttribute("aria-label")),
+    );
+  expect(groupLabels.map((label) => label?.split(",", 1)[0])).toEqual([
+    "Characters",
+    "Events",
+    "Star Systems",
+    "Other Locations",
+    "Species",
+    "Technologies",
+    "Organizations",
+  ]);
+
+  const organizations = page.getByRole("button", {
+    name: /Organizations, 4 visible/,
+  });
+  await organizations.click();
+  await expect(organizations).toHaveAttribute("aria-expanded", "false");
+  const search = page.getByRole("searchbox", {
+    name: "Search visible objects",
+  });
+  await search.fill("applied");
+  await expect(
+    page.getByRole("button", { name: /Organizations, 1 visible/ }),
+  ).toHaveAttribute("aria-expanded", "true");
+  await search.fill("");
+  await expect(organizations).toHaveAttribute("aria-expanded", "false");
+
+  await page.getByRole("button", { name: "New Handeltown" }).click();
+  const inspector = page.getByRole("complementary", {
+    name: "Object inspector",
+  });
+  await expect(inspector.getByText("Explicitly unmapped")).toBeVisible();
+  await expect(inspector.getByText("Narrative-known")).toBeVisible();
 });

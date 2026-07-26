@@ -27,7 +27,7 @@ derived from `../implementation-plan.md` and must remain consistent with
 | [BOB-009](BOB-009-promote-approved-chapter-1-1.md)                      | Done    | Promote the approved chapter 1.1 candidate into canonical narrative data. |
 | [BOB-010](BOB-010-important-mentions-and-narrative-activity.md)         | Done    | Add important mentions and generated cross-type narrative activity.       |
 | [BOB-011](BOB-011-reader-progress-and-temporal-navigation.md)           | Done    | Add guarded progress and chapter/date temporal navigation.                |
-| [BOB-012](BOB-012-progressive-object-browser-and-inspectors.md)         | Blocked | Add the progressive grouped browser and type-aware inspectors.            |
+| [BOB-012](BOB-012-progressive-object-browser-and-inspectors.md)         | Done    | Add the progressive grouped browser and type-aware inspectors.            |
 | [BOB-013](BOB-013-astronomy-neighbourhood-catalogue.md)                 | Draft   | Guarantee configurable astronomy context around mapped story systems.     |
 | [BOB-014](BOB-014-narrative-aware-map-integration.md)                   | Blocked | Join narrative knowledge and activity to the true-scale map.              |
 | [BOB-015](BOB-015-phase-2-desktop-integration-and-acceptance.md)        | Blocked | Integrate and accept the complete Phase 2 desktop workspace.              |

@@ -15,6 +15,7 @@ import {
   type NarrativeChapterSummary,
   type ReaderProgress,
 } from "../../src/narrative/progress";
+import { defaultBrowserGroupState } from "../../src/narrative/browser";
 import { createNarrativeFixtureCorpus } from "../fixtures/narrative";
 
 const chapters: NarrativeChapterSummary[] = [
@@ -30,6 +31,7 @@ const empty: ReaderProgress = {
   mode: "chapter",
   timelineZoom: 1,
   timelinePan: 0,
+  browserGroups: defaultBrowserGroupState(),
 };
 
 describe("reader progress", () => {
@@ -79,6 +81,10 @@ describe("reader progress", () => {
       mode: "date",
       timelineZoom: 3,
       timelinePan: 0.25,
+      browserGroups: {
+        ...defaultBrowserGroupState(),
+        characters: false,
+      },
     };
     persistReaderProgress(saved);
     expect(

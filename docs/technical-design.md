@@ -372,6 +372,24 @@ surface, and the attribution footer remains visible. The shared application stat
 components are later recomposed for mobile by BOB-016; desktop implementation must not
 create a parallel domain or spoiler model.
 
+`ObjectBrowser` receives the centralized `NarrativeWorld` projection and its generated
+activity array. It groups only projected entities, searches only projected names and
+aliases, and applies mode-specific activity ordering without reading authored chapter
+JSON. Group expansion preferences are a compatible field in the existing
+`bobiverse.app-state.v1` record. Search expansion is transient and never rewrites
+those preferences.
+
+Selection is one tagged identity: either a narrative entity ID or an astronomy
+catalogue system ID. `ObjectInspector` resolves narrative selections only against the
+current projected entity registry and renders sparse type-specific fields and
+eligible relationship links. A projection change makes an absent narrative
+selection ineligible immediately, clears it, and announces the change. Type-specific
+group SVGs and the shared row-bullet SVG are presentation-only and carry no selection
+or domain semantics. The legacy astronomy directory is removed; catalogue selection
+is map-driven until BOB-014 supplies the final query-only contextual astronomy DOM
+path. Neither the browser nor inspector owns map markers, astronomy context coverage,
+narrative schema facts, or a second spoiler filter.
+
 ## 11. Visual language
 
 The visual direction is an original strategic-space interface: dark layered space,
@@ -448,6 +466,12 @@ a source of entity state, relationships, continuous presence, or coordinates, an
 code must not reconstruct it independently. Important mentions target only an already
 visible direct narrative entity or location not structurally represented in that chapter;
 they do not assert presence, participation, ownership, membership, location, or use.
+
+The same projection emits a character's `last_known_location` only when
+reader-visible appearances at or before the displayed date have one uniquely latest,
+definitively comparable sighting. It records the sighting location, source chapter,
+and effective date; tied or incomparable sightings produce no singular result, and
+the value never asserts current presence.
 
 The normal development, test, and build paths first generate the ignored
 `generated/narrative/chapter-manifest.json` from authored chapter paths. The manifest

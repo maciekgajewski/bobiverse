@@ -4,9 +4,15 @@ import { formatDistance } from "../domain/units";
 export function SystemDetails({
   system,
   unit,
+  storyKnown = false,
+  embedded = false,
+  headingId = "details-heading",
 }: {
   system: StellarSystem | null;
   unit: DistanceUnit;
+  storyKnown?: boolean;
+  embedded?: boolean;
+  headingId?: string;
 }) {
   if (!system)
     return (
@@ -26,12 +32,25 @@ export function SystemDetails({
     .filter(Boolean);
   return (
     <section
-      className="details"
+      className={`details ${embedded ? "embedded-details" : ""}`}
       aria-live="polite"
-      aria-labelledby="details-heading"
+      aria-labelledby={embedded ? undefined : headingId}
     >
-      <p className="eyebrow">Selected system</p>
-      <h2 id="details-heading">{system.name}</h2>
+      <p className="eyebrow">
+        {embedded ? "Catalogue facts" : "Astronomy catalogue record"}
+      </p>
+      {embedded ? (
+        <h4>{system.name}</h4>
+      ) : (
+        <h2 id={headingId}>{system.name}</h2>
+      )}
+      {!embedded && (
+        <p className="object-status">
+          {storyKnown
+            ? "Story-known at this view"
+            : "Not story-known at this view"}
+        </p>
+      )}
       <p className="aliases">{system.alternates.join(" · ")}</p>
       <dl>
         <div>

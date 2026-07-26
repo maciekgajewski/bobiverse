@@ -1,13 +1,13 @@
 # BOB-012: progressive object browser and inspectors
 
-Status: Blocked
+Status: Done
 Phase: 2 (narrative foundation and chapter timeline)
 Last updated: 2026-07-26
 
-## Blocker
+## Dependency status
 
-BOB-010 must first provide the generated narrative activity contract and BOB-011 must
-provide the shared progress/projection state consumed by every browser mode.
+BOB-010 and BOB-011 are complete. Their generated narrative activity contract and
+shared progress/projection state are available to this task.
 
 ## Objective
 
@@ -43,17 +43,20 @@ knowledge chapter and story date.
   effective after the displayed date.
 - Astronomy-only search results are added by BOB-014 after BOB-013 provides their
   context dataset.
+- Each group heading uses an original, type-specific SVG line icon. Object rows use
+  one shared SVG ring-and-dot bullet; neither marker is a CSS-drawn proxy.
+- Captain visual review supersedes the earlier interim-compatibility decision: the
+  legacy astronomy directory is removed in BOB-012 rather than retained until
+  BOB-014.
 
 ## In scope
 
-- Introduce a generic projected-object browser without removing the accepted
-  astronomy-only directory and inspector path before BOB-014 can replace it.
-- During this intermediate task, retain the current astronomy systems as a clearly
-  separate compatibility section or equivalent adapter. It must preserve DOM
-  selection and inspection, including when WebGL is unavailable, and must not be
-  presented as the final **Nearby astronomy** search design.
+- Introduce a generic projected-object browser and remove the legacy astronomy-only
+  directory from the left rail.
 - Add progressive groups for Characters, Events, Star Systems, Other Locations,
   Species, Technologies, Organizations, and Vessel Types.
+- Add a distinct project-owned SVG icon to each group heading and a shared SVG bullet
+  to each object row.
 - Show visible and active counts per group.
 - Add accessible independent collapse controls and versioned saved state.
 - Implement adaptive recency ordering using BOB-010 activity facts.
@@ -74,7 +77,8 @@ knowledge chapter and story date.
   - `docs/technical-design.md` for browser/inspector component and selection
     boundaries;
   - `docs/visual-testing.md` for groups, search, recency, sparse inspectors,
-    compatibility astronomy browsing, and WebGL-unavailable checks;
+    icon treatment, absence of the legacy astronomy list, and WebGL-unavailable
+    checks;
   - this task's completion evidence and any documented deviations.
 
 ## Generated-artifact expectations
@@ -91,8 +95,8 @@ knowledge chapter and story date.
 ## Out of scope
 
 - The final query-only **Nearby astronomy** context results and astronomy-only
-  inspector; BOB-014 owns their replacement. BOB-012 must nevertheless preserve the
-  existing astronomy browsing path until that replacement lands.
+  inspector; BOB-014 owns that final DOM path. Until then, catalogue systems are
+  selected from the map rather than a left-rail list.
 - Map marker or camera behavior.
 - Description full-text, fuzzy search, bookmarks, saved searches, or a command
   palette.
@@ -104,7 +108,8 @@ knowledge chapter and story date.
 
 1. Only groups with at least one eligible object are rendered, in the fixed design
    order.
-2. Each heading reports its visible count and nonzero active count.
+2. Each heading reports its visible count and nonzero active count, carries the
+   correct type-specific SVG icon, and every object row carries the shared SVG bullet.
 3. Collapse controls are keyboard-operable, expose state semantically, persist
    through the versioned app state, and meet visible-focus requirements.
 4. Search expands matching groups temporarily and restores prior expansion state when
@@ -122,16 +127,16 @@ knowledge chapter and story date.
     present in the projection.
 11. Changing chapter/date clears an ineligible selection atomically and exposes an
     accessible status message.
-12. WebGL-unavailable mode retains browser selection and DOM inspection.
-13. Every currently shipped astronomy system remains selectable and inspectable
-    through an ordinary DOM path after the generic browser is introduced; BOB-012
-    does not create a gap awaiting BOB-014.
+12. WebGL-unavailable mode retains narrative browser selection and DOM inspection.
+13. The legacy **Astronomy systems** compatibility directory is absent. BOB-014 owns
+    the final query-only DOM path for nearby astronomy catalogue systems.
 14. Tests cover progressive groups, all entity types, search visibility, collapse
     persistence, both recency modes, unmapped/unplaced states, sparse records, and
-    selection invalidation, plus preservation of the astronomy compatibility path.
+    selection invalidation, group icon coverage, shared item bullets, and absence of
+    the legacy astronomy directory.
 15. README, technical design, visual-testing instructions, and completion evidence
-    describe the delivered browser, inspector, compatibility path, and generated-data
-    ownership accurately.
+    describe the delivered browser, inspector, icon treatment, astronomy boundary,
+    and generated-data ownership accurately.
 
 ## Validation commands
 
@@ -146,6 +151,46 @@ npm run test:e2e
 git diff --check
 ```
 
+## Implementation evidence
+
+Implementation and automated validation completed on 2026-07-26. `ObjectBrowser`
+consumes only the centralized
+projected world and generated activity index, renders the fixed progressive group
+order, persists independent collapse preferences in `bobiverse.app-state.v1`, and
+keeps search expansion transient. Chapter and Date modes use distinct reader-order
+and comparable story-time recency functions with stable projected-name ties.
+
+One tagged selection identity now covers narrative entities and astronomy catalogue
+systems. `ObjectInspector` resolves narrative details and relationship controls only
+against the current projection, renders every supported type sparsely, labels
+unmapped and unplaced states explicitly, and clears an ineligible selection with an
+accessible announcement. Each progressive group heading uses its own original SVG
+line icon and each object row uses a shared SVG bullet. Following Captain visual
+review, the legacy 21-system left-rail directory was removed; catalogue selection
+remains map-driven until BOB-014 adds the final query-only **Nearby astronomy** DOM
+path.
+
+The implementation completed BOB-011's already-documented generated
+`last_known_location` contract because BOB-012 could not otherwise satisfy the
+character **Last seen** requirement without scanning chapter source in UI code.
+Projection tests cover unique latest sightings, tied sightings, and Date-mode
+exclusion of unplaced events; the BOB-011 completion evidence and integrated data
+model were updated consistently. No authored narrative or astronomy data changed.
+
+All documented validation commands pass after the icon and astronomy-directory
+changes: narrative validation accepts the zero state and 2 chapter sources; format,
+lint, and typecheck pass; 95 unit/component tests pass across 20 files; the production
+build passes after validating all 21 astronomy systems; all 24 Playwright flows pass
+in Chromium, Firefox, and WebKit; and `git diff --check` is clean. README, technical
+design, and visual-testing guidance describe the delivered SVG treatment, removal of
+the legacy catalogue list, final BOB-014 ownership, and manual checks.
+
+## Manual acceptance
+
+The Captain manually reviewed the final group-heading icons, per-item bullets, and
+removal of the legacy astronomy compatibility list and explicitly accepted the UI on
+2026-07-26. Together with the automated evidence above, this completes BOB-012.
+
 ## Risks and cautions
 
 - Descriptions may contain later or incidental words and are deliberately not a
@@ -153,8 +198,8 @@ git diff --check
 - Activity is a recency input, not a relationship or current-location authority.
 - Progressive groups must not cause keyboard focus to disappear when a projection
   removes a group.
-- Do not delete `SystemDirectory`, `SystemDetails`, or their behavior until equivalent
-  temporary compatibility coverage exists. BOB-014 owns removal of that temporary
-  path when its context search and inspector pass acceptance.
+- Removing the legacy directory creates an intentional interim gap for keyboard and
+  WebGL-unavailable astronomy-only selection. Captain accepted that boundary;
+  BOB-014 owns the final contextual astronomy search and DOM fallback.
 - Promote this task from `Blocked` only after BOB-010 and the required BOB-011 state
   contract are complete.

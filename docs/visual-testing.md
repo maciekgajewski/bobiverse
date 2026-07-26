@@ -104,6 +104,50 @@ spoiler-limit card stays narrow, the mode controls stack vertically, and the cha
 rail uses one uninterrupted central line with references above and unlocked metadata
 below.
 
+## BOB-012 progressive object browser and inspectors
+
+At a desktop width of at least 1200 CSS pixels, clear
+`bobiverse.app-state.v1`. In the pre-book view, confirm that only nonempty groups are
+shown in the fixed design order and that no legacy **Astronomy systems** catalogue
+directory is present. Confirm each visible group heading has the distinct original
+line icon for its type and every object row has the shared ring-and-dot SVG bullet;
+neither should appear as a CSS-drawn proxy. Verify the icons remain crisp, aligned,
+and subordinate to the semantic labels at normal and 200% zoom.
+
+Confirm and view Chapter 1.2. Check that Characters, Events, Star Systems, Other
+Locations, Species, Technologies, and Organizations appear, while the empty Vessel
+Types group does not. Group headings must report visible counts and nonzero active
+counts. In Chapter mode, selected-chapter objects precede older activity; in Date
+mode, active-at-date objects precede the latest comparable activity at or before the
+chosen year. Names break equal-recency ties consistently.
+
+Collapse several groups with mouse and keyboard, reload, and confirm the arrangement
+persists. Enter a query that matches an item in a collapsed group; the matching group
+must expand without changing its saved state, and clearing the query must restore the
+collapse. Check mixed case, a known alias, and a name with a diacritic. Confirm that
+later aliases, descriptions, and ineligible objects never match, empty-search feedback
+is explicit, result counts are announced without moving focus, and all collapse
+buttons expose `aria-expanded` with visible focus.
+
+Disable WebGL for the site and repeat narrative-object selection through the DOM
+browser. Narrative details and relationship controls must remain usable. The final
+keyboard and WebGL-unavailable path for astronomy-only catalogue systems belongs to
+BOB-014's query-only **Nearby astronomy** search and is not part of BOB-012.
+
+Inspect at least one sparse record of every supported type. Verify absent fields do
+not produce placeholders, eligible relationships act as selection controls, and a
+mention alone does not become a relationship. New Handeltown must say
+**Explicitly unmapped** and remain selectable. An unplaced event must say
+**Chronologically unplaced** in Chapter mode and be absent in Date mode. Character
+details must label the eligible appearance as **Last seen**, with chapter and year,
+and must never call activity or `current_state` a current location.
+
+With a Chapter 1.2-only narrative object selected, change **Knowledge through** to
+Chapter 1.1. Its details must disappear in the same state transition, selection must
+clear, and an accessible status message must announce why. Repeat selection from the
+compact browser/inspector panels and confirm the same projection, relationship, and
+DOM behavior is reused rather than recomputed in a separate mobile path.
+
 ## Default and reset camera
 
 The repeatable default camera pose preserves the documented Three.js viewing

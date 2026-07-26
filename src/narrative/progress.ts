@@ -1,4 +1,9 @@
 import { compareNarrativeChapters } from "./model";
+import {
+  defaultBrowserGroupState,
+  normalizeBrowserGroupState,
+  type BrowserGroupState,
+} from "./browser";
 
 export type TimelineMode = "chapter" | "date";
 
@@ -16,6 +21,7 @@ export interface ReaderProgress {
   mode: TimelineMode;
   timelineZoom: number;
   timelinePan: number;
+  browserGroups: BrowserGroupState;
 }
 
 const storageKey = "bobiverse.app-state.v1";
@@ -26,6 +32,7 @@ const defaultProgress: ReaderProgress = {
   mode: "chapter",
   timelineZoom: 1,
   timelinePan: 0,
+  browserGroups: defaultBrowserGroupState(),
 };
 
 function knownChapter(
@@ -57,7 +64,11 @@ export function normalizeReaderProgress(
       ? (candidate as Record<string, unknown>)
       : {};
   const furthest = knownChapter(chapters, record.furthestChapterRead);
-  if (!furthest) return { ...defaultProgress };
+  if (!furthest)
+    return {
+      ...defaultProgress,
+      browserGroups: normalizeBrowserGroupState(record.browserGroups),
+    };
   const requestedView = knownChapter(chapters, record.viewChapter);
   const view =
     record.viewChapter === null
@@ -97,6 +108,7 @@ export function normalizeReaderProgress(
     mode,
     timelineZoom: zoom,
     timelinePan: pan,
+    browserGroups: normalizeBrowserGroupState(record.browserGroups),
   };
 }
 
@@ -161,8 +173,13 @@ export function confirmReadThrough(
   return { ...current, furthestChapterRead: chapter };
 }
 
-export function returnToZeroState(): ReaderProgress {
-  return { ...defaultProgress };
+export function returnToZeroState(current?: ReaderProgress): ReaderProgress {
+  return {
+    ...defaultProgress,
+    browserGroups: current
+      ? { ...current.browserGroups }
+      : defaultBrowserGroupState(),
+  };
 }
 
 export function selectZeroKnowledgeView(

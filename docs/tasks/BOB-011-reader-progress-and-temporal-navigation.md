@@ -182,6 +182,12 @@ linear axis. Runtime output is limited to the ignored manifest at
 `npm run test:e2e` passed all 21 Chromium, Firefox, and WebKit flows. The final fresh
 defect-first review returned `No findings.`
 
+BOB-012 subsequently completed the already-documented centralized
+`last_known_location` projection contract needed by the shared inspector. The
+generated value is derived only from reader-visible, temporally eligible appearances
+and is omitted when their story dates are tied or incomparable; UI code does not scan
+chapter sources or infer a current location.
+
 ## Dependencies and cautions
 
 - The existing projector already separates reader order and story time; extend that

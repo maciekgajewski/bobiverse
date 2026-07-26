@@ -54,9 +54,8 @@ and atmosphere only.
 - Derive active systems from generated mapped activity ancestry.
 - Add the temporary **Nearby astronomy** search group for matching in-scope context
   systems.
-- Replace and remove BOB-012's temporary astronomy compatibility directory only after
-  the query-only context search, astronomy inspector, and WebGL-unavailable DOM path
-  satisfy this task's acceptance criteria.
+- Add the final query-only astronomy DOM path after BOB-012 removed the legacy
+  full-catalogue directory. Do not restore that directory as an interim solution.
 - Search astronomy preferred names and alternate designations only inside the current
   rendered context.
 - Add the astronomy-only inspector and **Not story-known at this view** status.
@@ -123,9 +122,9 @@ and atmosphere only.
     an ineligible selection.
 12. Keyboard and WebGL-fallback paths expose equivalent selection and status
     information through DOM controls.
-13. The legacy/compatibility astronomy directory is removed only after every
-    currently in-scope context system remains searchable, selectable, and inspectable
-    through the final DOM path.
+13. Every currently in-scope context system is searchable, selectable, and
+    inspectable through the final DOM path without restoring the legacy
+    full-catalogue astronomy directory.
 14. Tests cover marker state geometry, label priorities, radius-union filtering,
     contextual search, focus/no-focus cases, selection invalidation, and unchanged
     true-coordinate behavior.

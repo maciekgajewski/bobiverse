@@ -1494,11 +1494,12 @@ imposed between `birth_date` and `death_date`.
 `current_state` does not establish a character location. A character location is only
 confirmed by an appearance with an effective location. From reader-visible appearances
 whose effective story dates are definitively at or before the requested display date,
-the generated projection may expose a `last_known_location` only when one appearance
+the generated projection exposes a `last_known_location` only when one appearance
 has a uniquely latest, definitively comparable story date. That generated value records
-the source chapter and story date of the sighting, is labelled as a last-known sighting,
-and must not be treated as current presence or used to position the character on the
-map. Tied or incomparable appearance dates produce no singular last-known location.
+`location_id`, `source_chapter`, and `effective_date`; it is labelled as a last-known
+sighting and must not be treated as current presence or used to position the character
+on the map. Tied or incomparable appearance dates produce no singular last-known
+location.
 
 ### Species
 

@@ -171,6 +171,11 @@ Each group heading shows its visible count and, when nonzero, the count active i
 current chapter or meaningful date. Groups are independently collapsible. Their
 expanded state is stored with the versioned application preferences.
 
+Each heading carries an original project-owned SVG line icon specific to its object
+type. Every object row carries the same small SVG ring-and-dot bullet. These graphics
+are decorative; the group name, counts, object name, and collapse state remain the
+semantic labels. CSS-drawn proxy shapes are not used for either role.
+
 Search temporarily expands all groups containing matches but does not overwrite saved
 expanded state. Clearing search restores the reader's prior group arrangement.
 

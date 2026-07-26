@@ -547,6 +547,11 @@ describe("narrative corpus validation and projection", () => {
         reasons: ["event"],
       },
     ]);
+    expect(
+      generateNarrativeWorld(corpus, "1.3", "2200.1").entities.some(
+        (entity) => entity.id === "event:fixture-unplaced",
+      ),
+    ).toBe(false);
     expect(activity.map((record) => record.source_chapter)).toEqual(
       [...activity.map((record) => record.source_chapter)].sort(
         (left, right) => {
@@ -556,5 +561,33 @@ describe("narrative corpus validation and projection", () => {
         },
       ),
     );
+  });
+
+  it("projects only one uniquely latest eligible character sighting", () => {
+    const corpus = createNarrativeFixtureCorpus();
+    expect(
+      generateNarrativeWorld(corpus, "1.3", "2200.1").entities.find(
+        (entity) => entity.id === "character:fixture-alex",
+      )?.last_known_location,
+    ).toEqual({
+      location_id: "location:earth",
+      source_chapter: "1.3",
+      effective_date: "2200.1",
+    });
+
+    const tied = createNarrativeFixtureCorpus();
+    tied.chapters[0]!.appearances = [
+      { character_id: "character:fixture-alex", role: "lead" },
+      {
+        character_id: "character:fixture-alex",
+        role: "other",
+        location_id: "location:mars",
+      },
+    ];
+    expect(
+      generateNarrativeWorld(tied, "1.1").entities.find(
+        (entity) => entity.id === "character:fixture-alex",
+      )?.last_known_location,
+    ).toBeUndefined();
   });
 });

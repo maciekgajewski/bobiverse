@@ -2,6 +2,7 @@ import { cleanup, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { TimelineDock } from "../../src/components/TimelineDock";
+import { defaultBrowserGroupState } from "../../src/narrative/browser";
 import type {
   NarrativeChapterSummary,
   ReaderProgress,
@@ -34,6 +35,7 @@ const progress: ReaderProgress = {
   mode: "chapter",
   timelineZoom: 1,
   timelinePan: 0,
+  browserGroups: defaultBrowserGroupState(),
 };
 const noDateSources = new Map<string, readonly string[]>();
 
