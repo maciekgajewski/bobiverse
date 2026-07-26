@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
-import canonicalChapter from "../../data/narrative/chapters/1/1.json";
+import canonicalChapter1 from "../../data/narrative/chapters/1/1.json";
+import canonicalChapter2 from "../../data/narrative/chapters/1/2.json";
+import { buildNarrativeBrowserGroups } from "../../src/narrative/browser";
 import {
   compareNarrativeDates,
   generateNarrativeWorld,
@@ -383,7 +385,7 @@ describe("narrative corpus validation and projection", () => {
 
   it("keeps Human in the zero state while chapter 1.1 introduces Robert", () => {
     const corpus = createNarrativeFixtureCorpus();
-    corpus.chapters = [structuredClone(canonicalChapter)];
+    corpus.chapters = [structuredClone(canonicalChapter1)];
 
     expect(() => validateNarrativeCorpus(corpus)).not.toThrow();
     const world = generateNarrativeWorld(corpus, "1.1");
@@ -395,6 +397,56 @@ describe("narrative corpus validation and projection", () => {
         (entity) => entity.id === "character:robert-johansson",
       )?.species_id,
     ).toBe("species:human");
+  });
+
+  it("projects chapter 1.2 acronym naming and Robert's confirmed death without changing chapter 1.1 knowledge", () => {
+    const corpus = createNarrativeFixtureCorpus();
+    corpus.chapters = [
+      structuredClone(canonicalChapter1),
+      structuredClone(canonicalChapter2),
+    ];
+
+    const chapter1World = generateNarrativeWorld(corpus, "1.1");
+    expect(
+      chapter1World.entities.find(
+        (entity) => entity.id === "character:robert-johansson",
+      ),
+    ).toMatchObject({
+      current_state: "Presumed dead after the road incident.",
+    });
+    expect(
+      chapter1World.entities.find(
+        (entity) => entity.id === "character:robert-johansson",
+      ),
+    ).not.toHaveProperty("death_date");
+
+    const chapter2World = generateNarrativeWorld(corpus, "1.2");
+    expect(
+      chapter2World.entities.find(
+        (entity) => entity.id === "character:robert-johansson",
+      ),
+    ).toMatchObject({
+      current_state: "Dead.",
+      death_date: "2016",
+      death_event_id: "event:bob-road-incident",
+    });
+    expect(
+      chapter2World.entities.find(
+        (entity) =>
+          entity.id ===
+          "organization:free-american-independent-theocratic-hegemony",
+      ),
+    ).toMatchObject({
+      name: "FAITH",
+      description: expect.stringContaining(
+        "Free American Independent Theocratic Hegemony",
+      ),
+    });
+    expect(
+      buildNarrativeBrowserGroups(chapter2World, "chapter", "faith")
+        .flatMap((group) => group.items)
+        .map((item) => item.entity.id),
+    ).toContain("organization:free-american-independent-theocratic-hegemony");
   });
 
   it("rejects an appearance list that has no lead", () => {

@@ -22,8 +22,8 @@
     },
     {
       "id": "organization:free-american-independent-theocratic-hegemony",
-      "name": "Free American Independent Theocratic Hegemony",
-      "description": "A theocratic U.S. government that makes criticism a felony and permits the deactivation of machine persons for it."
+      "name": "FAITH",
+      "description": "The Free American Independent Theocratic Hegemony, a theocratic U.S. government that makes criticism a felony and permits the deactivation of machine persons for it."
     },
     {
       "id": "organization:applied-synergetics",
@@ -44,6 +44,14 @@
       "participant_ids": ["character:bob-replicant"]
     }
   ],
+  "updates": [
+    {
+      "entity_id": "character:robert-johansson",
+      "current_state": "Dead.",
+      "death_date": "2016",
+      "death_event_id": "event:bob-road-incident"
+    }
+  ],
   "appearances": [
     {
       "character_id": "character:bob-replicant",
@@ -56,9 +64,5 @@
       "location_id": "location:new-handeltown"
     }
   ],
-  "mentions": [
-    "character:robert-johansson",
-    "event:bob-road-incident",
-    "organization:cryoeterna"
-  ]
+  "mentions": ["event:bob-road-incident", "organization:cryoeterna"]
 }

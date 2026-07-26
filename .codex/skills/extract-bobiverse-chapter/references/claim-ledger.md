@@ -48,6 +48,12 @@ canonical chapter `mentions` array, whose entries are stable narrative entity ID
 record only important non-redundant references. Use only these
 confidence values:
 
+Use the source's primary surface form for each source mention `label`. If the source
+primarily uses an acronym, preserve the acronym exactly in `label`; capture any
+source-supported expanded form as an entity-identity or entity-attribute claim so
+Pass 2 can place it in the canonical description. Never silently expand the label or
+invent an expansion.
+
 - `high`: explicit and unambiguous in the source;
 - `medium`: source-supported but identity, scope, or interpretation needs review;
 - `low`: plausible but incomplete or ambiguous; never promote without review.

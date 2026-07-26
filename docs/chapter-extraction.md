@@ -28,6 +28,11 @@ untitled chapter uses `1.3.txt`; a titled chapter uses
    A proposed canonical `mentions` entry is separately classified as an important,
    non-redundant reference, with sealed evidence and an explicit human-review row.
 
+Entity names preserve the source's primary surface form. When the source primarily
+uses an acronym, that acronym remains the canonical visible and searchable `name`;
+a source-supported expanded form belongs in the original `description`. Codex must
+not replace the acronym with its expansion or invent an expansion.
+
 ## Approve a candidate
 
 Review the exact candidate and ask Codex to apply it explicitly, for example:

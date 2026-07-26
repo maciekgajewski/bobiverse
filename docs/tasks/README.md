@@ -34,6 +34,7 @@ derived from `../implementation-plan.md` and must remain consistent with
 | [BOB-016](BOB-016-phase-2-mobile-design-and-responsive-adaptation.md)   | Draft   | Design and implement the first-class Phase 2 mobile composition.          |
 | [BOB-017](BOB-017-audit-important-mentions-for-chapters-1-1-and-1-2.md) | Done    | Audit important mentions for canonical chapters 1.1 and 1.2.              |
 | [BOB-018](BOB-018-promote-approved-chapter-1-2-mentions.md)             | Done    | Promote the approved important mentions into canonical chapter 1.2.       |
+| [BOB-019](BOB-019-correct-chapter-1-2-names-and-state.md)               | Done    | Correct chapter 1.2 acronym naming and Robert's confirmed death state.     |
 
 ## Task requirements
 

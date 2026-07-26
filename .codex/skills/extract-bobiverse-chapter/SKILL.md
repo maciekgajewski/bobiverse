@@ -118,6 +118,12 @@ IDs such as `mention:protagonist-1`. Capture:
 - an original summary draft;
 - uncertainty and unresolved questions.
 
+Preserve the source's primary entity name exactly. When the source primarily names an
+entity by an acronym, keep that acronym as the source mention label and, after
+reconciliation, as the canonical reader-visible `name`. Put a source-supported
+expanded form in the entity's original `description`; never replace the acronym with
+the expansion or invent an expansion.
+
 Give every nontrivial claim one or more short exact source excerpts. Do not use long
 quotations. Follow `references/claim-ledger.md`.
 
