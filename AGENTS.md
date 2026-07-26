@@ -30,6 +30,13 @@ accepted ADR without saying so explicitly.
 - Present a short implementation plan before editing.
 - Ask one question at a time if a material decision is still unresolved.
 
+Routine promotion of an exact chapter candidate produced by the
+`extract-bobiverse-chapter` workflow is an editorial-authoring exception: do not
+create a per-chapter task. Require explicit approval and application authority,
+follow `docs/chapter-extraction.md`, and append the result to
+`docs/chapter-promotion-log.md`. A task is still required when the work changes code,
+schemas, contracts, tooling, or includes broader editorial remediation.
+
 ## Architectural invariants
 
 - The initial product is a static React and TypeScript application built with Vite.
@@ -108,5 +115,7 @@ accepted ADR without saying so explicitly.
 - Create self-contained work items in `docs/tasks/` as phases are approached.
 - Keep exactly one status in each task file and update `docs/tasks/README.md` when
   status changes.
+- Do not create tasks for routine promotion of approved chapter candidates; use the
+  chapter-promotion log described above.
 - Record significant architecture changes in `docs/adrs/` using the process defined
   in `docs/adrs/README.md`.

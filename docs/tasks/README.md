@@ -52,3 +52,8 @@ Every task must contain:
 
 `Ready` means the task is implementable without recovering conversation history. It
 does not replace the requirement for explicit authorization from the Captain.
+
+Routine promotion of an exact, explicitly approved chapter candidate is not tracked
+as a task. Follow `../chapter-extraction.md` and append the result to
+`../chapter-promotion-log.md`. Create a task when chapter work also changes code,
+schemas, contracts, tooling, or includes broader editorial remediation.

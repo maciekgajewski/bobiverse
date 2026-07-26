@@ -60,8 +60,10 @@ exact source bytes.
 
 ## Establish the task boundary
 
-Read the active task, `AGENTS.md`, the narrative schema, the integrated narrative
-contract, and binding ADRs before work. Do not read canonical narrative data yet.
+Read `AGENTS.md`, the narrative schema, the integrated narrative contract, binding
+ADRs, and any active task before work. Routine chapter extraction and promotion does
+not require a per-chapter task; broader code, schema, contract, tooling, or editorial
+remediation does. Do not read canonical narrative data yet.
 
 Create a new workspace with `mktemp -d`. Put draft claims, sealed evidence, candidate
 JSON, and the temporary narrative root only there. Record the initial `git status`.
@@ -232,9 +234,12 @@ An ordinary invocation may write canonical JSON only after the Captain explicitl
 approves that exact candidate. A task-scoped dry run must stop without writing even if
 the candidate is approved for quality.
 
-After an authorized canonical write, run the task's documented validation commands and
-update directly affected documentation. Never commit source text, evidence excerpts,
-draft or sealed ledgers, temporary candidates, or temporary narrative roots.
+After an authorized routine canonical write, run the standard validation documented
+in `docs/chapter-extraction.md` and append one row to
+`docs/chapter-promotion-log.md`. When an active task exists for broader work, also run
+its validation commands and update its directly affected documentation. Never commit
+source text, evidence excerpts, draft or sealed ledgers, temporary candidates, or
+temporary narrative roots.
 
 ## Deferred source fallback
 

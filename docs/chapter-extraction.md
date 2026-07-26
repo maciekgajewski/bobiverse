@@ -44,3 +44,31 @@ Accept this candidate.json as chapter 1.2.
 Until that separate approval, the skill is review-only. `dry-run` always prevents a
 canonical write. Source text, evidence excerpts, and intermediate ledgers stay out of
 version control.
+
+## Record an approved promotion
+
+Routine promotion of an exact, explicitly approved candidate does not require a new
+task. After applying the candidate:
+
+1. Confirm the canonical JSON remains value-identical to the approved candidate;
+   standard formatting may change whitespace only.
+2. Run the shared validation below.
+3. Append one row to [the chapter-promotion log](chapter-promotion-log.md) with the
+   chapter, approval date, canonical SHA-256, validation result, and any material
+   editorial decision.
+
+Create a task instead when the work changes code, schemas, contracts, tooling, or
+includes broader editorial remediation beyond the approved chapter candidate.
+
+### Standard promotion validation
+
+```bash
+chapter_ref="1.3" # Replace with the approved chapter.
+npm run narrative:manifest
+npm run narrative:validate
+npm run narrative:generate -- --chapter "$chapter_ref" --output "/tmp/bobiverse-world-$chapter_ref.json"
+npm run format:check
+npm run lint
+npm run typecheck
+git diff --check
+```
