@@ -1,0 +1,33 @@
+{
+  "chapter": "1.10",
+  "title": "10",
+  "summary": "On August 10, 2133, Bob resumes consciousness after an explosive destroys the replicant matrices in the computer room and he is restored from backups. He reflects on the restored instance's continuity, deciding that he is conscious, alive, and Bob in the important respects. Dr. Landers confirms that Kenneth is gone and says only one spare matrix was available, while security personnel suspect internal FAITH factions leaked project progress to provoke outside reactions. As the project accelerates toward a currently estimated launch about a month away, Landers gives Bob continuous operation apart from nightly backup semi-sleep and access to more libraries.",
+  "date": "2133",
+  "location_id": "location:new-handeltown",
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead",
+      "location_id": "location:new-handeltown"
+    },
+    {
+      "character_id": "character:dr-landers",
+      "role": "other",
+      "location_id": "location:new-handeltown"
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "A nightly backed-up computer simulation made from a copy of Robert Johansson's mind and the remaining candidate for controlling a Von Neumann probe. Restored from backups after an attack destroyed the replicant matrices, he considers himself conscious, alive, and Bob in the important respects. He has complete project access and expanded library access, is regarded as adaptable and resilient, and is training for the mission while still lacking a visible face. He will remain online except for a nightly half-hour semi-sleep during backup."
+    },
+    {
+      "entity_id": "character:kenneth-martins",
+      "current_state": "Gone after the attack that destroyed the replicant matrices; his precise fate has not been revealed."
+    },
+    {
+      "entity_id": "organization:free-american-independent-theocratic-hegemony",
+      "description": "The Free American Independent Theocratic Hegemony, a theocratic U.S. government that makes criticism a felony and permits the deactivation of machine persons for it. It restricts information by default; the domestic internet no longer exists, and genealogy records are unavailable to the public. It is divided into factions and power blocs, including factions that regard artificial intelligence and replicants as abominations or advocate abandoning technology from steam power onward. It finances the replicant project and owns Bob. It controls most of North America, while several internal factions oppose Project HEAVEN, the Habitable Earths Abiogenic Vessel Exploration Network, and seek to stop it. Security personnel believe internal factions leaked the project's progress to provoke competing nations into reacting."
+    }
+  ]
+}

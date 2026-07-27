@@ -1,0 +1,66 @@
+{
+  "chapter": "1.7",
+  "title": "7",
+  "summary": "On July 25, 2133, Dr. Landers tells Bob that Project HEAVEN has been reduced from eight planned vessels to one as opponents converge on the project, leaving it vulnerable to sabotage. After gaining full project and library access, Bob explores the geopolitical race for self-replicating probes and learns how the USE, China, the Brazilian Empire, and Australia compare. Landers believes Bob and the other remaining replicant offer an unconventional advantage.",
+  "date": "2133",
+  "location_id": "location:new-handeltown",
+  "introducing": [
+    {
+      "id": "technology:surge-drive",
+      "name": "SURGE drive",
+      "description": "A recently developed drive technology enabled by a breakthrough in subspace theory and used to equip spacecraft for interstellar operations. Beyond prototypes, only a small number of SURGE-equipped vessels are in active service. Its operating principle and the expansion of SURGE have not yet been revealed."
+    },
+    {
+      "id": "technology:suddar",
+      "name": "SUDDAR",
+      "description": "A subspace technology enabled by the same theoretical breakthrough as the SURGE drive and associated with the new possibility of interstellar probes and colonization. Its specific function, operating principle, capabilities, limitations, and acronym expansion have not yet been revealed."
+    },
+    {
+      "id": "organization:united-states-of-eurasia",
+      "name": "USE",
+      "description": "The United States of Eurasia controls Europe and most of western Russia. It began an interstellar probe project two years earlier, and Dr. Landers considers it the strongest long-term competitor, with a substantial lead in colonization readiness."
+    },
+    {
+      "id": "organization:china",
+      "name": "China",
+      "description": "A major power whose probe project is sacrificing other concerns for speed and is expected to use an AMI. Dr. Landers's organization considers its project the most likely to fail outright."
+    },
+    {
+      "id": "organization:brazilian-empire",
+      "name": "Brazilian Empire",
+      "description": "A belligerent power believed by Dr. Landers's organization to be potentially arming its probes and to be the most likely sabotage threat. His organization expects it to launch multiple probes and, if it finds a suitable system, establish a military presence and reproduce there."
+    },
+    {
+      "id": "organization:australia",
+      "name": "Australia",
+      "description": "A suspected participant in the international interstellar-probe race, referred to as Australia. Dr. Landers's organization suspects it of operating a probe project. Its exact political identity, relationship to the separately mentioned Australian Federation, project capabilities, and other defining characteristics have not yet been revealed."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead",
+      "location_id": "location:new-handeltown"
+    },
+    {
+      "character_id": "character:dr-landers",
+      "role": "other",
+      "location_id": "location:new-handeltown"
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "A nightly backed-up computer simulation made from a copy of Robert Johansson's mind, now one of two candidates for controlling a Von Neumann probe. He has complete project and library access, is regarded as adaptable and resilient, and is training for the mission while still lacking a visible face."
+    },
+    {
+      "entity_id": "organization:free-american-independent-theocratic-hegemony",
+      "description": "The Free American Independent Theocratic Hegemony, a theocratic U.S. government that makes criticism a felony and permits the deactivation of machine persons for it. It restricts information by default; the domestic internet no longer exists, and genealogy records are unavailable to the public. It is divided into factions and power blocs, including factions that regard artificial intelligence and replicants as abominations or advocate abandoning technology from steam power onward. It finances the replicant project and owns Bob. It controls most of North America, while several internal factions oppose Project HEAVEN, the Habitable Earths Abiogenic Vessel Exploration Network, and seek to stop it."
+    },
+    {
+      "entity_id": "technology:von-neumann-probe",
+      "description": "A self-replicating spacecraft designed to travel between star systems and construct new copies of itself along the way. Interstellar use became possible after a breakthrough in subspace theory, and such probes are central to a competitive international colonization effort."
+    }
+  ],
+  "mentions": ["location:earth", "technology:ami"]
+}

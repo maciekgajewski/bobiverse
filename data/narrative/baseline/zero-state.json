@@ -86,6 +86,11 @@
       "id": "species:human",
       "name": "Human",
       "homeworld_id": "location:earth"
+    },
+    {
+      "id": "technology:ami",
+      "name": "AMI",
+      "description": "Artificial Machine Intelligence (AMI) is an artificial intelligence created directly as a machine mind rather than copied from a biological mind."
     }
   ]
 }

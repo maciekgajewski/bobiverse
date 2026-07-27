@@ -1,0 +1,50 @@
+{
+  "chapter": "1.6",
+  "title": "6",
+  "summary": "On July 19, 2133, after two subjective days of successful simulation testing, Bob learns that only two candidates remain after one suffered a psychotic break and Minister Travis rejected another, who appears to have been purged. Dr. Landers reveals that the winner will control a self-replicating interstellar probe. Newly eager to reach the stars, Bob applies himself to studying project documents and coordinating autonomous ROAMers through a repair exercise.",
+  "date": "2133",
+  "location_id": "location:new-handeltown",
+  "introducing": [
+    {
+      "id": "technology:von-neumann-probe",
+      "name": "Von Neumann probe",
+      "description": "A self-replicating spacecraft designed to travel between star systems and construct new copies of itself along the way."
+    },
+    {
+      "id": "technology:nanites",
+      "name": "nanites",
+      "description": "Tiny, single-purpose devices used for work below ROAMer scale; their flexibility is limited."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead",
+      "location_id": "location:new-handeltown"
+    },
+    {
+      "character_id": "character:dr-landers",
+      "role": "other",
+      "location_id": "location:new-handeltown"
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "A nightly backed-up computer simulation made from a copy of Robert Johansson's mind, now one of two candidates for controlling a Von Neumann probe and highly motivated to cooperate and train for the chance to reach the stars."
+    },
+    {
+      "entity_id": "organization:free-american-independent-theocratic-hegemony",
+      "description": "The Free American Independent Theocratic Hegemony, a theocratic U.S. government that makes criticism a felony and permits the deactivation of machine persons for it. It restricts information by default; the domestic internet no longer exists, and genealogy records are unavailable to the public. It is divided into factions and power blocs, including factions that regard artificial intelligence and replicants as abominations or advocate abandoning technology from steam power onward. It finances the replicant project and owns Bob."
+    },
+    {
+      "entity_id": "technology:guppi-interface",
+      "description": "An interface that offloads tasks for replicants while retaining their human limits on multitasking. Its name expands to General Unit Primary Peripheral Interface. Its logs record Bob's monitoring interfaces and scripts."
+    },
+    {
+      "entity_id": "technology:roamers",
+      "description": "Remote observation and manipulation devices that Bob directs through GUPPI. They come in varied sizes, can coordinate across scales, and need minimal supervision once their tasks, dependencies, and interruption conditions are defined. Without Bob's active interference, they can work up to ten times faster."
+    }
+  ],
+  "mentions": ["character:minister-travis"]
+}

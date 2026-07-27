@@ -1,0 +1,47 @@
+{
+  "chapter": "1.8",
+  "title": "8",
+  "summary": "On August 4, 2133, an armed raid on the project complex interrupts Bob's training. He directs a swarm of ROAMers to aid security, helping force the attackers to surrender; three people die and several are injured. He later learns that a tactical nuclear weapon is supposedly held as a last safeguard against him escaping. Secretly mapping the complex through an unaccounted-for ROAMer, he finds the computer room and discovers five candidate cubes: his and Kenneth Martins's are active, while three others are powered down, although Bob's individual label remains unrevealed.",
+  "date": "2133",
+  "location_id": "location:new-handeltown",
+  "introducing": [
+    {
+      "id": "character:kenneth-martins",
+      "name": "Kenneth Martins",
+      "current_state": "One of the project candidates, represented by one of the two glowing cubes in the project computer room; no other reader-visible details have been revealed."
+    },
+    {
+      "id": "character:jiro-tanaka",
+      "name": "Jiro Tanaka",
+      "current_state": "A project candidate identified only by a cube label; the individual cube state and other reader-visible details have not been revealed."
+    },
+    {
+      "id": "character:neves-reijnder",
+      "name": "Neves Reijnder",
+      "current_state": "A project candidate identified only by a cube label; the individual cube state and other reader-visible details have not been revealed."
+    },
+    {
+      "id": "character:joana-almeida",
+      "name": "Joana Almeida",
+      "current_state": "A project candidate identified only by a cube label; the individual cube state and other reader-visible details have not been revealed."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead",
+      "location_id": "location:new-handeltown"
+    },
+    {
+      "character_id": "character:dr-landers",
+      "role": "other",
+      "location_id": "location:new-handeltown"
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "technology:roamers",
+      "description": "Remote observation and manipulation devices that Bob directs through GUPPI. They come in varied sizes, can coordinate across scales, and need minimal supervision once their tasks, dependencies, and interruption conditions are defined. Without Bob's active interference, they can work up to ten times faster. They can travel along floors, walls, and ceilings, and carry video cameras for remote observation."
+    }
+  ]
+}

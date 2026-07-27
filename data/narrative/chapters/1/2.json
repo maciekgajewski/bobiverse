@@ -34,14 +34,6 @@
       "id": "technology:guppi-interface",
       "name": "GUPPI interface",
       "description": "An interface that offloads tasks for replicants while retaining their human limits on multitasking."
-    },
-    {
-      "id": "event:replicant-candidate-selection",
-      "name": "Replicant candidate selection",
-      "location_id": "location:new-handeltown",
-      "date": "2133",
-      "description": "Five activated replicant candidates compete for a project that requires only one.",
-      "participant_ids": ["character:bob-replicant"]
     }
   ],
   "updates": [

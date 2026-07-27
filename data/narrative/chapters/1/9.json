@@ -1,0 +1,41 @@
+{
+  "chapter": "1.9",
+  "title": "9",
+  "summary": "On August 6, 2133, while working in the roamer room, Bob covertly listens to Dr. Landers's confrontation with Minister Jacoby. Jacoby condemns the replicant enterprise as spiritually dangerous and threatens Landers, while Landers answers that the Ministry of Truth officially supports and funds the work. Bob's ROAMer can pick up the conversation through vibrations in the wall despite Landers disabling the intercom; after Jacoby leaves, Landers sends Bob back to his exercise.",
+  "date": "2133",
+  "location_id": "location:new-handeltown",
+  "introducing": [
+    {
+      "id": "character:minister-jacoby",
+      "name": "Minister Jacoby",
+      "current_state": "A minister who condemns the replicant enterprise as spiritually dangerous and threatens Dr. Landers over his participation."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead",
+      "location_id": "location:new-handeltown"
+    },
+    {
+      "character_id": "character:dr-landers",
+      "role": "other",
+      "location_id": "location:new-handeltown"
+    },
+    {
+      "character_id": "character:minister-jacoby",
+      "role": "other",
+      "location_id": "location:new-handeltown"
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "technology:roamers",
+      "description": "Remote observation and manipulation devices that Bob directs through GUPPI. They come in varied sizes, can coordinate across scales, and need minimal supervision once their tasks, dependencies, and interruption conditions are defined. Without Bob's active interference, they can work up to ten times faster. They can travel along floors, walls, and ceilings, carry video cameras for remote observation, and pick up vibrations transmitted through a wall when pressed against it."
+    },
+    {
+      "entity_id": "organization:ministry-of-truth",
+      "description": "A FAITH ministry that finances the replicant venture and has military, colonization, and diplomatic responsibilities. It officially supports and actively funds the replicant enterprise, and holds that the enterprise's machine minds are without souls but are based on God's creation rather than attempts to usurp divine authority."
+    }
+  ]
+}
