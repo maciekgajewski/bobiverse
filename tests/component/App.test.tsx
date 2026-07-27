@@ -8,6 +8,8 @@ import {
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import App from "../../src/App";
+import * as narrativeMap from "../../src/narrative/map";
+import * as narrativeModel from "../../src/narrative/model";
 
 describe("atlas shell", () => {
   afterEach(() => {
@@ -33,6 +35,98 @@ describe("atlas shell", () => {
     ).toBeInTheDocument();
     expect(screen.getByText(/WebGL unavailable/i)).toBeInTheDocument();
     expect(screen.queryByText("Astronomy systems")).not.toBeInTheDocument();
+  });
+
+  it("renders actionable content when the narrative projection is invalid", () => {
+    vi.spyOn(narrativeModel, "generateNarrativeWorld").mockImplementationOnce(
+      () => {
+        throw new Error("Fixture projection failed.");
+      },
+    );
+
+    render(<App />);
+
+    expect(
+      screen.getByRole("heading", { name: "Narrative projection unavailable" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Fixture projection failed.")).toBeInTheDocument();
+    expect(screen.getByText(/Reload the application/)).toBeInTheDocument();
+  });
+
+  it("routes persisted-progress projection failures to the recovery state", () => {
+    window.localStorage.setItem(
+      "bobiverse.app-state.v1",
+      JSON.stringify({
+        furthestChapterRead: "1.2",
+        viewChapter: "1.2",
+        displayDate: "2133",
+        mode: "chapter",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+    vi.spyOn(narrativeModel, "meaningfulNarrativeDates").mockImplementationOnce(
+      () => {
+        throw new Error("Persisted projection failed.");
+      },
+    );
+
+    render(<App />);
+
+    expect(
+      screen.getByRole("heading", { name: "Narrative projection unavailable" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Persisted projection failed."),
+    ).toBeInTheDocument();
+  });
+
+  it("routes selected-object transition failures to the recovery state", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: "Solar System" }));
+    vi.spyOn(narrativeModel, "generateNarrativeWorld").mockImplementationOnce(
+      () => {
+        throw new Error("Transition projection failed.");
+      },
+    );
+
+    await user.selectOptions(screen.getByLabelText("Read through"), "1.1");
+    await user.click(
+      screen.getByRole("button", { name: "Confirm read through" }),
+    );
+
+    expect(
+      screen.getByRole("heading", { name: "Narrative projection unavailable" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Transition projection failed."),
+    ).toBeInTheDocument();
+  });
+
+  it("keeps DOM navigation available when astronomy coverage is missing", () => {
+    vi.spyOn(narrativeMap, "projectNarrativeMap").mockReturnValueOnce({
+      knownSystemIds: new Set(),
+      missingAstronomySystemIds: new Set(["missing-anchor"]),
+      narrativeSystemIdsByAstronomyId: new Map(),
+      activeSystemIds: new Set(),
+      contextSystems: [],
+    });
+
+    render(<App />);
+
+    expect(
+      screen.getByRole("heading", { name: "Astronomy coverage unavailable" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/missing-anchor/)).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Solar System" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Select a map marker or browser item to inspect its reader-safe details.",
+      ),
+    ).toBeInTheDocument();
   });
 
   it("keeps unit controls and removes the measurement tool", async () => {

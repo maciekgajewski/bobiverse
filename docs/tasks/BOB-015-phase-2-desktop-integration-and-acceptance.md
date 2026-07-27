@@ -1,13 +1,14 @@
 # BOB-015: Phase 2 desktop integration and acceptance
 
-Status: Ready
+Status: Done
 Phase: 2 (narrative foundation and chapter timeline)
-Last updated: 2026-07-26
+Last updated: 2026-07-27
 
-## Blockers
+## Dependency status
 
 BOB-011 through BOB-014 must be complete. BOB-010 is an indirect prerequisite through
-the browser and map tasks.
+the browser and map tasks. All prerequisites are complete; the Captain authorized
+implementation on 2026-07-27.
 
 ## Objective
 
@@ -110,6 +111,28 @@ git diff --check
 Manual review uses `npm run dev` at the documented trusted-LAN address. Record browser,
 viewport, zoom, motion, and any unavailable real-browser coverage in this task before
 marking it `Done`.
+
+## Implementation evidence
+
+Implementation and automated validation completed on 2026-07-27. The compact command
+bar now opens the shared `TimelineDock` as **Timeline and progress** with unique DOM
+IDs, a non-animated modal surface, focus containment, Escape and close dismissal, and
+focus return. The map context badge remains inside the map at desktop and compact
+sizes. Invalid narrative projections and missing mapped astronomy anchors produce
+actionable DOM states.
+
+The narrative validator, astronomy validator, formatting, lint, typecheck, production
+build, and `git diff --check` pass. `npm run validate` passes 41 Python tests and 115
+unit/component tests. `npm run test:e2e` passes all 39 flows across Chromium, headed
+Firefox, and WebKit. A fresh independent closure review after the regression fixes
+returned `No findings.`
+
+On 2026-07-27, the Captain completed and accepted the required remote visual review
+in current Chrome, Firefox, and Edge. The review covered the simultaneous desktop
+workspace, short desktop viewport, 200% zoom compact reflow, shared chapter/date
+projection flow, modal focus containment and return, reduced motion, and attribution
+reachability. Real Safari remains the existing explicit pre-publication gap because
+no Apple test workstation is available.
 
 ## Risks and cautions
 

@@ -173,6 +173,10 @@ Planned work:
 - Keep `furthestChapterRead`, `viewChapter`, and requested story date separate. Add
   explicit **Read through** progress, reading-order Chapter mode, and meaningful-date
   Date mode with a linear calendar-year axis.
+- Keep the four desktop surfaces simultaneous at `>= 1200px`; below that breakpoint,
+  including 200% desktop zoom, retain the map-first compact browser and inspector
+  panels and expose the shared timeline/progress controls through a focus-contained
+  command-bar modal.
 - Add optional important chapter `mentions` and generate one cross-type narrative
   activity index for browser recency, map emphasis, and inspector context.
 - Add the Phase 2 searchable grouped object browser. Groups appear progressively for
@@ -197,6 +201,8 @@ Exit criteria:
 - Browser ordering, map activity, and inspector recency use the same generated
   activity result.
 - Story-date spacing and interstellar geometry both remain linear and truthful.
+- Desktop zoom reflow keeps browser, map, inspector, timeline/progress, and
+  attribution reachable without horizontal page scrolling.
 - Original book text is absent from the repository and built assets.
 
 ## 7. Phase 3: exploration tools

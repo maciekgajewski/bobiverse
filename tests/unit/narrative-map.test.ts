@@ -79,6 +79,7 @@ describe("narrative map projection", () => {
       "chapter",
     );
     expect([...projection.knownSystemIds]).toEqual(["known"]);
+    expect([...projection.missingAstronomySystemIds]).toEqual([]);
     expect([...projection.activeSystemIds]).toEqual(["known"]);
     expect(projection.narrativeSystemIdsByAstronomyId.get("known")).toBe(
       "location:system",
@@ -87,6 +88,19 @@ describe("narrative map projection", () => {
       "known",
       "near",
     ]);
+  });
+
+  it("reports mapped narrative anchors missing from astronomy coverage", () => {
+    const projection = projectNarrativeMap(
+      world,
+      [system("near", 5)],
+      20,
+      "chapter",
+    );
+
+    expect([...projection.knownSystemIds]).toEqual([]);
+    expect([...projection.missingAstronomySystemIds]).toEqual(["known"]);
+    expect(projection.contextSystems).toEqual([]);
   });
 
   it("uses mapped activity ancestry at the represented date", () => {

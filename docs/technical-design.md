@@ -425,6 +425,15 @@ surface, and the attribution footer remains visible. The shared application stat
 components are later recomposed for mobile by BOB-016; desktop implementation must not
 create a parallel domain or spoiler model.
 
+Below the simultaneous-layout breakpoint, including when 200% desktop zoom reduces
+the CSS viewport, the BOB-003 map-first browser and inspector panels remain in use.
+The command bar additionally opens **Timeline and progress** as a non-animated modal
+panel containing the same `TimelineDock` component and shared projection state as the
+desktop dock. The compact panel provides a visible close control, Escape dismissal,
+focus containment, and focus return. This is the BOB-015 desktop-zoom contract;
+BOB-016 may later recompose the same components for a first-class phone and tablet
+design without replacing their state or projection authority.
+
 `ObjectBrowser` receives the centralized `NarrativeWorld` projection and its generated
 activity array. It groups only projected entities, searches only projected names and
 aliases, and applies mode-specific activity ordering without reading authored chapter

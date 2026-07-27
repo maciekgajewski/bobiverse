@@ -38,6 +38,8 @@ function ShieldIcon() {
 }
 
 interface TimelineDockProps {
+  idPrefix?: string;
+  renderConfirmation?: boolean;
   chapters: readonly NarrativeChapterSummary[];
   progress: ReaderProgress;
   meaningfulDates: readonly string[];
@@ -55,6 +57,7 @@ interface TimelineDockProps {
 }
 
 function DateAxis({
+  idPrefix,
   meaningfulDates,
   meaningfulDateSources,
   unlocked,
@@ -70,7 +73,7 @@ function DateAxis({
   | "onDate"
   | "onZoom"
   | "onPan"
-> & { unlocked: NarrativeChapterSummary[] }) {
+> & { idPrefix: string; unlocked: NarrativeChapterSummary[] }) {
   const drag = useRef<{ pointerId: number; clientX: number } | null>(null);
   const viewport = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
@@ -111,14 +114,14 @@ function DateAxis({
 
   return (
     <div className="date-navigation">
-      <p className="timeline-gesture-help" id="date-axis-help">
+      <p className="timeline-gesture-help" id={`${idPrefix}-date-axis-help`}>
         Mouse wheel: zoom · Drag: pan · Keyboard: +/− and arrow keys
       </p>
       <div
         className={`date-axis-viewport ${dragging ? "dragging" : ""}`}
         ref={viewport}
         aria-label="Meaningful story dates"
-        aria-describedby="date-axis-help"
+        aria-describedby={`${idPrefix}-date-axis-help`}
         tabIndex={0}
         onWheel={(event) => {
           event.preventDefault();
@@ -178,7 +181,7 @@ function DateAxis({
             const selected = dates.some(
               (date) => date === progress.displayDate,
             );
-            const choiceListId = `story-year-${calendarYear}-choices`;
+            const choiceListId = `${idPrefix}-story-year-${calendarYear}-choices`;
             return (
               <div
                 className="year-cluster"
@@ -261,6 +264,8 @@ function DateAxis({
 }
 
 export function TimelineDock({
+  idPrefix = "desktop",
+  renderConfirmation = true,
   chapters,
   progress,
   meaningfulDates,
@@ -276,6 +281,9 @@ export function TimelineDock({
   onZoom,
   onPan,
 }: TimelineDockProps) {
+  const readThroughId = `${idPrefix}-read-through`;
+  const knowledgeThroughId = `${idPrefix}-knowledge-through`;
+  const confirmationHeadingId = `${idPrefix}-read-through-confirmation`;
   const unlocked = progress.furthestChapterRead
     ? chapters.filter(
         (chapter) =>
@@ -287,12 +295,23 @@ export function TimelineDock({
     : [];
   const selectedReadThrough =
     pendingReadThrough ?? progress.furthestChapterRead ?? "";
+  const readThroughSelect = useRef<HTMLSelectElement>(null);
   const confirmButton = useRef<HTMLButtonElement>(null);
   const confirmationDialog = useRef<HTMLDivElement>(null);
+  const confirmationWasOpen = useRef(false);
 
   useEffect(() => {
-    if (pendingReadThrough !== null) confirmButton.current?.focus();
-  }, [pendingReadThrough]);
+    if (!renderConfirmation) return;
+    if (pendingReadThrough !== null) {
+      confirmationWasOpen.current = true;
+      confirmButton.current?.focus();
+      return;
+    }
+    if (confirmationWasOpen.current) {
+      confirmationWasOpen.current = false;
+      readThroughSelect.current?.focus();
+    }
+  }, [pendingReadThrough, renderConfirmation]);
 
   return (
     <section
@@ -300,12 +319,13 @@ export function TimelineDock({
       aria-label="Reader progress and temporal navigation"
     >
       <div className="progress-control spoiler-limit">
-        <label htmlFor="read-through">
+        <label htmlFor={readThroughId}>
           <ShieldIcon />
           Read through
         </label>
         <select
-          id="read-through"
+          ref={readThroughSelect}
+          id={readThroughId}
           value={selectedReadThrough}
           onChange={(event) => onReadThroughChoice(event.target.value)}
         >
@@ -351,9 +371,9 @@ export function TimelineDock({
       {progress.mode === "chapter" ? (
         <div className="chapter-navigation">
           <div className="knowledge-control">
-            <label htmlFor="knowledge-through">Knowledge through</label>
+            <label htmlFor={knowledgeThroughId}>Knowledge through</label>
             <select
-              id="knowledge-through"
+              id={knowledgeThroughId}
               value={progress.viewChapter ?? ""}
               disabled={!progress.furthestChapterRead}
               onChange={(event) =>
@@ -450,6 +470,7 @@ export function TimelineDock({
         </div>
       ) : (
         <DateAxis
+          idPrefix={idPrefix}
           meaningfulDates={meaningfulDates}
           meaningfulDateSources={meaningfulDateSources}
           unlocked={unlocked}
@@ -460,7 +481,7 @@ export function TimelineDock({
         />
       )}
 
-      {pendingReadThrough !== null && (
+      {renderConfirmation && pendingReadThrough !== null && (
         <div className="confirmation-layer">
           <div className="confirmation-backdrop" aria-hidden="true" />
           <div
@@ -468,8 +489,9 @@ export function TimelineDock({
             className="confirmation-dialog"
             role="dialog"
             aria-modal="true"
-            aria-labelledby="read-through-confirmation"
+            aria-labelledby={confirmationHeadingId}
             onKeyDown={(event) => {
+              event.stopPropagation();
               if (event.key === "Escape") {
                 onCancelReadThrough();
                 return;
@@ -493,7 +515,7 @@ export function TimelineDock({
           >
             <div className="confirmation-heading">
               <ShieldIcon />
-              <h2 id="read-through-confirmation">Confirm read progress</h2>
+              <h2 id={confirmationHeadingId}>Confirm read progress</h2>
             </div>
             <p>
               {pendingReadThrough

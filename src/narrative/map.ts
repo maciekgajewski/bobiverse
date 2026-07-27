@@ -6,6 +6,7 @@ const PARSECS_PER_LIGHT_YEAR = 1 / 3.26156;
 
 export interface NarrativeMapProjection {
   knownSystemIds: ReadonlySet<string>;
+  missingAstronomySystemIds: ReadonlySet<string>;
   narrativeSystemIdsByAstronomyId: ReadonlyMap<string, string>;
   activeSystemIds: ReadonlySet<string>;
   contextSystems: StellarSystem[];
@@ -57,6 +58,7 @@ export function projectNarrativeMap(
 ): NarrativeMapProjection {
   const available = new Map(systems.map((system) => [system.id, system]));
   const knownSystemIds = new Set<string>();
+  const missingAstronomySystemIds = new Set<string>();
   const narrativeSystemIds = new Map<string, string>();
   const narrativeSystemIdsByAstronomyId = new Map<string, string>();
 
@@ -64,9 +66,12 @@ export function projectNarrativeMap(
     if (
       entity.entity_type !== "location" ||
       entity.kind !== "star_system" ||
-      typeof entity.astronomy_object_id !== "string" ||
-      !available.has(entity.astronomy_object_id)
+      typeof entity.astronomy_object_id !== "string"
     ) {
+      continue;
+    }
+    if (!available.has(entity.astronomy_object_id)) {
+      missingAstronomySystemIds.add(entity.astronomy_object_id);
       continue;
     }
     knownSystemIds.add(entity.astronomy_object_id);
@@ -98,6 +103,7 @@ export function projectNarrativeMap(
 
   return {
     knownSystemIds,
+    missingAstronomySystemIds,
     narrativeSystemIdsByAstronomyId,
     activeSystemIds,
     contextSystems,

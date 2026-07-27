@@ -15,6 +15,10 @@ test("phone browser opens, selection opens inspector, and units remain available
   await expect(
     page.getByRole("heading", { name: "Solar System" }),
   ).toBeVisible();
+  await page
+    .getByRole("dialog", { name: "Selected object" })
+    .getByRole("button", { name: "Close" })
+    .click();
   await page.getByRole("button", { name: "pc" }).click();
   await expect(page.getByTestId("map-scale-label")).toContainText("pc");
 });
@@ -50,6 +54,90 @@ test("compact inspector stays inside the viewport", async ({ page }) => {
   expect(bounds.bottom).toBeLessThanOrEqual(700);
 });
 
+test("compact reflow keeps timeline progress reachable and traps focus", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 720, height: 700 });
+  await page.goto("/");
+
+  await expect(page.locator(".timeline-dock").first()).toBeHidden();
+  const timelineCommand = page.getByRole("button", {
+    name: "Timeline and progress",
+  });
+  await timelineCommand.click();
+
+  const panel = page.getByRole("dialog", { name: "Timeline and progress" });
+  await expect(panel).toBeVisible();
+  await expect(panel.getByRole("button", { name: "Close" })).toBeFocused();
+  await page.keyboard.press("Shift+Tab");
+  expect(
+    await panel.evaluate((element) => element.contains(document.activeElement)),
+  ).toBe(true);
+  await page.keyboard.press("Tab");
+  await expect(panel.getByRole("button", { name: "Close" })).toBeFocused();
+
+  await panel.getByLabel("Read through").selectOption("1.2");
+  await expect(
+    page.getByRole("dialog", { name: "Confirm read progress" }),
+  ).toBeVisible();
+  await page
+    .getByRole("dialog", { name: "Confirm read progress" })
+    .getByRole("button", { name: "Confirm read through" })
+    .click();
+  await expect(panel.getByLabel("Knowledge through")).toHaveValue("1.2");
+  await expect(page.locator(".map-narrative-badge")).toContainText(
+    "Universe in 2133 · Knowledge through Chapter 1.2",
+  );
+
+  await page.keyboard.press("Escape");
+  await expect(panel).toHaveCount(0);
+  await expect(timelineCommand).toBeFocused();
+  await expect(
+    page.getByRole("link", { name: /Astronomy backdrop:/ }),
+  ).toBeVisible();
+  expect(
+    await page.evaluate(
+      () =>
+        document.documentElement.scrollWidth <=
+        document.documentElement.clientWidth,
+    ),
+  ).toBe(true);
+});
+
+test("crossing the desktop breakpoint closes compact timeline state safely", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 720, height: 700 });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Timeline and progress" }).click();
+  const compactPanel = page.getByRole("dialog", {
+    name: "Timeline and progress",
+  });
+  await compactPanel.getByLabel("Read through").selectOption("1.2");
+  await expect(
+    page.getByRole("dialog", { name: "Confirm read progress" }),
+  ).toBeVisible();
+
+  await page.setViewportSize({ width: 1200, height: 700 });
+  await expect(page.locator(".mobile-panel.timeline")).toHaveCount(0);
+  await expect(page.locator(".confirmation-layer")).toHaveCount(0);
+  const desktopReadThrough = page.locator("#desktop-read-through");
+  await expect(desktopReadThrough).toBeVisible();
+  await expect(desktopReadThrough).toHaveValue("");
+  await expect(desktopReadThrough).toBeFocused();
+
+  await page.setViewportSize({ width: 720, height: 700 });
+  await expect(page.locator(".timeline-dock").first()).toBeHidden();
+  const timelineCommand = page.getByRole("button", {
+    name: "Timeline and progress",
+  });
+  await expect(timelineCommand).toBeVisible();
+  await timelineCommand.click();
+  await expect(
+    page.getByRole("dialog", { name: "Timeline and progress" }),
+  ).toBeVisible();
+});
+
 test("short phone viewport does not create page scrolling", async ({
   page,
 }) => {
@@ -69,6 +157,62 @@ test("desktop footer remains within the viewport", async ({ page }) => {
       footerText.parentElement?.getBoundingClientRect().toJSON(),
     );
   expect(bounds?.bottom).toBeLessThanOrEqual(700);
+});
+
+test("desktop integration keeps all four surfaces usable with the map largest", async ({
+  page,
+}) => {
+  for (const viewport of [
+    { width: 1200, height: 700 },
+    { width: 1440, height: 1000 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+
+    const browser = page.getByRole("complementary", {
+      name: "Object browser",
+    });
+    const map = page.getByRole("region", {
+      name: "Interactive three dimensional nearby stellar-system map",
+    });
+    const inspector = page.getByRole("complementary", {
+      name: "Object inspector",
+    });
+    const timeline = page.getByRole("region", {
+      name: "Reader progress and temporal navigation",
+    });
+    await expect(browser).toBeVisible();
+    await expect(map).toBeVisible();
+    await expect(inspector).toBeVisible();
+    await expect(timeline).toBeVisible();
+
+    const [browserBox, mapBox, inspectorBox, badgeBox] = await Promise.all([
+      browser.boundingBox(),
+      map.boundingBox(),
+      inspector.boundingBox(),
+      page.locator(".map-narrative-badge").boundingBox(),
+    ]);
+    expect(
+      browserBox &&
+        mapBox &&
+        inspectorBox &&
+        mapBox.width > browserBox.width &&
+        mapBox.width > inspectorBox.width,
+    ).toBe(true);
+    expect(
+      badgeBox &&
+        mapBox &&
+        badgeBox.x >= mapBox.x &&
+        badgeBox.x + badgeBox.width <= mapBox.x + mapBox.width,
+    ).toBe(true);
+    expect(
+      await page.evaluate(
+        () =>
+          document.documentElement.scrollWidth <=
+          document.documentElement.clientWidth,
+      ),
+    ).toBe(true);
+  }
 });
 
 test("the permanent local backdrop preserves responsive map interaction", async ({
@@ -107,6 +251,7 @@ test("the permanent local backdrop preserves responsive map interaction", async 
 test("reader progress is confirmed before chapter data is unlocked", async ({
   page,
 }) => {
+  test.slow();
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/");
   await expect(page.locator(".map-narrative-badge")).toHaveText(
@@ -287,4 +432,45 @@ test("nearby astronomy remains a query-only in-context inspector path", async ({
   await expect(
     page.getByRole("heading", { name: "Alpha Centauri" }),
   ).toBeVisible();
+});
+
+test("desktop surfaces stay on one projection through chapter and date changes", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/");
+  await page.getByLabel("Read through").selectOption("1.2");
+  await page.getByRole("button", { name: "Confirm read through" }).click();
+
+  const sharedChapterStatus =
+    "Universe in 2133 · Knowledge through Chapter 1.2";
+  await expect(page.locator(".view-status")).toHaveText(sharedChapterStatus);
+  await expect(page.locator(".map-narrative-badge")).toHaveText(
+    sharedChapterStatus,
+  );
+  await page.getByRole("button", { name: "Bob Active" }).click();
+  await expect(
+    page
+      .getByRole("complementary", { name: "Object inspector" })
+      .getByRole("heading", { name: "Bob" }),
+  ).toBeVisible();
+
+  await page.getByRole("button", { name: "Date mode" }).click();
+  await page.getByRole("button", { name: "2016", exact: true }).click();
+  const sharedDateStatus = "Universe in 2016 · Knowledge through Chapter 1.2";
+  await expect(page.locator(".view-status")).toHaveText(sharedDateStatus);
+  await expect(page.locator(".map-narrative-badge")).toHaveText(
+    sharedDateStatus,
+  );
+  await expect(
+    page.getByText(
+      "Selection cleared because the object is not eligible in this view.",
+    ),
+  ).toBeAttached();
+
+  await page.getByRole("button", { name: "Chapter mode" }).click();
+  await expect(page.locator(".view-status")).toHaveText(sharedChapterStatus);
+  await expect(page.locator(".map-narrative-badge")).toHaveText(
+    sharedChapterStatus,
+  );
 });

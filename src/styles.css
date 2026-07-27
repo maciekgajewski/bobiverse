@@ -450,14 +450,18 @@ h2 {
   display: none;
 }
 .map-narrative-badge {
-  max-width: min(20rem, 42vw);
-  margin-left: 0.5rem;
+  position: absolute;
+  z-index: 2;
+  top: 0.75rem;
+  left: 0.75rem;
+  max-width: min(24rem, calc(100% - 1.5rem));
   padding: 0.22rem 0.38rem;
   border: 1px solid rgb(125 233 255 / 42%);
   border-radius: 0.25rem;
   background: rgb(4 10 20 / 82%);
   color: #cdeeff;
   font-size: 0.66rem;
+  pointer-events: none;
 }
 .timeline-dock {
   position: relative;
@@ -1114,12 +1118,55 @@ footer a:hover {
     background: var(--surface-panel);
     box-shadow: 0 -12px 48px rgb(0 0 0 / 60%);
   }
+  .compact-panel-backdrop {
+    position: fixed;
+    z-index: calc(var(--z-panel) - 1);
+    inset: 0;
+    background: rgb(1 6 14 / 64%);
+    backdrop-filter: blur(4px);
+  }
   .timeline-dock {
     display: none;
   }
   .mobile-panel.browser {
     inset: 0;
     border-radius: 0;
+  }
+  .mobile-panel.timeline {
+    inset: 0.5rem;
+    max-height: none;
+    border: 1px solid var(--line-accent);
+    border-radius: 0.75rem;
+  }
+  .compact-timeline-heading {
+    margin-bottom: 0.85rem;
+  }
+  .mobile-panel.timeline .timeline-dock {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+  .mobile-panel.timeline .timeline-mode {
+    flex-direction: row;
+  }
+  .mobile-panel.timeline .chapter-navigation {
+    flex-direction: column;
+    overflow-x: auto;
+  }
+  .mobile-panel.timeline .knowledge-control {
+    width: min(100%, 18rem);
+    flex-basis: auto;
+  }
+  .mobile-panel.timeline .chapter-track {
+    min-height: 7.2rem;
+  }
+  .mobile-panel.timeline .date-navigation {
+    min-height: 5rem;
   }
   .close-panel {
     min-width: 44px;

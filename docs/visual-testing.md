@@ -95,8 +95,13 @@ multiple states, confirm that the marker opens a compact choice list at the shar
 position. Confirm that each choice has unique, reader-visible source-chapter context,
 the latest year's full list remains reachable by panning, and no canonical internal
 ordering index is displayed. Returning to Chapter mode restores the selected chapter's
-story year. At 200% browser zoom, record the current desktop/compact behaviour as an
-acceptance gap until BOB-015 implements its approved reflow control.
+story year. At 200% browser zoom, verify the command bar exposes **Timeline and
+progress** after the CSS viewport falls below the simultaneous-layout breakpoint.
+Open it and confirm the same **Read through**, mode, chapter/date, and timeline values
+appear in a non-animated modal panel. Tab and Shift+Tab must remain inside it; Escape
+and the visible close control must return focus to the invoking command. The page must
+not gain horizontal scrolling, and the attribution footer must remain reachable after
+the panel closes.
 
 The dock remains one compact, fixed-height desktop row while switching between Chapter
 and Date modes; no mode change should move the map or footer vertically. The
@@ -173,6 +178,40 @@ Select a mapped system, descendant location, event at a mapped location, and a
 character with one **Last seen** mapped location; each must focus the canonical system
 without changing viewing angle. Select an unmapped event/location and a locationless
 entity; their inspectors remain available but the camera must not move.
+
+## BOB-015 Phase 2 desktop integration
+
+At 1200-by-700 and 1440-by-1000 CSS pixels, confirm the object browser, true-scale
+map, object inspector, timeline dock, and attribution footer are simultaneously
+visible. The map must remain wider than either rail, no horizontal page scrollbar may
+appear, and the context badge must remain wholly inside the map.
+
+Run one complete shared-projection flow. Confirm progress through Chapter 1.2, select
+it as **Knowledge through**, and verify the command status, map badge, browser active
+counts, marker activity, and inspector context all represent Chapter 1.2 and 2133.
+Enter Date mode, select 2016, and verify all surfaces change together; any now
+ineligible selection must clear with an accessible announcement. Select an eligible
+object, inspect it, and return to Chapter mode, confirming that 2133 is restored and
+no later fact survives an earlier knowledge view.
+
+Repeat the compact timeline/progress flow at a CSS viewport below 1200 pixels and at
+200% browser zoom. Also inspect a short desktop viewport with reduced motion enabled.
+Exercise empty search, no selection, explicitly unmapped, chronologically unplaced,
+WebGL unavailable, missing astronomy coverage, and invalid narrative projection
+content. Every state must explain what remains usable or what the reader can do next.
+
+Complete current Chrome, Firefox, and Edge review from the remote workstation. Test
+real Safari when available; otherwise retain it as an explicit pre-publication gap
+rather than treating automated WebKit as real Safari coverage.
+
+### BOB-015 manual acceptance
+
+On 2026-07-27, the Captain accepted the required remote visual review in current
+Chrome, Firefox, and Edge. The review covered the simultaneous desktop workspace,
+short desktop viewport, 200% zoom compact reflow, shared chapter/date projection,
+modal focus containment and return, reduced motion, and attribution reachability.
+Real Safari remains the explicit pre-publication gap because no Apple test workstation
+is available.
 
 ## Default and reset camera
 
