@@ -1,4 +1,5 @@
 import type { SelectionIdentity } from "../domain/selection";
+import type { StellarSystem } from "../domain/types";
 import type {
   BrowserGroupId,
   BrowserGroupState,
@@ -10,6 +11,7 @@ import {
   ObjectGroupIcon,
   ObjectItemBullet,
 } from "./ObjectBrowserIcons";
+import { normalizeBrowserSearch } from "../narrative/browser";
 
 function recencyLabel(
   group: NarrativeBrowserGroup,
@@ -33,6 +35,7 @@ export function ObjectBrowser({
   idPrefix,
   expanded,
   selection,
+  astronomySystems = [],
   onQuery,
   onToggle,
   onSelect,
@@ -43,6 +46,7 @@ export function ObjectBrowser({
   idPrefix: string;
   expanded: BrowserGroupState;
   selection: SelectionIdentity | null;
+  astronomySystems?: readonly StellarSystem[];
   onQuery: (query: string) => void;
   onToggle: (group: BrowserGroupId) => void;
   onSelect: (selection: SelectionIdentity) => void;
@@ -52,6 +56,14 @@ export function ObjectBrowser({
     0,
   );
   const searching = query.trim().length > 0;
+  const normalizedQuery = normalizeBrowserSearch(query);
+  const astronomyMatches = searching
+    ? astronomySystems.filter((system) =>
+        [system.name, ...system.alternates].some((value) =>
+          normalizeBrowserSearch(value).includes(normalizedQuery),
+        ),
+      )
+    : [];
   return (
     <div className="object-browser">
       <label className="browser-search">
@@ -65,10 +77,16 @@ export function ObjectBrowser({
       </label>
       <p className="search-status" aria-live="polite">
         {searching
-          ? `${resultCount} narrative ${resultCount === 1 ? "match" : "matches"}`
+          ? `${resultCount} narrative ${resultCount === 1 ? "match" : "matches"}${
+              astronomyMatches.length
+                ? ` · ${astronomyMatches.length} nearby astronomy ${
+                    astronomyMatches.length === 1 ? "match" : "matches"
+                  }`
+                : ""
+            }`
           : "Showing reader-visible projected objects"}
       </p>
-      {searching && groups.length === 0 && (
+      {searching && groups.length === 0 && astronomyMatches.length === 0 && (
         <p className="empty-browser-result">
           No eligible narrative object matches this name.
         </p>
@@ -143,6 +161,44 @@ export function ObjectBrowser({
             </section>
           );
         })}
+        {searching && astronomyMatches.length > 0 && (
+          <section className="browser-group nearby-astronomy-group">
+            <h3>
+              <span className="nearby-astronomy-heading">
+                Nearby astronomy
+                <span className="group-count">
+                  {astronomyMatches.length} visible
+                </span>
+              </span>
+            </h3>
+            <ul>
+              {astronomyMatches.map((system) => {
+                const selected =
+                  selection?.kind === "astronomy" && selection.id === system.id;
+                return (
+                  <li key={system.id}>
+                    <button
+                      type="button"
+                      className={selected ? "selected" : ""}
+                      aria-pressed={selected}
+                      onClick={() =>
+                        onSelect({ kind: "astronomy", id: system.id })
+                      }
+                    >
+                      <ObjectItemBullet active={false} />
+                      <span className="object-item-copy">
+                        <span>{system.name}</span>
+                        {system.alternates.length > 0 && (
+                          <small>{system.alternates[0]}</small>
+                        )}
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        )}
       </div>
     </div>
   );

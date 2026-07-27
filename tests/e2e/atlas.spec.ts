@@ -265,3 +265,26 @@ test("progressive browser search preserves collapse state and inspects unmapped 
   await expect(inspector.getByText("Explicitly unmapped")).toBeVisible();
   await expect(inspector.getByText("Narrative-known")).toBeVisible();
 });
+
+test("nearby astronomy remains a query-only in-context inspector path", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/");
+  const search = page.getByRole("searchbox", {
+    name: "Search visible objects",
+  });
+  await search.fill("rigil kentaurus");
+  await expect(
+    page.getByRole("heading", { name: /Nearby astronomy/ }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: /Alpha Centauri/ }).click();
+  await expect(page.getByText("Not story-known at this view")).toBeVisible();
+  await search.fill("");
+  await expect(
+    page.getByRole("heading", { name: /Nearby astronomy/ }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("heading", { name: "Alpha Centauri" }),
+  ).toBeVisible();
+});

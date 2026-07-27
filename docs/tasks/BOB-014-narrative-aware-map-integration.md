@@ -1,6 +1,6 @@
 # BOB-014: narrative-aware map integration
 
-Status: Ready
+Status: Done
 Phase: 2 (narrative foundation and chapter timeline)
 Last updated: 2026-07-27
 
@@ -155,6 +155,25 @@ git diff --check
 Manual desktop review must rotate, zoom, pan, select each marker state, create label
 collisions, search an astronomy-only system, change chapter/date, test an unmapped
 selection, reset the camera, and verify the Galactic backdrop remains subordinate.
+
+## Completion evidence
+
+- The map context is a runtime projection of the validated static catalogue, current
+  reader-safe world, and the single `map-display.json` radius; no join artifact was
+  created.
+- `./.venv/bin/python scripts/validate_data.py`, `npm run narrative:validate`,
+  `npm run format:check`, `npm run lint`, `npm run typecheck`, `npm run test`,
+  `npm run build`, and `git diff --check` pass. The unit/component suite reports 109
+  passing tests.
+- The added cross-browser Playwright scenario for query-only nearby astronomy passes
+  in Chromium, Firefox, and WebKit.
+- The complete `npm run test:e2e` suite passes: 27 tests across Chromium, Firefox,
+  and WebKit.
+- A fresh independent implementation review after the regression fixes returned
+  **No findings.**
+- On 2026-07-27, the Captain completed the required manual visual review, accepted
+  the elliptical marker and sampled reference-cyan refinement, and authorized task
+  closure.
 
 ## Risks and cautions
 

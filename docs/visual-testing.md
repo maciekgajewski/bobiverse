@@ -130,9 +130,7 @@ is explicit, result counts are announced without moving focus, and all collapse
 buttons expose `aria-expanded` with visible focus.
 
 Disable WebGL for the site and repeat narrative-object selection through the DOM
-browser. Narrative details and relationship controls must remain usable. The final
-keyboard and WebGL-unavailable path for astronomy-only catalogue systems belongs to
-BOB-014's query-only **Nearby astronomy** search and is not part of BOB-012.
+browser. Narrative details and relationship controls must remain usable.
 
 Inspect at least one sparse record of every supported type. Verify absent fields do
 not produce placeholders, eligible relationships act as selection controls, and a
@@ -147,6 +145,34 @@ Chapter 1.1. Its details must disappear in the same state transition, selection 
 clear, and an accessible status message must announce why. Repeat selection from the
 compact browser/inspector panels and confirm the same projection, relationship, and
 DOM behavior is reused rather than recomputed in a separate mobile path.
+
+## BOB-014 narrative-aware map integration
+
+In the pre-book view, verify that the map contains only the configured-radius
+neighbourhood around Sol, not the complete static catalogue. Confirm narrative-known
+systems retain one thin elliptical segmented ring, active systems at the selected
+chapter/date add static nested ellipses and an outward tick, and a selected system keeps its outer corner
+frame outside those marks. Rotate, pan, and zoom while creating caption collisions:
+selected, hovered, and active captions must remain visible, while lower-priority
+known captions may hide and reappear. Astronomy-only context markers must have no
+persistent caption or narrative ring. Confirm component colour families, decorative
+clusters, scale, picking, measurements, Galactic backdrop, reset, and reduced-motion
+focus behavior remain unchanged. Known-system captions are plain labels centered below
+their marker; only a hover tooltip receives a bordered surface.
+
+Search a known nearby astronomy-only system by a preferred name and an alternate
+designation. **Nearby astronomy** must appear only for a nonempty query, contain only
+systems already rendered in the current context, and vanish when cleared without
+clearing an eligible selected result. Select one from both search and map; its
+inspector must show catalogue facts, provenance, and **Not story-known at this view**.
+Repeat with WebGL unavailable to verify the same DOM path works without precise 3D
+picking. Change chapter/date until an astronomy-only selection leaves the context and
+confirm selection clears with the DOM status announcement.
+
+Select a mapped system, descendant location, event at a mapped location, and a
+character with one **Last seen** mapped location; each must focus the canonical system
+without changing viewing angle. Select an unmapped event/location and a locationless
+entity; their inspectors remain available but the camera must not move.
 
 ## Default and reset camera
 

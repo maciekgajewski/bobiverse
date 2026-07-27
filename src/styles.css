@@ -261,6 +261,17 @@ h2 {
 .browser-group h3 {
   margin: 0;
 }
+.nearby-astronomy-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  color: var(--text-primary);
+  background: #0d192b;
+  padding: 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
 .browser-group h3 button {
   display: flex;
   width: 100%;
@@ -794,35 +805,20 @@ h2 {
 .confirmation-dialog .button + .button {
   margin-left: 0.5rem;
 }
-.map-label {
+.narrative-map-label {
   min-width: max-content;
-  padding: 0.22rem 0.38rem;
-  border: 1px solid #486c91;
-  border-radius: 0.25rem;
-  background: rgb(4 10 20 / 88%);
   color: #ebf7ff;
-  font-size: 0.67rem;
-  box-shadow: 0 3px 15px rgb(0 0 0 / 35%);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-shadow: 0 2px 8px #000;
 }
-.map-label small {
-  display: block;
-  margin-top: 0.1rem;
-  color: #93b6d8;
-}
-.sol-label,
 .selection-label,
 .map-tooltip {
   min-width: max-content;
   color: #ebf7ff;
   font-size: 0.68rem;
   text-shadow: 0 2px 8px #000;
-}
-.sol-label {
-  color: #ffe4a5;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  box-shadow: none;
 }
 .selection-label {
   color: #e5f8ff;

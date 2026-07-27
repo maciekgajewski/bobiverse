@@ -100,6 +100,25 @@ describe("atlas shell", () => {
     );
   });
 
+  it("exposes only in-context astronomy through a nonempty search and labels it as non-narrative", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    const search = screen.getByRole("searchbox", {
+      name: "Search visible objects",
+    });
+    await user.type(search, "alpha centauri");
+    expect(screen.getByText("Nearby astronomy")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: /Alpha Centauri/ }));
+    expect(
+      screen.getByText("Not story-known at this view"),
+    ).toBeInTheDocument();
+    await user.clear(search);
+    expect(screen.queryByText("Nearby astronomy")).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Alpha Centauri" }),
+    ).toBeInTheDocument();
+  });
+
   it("shows last-seen and unmapped details, then clears an ineligible selection", async () => {
     const user = userEvent.setup();
     render(<App />);

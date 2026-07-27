@@ -3,12 +3,15 @@ import {
   COMPONENT_OFFSET_ELEVATION_MAX,
   COMPONENT_OFFSET_RADIUS_MAX,
   COMPONENT_OFFSET_RADIUS_MIN,
+  NARRATIVE_MARKER_COLOR,
   STAR_DISTANCE_FADE_END,
   STAR_DISTANCE_FADE_START,
   STAR_DISTANCE_FAR_BRIGHTNESS,
   STAR_SPRITE_FRAGMENT_SHADER,
   colorFamilyColor,
   componentOffset,
+  narrativeMarkerGeometry,
+  narrativeRingSegments,
   selectionFrameSegments,
   starDistanceAttenuation,
 } from "../../src/domain/star-visual";
@@ -61,6 +64,10 @@ const component = (id: string): Component => ({
 });
 
 describe("star visual encodings", () => {
+  it("uses the reference cyan for every narrative map mark", () => {
+    expect(NARRATIVE_MARKER_COLOR).toBe("#67cacd");
+  });
+
   it("uses the fixed Gaia colour-family palette", () => {
     expect(colorFamilyColor("blue")).toBe("#9bbcff");
     expect(colorFamilyColor("blue-white")).toBe("#c6d8ff");
@@ -124,5 +131,32 @@ describe("star visual encodings", () => {
     expect(segments.flat().filter((_, index) => index % 3 === 2)).toEqual(
       Array(12).fill(0),
     );
+  });
+
+  it("uses screen-space segmented rings without changing system coordinates", () => {
+    const segments = narrativeRingSegments(0.26, 0.17);
+    expect(segments).toHaveLength(4);
+    expect(segments.every((segment) => segment.length === 5)).toBe(true);
+    expect(segments.flat().every((point) => point[2] === 0)).toBe(true);
+    expect(
+      Math.max(...segments.flat().map((point) => Math.abs(point[0]))),
+    ).toBeCloseTo(0.26);
+    expect(
+      Math.max(...segments.flat().map((point) => Math.abs(point[1]))),
+    ).toBeCloseTo(0.17);
+  });
+
+  it("keeps known and active narrative marker geometry distinct", () => {
+    expect(narrativeMarkerGeometry(false)).toEqual({
+      ringRadii: [[0.26, 0.17]],
+      tick: null,
+    });
+    expect(narrativeMarkerGeometry(true)).toEqual({
+      ringRadii: [
+        [0.23, 0.15],
+        [0.29, 0.19],
+      ],
+      tick: [0.21, 0.29],
+    });
   });
 });

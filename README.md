@@ -116,9 +116,20 @@ links only when their targets are eligible in the same projection; unmapped and
 chronologically unplaced states remain explicit. Character location context is
 labelled **Last seen** and never treated as current presence. Each group heading has
 an original type-specific SVG icon, and each object row uses a shared SVG bullet.
-Astronomy catalogue systems are currently selected from the map; BOB-014 adds the
-final query-only **Nearby astronomy** search without restoring the legacy full
-catalogue list.
+The map renders the deduplicated union of the configured-radius neighbourhoods around
+reader-safe mapped systems. Narrative-known systems receive a segmented ring; systems
+active at the selected chapter or date receive a double ring and outward tick. These
+screen-readable marks do not affect coordinates, picking, measurements, or catalogue
+component presentation. Captions preserve selected, hovered, and active systems when
+they collide; other known-system captions return as the view changes.
+
+While a nonempty query is present, **Nearby astronomy** follows the narrative groups
+with matches from that rendered union only. It searches reviewed preferred names and
+alternate designations, never expands map scope, and does not restore the old
+full-catalogue directory. Selecting one opens its provenance-backed catalogue facts
+with the explicit **Not story-known at this view** status. Narrative selections focus
+only when they provide one unambiguous mapped system; unmapped and locationless
+objects remain inspectable without moving the camera.
 
 The ignored runtime manifest is generated, never hand-edited. Normal `npm run dev`,
 `npm run build`, and test paths create it. To generate it explicitly, run:

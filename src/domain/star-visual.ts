@@ -6,6 +6,8 @@ export const COMPONENT_OFFSET_ELEVATION_MAX = 0.0216;
 export const STAR_DISTANCE_FADE_START = 6;
 export const STAR_DISTANCE_FADE_END = 45;
 export const STAR_DISTANCE_FAR_BRIGHTNESS = 0.35;
+/** Reference-design cyan used for narrative-known, active, and selected map marks. */
+export const NARRATIVE_MARKER_COLOR = "#67cacd";
 
 const COLOR_FAMILIES: Record<ColorFamily, string> = {
   blue: "#9bbcff",
@@ -85,4 +87,38 @@ export function selectionFrameSegments(
     [-half, -half + corner, 0, -half, -half, 0, -half + corner, -half, 0],
     [half - corner, -half, 0, half, -half, 0, half, -half + corner, 0],
   ];
+}
+
+/** Screen-space ring segments for narrative state; they never alter map coordinates. */
+export function narrativeRingSegments(
+  horizontalRadius: number,
+  verticalRadius: number,
+): Array<Array<[number, number, number]>> {
+  return Array.from({ length: 4 }, (_, index) => {
+    const start = (index * Math.PI * 2) / 4 + 0.1;
+    const end = ((index + 1) * Math.PI * 2) / 4 - 0.1;
+    return Array.from({ length: 5 }, (_, pointIndex) => {
+      const angle = start + ((end - start) * pointIndex) / 4;
+      return [
+        Math.cos(angle) * horizontalRadius,
+        Math.sin(angle) * verticalRadius,
+        0,
+      ];
+    });
+  });
+}
+
+export function narrativeMarkerGeometry(active: boolean): {
+  ringRadii: Array<[number, number]>;
+  tick: [number, number] | null;
+} {
+  return active
+    ? {
+        ringRadii: [
+          [0.23, 0.15],
+          [0.29, 0.19],
+        ],
+        tick: [0.21, 0.29],
+      }
+    : { ringRadii: [[0.26, 0.17]], tick: null };
 }

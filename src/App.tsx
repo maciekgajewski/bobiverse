@@ -4,13 +4,19 @@ import { ObjectBrowser } from "./components/ObjectBrowser";
 import { ObjectInspector } from "./components/ObjectInspector";
 import { TimelineDock } from "./components/TimelineDock";
 import { nearbySystems, nearbySystemsResult } from "./domain/data";
+import { mapDisplayConfig } from "./domain/config";
 import {
   GALACTIC_STARFIELD_SOURCE_URL,
   GALACTIC_STARFIELD_UI_CREDIT,
 } from "./domain/galactic-starfield";
 import type { SelectionIdentity } from "./domain/selection";
-import type { DistanceUnit } from "./domain/types";
+import type { DistanceUnit, StellarSystem } from "./domain/types";
 import { buildNarrativeBrowserGroups } from "./narrative/browser";
+import {
+  focusSystemIdForSelection,
+  isSelectionEligibleForMap,
+  projectNarrativeMap,
+} from "./narrative/map";
 import {
   generateNarrativeWorld,
   meaningfulNarrativeDateOptions,
@@ -30,6 +36,8 @@ import {
 } from "./narrative/progress";
 import { narrativeChapters, narrativeCorpus } from "./narrative/runtime";
 import "./styles.css";
+
+const EMPTY_SYSTEMS: StellarSystem[] = [];
 
 function canRenderWebgl(): boolean {
   try {
@@ -68,7 +76,7 @@ export default function App() {
     label: "1 ly",
     pixelWidth: 50,
   });
-  const systems = nearbySystems?.systems ?? [];
+  const systems = nearbySystems?.systems ?? EMPTY_SYSTEMS;
   const meaningfulDateOptions = useMemo(
     () =>
       progress.viewChapter
@@ -108,6 +116,27 @@ export default function App() {
       buildNarrativeBrowserGroups(narrativeWorld, progress.mode, browserQuery),
     [browserQuery, narrativeWorld, progress.mode],
   );
+  const mapProjection = useMemo(
+    () =>
+      projectNarrativeMap(
+        narrativeWorld,
+        systems,
+        mapDisplayConfig.context_radius_ly,
+        progress.mode,
+      ),
+    [narrativeWorld, progress.mode, systems],
+  );
+  const contextSystemIds = useMemo(
+    () => new Set(mapProjection.contextSystems.map((system) => system.id)),
+    [mapProjection.contextSystems],
+  );
+  const astronomySearchSystems = useMemo(
+    () =>
+      mapProjection.contextSystems.filter(
+        (system) => !mapProjection.knownSystemIds.has(system.id),
+      ),
+    [mapProjection.contextSystems, mapProjection.knownSystemIds],
+  );
   const viewStatus =
     progress.viewChapter && progress.displayDate
       ? `Universe in ${progress.displayDate.split(".", 1)[0]} · Knowledge through Chapter ${progress.viewChapter}`
@@ -118,7 +147,11 @@ export default function App() {
           .flatMap((group) => group.items)
           .find((item) => item.entity.id === selection.id) ?? null)
       : null;
-  const selectedMapId = selection?.kind === "astronomy" ? selection.id : null;
+  const selectedMapId = focusSystemIdForSelection(
+    selection,
+    narrativeWorld,
+    contextSystemIds,
+  );
   const updateMapScale = useCallback((nextScale: MapScale) => {
     setMapScale((current) =>
       current.label === nextScale.label &&
@@ -183,13 +216,22 @@ export default function App() {
       ? meaningfulNarrativeDates(narrativeCorpus, next.viewChapter)
       : [];
     const normalized = normalizeReaderProgress(next, narrativeChapters, dates);
-    if (selection?.kind === "narrative") {
+    if (selection) {
       const nextWorld = generateNarrativeWorld(
         narrativeCorpus,
         normalized.viewChapter,
         normalized.mode === "date" ? normalized.displayDate : null,
       );
-      if (!nextWorld.entities.some((entity) => entity.id === selection.id)) {
+      const nextProjection = projectNarrativeMap(
+        nextWorld,
+        systems,
+        mapDisplayConfig.context_radius_ly,
+        normalized.mode,
+      );
+      const nextContextIds = new Set(
+        nextProjection.contextSystems.map((system) => system.id),
+      );
+      if (!isSelectionEligibleForMap(selection, nextWorld, nextContextIds)) {
         setSelection(null);
         setSelectionStatus(
           "Selection cleared because the object is not eligible in this view.",
@@ -295,6 +337,7 @@ export default function App() {
           </div>
           <ObjectBrowser
             groups={visibleBrowserGroups}
+            astronomySystems={astronomySearchSystems}
             mode={progress.mode}
             query={browserQuery}
             idPrefix="desktop"
@@ -324,11 +367,21 @@ export default function App() {
           )}
           {webgl === "ready" && (
             <StarMap
-              systems={systems}
+              systems={mapProjection.contextSystems}
               selectedId={selectedMapId}
+              knownSystemIds={mapProjection.knownSystemIds}
+              activeSystemIds={mapProjection.activeSystemIds}
               unit={unit}
               resetToken={resetToken}
-              onSelect={(id) => selectObject({ kind: "astronomy", id })}
+              onSelect={(id) => {
+                const narrativeId =
+                  mapProjection.narrativeSystemIdsByAstronomyId.get(id);
+                selectObject(
+                  narrativeId
+                    ? { kind: "narrative", id: narrativeId }
+                    : { kind: "astronomy", id },
+                );
+              }}
               onDeselect={() => {
                 setSelection(null);
                 setSelectionStatus("Selection cleared.");
@@ -361,7 +414,8 @@ export default function App() {
             selection={selection}
             narrativeItem={selectedNarrativeItem}
             world={narrativeWorld}
-            systems={systems}
+            systems={mapProjection.contextSystems}
+            knownAstronomySystemIds={mapProjection.knownSystemIds}
             assets={narrativeCorpus.assets}
             unit={unit}
             headingId="desktop-object-details-heading"
@@ -448,6 +502,7 @@ export default function App() {
           {mobilePanel === "browser" ? (
             <ObjectBrowser
               groups={visibleBrowserGroups}
+              astronomySystems={astronomySearchSystems}
               mode={progress.mode}
               query={browserQuery}
               idPrefix="compact"
@@ -462,7 +517,8 @@ export default function App() {
               selection={selection}
               narrativeItem={selectedNarrativeItem}
               world={narrativeWorld}
-              systems={systems}
+              systems={mapProjection.contextSystems}
+              knownAstronomySystemIds={mapProjection.knownSystemIds}
               assets={narrativeCorpus.assets}
               unit={unit}
               headingId="compact-object-details-heading"

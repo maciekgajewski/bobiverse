@@ -20,16 +20,22 @@ import {
   perspectiveWorldWidthAtTarget,
 } from "../domain/camera-motion";
 import { closestMarkerSystemId } from "../domain/star-picking";
+import { resolveCaptionVisibility } from "../domain/caption-visibility";
 import {
+  NARRATIVE_MARKER_COLOR,
   STAR_SPRITE_FRAGMENT_SHADER,
   colorFamilyColor,
   componentOffset,
+  narrativeMarkerGeometry,
+  narrativeRingSegments,
   selectionFrameSegments,
 } from "../domain/star-visual";
 
 interface MapSceneProps {
   systems: StellarSystem[];
   selectedId: string | null;
+  knownSystemIds: ReadonlySet<string>;
+  activeSystemIds: ReadonlySet<string>;
   unit: DistanceUnit;
   resetToken: number;
   onSelect: (id: string) => void;
@@ -167,11 +173,19 @@ function StarMarker({
   system,
   selected,
   selectedSystem,
+  known,
+  active,
+  captionVisible,
+  onHover,
   unit,
 }: {
   system: StellarSystem;
   selected: boolean;
   selectedSystem: StellarSystem | undefined;
+  known: boolean;
+  active: boolean;
+  captionVisible: boolean;
+  onHover: (id: string | null) => void;
   unit: DistanceUnit;
 }) {
   const [hovered, setHovered] = useState(false);
@@ -189,8 +203,12 @@ function StarMarker({
       onPointerOver={(event) => {
         event.stopPropagation();
         setHovered(true);
+        onHover(system.id);
       }}
-      onPointerOut={() => setHovered(false)}
+      onPointerOut={() => {
+        setHovered(false);
+        onHover(null);
+      }}
     >
       {system.components.map((component, index) => {
         const radius = component.visual.marker_radius;
@@ -222,11 +240,12 @@ function StarMarker({
           </Billboard>
         );
       })}
+      {known && <NarrativeRing active={active} />}
       {selected && <SelectionFrame name={system.name} />}
-      {system.id === "sol" && !selected && (
-        <Billboard position={[0.34, 0.18, 0]} follow>
+      {captionVisible && (
+        <Billboard position={[0, -0.32, 0]} follow raycast={ignoreRaycast}>
           <Html center style={{ pointerEvents: "none" }}>
-            <div className="sol-label">Sol</div>
+            <div className="narrative-map-label">{system.name}</div>
           </Html>
         </Billboard>
       )}
@@ -247,8 +266,63 @@ function StarMarker({
   );
 }
 
+function SegmentedRing({
+  radius,
+  color,
+}: {
+  radius: [number, number];
+  color: string;
+}) {
+  return (
+    <Billboard follow raycast={ignoreRaycast}>
+      {narrativeRingSegments(radius[0], radius[1]).map((points, index) => {
+        return (
+          <Line
+            key={index}
+            points={points}
+            color={color}
+            lineWidth={1}
+            transparent
+            opacity={0.9}
+            raycast={ignoreRaycast}
+          />
+        );
+      })}
+    </Billboard>
+  );
+}
+
+function NarrativeRing({ active }: { active: boolean }) {
+  const geometry = narrativeMarkerGeometry(active);
+  return (
+    <>
+      <SegmentedRing
+        radius={geometry.ringRadii[0]!}
+        color={NARRATIVE_MARKER_COLOR}
+      />
+      {active && (
+        <Billboard follow raycast={ignoreRaycast}>
+          <SegmentedRing
+            radius={geometry.ringRadii[1]!}
+            color={NARRATIVE_MARKER_COLOR}
+          />
+          <Line
+            points={[
+              [0, geometry.tick![0], 0],
+              [0, geometry.tick![1], 0],
+            ]}
+            color={NARRATIVE_MARKER_COLOR}
+            lineWidth={1}
+            raycast={ignoreRaycast}
+          />
+        </Billboard>
+      )}
+    </>
+  );
+}
+
 function SelectionFrame({ name }: { name: string }) {
-  const half = 0.27;
+  const half = 0.34;
   const corner = 0.07;
   const segments = selectionFrameSegments(half, corner);
   return (
@@ -261,7 +335,7 @@ function SelectionFrame({ name }: { name: string }) {
             [segment[3]!, segment[4]!, segment[5]!],
             [segment[6]!, segment[7]!, segment[8]!],
           ]}
-          color="#d8f3ff"
+          color={NARRATIVE_MARKER_COLOR}
           transparent
           opacity={0.92}
           raycast={ignoreRaycast}
@@ -316,9 +390,71 @@ function CameraScaleReporter({
   return null;
 }
 
+function CaptionController({
+  systems,
+  knownSystemIds,
+  activeSystemIds,
+  selectedId,
+  hoveredId,
+  onChange,
+}: {
+  systems: readonly StellarSystem[];
+  knownSystemIds: ReadonlySet<string>;
+  activeSystemIds: ReadonlySet<string>;
+  selectedId: string | null;
+  hoveredId: string | null;
+  onChange: (ids: ReadonlySet<string>) => void;
+}) {
+  const { camera, size } = useThree();
+  const last = useRef(0);
+  const previous = useRef("");
+  useFrame(() => {
+    if (performance.now() - last.current < 120) return;
+    last.current = performance.now();
+    const candidates = systems
+      .filter(
+        (system) =>
+          knownSystemIds.has(system.id) ||
+          system.id === selectedId ||
+          system.id === hoveredId,
+      )
+      .map((system) => {
+        const point = new Vector3(
+          system.render_position.x,
+          system.render_position.y,
+          system.render_position.z,
+        ).project(camera);
+        const priority =
+          system.id === selectedId
+            ? 3
+            : system.id === hoveredId
+              ? 2
+              : activeSystemIds.has(system.id)
+                ? 1
+                : 0;
+        return {
+          id: system.id,
+          priority,
+          x: (point.x * 0.5 + 0.5) * size.width,
+          y: (-point.y * 0.5 + 0.5) * size.height,
+          visible: point.z >= -1 && point.z <= 1,
+        };
+      });
+    const visible = resolveCaptionVisibility(candidates);
+    const key = [...visible].sort().join("\u0000");
+    if (key !== previous.current) {
+      previous.current = key;
+      onChange(visible);
+    }
+  });
+  return null;
+}
+
 function Scene({
   systems,
   selectedId,
+  knownSystemIds,
+  activeSystemIds,
   unit,
   resetToken,
   onSelect,
@@ -327,6 +463,8 @@ function Scene({
 }: SceneProps) {
   useEffect(onReady, [onReady]);
   const selected = systems.find((system) => system.id === selectedId);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [captionIds, setCaptionIds] = useState<ReadonlySet<string>>(new Set());
   return (
     <>
       <color attach="background" args={["#050812"]} />
@@ -361,6 +499,10 @@ function Scene({
             system={system}
             selected={selectedId === system.id}
             selectedSystem={selected}
+            known={knownSystemIds.has(system.id)}
+            active={activeSystemIds.has(system.id)}
+            captionVisible={captionIds.has(system.id)}
+            onHover={setHoveredId}
             unit={unit}
           />
         ))}
@@ -371,6 +513,14 @@ function Scene({
         systems={systems}
       />
       <CameraScaleReporter unit={unit} onScaleChange={onScaleChange} />
+      <CaptionController
+        systems={systems}
+        knownSystemIds={knownSystemIds}
+        activeSystemIds={activeSystemIds}
+        selectedId={selectedId}
+        hoveredId={hoveredId}
+        onChange={setCaptionIds}
+      />
     </>
   );
 }

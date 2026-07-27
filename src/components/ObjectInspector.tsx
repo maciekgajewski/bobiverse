@@ -319,6 +319,7 @@ export function ObjectInspector({
   narrativeItem,
   world,
   systems,
+  knownAstronomySystemIds,
   assets,
   unit,
   headingId = "details-heading",
@@ -328,6 +329,7 @@ export function ObjectInspector({
   narrativeItem: NarrativeBrowserItem | null;
   world: NarrativeWorld;
   systems: StellarSystem[];
+  knownAstronomySystemIds?: ReadonlySet<string>;
   assets: NarrativeRecord;
   unit: DistanceUnit;
   headingId?: string;
@@ -357,12 +359,14 @@ export function ObjectInspector({
   if (selection.kind === "astronomy") {
     const system =
       systems.find((candidate) => candidate.id === selection.id) ?? null;
-    const storyKnown = world.entities.some(
-      (entity) =>
-        entity.entity_type === "location" &&
-        entity.kind === "star_system" &&
-        entity.astronomy_object_id === selection.id,
-    );
+    const storyKnown = knownAstronomySystemIds
+      ? knownAstronomySystemIds.has(selection.id)
+      : world.entities.some(
+          (entity) =>
+            entity.entity_type === "location" &&
+            entity.kind === "star_system" &&
+            entity.astronomy_object_id === selection.id,
+        );
     return (
       <SystemDetails
         system={system}

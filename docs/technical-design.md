@@ -322,6 +322,27 @@ neighbourhoods deduplicate by stable system identity. A source boundary must not
 silently presented as complete, and the browser still makes no runtime catalogue
 request.
 
+At runtime the map derives this rendered union directly from the validated static
+catalogue, the current reader-safe narrative projection, and the shared configuration;
+there is no separate narrative/astronomy join artifact. Every mapped eligible
+narrative system receives a segmented screen-readable ring. Generated
+`mapped_system_ancestry` activity makes a system active at the selected chapter or
+date, drawing a distinct static double ring and outward tick. These decorations are
+centred on the canonical node but are non-raycastable and do not alter component
+sprites, coordinates, measurements, focus targets, or camera framing. Selected,
+hovered, and active captions have collision priority; other known captions may hide
+and return as the camera changes. Astronomy-only systems have no persistent caption.
+
+The only DOM access path for astronomy-only systems is the temporary **Nearby
+astronomy** search group. It appears for a nonempty query, searches preferred names
+and alternate designations inside the current rendered union only, and does not change
+that union. Its inspector exposes catalogue facts and provenance with **Not
+story-known at this view**. Shared selection resolves an automatic map focus only for
+a mapped system/location, an event with one mapped location, a character's uniquely
+derived last-seen location, or an astronomy-only result; unsupported, unmapped, and
+locationless selections leave the camera unchanged. A chapter/date change atomically
+clears an astronomy-only selection that has left the rendered union.
+
 A new non-Sol anchor is bootstrapped from an exact GCNS or CNS5 source identity before
 its acquisition sphere is planned; a coordinate from the previous generated runtime
 is comparison evidence only. A reviewed landmark roster makes recognizable local
@@ -548,8 +569,10 @@ contain coordinates, radii, distances, colours, or other measured astronomy fact
 mapped narrative star system may reference an astronomy node; mapped
 parent-child locations must agree with astronomy ancestry. Only mapped narrative star
 systems carry that direct reference; descendants inherit the system context. The visual
-layer receives a generated join of stellar astronomy data, the zero-state registry,
-and selected narrative patches. Images are manually curated assets, while an entity's
+layer derives the current map join at runtime from validated stellar astronomy data,
+the reader-safe projection of the zero-state registry, and selected narrative patches;
+it does not create a second generated authority. Images are manually curated assets,
+while an entity's
 `picture_id` assignment is zero-state or chapter-controlled narrative state and remains
 subject to the shared visibility policy. The zero-state source contains no asset files;
 any zero-state `description` or `state` value is original plain text, not measured
