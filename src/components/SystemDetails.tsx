@@ -22,12 +22,7 @@ export function SystemDetails({
     );
   const identifiers = system.components
     .map((component) =>
-      [
-        component.gj && `GJ ${component.gj}`,
-        component.hip_id && `HIP ${component.hip_id}`,
-      ]
-        .filter(Boolean)
-        .join(" · "),
+      component.gaia_source_id ? `Gaia DR3 ${component.gaia_source_id}` : null,
     )
     .filter(Boolean);
   return (

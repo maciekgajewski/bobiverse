@@ -158,21 +158,21 @@ GPU, driver, and software renderer.
 
 ### 8.1 Sources
 
-The primary nearby-star source is the Fifth Catalogue of Nearby Stars (CNS5), which
-combines Gaia EDR3, Hipparcos, and ground-based measurements. Gaia and other curated
-catalogues may supplement identifiers or fields when their provenance is retained.
+Gaia Data Release 3 is the sole active external astronomy catalogue under ADR-0010.
+The explicit source contract selects Gaia records with reliable five- or six-parameter
+astrometry; completeness is relative to those qualifying records and does not claim
+that Gaia observes every physical star or resolves every component.
 
 References:
 
-- [CNS5 paper](https://doi.org/10.1051/0004-6361/202244250)
-- [CNS5 service](https://dc.zah.uni-heidelberg.de/cns5/q/cone/form)
 - [Gaia DR3 documentation](https://gea.esac.esa.int/archive/documentation/GDR3/)
+- [Gaia Archive](https://archives.esac.esa.int/gaia/)
 - [Astropy coordinates](https://docs.astropy.org/en/stable/coordinates/)
 
-The nearest catalogue objects are not automatically the nearest stellar systems.
-Multiple-star components must be grouped through a small, reviewed system-membership
-layer. Phase 1 ranks the resulting systems by their adopted system distance and emits
-one map record per system.
+Catalogue sources are not automatically stellar systems. Each Gaia source is treated
+conservatively as a one-component system unless the project-owned reviewed membership
+layer explicitly groups multiple Gaia source IDs. No other catalogue supplies
+astrometry or implicit membership.
 
 ### 8.2 Provenance
 
@@ -222,45 +222,34 @@ offers a parsec toggle. Unit conversion occurs only at presentation boundaries.
 System positions use a single linear scene scale. Camera projection can affect visual
 perspective, but no logarithmic or piecewise distance compression is permitted.
 Marker glyphs may have a minimum screen-readable size and use a non-linear visual
-scale derived from reviewed stellar physical size. They are not literal stellar
-diameters; this presentation exception must not affect positions or measurements.
+scale. Under ADR-0010 the current catalogue markers use one fixed readable radius;
+this presentation choice must not affect positions or measurements.
 
-Phase 1 markers are camera-facing shader sprites with a luminous core and soft radial
-halo. Reviewed stellar class selects the base color. A multi-star system remains one
-canonical map node, but renders its component stars as a small deterministic,
-decorative cluster around that node. Its radial decorative offset is bounded to
+Markers are camera-facing shader sprites with a luminous core and soft radial halo.
+Gaia `bp_rp` selects an approximate colour family when available and missing colour
+uses a neutral marker. A reviewed multi-source system remains one canonical map node,
+but renders its component sources as a small deterministic, decorative cluster around
+that node. Its radial decorative offset is bounded to
 0.036–0.0576 map units and its vertical offset to 0.0216 map units. Those offsets are
 not component positions or orbital data, and must never be used for labels, camera
 focus, or measurement.
 
-The Phase 1 color mapping follows the conventional spectral sequence: O/B blue, A
-blue-white, F white, G yellow, K orange, M red, and white dwarfs cool-white. It is a
-visual classification aid, not a calibrated temperature display. Late L/T/Y
-substellar classes share the red end of that palette rather than using a neutral
-fallback color.
-
-Marker scale uses a square-root transform of reviewed physical radius with explicit
-minimum and maximum readability bounds. The transform makes visual variation legible
-without representing literal stellar diameter or altering map geometry.
-Those map-space bounds are calibrated once against the pinned dataset, documented,
-and remain fixed across source refreshes.
+The Gaia colour mapping follows fixed `bp_rp` bands from blue through red. It is a
+visual orientation aid, not a spectral classification or calibrated temperature
+display. The neutral fallback is explicit and does not omit a qualifying source.
 
 Star-sprite brightness smoothly attenuates from 100% at 6 map units to 35% at
 45 map units as a presentation aid. This does not affect marker position,
-physical-size encoding, labels, or measurement.
+labels, or measurement.
 
 Selection frames do not participate in raycasting, but every star-marker glyph,
 including the selected one, does. Canvas picking explicitly resolves the closest
 marker hit to the camera; this preserves selected-star tooltips and re-selection while
 ensuring an overlapping closer system is selected instead of the decorative frame.
 
-Every rendered component must have a usable reviewed radius and MK spectral class.
-Generation and validation fail on missing or invalid visual properties; the browser
-does not substitute a neutral marker or silently omit the component.
-
-Sol is represented by an explicit generated component with G2V class, one solar
-radius, and solar-reference provenance. It uses the same marker pipeline as catalogue
-components rather than a rendering exception.
+Every rendered catalogue component retains its Gaia source identifier and the
+photometry used for presentation. Sol is an explicit generated origin using the same
+marker pipeline.
 
 ### 8.5 Stellar-system model
 
@@ -273,21 +262,19 @@ Phase 1 fields include:
 - Canonical and render coordinates.
 - Distance from Sol.
 - Basic display properties supported by source data.
-- Reviewed stellar class and physical size for each rendered component, with source
-  provenance and units.
+- Gaia photometry and the derived approximate colour family for each rendered
+  component.
 - Component references.
 - Provenance.
 
 Most systems intentionally have only basic data. Rich descriptions and planets are
 added selectively when story relevance or product needs justify them.
 
-Component visual properties are imported from a pinned, reviewed component-properties
-snapshot and joined to CNS5 component records through documented stable identifiers.
-Each component has property-level radius and MK spectral-class provenance. TIC and
-SIMBAD are preferred inputs where they separately identify the component; where they
-do not, the snapshot records a component-specific catalogue or literature source. The
-generated browser data retains the joined provenance; no browser request may resolve
-or refresh visual properties at runtime.
+Marker presentation is deliberately approximate. Gaia `bp_rp` maps to one documented
+coarse colour family when present; a missing value uses the neutral family. Catalogue
+components share one fixed readable marker radius. The runtime retains the Gaia value
+and derivation method and does not describe the result as an MK spectral class or
+physical stellar radius. No browser request resolves or refreshes visual properties.
 
 Phase 2 replaces a fixed nearest-system presentation with contextual neighbourhoods.
 The offline pipeline must guarantee every source-available stellar system within one

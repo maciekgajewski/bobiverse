@@ -1,86 +1,122 @@
 import { z } from "zod";
 import rawData from "../data/nearby-systems.json";
+import { mapDisplayConfig } from "./config";
 import { toRenderPosition } from "./coordinates";
 import type { NearbySystemsData } from "./types";
 
 const finite = z.number().refine(Number.isFinite, "must be finite");
 const position = z.object({ xg: finite, yg: finite, zg: finite });
 const renderPosition = z.object({ x: finite, y: finite, z: finite });
-const propertyProvenance = z.object({
-  catalogue: z.string().min(1),
-  release: z.string().optional(),
-  record_id: z.string().min(1),
-  reference: z.string().optional(),
-});
+const colorFamily = z.enum([
+  "blue",
+  "blue-white",
+  "white",
+  "yellow",
+  "orange",
+  "red",
+  "neutral",
+]);
 const component = z.object({
   id: z.string().min(1),
-  cns5_id: z.number().int(),
-  gj: z.string().nullable(),
-  component: z.string().nullable(),
-  gaia_dr3_id: z.string().nullable(),
-  hip_id: z.number().int().nullable(),
-  g_magnitude: finite.nullable(),
+  gaia_source_id: z
+    .string()
+    .regex(/^[0-9]+$/)
+    .nullable(),
+  designation: z.string().min(1),
   icrs: z.object({
     ra_deg: finite.nullable(),
     dec_deg: finite.nullable(),
     epoch_year: finite.nullable(),
     parallax_mas: finite.nullable(),
     parallax_error_mas: finite.nullable(),
-    position_bibcode: z.string().nullable(),
-    parallax_bibcode: z.string().nullable(),
+  }),
+  astrometry_quality: z.object({
+    parallax_over_error: finite.nullable(),
+    visibility_periods_used: z.number().int().nullable(),
+    ruwe: finite.nullable(),
+  }),
+  photometry: z.object({
+    g_magnitude: finite.nullable(),
+    bp_rp: finite.nullable(),
   }),
   visual: z.object({
-    spectral_class: z.string().min(1),
-    radius_solar: finite.positive(),
-    provenance: z.object({
-      spectral_class: propertyProvenance,
-      radius: propertyProvenance,
-    }),
+    color_family: colorFamily,
+    marker_radius: finite.positive(),
+    derivation: z.string().min(1),
   }),
 });
 
 const dataSchema = z.object({
-  schema_version: z.literal("1.0.0"),
+  schema_version: z.literal("2.0.0"),
   metadata: z.object({
-    generated_at: z.string(),
+    generated_at: z.string().min(1),
     coordinate_frame: z.literal("Sun-centered Galactic Cartesian"),
     units: z.literal("pc"),
     render_mapping: z.literal("scene.x=Xg; scene.y=Zg; scene.z=-Yg"),
     source: z.object({
-      catalogue: z.string(),
-      release: z.string(),
-      acknowledgement: z.string(),
+      catalogue: z.string().min(1),
+      release: z.string().min(1),
+      archive_url: z.url(),
+      documentation_url: z.url(),
+      retrieved_at: z.string().min(1),
+      acknowledgement: z.string().min(1),
+      snapshot_sha256: z.string().regex(/^[0-9a-f]{64}$/),
     }),
+    configuration: z.object({
+      context_radius_ly: finite.positive(),
+    }),
+    coverage: z
+      .array(
+        z.object({
+          anchor_id: z.string().min(1),
+          anchor_position_pc: position,
+          radius_ly: finite.positive(),
+          system_count: z.number().int().nonnegative(),
+          source_record_count: z.number().int().nonnegative(),
+        }),
+      )
+      .min(1),
   }),
   systems: z
     .array(
       z.object({
         id: z.string().min(1),
         name: z.string().min(1),
-        alternates: z.array(z.string()),
+        alternates: z.array(z.string().min(1)),
         position_pc: position,
         render_position: renderPosition,
-        distance_from_sol_pc: finite,
-        distance_uncertainty_pc: finite.nullable(),
-        components: z.array(component),
+        distance_from_sol_pc: finite.nonnegative(),
+        distance_uncertainty_pc: finite.nonnegative().nullable(),
+        components: z.array(component).min(1),
         provenance: z.object({
-          catalogue: z.string(),
+          catalogue: z.string().min(1),
           release: z.string().optional(),
-          source_object_ids: z.array(z.string()),
-          adopted_source_object_id: z.string().optional(),
+          source_object_ids: z.array(z.string().regex(/^[0-9]+$/)),
+          adopted_source_object_id: z
+            .string()
+            .regex(/^[0-9]+$/)
+            .optional(),
           transformation: z.string().optional(),
           review_version: z.string().optional(),
         }),
       }),
     )
-    .length(21),
+    .min(1)
+    .max(2_000),
 });
 
 export function validateNearbySystems(candidate: unknown): NearbySystemsData {
   const data = dataSchema.parse(candidate) as NearbySystemsData;
+  if (
+    data.metadata.configuration.context_radius_ly !==
+    mapDisplayConfig.context_radius_ly
+  ) {
+    throw new Error("Runtime context radius differs from map-display config.");
+  }
   const ids = new Set(data.systems.map((system) => system.id));
-  if (ids.size !== 21 || !ids.has("sol"))
-    throw new Error("Expected Sol and 20 unique nearby systems.");
+  if (ids.size !== data.systems.length || data.systems[0]?.id !== "sol") {
+    throw new Error("Expected Sol first and unique stellar-system IDs.");
+  }
   for (const system of data.systems) {
     const expected = toRenderPosition(system.position_pc);
     if (

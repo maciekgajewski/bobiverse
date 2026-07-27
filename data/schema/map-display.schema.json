@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bobiverse.local/schema/map-display-1.0.0.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "context_radius_ly"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "context_radius_ly": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    }
+  }
+}

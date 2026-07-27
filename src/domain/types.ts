@@ -12,37 +12,33 @@ export interface RenderPosition {
   z: number;
 }
 
-export interface PropertyProvenance {
-  catalogue: string;
-  release?: string;
-  record_id: string;
-  reference?: string;
-}
+export type ColorFamily =
+  "blue" | "blue-white" | "white" | "yellow" | "orange" | "red" | "neutral";
 
 export interface Component {
   id: string;
-  cns5_id: number;
-  gj: string | null;
-  component: string | null;
-  gaia_dr3_id: string | null;
-  hip_id: number | null;
-  g_magnitude: number | null;
+  gaia_source_id: string | null;
+  designation: string;
   icrs: {
     ra_deg: number | null;
     dec_deg: number | null;
     epoch_year: number | null;
     parallax_mas: number | null;
     parallax_error_mas: number | null;
-    position_bibcode: string | null;
-    parallax_bibcode: string | null;
+  };
+  astrometry_quality: {
+    parallax_over_error: number | null;
+    visibility_periods_used: number | null;
+    ruwe: number | null;
+  };
+  photometry: {
+    g_magnitude: number | null;
+    bp_rp: number | null;
   };
   visual: {
-    spectral_class: string;
-    radius_solar: number;
-    provenance: {
-      spectral_class: PropertyProvenance;
-      radius: PropertyProvenance;
-    };
+    color_family: ColorFamily;
+    marker_radius: number;
+    derivation: string;
   };
 }
 
@@ -65,14 +61,32 @@ export interface StellarSystem {
   };
 }
 
+export interface CoverageProof {
+  anchor_id: string;
+  anchor_position_pc: GalacticPosition;
+  radius_ly: number;
+  system_count: number;
+  source_record_count: number;
+}
+
 export interface NearbySystemsData {
-  schema_version: "1.0.0";
+  schema_version: "2.0.0";
   metadata: {
     generated_at: string;
     coordinate_frame: string;
     units: "pc";
     render_mapping: string;
-    source: { catalogue: string; release: string; acknowledgement: string };
+    source: {
+      catalogue: string;
+      release: string;
+      archive_url: string;
+      documentation_url: string;
+      retrieved_at: string;
+      acknowledgement: string;
+      snapshot_sha256: string;
+    };
+    configuration: { context_radius_ly: number };
+    coverage: CoverageProof[];
   };
   systems: StellarSystem[];
 }

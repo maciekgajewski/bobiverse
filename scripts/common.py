@@ -7,15 +7,29 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parent.parent
 SOURCE_DIR = ROOT / "data" / "source"
+CONFIG_PATH = ROOT / "data" / "config" / "map-display.json"
+CONFIG_SCHEMA_PATH = ROOT / "data" / "schema" / "map-display.schema.json"
 GENERATED_PATH = ROOT / "src" / "data" / "nearby-systems.json"
 REVIEW_PATH = SOURCE_DIR / "system-review.json"
-SNAPSHOT_PATH = SOURCE_DIR / "cns5-nearest-components.json"
-VISUAL_PROPERTIES_PATH = SOURCE_DIR / "component-visual-properties.json"
+RAW_SNAPSHOT_PATH = SOURCE_DIR / "gaia-dr3-neighbourhood.csv"
+SNAPSHOT_PATH = SOURCE_DIR / "gaia-dr3-neighbourhood.json"
+
+LIGHT_YEARS_PER_PARSEC = 3.261563777
+GAIA_CATALOGUE = "Gaia DR3 gaiadr3.gaia_source"
+GAIA_RELEASE = "2022-06-13"
+GAIA_ARCHIVE_URL = "https://gea.esac.esa.int/tap-server/tap/sync"
+GAIA_ACKNOWLEDGEMENT = (
+    "This work has made use of data from the European Space Agency (ESA) mission "
+    "Gaia (https://www.cosmos.esa.int/gaia), processed by the Gaia Data Processing "
+    "and Analysis Consortium (DPAC, https://www.cosmos.esa.int/web/gaia/dpac/consortium)."
+)
 
 
 def write_json(path: Path, value: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(value, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
 
 
 def read_json(path: Path) -> Any:
@@ -26,34 +40,20 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def parse_cns5_line(line: str) -> dict[str, Any]:
-    def text(start: int, end: int) -> str | None:
-        value = line[start:end].strip()
-        return None if value in ("", "-") else value
+def mapped_anchor_ids() -> list[str]:
+    ids: set[str] = set()
 
-    def number(start: int, end: int) -> float | None:
-        value = text(start, end)
-        return float(value) if value not in (None, "-") else None
+    def visit(value: Any) -> None:
+        if isinstance(value, dict):
+            astronomy_id = value.get("astronomy_object_id")
+            if isinstance(astronomy_id, str):
+                ids.add(astronomy_id)
+            for child in value.values():
+                visit(child)
+        elif isinstance(value, list):
+            for child in value:
+                visit(child)
 
-    def integer(start: int, end: int) -> int | None:
-        value = text(start, end)
-        return int(value) if value not in (None, "-") else None
-
-    return {
-        "cns5_id": integer(0, 4),
-        "gj": text(5, 11),
-        "component": text(12, 16),
-        "component_count": integer(17, 18),
-        "is_primary": text(19, 20) == "1",
-        "gj_system_primary": text(21, 26),
-        "gaia_dr3_id": text(27, 46),
-        "hip_id": integer(47, 53),
-        "ra_deg": number(54, 74),
-        "dec_deg": number(75, 98),
-        "epoch_year": number(99, 108),
-        "position_bibcode": text(109, 128),
-        "parallax_mas": number(129, 148),
-        "parallax_error_mas": number(149, 162),
-        "parallax_bibcode": text(163, 182),
-        "g_magnitude": number(361, 371),
-    }
+    for path in sorted((ROOT / "data" / "narrative").rglob("*.json")):
+        visit(read_json(path))
+    return sorted(ids)

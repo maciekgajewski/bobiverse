@@ -64,7 +64,7 @@ test("desktop footer remains within the viewport", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 700 });
   await page.goto("/");
   const bounds = await page
-    .getByText(/This project uses the VizieR catalogue access tool/)
+    .getByText(/This work has made use of data from.*mission Gaia/)
     .evaluate((footerText) =>
       footerText.parentElement?.getBoundingClientRect().toJSON(),
     );

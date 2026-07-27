@@ -28,8 +28,8 @@ derived from `../implementation-plan.md` and must remain consistent with
 | [BOB-010](BOB-010-important-mentions-and-narrative-activity.md)         | Done    | Add important mentions and generated cross-type narrative activity.       |
 | [BOB-011](BOB-011-reader-progress-and-temporal-navigation.md)           | Done    | Add guarded progress and chapter/date temporal navigation.                |
 | [BOB-012](BOB-012-progressive-object-browser-and-inspectors.md)         | Done    | Add the progressive grouped browser and type-aware inspectors.            |
-| [BOB-013](BOB-013-astronomy-neighbourhood-catalogue.md)                 | Draft   | Guarantee configurable astronomy context around mapped story systems.     |
-| [BOB-014](BOB-014-narrative-aware-map-integration.md)                   | Blocked | Join narrative knowledge and activity to the true-scale map.              |
+| [BOB-013](BOB-013-astronomy-neighbourhood-catalogue.md)                 | Done    | Guarantee configurable astronomy context around mapped story systems.     |
+| [BOB-014](BOB-014-narrative-aware-map-integration.md)                   | Ready   | Join narrative knowledge and activity to the true-scale map.              |
 | [BOB-015](BOB-015-phase-2-desktop-integration-and-acceptance.md)        | Blocked | Integrate and accept the complete Phase 2 desktop workspace.              |
 | [BOB-016](BOB-016-phase-2-mobile-design-and-responsive-adaptation.md)   | Draft   | Design and implement the first-class Phase 2 mobile composition.          |
 | [BOB-017](BOB-017-audit-important-mentions-for-chapters-1-1-and-1-2.md) | Done    | Audit important mentions for canonical chapters 1.1 and 1.2.              |

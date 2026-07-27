@@ -3,63 +3,51 @@ import {
   COMPONENT_OFFSET_ELEVATION_MAX,
   COMPONENT_OFFSET_RADIUS_MAX,
   COMPONENT_OFFSET_RADIUS_MIN,
-  MARKER_RADIUS_MAX,
-  MARKER_RADIUS_MIN,
   STAR_DISTANCE_FADE_END,
   STAR_DISTANCE_FADE_START,
   STAR_DISTANCE_FAR_BRIGHTNESS,
   STAR_SPRITE_FRAGMENT_SHADER,
+  colorFamilyColor,
   componentOffset,
-  markerRadius,
   selectionFrameSegments,
-  spectralColor,
   starDistanceAttenuation,
 } from "../../src/domain/star-visual";
 import type { Component } from "../../src/domain/types";
 
 const component = (id: string): Component => ({
   id,
-  cns5_id: 1,
-  gj: null,
-  component: null,
-  gaia_dr3_id: null,
-  hip_id: null,
-  g_magnitude: null,
+  gaia_source_id: id.split(":")[1] ?? null,
+  designation: id,
   icrs: {
     ra_deg: null,
     dec_deg: null,
     epoch_year: null,
     parallax_mas: null,
     parallax_error_mas: null,
-    position_bibcode: null,
-    parallax_bibcode: null,
+  },
+  astrometry_quality: {
+    parallax_over_error: null,
+    visibility_periods_used: null,
+    ruwe: null,
+  },
+  photometry: {
+    g_magnitude: null,
+    bp_rp: null,
   },
   visual: {
-    spectral_class: "G2V",
-    radius_solar: 1,
-    provenance: {
-      spectral_class: { catalogue: "test", record_id: id },
-      radius: { catalogue: "test", record_id: id },
-    },
+    color_family: "yellow",
+    marker_radius: 0.09,
+    derivation: "test",
   },
 });
 
 describe("star visual encodings", () => {
-  it("uses the conventional spectral palette, including white dwarfs", () => {
-    expect(spectralColor("B1V")).toBe("#b8ccff");
-    expect(spectralColor("G2V")).toBe("#ffd884");
-    expect(spectralColor("M4V")).toBe("#ff6b55");
-    expect(spectralColor("T1V")).toBe("#ff6b55");
-    expect(spectralColor("DA2.5")).toBe("#d9ecff");
-  });
-
-  it("maps physical radius with a bounded square-root scale", () => {
-    expect(markerRadius(0)).toBe(MARKER_RADIUS_MIN);
-    expect(markerRadius(100)).toBe(MARKER_RADIUS_MAX);
-    expect(markerRadius(1)).toBeGreaterThan(markerRadius(0.25));
-    expect(markerRadius(1) - markerRadius(0.25)).toBeGreaterThan(
-      markerRadius(2.25) - markerRadius(1),
-    );
+  it("uses the fixed Gaia colour-family palette", () => {
+    expect(colorFamilyColor("blue")).toBe("#9bbcff");
+    expect(colorFamilyColor("blue-white")).toBe("#c6d8ff");
+    expect(colorFamilyColor("yellow")).toBe("#ffd884");
+    expect(colorFamilyColor("red")).toBe("#ff6b55");
+    expect(colorFamilyColor("neutral")).toBe("#d8e6ff");
   });
 
   it("attenuates additive sprite contribution exactly once", () => {
@@ -75,9 +63,9 @@ describe("star visual encodings", () => {
     );
   });
 
-  it("keeps multi-star decorative offsets stable and non-zero", () => {
-    const first = componentOffset(component("cns5:1"), 0, 2);
-    expect(componentOffset(component("cns5:1"), 0, 2)).toEqual(first);
+  it("keeps multi-source decorative offsets stable and non-zero", () => {
+    const first = componentOffset(component("gaia-dr3:1"), 0, 2);
+    expect(componentOffset(component("gaia-dr3:1"), 0, 2)).toEqual(first);
     expect(first).not.toEqual([0, 0, 0]);
     const horizontalRadius = Math.hypot(first[0], first[2]);
     expect(horizontalRadius).toBeGreaterThanOrEqual(
@@ -87,12 +75,20 @@ describe("star visual encodings", () => {
     expect(Math.abs(first[1])).toBeLessThanOrEqual(
       COMPONENT_OFFSET_ELEVATION_MAX,
     );
-    expect(componentOffset(component("cns5:1"), 0, 1)).toEqual([0, 0, 0]);
+    expect(componentOffset(component("gaia-dr3:1"), 0, 1)).toEqual([0, 0, 0]);
   });
 
   it("keeps Groombridge 34's decorative components within the restored envelope", () => {
-    const first = componentOffset(component("cns5:89"), 0, 2);
-    const second = componentOffset(component("cns5:90"), 1, 2);
+    const first = componentOffset(
+      component("gaia-dr3:385334196532776576"),
+      0,
+      2,
+    );
+    const second = componentOffset(
+      component("gaia-dr3:385334230892516480"),
+      1,
+      2,
+    );
     expect(
       Math.hypot(
         first[0] - second[0],

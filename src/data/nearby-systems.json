@@ -1,51 +1,64 @@
 {
   "metadata": {
+    "configuration": {
+      "context_radius_ly": 20.0
+    },
     "coordinate_frame": "Sun-centered Galactic Cartesian",
-    "generated_at": "2026-07-20T13:53:41+00:00",
+    "coverage": [
+      {
+        "anchor_id": "sol",
+        "anchor_position_pc": {
+          "xg": 0.0,
+          "yg": 0.0,
+          "zg": 0.0
+        },
+        "radius_ly": 20.0,
+        "source_record_count": 73,
+        "system_count": 70
+      }
+    ],
+    "generated_at": "2026-07-26T20:27:56+00:00",
     "render_mapping": "scene.x=Xg; scene.y=Zg; scene.z=-Yg",
     "source": {
-      "acknowledgement": "This project uses the VizieR catalogue access tool, CDS, Strasbourg, France (DOI: 10.26093/cds/vizier).",
-      "catalogue": "CNS5 J/A+A/670/A19",
-      "release": "corrected 2023-12-13"
+      "acknowledgement": "This work has made use of data from the European Space Agency (ESA) mission Gaia (https://www.cosmos.esa.int/gaia), processed by the Gaia Data Processing and Analysis Consortium (DPAC, https://www.cosmos.esa.int/web/gaia/dpac/consortium).",
+      "archive_url": "https://gea.esac.esa.int/tap-server/tap/sync",
+      "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+      "documentation_url": "https://gea.esac.esa.int/archive/documentation/GDR3/",
+      "release": "2022-06-13",
+      "retrieved_at": "2026-07-26T20:27:56+00:00",
+      "snapshot_sha256": "042f769e6e6defcb9600c90daf4d8061e1cad41048aa054a11fb1d0b982116a8"
     },
     "units": "pc"
   },
-  "schema_version": "1.0.0",
+  "schema_version": "2.0.0",
   "systems": [
     {
       "alternates": ["Sun"],
       "components": [
         {
-          "cns5_id": 0,
-          "component": null,
-          "g_magnitude": null,
-          "gaia_dr3_id": null,
-          "gj": null,
-          "hip_id": null,
+          "astrometry_quality": {
+            "parallax_over_error": null,
+            "ruwe": null,
+            "visibility_periods_used": null
+          },
+          "designation": "Sol",
+          "gaia_source_id": null,
           "icrs": {
             "dec_deg": null,
             "epoch_year": null,
-            "parallax_bibcode": null,
             "parallax_error_mas": null,
             "parallax_mas": null,
-            "position_bibcode": null,
             "ra_deg": null
           },
-          "id": "solar:sol",
+          "id": "generated:sol",
+          "photometry": {
+            "bp_rp": null,
+            "g_magnitude": null
+          },
           "visual": {
-            "provenance": {
-              "radius": {
-                "catalogue": "IAU nominal solar radius",
-                "record_id": "R_sun",
-                "reference": "IAU 2015 Resolution B3"
-              },
-              "spectral_class": {
-                "catalogue": "IAU conventional solar classification",
-                "record_id": "Sol"
-              }
-            },
-            "radius_solar": 1.0,
-            "spectral_class": "G2V"
+            "color_family": "yellow",
+            "derivation": "generated Sol origin",
+            "marker_radius": 0.09
           }
         }
       ],
@@ -59,209 +72,153 @@
         "zg": 0.0
       },
       "provenance": {
-        "catalogue": "IAU conventional solar origin",
+        "catalogue": "Generated canonical origin",
         "source_object_ids": []
       },
       "render_position": {
         "x": 0.0,
         "y": 0.0,
-        "z": -0.0
+        "z": 0.0
       }
     },
     {
-      "alternates": ["Rigil Kentaurus", "GJ 559"],
+      "alternates": ["Rigil Kentaurus", "Gaia DR3 5853498713190525696"],
       "components": [
         {
-          "cns5_id": 3627,
-          "component": "AB",
-          "g_magnitude": null,
-          "gaia_dr3_id": null,
-          "gj": "559",
-          "hip_id": 71683,
-          "icrs": {
-            "dec_deg": -60.83514521897498,
-            "epoch_year": 1991.25,
-            "parallax_bibcode": "2007A&A...474..653V",
-            "parallax_error_mas": 4.11,
-            "parallax_mas": 754.8099975585938,
-            "position_bibcode": "2007A&A...474..653V",
-            "ra_deg": 219.9204081301028
+          "astrometry_quality": {
+            "parallax_over_error": 15400.477,
+            "ruwe": 0.97145325,
+            "visibility_periods_used": 26
           },
-          "id": "cns5:3627",
-          "visual": {
-            "provenance": {
-              "radius": {
-                "catalogue": "Nearby-star literature review",
-                "record_id": "Alpha Centauri A",
-                "reference": "Kervella et al. 2017"
-              },
-              "spectral_class": {
-                "catalogue": "SIMBAD",
-                "record_id": "Alpha Cen"
-              }
-            },
-            "radius_solar": 1.22,
-            "spectral_class": "G2V"
-          }
-        },
-        {
-          "cns5_id": 3591,
-          "component": "C",
-          "g_magnitude": 8.984749,
-          "gaia_dr3_id": "5853498713190525696",
-          "gj": "551",
-          "hip_id": 70890,
+          "designation": "Gaia DR3 5853498713190525696",
+          "gaia_source_id": "5853498713190525696",
           "icrs": {
             "dec_deg": -62.67607511676666,
             "epoch_year": 2016.0,
-            "parallax_bibcode": "2020yCat.1350....0G",
-            "parallax_error_mas": 0.056201234,
+            "parallax_error_mas": 0.049872905,
             "parallax_mas": 768.0665391873573,
-            "position_bibcode": "2020yCat.1350....0G",
             "ra_deg": 217.39232147200883
           },
-          "id": "cns5:3591",
+          "id": "gaia-dr3:5853498713190525696",
+          "photometry": {
+            "bp_rp": 3.8045802,
+            "g_magnitude": 8.984749
+          },
           "visual": {
-            "provenance": {
-              "radius": {
-                "catalogue": "Nearby-star literature review",
-                "record_id": "Proxima Centauri",
-                "reference": "Kervella et al. 2017"
-              },
-              "spectral_class": {
-                "catalogue": "SIMBAD",
-                "record_id": "Proxima"
-              }
-            },
-            "radius_solar": 0.154,
-            "spectral_class": "M5.5V"
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
           }
         }
       ],
-      "distance_from_sol_pc": 1.32483671816,
-      "distance_uncertainty_pc": 0.007213840475,
+      "distance_from_sol_pc": 1.30197053117,
+      "distance_uncertainty_pc": 8.4540921e-5,
       "id": "alpha-centauri",
       "name": "Alpha Centauri",
       "position_pc": {
-        "xg": 0.948784452269,
-        "yg": -0.924526916065,
-        "zg": -0.015823223108
+        "xg": 0.902700319298,
+        "yg": -0.937209166763,
+        "zg": -0.043570348986
       },
       "provenance": {
-        "adopted_source_object_id": "cns5:3627",
-        "catalogue": "CNS5 J/A+A/670/A19",
-        "release": "corrected 2023-12-13",
-        "review_version": "1.0.0",
-        "source_object_ids": ["cns5:3627", "cns5:3591"],
+        "adopted_source_object_id": "5853498713190525696",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["5853498713190525696"],
         "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
       },
       "render_position": {
-        "x": 0.948784452269,
-        "y": -0.015823223108,
-        "z": 0.924526916065
+        "x": 0.902700319298,
+        "y": -0.043570348986,
+        "z": 0.937209166763
       }
     },
     {
-      "alternates": ["GJ 699"],
+      "alternates": ["Gaia DR3 4472832130942575872"],
       "components": [
         {
-          "cns5_id": 4449,
-          "component": null,
-          "g_magnitude": 8.1939745,
-          "gaia_dr3_id": "4472832130942575872",
-          "gj": "699",
-          "hip_id": 87937,
+          "astrometry_quality": {
+            "parallax_over_error": 13634.737,
+            "ruwe": 1.0848505,
+            "visibility_periods_used": 17
+          },
+          "designation": "Gaia DR3 4472832130942575872",
+          "gaia_source_id": "4472832130942575872",
           "icrs": {
             "dec_deg": 4.739420051112412,
             "epoch_year": 2016.0,
-            "parallax_bibcode": "2020yCat.1350....0G",
-            "parallax_error_mas": 0.045417666,
-            "parallax_mas": 547.0241867292879,
-            "position_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.040116355,
+            "parallax_mas": 546.975939730948,
             "ra_deg": 269.44850252543836
           },
-          "id": "cns5:4449",
+          "id": "gaia-dr3:4472832130942575872",
+          "photometry": {
+            "bp_rp": 2.8336968,
+            "g_magnitude": 8.1939745
+          },
           "visual": {
-            "provenance": {
-              "radius": {
-                "catalogue": "TESS Input Catalog",
-                "record_id": "HIP 87937",
-                "reference": "Stassun et al. 2019",
-                "release": "8.2"
-              },
-              "spectral_class": {
-                "catalogue": "SIMBAD",
-                "record_id": "GJ 699"
-              }
-            },
-            "radius_solar": 0.2,
-            "spectral_class": "M4V"
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
           }
         }
       ],
-      "distance_from_sol_pc": 1.828072732906,
-      "distance_uncertainty_pc": 0.000151779023,
+      "distance_from_sol_pc": 1.828233981356,
+      "distance_uncertainty_pc": 0.000134086489,
       "id": "barnards-star",
       "name": "Barnard's Star",
       "position_pc": {
-        "xg": 1.519055614633,
-        "yg": 0.914525044057,
-        "zg": 0.444931343288
+        "xg": 1.519189605671,
+        "yg": 0.914605711386,
+        "zg": 0.444970589258
       },
       "provenance": {
-        "adopted_source_object_id": "cns5:4449",
-        "catalogue": "CNS5 J/A+A/670/A19",
-        "release": "corrected 2023-12-13",
-        "review_version": "1.0.0",
-        "source_object_ids": ["cns5:4449"],
+        "adopted_source_object_id": "4472832130942575872",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["4472832130942575872"],
         "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
       },
       "render_position": {
-        "x": 1.519055614633,
-        "y": 0.444931343288,
-        "z": -0.914525044057
+        "x": 1.519189605671,
+        "y": 0.444970589258,
+        "z": -0.914605711386
       }
     },
     {
-      "alternates": ["GJ 406"],
+      "alternates": ["Gaia DR3 3864972938605115520"],
       "components": [
         {
-          "cns5_id": 2674,
-          "component": null,
-          "g_magnitude": 11.038391,
-          "gaia_dr3_id": "3864972938605115520",
-          "gj": "406",
-          "hip_id": null,
+          "astrometry_quality": {
+            "parallax_over_error": 6072.462,
+            "ruwe": 0.8353354,
+            "visibility_periods_used": 15
+          },
+          "designation": "Gaia DR3 3864972938605115520",
+          "gaia_source_id": "3864972938605115520",
           "icrs": {
             "dec_deg": 7.002726940984864,
             "epoch_year": 2016.0,
-            "parallax_bibcode": "2020yCat.1350....0G",
-            "parallax_error_mas": 0.07644637,
+            "parallax_error_mas": 0.06837086,
             "parallax_mas": 415.17941567802137,
-            "position_bibcode": "2020yCat.1350....0G",
             "ra_deg": 164.10319030755974
           },
-          "id": "cns5:2674",
+          "id": "gaia-dr3:3864972938605115520",
+          "photometry": {
+            "bp_rp": 4.1848364,
+            "g_magnitude": 11.038391
+          },
           "visual": {
-            "provenance": {
-              "radius": {
-                "catalogue": "TESS Input Catalog",
-                "record_id": "GJ 406",
-                "reference": "Stassun et al. 2019",
-                "release": "8.2"
-              },
-              "spectral_class": {
-                "catalogue": "SIMBAD",
-                "record_id": "Wolf 359"
-              }
-            },
-            "radius_solar": 0.14,
-            "spectral_class": "M6V"
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
           }
         }
       ],
       "distance_from_sol_pc": 2.408597252749,
-      "distance_uncertainty_pc": 0.00044349144,
+      "distance_uncertainty_pc": 0.000396642655,
       "id": "wolf-359",
       "name": "Wolf 359",
       "position_pc": {
@@ -270,11 +227,11 @@
         "zg": 1.999138419797
       },
       "provenance": {
-        "adopted_source_object_id": "cns5:2674",
-        "catalogue": "CNS5 J/A+A/670/A19",
-        "release": "corrected 2023-12-13",
-        "review_version": "1.0.0",
-        "source_object_ids": ["cns5:2674"],
+        "adopted_source_object_id": "3864972938605115520",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["3864972938605115520"],
         "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
       },
       "render_position": {
@@ -284,695 +241,331 @@
       }
     },
     {
-      "alternates": ["GJ 411"],
+      "alternates": ["Gaia DR3 762815470562110464"],
       "components": [
         {
-          "cns5_id": 2696,
-          "component": null,
-          "g_magnitude": 6.551172,
-          "gaia_dr3_id": "762815470562110464",
-          "gj": "411",
-          "hip_id": 54035,
+          "astrometry_quality": {
+            "parallax_over_error": 12248.019,
+            "ruwe": 0.9638494,
+            "visibility_periods_used": 16
+          },
+          "designation": "Gaia DR3 762815470562110464",
+          "gaia_source_id": "762815470562110464",
           "icrs": {
             "dec_deg": 35.948653032660104,
             "epoch_year": 2016.0,
-            "parallax_bibcode": "2020yCat.1350....0G",
-            "parallax_error_mas": 0.036575083,
-            "parallax_mas": 392.784297437213,
-            "position_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.03206665,
+            "parallax_mas": 392.75294543876464,
             "ra_deg": 165.83095967577933
           },
-          "id": "cns5:2696",
+          "id": "gaia-dr3:762815470562110464",
+          "photometry": {
+            "bp_rp": 2.2156086,
+            "g_magnitude": 6.551172
+          },
           "visual": {
-            "provenance": {
-              "radius": {
-                "catalogue": "TESS Input Catalog",
-                "record_id": "HIP 54035",
-                "reference": "Stassun et al. 2019",
-                "release": "8.2"
-              },
-              "spectral_class": {
-                "catalogue": "SIMBAD",
-                "record_id": "GJ 411"
-              }
-            },
-            "radius_solar": 0.39,
-            "spectral_class": "M2V"
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
           }
         }
       ],
-      "distance_from_sol_pc": 2.545926623148,
-      "distance_uncertainty_pc": 0.000237070265,
+      "distance_from_sol_pc": 2.546129854947,
+      "distance_uncertainty_pc": 0.000207880949,
       "id": "lalande-21185",
       "name": "Lalande 21185",
       "position_pc": {
-        "xg": -1.054141625341,
-        "yg": -0.095368985585,
-        "zg": 2.315476745892
+        "xg": -1.054225773524,
+        "yg": -0.095376598534,
+        "zg": 2.315661581739
       },
       "provenance": {
-        "adopted_source_object_id": "cns5:2696",
-        "catalogue": "CNS5 J/A+A/670/A19",
-        "release": "corrected 2023-12-13",
-        "review_version": "1.0.0",
-        "source_object_ids": ["cns5:2696"],
+        "adopted_source_object_id": "762815470562110464",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["762815470562110464"],
         "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
       },
       "render_position": {
-        "x": -1.054141625341,
-        "y": 2.315476745892,
-        "z": 0.095368985585
+        "x": -1.054225773524,
+        "y": 2.315661581739,
+        "z": 0.095376598534
       }
     },
     {
-      "alternates": ["GJ 244"],
+      "alternates": ["Gaia DR3 4075141768785646848"],
       "components": [
         {
-          "cns5_id": 1675,
-          "component": "B",
-          "g_magnitude": 8.524133,
-          "gaia_dr3_id": "2947050466531873024",
-          "gj": "244",
-          "hip_id": null,
-          "icrs": {
-            "dec_deg": -16.720932526023173,
-            "epoch_year": 2016.0,
-            "parallax_bibcode": "2020yCat.1350....0G",
-            "parallax_error_mas": 0.26141906,
-            "parallax_mas": 374.5105905289588,
-            "position_bibcode": "2020yCat.1350....0G",
-            "ra_deg": 101.28662552099249
+          "astrometry_quality": {
+            "parallax_over_error": 10611.549,
+            "ruwe": 0.98801184,
+            "visibility_periods_used": 14
           },
-          "id": "cns5:1675",
-          "visual": {
-            "provenance": {
-              "radius": {
-                "catalogue": "Nearby-star literature review",
-                "record_id": "Sirius B",
-                "reference": "Holberg et al. 2012"
-              },
-              "spectral_class": {
-                "catalogue": "SIMBAD",
-                "record_id": "Sirius B"
-              }
-            },
-            "radius_solar": 0.0084,
-            "spectral_class": "DA2"
-          }
-        },
-        {
-          "cns5_id": 1676,
-          "component": "A",
-          "g_magnitude": null,
-          "gaia_dr3_id": null,
-          "gj": "244",
-          "hip_id": 32349,
-          "icrs": {
-            "dec_deg": -16.713143062644765,
-            "epoch_year": 1991.25,
-            "parallax_bibcode": "2007A&A...474..653V",
-            "parallax_error_mas": 1.58,
-            "parallax_mas": 379.2099914550781,
-            "position_bibcode": "2007A&A...474..653V",
-            "ra_deg": 101.2885410520664
-          },
-          "id": "cns5:1676",
-          "visual": {
-            "provenance": {
-              "radius": {
-                "catalogue": "TESS Input Catalog",
-                "record_id": "HIP 32349",
-                "reference": "Stassun et al. 2019",
-                "release": "8.2"
-              },
-              "spectral_class": {
-                "catalogue": "SIMBAD",
-                "record_id": "Sirius"
-              }
-            },
-            "radius_solar": 1.71,
-            "spectral_class": "A1V"
-          }
-        }
-      ],
-      "distance_from_sol_pc": 2.67015145977,
-      "distance_uncertainty_pc": 0.001863841777,
-      "id": "sirius",
-      "name": "Sirius",
-      "position_pc": {
-        "xg": -1.791238525787,
-        "yg": -1.936696709296,
-        "zg": -0.412770175823
-      },
-      "provenance": {
-        "adopted_source_object_id": "cns5:1675",
-        "catalogue": "CNS5 J/A+A/670/A19",
-        "release": "corrected 2023-12-13",
-        "review_version": "1.0.0",
-        "source_object_ids": ["cns5:1675", "cns5:1676"],
-        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
-      },
-      "render_position": {
-        "x": -1.791238525787,
-        "y": -0.412770175823,
-        "z": 1.936696709296
-      }
-    },
-    {
-      "alternates": ["GJ 65", "BL Ceti", "UV Ceti"],
-      "components": [
-        {
-          "cns5_id": 424,
-          "component": "A",
-          "g_magnitude": 10.507542,
-          "gaia_dr3_id": "5140693571158739840",
-          "gj": "65",
-          "hip_id": null,
-          "icrs": {
-            "dec_deg": -17.948299887129313,
-            "epoch_year": 2016.0,
-            "parallax_bibcode": "2018A&A...616A...1G",
-            "parallax_error_mas": 0.27,
-            "parallax_mas": 369.92999267578125,
-            "position_bibcode": "2020yCat.1350....0G",
-            "ra_deg": 24.771554293454546
-          },
-          "id": "cns5:424",
-          "visual": {
-            "provenance": {
-              "radius": {
-                "catalogue": "TESS Input Catalog",
-                "record_id": "GJ 65 A",
-                "reference": "Stassun et al. 2019",
-                "release": "8.2"
-              },
-              "spectral_class": {
-                "catalogue": "SIMBAD",
-                "record_id": "GJ 65 A"
-              }
-            },
-            "radius_solar": 0.17,
-            "spectral_class": "M5.5V"
-          }
-        },
-        {
-          "cns5_id": 425,
-          "component": "B",
-          "g_magnitude": 10.817838,
-          "gaia_dr3_id": "5140693571158946048",
-          "gj": "65",
-          "hip_id": null,
-          "icrs": {
-            "dec_deg": -17.947682860008488,
-            "epoch_year": 2016.0,
-            "parallax_bibcode": "2020yCat.1350....0G",
-            "parallax_error_mas": 0.5584941,
-            "parallax_mas": 373.8443122683992,
-            "position_bibcode": "2020yCat.1350....0G",
-            "ra_deg": 24.771674208211856
-          },
-          "id": "cns5:425",
-          "visual": {
-            "provenance": {
-              "radius": {
-                "catalogue": "TESS Input Catalog",
-                "record_id": "GJ 65 B",
-                "reference": "Stassun et al. 2019",
-                "release": "8.2"
-              },
-              "spectral_class": {
-                "catalogue": "SIMBAD",
-                "record_id": "GJ 65 B"
-              }
-            },
-            "radius_solar": 0.16,
-            "spectral_class": "M6V"
-          }
-        }
-      ],
-      "distance_from_sol_pc": 2.703214175112,
-      "distance_uncertainty_pc": 0.001972989057,
-      "id": "luyten-726-8",
-      "name": "Luyten 726-8",
-      "position_pc": {
-        "xg": -0.666247190205,
-        "yg": 0.052193824883,
-        "zg": -2.619304747965
-      },
-      "provenance": {
-        "adopted_source_object_id": "cns5:424",
-        "catalogue": "CNS5 J/A+A/670/A19",
-        "release": "corrected 2023-12-13",
-        "review_version": "1.0.0",
-        "source_object_ids": ["cns5:424", "cns5:425"],
-        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
-      },
-      "render_position": {
-        "x": -0.666247190205,
-        "y": -2.619304747965,
-        "z": -0.052193824883
-      }
-    },
-    {
-      "alternates": ["GJ 729"],
-      "components": [
-        {
-          "cns5_id": 4678,
-          "component": null,
-          "g_magnitude": 9.126414,
-          "gaia_dr3_id": "4075141768785646848",
-          "gj": "729",
-          "hip_id": 92403,
+          "designation": "Gaia DR3 4075141768785646848",
+          "gaia_source_id": "4075141768785646848",
           "icrs": {
             "dec_deg": -23.83709744872712,
             "epoch_year": 2016.0,
-            "parallax_bibcode": "2020yCat.1350....0G",
-            "parallax_error_mas": 0.035651777,
-            "parallax_mas": 336.079124666674,
-            "position_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.031666122,
+            "parallax_mas": 336.0266016683708,
             "ra_deg": 282.4587890175222
           },
-          "id": "cns5:4678",
+          "id": "gaia-dr3:4075141768785646848",
+          "photometry": {
+            "bp_rp": 2.8340364,
+            "g_magnitude": 9.126414
+          },
           "visual": {
-            "provenance": {
-              "radius": {
-                "catalogue": "TESS Input Catalog",
-                "record_id": "HIP 92403",
-                "reference": "Stassun et al. 2019",
-                "release": "8.2"
-              },
-              "spectral_class": {
-                "catalogue": "SIMBAD",
-                "record_id": "GJ 729"
-              }
-            },
-            "radius_solar": 0.2,
-            "spectral_class": "M3.5V"
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
           }
         }
       ],
-      "distance_from_sol_pc": 2.975489777866,
-      "distance_uncertainty_pc": 0.000315644413,
+      "distance_from_sol_pc": 2.975954864987,
+      "distance_uncertainty_pc": 0.000280444909,
       "id": "ross-154",
       "name": "Ross 154",
       "position_pc": {
-        "xg": 2.870826024918,
-        "yg": 0.574045310906,
-        "zg": -0.531384356061
+        "xg": 2.871274752459,
+        "yg": 0.574135037674,
+        "zg": -0.531467414662
       },
       "provenance": {
-        "adopted_source_object_id": "cns5:4678",
-        "catalogue": "CNS5 J/A+A/670/A19",
-        "release": "corrected 2023-12-13",
-        "review_version": "1.0.0",
-        "source_object_ids": ["cns5:4678"],
+        "adopted_source_object_id": "4075141768785646848",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["4075141768785646848"],
         "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
       },
       "render_position": {
-        "x": 2.870826024918,
-        "y": -0.531384356061,
-        "z": -0.574045310906
+        "x": 2.871274752459,
+        "y": -0.531467414662,
+        "z": -0.574135037674
       }
     },
     {
-      "alternates": ["GJ 905"],
+      "alternates": ["Gaia DR3 1926461164913660160"],
       "components": [
         {
-          "cns5_id": 5844,
-          "component": null,
-          "g_magnitude": 10.379277,
-          "gaia_dr3_id": "1926461164913660160",
-          "gj": "905",
-          "hip_id": null,
+          "astrometry_quality": {
+            "parallax_over_error": 7120.1313,
+            "ruwe": 1.0273284,
+            "visibility_periods_used": 20
+          },
+          "designation": "Gaia DR3 1926461164913660160",
+          "gaia_source_id": "1926461164913660160",
           "icrs": {
             "dec_deg": 44.170375700747755,
             "epoch_year": 2016.0,
-            "parallax_bibcode": "2020yCat.1350....0G",
-            "parallax_error_mas": 0.049608666,
-            "parallax_mas": 316.5352087815091,
-            "position_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.044448785,
+            "parallax_mas": 316.48118678226916,
             "ra_deg": 355.4800152581559
           },
-          "id": "cns5:5844",
+          "id": "gaia-dr3:1926461164913660160",
+          "photometry": {
+            "bp_rp": 3.5294142,
+            "g_magnitude": 10.379277
+          },
           "visual": {
-            "provenance": {
-              "radius": {
-                "catalogue": "TESS Input Catalog",
-                "record_id": "GJ 905",
-                "reference": "Stassun et al. 2019",
-                "release": "8.2"
-              },
-              "spectral_class": {
-                "catalogue": "SIMBAD",
-                "record_id": "GJ 905"
-              }
-            },
-            "radius_solar": 0.17,
-            "spectral_class": "M5.5V"
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
           }
         }
       ],
-      "distance_from_sol_pc": 3.159206218637,
-      "distance_uncertainty_pc": 0.000495123455,
+      "distance_from_sol_pc": 3.159745481768,
+      "distance_uncertainty_pc": 0.000443776292,
       "id": "ross-248",
       "name": "Ross 248",
       "position_pc": {
-        "xg": -1.033060674477,
-        "yg": 2.839954019336,
-        "zg": -0.920885846769
+        "xg": -1.033237013562,
+        "yg": 2.840438787468,
+        "zg": -0.921043038086
       },
       "provenance": {
-        "adopted_source_object_id": "cns5:5844",
-        "catalogue": "CNS5 J/A+A/670/A19",
-        "release": "corrected 2023-12-13",
-        "review_version": "1.0.0",
-        "source_object_ids": ["cns5:5844"],
+        "adopted_source_object_id": "1926461164913660160",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["1926461164913660160"],
         "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
       },
       "render_position": {
-        "x": -1.033060674477,
-        "y": -0.920885846769,
-        "z": -2.839954019336
+        "x": -1.033237013562,
+        "y": -0.921043038086,
+        "z": -2.840438787468
       }
     },
     {
-      "alternates": ["GJ 144"],
+      "alternates": ["Gaia DR3 6553614253923452800"],
       "components": [
         {
-          "cns5_id": 905,
-          "component": null,
-          "g_magnitude": 3.465752,
-          "gaia_dr3_id": "5164707970261890560",
-          "gj": "144.0",
-          "hip_id": 16537,
-          "icrs": {
-            "dec_deg": -9.458168216292322,
-            "epoch_year": 2016.0,
-            "parallax_bibcode": "2020yCat.1350....0G",
-            "parallax_error_mas": 0.15547387,
-            "parallax_mas": 310.5772928005821,
-            "position_bibcode": "2020yCat.1350....0G",
-            "ra_deg": 53.22829341517546
+          "astrometry_quality": {
+            "parallax_over_error": 15210.015,
+            "ruwe": 0.9320045,
+            "visibility_periods_used": 16
           },
-          "id": "cns5:905",
-          "visual": {
-            "provenance": {
-              "radius": {
-                "catalogue": "TESS Input Catalog",
-                "record_id": "HIP 16537",
-                "reference": "Stassun et al. 2019",
-                "release": "8.2"
-              },
-              "spectral_class": {
-                "catalogue": "SIMBAD",
-                "record_id": "eps Eri"
-              }
-            },
-            "radius_solar": 0.74,
-            "spectral_class": "K2V"
-          }
-        }
-      ],
-      "distance_from_sol_pc": 3.21981040849,
-      "distance_uncertainty_pc": 0.00161182545,
-      "id": "epsilon-eridani",
-      "name": "Epsilon Eridani",
-      "position_pc": {
-        "xg": -2.070440380151,
-        "yg": -0.587485489724,
-        "zg": -2.394852082744
-      },
-      "provenance": {
-        "adopted_source_object_id": "cns5:905",
-        "catalogue": "CNS5 J/A+A/670/A19",
-        "release": "corrected 2023-12-13",
-        "review_version": "1.0.0",
-        "source_object_ids": ["cns5:905"],
-        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
-      },
-      "render_position": {
-        "x": -2.070440380151,
-        "y": -2.394852082744,
-        "z": 0.587485489724
-      }
-    },
-    {
-      "alternates": ["GJ 887"],
-      "components": [
-        {
-          "cns5_id": 5688,
-          "component": null,
-          "g_magnitude": 6.5220323,
-          "gaia_dr3_id": "6553614253923452800",
-          "gj": "887",
-          "hip_id": 114046,
+          "designation": "Gaia DR3 6553614253923452800",
+          "gaia_source_id": "6553614253923452800",
           "icrs": {
             "dec_deg": -35.8471642082214,
             "epoch_year": 2016.0,
-            "parallax_bibcode": "2020yCat.1350....0G",
-            "parallax_error_mas": 0.022809435,
-            "parallax_mas": 304.1626511996916,
-            "position_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.01999573,
+            "parallax_mas": 304.1353692001036,
             "ra_deg": 346.5039166796005
           },
-          "id": "cns5:5688",
+          "id": "gaia-dr3:6553614253923452800",
+          "photometry": {
+            "bp_rp": 2.0982852,
+            "g_magnitude": 6.5220323
+          },
           "visual": {
-            "provenance": {
-              "radius": {
-                "catalogue": "TESS Input Catalog",
-                "record_id": "HIP 114046",
-                "reference": "Stassun et al. 2019",
-                "release": "8.2"
-              },
-              "spectral_class": {
-                "catalogue": "SIMBAD",
-                "record_id": "GJ 887"
-              }
-            },
-            "radius_solar": 0.47,
-            "spectral_class": "M2V"
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
           }
         }
       ],
-      "distance_from_sol_pc": 3.287714635757,
-      "distance_uncertainty_pc": 0.000246548723,
+      "distance_from_sol_pc": 3.288009555186,
+      "distance_uncertainty_pc": 0.000216173974,
       "id": "lacaille-9352",
       "name": "Lacaille 9352",
       "position_pc": {
-        "xg": 1.332588128543,
-        "yg": 0.118865503427,
-        "zg": -3.003189537464
+        "xg": 1.332707666329,
+        "yg": 0.118876166076,
+        "zg": -3.003458934003
       },
       "provenance": {
-        "adopted_source_object_id": "cns5:5688",
-        "catalogue": "CNS5 J/A+A/670/A19",
-        "release": "corrected 2023-12-13",
-        "review_version": "1.0.0",
-        "source_object_ids": ["cns5:5688"],
+        "adopted_source_object_id": "6553614253923452800",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["6553614253923452800"],
         "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
       },
       "render_position": {
-        "x": 1.332588128543,
-        "y": -3.003189537464,
-        "z": -0.118865503427
+        "x": 1.332707666329,
+        "y": -3.003458934003,
+        "z": -0.118876166076
       }
     },
     {
-      "alternates": ["GJ 447"],
+      "alternates": ["Gaia DR3 3796072592206250624"],
       "components": [
         {
-          "cns5_id": 2890,
-          "component": null,
-          "g_magnitude": 9.601,
-          "gaia_dr3_id": "3796072592206250624",
-          "gj": "447",
-          "hip_id": 57548,
+          "astrometry_quality": {
+            "parallax_over_error": 9816.142,
+            "ruwe": 1.0825819,
+            "visibility_periods_used": 16
+          },
+          "designation": "Gaia DR3 3796072592206250624",
+          "gaia_source_id": "3796072592206250624",
           "icrs": {
             "dec_deg": 0.7991199702364985,
             "epoch_year": 2016.0,
-            "parallax_bibcode": "2020yCat.1350....0G",
-            "parallax_error_mas": 0.03387585,
-            "parallax_mas": 296.3626809123856,
-            "position_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.030185517,
+            "parallax_mas": 296.3053079139394,
             "ra_deg": 176.93768799004127
           },
-          "id": "cns5:2890",
+          "id": "gaia-dr3:3796072592206250624",
+          "photometry": {
+            "bp_rp": 3.0332584,
+            "g_magnitude": 9.601
+          },
           "visual": {
-            "provenance": {
-              "radius": {
-                "catalogue": "TESS Input Catalog",
-                "record_id": "HIP 57548",
-                "reference": "Stassun et al. 2019",
-                "release": "8.2"
-              },
-              "spectral_class": {
-                "catalogue": "SIMBAD",
-                "record_id": "GJ 447"
-              }
-            },
-            "radius_solar": 0.2,
-            "spectral_class": "M4V"
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
           }
         }
       ],
-      "distance_from_sol_pc": 3.374244007111,
-      "distance_uncertainty_pc": 0.000385694256,
+      "distance_from_sol_pc": 3.374897355164,
+      "distance_uncertainty_pc": 0.000343810991,
       "id": "ross-128",
       "name": "Ross 128",
       "position_pc": {
-        "xg": 0.004682785795,
-        "yg": -1.709726805993,
-        "zg": 2.909009271197
+        "xg": 0.004683692513,
+        "yg": -1.710057856942,
+        "zg": 2.909572536788
       },
       "provenance": {
-        "adopted_source_object_id": "cns5:2890",
-        "catalogue": "CNS5 J/A+A/670/A19",
-        "release": "corrected 2023-12-13",
-        "review_version": "1.0.0",
-        "source_object_ids": ["cns5:2890"],
+        "adopted_source_object_id": "3796072592206250624",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["3796072592206250624"],
         "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
       },
       "render_position": {
-        "x": 0.004682785795,
-        "y": 2.909009271197,
-        "z": 1.709726805993
+        "x": 0.004683692513,
+        "y": 2.909572536788,
+        "z": 1.710057856942
       }
     },
     {
-      "alternates": ["GJ 866"],
-      "components": [
-        {
-          "cns5_id": 5586,
-          "component": "ABC",
-          "g_magnitude": null,
-          "gaia_dr3_id": null,
-          "gj": "866",
-          "hip_id": null,
-          "icrs": {
-            "dec_deg": -15.28964705186,
-            "epoch_year": 2016.0,
-            "parallax_bibcode": "2010A&ARv..18...67T",
-            "parallax_error_mas": 0.9,
-            "parallax_mas": 293.6,
-            "position_bibcode": "2020yCat.1350....0G",
-            "ra_deg": 339.650693945
-          },
-          "id": "cns5:5586",
-          "visual": {
-            "provenance": {
-              "radius": {
-                "catalogue": "TESS Input Catalog",
-                "record_id": "GJ 866",
-                "reference": "Stassun et al. 2019",
-                "release": "8.2"
-              },
-              "spectral_class": {
-                "catalogue": "SIMBAD",
-                "record_id": "GJ 866"
-              }
-            },
-            "radius_solar": 0.2,
-            "spectral_class": "M5V"
-          }
-        }
+      "alternates": [
+        "Gaia DR3 1872046574983497216",
+        "Gaia DR3 1872046609345556480"
       ],
-      "distance_from_sol_pc": 3.405994550409,
-      "distance_uncertainty_pc": 0.01044071899,
-      "id": "ez-aquarii",
-      "name": "EZ Aquarii",
-      "position_pc": {
-        "xg": 1.26341174146,
-        "yg": 1.359357903121,
-        "zg": -2.855999954513
-      },
-      "provenance": {
-        "adopted_source_object_id": "cns5:5586",
-        "catalogue": "CNS5 J/A+A/670/A19",
-        "release": "corrected 2023-12-13",
-        "review_version": "1.0.0",
-        "source_object_ids": ["cns5:5586"],
-        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
-      },
-      "render_position": {
-        "x": 1.26341174146,
-        "y": -2.855999954513,
-        "z": -1.359357903121
-      }
-    },
-    {
-      "alternates": ["GJ 820"],
       "components": [
         {
-          "cns5_id": 5218,
-          "component": "B",
-          "g_magnitude": 5.4506445,
-          "gaia_dr3_id": "1872046574983497216",
-          "gj": "820",
-          "hip_id": 104217,
+          "astrometry_quality": {
+            "parallax_over_error": 9882.616,
+            "ruwe": 0.9611461,
+            "visibility_periods_used": 25
+          },
+          "designation": "Gaia DR3 1872046574983497216",
+          "gaia_source_id": "1872046574983497216",
           "icrs": {
             "dec_deg": 38.75607277205679,
             "epoch_year": 2016.0,
-            "parallax_bibcode": "2020yCat.1350....0G",
-            "parallax_error_mas": 0.033118717,
+            "parallax_error_mas": 0.028940246,
             "parallax_mas": 286.0053518616485,
-            "position_bibcode": "2020yCat.1350....0G",
             "ra_deg": 316.753662752556
           },
-          "id": "cns5:5218",
+          "id": "gaia-dr3:1872046574983497216",
+          "photometry": {
+            "bp_rp": 1.7153406,
+            "g_magnitude": 5.4506445
+          },
           "visual": {
-            "provenance": {
-              "radius": {
-                "catalogue": "TESS Input Catalog",
-                "record_id": "HIP 104217",
-                "reference": "Stassun et al. 2019",
-                "release": "8.2"
-              },
-              "spectral_class": {
-                "catalogue": "SIMBAD",
-                "record_id": "GJ 820 B"
-              }
-            },
-            "radius_solar": 0.6,
-            "spectral_class": "K7V"
+            "color_family": "orange",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
           }
         },
         {
-          "cns5_id": 5217,
-          "component": "A",
-          "g_magnitude": 4.766713,
-          "gaia_dr3_id": "1872046609345556480",
-          "gj": "820",
-          "hip_id": 104214,
+          "astrometry_quality": {
+            "parallax_over_error": 4774.757,
+            "ruwe": 1.2043179,
+            "visibility_periods_used": 24
+          },
+          "designation": "Gaia DR3 1872046609345556480",
+          "gaia_source_id": "1872046609345556480",
           "icrs": {
             "dec_deg": 38.76386244649797,
             "epoch_year": 2016.0,
-            "parallax_bibcode": "2020yCat.1350....0G",
-            "parallax_error_mas": 0.06864106,
+            "parallax_error_mas": 0.05989728,
             "parallax_mas": 285.99494829578117,
-            "position_bibcode": "2020yCat.1350....0G",
             "ra_deg": 316.7484792940004
           },
-          "id": "cns5:5217",
+          "id": "gaia-dr3:1872046609345556480",
+          "photometry": {
+            "bp_rp": 1.4625897,
+            "g_magnitude": 4.766713
+          },
           "visual": {
-            "provenance": {
-              "radius": {
-                "catalogue": "TESS Input Catalog",
-                "record_id": "HIP 104214",
-                "reference": "Stassun et al. 2019",
-                "release": "8.2"
-              },
-              "spectral_class": {
-                "catalogue": "SIMBAD",
-                "record_id": "GJ 820 A"
-              }
-            },
-            "radius_solar": 0.67,
-            "spectral_class": "K5V"
+            "color_family": "orange",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
           }
         }
       ],
       "distance_from_sol_pc": 3.496438068346,
-      "distance_uncertainty_pc": 0.000404878937,
+      "distance_uncertainty_pc": 0.000353796798,
       "id": "61-cygni",
       "name": "61 Cygni",
       "position_pc": {
@@ -981,11 +574,11 @@
         "zg": -0.35518237531
       },
       "provenance": {
-        "adopted_source_object_id": "cns5:5218",
-        "catalogue": "CNS5 J/A+A/670/A19",
-        "release": "corrected 2023-12-13",
-        "review_version": "1.0.0",
-        "source_object_ids": ["cns5:5218", "cns5:5217"],
+        "adopted_source_object_id": "1872046574983497216",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["1872046574983497216", "1872046609345556480"],
         "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
       },
       "render_position": {
@@ -995,390 +588,254 @@
       }
     },
     {
-      "alternates": ["GJ 280"],
-      "components": [
-        {
-          "cns5_id": 1895,
-          "component": null,
-          "g_magnitude": null,
-          "gaia_dr3_id": null,
-          "gj": "280.0",
-          "hip_id": 37279,
-          "icrs": {
-            "dec_deg": 5.227507577481227,
-            "epoch_year": 1991.25,
-            "parallax_bibcode": "2007A&A...474..653V",
-            "parallax_error_mas": 1.26,
-            "parallax_mas": 284.55999755859375,
-            "position_bibcode": "2007A&A...474..653V",
-            "ra_deg": 114.82724201808722
-          },
-          "id": "cns5:1895",
-          "visual": {
-            "provenance": {
-              "radius": {
-                "catalogue": "TESS Input Catalog",
-                "record_id": "TIC 280310048",
-                "reference": "Stassun et al. 2019",
-                "release": "8.2"
-              },
-              "spectral_class": {
-                "catalogue": "SIMBAD",
-                "record_id": "Procyon"
-              }
-            },
-            "radius_solar": 2.13,
-            "spectral_class": "F5IV-V"
-          }
-        }
+      "alternates": [
+        "Gaia DR3 2154880616774131712",
+        "Gaia DR3 2154880616774131840"
       ],
-      "distance_from_sol_pc": 3.514197387474,
-      "distance_uncertainty_pc": 0.01556047493,
-      "id": "procyon",
-      "name": "Procyon",
-      "position_pc": {
-        "xg": -2.848440149455,
-        "yg": -1.89972587539,
-        "zg": 0.79184189803
-      },
-      "provenance": {
-        "adopted_source_object_id": "cns5:1895",
-        "catalogue": "CNS5 J/A+A/670/A19",
-        "release": "corrected 2023-12-13",
-        "review_version": "1.0.0",
-        "source_object_ids": ["cns5:1895"],
-        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
-      },
-      "render_position": {
-        "x": -2.848440149455,
-        "y": 0.79184189803,
-        "z": 1.89972587539
-      }
-    },
-    {
-      "alternates": ["GJ 725"],
       "components": [
         {
-          "cns5_id": 4634,
-          "component": "B",
-          "g_magnitude": 8.524704,
-          "gaia_dr3_id": "2154880616774131712",
-          "gj": "725",
-          "hip_id": 91772,
+          "astrometry_quality": {
+            "parallax_over_error": 9895.117,
+            "ruwe": 1.312914,
+            "visibility_periods_used": 26
+          },
+          "designation": "Gaia DR3 2154880616774131712",
+          "gaia_source_id": "2154880616774131712",
           "icrs": {
             "dec_deg": 59.635145454818776,
             "epoch_year": 2016.0,
-            "parallax_bibcode": "2020yCat.1350....0G",
-            "parallax_error_mas": 0.032414872,
-            "parallax_mas": 283.85911584457847,
-            "position_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.028684631,
+            "parallax_mas": 283.8377678450057,
             "ra_deg": 280.68308624583415
           },
-          "id": "cns5:4634",
+          "id": "gaia-dr3:2154880616774131712",
+          "photometry": {
+            "bp_rp": 2.625472,
+            "g_magnitude": 8.524704
+          },
           "visual": {
-            "provenance": {
-              "radius": {
-                "catalogue": "TESS Input Catalog",
-                "record_id": "HIP 91772",
-                "reference": "Stassun et al. 2019",
-                "release": "8.2"
-              },
-              "spectral_class": {
-                "catalogue": "SIMBAD",
-                "record_id": "GJ 725 B"
-              }
-            },
-            "radius_solar": 0.3,
-            "spectral_class": "M3.5V"
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
           }
         },
         {
-          "cns5_id": 4633,
-          "component": "A",
-          "g_magnitude": 7.854393,
-          "gaia_dr3_id": "2154880616774131840",
-          "gj": "725",
-          "hip_id": 91768,
+          "astrometry_quality": {
+            "parallax_over_error": 12906.132,
+            "ruwe": 1.0079373,
+            "visibility_periods_used": 25
+          },
+          "designation": "Gaia DR3 2154880616774131840",
+          "gaia_source_id": "2154880616774131840",
           "icrs": {
             "dec_deg": 59.638357907754816,
             "epoch_year": 2016.0,
-            "parallax_bibcode": "2020yCat.1350....0G",
-            "parallax_error_mas": 0.024943385,
-            "parallax_mas": 283.860076019069,
-            "position_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.021992655,
+            "parallax_mas": 283.8401180184389,
             "ra_deg": 280.6830708352289
           },
-          "id": "cns5:4633",
+          "id": "gaia-dr3:2154880616774131840",
+          "photometry": {
+            "bp_rp": 2.4610577,
+            "g_magnitude": 7.854393
+          },
           "visual": {
-            "provenance": {
-              "radius": {
-                "catalogue": "TESS Input Catalog",
-                "record_id": "HIP 91768",
-                "reference": "Stassun et al. 2019",
-                "release": "8.2"
-              },
-              "spectral_class": {
-                "catalogue": "SIMBAD",
-                "record_id": "GJ 725 A"
-              }
-            },
-            "radius_solar": 0.35,
-            "spectral_class": "M3V"
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
           }
         }
       ],
-      "distance_from_sol_pc": 3.522874356261,
-      "distance_uncertainty_pc": 0.000402289428,
+      "distance_from_sol_pc": 3.523139318605,
+      "distance_uncertainty_pc": 0.000356048288,
       "id": "struve-2398",
       "name": "Struve 2398",
       "position_pc": {
-        "xg": 0.03969194928,
-        "yg": 3.212095105134,
-        "zg": 1.446206525618
+        "xg": 0.03969493459,
+        "yg": 3.212336693156,
+        "zg": 1.44631529767
       },
       "provenance": {
-        "adopted_source_object_id": "cns5:4634",
-        "catalogue": "CNS5 J/A+A/670/A19",
-        "release": "corrected 2023-12-13",
-        "review_version": "1.0.0",
-        "source_object_ids": ["cns5:4634", "cns5:4633"],
+        "adopted_source_object_id": "2154880616774131712",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["2154880616774131712", "2154880616774131840"],
         "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
       },
       "render_position": {
-        "x": 0.03969194928,
-        "y": 1.446206525618,
-        "z": -3.212095105134
+        "x": 0.03969493459,
+        "y": 1.44631529767,
+        "z": -3.212336693156
       }
     },
     {
-      "alternates": ["GJ 15"],
+      "alternates": [
+        "Gaia DR3 385334196532776576",
+        "Gaia DR3 385334230892516480"
+      ],
       "components": [
         {
-          "cns5_id": 89,
-          "component": "A",
-          "g_magnitude": 7.218567,
-          "gaia_dr3_id": "385334230892516480",
-          "gj": "15",
-          "hip_id": 1475,
-          "icrs": {
-            "dec_deg": 44.02478674398518,
-            "epoch_year": 2016.0,
-            "parallax_bibcode": "2020yCat.1350....0G",
-            "parallax_error_mas": 0.023075048,
-            "parallax_mas": 280.7411265779381,
-            "position_bibcode": "2020yCat.1350....0G",
-            "ra_deg": 4.613226257557736
+          "astrometry_quality": {
+            "parallax_over_error": 10082.761,
+            "ruwe": 1.1803766,
+            "visibility_periods_used": 22
           },
-          "id": "cns5:89",
-          "visual": {
-            "provenance": {
-              "radius": {
-                "catalogue": "TESS Input Catalog",
-                "record_id": "GJ 15 A",
-                "reference": "Stassun et al. 2019",
-                "release": "8.2"
-              },
-              "spectral_class": {
-                "catalogue": "SIMBAD",
-                "record_id": "GJ 15 A"
-              }
-            },
-            "radius_solar": 0.39,
-            "spectral_class": "M1V"
-          }
-        },
-        {
-          "cns5_id": 90,
-          "component": "B",
-          "g_magnitude": 9.686646,
-          "gaia_dr3_id": "385334196532776576",
-          "gj": "15",
-          "hip_id": null,
+          "designation": "Gaia DR3 385334196532776576",
+          "gaia_source_id": "385334196532776576",
           "icrs": {
             "dec_deg": 44.02874451664357,
             "epoch_year": 2016.0,
-            "parallax_bibcode": "2020yCat.1350....0G",
-            "parallax_error_mas": 0.031223621,
-            "parallax_mas": 280.74451904422403,
-            "position_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.027839076,
+            "parallax_mas": 280.6947310460246,
             "ra_deg": 4.625300681217554
           },
-          "id": "cns5:90",
-          "visual": {
-            "provenance": {
-              "radius": {
-                "catalogue": "TESS Input Catalog",
-                "record_id": "GJ 15 B",
-                "reference": "Stassun et al. 2019",
-                "release": "8.2"
-              },
-              "spectral_class": {
-                "catalogue": "SIMBAD",
-                "record_id": "GJ 15 B"
-              }
-            },
-            "radius_solar": 0.15,
-            "spectral_class": "M3.5V"
-          }
-        }
-      ],
-      "distance_from_sol_pc": 3.562000381595,
-      "distance_uncertainty_pc": 0.000292772672,
-      "id": "groombridge-34",
-      "name": "Groombridge 34",
-      "position_pc": {
-        "xg": -1.517742782184,
-        "yg": 3.01892951699,
-        "zg": -1.12710608953
-      },
-      "provenance": {
-        "adopted_source_object_id": "cns5:89",
-        "catalogue": "CNS5 J/A+A/670/A19",
-        "release": "corrected 2023-12-13",
-        "review_version": "1.0.0",
-        "source_object_ids": ["cns5:89", "cns5:90"],
-        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
-      },
-      "render_position": {
-        "x": -1.517742782184,
-        "y": -1.12710608953,
-        "z": -3.01892951699
-      }
-    },
-    {
-      "alternates": ["GJ 1111"],
-      "components": [
-        {
-          "cns5_id": 2093,
-          "component": null,
-          "g_magnitude": 12.167455,
-          "gaia_dr3_id": "703790044252850688",
-          "gj": "1111",
-          "hip_id": null,
-          "icrs": {
-            "dec_deg": 26.77328596508202,
-            "epoch_year": 2016.0,
-            "parallax_bibcode": "2020yCat.1350....0G",
-            "parallax_error_mas": 0.08000224,
-            "parallax_mas": 279.2596271009328,
-            "position_bibcode": "2020yCat.1350....0G",
-            "ra_deg": 127.45009240230564
+          "id": "gaia-dr3:385334196532776576",
+          "photometry": {
+            "bp_rp": 2.8360271,
+            "g_magnitude": 9.686646
           },
-          "id": "cns5:2093",
           "visual": {
-            "provenance": {
-              "radius": {
-                "catalogue": "TESS Input Catalog",
-                "record_id": "GJ 1111",
-                "reference": "Stassun et al. 2019",
-                "release": "8.2"
-              },
-              "spectral_class": {
-                "catalogue": "SIMBAD",
-                "record_id": "DX Cnc"
-              }
-            },
-            "radius_solar": 0.12,
-            "spectral_class": "M6.5V"
-          }
-        }
-      ],
-      "distance_from_sol_pc": 3.580897139988,
-      "distance_uncertainty_pc": 0.001025854669,
-      "id": "dx-cancri",
-      "name": "DX Cancri",
-      "position_pc": {
-        "xg": -2.890603974827,
-        "yg": -0.884629657808,
-        "zg": 1.919547695791
-      },
-      "provenance": {
-        "adopted_source_object_id": "cns5:2093",
-        "catalogue": "CNS5 J/A+A/670/A19",
-        "release": "corrected 2023-12-13",
-        "review_version": "1.0.0",
-        "source_object_ids": ["cns5:2093"],
-        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
-      },
-      "render_position": {
-        "x": -2.890603974827,
-        "y": 1.919547695791,
-        "z": 0.884629657808
-      }
-    },
-    {
-      "alternates": ["GJ 845"],
-      "components": [
-        {
-          "cns5_id": 5449,
-          "component": "A",
-          "g_magnitude": 4.322904,
-          "gaia_dr3_id": "6412595290592307840",
-          "gj": "845",
-          "hip_id": 108870,
-          "icrs": {
-            "dec_deg": -56.79725466122902,
-            "epoch_year": 2016.0,
-            "parallax_bibcode": "2020yCat.1350....0G",
-            "parallax_error_mas": 0.10964223,
-            "parallax_mas": 274.8431415216296,
-            "position_bibcode": "2020yCat.1350....0G",
-            "ra_deg": 330.8724078795965
-          },
-          "id": "cns5:5449",
-          "visual": {
-            "provenance": {
-              "radius": {
-                "catalogue": "TESS Input Catalog",
-                "record_id": "HIP 108870",
-                "reference": "Stassun et al. 2019",
-                "release": "8.2"
-              },
-              "spectral_class": {
-                "catalogue": "SIMBAD",
-                "record_id": "eps Ind A"
-              }
-            },
-            "radius_solar": 0.7,
-            "spectral_class": "K4.5V"
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
           }
         },
         {
-          "cns5_id": 5452,
-          "component": "B",
-          "g_magnitude": 18.056162,
-          "gaia_dr3_id": "6412596012146801152",
-          "gj": "845",
-          "hip_id": null,
-          "icrs": {
-            "dec_deg": -56.79381206688221,
-            "epoch_year": 2016.0,
-            "parallax_bibcode": "2020yCat.1350....0G",
-            "parallax_error_mas": 0.6972039,
-            "parallax_mas": 270.6580324694526,
-            "position_bibcode": "2020yCat.1350....0G",
-            "ra_deg": 331.07645259656397
+          "astrometry_quality": {
+            "parallax_over_error": 13838.454,
+            "ruwe": 1.0384927,
+            "visibility_periods_used": 22
           },
-          "id": "cns5:5452",
+          "designation": "Gaia DR3 385334230892516480",
+          "gaia_source_id": "385334230892516480",
+          "icrs": {
+            "dec_deg": 44.02478674398518,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.020284552,
+            "parallax_mas": 280.706821579123,
+            "ra_deg": 4.613226257557736
+          },
+          "id": "gaia-dr3:385334230892516480",
+          "photometry": {
+            "bp_rp": 2.164384,
+            "g_magnitude": 7.218567
+          },
           "visual": {
-            "provenance": {
-              "radius": {
-                "catalogue": "Nearby-star literature review",
-                "record_id": "Epsilon Indi Ba",
-                "reference": "King et al. 2010"
-              },
-              "spectral_class": {
-                "catalogue": "SIMBAD",
-                "record_id": "eps Ind B"
-              }
-            },
-            "radius_solar": 0.1,
-            "spectral_class": "T1V"
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 3.562435691354,
+      "distance_uncertainty_pc": 0.000257430196,
+      "id": "groombridge-34",
+      "name": "Groombridge 34",
+      "position_pc": {
+        "xg": -1.517928264546,
+        "yg": 3.019298458411,
+        "zg": -1.127243832435
+      },
+      "provenance": {
+        "adopted_source_object_id": "385334230892516480",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["385334196532776576", "385334230892516480"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -1.517928264546,
+        "y": -1.127243832435,
+        "z": -3.019298458411
+      }
+    },
+    {
+      "alternates": ["Gaia DR3 703790044252850688"],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 4382.0522,
+            "ruwe": 1.1545533,
+            "visibility_periods_used": 18
+          },
+          "designation": "Gaia DR3 703790044252850688",
+          "gaia_source_id": "703790044252850688",
+          "icrs": {
+            "dec_deg": 26.77328596508202,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.06372576,
+            "parallax_mas": 279.2496391012477,
+            "ra_deg": 127.45009240230564
+          },
+          "id": "gaia-dr3:703790044252850688",
+          "photometry": {
+            "bp_rp": 4.3975945,
+            "g_magnitude": 12.167455
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 3.581025218935,
+      "distance_uncertainty_pc": 0.000817202681,
+      "id": "dx-cancri",
+      "name": "DX Cancri",
+      "position_pc": {
+        "xg": -2.890707363865,
+        "yg": -0.884661298604,
+        "zg": 1.919616352789
+      },
+      "provenance": {
+        "adopted_source_object_id": "703790044252850688",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["703790044252850688"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -2.890707363865,
+        "y": 1.919616352789,
+        "z": 0.884661298604
+      }
+    },
+    {
+      "alternates": ["Gaia DR3 6412595290592307840"],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 2874.4775,
+            "ruwe": 1.1482686,
+            "visibility_periods_used": 23
+          },
+          "designation": "Gaia DR3 6412595290592307840",
+          "gaia_source_id": "6412595290592307840",
+          "icrs": {
+            "dec_deg": -56.79725466122902,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.09561499,
+            "parallax_mas": 274.8431415216296,
+            "ra_deg": 330.8724078795965
+          },
+          "id": "gaia-dr3:6412595290592307840",
+          "photometry": {
+            "bp_rp": 1.2974195,
+            "g_magnitude": 4.322904
+          },
+          "visual": {
+            "color_family": "orange",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
           }
         }
       ],
       "distance_from_sol_pc": 3.638438981826,
-      "distance_uncertainty_pc": 0.00145146996,
+      "distance_uncertainty_pc": 0.001265774015,
       "id": "epsilon-indi",
       "name": "Epsilon Indi",
       "position_pc": {
@@ -1387,11 +844,11 @@
         "zg": -2.706241717662
       },
       "provenance": {
-        "adopted_source_object_id": "cns5:5449",
-        "catalogue": "CNS5 J/A+A/670/A19",
-        "release": "corrected 2023-12-13",
-        "review_version": "1.0.0",
-        "source_object_ids": ["cns5:5449", "cns5:5452"],
+        "adopted_source_object_id": "6412595290592307840",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["6412595290592307840"],
         "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
       },
       "render_position": {
@@ -1401,125 +858,3024 @@
       }
     },
     {
-      "alternates": ["GJ 71"],
+      "alternates": ["Gaia DR3 4848140361962951552"],
       "components": [
         {
-          "cns5_id": 448,
-          "component": null,
-          "g_magnitude": 3.3003998,
-          "gaia_dr3_id": "2452378776434477184",
-          "gj": "71.0",
-          "hip_id": 8102,
-          "icrs": {
-            "dec_deg": -15.933680200693857,
-            "epoch_year": 2016.0,
-            "parallax_bibcode": "2007A&A...474..653V",
-            "parallax_error_mas": 0.17,
-            "parallax_mas": 273.9599914550781,
-            "position_bibcode": "2020yCat.1350....0G",
-            "ra_deg": 26.009055057160104
+          "astrometry_quality": {
+            "parallax_over_error": 8600.249,
+            "ruwe": 1.1922306,
+            "visibility_periods_used": 26
           },
-          "id": "cns5:448",
-          "visual": {
-            "provenance": {
-              "radius": {
-                "catalogue": "TESS Input Catalog",
-                "record_id": "HIP 8102",
-                "reference": "Stassun et al. 2019",
-                "release": "8.2"
-              },
-              "spectral_class": {
-                "catalogue": "SIMBAD",
-                "record_id": "tau Cet"
-              }
-            },
-            "radius_solar": 0.79,
-            "spectral_class": "G8V"
-          }
-        }
-      ],
-      "distance_from_sol_pc": 3.650168021574,
-      "distance_uncertainty_pc": 0.00226503352,
-      "id": "tau-ceti",
-      "name": "Tau Ceti",
-      "position_pc": {
-        "xg": -1.032621754819,
-        "yg": 0.125467333748,
-        "zg": -3.498810775872
-      },
-      "provenance": {
-        "adopted_source_object_id": "cns5:448",
-        "catalogue": "CNS5 J/A+A/670/A19",
-        "release": "corrected 2023-12-13",
-        "review_version": "1.0.0",
-        "source_object_ids": ["cns5:448"],
-        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
-      },
-      "render_position": {
-        "x": -1.032621754819,
-        "y": -3.498810775872,
-        "z": -0.125467333748
-      }
-    },
-    {
-      "alternates": ["LHS 1565"],
-      "components": [
-        {
-          "cns5_id": 919,
-          "component": null,
-          "g_magnitude": 10.995456,
-          "gaia_dr3_id": "4848140361962951552",
-          "gj": "1061",
-          "hip_id": null,
+          "designation": "Gaia DR3 4848140361962951552",
+          "gaia_source_id": "4848140361962951552",
           "icrs": {
             "dec_deg": -44.51436231604776,
             "epoch_year": 2016.0,
-            "parallax_bibcode": "2020yCat.1350....0G",
-            "parallax_error_mas": 0.03535391,
-            "parallax_mas": 272.18890083149853,
-            "position_bibcode": "2020yCat.1350....0G",
+            "parallax_error_mas": 0.031645775,
+            "parallax_mas": 272.16154083178225,
             "ra_deg": 54.00339387736301
           },
-          "id": "cns5:919",
+          "id": "gaia-dr3:4848140361962951552",
+          "photometry": {
+            "bp_rp": 3.6653757,
+            "g_magnitude": 10.995456
+          },
           "visual": {
-            "provenance": {
-              "radius": {
-                "catalogue": "TESS Input Catalog",
-                "record_id": "GJ 1061",
-                "reference": "Stassun et al. 2019",
-                "release": "8.2"
-              },
-              "spectral_class": {
-                "catalogue": "SIMBAD",
-                "record_id": "GJ 1061"
-              }
-            },
-            "radius_solar": 0.15,
-            "spectral_class": "M5.5V"
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
           }
         }
       ],
-      "distance_from_sol_pc": 3.673919094222,
-      "distance_uncertainty_pc": 0.000477195817,
+      "distance_from_sol_pc": 3.674288427908,
+      "distance_uncertainty_pc": 0.000427230477,
       "id": "gj-1061",
       "name": "GJ 1061",
       "position_pc": {
-        "xg": -0.689542653561,
-        "yg": -2.106064427796,
-        "zg": -2.930308015513
+        "xg": -0.689611972271,
+        "yg": -2.106276147357,
+        "zg": -2.930602595071
       },
       "provenance": {
-        "adopted_source_object_id": "cns5:919",
-        "catalogue": "CNS5 J/A+A/670/A19",
-        "release": "corrected 2023-12-13",
-        "review_version": "1.0.0",
-        "source_object_ids": ["cns5:919"],
+        "adopted_source_object_id": "4848140361962951552",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["4848140361962951552"],
         "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
       },
       "render_position": {
-        "x": -0.689542653561,
-        "y": -2.930308015513,
-        "z": 2.106064427796
+        "x": -0.689611972271,
+        "y": -2.930602595071,
+        "z": 2.106276147357
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 7991.9546,
+            "ruwe": 1.0011495,
+            "visibility_periods_used": 17
+          },
+          "designation": "Gaia DR3 2358524597030794112",
+          "gaia_source_id": "2358524597030794112",
+          "icrs": {
+            "dec_deg": -16.996154872479234,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.03366602,
+            "parallax_mas": 269.05730465038937,
+            "ra_deg": 18.13325425370941
+          },
+          "id": "gaia-dr3:2358524597030794112",
+          "photometry": {
+            "bp_rp": 3.1970692,
+            "g_magnitude": 10.436525
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 3.716680360339,
+      "distance_uncertainty_pc": 0.000465052735,
+      "id": "gaia-dr3-2358524597030794112",
+      "name": "Gaia DR3 2358524597030794112",
+      "position_pc": {
+        "xg": -0.625923748043,
+        "yg": 0.365407196347,
+        "zg": -3.645327138053
+      },
+      "provenance": {
+        "adopted_source_object_id": "2358524597030794112",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["2358524597030794112"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -0.625923748043,
+        "y": -3.645327138053,
+        "z": -0.365407196347
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 6398.4556,
+            "ruwe": 1.2387705,
+            "visibility_periods_used": 15
+          },
+          "designation": "Gaia DR3 3139847906307949696",
+          "gaia_source_id": "3139847906307949696",
+          "icrs": {
+            "dec_deg": 5.209382701706996,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.04127979,
+            "parallax_mas": 264.12689775460655,
+            "ra_deg": 111.85462844259372
+          },
+          "id": "gaia-dr3:3139847906307949696",
+          "photometry": {
+            "bp_rp": 2.7577581,
+            "g_magnitude": 8.576388
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 3.78605893039,
+      "distance_uncertainty_pc": 0.000591714509,
+      "id": "gaia-dr3-3139847906307949696",
+      "name": "Gaia DR3 3139847906307949696",
+      "position_pc": {
+        "xg": -3.145846788971,
+        "yg": -1.993383909425,
+        "zg": 0.681403547358
+      },
+      "provenance": {
+        "adopted_source_object_id": "3139847906307949696",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["3139847906307949696"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -3.145846788971,
+        "y": 0.681403547358,
+        "z": 1.993383909425
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 2793.5095,
+            "ruwe": 1.3042897,
+            "visibility_periods_used": 13
+          },
+          "designation": "Gaia DR3 35227046884571776",
+          "gaia_source_id": "35227046884571776",
+          "icrs": {
+            "dec_deg": 16.86437381897744,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.09342672,
+            "parallax_mas": 260.98844068047276,
+            "ra_deg": 43.26964247679057
+          },
+          "id": "gaia-dr3:35227046884571776",
+          "photometry": {
+            "bp_rp": 4.5285025,
+            "g_magnitude": 12.263103
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 3.831587320084,
+      "distance_uncertainty_pc": 0.001371603412,
+      "id": "gaia-dr3-35227046884571776",
+      "name": "Gaia DR3 35227046884571776",
+      "position_pc": {
+        "xg": -2.879583619012,
+        "yg": 1.031551035454,
+        "zg": -2.307587925476
+      },
+      "provenance": {
+        "adopted_source_object_id": "35227046884571776",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["35227046884571776"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -2.879583619012,
+        "y": -2.307587925476,
+        "z": -1.031551035454
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 15092.47,
+            "ruwe": 1.1701684,
+            "visibility_periods_used": 30
+          },
+          "designation": "Gaia DR3 4810594479418041856",
+          "gaia_source_id": "4810594479418041856",
+          "icrs": {
+            "dec_deg": -45.0438126993602,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.016842743,
+            "parallax_mas": 254.19859326384577,
+            "ra_deg": 77.9599373502188
+          },
+          "id": "gaia-dr3:4810594479418041856",
+          "photometry": {
+            "bp_rp": 2.0266457,
+            "g_magnitude": 8.063552
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 3.933932077122,
+      "distance_uncertainty_pc": 0.000260655286,
+      "id": "gaia-dr3-4810594479418041856",
+      "name": "Gaia DR3 4810594479418041856",
+      "position_pc": {
+        "xg": -1.059283172847,
+        "yg": -3.002228769323,
+        "zg": -2.310922578492
+      },
+      "provenance": {
+        "adopted_source_object_id": "4810594479418041856",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["4810594479418041856"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -1.059283172847,
+        "y": -2.310922578492,
+        "z": 3.002228769323
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 7164.5996,
+            "ruwe": 0.8343736,
+            "visibility_periods_used": 17
+          },
+          "designation": "Gaia DR3 6583272171336048640",
+          "gaia_source_id": "6583272171336048640",
+          "icrs": {
+            "dec_deg": -38.872456400701786,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.03516071,
+            "parallax_mas": 251.9124222107058,
+            "ra_deg": 319.2950181380955
+          },
+          "id": "gaia-dr3:6583272171336048640",
+          "photometry": {
+            "bp_rp": 1.8535872,
+            "g_magnitude": 5.984104
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 3.96963353861,
+      "distance_uncertainty_pc": 0.000554062132,
+      "id": "gaia-dr3-6583272171336048640",
+      "name": "Gaia DR3 6583272171336048640",
+      "position_pc": {
+        "xg": 2.837257002873,
+        "yg": 0.193249529186,
+        "zg": -2.769588010873
+      },
+      "provenance": {
+        "adopted_source_object_id": "6583272171336048640",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["6583272171336048640"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 2.837257002873,
+        "y": -2.769588010873,
+        "z": -0.193249529186
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 1876.7568,
+            "ruwe": 1.2620903,
+            "visibility_periods_used": 22
+          },
+          "designation": "Gaia DR3 6439125097427143808",
+          "gaia_source_id": "6439125097427143808",
+          "icrs": {
+            "dec_deg": -63.96056736658412,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.1330301,
+            "parallax_mas": 249.6651458904217,
+            "ra_deg": 281.29804386226
+          },
+          "id": "gaia-dr3:6439125097427143808",
+          "photometry": {
+            "bp_rp": 5.11292,
+            "g_magnitude": 14.005345
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 4.005364851524,
+      "distance_uncertainty_pc": 0.002134194923,
+      "id": "gaia-dr3-6439125097427143808",
+      "name": "Gaia DR3 6439125097427143808",
+      "position_pc": {
+        "xg": 3.228331873794,
+        "yg": -1.75102920315,
+        "zg": -1.598348408885
+      },
+      "provenance": {
+        "adopted_source_object_id": "6439125097427143808",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["6439125097427143808"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 3.228331873794,
+        "y": -1.598348408885,
+        "z": 1.75102920315
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 4828.6377,
+            "ruwe": 1.0446762,
+            "visibility_periods_used": 22
+          },
+          "designation": "Gaia DR3 5393446658454453632",
+          "gaia_source_id": "5393446658454453632",
+          "icrs": {
+            "dec_deg": -39.93962594730691,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.051197793,
+            "parallax_mas": 247.21558692230735,
+            "ra_deg": 162.05388771666577
+          },
+          "id": "gaia-dr3:5393446658454453632",
+          "photometry": {
+            "bp_rp": 5.153656,
+            "g_magnitude": 14.005882
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 4.045052387066,
+      "distance_uncertainty_pc": 0.000837721267,
+      "id": "gaia-dr3-5393446658454453632",
+      "name": "Gaia DR3 5393446658454453632",
+      "position_pc": {
+        "xg": 0.58368281007,
+        "yg": -3.822769686725,
+        "zg": 1.186673971062
+      },
+      "provenance": {
+        "adopted_source_object_id": "5393446658454453632",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["5393446658454453632"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 0.58368281007,
+        "y": 1.186673971062,
+        "z": 3.822769686725
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 8654.17,
+            "ruwe": 1.1489384,
+            "visibility_periods_used": 18
+          },
+          "designation": "Gaia DR3 4330690742322011520",
+          "gaia_source_id": "4330690742322011520",
+          "icrs": {
+            "dec_deg": -12.66785108081103,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.026823945,
+            "parallax_mas": 232.13898083974135,
+            "ra_deg": 247.57481416249274
+          },
+          "id": "gaia-dr3:4330690742322011520",
+          "photometry": {
+            "bp_rp": 2.7315807,
+            "g_magnitude": 8.801877
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 4.3077642384,
+      "distance_uncertainty_pc": 0.000497767461,
+      "id": "gaia-dr3-4330690742322011520",
+      "name": "Gaia DR3 4330690742322011520",
+      "position_pc": {
+        "xg": 3.938422698279,
+        "yg": 0.230320799964,
+        "zg": 1.729916677885
+      },
+      "provenance": {
+        "adopted_source_object_id": "4330690742322011520",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["4330690742322011520"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 3.938422698279,
+        "y": 1.729916677885,
+        "z": -0.230320799964
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 12684.403,
+            "ruwe": 1.2103684,
+            "visibility_periods_used": 16
+          },
+          "designation": "Gaia DR3 2552928187080872832",
+          "gaia_source_id": "2552928187080872832",
+          "icrs": {
+            "dec_deg": 5.376556608426358,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.018272836,
+            "parallax_mas": 231.7799995322092,
+            "ra_deg": 12.296740250462333
+          },
+          "id": "gaia-dr3:2552928187080872832",
+          "photometry": {
+            "bp_rp": 0.5975876,
+            "g_magnitude": 12.299163
+          },
+          "visual": {
+            "color_family": "white",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 4.314436111909,
+      "distance_uncertainty_pc": 0.000340137129,
+      "id": "gaia-dr3-2552928187080872832",
+      "name": "Gaia DR3 2552928187080872832",
+      "position_pc": {
+        "xg": -1.224947211383,
+        "yg": 1.968770580149,
+        "zg": -3.638379542572
+      },
+      "provenance": {
+        "adopted_source_object_id": "2552928187080872832",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["2552928187080872832"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -1.224947211383,
+        "y": -3.638379542572,
+        "z": -1.968770580149
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 10456.198,
+            "ruwe": 1.2150519,
+            "visibility_periods_used": 24
+          },
+          "designation": "Gaia DR3 1637645127018395776",
+          "gaia_source_id": "1637645127018395776",
+          "icrs": {
+            "dec_deg": 68.3334976375916,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.021020047,
+            "parallax_mas": 219.78977211974913,
+            "ra_deg": 264.1040525731971
+          },
+          "id": "gaia-dr3:1637645127018395776",
+          "photometry": {
+            "bp_rp": 2.518117,
+            "g_magnitude": 8.02864
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 4.549802251285,
+      "distance_uncertainty_pc": 0.000435129698,
+      "id": "gaia-dr3-1637645127018395776",
+      "name": "Gaia DR3 1637645127018395776",
+      "position_pc": {
+        "xg": -0.576915512205,
+        "yg": 3.816517210121,
+        "zg": 2.40874768343
+      },
+      "provenance": {
+        "adopted_source_object_id": "1637645127018395776",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["1637645127018395776"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -0.576915512205,
+        "y": 2.40874768343,
+        "z": -3.816517210121
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 8374.264,
+            "ruwe": 1.054375,
+            "visibility_periods_used": 17
+          },
+          "designation": "Gaia DR3 5951824121022278144",
+          "gaia_source_id": "5951824121022278144",
+          "icrs": {
+            "dec_deg": -46.89910489864381,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.026228724,
+            "parallax_mas": 219.64625138839503,
+            "ra_deg": 262.1701639221161
+          },
+          "id": "gaia-dr3:5951824121022278144",
+          "photometry": {
+            "bp_rp": 2.4648557,
+            "g_magnitude": 8.336431
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 4.552775172256,
+      "distance_uncertainty_pc": 0.000543662743,
+      "id": "gaia-dr3-5951824121022278144",
+      "name": "Gaia DR3 5951824121022278144",
+      "position_pc": {
+        "xg": 4.323422921881,
+        "yg": -1.321636518573,
+        "zg": -0.537636420302
+      },
+      "provenance": {
+        "adopted_source_object_id": "5951824121022278144",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["5951824121022278144"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 4.323422921881,
+        "y": -0.537636420302,
+        "z": 1.321636518573
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 3641.5178,
+            "ruwe": 1.1384968,
+            "visibility_periods_used": 14
+          },
+          "designation": "Gaia DR3 3757613049856225792",
+          "gaia_source_id": "3757613049856225792",
+          "icrs": {
+            "dec_deg": -11.342803319735205,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.060230438,
+            "parallax_mas": 219.33021263059618,
+            "ra_deg": 162.05518399901217
+          },
+          "id": "gaia-dr3:3757613049856225792",
+          "photometry": {
+            "bp_rp": 4.5808744,
+            "g_magnitude": 12.837447
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 4.559335387524,
+      "distance_uncertainty_pc": 0.00125204259,
+      "id": "gaia-dr3-3757613049856225792",
+      "name": "Gaia DR3 3757613049856225792",
+      "position_pc": {
+        "xg": -0.535740138619,
+        "yg": -3.383858239458,
+        "zg": 3.008325962235
+      },
+      "provenance": {
+        "adopted_source_object_id": "3757613049856225792",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["3757613049856225792"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -0.535740138619,
+        "y": 3.008325962235,
+        "z": 3.383858239458
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 11886.883,
+            "ruwe": 0.8742317,
+            "visibility_periods_used": 26
+          },
+          "designation": "Gaia DR3 5332606522595645952",
+          "gaia_source_id": "5332606522595645952",
+          "icrs": {
+            "dec_deg": -64.843052846102,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.018143972,
+            "parallax_mas": 215.67527344818546,
+            "ra_deg": 176.45664661730092
+          },
+          "id": "gaia-dr3:5332606522595645952",
+          "photometry": {
+            "bp_rp": 0.28574753,
+            "g_magnitude": 11.423104
+          },
+          "visual": {
+            "color_family": "blue-white",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 4.636600125791,
+      "distance_uncertainty_pc": 0.000390060212,
+      "id": "gaia-dr3-5332606522595645952",
+      "name": "Gaia DR3 5332606522595645952",
+      "position_pc": {
+        "xg": 2.032115940624,
+        "yg": -4.161160368428,
+        "zg": -0.230889407665
+      },
+      "provenance": {
+        "adopted_source_object_id": "5332606522595645952",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["5332606522595645952"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 2.032115940624,
+        "y": -0.230889407665,
+        "z": 4.161160368428
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 6008.947,
+            "ruwe": 1.3398496,
+            "visibility_periods_used": 13
+          },
+          "designation": "Gaia DR3 2603090003484152064",
+          "gaia_source_id": "2603090003484152064",
+          "icrs": {
+            "dec_deg": -14.266689393516607,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.035619885,
+            "parallax_mas": 214.0379888743159,
+            "ra_deg": 343.3241110018443
+          },
+          "id": "gaia-dr3:2603090003484152064",
+          "photometry": {
+            "bp_rp": 2.8092842,
+            "g_magnitude": 8.875059
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 4.672067819639,
+      "distance_uncertainty_pc": 0.000777518605,
+      "id": "gaia-dr3-2603090003484152064",
+      "name": "Gaia DR3 2603090003484152064",
+      "position_pc": {
+        "xg": 1.453933387872,
+        "yg": 1.861157590031,
+        "zg": -4.031176979495
+      },
+      "provenance": {
+        "adopted_source_object_id": "2603090003484152064",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["2603090003484152064"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 1.453933387872,
+        "y": -4.031176979495,
+        "z": -1.861157590031
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 4619.898,
+            "ruwe": 0.9512852,
+            "visibility_periods_used": 27
+          },
+          "designation": "Gaia DR3 5254061535106490112",
+          "gaia_source_id": "5254061535106490112",
+          "icrs": {
+            "dec_deg": -61.20263830459439,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.04479964,
+            "parallax_mas": 206.96977507456424,
+            "ra_deg": 161.08527551332452
+          },
+          "id": "gaia-dr3:5254061535106490112",
+          "photometry": {
+            "bp_rp": 3.6814375,
+            "g_magnitude": 11.859422
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 4.83162335969,
+      "distance_uncertainty_pc": 0.001045828972,
+      "id": "gaia-dr3-5254061535106490112",
+      "name": "Gaia DR3 5254061535106490112",
+      "position_pc": {
+        "xg": 1.510443921783,
+        "yg": -4.586321177092,
+        "zg": -0.16971007515
+      },
+      "provenance": {
+        "adopted_source_object_id": "5254061535106490112",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["5254061535106490112"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 1.510443921783,
+        "y": -0.16971007515,
+        "z": 4.586321177092
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 4349.1987,
+            "ruwe": 1.3369209,
+            "visibility_periods_used": 17
+          },
+          "designation": "Gaia DR3 2441630500517079808",
+          "gaia_source_id": "2441630500517079808",
+          "icrs": {
+            "dec_deg": -7.5464753252597605,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.04744553,
+            "parallax_mas": 206.35003920573322,
+            "ra_deg": 1.6763504259443918
+          },
+          "id": "gaia-dr3:2441630500517079808",
+          "photometry": {
+            "bp_rp": 3.6749277,
+            "g_magnitude": 11.773832
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 4.846134286425,
+      "distance_uncertainty_pc": 0.001114259103,
+      "id": "gaia-dr3-2441630500517079808",
+      "name": "Gaia DR3 2441630500517079808",
+      "position_pc": {
+        "xg": -0.078336639141,
+        "yg": 1.834836211799,
+        "zg": -4.484669103613
+      },
+      "provenance": {
+        "adopted_source_object_id": "2441630500517079808",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["2441630500517079808"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -0.078336639141,
+        "y": -4.484669103613,
+        "z": -1.834836211799
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 1106.1012,
+            "ruwe": 1.1210604,
+            "visibility_periods_used": 28
+          },
+          "designation": "Gaia DR3 4752399493622045696",
+          "gaia_source_id": "4752399493622045696",
+          "icrs": {
+            "dec_deg": -47.01672835622661,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.18571998,
+            "parallax_mas": 205.42508538452748,
+            "ra_deg": 43.77198593477078
+          },
+          "id": "gaia-dr3:4752399493622045696",
+          "photometry": {
+            "bp_rp": 4.87331,
+            "g_magnitude": 18.57293
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 4.86795465183,
+      "distance_uncertainty_pc": 0.004401003115,
+      "id": "gaia-dr3-4752399493622045696",
+      "name": "Gaia DR3 4752399493622045696",
+      "position_pc": {
+        "xg": -0.413891149257,
+        "yg": -2.497279494699,
+        "zg": -4.158037004909
+      },
+      "provenance": {
+        "adopted_source_object_id": "4752399493622045696",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["4752399493622045696"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -0.413891149257,
+        "y": -4.158037004909,
+        "z": 2.497279494699
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 9177.212,
+            "ruwe": 0.94332755,
+            "visibility_periods_used": 19
+          },
+          "designation": "Gaia DR3 823773494718931968",
+          "gaia_source_id": "823773494718931968",
+          "icrs": {
+            "dec_deg": 49.451988897100506,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.02237224,
+            "parallax_mas": 205.31478196510724,
+            "ra_deg": 152.8329289582321
+          },
+          "id": "gaia-dr3:823773494718931968",
+          "photometry": {
+            "bp_rp": 1.7223029,
+            "g_magnitude": 5.9611735
+          },
+          "visual": {
+            "color_family": "orange",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 4.870569914298,
+      "distance_uncertainty_pc": 0.000530724374,
+      "id": "gaia-dr3-823773494718931968",
+      "name": "Gaia DR3 823773494718931968",
+      "position_pc": {
+        "xg": -2.898783486935,
+        "yg": 0.729572460306,
+        "zg": 3.845416701881
+      },
+      "provenance": {
+        "adopted_source_object_id": "823773494718931968",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["823773494718931968"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -2.898783486935,
+        "y": 3.845416701881,
+        "z": -0.729572460306
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 6133.739,
+            "ruwe": 0.9393333,
+            "visibility_periods_used": 17
+          },
+          "designation": "Gaia DR3 778947814402602752",
+          "gaia_source_id": "778947814402602752",
+          "icrs": {
+            "dec_deg": 43.53094856108456,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.033240344,
+            "parallax_mas": 203.8875927696954,
+            "ra_deg": 166.34205974427476
+          },
+          "id": "gaia-dr3:778947814402602752",
+          "photometry": {
+            "bp_rp": 2.104178,
+            "g_magnitude": 7.912665
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 4.904663331474,
+      "distance_uncertainty_pc": 0.000799620488,
+      "id": "gaia-dr3-778947814402602752",
+      "name": "Gaia DR3 778947814402602752",
+      "position_pc": {
+        "xg": -2.178182097823,
+        "yg": 0.442545538049,
+        "zg": 4.372116031235
+      },
+      "provenance": {
+        "adopted_source_object_id": "778947814402602752",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["778947814402602752"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -2.178182097823,
+        "y": 4.372116031235,
+        "z": -0.442545538049
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 4073.5972,
+            "ruwe": 1.0334092,
+            "visibility_periods_used": 18
+          },
+          "designation": "Gaia DR3 778947608243864320",
+          "gaia_source_id": "778947608243864320",
+          "icrs": {
+            "dec_deg": 43.52590762036144,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.050037432,
+            "parallax_mas": 203.83234385738783,
+            "ra_deg": 166.35208967877313
+          },
+          "id": "gaia-dr3:778947608243864320",
+          "photometry": {
+            "bp_rp": 3.8549728,
+            "g_magnitude": 12.257253
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 4.905992744212,
+      "distance_uncertainty_pc": 0.001204339182,
+      "id": "gaia-dr3-778947608243864320",
+      "name": "Gaia DR3 778947608243864320",
+      "position_pc": {
+        "xg": -2.178129952301,
+        "yg": 0.442454310184,
+        "zg": 4.373642520891
+      },
+      "provenance": {
+        "adopted_source_object_id": "778947608243864320",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["778947608243864320"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -2.178129952301,
+        "y": 4.373642520891,
+        "z": -0.442454310184
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 6800.6636,
+            "ruwe": 1.1544943,
+            "visibility_periods_used": 15
+          },
+          "designation": "Gaia DR3 625453654702751872",
+          "gaia_source_id": "625453654702751872",
+          "icrs": {
+            "dec_deg": 19.869809905451323,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.0296157,
+            "parallax_mas": 201.40642101948626,
+            "ra_deg": 154.89881370110675
+          },
+          "id": "gaia-dr3:625453654702751872",
+          "photometry": {
+            "bp_rp": 2.564643,
+            "g_magnitude": 8.204091
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 4.965085000459,
+      "distance_uncertainty_pc": 0.000730088282,
+      "id": "gaia-dr3-625453654702751872",
+      "name": "Gaia DR3 625453654702751872",
+      "position_pc": {
+        "xg": -2.314635012629,
+        "yg": -1.709933265156,
+        "zg": 4.046067479517
+      },
+      "provenance": {
+        "adopted_source_object_id": "625453654702751872",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["625453654702751872"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -2.314635012629,
+        "y": 4.046067479517,
+        "z": 1.709933265156
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 8499.19,
+            "ruwe": 1.0965127,
+            "visibility_periods_used": 24
+          },
+          "designation": "Gaia DR3 6562924609150908416",
+          "gaia_source_id": "6562924609150908416",
+          "icrs": {
+            "dec_deg": -49.01263039681064,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.023687575,
+            "parallax_mas": 201.3251983325545,
+            "ra_deg": 323.3912518776402
+          },
+          "id": "gaia-dr3:6562924609150908416",
+          "photometry": {
+            "bp_rp": 2.2399096,
+            "g_magnitude": 7.739947
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 4.967088115558,
+      "distance_uncertainty_pc": 0.000584419006,
+      "id": "gaia-dr3-6562924609150908416",
+      "name": "Gaia DR3 6562924609150908416",
+      "position_pc": {
+        "xg": 3.367531016065,
+        "yg": -0.644341540818,
+        "zg": -3.593956480306
+      },
+      "provenance": {
+        "adopted_source_object_id": "6562924609150908416",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["6562924609150908416"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 3.367531016065,
+        "y": -3.593956480306,
+        "z": 0.644341540818
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 6410.171,
+            "ruwe": 1.0140452,
+            "visibility_periods_used": 18
+          },
+          "designation": "Gaia DR3 5955305209191546112",
+          "gaia_source_id": "5955305209191546112",
+          "icrs": {
+            "dec_deg": -44.323382243038424,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.031152742,
+            "parallax_mas": 199.6944012807481,
+            "ra_deg": 264.26088738973226
+          },
+          "id": "gaia-dr3:5955305209191546112",
+          "photometry": {
+            "bp_rp": 2.9048986,
+            "g_magnitude": 9.602153
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.007651659668,
+      "distance_uncertainty_pc": 0.000781204076,
+      "id": "gaia-dr3-5955305209191546112",
+      "name": "Gaia DR3 5955305209191546112",
+      "position_pc": {
+        "xg": 4.825955785785,
+        "yg": -1.204996569518,
+        "zg": -0.578540547998
+      },
+      "provenance": {
+        "adopted_source_object_id": "5955305209191546112",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["5955305209191546112"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 4.825955785785,
+        "y": -0.578540547998,
+        "z": 1.204996569518
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 3899.964,
+            "ruwe": 1.1953526,
+            "visibility_periods_used": 18
+          },
+          "designation": "Gaia DR3 3195919254111315712",
+          "gaia_source_id": "3195919254111315712",
+          "icrs": {
+            "dec_deg": -7.672952135407352,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.05120331,
+            "parallax_mas": 199.6910732720413,
+            "ra_deg": 63.830787524383176
+          },
+          "id": "gaia-dr3:3195919254111315712",
+          "photometry": {
+            "bp_rp": -0.1910038,
+            "g_magnitude": 9.54224
+          },
+          "visual": {
+            "color_family": "blue",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.00773511612,
+      "distance_uncertainty_pc": 0.001284046449,
+      "id": "gaia-dr3-3195919254111315712",
+      "name": "Gaia DR3 3195919254111315712",
+      "position_pc": {
+        "xg": -3.687049593047,
+        "yg": -1.399316832956,
+        "zg": -3.086258040514
+      },
+      "provenance": {
+        "adopted_source_object_id": "3195919254111315712",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["3195919254111315712"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -3.687049593047,
+        "y": -3.086258040514,
+        "z": 1.399316832956
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 9001.889,
+            "ruwe": 1.104833,
+            "visibility_periods_used": 25
+          },
+          "designation": "Gaia DR3 1934263333784036736",
+          "gaia_source_id": "1934263333784036736",
+          "icrs": {
+            "dec_deg": 44.3319533233193,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.021990642,
+            "parallax_mas": 197.95730094675557,
+            "ra_deg": 341.7028254522359
+          },
+          "id": "gaia-dr3:1934263333784036736",
+          "photometry": {
+            "bp_rp": 2.7301593,
+            "g_magnitude": 9.005235
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.051594435857,
+      "distance_uncertainty_pc": 0.000561170536,
+      "id": "gaia-dr3-1934263333784036736",
+      "name": "Gaia DR3 1934263333784036736",
+      "position_pc": {
+        "xg": -0.905420009999,
+        "yg": 4.83672051858,
+        "zg": -1.142346521429
+      },
+      "provenance": {
+        "adopted_source_object_id": "1934263333784036736",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["1934263333784036736"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -0.905420009999,
+        "y": -1.142346521429,
+        "z": -4.83672051858
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 308.95428,
+            "ruwe": 1.3111067,
+            "visibility_periods_used": 24
+          },
+          "designation": "Gaia DR3 1695191332232990720",
+          "gaia_source_id": "1695191332232990720",
+          "icrs": {
+            "dec_deg": 70.46161913358111,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.6277344,
+            "parallax_mas": 193.9412326077981,
+            "ra_deg": 226.70263614661923
+          },
+          "id": "gaia-dr3:1695191332232990720",
+          "photometry": {
+            "bp_rp": 3.4400425,
+            "g_magnitude": 20.199528
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.156201115945,
+      "distance_uncertainty_pc": 0.016689204097,
+      "id": "gaia-dr3-1695191332232990720",
+      "name": "Gaia DR3 1695191332232990720",
+      "position_pc": {
+        "xg": -1.189996483396,
+        "yg": 3.603761394814,
+        "zg": 3.490447267446
+      },
+      "provenance": {
+        "adopted_source_object_id": "1695191332232990720",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["1695191332232990720"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -1.189996483396,
+        "y": 3.490447267446,
+        "z": -3.603761394814
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 6202.378,
+            "ruwe": 1.0857981,
+            "visibility_periods_used": 16
+          },
+          "designation": "Gaia DR3 3316364602541746048",
+          "gaia_source_id": "3316364602541746048",
+          "icrs": {
+            "dec_deg": 2.7063740799024933,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.03095804,
+            "parallax_mas": 192.01346218785218,
+            "ra_deg": 90.01597644159976
+          },
+          "id": "gaia-dr3:3316364602541746048",
+          "photometry": {
+            "bp_rp": 2.8903284,
+            "g_magnitude": 9.901327
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.207968173719,
+      "distance_uncertainty_pc": 0.000839672829,
+      "id": "gaia-dr3-3316364602541746048",
+      "name": "Gaia DR3 3316364602541746048",
+      "position_pc": {
+        "xg": -4.662657687879,
+        "yg": -2.131103129874,
+        "zg": -0.917036113781
+      },
+      "provenance": {
+        "adopted_source_object_id": "3316364602541746048",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["3316364602541746048"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -4.662657687879,
+        "y": -0.917036113781,
+        "z": 2.131103129874
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 458.2679,
+            "ruwe": 1.2428653,
+            "visibility_periods_used": 25
+          },
+          "designation": "Gaia DR3 5278042880077383040",
+          "gaia_source_id": "5278042880077383040",
+          "icrs": {
+            "dec_deg": -61.91613022264878,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.41861156,
+            "parallax_mas": 191.83624032785028,
+            "ra_deg": 124.37351805519963
+          },
+          "id": "gaia-dr3:5278042880077383040",
+          "photometry": {
+            "bp_rp": 3.511303,
+            "g_magnitude": 20.009703
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.212779390854,
+      "distance_uncertainty_pc": 0.011374960795,
+      "id": "gaia-dr3-5278042880077383040",
+      "name": "Gaia DR3 5278042880077383040",
+      "position_pc": {
+        "xg": 0.532088479151,
+        "yg": -5.020954066589,
+        "zg": -1.296136987079
+      },
+      "provenance": {
+        "adopted_source_object_id": "5278042880077383040",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["5278042880077383040"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 0.532088479151,
+        "y": -1.296136987079,
+        "z": 5.020954066589
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 9829.609,
+            "ruwe": 1.284949,
+            "visibility_periods_used": 26
+          },
+          "designation": "Gaia DR3 1129149723913123456",
+          "gaia_source_id": "1129149723913123456",
+          "icrs": {
+            "dec_deg": 78.69329745305299,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.019362431,
+            "parallax_mas": 190.32514271529305,
+            "ra_deg": 176.9394079814786
+          },
+          "id": "gaia-dr3:1129149723913123456",
+          "photometry": {
+            "bp_rp": 2.701994,
+            "g_magnitude": 9.551337
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.254166557993,
+      "distance_uncertainty_pc": 0.000534524425,
+      "id": "gaia-dr3-1129149723913123456",
+      "name": "Gaia DR3 1129149723913123456",
+      "position_pc": {
+        "xg": -2.484402502881,
+        "yg": 3.315855642524,
+        "zg": 3.230961432879
+      },
+      "provenance": {
+        "adopted_source_object_id": "1129149723913123456",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["1129149723913123456"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -2.484402502881,
+        "y": 3.230961432879,
+        "z": -3.315855642524
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 3782.4656,
+            "ruwe": 1.0455922,
+            "visibility_periods_used": 20
+          },
+          "designation": "Gaia DR3 5985290231327158144",
+          "gaia_source_id": "5985290231327158144",
+          "icrs": {
+            "dec_deg": -51.028101306904475,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.04963138,
+            "parallax_mas": 187.7289806878707,
+            "ra_deg": 235.1951774625917
+          },
+          "id": "gaia-dr3:5985290231327158144",
+          "photometry": {
+            "bp_rp": 4.2261887,
+            "g_magnitude": 12.7359295
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.326828049329,
+      "distance_uncertainty_pc": 0.001408295225,
+      "id": "gaia-dr3-5985290231327158144",
+      "name": "Gaia DR3 5985290231327158144",
+      "position_pc": {
+        "xg": 4.511408648145,
+        "yg": -2.814715509085,
+        "zg": 0.315698716302
+      },
+      "provenance": {
+        "adopted_source_object_id": "5985290231327158144",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["5985290231327158144"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 4.511408648145,
+        "y": 0.315698716302,
+        "z": 2.814715509085
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 6704.4185,
+            "ruwe": 1.1008298,
+            "visibility_periods_used": 21
+          },
+          "designation": "Gaia DR3 3187115498866675456",
+          "gaia_source_id": "3187115498866675456",
+          "icrs": {
+            "dec_deg": -6.948587409027854,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.027749853,
+            "parallax_mas": 186.04662779359126,
+            "ra_deg": 75.4868052125233
+          },
+          "id": "gaia-dr3:3187115498866675456",
+          "photometry": {
+            "bp_rp": 3.0327492,
+            "g_magnitude": 10.649305
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.374996643903,
+      "distance_uncertainty_pc": 0.000801709596,
+      "id": "gaia-dr3-3187115498866675456",
+      "name": "Gaia DR3 3187115498866675456",
+      "position_pc": {
+        "xg": -4.270286060131,
+        "yg": -2.122722272345,
+        "zg": -2.479777417654
+      },
+      "provenance": {
+        "adopted_source_object_id": "3187115498866675456",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["3187115498866675456"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -4.270286060131,
+        "y": -2.479777417654,
+        "z": 2.122722272345
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 7265.6514,
+            "ruwe": 1.0476037,
+            "visibility_periods_used": 17
+          },
+          "designation": "Gaia DR3 3741297293732404352",
+          "gaia_source_id": "3741297293732404352",
+          "icrs": {
+            "dec_deg": 14.885052704598573,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.025324116,
+            "parallax_mas": 183.99619525468464,
+            "ra_deg": 206.4405658448607
+          },
+          "id": "gaia-dr3:3741297293732404352",
+          "photometry": {
+            "bp_rp": 2.1149225,
+            "g_magnitude": 7.6105833
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.434894991256,
+      "distance_uncertainty_pc": 0.000748025855,
+      "id": "gaia-dr3-3741297293732404352",
+      "name": "Gaia DR3 3741297293732404352",
+      "position_pc": {
+        "xg": 1.625374161538,
+        "yg": -0.240602287555,
+        "zg": 5.180574576262
+      },
+      "provenance": {
+        "adopted_source_object_id": "3741297293732404352",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["3741297293732404352"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 1.625374161538,
+        "y": 5.180574576262,
+        "z": 0.240602287555
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 8947.963,
+            "ruwe": 0.92638206,
+            "visibility_periods_used": 21
+          },
+          "designation": "Gaia DR3 470826482637310848",
+          "gaia_source_id": "470826482637310848",
+          "icrs": {
+            "dec_deg": 58.969481205135885,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.02025858,
+            "parallax_mas": 181.2730074917688,
+            "ra_deg": 67.81389197465391
+          },
+          "id": "gaia-dr3:470826482637310848",
+          "photometry": {
+            "bp_rp": 0.44229984,
+            "g_magnitude": 12.33619
+          },
+          "visual": {
+            "color_family": "blue-white",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.516541121245,
+      "distance_uncertainty_pc": 0.000616513684,
+      "id": "gaia-dr3-470826482637310848",
+      "name": "Gaia DR3 470826482637310848",
+      "position_pc": {
+        "xg": -4.645993618781,
+        "yg": 2.89031844172,
+        "zg": 0.702159912046
+      },
+      "provenance": {
+        "adopted_source_object_id": "470826482637310848",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["470826482637310848"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -4.645993618781,
+        "y": 0.702159912046,
+        "z": -2.89031844172
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 3635.5642,
+            "ruwe": 1.2182512,
+            "visibility_periods_used": 21
+          },
+          "designation": "Gaia DR3 470826482637310080",
+          "gaia_source_id": "470826482637310080",
+          "icrs": {
+            "dec_deg": 58.967979971547436,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.049853016,
+            "parallax_mas": 181.24383901243414,
+            "ra_deg": 67.80919062832808
+          },
+          "id": "gaia-dr3:470826482637310080",
+          "photometry": {
+            "bp_rp": 2.8958826,
+            "g_magnitude": 9.702565
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.517428925854,
+      "distance_uncertainty_pc": 0.001517626607,
+      "id": "gaia-dr3-470826482637310080",
+      "name": "Gaia DR3 470826482637310080",
+      "position_pc": {
+        "xg": -4.646742892259,
+        "yg": 2.890846003482,
+        "zg": 0.702005576361
+      },
+      "provenance": {
+        "adopted_source_object_id": "470826482637310080",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["470826482637310080"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -4.646742892259,
+        "y": 0.702005576361,
+        "z": -2.890846003482
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 6403.4116,
+            "ruwe": 1.1459758,
+            "visibility_periods_used": 14
+          },
+          "designation": "Gaia DR3 939072613334579328",
+          "gaia_source_id": "939072613334579328",
+          "icrs": {
+            "dec_deg": 33.266408018167255,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.027963677,
+            "parallax_mas": 179.06293491259635,
+            "ra_deg": 103.70012922713916
+          },
+          "id": "gaia-dr3:939072613334579328",
+          "photometry": {
+            "bp_rp": 2.5611715,
+            "g_magnitude": 8.863551
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.584628669736,
+      "distance_uncertainty_pc": 0.000872133322,
+      "id": "gaia-dr3-939072613334579328",
+      "name": "Gaia DR3 939072613334579328",
+      "position_pc": {
+        "xg": -5.383918672437,
+        "yg": -0.276198376656,
+        "zg": 1.457810537812
+      },
+      "provenance": {
+        "adopted_source_object_id": "939072613334579328",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["939072613334579328"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -5.383918672437,
+        "y": 1.457810537812,
+        "z": 0.276198376656
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 4870.7495,
+            "ruwe": 1.0382286,
+            "visibility_periods_used": 17
+          },
+          "designation": "Gaia DR3 6882963066420161664",
+          "gaia_source_id": "6882963066420161664",
+          "icrs": {
+            "dec_deg": -16.974558468206272,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.03653056,
+            "parallax_mas": 177.93122142191174,
+            "ra_deg": 313.1361327596479
+          },
+          "id": "gaia-dr3:6882963066420161664",
+          "photometry": {
+            "bp_rp": 2.9015598,
+            "g_magnitude": 10.081701
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.62014913408,
+      "distance_uncertainty_pc": 0.001153857055,
+      "id": "gaia-dr3-6882963066420161664",
+      "name": "Gaia DR3 6882963066420161664",
+      "position_pc": {
+        "xg": 4.01826731824,
+        "yg": 2.335209024149,
+        "zg": -3.160127032572
+      },
+      "provenance": {
+        "adopted_source_object_id": "6882963066420161664",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["6882963066420161664"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 4.01826731824,
+        "y": -3.160127032572,
+        "z": -2.335209024149
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 3756.131,
+            "ruwe": 1.0964748,
+            "visibility_periods_used": 28
+          },
+          "designation": "Gaia DR3 2091177593123254016",
+          "gaia_source_id": "2091177593123254016",
+          "icrs": {
+            "dec_deg": 32.994787158699616,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.046801604,
+            "parallax_mas": 175.79296679952537,
+            "ra_deg": 278.90744884954285
+          },
+          "id": "gaia-dr3:2091177593123254016",
+          "photometry": {
+            "bp_rp": 5.1506624,
+            "g_magnitude": 14.850962
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.688509718028,
+      "distance_uncertainty_pc": 0.001514459788,
+      "id": "gaia-dr3-2091177593123254016",
+      "name": "Gaia DR3 2091177593123254016",
+      "position_pc": {
+        "xg": 2.577629851737,
+        "yg": 4.775702966793,
+        "zg": 1.705176921172
+      },
+      "provenance": {
+        "adopted_source_object_id": "2091177593123254016",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["2091177593123254016"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 2.577629851737,
+        "y": 1.705176921172,
+        "z": -4.775702966793
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 8596.816,
+            "ruwe": 0.96368384,
+            "visibility_periods_used": 20
+          },
+          "designation": "Gaia DR3 3209938366665770752",
+          "gaia_source_id": "3209938366665770752",
+          "icrs": {
+            "dec_deg": -3.6865276019053095,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.020392798,
+            "parallax_mas": 175.31313655111924,
+            "ra_deg": 82.86754111476276
+          },
+          "id": "gaia-dr3:3209938366665770752",
+          "photometry": {
+            "bp_rp": 2.121859,
+            "g_magnitude": 7.1082892
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.704079110514,
+      "distance_uncertainty_pc": 0.000663510649,
+      "id": "gaia-dr3-3209938366665770752",
+      "name": "Gaia DR3 3209938366665770752",
+      "position_pc": {
+        "xg": -4.794705281207,
+        "yg": -2.437238466435,
+        "zg": -1.899259967224
+      },
+      "provenance": {
+        "adopted_source_object_id": "3209938366665770752",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["3209938366665770752"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -4.794705281207,
+        "y": -1.899259967224,
+        "z": 2.437238466435
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 91.56341,
+            "ruwe": 1.0239208,
+            "visibility_periods_used": 9
+          },
+          "designation": "Gaia DR3 6305165514134625024",
+          "gaia_source_id": "6305165514134625024",
+          "icrs": {
+            "dec_deg": -18.53775641089888,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 1.9005988,
+            "parallax_mas": 174.02530425165742,
+            "ra_deg": 224.97665286074593
+          },
+          "id": "gaia-dr3:6305165514134625024",
+          "photometry": {
+            "bp_rp": 1.975874,
+            "g_magnitude": 20.435377
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.746290772484,
+      "distance_uncertainty_pc": 0.06275750181,
+      "id": "gaia-dr3-6305165514134625024",
+      "name": "Gaia DR3 6305165514134625024",
+      "position_pc": {
+        "xg": 4.45888839343,
+        "yg": -1.555993213478,
+        "zg": 3.273691655682
+      },
+      "provenance": {
+        "adopted_source_object_id": "6305165514134625024",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["6305165514134625024"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 4.45888839343,
+        "y": 3.273691655682,
+        "z": 1.555993213478
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 10180.552,
+            "ruwe": 1.0134844,
+            "visibility_periods_used": 26
+          },
+          "designation": "Gaia DR3 2940856402123426176",
+          "gaia_source_id": "2940856402123426176",
+          "icrs": {
+            "dec_deg": -21.86782311323394,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.017049566,
+            "parallax_mas": 173.57398583239672,
+            "ra_deg": 92.64357908167638
+          },
+          "id": "gaia-dr3:2940856402123426176",
+          "photometry": {
+            "bp_rp": 2.0742784,
+            "g_magnitude": 7.3134713
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.761231991099,
+      "distance_uncertainty_pc": 0.000565905683,
+      "id": "gaia-dr3-2940856402123426176",
+      "name": "Gaia DR3 2940856402123426176",
+      "position_pc": {
+        "xg": -3.613245426181,
+        "yg": -4.100607355452,
+        "zg": -1.822435420489
+      },
+      "provenance": {
+        "adopted_source_object_id": "2940856402123426176",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["2940856402123426176"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -3.613245426181,
+        "y": -1.822435420489,
+        "z": 4.100607355452
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 6039.886,
+            "ruwe": 1.114727,
+            "visibility_periods_used": 19
+          },
+          "designation": "Gaia DR3 3340477717172813568",
+          "gaia_source_id": "3340477717172813568",
+          "icrs": {
+            "dec_deg": 12.482359917793618,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.028589318,
+            "parallax_mas": 172.67623105398982,
+            "ra_deg": 85.547707594821
+          },
+          "id": "gaia-dr3:3340477717172813568",
+          "photometry": {
+            "bp_rp": 2.8699055,
+            "g_magnitude": 10.11378
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.791185005002,
+      "distance_uncertainty_pc": 0.000958823509,
+      "id": "gaia-dr3-3340477717172813568",
+      "name": "Gaia DR3 3340477717172813568",
+      "position_pc": {
+        "xg": -5.553472518502,
+        "yg": -1.355727584529,
+        "zg": -0.926698152014
+      },
+      "provenance": {
+        "adopted_source_object_id": "3340477717172813568",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["3340477717172813568"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -5.553472518502,
+        "y": -0.926698152014,
+        "z": 1.355727584529
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 2599.9316,
+            "ruwe": 1.2978287,
+            "visibility_periods_used": 14
+          },
+          "designation": "Gaia DR3 6232511606838403968",
+          "gaia_source_id": "6232511606838403968",
+          "icrs": {
+            "dec_deg": -21.423140396261676,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.06534182,
+            "parallax_mas": 169.8842702825854,
+            "ra_deg": 224.37159427348143
+          },
+          "id": "gaia-dr3:6232511606838403968",
+          "photometry": {
+            "bp_rp": 1.3236036,
+            "g_magnitude": 5.3640366
+          },
+          "visual": {
+            "color_family": "orange",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.886360157633,
+      "distance_uncertainty_pc": 0.002264044136,
+      "id": "gaia-dr3-6232511606838403968",
+      "name": "Gaia DR3 6232511606838403968",
+      "position_pc": {
+        "xg": 4.602187046815,
+        "yg": -1.836852798374,
+        "zg": 3.177275891169
+      },
+      "provenance": {
+        "adopted_source_object_id": "6232511606838403968",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["6232511606838403968"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 4.602187046815,
+        "y": 3.177275891169,
+        "z": 1.836852798374
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 3654.1372,
+            "ruwe": 0.97503436,
+            "visibility_periods_used": 18
+          },
+          "designation": "Gaia DR3 5918660719983560192",
+          "gaia_source_id": "5918660719983560192",
+          "icrs": {
+            "dec_deg": -57.32506180218072,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.046469025,
+            "parallax_mas": 169.8041953551915,
+            "ra_deg": 266.6334444727895
+          },
+          "id": "gaia-dr3:5918660719983560192",
+          "photometry": {
+            "bp_rp": 2.5847359,
+            "g_magnitude": 9.592273
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.889136001076,
+      "distance_uncertainty_pc": 0.001611635139,
+      "id": "gaia-dr3-5918660719983560192",
+      "name": "Gaia DR3 5918660719983560192",
+      "position_pc": {
+        "xg": 5.180891287878,
+        "yg": -2.383322444598,
+        "zg": -1.469715083762
+      },
+      "provenance": {
+        "adopted_source_object_id": "5918660719983560192",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["5918660719983560192"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 5.180891287878,
+        "y": -1.469715083762,
+        "z": 2.383322444598
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 2875.8105,
+            "ruwe": 1.2843816,
+            "visibility_periods_used": 16
+          },
+          "designation": "Gaia DR3 6663600360560306560",
+          "gaia_source_id": "6663600360560306560",
+          "icrs": {
+            "dec_deg": -45.57110617010142,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.05884779,
+            "parallax_mas": 169.23508466417934,
+            "ra_deg": 290.20411626707914
+          },
+          "id": "gaia-dr3:6663600360560306560",
+          "photometry": {
+            "bp_rp": 3.0468893,
+            "g_magnitude": 10.752913
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.908940229412,
+      "distance_uncertainty_pc": 0.002054704404,
+      "id": "gaia-dr3-6663600360560306560",
+      "name": "Gaia DR3 6663600360560306560",
+      "position_pc": {
+        "xg": 5.35381636403,
+        "yg": -0.719389860802,
+        "zg": -2.394724034869
+      },
+      "provenance": {
+        "adopted_source_object_id": "6663600360560306560",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["6663600360560306560"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 5.35381636403,
+        "y": -2.394724034869,
+        "z": 0.719389860802
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 6030.9336,
+            "ruwe": 1.1554246,
+            "visibility_periods_used": 16
+          },
+          "designation": "Gaia DR3 2739689239311660672",
+          "gaia_source_id": "2739689239311660672",
+          "icrs": {
+            "dec_deg": 2.3969179441959985,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.028058065,
+            "parallax_mas": 169.21632962255026,
+            "ra_deg": 357.3066038231343
+          },
+          "id": "gaia-dr3:2739689239311660672",
+          "photometry": {
+            "bp_rp": 2.095766,
+            "g_magnitude": 8.152917
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.909595145047,
+      "distance_uncertainty_pc": 0.000979880636,
+      "id": "gaia-dr3-2739689239311660672",
+      "name": "Gaia DR3 2739689239311660672",
+      "position_pc": {
+        "xg": -0.200890389108,
+        "yg": 3.222247134929,
+        "zg": -4.949755673906
+      },
+      "provenance": {
+        "adopted_source_object_id": "2739689239311660672",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["2739689239311660672"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -0.200890389108,
+        "y": -4.949755673906,
+        "z": -3.222247134929
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 7065.995,
+            "ruwe": 0.91293514,
+            "visibility_periods_used": 16
+          },
+          "designation": "Gaia DR3 4293318823182081408",
+          "gaia_source_id": "4293318823182081408",
+          "icrs": {
+            "dec_deg": 5.162976302668586,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.023926072,
+            "parallax_mas": 169.06150528157374,
+            "ra_deg": 289.2276515036191
+          },
+          "id": "gaia-dr3:4293318823182081408",
+          "photometry": {
+            "bp_rp": 2.378519,
+            "g_magnitude": 8.099911
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.915007075883,
+      "distance_uncertainty_pc": 0.000837108867,
+      "id": "gaia-dr3-4293318823182081408",
+      "name": "Gaia DR3 4293318823182081408",
+      "position_pc": {
+        "xg": 4.494401067532,
+        "yg": 3.830518474026,
+        "zg": -0.338815542826
+      },
+      "provenance": {
+        "adopted_source_object_id": "4293318823182081408",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["4293318823182081408"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 4.494401067532,
+        "y": -0.338815542826,
+        "z": -3.830518474026
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 6252.712,
+            "ruwe": 1.0352235,
+            "visibility_periods_used": 17
+          },
+          "designation": "Gaia DR3 6002807341299977216",
+          "gaia_source_id": "6002807341299977216",
+          "icrs": {
+            "dec_deg": -41.28017408697192,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.027027713,
+            "parallax_mas": 168.9965073189456,
+            "ra_deg": 233.0469274248337
+          },
+          "id": "gaia-dr3:6002807341299977216",
+          "photometry": {
+            "bp_rp": 2.4276128,
+            "g_magnitude": 8.2741785
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.917282054313,
+      "distance_uncertainty_pc": 0.000946354476,
+      "id": "gaia-dr3-6002807341299977216",
+      "name": "Gaia DR3 6002807341299977216",
+      "position_pc": {
+        "xg": 5.139337212193,
+        "yg": -2.656270746922,
+        "zg": 1.243248023812
+      },
+      "provenance": {
+        "adopted_source_object_id": "6002807341299977216",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["6002807341299977216"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 5.139337212193,
+        "y": 1.243248023812,
+        "z": 2.656270746922
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 2528.0022,
+            "ruwe": 1.2698908,
+            "visibility_periods_used": 17
+          },
+          "designation": "Gaia DR3 4293315765165489536",
+          "gaia_source_id": "4293315765165489536",
+          "icrs": {
+            "dec_deg": 5.14437331543419,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.0668329,
+            "parallax_mas": 168.95370741857366,
+            "ra_deg": 289.2373736967538
+          },
+          "id": "gaia-dr3:4293315765165489536",
+          "photometry": {
+            "bp_rp": 4.971408,
+            "g_magnitude": 14.3032875
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.918781039368,
+      "distance_uncertainty_pc": 0.00234128808,
+      "id": "gaia-dr3-4293315765165489536",
+      "name": "Gaia DR3 4293315765165489536",
+      "position_pc": {
+        "xg": 4.497994306303,
+        "yg": 3.831953460991,
+        "zg": -0.340806228299
+      },
+      "provenance": {
+        "adopted_source_object_id": "4293315765165489536",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["4293315765165489536"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 4.497994306303,
+        "y": -0.340806228299,
+        "z": -3.831953460991
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 7817.7974,
+            "ruwe": 1.0389044,
+            "visibility_periods_used": 23
+          },
+          "designation": "Gaia DR3 425040000962497792",
+          "gaia_source_id": "425040000962497792",
+          "icrs": {
+            "dec_deg": 57.815739188554126,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.021581342,
+            "parallax_mas": 168.71856118825883,
+            "ra_deg": 12.281184764215306
+          },
+          "id": "gaia-dr3:425040000962497792",
+          "photometry": {
+            "bp_rp": 1.7540107,
+            "g_magnitude": 6.762044
+          },
+          "visual": {
+            "color_family": "orange",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.927030155764,
+      "distance_uncertainty_pc": 0.000758145778,
+      "id": "gaia-dr3-425040000962497792",
+      "name": "Gaia DR3 425040000962497792",
+      "position_pc": {
+        "xg": -3.182862937855,
+        "yg": 4.97256210034,
+        "zg": -0.522203163939
+      },
+      "provenance": {
+        "adopted_source_object_id": "425040000962497792",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["425040000962497792"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -3.182862937855,
+        "y": -0.522203163939,
+        "z": -4.97256210034
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 1555.6709,
+            "ruwe": 0.66811454,
+            "visibility_periods_used": 14
+          },
+          "designation": "Gaia DR3 4109030160308317312",
+          "gaia_source_id": "4109030160308317312",
+          "icrs": {
+            "dec_deg": -26.60789783205067,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.10807573,
+            "parallax_mas": 168.13027793748972,
+            "ra_deg": 258.83511696459266
+          },
+          "id": "gaia-dr3:4109030160308317312",
+          "photometry": {
+            "bp_rp": 1.0597496,
+            "g_magnitude": 4.828591
+          },
+          "visual": {
+            "color_family": "yellow",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.947768672409,
+      "distance_uncertainty_pc": 0.003823281856,
+      "id": "gaia-dr3-4109030160308317312",
+      "name": "Gaia DR3 4109030160308317312",
+      "position_pc": {
+        "xg": 5.902298998493,
+        "yg": -0.177907041879,
+        "zg": 0.712157143703
+      },
+      "provenance": {
+        "adopted_source_object_id": "4109030160308317312",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["4109030160308317312"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 5.902298998493,
+        "y": 0.712157143703,
+        "z": 0.177907041879
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 1250.5865,
+            "ruwe": 0.6913257,
+            "visibility_periods_used": 14
+          },
+          "designation": "Gaia DR3 4109030160308320128",
+          "gaia_source_id": "4109030160308320128",
+          "icrs": {
+            "dec_deg": -26.606806615399403,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.13433942,
+            "parallax_mas": 168.00307885629599,
+            "ra_deg": 258.83412017812816
+          },
+          "id": "gaia-dr3:4109030160308320128",
+          "photometry": {
+            "bp_rp": 1.0583043,
+            "g_magnitude": 4.831335
+          },
+          "visual": {
+            "color_family": "yellow",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.952271867919,
+      "distance_uncertainty_pc": 0.004759583907,
+      "id": "gaia-dr3-4109030160308320128",
+      "name": "Gaia DR3 4109030160308320128",
+      "position_pc": {
+        "xg": 5.906752099202,
+        "yg": -0.178001584667,
+        "zg": 0.712836211233
+      },
+      "provenance": {
+        "adopted_source_object_id": "4109030160308320128",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["4109030160308320128"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 5.906752099202,
+        "y": 0.712836211233,
+        "z": 0.178001584667
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 5408.585,
+            "ruwe": 0.73806286,
+            "visibility_periods_used": 15
+          },
+          "designation": "Gaia DR3 4109034455276324608",
+          "gaia_source_id": "4109034455276324608",
+          "icrs": {
+            "dec_deg": -26.551146094884785,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.031054644,
+            "parallax_mas": 167.9616795430231,
+            "ra_deg": 259.05329410009625
+          },
+          "id": "gaia-dr3:4109034455276324608",
+          "photometry": {
+            "bp_rp": 1.4148359,
+            "g_magnitude": 5.889863
+          },
+          "visual": {
+            "color_family": "orange",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.953738988087,
+      "distance_uncertainty_pc": 0.001100794212,
+      "id": "gaia-dr3-4109034455276324608",
+      "name": "Gaia DR3 4109034455276324608",
+      "position_pc": {
+        "xg": 5.910265650113,
+        "yg": -0.161682333193,
+        "zg": 0.699733310984
+      },
+      "provenance": {
+        "adopted_source_object_id": "4109034455276324608",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["4109034455276324608"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 5.910265650113,
+        "y": 0.699733310984,
+        "z": 0.161682333193
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 4862.338,
+            "ruwe": 1.3503697,
+            "visibility_periods_used": 18
+          },
+          "designation": "Gaia DR3 3136952686035250688",
+          "gaia_source_id": "3136952686035250688",
+          "icrs": {
+            "dec_deg": 3.5504844454883244,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.034340866,
+            "parallax_mas": 166.97689652666736,
+            "ra_deg": 116.1658359308822
+          },
+          "id": "gaia-dr3:3136952686035250688",
+          "photometry": {
+            "bp_rp": 2.997038,
+            "g_magnitude": 9.692206
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 5.988852474812,
+      "distance_uncertainty_pc": 0.001231681655,
+      "id": "gaia-dr3-3136952686035250688",
+      "name": "Gaia DR3 3136952686035250688",
+      "position_pc": {
+        "xg": -4.720621152262,
+        "yg": -3.411779915178,
+        "zg": 1.393501959906
+      },
+      "provenance": {
+        "adopted_source_object_id": "3136952686035250688",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["3136952686035250688"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -4.720621152262,
+        "y": 1.393501959906,
+        "z": 3.411779915178
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 1561.6835,
+            "ruwe": 0.94949293,
+            "visibility_periods_used": 14
+          },
+          "designation": "Gaia DR3 6697578465310949376",
+          "gaia_source_id": "6697578465310949376",
+          "icrs": {
+            "dec_deg": -36.10821653736984,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.106505066,
+            "parallax_mas": 166.3272042796776,
+            "ra_deg": 302.8022690433109
+          },
+          "id": "gaia-dr3:6697578465310949376",
+          "photometry": {
+            "bp_rp": 1.101397,
+            "g_magnitude": 5.033037
+          },
+          "visual": {
+            "color_family": "yellow",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 6.012245587429,
+      "distance_uncertainty_pc": 0.003849848952,
+      "id": "gaia-dr3-6697578465310949376",
+      "name": "Gaia DR3 6697578465310949376",
+      "position_pc": {
+        "xg": 5.135940554915,
+        "yg": 0.469733369172,
+        "zg": -3.090074785799
+      },
+      "provenance": {
+        "adopted_source_object_id": "6697578465310949376",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["6697578465310949376"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": 5.135940554915,
+        "y": -3.090074785799,
+        "z": -0.469733369172
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 2595.976,
+            "ruwe": 1.1360852,
+            "visibility_periods_used": 17
+          },
+          "designation": "Gaia DR3 946632924007399936",
+          "gaia_source_id": "946632924007399936",
+          "icrs": {
+            "dec_deg": 38.52526941964586,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.06364261,
+            "parallax_mas": 165.2146994337292,
+            "ra_deg": 107.50514340448903
+          },
+          "id": "gaia-dr3:946632924007399936",
+          "photometry": {
+            "bp_rp": 3.105956,
+            "g_magnitude": 9.934659
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 6.052730195482,
+      "distance_uncertainty_pc": 0.002331581564,
+      "id": "gaia-dr3-946632924007399936",
+      "name": "Gaia DR3 946632924007399936",
+      "position_pc": {
+        "xg": -5.690308699643,
+        "yg": 0.103517507749,
+        "zg": 2.060391673361
+      },
+      "provenance": {
+        "adopted_source_object_id": "946632924007399936",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["946632924007399936"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -5.690308699643,
+        "y": 2.060391673361,
+        "z": -0.103517507749
+      }
+    },
+    {
+      "alternates": [],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": 353.0994,
+            "ruwe": 1.1058807,
+            "visibility_periods_used": 15
+          },
+          "designation": "Gaia DR3 2572901021957789568",
+          "gaia_source_id": "2572901021957789568",
+          "icrs": {
+            "dec_deg": 9.563070454755835,
+            "epoch_year": 2016.0,
+            "parallax_error_mas": 0.4628947,
+            "parallax_mas": 163.44784569658697,
+            "ra_deg": 24.24124978791965
+          },
+          "id": "gaia-dr3:2572901021957789568",
+          "photometry": {
+            "bp_rp": 3.4663029,
+            "g_magnitude": 19.461197
+          },
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "marker_radius": 0.09
+          }
+        }
+      ],
+      "distance_from_sol_pc": 6.118159561774,
+      "distance_uncertainty_pc": 0.017327017207,
+      "id": "gaia-dr3-2572901021957789568",
+      "name": "Gaia DR3 2572901021957789568",
+      "position_pc": {
+        "xg": -2.957240431536,
+        "yg": 2.375551532771,
+        "zg": -4.80035002563
+      },
+      "provenance": {
+        "adopted_source_object_id": "2572901021957789568",
+        "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+        "release": "2022-06-13",
+        "review_version": "2.0.0",
+        "source_object_ids": ["2572901021957789568"],
+        "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+      },
+      "render_position": {
+        "x": -2.957240431536,
+        "y": -4.80035002563,
+        "z": -2.375551532771
       }
     }
   ]

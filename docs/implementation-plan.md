@@ -99,7 +99,7 @@ acceptance; later work must not restore the tool without a new approved task.
 
 ## 5. Phase 1B: catalogue expansion and contextual coverage
 
-Status: Rebaselined; delivery owned by BOB-013
+Status: Complete
 
 Goal: expand the accepted Phase 1A pipeline without weakening system identity,
 provenance, true geometry, or offline reproducibility.
@@ -132,6 +132,12 @@ Exit criteria:
 - Every mapped narrative anchor passes the accepted source-coverage guarantee.
 - The map remains legible and responsive on supported hardware.
 - Any level-of-detail optimization preserves canonical positions.
+
+Completion note: BOB-013 completed the Gaia DR3-only migration on 2026-07-26. The
+current canonical corpus maps Sol, whose validated 20-light-year neighbourhood
+contains 73 qualifying Gaia records grouped into 70 non-Sol system nodes. The
+pipeline inventories future mapped anchors, uses conservative query envelopes,
+performs exact offline Euclidean inclusion, and fails on incomplete coverage.
 
 ## 6. Phase 2: narrative foundation and chapter timeline
 

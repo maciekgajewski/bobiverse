@@ -20,8 +20,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "data:refresh": "./.venv/bin/python scripts/refresh_cns5_snapshot.py",
+    "data:refresh": "./.venv/bin/python scripts/refresh_gaia_snapshot.py",
     "data:generate": "./.venv/bin/python scripts/generate_nearby_systems.py && prettier --write src/data/nearby-systems.json",
+    "data:test": "./.venv/bin/python -m unittest discover -s tests/python -p 'test_*.py'",
     "data:validate": "./.venv/bin/python scripts/validate_data.py",
     "narrative:validate": "tsx scripts/narrative-cli.ts validate",
     "narrative:manifest": "tsx scripts/narrative-cli.ts manifest",
@@ -30,7 +31,7 @@
     "test:e2e": "npm run narrative:manifest && xvfb-run -a playwright test",
     "build": "npm run data:validate && npm run narrative:manifest && npm run narrative:validate && tsc -b && vite build",
     "preview": "vite preview --host 0.0.0.0 --port 4173 --strictPort",
-    "validate": "npm run format:check && npm run lint && npm run typecheck && npm run data:validate && npm run test && npm run build"
+    "validate": "npm run format:check && npm run lint && npm run typecheck && npm run data:test && npm run data:validate && npm run test && npm run build"
   },
   "dependencies": {
     "@react-three/drei": "10.7.7",

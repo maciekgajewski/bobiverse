@@ -11,7 +11,7 @@ const scripts = [
   },
   {
     command: "./.venv/bin/python",
-    argumentsList: ["scripts/refresh_cns5_snapshot.py", "--help"],
+    argumentsList: ["scripts/refresh_gaia_snapshot.py", "--help"],
   },
   {
     command: "./.venv/bin/python",

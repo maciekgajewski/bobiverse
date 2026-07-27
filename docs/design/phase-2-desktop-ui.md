@@ -256,8 +256,9 @@ positions.
 
 ### 8.2 Narrative marker states
 
-Stellar component sprites retain their reviewed spectral colours and physical-size
-presentation. Narrative state is drawn outside the component cluster:
+Stellar component sprites retain their Gaia-derived approximate colour family and
+fixed marker radius under ADR-0010. Narrative state is drawn outside the component
+cluster:
 
 | State                           | Persistent treatment                                             |
 | ------------------------------- | ---------------------------------------------------------------- |

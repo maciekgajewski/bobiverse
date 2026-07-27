@@ -1,0 +1,28 @@
+{
+  "quality_contract": {
+    "astrometric_params_solved": [31, 95],
+    "maximum_ruwe": 1.4,
+    "minimum_parallax_over_error": 10,
+    "minimum_visibility_periods_used": 8
+  },
+  "queries": [
+    {
+      "adql": "SELECT source_id, designation, ref_epoch, ra, dec, parallax, parallax_error, parallax_over_error, astrometric_params_solved, visibility_periods_used, ruwe, phot_g_mean_mag, bp_rp\nFROM gaiadr3.gaia_source\nWHERE parallax >= 163.078188686922\n  AND parallax_over_error >= 10\n  AND visibility_periods_used >= 8\n  AND ruwe < 1.4\n  AND astrometric_params_solved IN (31, 95)\nORDER BY source_id",
+      "anchor_id": "sol"
+    }
+  ],
+  "raw_snapshot": {
+    "path": "data/source/gaia-dr3-neighbourhood.csv",
+    "row_count": 73,
+    "sha256": "042f769e6e6defcb9600c90daf4d8061e1cad41048aa054a11fb1d0b982116a8"
+  },
+  "schema_version": "1.0.0",
+  "source": {
+    "acknowledgement": "This work has made use of data from the European Space Agency (ESA) mission Gaia (https://www.cosmos.esa.int/gaia), processed by the Gaia Data Processing and Analysis Consortium (DPAC, https://www.cosmos.esa.int/web/gaia/dpac/consortium).",
+    "archive_url": "https://gea.esac.esa.int/tap-server/tap/sync",
+    "catalogue": "Gaia DR3 gaiadr3.gaia_source",
+    "documentation_url": "https://gea.esac.esa.int/archive/documentation/GDR3/",
+    "release": "2022-06-13",
+    "retrieved_at": "2026-07-26T20:27:56+00:00"
+  }
+}

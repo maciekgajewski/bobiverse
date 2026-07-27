@@ -5,14 +5,15 @@ Taylor. Its central feature is a true-scale, interactive 3D map that helps reade
 understand the relative orientation and distances of nearby stellar systems. Later
 phases connect that map to chapters, characters, travel, events, and Bob genealogy.
 
-The current implementation maps the 20 nearest reviewed stellar systems plus Sol,
-with true-scale Galactic geometry, selection, distance-unit display, and a permanent
-local Deep Star Maps 2020 Galactic backdrop. A spoiler-safe projected-object browser,
-search, and type-aware inspector expose narrative objects allowed by the selected
-knowledge chapter and story date. The application makes no runtime astronomy or
-image-host request; see the [backdrop provenance and attribution
-record](docs/data/galactic-starfield-backdrop.md) for its retained source, exact
-conversion command, and required manual orientation check.
+The current implementation maps the complete pinned Gaia DR3 neighbourhood within 20
+light-years of each mapped narrative stellar system. The current corpus maps Sol, so
+the generated union contains 70 non-Sol system nodes plus Sol, with true-scale
+Galactic geometry, selection, distance-unit display, and a permanent local Deep Star
+Maps 2020 Galactic backdrop. A spoiler-safe projected-object browser, search, and
+type-aware inspector expose narrative objects allowed by the selected knowledge
+chapter and story date. The application makes no runtime astronomy or image-host
+request; see the [astronomy pipeline](docs/data/astronomy-pipeline.md) and [backdrop
+provenance and attribution record](docs/data/galactic-starfield-backdrop.md).
 
 ## Project documentation
 

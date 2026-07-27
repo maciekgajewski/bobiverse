@@ -22,10 +22,9 @@ import {
 import { closestMarkerSystemId } from "../domain/star-picking";
 import {
   STAR_SPRITE_FRAGMENT_SHADER,
+  colorFamilyColor,
   componentOffset,
-  markerRadius,
   selectionFrameSegments,
-  spectralColor,
 } from "../domain/star-visual";
 
 interface MapSceneProps {
@@ -194,7 +193,7 @@ function StarMarker({
       onPointerOut={() => setHovered(false)}
     >
       {system.components.map((component, index) => {
-        const radius = markerRadius(component.visual.radius_solar);
+        const radius = component.visual.marker_radius;
         const offset = componentOffset(
           component,
           index,
@@ -212,7 +211,7 @@ function StarMarker({
                 uniforms={{
                   uColor: {
                     value: new Color(
-                      spectralColor(component.visual.spectral_class),
+                      colorFamilyColor(component.visual.color_family),
                     ),
                   },
                 }}

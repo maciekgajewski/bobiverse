@@ -1,14 +1,14 @@
 # BOB-014: narrative-aware map integration
 
-Status: Blocked
+Status: Ready
 Phase: 2 (narrative foundation and chapter timeline)
 Last updated: 2026-07-26
 
-## Blockers
+## Prerequisites
 
-- BOB-010 must provide generated activity.
-- BOB-012 must provide generic selection, browser, and inspectors.
-- BOB-013 must provide the validated astronomy neighbourhood catalogue and radius
+- BOB-010 provides generated activity.
+- BOB-012 provides generic selection, browser, and inspectors.
+- BOB-013 provides the validated astronomy neighbourhood catalogue and radius
   configuration.
 
 ## Objective
@@ -46,7 +46,8 @@ and atmosphere only.
   currently eligible known systems.
 - Render astronomy-only, narrative-known, active, selected, and hovered states using
   the approved geometric hierarchy.
-- Keep spectral component colours and existing decorative component clusters intact.
+- Keep Gaia-derived component colour families, the fixed marker radius, and existing
+  decorative component clusters intact.
 - Implement collision-managed captions with guaranteed selected, hovered, and active
   priorities.
 - Keep narrative rings and captions screen-readable, non-raycastable, and centred on
@@ -108,8 +109,8 @@ and atmosphere only.
 4. Astronomy-only context systems have no persistent caption or narrative ring.
 5. Selected, hovered, and active captions are never collision-suppressed; other known
    captions are suppressed only on collision and return as the view changes.
-6. Narrative decoration does not change canonical coordinates, physical marker
-   properties, measurement, camera targeting, or raycast priority.
+6. Narrative decoration does not change canonical coordinates, Gaia-derived marker
+   presentation, measurement, camera targeting, or raycast priority.
 7. Context filtering uses the one validated radius configuration and includes the
    deduplicated union around all eligible known-system anchors.
 8. Astronomy search covers only that rendered union, appears only for a nonempty
