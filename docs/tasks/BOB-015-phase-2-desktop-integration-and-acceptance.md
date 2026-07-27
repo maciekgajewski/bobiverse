@@ -1,6 +1,6 @@
 # BOB-015: Phase 2 desktop integration and acceptance
 
-Status: Blocked
+Status: Ready
 Phase: 2 (narrative foundation and chapter timeline)
 Last updated: 2026-07-26
 
