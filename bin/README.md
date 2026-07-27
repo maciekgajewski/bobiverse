@@ -9,6 +9,22 @@ under that explicit help contract.
 
 Install the project dependencies first with `npm ci`.
 
+## Chapter extraction
+
+Run blind Pass 1 against the explicitly configured local provider:
+
+```bash
+workspace="$(mktemp -d)"
+./bin/chapter-extract \
+  --config config/chapter-extraction-qwen3-14b.json \
+  --chapter 1.2 \
+  --source "../source-text/1.2 - Bob Version 2.0.txt" \
+  --output-dir "$workspace"
+```
+
+The source and output workspace must resolve outside the repository. The local
+provider configuration accepts only a loopback Ollama endpoint.
+
 ## Narrative commands
 
 Validate the canonical narrative corpus:
@@ -31,3 +47,11 @@ After chapters are authored, generate the reader-safe state for one chapter:
 
 Redirect standard output to save a projection, or pass optional `--output <file>` to
 have the script write it. It never creates or edits authored narrative source data.
+
+## Asset conversion
+
+Rebuild the pinned galactic starfield derivative:
+
+```bash
+./bin/convert-galactic-starfield
+```

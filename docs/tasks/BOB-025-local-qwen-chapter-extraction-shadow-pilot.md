@@ -1,6 +1,6 @@
 # BOB-025: local Qwen chapter-extraction shadow pilot
 
-Status: Ready
+Status: Done
 Phase: 4 (LLM-assisted editorial pipeline)
 Last updated: 2026-07-27
 
@@ -344,3 +344,178 @@ dry-run evaluations and must not write canonical data.
 - The three-chapter pilot provides a bounded go/no-go signal, not proof across the
   full corpus. Passing permits controlled evolution; it does not justify unattended
   extraction or canonical publication.
+
+## Completion evidence
+
+### Frozen protocol
+
+The source-free protocol was frozen before either provider received a trial chapter
+at `/tmp/bob025-shadow-trial-cZ7TgL/protocol.json`. Its SHA-256 is
+`b55760361ab681df93c9e90f2344a7ec516a86b20d0618feb6f7b5e233816f5f`.
+The frozen values and procedure were:
+
+```json
+{
+  "repository_commit": "3c3e91731c971f66743936fefcec5e02bf8f6d97",
+  "task_revision_sha256": "c98840f4b249d75d7883223875ebb7e30ce05615434a8c94cb9a24514d3c268d",
+  "config_sha256": "8709585ebf8d9d32112a186815efa68e22ad667487367c68886cd17674b5415e",
+  "prompt_contract_sha256": "bf42f513fd83eaf69ffc1b6b0005cfefdd27530bdf7c9fb41159b0d908c14a1d",
+  "ledger_schema_sha256": "c7679d486dfd2db83982925153bcca35ed11d5a100f58efe9da69b250ddddea3",
+  "qwen": {
+    "model": "qwen3:14b",
+    "ollama_version": "0.30.8",
+    "num_ctx": 32768,
+    "num_predict": 8192,
+    "chunk_bytes": 6000,
+    "overlap_bytes": 256,
+    "thinking": true,
+    "temperature": 0,
+    "seed": 42,
+    "maximum_attempts": 3
+  },
+  "terra": {
+    "model": "gpt-5.6-terra",
+    "reasoning_effort": "high",
+    "fresh_isolated_context_per_chapter": true
+  },
+  "chapters": [
+    {
+      "chapter": "1.1",
+      "source_sha256": "01be0cf8ed2122c42676b976c51c052e46ed2faac9fb1002c1534a369fa1c7e2",
+      "source_bytes": 18076,
+      "review_order": ["qwen", "terra"]
+    },
+    {
+      "chapter": "1.2",
+      "source_sha256": "cd683ae9a4e5e30f97310ad219e792f766ea6c390290be096318027911b50c72",
+      "source_bytes": 17594,
+      "review_order": ["terra", "qwen"]
+    },
+    {
+      "chapter": "1.8",
+      "source_sha256": "e135f59f18ceefc83a6c89748976ba016b11a7af9bfb5c6ee8fdd93b17fe53c9",
+      "source_bytes": 11039,
+      "review_order": ["qwen", "terra"]
+    }
+  ],
+  "chapter_order": ["1.1", "1.2", "1.8"],
+  "reviewer_order_seed": 42
+}
+```
+
+Common manifest preparation was excluded from both provider timers. Runs proceeded
+sequentially in chapter order. Each Qwen run began with the model deliberately
+unloaded; its reported load duration was subtracted exactly once, while prompt
+evaluation, generation, retries, deterministic validation, and sealing remained in
+the measured time. Each Terra run used a fresh isolated context. Every attempt
+counted toward reliability.
+
+The frozen review procedure required provider-neutral packets with identical field
+order, source access, evidence rendering, and instructions. Provider identity and
+timing were to remain hidden until both packets for a chapter were reviewed. The
+timer boundaries and pause rules were those in the pre-run protocol above, and union
+adjudication could begin only after both reviews. The protocol was not changed after
+provider output was opened.
+
+### Exact trial invocations
+
+The local-provider commands were:
+
+```bash
+./bin/chapter-extract --config config/chapter-extraction-qwen3-14b.json \
+  --chapter 1.1 \
+  --source '/home/maciek/bobiverse-project/source-text/1.1 - Bob Version 1.0.txt' \
+  --output-dir /tmp/bob025-shadow-trial-cZ7TgL/qwen-corrected/1.1
+./bin/chapter-extract --config config/chapter-extraction-qwen3-14b.json \
+  --chapter 1.2 \
+  --source '/home/maciek/bobiverse-project/source-text/1.2 - Bob Version 2.0.txt' \
+  --output-dir /tmp/bob025-shadow-trial-cZ7TgL/qwen-corrected/1.2
+./bin/chapter-extract --config config/chapter-extraction-qwen3-14b.json \
+  --chapter 1.8 \
+  --source /home/maciek/bobiverse-project/source-text/1.8.txt \
+  --output-dir /tmp/bob025-shadow-trial-cZ7TgL/qwen-corrected/1.8
+```
+
+The comparator invocations were three fresh isolated Codex contexts, one per chapter,
+with model `gpt-5.6-terra` and reasoning effort `high`. Each context was permitted to
+read only the extraction skill, its fact-free claim-ledger reference and evidence
+helper, and its assigned source chapter. Their workspaces were
+`/tmp/bob025-shadow-trial-cZ7TgL/terra/1.1`, `terra/1.2`, and `terra/1.8`.
+They were explicitly prohibited from reading canonical narrative data, target
+chapters, later chapters, fixtures, the other provider's output, or trial results.
+
+### Trial measurements
+
+All durations are end-to-end blind Pass 1 seconds. Qwen effective time subtracts the
+Ollama-reported load duration. `size_bytes` equaled `size_vram_bytes`
+(`14,373,334,547`) for every measured Qwen run, confirming complete GPU placement.
+
+| Chapter | Qwen result | Attempts | Qwen wall | Qwen load | Qwen effective | Terra wall | Terra attempts |
+| ------- | ----------- | -------- | --------- | --------- | -------------- | ---------- | -------------- |
+| `1.1`   | Failed      | 1        | 237.386   | 2.616     | 234.771        | 140.550    | 1              |
+| `1.2`   | Failed      | 1        | 237.310   | 3.020     | 234.289        | 101.268    | 1              |
+| `1.8`   | Failed      | 1        | 232.100   | 3.099     | 229.000        | 105.973    | 1              |
+| Total   | 0 of 3      | 3        | 706.796   | 8.735     | 698.061        | 347.791    | 3              |
+
+Every corrected Qwen run exhausted all 8,192 generation tokens without a clean
+terminal response. Provider termination is not an allowed correction class, so each
+run stopped after one attempt. Each source-free metrics artifact contains the complete
+normalized non-secret configuration as well as its hash. No raw response, thinking,
+prompt, or source excerpt was persisted.
+
+An initial measurement mistakenly retried terminal provider failures and subtracted
+load overhead from every attempt. Independent review identified that protocol
+violation. Those artifacts under `qwen/` were invalidated, the implementation was
+corrected, and the authoritative measurements above were rerun under
+`qwen-corrected/` without changing the frozen prompt, config, chapter order, Terra
+comparators, or review rules.
+
+Sealed-ledger SHA-256 values:
+
+| Chapter | Qwen | Terra/high |
+| ------- | ---- | ---------- |
+| `1.1` | Not produced | `d79e12896870f62bd4fc0b15b348e087de49c0b67b9ce4e07eb80389e9ed48c6` |
+| `1.2` | Not produced | `6ded1c62c5d42a9227a51da5a0a1cdbc541fafeedc003d1fa3e07a7b8ed28f0d` |
+| `1.8` | Not produced | `b99e5386ba78d3c7a4b420e36be79b3539d02d7675c1e37923f6f357b6018d95` |
+
+### Decision-gate adjudication
+
+The current local Qwen configuration is a **no-go** for default Pass 1 and does not
+authorize work on Qwen Pass 2.
+
+1. **Evidence correctness:** unmeasurable, therefore failed. Qwen produced zero
+   accepted claims and no review packet, so no accepted-claim denominator exists.
+2. **Material-claim recall:** unmeasurable, therefore failed. A three-chapter
+   adjudicated material-claim union could not be formed without any Qwen ledger.
+3. **Unsupported claims:** unmeasurable, therefore failed. The required numerator and
+   denominator across accepted Qwen factual claims is zero.
+4. **Performance:** failed. Qwen effective aggregate time was `698.061 / 347.791 =
+   2.007` times Terra's time, or `0.498x` Terra throughput against the required
+   `>=2.000x`.
+5. **Review effort:** unmeasurable, therefore failed. Provider-neutral paired review
+   packets and an aggregate Qwen review-time denominator could not be constructed.
+6. **Reliability:** failed. Qwen sealed `0 / 3 = 0%` chapters, with three total
+   attempts, against the required `3 / 3 = 100%`.
+
+No human source-fidelity review was requested after the missing Qwen ledgers made the
+aggregate quality and review-effort gates impossible to calculate. This is a recorded
+trial deviation, not a waiver: under the frozen rule, each unmeasurable criterion is
+itself a no-go. Canonical narrative data was not read during blind extraction and was
+not changed.
+
+### Validation and review
+
+The final validation run passed:
+
+- all four supported `bin/` commands returned side-effect-free help;
+- the extraction skill passed `quick_validate.py`;
+- the evidence helper returned valid help;
+- `tests/unit/script-help.test.ts`: 9 tests passed;
+- `tests/unit/source-evidence-helper.test.ts`: 3 tests passed;
+- the full Python discovery suite: 66 tests passed;
+- Prettier format check, ESLint, TypeScript typecheck, narrative validation, and
+  `git diff --check`.
+
+The required independent post-implementation review found seven issues across its
+first two passes. All were corrected with regression coverage. The final review pass
+reported `No findings.`

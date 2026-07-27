@@ -231,59 +231,71 @@ def validate_draft(draft: Any, chapter: str, source_sha256: str) -> list[dict[st
     return claims
 
 
+def seal_evidence_item(
+    data: bytes,
+    claim_id: str,
+    raw_evidence: Any,
+    evidence_id: str,
+) -> dict[str, Any]:
+    if not isinstance(raw_evidence, dict):
+        raise EvidenceError(f"{claim_id} evidence entries must be objects.")
+    quote = raw_evidence.get("quote")
+    if not isinstance(quote, str) or not quote:
+        raise EvidenceError(f"{claim_id} evidence requires a nonempty exact quote.")
+    quote_bytes = quote.encode("utf-8")
+    occurrences = find_occurrences(data, quote_bytes)
+    if not occurrences:
+        raise EvidenceError(f"{claim_id} evidence quote was not found exactly.")
+    occurrence = raw_evidence.get("occurrence")
+    if occurrence is None:
+        if len(occurrences) != 1:
+            raise EvidenceError(
+                f"{claim_id} evidence quote occurs "
+                f"{len(occurrences)} times; specify occurrence."
+            )
+        occurrence = 1
+    if not isinstance(occurrence, int) or isinstance(occurrence, bool):
+        raise EvidenceError(f"{claim_id} evidence occurrence must be an integer.")
+    if occurrence < 1 or occurrence > len(occurrences):
+        raise EvidenceError(
+            f"{claim_id} evidence occurrence must be between "
+            f"1 and {len(occurrences)}."
+        )
+    start = occurrences[occurrence - 1]
+    return {
+        "evidence_id": evidence_id,
+        "start_byte": start,
+        "end_byte": start + len(quote_bytes),
+    }
+
+
 def command_seal(arguments: argparse.Namespace) -> None:
     metadata, data, _ = metadata_for(arguments.source, arguments.chapter)
     draft = load_json(arguments.draft, "draft ledger")
     claims = validate_draft(draft, arguments.chapter, metadata["source_sha256"])
     sealed_claims: list[dict[str, Any]] = []
     evidence_counter = 0
+    evidence_errors: list[str] = []
     for claim in claims:
         sealed_evidence: list[dict[str, Any]] = []
         for raw_evidence in claim["evidence"]:
-            if not isinstance(raw_evidence, dict):
-                raise EvidenceError(
-                    f'{claim["claim_id"]} evidence entries must be objects.'
-                )
-            quote = raw_evidence.get("quote")
-            if not isinstance(quote, str) or not quote:
-                raise EvidenceError(
-                    f'{claim["claim_id"]} evidence requires a nonempty exact quote.'
-                )
-            quote_bytes = quote.encode("utf-8")
-            occurrences = find_occurrences(data, quote_bytes)
-            if not occurrences:
-                raise EvidenceError(
-                    f'{claim["claim_id"]} evidence quote was not found exactly.'
-                )
-            occurrence = raw_evidence.get("occurrence")
-            if occurrence is None:
-                if len(occurrences) != 1:
-                    raise EvidenceError(
-                        f'{claim["claim_id"]} evidence quote occurs '
-                        f"{len(occurrences)} times; specify occurrence."
-                    )
-                occurrence = 1
-            if not isinstance(occurrence, int) or isinstance(occurrence, bool):
-                raise EvidenceError(
-                    f'{claim["claim_id"]} evidence occurrence must be an integer.'
-                )
-            if occurrence < 1 or occurrence > len(occurrences):
-                raise EvidenceError(
-                    f'{claim["claim_id"]} evidence occurrence must be between '
-                    f"1 and {len(occurrences)}."
-                )
-            start = occurrences[occurrence - 1]
             evidence_counter += 1
-            sealed_evidence.append(
-                {
-                    "evidence_id": f"evidence:{evidence_counter:03d}",
-                    "start_byte": start,
-                    "end_byte": start + len(quote_bytes),
-                }
-            )
+            try:
+                sealed_evidence.append(
+                    seal_evidence_item(
+                        data,
+                        claim["claim_id"],
+                        raw_evidence,
+                        f"evidence:{evidence_counter:03d}",
+                    )
+                )
+            except EvidenceError as error:
+                evidence_errors.append(str(error))
         sealed_claim = dict(claim)
         sealed_claim["evidence"] = sealed_evidence
         sealed_claims.append(sealed_claim)
+    if evidence_errors:
+        raise EvidenceError("; ".join(evidence_errors))
     passthrough = {
         key: value
         for key, value in draft.items()

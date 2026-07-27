@@ -1,8 +1,9 @@
-# Chapter extraction with Codex
+# Chapter extraction
 
 Use `extract-bobiverse-chapter` to turn one lawfully obtained plaintext chapter into
-a spoiler-safe candidate JSON object. It is an editorial assistant: it does not
-silently publish chapter data.
+a spoiler-safe candidate JSON object. The ordinary Codex workflow remains Sol/high.
+Under BOB-025 only, Terra/high is the independent blind Pass 1 comparator for the
+local Qwen shadow path. Neither comparator can silently publish chapter data.
 
 ## Start an extraction
 
@@ -32,6 +33,41 @@ Entity names preserve the source's primary surface form. When the source primari
 uses an acronym, that acronym remains the canonical visible and searchable `name`;
 a source-supported expanded form belongs in the original `description`. Codex must
 not replace the acronym with its expansion or invent an expansion.
+
+## Local Qwen blind Pass 1
+
+The local provider uses the checked-in, non-secret
+`config/chapter-extraction-qwen3-14b.json` and accepts only a loopback Ollama
+endpoint. Create an explicit temporary workspace and invoke the supported command:
+
+```bash
+workspace="$(mktemp -d)"
+./bin/chapter-extract \
+  --config config/chapter-extraction-qwen3-14b.json \
+  --chapter 1.2 \
+  --source "../source-text/1.2 - Bob Version 2.0.txt" \
+  --output-dir "$workspace"
+```
+
+Both the source and output workspace must resolve outside the repository. The command
+verifies the local endpoint and configured model before reading source bytes. It sends
+all labeled evidence chunks in one non-streaming, thinking-enabled, JSON-Schema-
+constrained request. Raw model output and thinking are discarded. Only the validated
+draft ledger, sealed ledger, and source-free metrics remain in the temporary
+workspace.
+
+Qwen currently replaces no Codex authority. During the BOB-025 shadow trial:
+
+1. Run Qwen and a fresh isolated Codex Terra/high Pass 1 independently.
+2. Seal both ledgers before either provider sees the other output or canonical state.
+3. Review provider-neutral evidence packets under the task's frozen measurement
+   protocol.
+4. Adjudicate the union only after both independent reviews.
+5. Stop both comparators after Pass 1. The ordinary Sol/high workflow remains
+   responsible for Pass 2 reconciliation and candidate assembly.
+
+A later task may extend Qwen into Pass 2 only after the BOB-025 gate passes and the
+Captain explicitly authorizes that evolution.
 
 ## Description authoring standard
 

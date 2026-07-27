@@ -42,6 +42,17 @@ Pass 1 writes a draft JSON object outside the repository:
 }
 ```
 
+Every top-level field shown above is required. Each `source_mentions` entry requires
+exactly `mention_id`, `kind`, `label`, and nullable `uncertainty`. Each claim requires
+exactly `claim_id`, `claim_type`, `statement`, `subject_mentions`, `confidence`,
+nullable `uncertainty`, and nonempty `evidence`. Use empty arrays rather than omitting
+known-empty collections.
+
+The local provider receives the fact-free machine-readable form of this contract
+through Ollama's structured-output field. The same project-owned validator checks the
+returned object before `source_evidence.py seal`; provider validation never replaces
+exact-evidence sealing.
+
 Use stable, ordered `claim:NNN` and source-local `mention:*` IDs in
 `source_mentions`. These source-local identity anchors are distinct from a reviewed
 canonical chapter `mentions` array, whose entries are stable narrative entity IDs and

@@ -29,7 +29,7 @@ Run this explicit, offline conversion from the repository root after confirming 
 the recorded source hash still matches:
 
 ```bash
-./scripts/convert_galactic_starfield.sh
+./bin/convert-galactic-starfield
 ```
 
 The command requires FFmpeg 8.0.1 with `libaom-av1` (the recorded operator version

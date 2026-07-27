@@ -33,6 +33,11 @@ Invocation alone never authorizes a canonical write. Write canonical JSON only a
 the Captain separately approves the exact reviewed candidate and explicitly asks to
 apply it. If the Captain says `dry-run`, do not write even after quality approval.
 
+The default Codex provider remains GPT-5.6 Sol with high reasoning. During the
+BOB-025 shadow pilot only, compare local Qwen blind Pass 1 with an independent
+GPT-5.6 Terra/high Pass 1. Neither comparator changes the provider for ordinary
+chapter extraction or reconciliation.
+
 ## Inputs
 
 Require:
@@ -69,9 +74,13 @@ Create a new workspace with `mktemp -d`. Put draft claims, sealed evidence, cand
 JSON, and the temporary narrative root only there. Record the initial `git status`.
 
 Always run Pass 1 in a fresh isolated Codex context. Never use the orchestrating
-conversation for blind extraction, even if it appears not to have read canonical
-state. The orchestrator may already contain zero state, preceding chapters, target
-state, generated projections, entity identities, or facts from an earlier run.
+conversation for blind Codex extraction, even if it appears not to have read
+canonical state. The orchestrator may already contain zero state, preceding chapters,
+target state, generated projections, entity identities, or facts from an earlier run.
+
+The local Qwen path obtains equivalent isolation through `bin/chapter-extract`: the
+CLI assembles only the fact-free contract, source metadata, manifest, and labeled
+source chunks. It rejects non-loopback providers and never loads canonical state.
 
 Stage only:
 
@@ -85,8 +94,36 @@ contract documents, ADR examples, tests, fixtures, or any other repository file
 merely because the orchestrator read it. The canonical narrative schema belongs to
 Pass 2: it contains canonical constants and is not a blind-extraction input.
 
-Use GPT-5.6 Sol with high reasoning for extraction and reconciliation. If that model
-or reasoning level is unavailable, ask the Captain before substituting another.
+Use GPT-5.6 Sol with high reasoning for ordinary extraction and reconciliation. If
+that model or reasoning level is unavailable, ask the Captain before substituting
+another. For the BOB-025 comparator only, use a fresh GPT-5.6 Terra context with high
+reasoning for blind Pass 1.
+
+### Local Qwen shadow provider
+
+Use an explicit temporary workspace and config path:
+
+```bash
+workspace="$(mktemp -d)"
+./bin/chapter-extract \
+  --config config/chapter-extraction-qwen3-14b.json \
+  --chapter <book.chapter> \
+  --source "<source-path>" \
+  --output-dir "$workspace"
+```
+
+The source and workspace must resolve outside the repository. The CLI validates the
+loopback endpoint and model capabilities before reading the source, sends every
+labeled manifest chunk in one schema-constrained request, discards raw response and
+thinking fields, validates the draft contract, and invokes `source_evidence.py seal`.
+It may make at most three total attempts for deterministic representation or exact
+evidence failures. It never receives canonical IDs, schemas, chapters, projections,
+fixtures, or later knowledge.
+
+The workspace may contain only the validated draft ledger, sealed ledger, and
+source-free metrics. Never copy those artifacts into the repository. Treat a local
+Qwen ledger exactly like a Codex Pass 1 ledger: immutable after sealing and
+non-authoritative.
 
 ## Pass 1: extract claims blind
 
@@ -168,6 +205,11 @@ After sealing:
 2. verify that all chunk IDs were processed;
 3. stop Pass 1;
 4. do not revise source claims merely to match canonical state later.
+
+For a BOB-025 shadow comparison, do not let Terra and Qwen see each other's output.
+Seal both ledgers before opening the target canonical chapter or beginning provider-
+neutral review and union adjudication. Follow the frozen timing and review protocol
+recorded by the active task.
 
 ## Pass 2: reconcile with prior state
 

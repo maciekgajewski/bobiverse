@@ -2,12 +2,12 @@
 set -euo pipefail
 
 if [[ "${1:-}" == "--help" ]]; then
-  echo "Usage: ./bin/narrative-validate.sh"
-  echo "Validate the canonical narrative corpus."
+  echo "Usage: ./bin/convert-galactic-starfield"
+  echo "Rebuild the derived galactic starfield asset from its pinned source."
   exit 0
 fi
 
 repository_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repository_root"
 
-exec npm run narrative:validate
+exec ./scripts/convert_galactic_starfield.sh "$@"

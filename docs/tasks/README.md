@@ -40,7 +40,7 @@ derived from `../implementation-plan.md` and must remain consistent with
 | [BOB-022](BOB-022-seed-ami-zero-state.md)                               | Done    | Seed AMI before the book and reconcile its chapter 1.7 reference.         |
 | [BOB-023](BOB-023-settlement-scale-location-authoring.md)               | Done    | Keep extracted locations at settlement or base scale.                     |
 | [BOB-024](BOB-024-significant-narrative-event-authoring.md)             | Done    | Reserve events for consequential, memorable narrative turning points.     |
-| [BOB-025](BOB-025-local-qwen-chapter-extraction-shadow-pilot.md)        | Ready   | Pilot local Qwen blind extraction against Codex Terra/high.                |
+| [BOB-025](BOB-025-local-qwen-chapter-extraction-shadow-pilot.md)        | Done    | Pilot local Qwen blind extraction against Codex Terra/high.             |
 
 ## Task requirements
 
