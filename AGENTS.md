@@ -113,9 +113,12 @@ schemas, contracts, tooling, or includes broader editorial remediation.
 - `docs/implementation-plan.md` is the initial phased roadmap, not the live task
   tracker.
 - Create self-contained work items in `docs/tasks/` as phases are approached.
+- After creating a task document, use [$review-agent] to review the document. Address all findings, repeat the review until it comes clean.
 - Keep exactly one status in each task file and update `docs/tasks/README.md` when
   status changes.
 - Do not create tasks for routine promotion of approved chapter candidates; use the
   chapter-promotion log described above.
 - Record significant architecture changes in `docs/adrs/` using the process defined
   in `docs/adrs/README.md`.
+- After implementing a task, use [$review-agent] to review the document. Address all findings, repeat the review until it comes clean.
+
