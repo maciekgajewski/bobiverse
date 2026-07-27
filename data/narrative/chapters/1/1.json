@@ -1,7 +1,7 @@
 {
   "chapter": "1.1",
   "title": "1 - Bob Version 1.0",
-  "summary": "Newly financially secure after selling his software business, Bob Johansson attends a science-fiction convention in Las Vegas and signs a cryonics agreement. Conversations with former colleagues and family touch on the breakup he is recovering from and the prospect of self-replicating space probes. Later, a car bears down on him in a crosswalk; pain, medical voices, and his fading awareness strongly indicate a fatal collision.",
+  "summary": "Newly financially secure after selling his software business, Bob Johansson attends The Vortex, a three-day science-fiction convention in Las Vegas, and signs a cryonics agreement. Convention discussions include extraterrestrial life and self-replicating space probes, while conversations with former colleagues and family touch on the breakup he is recovering from. Later, a car bears down on him in a crosswalk; pain, medical voices, and his fading awareness strongly indicate a fatal collision.",
   "date": "2016",
   "location_id": "location:las-vegas",
   "introducing": [
@@ -36,14 +36,6 @@
       "name": "InterGator Software",
       "description": "Bob's software company, built around a successful engineering application and sold after attracting a large acquisition offer.",
       "current_state": "Sold."
-    },
-    {
-      "id": "event:the-vortex",
-      "name": "The Vortex",
-      "location_id": "location:las-vegas",
-      "date": "2016",
-      "description": "A three-day science-fiction convention where Bob attends discussions about extraterrestrial life and self-replicating interstellar probes.",
-      "participant_ids": ["character:robert-johansson"]
     }
   ],
   "appearances": [

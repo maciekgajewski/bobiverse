@@ -1,7 +1,7 @@
 {
   "chapter": "1.6",
   "title": "6",
-  "summary": "On July 19, 2133, after two subjective days of successful simulation testing, Bob learns that only two candidates remain after one suffered a psychotic break and Minister Travis rejected another. Dr. Landers reveals that the winner will control a self-replicating interstellar probe. Newly eager to reach the stars, Bob applies himself to studying project documents and coordinating autonomous ROAMers through a repair exercise.",
+  "summary": "On July 19, 2133, after two subjective days of successful simulation testing, Bob learns that only two candidates remain after one suffered a psychotic break and Minister Travis rejected another, who appears to have been purged. Dr. Landers reveals that the winner will control a self-replicating interstellar probe. Newly eager to reach the stars, Bob applies himself to studying project documents and coordinating autonomous ROAMers through a repair exercise.",
   "date": "2133",
   "location_id": "location:new-handeltown",
   "introducing": [
@@ -44,10 +44,6 @@
     {
       "entity_id": "technology:roamers",
       "description": "Remote observation and manipulation devices that Bob directs through GUPPI. They come in varied sizes, can coordinate across scales, and need minimal supervision once their tasks, dependencies, and interruption conditions are defined. Without Bob's active interference, they can work up to ten times faster."
-    },
-    {
-      "entity_id": "event:replicant-candidate-selection",
-      "description": "Two candidates remain in the selection process. One recent candidate suffered a psychotic break; Minister Travis judged another unsuitable, and that candidate appears to have been purged. The successful candidate will serve as the controlling intelligence for a Von Neumann probe."
     }
   ],
   "mentions": ["character:minister-travis"]

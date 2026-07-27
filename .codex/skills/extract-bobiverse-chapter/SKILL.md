@@ -117,14 +117,43 @@ IDs such as `mention:protagonist-1`. Capture:
 - locations and movement;
 - events and participants;
 - state, alias, relationship, and date claims;
+- definition, function, purpose, operating-principle, capability, limitation, and
+  acronym-expansion claims needed to describe durable entities;
 - an original summary draft;
 - uncertainty and unresolved questions.
+
+Capture locations and movement at the granularity stated by the source even when the
+place is only a room, corridor, laboratory, office, floor, building, or other
+internal space. Pass 1 preserves source evidence; it does not decide whether a place
+is eligible for a canonical location entity.
+
+Capture every source-supported occurrence, participant, cause, outcome, and
+significance claim that may describe an event. Do not apply the canonical event
+significance threshold during blind extraction. Pass 1 preserves source evidence;
+Pass 2 decides whether the occurrence warrants a durable `event:` entity.
 
 Preserve the source's primary entity name exactly. When the source primarily names an
 entity by an acronym, keep that acronym as the source mention label and, after
 reconciliation, as the canonical reader-visible `name`. Put a source-supported
 expanded form in the entity's original `description`; never replace the acronym with
-the expansion or invent an expansion.
+the expansion or invent an expansion. When the current chapter does not reveal an
+expansion, record that absence as an unresolved description fact so Pass 2 can produce
+an explicitly partial entry.
+
+For every source mention that may become a durable described entity, gather the
+evidence needed to answer, when revealed:
+
+- what kind of entity it is;
+- what it does, represents, or is for;
+- its defining operation, characteristics, or scope;
+- its important capabilities and limitations;
+- what makes it reader-relevant;
+- the expansion of a source-primary acronym.
+
+Do not fill a checklist item from model memory, generic genre knowledge, a later
+chapter, or an unsupported inference. A missing answer remains explicit uncertainty;
+it is not permission to create a vague claim about who merely mentions or uses the
+entity.
 
 Give every nontrivial claim one or more short exact source excerpts. Do not use long
 quotations. Follow `references/claim-ledger.md`.
@@ -165,6 +194,118 @@ from the canonical companion model because it is incidental, redundant at the
 chapter-object level, or lacks enough identity to support a durable entity. Record
 the editorial reason. Never use it to hide an unresolved contradiction or weak
 evidence.
+
+### Event significance
+
+Reserve canonical `event:` entities for major, memorable turning points in the book
+timeline whose durable consequences shape the fate of many beings, not only the
+principal characters. Require all of the following:
+
+- a distinct occurrence in the narrative timeline;
+- significance and memorability beyond routine scene activity;
+- durable consequences rather than a temporary condition or local status change;
+- a consequence scale that reaches a community, civilization, species, or otherwise
+  many beings beyond the immediate participants.
+
+Battles, first contact, consequential discoveries or technological breakthroughs,
+revolutions, and natural or artificial disasters are typical qualifying categories
+when the source-supported occurrence also passes the consequence tests. Category
+membership alone is not sufficient.
+
+Allow a foundational inciting incident whose immediate scale is personal when its
+clear long causal chain produces series-wide consequences for many beings. Apply this
+exception only from explicit project-level editorial guidance; do not read later
+chapters to discover or justify it during extraction. Keep the event's reader-facing
+name, description, date, location, and participants strictly spoiler-safe at its
+introduction boundary.
+
+After Pass 1 is sealed, read `references/event-exceptions.md` during Pass 2 and apply
+only the project-ratified exceptions listed there. Never stage or read that reference
+in the blind Pass 1 context.
+
+Do not create an event merely because an occurrence is violent, novel, lengthy, or
+important to one principal character. Conversations, confrontations, conventions,
+routine operations, training, selection processes, personal realizations, isolated
+attacks or accidents, and temporary setbacks remain prose or ordinary entity state
+unless their lasting scale passes the gate.
+
+Classify a rejected source event claim as `not-modeled` and record the failed
+significance or scale test. Preserve useful facts in the original chapter summary or
+an appropriate character, technology, organization, location, or other entity field.
+Do not use an event as a cumulative status record for an ongoing process when ordinary
+entity state represents the durable knowledge.
+
+### Location granularity
+
+Use settlement scale as the minimum ordinary granularity for authored narrative
+locations. A supported city, town, settlement, or distinct base or installation may
+be a location entity. Do not introduce or update a room, corridor, laboratory,
+office, floor, individual building, or comparable internal facility space as a
+location.
+
+Apply the same restriction to structured references: chapter `location_id`,
+appearance locations, and event locations must not point to an ineligible internal
+space. Use the nearest reader-visible supported location at settlement or base scale.
+If none is supported, follow the existing unknown-location behavior; never invent
+containment or promote a room merely to satisfy a required field.
+
+Classify a source-supported fine-grained place as `not-modeled` for location
+granularity and record that editorial reason. Preserve relevant facts in the original
+chapter summary, an event description, or another suitable entity description so the
+restriction does not erase source knowledge. Pass 1 evidence and the immutable sealed
+ledger remain unchanged.
+
+### Description authoring
+
+Treat every authored `description` as a concise, original, spoiler-safe
+mini-encyclopedia entry, not as a narrative extract or a retelling of the scene where
+the entity appears. A reader who sees only the entity's name and description should
+understand what it is, its defining characteristics at the current reader boundary,
+and why it matters.
+
+Apply this general quality gate:
+
+- begin with a standalone definition or classification when reader-visible evidence
+  supports one;
+- explain durable purpose, function, scope, characteristics, capabilities, and
+  limitations that distinguish the entity;
+- use chapter-specific facts only after they improve the general explanation; a
+  sentence that merely says who uses, mentions, owns, or discusses the entity is not
+  a sufficient description by itself;
+- keep subjective assessments and uncertain forecasts explicitly attributed;
+- do not duplicate structured fields unless needed for a coherent standalone entry;
+- keep transient operational condition in the type's `state` or `current_state`
+  field when one exists;
+- never import later knowledge, model-memory facts, or unsupported expansions to make
+  an entry sound complete.
+
+An explicitly partial entry is valid when a durable identity is supported but one or
+more defining facts have not yet been revealed. State the gap naturally in
+reader-facing prose, for example, `Its operating principle has not yet been revealed`
+or `The acronym's expansion has not yet been revealed`. Do not present inference as
+the missing definition.
+
+Use the checklist for each type that owns a description:
+
+- `species`: what kind of beings they are, distinguishing known traits, and
+  reader-visible home or social context;
+- `technology`: what kind of technology it is, what it does, how it works at the
+  revealed level, distinguishing capabilities or limitations, and any
+  source-supported acronym expansion;
+- `organization`: what kind of organization it is, its purpose, constituency or
+  scope, defining policies, and durable capabilities or relationships;
+- `vessel_type`: what class of vessel it describes, its intended role, defining
+  capabilities, and limitations; do not describe one individual vessel;
+- `event`: what happened, its durable outcome, and why it matters; use structured
+  date, location, and participant fields for those facts when available;
+- `location`: what kind of place it is, its narrative context, and distinguishing
+  reader-visible traits; keep mutable condition in `state` and measured astronomy
+  facts in the astronomy authority.
+
+When updating an existing description, start from the complete prior reviewed entry
+and integrate the newly supported information. A description update replaces the
+entire field; never erase useful reader-visible knowledge by emitting only the new
+chapter fact.
 
 Respect reader-order visibility before story-time projection. Preserve introduction
 ordering, reference ordering, update ownership, unknown-location behavior, astronomy

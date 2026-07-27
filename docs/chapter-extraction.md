@@ -33,6 +33,99 @@ uses an acronym, that acronym remains the canonical visible and searchable `name
 a source-supported expanded form belongs in the original `description`. Codex must
 not replace the acronym with its expansion or invent an expansion.
 
+## Description authoring standard
+
+Every authored `description` is a concise, original, spoiler-safe
+mini-encyclopedia entry. It must stand on its own rather than retell the chapter scene
+where the entity appeared. A useful entry explains what the entity is, its durable
+purpose or role, its defining characteristics at the selected reader boundary, and
+why it matters.
+
+Chapter-specific facts may enrich that explanation, but a sentence that only records
+who uses, owns, mentions, or discusses an entity is not a sufficient description.
+Subjective assessments and forecasts remain attributed. Transient operational
+condition belongs in `state` or `current_state` when the entity type provides that
+field.
+
+The type-specific review checks are:
+
+- Species: nature, distinguishing known traits, and reader-visible home or social
+  context.
+- Technology: kind, function, revealed operating principle, distinguishing
+  capabilities or limitations, and acronym expansion.
+- Organization: kind, purpose, constituency or scope, defining policies, and durable
+  capabilities or relationships.
+- Vessel type: class, intended role, defining capabilities, and limitations; the
+  description must not silently become a record for one individual vessel.
+- Event: what happened, its durable outcome, and why it matters; structured fields
+  continue to own date, location, and participant references.
+- Location: kind, narrative context, and distinguishing reader-visible traits;
+  `state` owns mutable condition and astronomy owns measured physical facts.
+
+These checks never authorize invented completeness. An explicitly partial entry is
+valid when a durable entity is supported but a defining fact has not yet been
+revealed. Say so naturally, such as `Its operating principle has not yet been
+revealed` or `The acronym's expansion has not yet been revealed`. Do not import later
+chapters, model-memory facts, or unsupported expansions.
+
+Pass 1 therefore captures separate evidence-backed claims for definitions, functions,
+purposes, operating principles, capabilities, limitations, and acronym expansions,
+plus explicit uncertainty for checklist items the source does not reveal. Pass 2
+applies the checklist after reconciliation with the preceding reader-visible state.
+
+Description updates replace the complete field. Preserve useful prior reviewed
+knowledge and integrate the newly revealed information rather than emitting only the
+latest chapter fact.
+
+## Event significance
+
+A canonical event is a major, memorable turning point in the book timeline whose
+durable consequences shape the fate of many beings, not only the principal
+characters. It must be a distinct occurrence, matter beyond routine scene activity,
+produce lasting consequences, and reach a community, civilization, species, or
+otherwise many beings beyond its immediate participants.
+
+Battles, first contact, consequential discoveries or technological breakthroughs,
+revolutions, and natural or artificial disasters commonly qualify when they meet
+those consequence tests. Violence, novelty, scene length, or importance to one main
+character is not sufficient by itself.
+
+A foundational inciting incident may qualify when its immediate impact is personal
+but its long causal chain produces series-wide consequences for many beings.
+`event:bob-road-incident` is retained under this exception because it begins the
+series' origin story. Its authored description remains spoiler-safe at Chapter `1.1`;
+later consequences justify eligibility but are not revealed early.
+
+Conversations, confrontations, conventions, routine operations, training, selection
+processes, personal realizations, isolated attacks or accidents, and temporary
+setbacks remain summary or entity-state facts unless their lasting scale passes the
+gate. Pass 1 still captures all source-supported event claims. Pass 2 classifies a
+rejected event as `not-modeled`, records the failed significance or scale test, and
+preserves useful facts in the summary or an appropriate entity record.
+
+The retroactive audit retains `event:bob-road-incident` and removes The Vortex, the
+replicant candidate-selection process, and the project-complex raid as event
+entities.
+
+## Location authoring granularity
+
+Settlement scale is the minimum ordinary granularity for narrative location
+entities. A source-supported city, town, settlement, or distinct base or installation
+may be authored as a location. Rooms, corridors, laboratories, offices, floors,
+individual buildings, and comparable internal facility spaces must not be introduced
+or updated as locations.
+
+The restriction also applies to chapter defaults, appearance locations, and event
+locations. Use the nearest reader-visible supported location at settlement or base
+scale; do not invent containment or promote an internal space merely because a
+structured location field is required.
+
+Blind Pass 1 still captures fine-grained location and movement claims with sealed
+evidence. During reconciliation, Pass 2 records an explicit `not-modeled` granularity
+decision and keeps relevant facts in the chapter summary, an event description, or
+another suitable entity description. The rule therefore limits browser granularity
+without deleting source knowledge.
+
 ## Approve a candidate
 
 Review the exact candidate and ask Codex to apply it explicitly, for example:

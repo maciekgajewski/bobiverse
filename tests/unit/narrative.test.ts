@@ -1,6 +1,14 @@
 import { describe, expect, it } from "vitest";
 import canonicalChapter1 from "../../data/narrative/chapters/1/1.json";
+import canonicalChapter10 from "../../data/narrative/chapters/1/10.json";
 import canonicalChapter2 from "../../data/narrative/chapters/1/2.json";
+import canonicalChapter3 from "../../data/narrative/chapters/1/3.json";
+import canonicalChapter4 from "../../data/narrative/chapters/1/4.json";
+import canonicalChapter5 from "../../data/narrative/chapters/1/5.json";
+import canonicalChapter6 from "../../data/narrative/chapters/1/6.json";
+import canonicalChapter7 from "../../data/narrative/chapters/1/7.json";
+import canonicalChapter8 from "../../data/narrative/chapters/1/8.json";
+import canonicalChapter9 from "../../data/narrative/chapters/1/9.json";
 import { buildNarrativeBrowserGroups } from "../../src/narrative/browser";
 import {
   compareNarrativeDates,
@@ -19,7 +27,7 @@ describe("narrative corpus validation and projection", () => {
     expect(() => validateNarrativeCorpus(corpus)).not.toThrow();
     const world = generateNarrativeWorld(corpus);
     expect(world.view).toEqual({ chapter: null, display_date: null });
-    expect(world.entities).toHaveLength(14);
+    expect(world.entities).toHaveLength(15);
     expect(world.entities).toContainEqual(
       expect.objectContaining({
         id: "species:human",
@@ -27,6 +35,13 @@ describe("narrative corpus validation and projection", () => {
         homeworld_id: "location:earth",
       }),
     );
+    expect(world.entities).toContainEqual({
+      id: "technology:ami",
+      name: "AMI",
+      description:
+        "Artificial Machine Intelligence (AMI) is an artificial intelligence created directly as a machine mind rather than copied from a biological mind.",
+      entity_type: "technology",
+    });
     expect(
       world.entities.find((entity) => entity.id === "location:sol")?.child_ids,
     ).toEqual([
@@ -447,6 +462,49 @@ describe("narrative corpus validation and projection", () => {
         .flatMap((group) => group.items)
         .map((item) => item.entity.id),
     ).toContain("organization:free-american-independent-theocratic-hegemony");
+  });
+
+  it("retains the road incident while excluding non-significant canonical events through chapter 1.10", () => {
+    const corpus = createNarrativeFixtureCorpus();
+    corpus.chapters = [
+      structuredClone(canonicalChapter1),
+      structuredClone(canonicalChapter2),
+      structuredClone(canonicalChapter3),
+      structuredClone(canonicalChapter4),
+      structuredClone(canonicalChapter5),
+      structuredClone(canonicalChapter6),
+      structuredClone(canonicalChapter7),
+      structuredClone(canonicalChapter8),
+      structuredClone(canonicalChapter9),
+      structuredClone(canonicalChapter10),
+    ];
+
+    expect(() => validateNarrativeCorpus(corpus)).not.toThrow();
+    const world = generateNarrativeWorld(corpus, "1.10");
+    const entityIds = world.entities.map((entity) => entity.id);
+
+    expect(entityIds).toContain("event:bob-road-incident");
+    expect(entityIds).not.toContain("event:the-vortex");
+    expect(entityIds).not.toContain("event:replicant-candidate-selection");
+    expect(entityIds).not.toContain("event:project-complex-raid");
+    const activityEntityIds = world.activity.map(
+      (activity) => activity.entity_id,
+    );
+    expect(activityEntityIds).not.toContain("event:the-vortex");
+    expect(activityEntityIds).not.toContain(
+      "event:replicant-candidate-selection",
+    );
+    expect(activityEntityIds).not.toContain("event:project-complex-raid");
+    expect(
+      world.entities.find(
+        (entity) => entity.id === "character:robert-johansson",
+      ),
+    ).toMatchObject({
+      current_state: "Dead.",
+      death_date: "2016",
+      death_event_id: "event:bob-road-incident",
+    });
+    expect(canonicalChapter2.mentions).toContain("event:bob-road-incident");
   });
 
   it("rejects an appearance list that has no lead", () => {

@@ -34,8 +34,12 @@ derived from `../implementation-plan.md` and must remain consistent with
 | [BOB-016](BOB-016-phase-2-mobile-design-and-responsive-adaptation.md)   | Draft   | Design and implement the first-class Phase 2 mobile composition.          |
 | [BOB-017](BOB-017-audit-important-mentions-for-chapters-1-1-and-1-2.md) | Done    | Audit important mentions for canonical chapters 1.1 and 1.2.              |
 | [BOB-018](BOB-018-promote-approved-chapter-1-2-mentions.md)             | Done    | Promote the approved important mentions into canonical chapter 1.2.       |
-| [BOB-019](BOB-019-correct-chapter-1-2-names-and-state.md)               | Done    | Correct chapter 1.2 acronym naming and Robert's confirmed death state.     |
+| [BOB-019](BOB-019-correct-chapter-1-2-names-and-state.md)               | Done    | Correct chapter 1.2 acronym naming and Robert's confirmed death state.    |
 | [BOB-020](BOB-020-year-only-state-write-ordering.md)                    | Done    | Order equal year-only state writes by canonical chapter.                  |
+| [BOB-021](BOB-021-encyclopedic-entity-descriptions.md)                  | Done    | Author spoiler-safe mini-encyclopedia descriptions during extraction.     |
+| [BOB-022](BOB-022-seed-ami-zero-state.md)                               | Done    | Seed AMI before the book and reconcile its chapter 1.7 reference.         |
+| [BOB-023](BOB-023-settlement-scale-location-authoring.md)               | Done    | Keep extracted locations at settlement or base scale.                     |
+| [BOB-024](BOB-024-significant-narrative-event-authoring.md)             | Done    | Reserve events for consequential, memorable narrative turning points.     |
 
 ## Task requirements
 

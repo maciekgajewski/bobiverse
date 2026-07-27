@@ -1,0 +1,54 @@
+{
+  "chapter": "1.11",
+  "title": "11",
+  "summary": "On August 15, 2133, Bob coordinates ROAMers assembling ship components while Dr. Doucette covers for Dr. Landers. Their conversation recounts Old Handeltown's origins in Salem, Oregon, the city's renaming and memorial, the memorial's nuclear destruction, and the later move of Handeltown to Portland, as well as the State's expectation of public piety. Bob learns that Piety Monitors may be among security patrols and that the Ministry of Proper Thought is a feared consequence of confronting them. When he asks how his handlers will ensure he follows the mission after release, Doucette says his software contains undisclosed safeguards; Bob worries that they may compel choices while still feeling like his own.",
+  "date": "2133",
+  "location_id": "location:new-handeltown",
+  "introducing": [
+    {
+      "id": "character:dr-doucette",
+      "name": "Dr. Doucette",
+      "current_state": "Covering for Dr. Landers while Bob continues his training and assembly work."
+    },
+    {
+      "id": "technology:translation-routine",
+      "name": "translation routine",
+      "description": "A routine integrated into Bob's system that interprets the standard twenty-second-century accent so smoothly that he no longer notices the differing speech patterns. Its implementation and language scope have not yet been revealed."
+    },
+    {
+      "id": "location:old-handeltown",
+      "name": "Old Handeltown",
+      "kind": "locale",
+      "parent_location_id": "location:earth",
+      "parent_relation": "located_on",
+      "description": "A historic Oregon city identified as Salem, Oregon and as Handel's birthplace. After Handel's death, the city changed its name and a large memorial was established in his honor. An unidentified person later destroyed the memorial with a pocket nuclear weapon after objecting. It was the only nuclear weapon deployed in North America. Advanced radiation treatment limited deaths relative to Bob's expectation."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead",
+      "location_id": "location:new-handeltown"
+    },
+    {
+      "character_id": "character:dr-doucette",
+      "role": "other",
+      "location_id": "location:new-handeltown"
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "A nightly backed-up computer simulation made from a copy of Robert Johansson's mind and the remaining candidate for controlling a Von Neumann probe. Restored from backups after an attack destroyed the replicant matrices, he considers himself conscious, alive, and Bob in the important respects. He has complete project access and expanded library access, is regarded as adaptable and resilient, and is training for the mission while still lacking a visible face. He will remain online except for a nightly half-hour semi-sleep during backup. According to Dr. Doucette, his software contains safeguards intended to ensure mission objectives are met; their operation has not been revealed."
+    },
+    {
+      "entity_id": "character:dr-landers",
+      "current_state": "A specialist trained to deal with replicants who has studied Bob's era."
+    },
+    {
+      "entity_id": "technology:roamers",
+      "description": "Remote observation and manipulation devices that Bob directs through GUPPI. They come in varied sizes, can coordinate across scales, and need minimal supervision once their tasks, dependencies, and interruption conditions are defined. Without Bob's active interference, they can work up to ten times faster. They can travel along floors, walls, and ceilings, carry video cameras for remote observation, and pick up vibrations transmitted through a wall when pressed against it. Bob has written scripts for many of their activities, so routine assembly work often requires little more than his presence."
+    }
+  ],
+  "mentions": ["organization:ministry-of-proper-thought"]
+}

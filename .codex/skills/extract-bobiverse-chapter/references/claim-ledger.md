@@ -62,8 +62,13 @@ Useful claim types include:
 
 - `chapter_date`;
 - `chapter_location`;
+- `entity_definition`;
 - `entity_identity`;
 - `entity_attribute`;
+- `entity_function`;
+- `acronym_expansion`;
+- `capability`;
+- `limitation`;
 - `appearance`;
 - `alias`;
 - `location`;
@@ -73,6 +78,49 @@ Useful claim types include:
 - `event`;
 - `event_participant`;
 - `introduction_clue`.
+
+Capture source locations and movement even when they occur inside a room, corridor,
+laboratory, office, floor, individual building, or other internal facility space.
+Pass 1 must preserve those facts and their evidence without deciding canonical
+location eligibility. During Pass 2, settlement scale is the minimum ordinary
+location granularity: cities, towns, settlements, and distinct bases or installations
+may become locations, while finer internal spaces are explicitly classified
+`not-modeled` for granularity and retained as prose context where relevant.
+
+Capture every source-supported occurrence that may be an event, including separate
+claims for its participants, cause, immediate outcome, durable consequences, affected
+population, and source-stated significance. Blind Pass 1 must not discard an event
+claim because it appears local, personal, routine, or insignificant.
+
+Pass 2 applies the canonical event gate. An `event:` entity is reserved for a major,
+memorable turning point with durable consequences that shape the fate of many beings
+beyond the principal characters. A foundational inciting incident may qualify when a
+clear long causal chain reaches that scale even though its immediate impact is
+personal. Ordinary conversations, confrontations, conventions, operations, training,
+selection processes, personal realizations, isolated incidents, and temporary
+setbacks are normally `not-modeled` as events. Preserve their useful facts in summary
+prose or appropriate entity state.
+
+For every source mention that may become a durable entity with a `description`, Pass
+1 should capture separate evidence-backed claims for the facts needed by a
+mini-encyclopedia entry:
+
+- entity kind or classification;
+- function, purpose, or role;
+- revealed operating principle or defining behavior;
+- distinguishing characteristics, capabilities, and limitations;
+- reader-visible significance;
+- acronym expansion, when the source supplies one.
+
+Record unrevealed or uncertain checklist items in the mention's `uncertainty` or the
+ledger's `unresolved_questions`. Do not manufacture a claim merely to complete the
+entry. If the source primarily uses an acronym and supplies no expansion, preserve the
+acronym as the mention label and explicitly record that its expansion is unrevealed.
+Pass 2 may then author a partial description that says so.
+
+A relationship such as who uses, owns, mentions, or discusses an entity is not by
+itself an `entity_definition`. Keep that relationship as its own claim so Pass 2
+cannot mistake narrative context for an encyclopedic explanation.
 
 Claims describe only what the source says. They do not say `introducing`, `update`, or
 `already-known`; Pass 2 owns those classifications.
