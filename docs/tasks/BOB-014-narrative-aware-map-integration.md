@@ -1,8 +1,8 @@
 # BOB-014: narrative-aware map integration
 
-Status: Ready
+Status: Blocked
 Phase: 2 (narrative foundation and chapter timeline)
-Last updated: 2026-07-26
+Last updated: 2026-07-27
 
 ## Prerequisites
 
@@ -10,6 +10,10 @@ Last updated: 2026-07-26
 - BOB-012 provides generic selection, browser, and inspectors.
 - BOB-013 provides the validated astronomy neighbourhood catalogue and radius
   configuration.
+
+BOB-013 was reopened under ADR-0011 after the Gaia-only catalogue failed recognizable
+local-completeness review. This task remains blocked until the reconciled
+GCNS/Gaia/CNS5/WDS catalogue passes BOB-013.
 
 ## Objective
 
@@ -29,6 +33,7 @@ selection with the browser and inspector.
 - `../design/reference/desktop-narrative-map-markers.png`
 - `../technical-design.md`, Sections 8 through 12
 - `../adrs/0008-important-mentions-and-narrative-activity.md`
+- `../adrs/0011-multi-catalogue-astronomy-authority.md`
 - `BOB-010-important-mentions-and-narrative-activity.md`
 - `BOB-012-progressive-object-browser-and-inspectors.md`
 - `BOB-013-astronomy-neighbourhood-catalogue.md`
@@ -46,8 +51,8 @@ and atmosphere only.
   currently eligible known systems.
 - Render astronomy-only, narrative-known, active, selected, and hovered states using
   the approved geometric hierarchy.
-- Keep Gaia-derived component colour families, the fixed marker radius, and existing
-  decorative component clusters intact.
+- Keep catalogue-derived component colour families, the fixed marker radius, and
+  existing decorative component clusters intact.
 - Implement collision-managed captions with guaranteed selected, hovered, and active
   priorities.
 - Keep narrative rings and captions screen-readable, non-raycastable, and centred on
@@ -109,8 +114,8 @@ and atmosphere only.
 4. Astronomy-only context systems have no persistent caption or narrative ring.
 5. Selected, hovered, and active captions are never collision-suppressed; other known
    captions are suppressed only on collision and return as the view changes.
-6. Narrative decoration does not change canonical coordinates, Gaia-derived marker
-   presentation, measurement, camera targeting, or raycast priority.
+6. Narrative decoration does not change canonical coordinates, catalogue-derived
+   marker presentation, measurement, camera targeting, or raycast priority.
 7. Context filtering uses the one validated radius configuration and includes the
    deduplicated union around all eligible known-system anchors.
 8. Astronomy search covers only that rendered union, appears only for a nonempty

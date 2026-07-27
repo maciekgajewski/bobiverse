@@ -244,11 +244,11 @@ validated static configuration record shared by astronomy generation, runtime
 filtering, tests, and relevant UI wording. It is not duplicated as source constants
 and is not an end-user setting in Phase 2.
 
-The offline astronomy pipeline must guarantee every available catalogue system in
-each required neighbourhood. It may not silently treat the current nearest-20 dataset
-as complete. If the selected catalogue cannot provide the promised coverage around a
-mapped story system, generation fails or the task remains blocked until an accepted
-source decision resolves the gap.
+The offline astronomy pipeline must guarantee every system available under the
+accepted multi-catalogue contract in each required neighbourhood. It may not silently
+treat the current nearest-20 dataset as complete. If the accepted source union cannot
+provide the promised coverage around a mapped story system, generation fails or the
+task remains blocked until an accepted source decision resolves the gap.
 
 One interstellar node remains one stellar system. Multiple physical components render
 through the existing decorative component cluster and never become independent map
@@ -256,9 +256,9 @@ positions.
 
 ### 8.2 Narrative marker states
 
-Stellar component sprites retain their Gaia-derived approximate colour family and
-fixed marker radius under ADR-0010. Narrative state is drawn outside the component
-cluster:
+Stellar component sprites retain their catalogue-derived approximate colour family
+and fixed marker radius under ADR-0011. Narrative state is drawn outside the
+component cluster:
 
 | State                           | Persistent treatment                                             |
 | ------------------------------- | ---------------------------------------------------------------- |

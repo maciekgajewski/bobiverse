@@ -64,9 +64,10 @@ There are 3 NPC AI characters that could be used as app assitants, clippy-style:
   - list of other characters appearing, providing a data point (time + location) to their history
   - major events
 
-- Real 3D coordinates come from a reproducible offline astronomy pipeline using Gaia
-  DR3 and Astropy. The application stores Sun-centered Galactic Cartesian coordinates
-  and renders them at true linear scale.
+- Real 3D coordinates come from a reproducible offline astronomy pipeline using
+  GCNS, Gaia DR3, CNS5, WDS, and Astropy under explicit source precedence. The
+  application stores Sun-centered Galactic Cartesian coordinates and renders them at
+  true linear scale.
 - LLMs may later assist with per-chapter extraction, but only after a manually authored
   schema is proven and with mandatory human review. Source book text is not published
   or committed.

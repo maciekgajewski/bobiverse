@@ -1,6 +1,6 @@
 # ADR-0010: Gaia DR3 astronomy authority
 
-Status: Accepted
+Status: Superseded by ADR-0011
 Date: 2026-07-26
 
 ## Context

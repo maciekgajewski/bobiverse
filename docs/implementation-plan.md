@@ -99,7 +99,7 @@ acceptance; later work must not restore the tool without a new approved task.
 
 ## 5. Phase 1B: catalogue expansion and contextual coverage
 
-Status: Complete
+Status: Reopened; implementation pending explicit authorization
 
 Goal: expand the accepted Phase 1A pipeline without weakening system identity,
 provenance, true geometry, or offline reproducibility.
@@ -133,11 +133,12 @@ Exit criteria:
 - The map remains legible and responsive on supported hardware.
 - Any level-of-detail optimization preserves canonical positions.
 
-Completion note: BOB-013 completed the Gaia DR3-only migration on 2026-07-26. The
-current canonical corpus maps Sol, whose validated 20-light-year neighbourhood
-contains 73 qualifying Gaia records grouped into 70 non-Sol system nodes. The
-pipeline inventories future mapped anchors, uses conservative query envelopes,
-performs exact offline Euclidean inclusion, and fails on incomplete coverage.
+Rebaseline note: the 2026-07-26 Gaia DR3-only implementation was reproducible but
+failed recognizable local-completeness review: Sirius and Procyon were absent and
+Alpha Centauri was reduced to Proxima. ADR-0011 supersedes that source decision.
+BOB-013 is Ready to implement the reconciled CNS5/GCNS inclusion model, Gaia DR3
+enrichment, CNS5/WDS membership, landmark fixtures, and revised coverage proof.
+BOB-014 is blocked until that work passes.
 
 ## 6. Phase 2: narrative foundation and chapter timeline
 

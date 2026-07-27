@@ -158,32 +158,65 @@ GPU, driver, and software renderer.
 
 ### 8.1 Sources
 
-Gaia Data Release 3 is the sole active external astronomy catalogue under ADR-0010.
-The explicit source contract selects Gaia records with reliable five- or six-parameter
-astrometry; completeness is relative to those qualifying records and does not claim
-that Gaia observes every physical star or resolves every component.
+ADR-0011 assigns complementary authority to GCNS, Gaia DR3, CNS5, and WDS:
+
+- CNS5 controls recognizable local inclusion inside 25 pc and supplies the initial
+  local component-to-system grouping.
+- GCNS supplies source selection from 25 to 100 pc and the preferred Bayesian
+  distance and heliocentric Galactic Cartesian coordinates for matched sources.
+- Gaia DR3 left-joins optional astrophysical and observational enrichment by the
+  shared EDR3/DR3 `source_id`.
+- WDS supplements multiple-system membership, subject to deterministic
+  reconciliation or explicit project review.
+
+Inside 25 pc the inclusion set is the union of CNS5 and GCNS, so a bright or multiple
+CNS5 object is not lost merely because Gaia has no suitable source. Between 25 and
+100 pc GCNS is the available census authority. A required context sphere that crosses
+the 100 pc GCNS boundary fails validation rather than being presented as complete.
+The binding acquisition contract is the one in
+`docs/data/astronomy-pipeline.md`: GAVO TAP tables `gcns.main` and
+`cns5update.main`, the explicitly projected Gaia DR3 tables, and the pinned precise
+WDS catalogue plus its format file. The complete WDS input is committed in
+deterministic compressed form so offline validation can repeat candidate selection;
+builds do not choose alternate services or tables.
 
 References:
 
+- [GCNS publication](https://doi.org/10.1051/0004-6361/202039498)
 - [Gaia DR3 documentation](https://gea.esac.esa.int/archive/documentation/GDR3/)
-- [Gaia Archive](https://archives.esac.esa.int/gaia/)
+- [CNS5 publication](https://doi.org/10.1051/0004-6361/202244250)
+- [Washington Double Star Catalog](https://www.astro.gsu.edu/wds/)
 - [Astropy coordinates](https://docs.astropy.org/en/stable/coordinates/)
 
-Catalogue sources are not automatically stellar systems. Each Gaia source is treated
-conservatively as a one-component system unless the project-owned reviewed membership
-layer explicitly groups multiple Gaia source IDs. No other catalogue supplies
-astrometry or implicit membership.
+Catalogue sources are not automatically stellar systems. Stable application system
+and component IDs are catalogue-independent. CNS5 grouping fields provide the first
+local model, WDS supplies specialist multiplicity evidence, and the project-owned
+review layer resolves ambiguous or conflicting membership. Positional proximity
+alone never creates a physical-system identity. A committed append-only identity
+registry preserves IDs across source refreshes. Every retained source graph becomes
+an application component; absent accepted grouping evidence it becomes a singleton
+system rather than disappearing. Registry IDs are opaque and monotonic, tombstoned
+IDs are not reused, and merge or split churn requires review. Automatically retained
+singletons derive a source-backed fallback display-name candidate and propose their
+sole mapped component as the system position. The review layer accepts the complete
+normalized candidate snapshot by checksum and records explicit overrides for
+conflicts, landmarks, and ambiguous multiple systems; refresh cannot accept its own
+candidate checksum implicitly.
+
+The current checked-in Gaia-only dataset predates ADR-0011 and is not the accepted
+target architecture. BOB-013 owns its replacement.
 
 ### 8.2 Provenance
 
 Every generated system record must identify:
 
-- Source catalogue and release or snapshot.
-- Source object identifiers.
+- Every contributing source catalogue and release or snapshot.
+- Source-specific object identifiers and accepted cross-match reason.
 - Imported astrometric values and units.
 - Adopted distance and uncertainty when available.
 - Transformation version and generation timestamp.
-- Reviewed component-to-system grouping.
+- Position and presentation precedence.
+- Reviewed component-to-system grouping and conflict resolution.
 
 Generated data is committed so builds remain deterministic and the browser remains
 offline. Refreshing a source is an explicit reviewed change, not an automatic build
@@ -222,21 +255,22 @@ offers a parsec toggle. Unit conversion occurs only at presentation boundaries.
 System positions use a single linear scene scale. Camera projection can affect visual
 perspective, but no logarithmic or piecewise distance compression is permitted.
 Marker glyphs may have a minimum screen-readable size and use a non-linear visual
-scale. Under ADR-0010 the current catalogue markers use one fixed readable radius;
-this presentation choice must not affect positions or measurements.
+scale. The current catalogue markers use one fixed readable radius; this presentation
+choice must not affect positions or measurements.
 
 Markers are camera-facing shader sprites with a luminous core and soft radial halo.
-Gaia `bp_rp` selects an approximate colour family when available and missing colour
-uses a neutral marker. A reviewed multi-source system remains one canonical map node,
-but renders its component sources as a small deterministic, decorative cluster around
-that node. Its radial decorative offset is bounded to
+Presentation follows the documented source precedence: accepted Gaia DR3
+temperature or classification, then Gaia `bp_rp`, then an accepted CNS5/WDS spectral
+value, then the neutral family. A reviewed multi-component system remains one
+canonical map node, but renders its components as a small deterministic, decorative
+cluster around that node. Its radial decorative offset is bounded to
 0.036–0.0576 map units and its vertical offset to 0.0216 map units. Those offsets are
 not component positions or orbital data, and must never be used for labels, camera
 focus, or measurement.
 
-The Gaia colour mapping follows fixed `bp_rp` bands from blue through red. It is a
-visual orientation aid, not a spectral classification or calibrated temperature
-display. The neutral fallback is explicit and does not omit a qualifying source.
+The colour mapping is a visual orientation aid, not a precision stellar model. The
+runtime retains the selected source fact and derivation. The neutral fallback is
+explicit and never removes a selected source or component.
 
 Star-sprite brightness smoothly attenuates from 100% at 6 map units to 35% at
 45 map units as a presentation aid. This does not affect marker position,
@@ -247,9 +281,9 @@ including the selected one, does. Canvas picking explicitly resolves the closest
 marker hit to the camera; this preserves selected-star tooltips and re-selection while
 ensuring an overlapping closer system is selected instead of the decorative frame.
 
-Every rendered catalogue component retains its Gaia source identifier and the
-photometry used for presentation. Sol is an explicit generated origin using the same
-marker pipeline.
+Every rendered catalogue component retains every applicable GCNS/Gaia, CNS5, and WDS
+identifier plus the fact and provenance used for presentation. Sol is an explicit
+generated origin using the same marker pipeline.
 
 ### 8.5 Stellar-system model
 
@@ -262,19 +296,20 @@ Phase 1 fields include:
 - Canonical and render coordinates.
 - Distance from Sol.
 - Basic display properties supported by source data.
-- Gaia photometry and the derived approximate colour family for each rendered
-  component.
+- Source-backed presentation facts and the derived approximate colour family for
+  each rendered component.
 - Component references.
 - Provenance.
 
 Most systems intentionally have only basic data. Rich descriptions and planets are
 added selectively when story relevance or product needs justify them.
 
-Marker presentation is deliberately approximate. Gaia `bp_rp` maps to one documented
-coarse colour family when present; a missing value uses the neutral family. Catalogue
-components share one fixed readable marker radius. The runtime retains the Gaia value
-and derivation method and does not describe the result as an MK spectral class or
-physical stellar radius. No browser request resolves or refreshes visual properties.
+Marker presentation is deliberately approximate. It follows the documented
+multi-source precedence and uses the neutral family when no accepted presentation
+fact is available. Catalogue components share one fixed readable marker radius. The
+runtime retains the source value and derivation method and does not promote an
+approximation into a more precise claim. No browser request resolves or refreshes
+visual properties.
 
 Phase 2 replaces a fixed nearest-system presentation with contextual neighbourhoods.
 The offline pipeline must guarantee every source-available stellar system within one
@@ -285,6 +320,15 @@ tests, and relevant UI wording; it is not an end-user preference. Overlapping
 neighbourhoods deduplicate by stable system identity. A source boundary must not be
 silently presented as complete, and the browser still makes no runtime catalogue
 request.
+
+A new non-Sol anchor is bootstrapped from an exact GCNS or CNS5 source identity before
+its acquisition sphere is planned; a coordinate from the previous generated runtime
+is comparison evidence only. A reviewed landmark roster makes recognizable local
+completeness testable. The complete initial roster and its multiple-system membership
+expectations are binding in `docs/data/astronomy-pipeline.md`; they include Sirius,
+Procyon, and Alpha Centauri with Alpha Centauri A, Alpha Centauri B, and Proxima
+Centauri. The roster validates stable IDs and membership; it is not an astrometry
+source.
 
 ## 9. Phase 1 interaction design
 
