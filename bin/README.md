@@ -1,7 +1,15 @@
-# Narrative command wrappers
+# User-facing command-line tools
 
-These scripts run from any current directory and locate the repository root
-themselves. Install the project dependencies first with `npm ci`.
+`bin/` is the supported user-facing command surface. Agent-facing and internal
+implementation tools remain under `scripts/`. Commands in this directory run from
+any current directory, locate the repository root themselves, and must implement
+`--help` without performing their normal side effect. BOB-025 tracks the audit and
+regression coverage needed to bring every existing documented operator entry point
+under that explicit help contract.
+
+Install the project dependencies first with `npm ci`.
+
+## Narrative commands
 
 Validate the canonical narrative corpus:
 

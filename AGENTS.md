@@ -91,9 +91,12 @@ schemas, contracts, tooling, or includes broader editorial remediation.
 
 ## User-facing scripts
 
-- Every user-facing script in `scripts/` must implement `--help`: print concise
-  usage information to standard output and exit successfully without performing its
-  normal side effect. Internal helper modules are excluded.
+- Every user-facing command-line entry point lives in `bin/`. Agent-facing and
+  internal implementation tools live in `scripts/`; they are not the supported
+  user command surface.
+- Every user-facing command in `bin/` must implement `--help`: print concise usage
+  information to standard output and exit successfully without performing its normal
+  side effect.
 - Direct script invocation is the current contract. Forwarding `--help` through npm
   package-script wrappers is deferred until explicitly adopted.
 
@@ -121,4 +124,3 @@ schemas, contracts, tooling, or includes broader editorial remediation.
 - Record significant architecture changes in `docs/adrs/` using the process defined
   in `docs/adrs/README.md`.
 - After implementing a task, use [$review-agent] to review the document. Address all findings, repeat the review until it comes clean.
-
