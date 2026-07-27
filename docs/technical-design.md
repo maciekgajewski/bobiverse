@@ -203,8 +203,9 @@ normalized candidate snapshot by checksum and records explicit overrides for
 conflicts, landmarks, and ambiguous multiple systems; refresh cannot accept its own
 candidate checksum implicitly.
 
-The current checked-in Gaia-only dataset predates ADR-0011 and is not the accepted
-target architecture. BOB-013 owns its replacement.
+The checked-in runtime implements ADR-0011 through pinned GCNS, CNS5, Gaia DR3, and
+WDS inputs, a reviewed stable-identity layer, and independently validated static
+generation. BOB-013 records that implementation and its acceptance evidence.
 
 ### 8.2 Provenance
 

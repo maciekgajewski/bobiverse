@@ -71,10 +71,7 @@ export function SystemDetails({
           {identifiers.join("; ")}
         </p>
       )}
-      <p className="provenance">
-        {system.provenance.catalogue}
-        {system.provenance.release ? ` · ${system.provenance.release}` : ""}
-      </p>
+      <p className="provenance">{system.provenance.catalogues.join(" · ")}</p>
     </section>
   );
 }

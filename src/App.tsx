@@ -472,11 +472,12 @@ export default function App() {
         </div>
       )}
       <footer>
+        <span>GCNS · CNS5 · Gaia DR3 · WDS</span>
         <span>
-          {nearbySystems.metadata.source.catalogue} ·{" "}
-          {nearbySystems.metadata.source.release}
+          {Object.values(nearbySystems.metadata.sources)
+            .map((source) => source.acknowledgement)
+            .join(" ")}
         </span>
-        <span>{nearbySystems.metadata.source.acknowledgement}</span>
         <a
           href={GALACTIC_STARFIELD_SOURCE_URL}
           target="_blank"

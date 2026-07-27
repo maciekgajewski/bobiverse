@@ -1,0 +1,587 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bobiverse.local/schema/astronomy-source-extract-2.0.0.json",
+  "oneOf": [
+    { "$ref": "#/$defs/gcns_extract" },
+    { "$ref": "#/$defs/cns5_extract" },
+    { "$ref": "#/$defs/gaia_extract" },
+    { "$ref": "#/$defs/wds_extract" }
+  ],
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "nullable_number_string": {
+      "type": "string",
+      "pattern": "^$|^[+-]?[0-9]+(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$"
+    },
+    "nullable_integer_string": {
+      "type": "string",
+      "pattern": "^$|^[+-]?[0-9]+$"
+    },
+    "wds_nullable_magnitude_string": {
+      "type": "string",
+      "pattern": "^$|^\\.$|^[+-]?[0-9]+(?:\\.[0-9]*)?$"
+    },
+    "base_source": {
+      "type": "object",
+      "required": [
+        "catalogue",
+        "endpoint",
+        "table",
+        "adql",
+        "columns",
+        "retrieved_at",
+        "release",
+        "row_count",
+        "normalised_sha256",
+        "acknowledgement"
+      ],
+      "properties": {
+        "catalogue": { "type": "string" },
+        "endpoint": { "type": "string", "format": "uri" },
+        "table": { "type": "string", "minLength": 1 },
+        "adql": { "type": "string", "minLength": 1 },
+        "columns": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "retrieved_at": { "type": "string", "minLength": 1 },
+        "release": { "type": "string", "minLength": 1 },
+        "row_count": { "type": "integer", "minimum": 0 },
+        "normalised_sha256": { "$ref": "#/$defs/sha256" },
+        "acknowledgement": { "type": "string", "minLength": 1 },
+        "upstream_updated_at": { "type": "string", "minLength": 1 },
+        "queries": { "type": "array", "items": { "type": "object" } },
+        "input_source_id_sha256": { "$ref": "#/$defs/sha256" },
+        "unmatched_source_ids": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[0-9]+$" },
+          "uniqueItems": true
+        }
+      }
+    },
+    "gcns_source": {
+      "allOf": [
+        { "$ref": "#/$defs/base_source" },
+        {
+          "required": ["upstream_updated_at", "queries"],
+          "properties": {
+            "catalogue": { "const": "gcns" },
+            "endpoint": { "const": "https://dc.g-vo.org/tap/sync" },
+            "table": { "const": "gcns.main" },
+            "release": { "const": "Gaia EDR3 GCNS" },
+            "columns": {
+              "const": [
+                "source_id",
+                "ra",
+                "dec",
+                "ra_error",
+                "dec_error",
+                "parallax",
+                "parallax_error",
+                "pmra",
+                "pmra_error",
+                "pmdec",
+                "pmdec_error",
+                "phot_g_mean_mag",
+                "phot_bp_mean_mag",
+                "phot_rp_mean_mag",
+                "phot_bp_rp_excess_factor",
+                "ruwe",
+                "ipd_frac_multi_peak",
+                "adoptedrv",
+                "adoptedrv_error",
+                "adoptedrv_refname",
+                "radial_velocity_is_valid",
+                "gcns_prob",
+                "wd_prob",
+                "dist_1",
+                "dist_16",
+                "dist_50",
+                "dist_84",
+                "xcoord_16",
+                "xcoord_50",
+                "xcoord_84",
+                "ycoord_16",
+                "ycoord_50",
+                "ycoord_84",
+                "zcoord_16",
+                "zcoord_50",
+                "zcoord_84"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "cns5_source": {
+      "allOf": [
+        { "$ref": "#/$defs/base_source" },
+        {
+          "required": ["upstream_updated_at", "queries"],
+          "properties": {
+            "catalogue": { "const": "cns5" },
+            "endpoint": { "const": "https://dc.g-vo.org/tap/sync" },
+            "table": { "const": "cns5update.main" },
+            "release": { "const": "CNS5 update snapshot" },
+            "columns": {
+              "const": [
+                "cns5_id",
+                "gj_id",
+                "component_id",
+                "n_components",
+                "primary_flag",
+                "gj_system_primary",
+                "gaia_dr3_id",
+                "hip_id",
+                "ra",
+                "dec",
+                "epoch",
+                "coordinates_bibcode",
+                "parallax",
+                "parallax_error",
+                "parallax_bibcode",
+                "pmra",
+                "pmra_error",
+                "pmdec",
+                "pmdec_error",
+                "pm_bibcode",
+                "rv",
+                "rv_error",
+                "rv_bibcode",
+                "g_mag",
+                "g_mag_error",
+                "bp_mag",
+                "bp_mag_error",
+                "rp_mag",
+                "rp_mag_error",
+                "g_mag_resulting",
+                "g_mag_resulting_error",
+                "g_rp_resulting",
+                "g_rp_resulting_error",
+                "g_rp_resulting_flag",
+                "cns6_system_id",
+                "reference_object_cns5_id",
+                "multiplicity_bibcode",
+                "remarks"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "gaia_source": {
+      "allOf": [
+        { "$ref": "#/$defs/base_source" },
+        {
+          "required": [
+            "input_source_id_sha256",
+            "unmatched_source_ids",
+            "queries"
+          ],
+          "properties": {
+            "catalogue": { "const": "gaia_dr3" },
+            "endpoint": {
+              "const": "https://gea.esac.esa.int/tap-server/tap/sync"
+            },
+            "table": { "const": "gaiadr3.gaia_source + pinned left joins" },
+            "release": { "const": "Gaia DR3" },
+            "columns": {
+              "const": [
+                "source_id",
+                "phot_g_mean_mag",
+                "phot_bp_mean_mag",
+                "phot_rp_mean_mag",
+                "bp_rp",
+                "radial_velocity",
+                "radial_velocity_error",
+                "phot_variable_flag",
+                "non_single_star",
+                "teff_gspphot",
+                "logg_gspphot",
+                "lum_flame",
+                "radius_flame",
+                "spectraltype_esphs",
+                "classprob_dsc_combmod_star",
+                "best_class_name",
+                "best_class_score"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "wds_source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "catalogue",
+        "endpoint",
+        "format_url",
+        "retrieved_at",
+        "last_modified",
+        "format_last_modified",
+        "row_count",
+        "compressed_sha256",
+        "uncompressed_sha256",
+        "format_sha256",
+        "candidate_row_count",
+        "candidate_sha256",
+        "acknowledgement"
+      ],
+      "properties": {
+        "schema_version": { "const": "2.0.0" },
+        "catalogue": { "const": "wds" },
+        "endpoint": {
+          "const": "https://www.astro.gsu.edu/wds/Webtextfiles/wds_precise.txt"
+        },
+        "format_url": {
+          "const": "https://www.astro.gsu.edu/wds/Webtextfiles/wdsweb_format.txt"
+        },
+        "retrieved_at": { "type": "string", "minLength": 1 },
+        "last_modified": { "type": "string" },
+        "format_last_modified": { "type": "string" },
+        "row_count": { "type": "integer", "minimum": 1 },
+        "compressed_sha256": { "$ref": "#/$defs/sha256" },
+        "uncompressed_sha256": { "$ref": "#/$defs/sha256" },
+        "format_sha256": { "$ref": "#/$defs/sha256" },
+        "candidate_row_count": { "type": "integer", "minimum": 0 },
+        "candidate_sha256": { "$ref": "#/$defs/sha256" },
+        "acknowledgement": { "type": "string", "minLength": 1 }
+      }
+    },
+    "gcns_row": {
+      "type": "object",
+      "required": ["source_id"],
+      "minProperties": 36,
+      "maxProperties": 36,
+      "propertyNames": {
+        "enum": [
+          "source_id",
+          "ra",
+          "dec",
+          "ra_error",
+          "dec_error",
+          "parallax",
+          "parallax_error",
+          "pmra",
+          "pmra_error",
+          "pmdec",
+          "pmdec_error",
+          "phot_g_mean_mag",
+          "phot_bp_mean_mag",
+          "phot_rp_mean_mag",
+          "phot_bp_rp_excess_factor",
+          "ruwe",
+          "ipd_frac_multi_peak",
+          "adoptedrv",
+          "adoptedrv_error",
+          "adoptedrv_refname",
+          "radial_velocity_is_valid",
+          "gcns_prob",
+          "wd_prob",
+          "dist_1",
+          "dist_16",
+          "dist_50",
+          "dist_84",
+          "xcoord_16",
+          "xcoord_50",
+          "xcoord_84",
+          "ycoord_16",
+          "ycoord_50",
+          "ycoord_84",
+          "zcoord_16",
+          "zcoord_50",
+          "zcoord_84"
+        ]
+      },
+      "additionalProperties": { "type": "string" },
+      "patternProperties": {
+        "^(ra|dec|ra_error|dec_error|parallax|parallax_error|pmra|pmra_error|pmdec|pmdec_error|phot_g_mean_mag|phot_bp_mean_mag|phot_rp_mean_mag|phot_bp_rp_excess_factor|ruwe|ipd_frac_multi_peak|adoptedrv|adoptedrv_error|radial_velocity_is_valid|gcns_prob|wd_prob|dist_1|dist_16|dist_50|dist_84|xcoord_16|xcoord_50|xcoord_84|ycoord_16|ycoord_50|ycoord_84|zcoord_16|zcoord_50|zcoord_84)$": {
+          "$ref": "#/$defs/nullable_number_string"
+        }
+      },
+      "properties": {
+        "source_id": { "type": "string", "pattern": "^[0-9]+$" }
+      }
+    },
+    "cns5_row": {
+      "type": "object",
+      "required": ["cns5_id"],
+      "minProperties": 38,
+      "maxProperties": 38,
+      "propertyNames": {
+        "enum": [
+          "cns5_id",
+          "gj_id",
+          "component_id",
+          "n_components",
+          "primary_flag",
+          "gj_system_primary",
+          "gaia_dr3_id",
+          "hip_id",
+          "ra",
+          "dec",
+          "epoch",
+          "coordinates_bibcode",
+          "parallax",
+          "parallax_error",
+          "parallax_bibcode",
+          "pmra",
+          "pmra_error",
+          "pmdec",
+          "pmdec_error",
+          "pm_bibcode",
+          "rv",
+          "rv_error",
+          "rv_bibcode",
+          "g_mag",
+          "g_mag_error",
+          "bp_mag",
+          "bp_mag_error",
+          "rp_mag",
+          "rp_mag_error",
+          "g_mag_resulting",
+          "g_mag_resulting_error",
+          "g_rp_resulting",
+          "g_rp_resulting_error",
+          "g_rp_resulting_flag",
+          "cns6_system_id",
+          "reference_object_cns5_id",
+          "multiplicity_bibcode",
+          "remarks"
+        ]
+      },
+      "additionalProperties": { "type": "string" },
+      "patternProperties": {
+        "^(n_components|primary_flag|ra|dec|epoch|parallax|parallax_error|pmra|pmra_error|pmdec|pmdec_error|rv|rv_error|g_mag|g_mag_error|bp_mag|bp_mag_error|rp_mag|rp_mag_error|g_mag_resulting|g_mag_resulting_error|g_rp_resulting|g_rp_resulting_error|g_rp_resulting_flag)$": {
+          "$ref": "#/$defs/nullable_number_string"
+        },
+        "^(cns6_system_id|reference_object_cns5_id)$": {
+          "type": "string",
+          "pattern": "^$|^--$|^[0-9]+(?:, [0-9]+)*$"
+        }
+      },
+      "properties": {
+        "cns5_id": { "type": "string", "pattern": "^[0-9]+$" },
+        "gaia_dr3_id": { "type": "string", "pattern": "^$|^[0-9]+$" }
+      }
+    },
+    "gaia_row": {
+      "type": "object",
+      "required": ["source_id"],
+      "minProperties": 17,
+      "maxProperties": 17,
+      "propertyNames": {
+        "enum": [
+          "source_id",
+          "phot_g_mean_mag",
+          "phot_bp_mean_mag",
+          "phot_rp_mean_mag",
+          "bp_rp",
+          "radial_velocity",
+          "radial_velocity_error",
+          "phot_variable_flag",
+          "non_single_star",
+          "teff_gspphot",
+          "logg_gspphot",
+          "lum_flame",
+          "radius_flame",
+          "spectraltype_esphs",
+          "classprob_dsc_combmod_star",
+          "best_class_name",
+          "best_class_score"
+        ]
+      },
+      "additionalProperties": { "type": "string" },
+      "patternProperties": {
+        "^(phot_g_mean_mag|phot_bp_mean_mag|phot_rp_mean_mag|bp_rp|radial_velocity|radial_velocity_error|teff_gspphot|logg_gspphot|lum_flame|radius_flame|classprob_dsc_combmod_star|best_class_score)$": {
+          "$ref": "#/$defs/nullable_number_string"
+        },
+        "^non_single_star$": {
+          "$ref": "#/$defs/nullable_integer_string"
+        }
+      },
+      "properties": {
+        "source_id": { "type": "string", "pattern": "^[0-9]+$" }
+      }
+    },
+    "wds_row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "wds_coordinate",
+        "discoverer",
+        "components",
+        "first_observation_epoch",
+        "last_observation_epoch",
+        "observation_count",
+        "first_position_angle_deg",
+        "last_position_angle_deg",
+        "first_separation_arcsec",
+        "last_separation_arcsec",
+        "primary_magnitude",
+        "secondary_magnitude",
+        "spectral_type",
+        "primary_pm_ra",
+        "primary_pm_dec",
+        "secondary_pm_ra",
+        "secondary_pm_dec",
+        "durchmusterung_id",
+        "notes",
+        "precise_coordinate",
+        "selection_reason"
+      ],
+      "properties": {
+        "seed_catalogue": {
+          "enum": ["cns5", "gcns", "gaia_dr3"]
+        },
+        "seed_source_id": { "type": "string", "pattern": "^[0-9]+$" },
+        "system_id": {
+          "type": "string",
+          "pattern": "^stellar-system-[0-9]{6}$"
+        },
+        "membership_action": { "enum": ["confirm", "replace"] },
+        "component_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^stellar-component-[0-9]{6}$"
+          }
+        },
+        "wds_coordinate": {
+          "type": "string",
+          "pattern": "^[0-9]{5}[+-][0-9]{4}$"
+        },
+        "discoverer": { "type": "string", "minLength": 1 },
+        "components": { "type": "string" },
+        "first_observation_epoch": {
+          "$ref": "#/$defs/nullable_integer_string"
+        },
+        "last_observation_epoch": {
+          "$ref": "#/$defs/nullable_integer_string"
+        },
+        "observation_count": {
+          "$ref": "#/$defs/nullable_integer_string"
+        },
+        "first_position_angle_deg": {
+          "$ref": "#/$defs/nullable_integer_string"
+        },
+        "last_position_angle_deg": {
+          "$ref": "#/$defs/nullable_integer_string"
+        },
+        "first_separation_arcsec": {
+          "$ref": "#/$defs/nullable_number_string"
+        },
+        "last_separation_arcsec": {
+          "$ref": "#/$defs/nullable_number_string"
+        },
+        "primary_magnitude": {
+          "$ref": "#/$defs/wds_nullable_magnitude_string"
+        },
+        "secondary_magnitude": {
+          "$ref": "#/$defs/wds_nullable_magnitude_string"
+        },
+        "spectral_type": { "type": "string" },
+        "primary_pm_ra": {
+          "$ref": "#/$defs/nullable_integer_string"
+        },
+        "primary_pm_dec": {
+          "$ref": "#/$defs/nullable_integer_string"
+        },
+        "secondary_pm_ra": {
+          "$ref": "#/$defs/nullable_integer_string"
+        },
+        "secondary_pm_dec": {
+          "$ref": "#/$defs/nullable_integer_string"
+        },
+        "durchmusterung_id": { "type": "string" },
+        "notes": { "type": "string" },
+        "precise_coordinate": {
+          "type": "string",
+          "pattern": "^[0-9]{6}\\.[0-9]{2}[+-][0-9]{6}\\.[0-9]$"
+        },
+        "selection_reason": { "type": "string", "minLength": 1 }
+      },
+      "oneOf": [
+        {
+          "required": ["seed_catalogue", "seed_source_id"],
+          "not": {
+            "anyOf": [
+              { "required": ["system_id"] },
+              { "required": ["membership_action"] },
+              { "required": ["component_ids"] }
+            ]
+          }
+        },
+        {
+          "required": ["system_id", "membership_action", "component_ids"],
+          "not": {
+            "anyOf": [
+              { "required": ["seed_catalogue"] },
+              { "required": ["seed_source_id"] }
+            ]
+          }
+        }
+      ]
+    },
+    "gcns_extract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "source", "rows"],
+      "properties": {
+        "schema_version": { "const": "2.0.0" },
+        "source": { "$ref": "#/$defs/gcns_source" },
+        "rows": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/gcns_row" }
+        }
+      }
+    },
+    "cns5_extract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "source", "rows"],
+      "properties": {
+        "schema_version": { "const": "2.0.0" },
+        "source": { "$ref": "#/$defs/cns5_source" },
+        "rows": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/cns5_row" }
+        }
+      }
+    },
+    "gaia_extract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "source", "rows"],
+      "properties": {
+        "schema_version": { "const": "2.0.0" },
+        "source": { "$ref": "#/$defs/gaia_source" },
+        "rows": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/gaia_row" }
+        }
+      }
+    },
+    "wds_extract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "source", "rows"],
+      "properties": {
+        "schema_version": { "const": "1.0.0" },
+        "source": { "$ref": "#/$defs/wds_source" },
+        "rows": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/wds_row" }
+        }
+      }
+    }
+  }
+}

@@ -1,88 +1,50 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://bobiverse.local/schema/nearby-systems-2.0.0.json",
+  "$id": "https://bobiverse.local/schema/nearby-systems-3.0.0.json",
   "type": "object",
   "additionalProperties": false,
   "required": ["schema_version", "metadata", "systems"],
   "properties": {
-    "schema_version": { "const": "2.0.0" },
+    "schema_version": { "const": "3.0.0" },
     "metadata": {
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "source",
         "generated_at",
         "coordinate_frame",
         "units",
         "render_mapping",
         "configuration",
-        "coverage"
+        "coverage",
+        "sources"
       ],
       "properties": {
-        "source": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "catalogue",
-            "release",
-            "archive_url",
-            "documentation_url",
-            "retrieved_at",
-            "acknowledgement",
-            "snapshot_sha256"
-          ],
-          "properties": {
-            "catalogue": { "type": "string", "minLength": 1 },
-            "release": { "type": "string", "minLength": 1 },
-            "archive_url": { "type": "string", "format": "uri" },
-            "documentation_url": { "type": "string", "format": "uri" },
-            "retrieved_at": { "type": "string", "format": "date-time" },
-            "acknowledgement": { "type": "string", "minLength": 1 },
-            "snapshot_sha256": {
-              "type": "string",
-              "pattern": "^[0-9a-f]{64}$"
-            }
-          }
-        },
         "generated_at": { "type": "string", "minLength": 1 },
-        "coordinate_frame": {
-          "const": "Sun-centered Galactic Cartesian"
-        },
+        "coordinate_frame": { "const": "Sun-centered Galactic Cartesian" },
         "units": { "const": "pc" },
-        "render_mapping": {
-          "const": "scene.x=Xg; scene.y=Zg; scene.z=-Yg"
-        },
+        "render_mapping": { "const": "scene.x=Xg; scene.y=Zg; scene.z=-Yg" },
         "configuration": {
           "type": "object",
           "additionalProperties": false,
           "required": ["context_radius_ly"],
           "properties": {
-            "context_radius_ly": {
-              "type": "number",
-              "exclusiveMinimum": 0
-            }
+            "context_radius_ly": { "type": "number", "exclusiveMinimum": 0 }
           }
         },
         "coverage": {
           "type": "array",
           "minItems": 1,
-          "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "anchor_id",
-              "anchor_position_pc",
-              "radius_ly",
-              "system_count",
-              "source_record_count"
-            ],
-            "properties": {
-              "anchor_id": { "type": "string", "minLength": 1 },
-              "anchor_position_pc": { "$ref": "#/$defs/position" },
-              "radius_ly": { "type": "number", "exclusiveMinimum": 0 },
-              "system_count": { "type": "integer", "minimum": 0 },
-              "source_record_count": { "type": "integer", "minimum": 0 }
-            }
+          "items": { "$ref": "#/$defs/coverage" }
+        },
+        "sources": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["gcns", "cns5", "gaia_dr3", "wds"],
+          "properties": {
+            "gcns": { "$ref": "#/$defs/source" },
+            "cns5": { "$ref": "#/$defs/source" },
+            "gaia_dr3": { "$ref": "#/$defs/source" },
+            "wds": { "$ref": "#/$defs/wds_source" }
           }
         }
       }
@@ -90,10 +52,12 @@
     "systems": {
       "type": "array",
       "minItems": 1,
+      "maxItems": 2000,
       "items": { "$ref": "#/$defs/system" }
     }
   },
   "$defs": {
+    "nullable_number": { "type": ["number", "null"] },
     "position": {
       "type": "object",
       "additionalProperties": false,
@@ -114,8 +78,59 @@
         "z": { "type": "number" }
       }
     },
-    "nullable_number": {
-      "type": ["number", "null"]
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["normalised_sha256", "row_count", "acknowledgement"],
+      "properties": {
+        "normalised_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "row_count": { "type": "integer", "minimum": 0 },
+        "acknowledgement": { "type": "string", "minLength": 1 }
+      }
+    },
+    "wds_source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "snapshot_sha256",
+        "candidate_sha256",
+        "row_count",
+        "candidate_row_count",
+        "acknowledgement"
+      ],
+      "properties": {
+        "snapshot_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "candidate_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "row_count": { "type": "integer", "minimum": 1 },
+        "candidate_row_count": { "type": "integer", "minimum": 0 },
+        "acknowledgement": { "type": "string", "minLength": 1 }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "anchor_id",
+        "anchor_position_pc",
+        "radius_ly",
+        "system_count",
+        "source_record_count",
+        "gcns_boundary_pc"
+      ],
+      "properties": {
+        "anchor_id": { "type": "string", "minLength": 1 },
+        "anchor_position_pc": { "$ref": "#/$defs/position" },
+        "radius_ly": { "type": "number", "exclusiveMinimum": 0 },
+        "system_count": { "type": "integer", "minimum": 0 },
+        "source_record_count": { "type": "integer", "minimum": 0 },
+        "gcns_boundary_pc": { "const": 100 }
+      }
     },
     "component": {
       "type": "object",
@@ -123,19 +138,104 @@
       "required": [
         "id",
         "gaia_source_id",
+        "cns5_id",
+        "source_identities",
+        "gaia_enrichment",
         "designation",
+        "identifiers",
         "icrs",
         "astrometry_quality",
         "photometry",
-        "visual"
+        "visual",
+        "provenance"
       ],
       "properties": {
         "id": { "type": "string", "minLength": 1 },
-        "gaia_source_id": {
-          "type": ["string", "null"],
-          "pattern": "^[0-9]+$"
+        "gaia_source_id": { "type": ["string", "null"], "pattern": "^[0-9]+$" },
+        "cns5_id": { "type": ["string", "null"], "minLength": 1 },
+        "source_identities": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "gaia_enrichment": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "phot_g_mean_mag",
+                "phot_bp_mean_mag",
+                "phot_rp_mean_mag",
+                "bp_rp",
+                "radial_velocity_km_s",
+                "radial_velocity_error_km_s",
+                "phot_variable_flag",
+                "non_single_star",
+                "effective_temperature_k",
+                "logg_gspphot",
+                "luminosity_solar",
+                "radius_solar",
+                "spectral_type",
+                "star_class_probability",
+                "variability_class",
+                "variability_class_score"
+              ],
+              "properties": {
+                "phot_g_mean_mag": { "$ref": "#/$defs/nullable_number" },
+                "phot_bp_mean_mag": { "$ref": "#/$defs/nullable_number" },
+                "phot_rp_mean_mag": { "$ref": "#/$defs/nullable_number" },
+                "bp_rp": { "$ref": "#/$defs/nullable_number" },
+                "radial_velocity_km_s": {
+                  "$ref": "#/$defs/nullable_number"
+                },
+                "radial_velocity_error_km_s": {
+                  "$ref": "#/$defs/nullable_number"
+                },
+                "phot_variable_flag": { "type": ["string", "null"] },
+                "non_single_star": { "type": ["string", "null"] },
+                "effective_temperature_k": {
+                  "$ref": "#/$defs/nullable_number"
+                },
+                "logg_gspphot": { "$ref": "#/$defs/nullable_number" },
+                "luminosity_solar": { "$ref": "#/$defs/nullable_number" },
+                "radius_solar": { "$ref": "#/$defs/nullable_number" },
+                "spectral_type": { "type": ["string", "null"] },
+                "star_class_probability": {
+                  "$ref": "#/$defs/nullable_number"
+                },
+                "variability_class": { "type": ["string", "null"] },
+                "variability_class_score": {
+                  "$ref": "#/$defs/nullable_number"
+                }
+              }
+            }
+          ]
         },
         "designation": { "type": "string", "minLength": 1 },
+        "identifiers": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "gaia_dr3_source_id",
+            "gcns_source_id",
+            "cns5_id",
+            "gj_id",
+            "hip_id",
+            "cns5_component_id",
+            "cns6_system_id"
+          ],
+          "properties": {
+            "gaia_dr3_source_id": { "type": ["string", "null"] },
+            "gcns_source_id": { "type": ["string", "null"] },
+            "cns5_id": { "type": ["string", "null"] },
+            "gj_id": { "type": ["string", "null"] },
+            "hip_id": { "type": ["string", "null"] },
+            "cns5_component_id": { "type": ["string", "null"] },
+            "cns6_system_id": { "type": ["string", "null"] }
+          }
+        },
         "icrs": {
           "type": "object",
           "additionalProperties": false,
@@ -164,9 +264,7 @@
           ],
           "properties": {
             "parallax_over_error": { "$ref": "#/$defs/nullable_number" },
-            "visibility_periods_used": {
-              "type": ["integer", "null"]
-            },
+            "visibility_periods_used": { "type": ["integer", "null"] },
             "ruwe": { "$ref": "#/$defs/nullable_number" }
           }
         },
@@ -182,7 +280,12 @@
         "visual": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["color_family", "marker_radius", "derivation"],
+          "required": [
+            "color_family",
+            "marker_radius",
+            "derivation",
+            "source_facts"
+          ],
           "properties": {
             "color_family": {
               "enum": [
@@ -196,7 +299,35 @@
               ]
             },
             "marker_radius": { "type": "number", "exclusiveMinimum": 0 },
-            "derivation": { "type": "string", "minLength": 1 }
+            "derivation": { "type": "string", "minLength": 1 },
+            "source_facts": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "effective_temperature_k",
+                "spectral_type",
+                "bp_rp",
+                "wds_spectral_type"
+              ],
+              "properties": {
+                "effective_temperature_k": {
+                  "$ref": "#/$defs/nullable_number"
+                },
+                "spectral_type": { "type": ["string", "null"] },
+                "bp_rp": { "$ref": "#/$defs/nullable_number" },
+                "wds_spectral_type": { "type": ["string", "null"] }
+              }
+            }
+          }
+        },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["position", "catalogues", "enrichment"],
+          "properties": {
+            "position": { "type": ["string", "null"] },
+            "catalogues": { "type": "array", "items": { "type": "string" } },
+            "enrichment": { "type": ["string", "null"] }
           }
         }
       }
@@ -220,16 +351,13 @@
         "name": { "type": "string", "minLength": 1 },
         "alternates": {
           "type": "array",
-          "items": { "type": "string", "minLength": 1 },
-          "uniqueItems": true
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
         },
         "position_pc": { "$ref": "#/$defs/position" },
         "render_position": { "$ref": "#/$defs/render_position" },
         "distance_from_sol_pc": { "type": "number", "minimum": 0 },
-        "distance_uncertainty_pc": {
-          "type": ["number", "null"],
-          "minimum": 0
-        },
+        "distance_uncertainty_pc": { "type": ["number", "null"], "minimum": 0 },
         "components": {
           "type": "array",
           "minItems": 1,
@@ -237,21 +365,53 @@
         },
         "provenance": {
           "type": "object",
-          "required": ["catalogue", "source_object_ids"],
+          "additionalProperties": false,
+          "required": [
+            "catalogues",
+            "source_object_ids",
+            "adopted_component_id",
+            "review_version",
+            "wds_designations"
+          ],
           "properties": {
-            "catalogue": { "type": "string", "minLength": 1 },
-            "release": { "type": "string", "minLength": 1 },
+            "catalogues": { "type": "array", "items": { "type": "string" } },
             "source_object_ids": {
               "type": "array",
-              "items": { "type": "string", "pattern": "^[0-9]+$" },
+              "items": { "type": "string" },
               "uniqueItems": true
             },
-            "adopted_source_object_id": {
-              "type": "string",
-              "pattern": "^[0-9]+$"
-            },
-            "transformation": { "type": "string", "minLength": 1 },
-            "review_version": { "type": "string", "minLength": 1 }
+            "adopted_component_id": { "type": "string", "minLength": 1 },
+            "review_version": { "type": "string", "minLength": 1 },
+            "wds_designations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "wds_coordinate",
+                  "discoverer",
+                  "components",
+                  "component_ids",
+                  "membership_action",
+                  "reason"
+                ],
+                "properties": {
+                  "wds_coordinate": { "type": "string", "minLength": 1 },
+                  "discoverer": { "type": "string", "minLength": 1 },
+                  "components": { "type": "string" },
+                  "component_ids": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": { "type": "string", "minLength": 1 }
+                  },
+                  "membership_action": {
+                    "enum": ["confirm", "replace"]
+                  },
+                  "reason": { "type": "string", "minLength": 1 }
+                }
+              }
+            }
           }
         }
       }

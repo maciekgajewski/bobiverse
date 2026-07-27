@@ -2,19 +2,20 @@ import { describe, expect, it } from "vitest";
 import { mapDisplayConfig } from "../../src/domain/config";
 import { nearbySystems, validateNearbySystems } from "../../src/domain/data";
 
-describe("Gaia neighbourhood runtime data", () => {
-  it("contains the complete pinned Sol neighbourhood", () => {
+describe("reconciled astronomy runtime data", () => {
+  it("contains the generated Sol neighbourhood and its coverage proof", () => {
     expect(nearbySystems).not.toBeNull();
     if (!nearbySystems) throw new Error("Fixture dataset failed validation");
-    expect(nearbySystems.systems).toHaveLength(71);
+    expect(nearbySystems.systems).toHaveLength(97);
     expect(nearbySystems.systems[0]?.id).toBe("sol");
     expect(nearbySystems.metadata.coverage).toEqual([
       {
         anchor_id: "sol",
         anchor_position_pc: { xg: 0, yg: 0, zg: 0 },
         radius_ly: mapDisplayConfig.context_radius_ly,
-        source_record_count: 73,
-        system_count: 70,
+        source_record_count: 118,
+        system_count: 96,
+        gcns_boundary_pc: 100,
       },
     ]);
   });
@@ -35,58 +36,57 @@ describe("Gaia neighbourhood runtime data", () => {
     );
   });
 
-  it("requires complete, typed runtime source provenance", () => {
+  it("requires provenance from every active catalogue", () => {
     if (!nearbySystems) throw new Error("Fixture dataset failed validation");
     const altered = structuredClone(nearbySystems);
-    altered.metadata.source.acknowledgement = "";
+    altered.metadata.sources.cns5.acknowledgement = "";
     expect(() => validateNearbySystems(altered)).toThrow();
   });
 
-  it("keeps a pinned Gaia distance fixture stable after transformation", () => {
+  it("keeps a source-backed Barnard distance fixture stable", () => {
     if (!nearbySystems) throw new Error("Fixture dataset failed validation");
     const barnard = nearbySystems.systems.find(
-      (system) => system.id === "barnards-star",
+      (system) => system.name === "Barnard's Star",
     );
-    expect(barnard?.distance_from_sol_pc).toBeCloseTo(1.828233981356, 10);
+    expect(barnard?.distance_from_sol_pc).toBeCloseTo(1.83800015242, 10);
     expect(barnard?.components[0]?.gaia_source_id).toBe("4472832130942575872");
   });
 
-  it("keeps reviewed Gaia components in one stellar-system node", () => {
+  it("keeps reviewed multiple components in one stellar-system node", () => {
     if (!nearbySystems) throw new Error("Fixture dataset failed validation");
-    const groombridge = nearbySystems.systems.find(
-      (system) => system.id === "groombridge-34",
+    const alpha = nearbySystems.systems.find(
+      (system) => system.name === "Alpha Centauri",
     );
-    expect(groombridge?.components.map((component) => component.id)).toEqual([
-      "gaia-dr3:385334196532776576",
-      "gaia-dr3:385334230892516480",
-    ]);
+    expect(alpha?.components.map((component) => component.designation)).toEqual(
+      ["Alpha Centauri A", "Alpha Centauri B", "Proxima Centauri"],
+    );
   });
 
   it("rejects component astrometry inconsistent with its reviewed system", () => {
     if (!nearbySystems) throw new Error("Fixture dataset failed validation");
     const altered = structuredClone(nearbySystems);
     const groombridge = altered.systems.find(
-      (system) => system.id === "groombridge-34",
+      (system) => system.name === "Groombridge 34",
     );
     if (!groombridge) throw new Error("Groombridge 34 fixture is missing");
     groombridge.components[0]!.icrs.parallax_mas = 47;
     expect(() => validateNearbySystems(altered)).toThrow(
-      "Component distance mismatch for gaia-dr3:385334196532776576",
+      "Component distance mismatch",
     );
   });
 
-  it("retains Gaia photometry and explicit approximate visual cues", () => {
+  it("retains nullable enrichment and explicit approximate visual cues", () => {
     if (!nearbySystems) throw new Error("Fixture dataset failed validation");
     for (const system of nearbySystems.systems.slice(1)) {
       for (const component of system.components) {
-        expect(component.gaia_source_id).toMatch(/^[0-9]+$/);
         expect(component.visual.marker_radius).toBeGreaterThan(0);
-        expect(component.visual.derivation).toContain("Gaia DR3");
+        expect(component.visual.derivation).toMatch(/^(Gaia DR3|Reviewed WDS)/);
+        expect(component.visual.derivation).toMatch(/approximate|fixed bands/);
       }
     }
     expect(nearbySystems.systems[0]?.components).toMatchObject([
       {
-        id: "generated:sol",
+        id: "stellar-component-sol",
         gaia_source_id: null,
         visual: { color_family: "yellow", marker_radius: 0.09 },
       },

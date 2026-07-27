@@ -2,594 +2,1465 @@ from __future__ import annotations
 
 import argparse
 import csv
+import io
 import math
+import re
+from pathlib import Path
 from typing import Any
 
 import astropy.units as u
 from astropy.coordinates import ICRS, SkyCoord
 from jsonschema import Draft202012Validator
 
+from astronomy_pipeline import (
+    ACKNOWLEDGEMENTS,
+    CNS5_COLUMNS,
+    GAIA_COLUMNS,
+    GCNS_COLUMNS,
+    LY_PER_PC,
+    WDS_FORMAT_URL,
+    WDS_URL,
+    decimal_id,
+    cns5_query,
+    cns5_astrometry_issue,
+    distance,
+    exact_source_query,
+    gaia_query,
+    gcns_anchor_query,
+    gcns_query,
+    reviewed_landmark_source_identities,
+    read_extract,
+    resolved_cns5_identity,
+    wds_component_spectral_types,
+    wds_membership_candidates,
+)
 from common import (
-    CONFIG_PATH,
-    CONFIG_SCHEMA_PATH,
-    GENERATED_PATH,
-    LIGHT_YEARS_PER_PARSEC,
-    RAW_SNAPSHOT_PATH,
-    REVIEW_PATH,
-    ROOT,
-    SNAPSHOT_PATH,
-    mapped_anchor_ids,
-    read_json,
-    sha256,
+    CANDIDATES_PATH, CNS5_PATH, CONFIG_PATH, CONFIG_SCHEMA_PATH, GAIA_ENRICHMENT_PATH,
+    GCNS_PATH, GENERATED_PATH, IDENTITY_REGISTRY_PATH, LANDMARKS_PATH, REVIEW_PATH,
+    ROOT, SOURCE_DIR, SOURCE_EXTRACT_SCHEMA_PATH, WDS_FORMAT_PATH, WDS_PATH,
+    mapped_anchor_ids, read_gzip, read_json, sha256, sha256_bytes, value_sha256,
 )
 
-MAX_SYSTEMS = 2_000
 MAX_RUNTIME_BYTES = 5 * 1024 * 1024
-EXPECTED_SOURCE = {
-    "catalogue": "Gaia DR3 gaiadr3.gaia_source",
-    "release": "2022-06-13",
-    "archive_url": "https://gea.esac.esa.int/tap-server/tap/sync",
-    "documentation_url": "https://gea.esac.esa.int/archive/documentation/GDR3/",
-    "acknowledgement": (
-        "This work has made use of data from the European Space Agency (ESA) mission "
-        "Gaia (https://www.cosmos.esa.int/gaia), processed by the Gaia Data Processing "
-        "and Analysis Consortium (DPAC, "
-        "https://www.cosmos.esa.int/web/gaia/dpac/consortium)."
+MAX_SYSTEMS = 2_000
+EXPECTED_SOURCE_CONTRACTS = {
+    "gcns": ("https://dc.g-vo.org/tap/sync", "gcns.main"),
+    "cns5": ("https://dc.g-vo.org/tap/sync", "cns5update.main"),
+    "gaia_dr3": (
+        "https://gea.esac.esa.int/tap-server/tap/sync",
+        "gaiadr3.gaia_source + pinned left joins",
     ),
 }
-EXPECTED_QUALITY_CONTRACT = {
-    "astrometric_params_solved": [31, 95],
-    "minimum_parallax_over_error": 10,
-    "minimum_visibility_periods_used": 8,
-    "maximum_ruwe": 1.4,
-}
-EXPECTED_FIELDNAMES = [
-    "source_id",
-    "designation",
-    "ref_epoch",
-    "ra",
-    "dec",
-    "parallax",
-    "parallax_error",
-    "parallax_over_error",
-    "astrometric_params_solved",
-    "visibility_periods_used",
-    "ruwe",
-    "phot_g_mean_mag",
-    "bp_rp",
-]
-EXPECTED_QUALITY_CLAUSES = [
-    "parallax_over_error >= 10",
-    "visibility_periods_used >= 8",
-    "ruwe < 1.4",
-    "astrometric_params_solved IN (31, 95)",
-]
-QUERY_ENVELOPE_MARGIN = 1e-9
 
 
-def validate_schema(value: Any, schema_path: Any, label: str) -> None:
-    schema = read_json(schema_path)
-    errors = sorted(
-        Draft202012Validator(schema).iter_errors(value),
-        key=lambda error: list(error.path),
-    )
+def validate_schema(value: Any, schema_path: Path, label: str) -> None:
+    errors = sorted(Draft202012Validator(read_json(schema_path)).iter_errors(value), key=lambda error: list(error.path))
     if errors:
-        raise ValueError(
-            f"{label} schema validation failed:\n"
-            + "\n".join(error.message for error in errors)
-        )
+        raise ValueError(f"{label} schema validation failed:\n" + "\n".join(error.message for error in errors))
 
 
-def optional_float(value: str) -> float | None:
-    return None if value == "" else float(value)
+def csv_sha(columns: list[str], rows: list[dict[str, str]]) -> str:
+    output = io.StringIO(newline="")
+    writer = csv.DictWriter(output, fieldnames=columns, lineterminator="\n")
+    writer.writeheader()
+    writer.writerows(rows)
+    return sha256_bytes(output.getvalue().encode())
 
 
-def read_source_rows() -> list[dict[str, Any]]:
-    with RAW_SNAPSHOT_PATH.open(encoding="utf-8", newline="") as handle:
-        reader = csv.DictReader(handle)
-        if reader.fieldnames != EXPECTED_FIELDNAMES:
-            raise ValueError(
-                "Gaia raw snapshot fields do not match the acquisition contract"
-            )
-        rows = list(reader)
-    return [
-        {
-            "source_id": row["source_id"],
-            "designation": row["designation"],
-            "ref_epoch": float(row["ref_epoch"]),
-            "ra": float(row["ra"]),
-            "dec": float(row["dec"]),
-            "parallax": float(row["parallax"]),
-            "parallax_error": float(row["parallax_error"]),
-            "parallax_over_error": float(row["parallax_over_error"]),
-            "astrometric_params_solved": int(row["astrometric_params_solved"]),
-            "visibility_periods_used": int(row["visibility_periods_used"]),
-            "ruwe": float(row["ruwe"]),
-            "phot_g_mean_mag": optional_float(row["phot_g_mean_mag"]),
-            "bp_rp": optional_float(row["bp_rp"]),
-        }
-        for row in rows
-    ]
-
-
-def expected_query_text(clauses: list[str]) -> str:
-    columns = ", ".join(EXPECTED_FIELDNAMES)
-    return "\n".join(
-        [
-            f"SELECT {columns}",
-            "FROM gaiadr3.gaia_source",
-            f"WHERE {clauses[0]}",
-            *[f"  AND {clause}" for clause in clauses[1:]],
-            "ORDER BY source_id",
-        ]
-    )
-
-
-def expected_neighbourhood_query(
-    radius_ly: float, anchor: dict[str, Any] | None
-) -> str:
-    radius_pc = radius_ly / LIGHT_YEARS_PER_PARSEC
-    if anchor is None:
-        minimum_parallax = (1000 / radius_pc) * (1 - QUERY_ENVELOPE_MARGIN)
-        return expected_query_text(
-            [f"parallax >= {minimum_parallax:.12f}", *EXPECTED_QUALITY_CLAUSES]
-        )
-
-    anchor_distance_pc = 1000 / anchor["parallax"]
-    minimum_parallax = (
-        1000
-        / (anchor_distance_pc + radius_pc)
-        * (1 - QUERY_ENVELOPE_MARGIN)
-    )
-    clauses = [f"parallax >= {minimum_parallax:.12f}"]
-    if anchor_distance_pc > radius_pc:
-        maximum_parallax = (
-            1000
-            / (anchor_distance_pc - radius_pc)
-            * (1 + QUERY_ENVELOPE_MARGIN)
-        )
-        angular_radius = (
-            math.degrees(math.asin(radius_pc / anchor_distance_pc))
-            + QUERY_ENVELOPE_MARGIN
-        )
-        clauses.extend(
-            [
-                f"parallax <= {maximum_parallax:.12f}",
-                (
-                    f"DISTANCE({anchor['ra']:.12f}, "
-                    f"{anchor['dec']:.12f}, ra, dec) "
-                    f"<= {angular_radius:.12f}"
-                ),
-            ]
-        )
-    clauses.extend(EXPECTED_QUALITY_CLAUSES)
-    return expected_query_text(clauses)
-
-
-def validate_snapshot_metadata(snapshot: dict[str, Any]) -> None:
-    if snapshot.get("schema_version") != "1.0.0":
-        raise ValueError("Gaia snapshot metadata has an unsupported schema version")
-    if snapshot.get("quality_contract") != EXPECTED_QUALITY_CONTRACT:
-        raise ValueError("Gaia snapshot quality contract differs from validation")
-    snapshot_source = snapshot.get("source", {})
-    if any(
-        snapshot_source.get(field) != expected
-        for field, expected in EXPECTED_SOURCE.items()
-    ):
-        raise ValueError("Gaia snapshot source identity differs from validation")
+def validate_extract(key: str, columns: list[str], id_key: str) -> tuple[dict[str, Any], list[dict[str, str]]]:
+    manifest, rows = read_extract(key)
+    path = {"gcns": GCNS_PATH, "cns5": CNS5_PATH, "gaia_dr3": GAIA_ENRICHMENT_PATH}[key]
+    csv_path = {
+        "gcns": SOURCE_DIR / "gcns-neighbourhood.csv",
+        "cns5": SOURCE_DIR / "cns5-nearby-components.csv",
+        "gaia_dr3": SOURCE_DIR / "gaia-dr3-enrichment.csv",
+    }[key]
+    validate_schema(read_json(path), SOURCE_EXTRACT_SCHEMA_PATH, key)
+    if manifest.get("catalogue") != key or manifest.get("columns") != columns:
+        raise ValueError(f"{key} manifest does not identify the pinned source contract")
+    expected_endpoint, expected_table = EXPECTED_SOURCE_CONTRACTS[key]
     if (
-        snapshot.get("raw_snapshot", {}).get("path")
-        != "data/source/gaia-dr3-neighbourhood.csv"
+        manifest.get("endpoint") != expected_endpoint
+        or manifest.get("table") != expected_table
+        or not manifest.get("adql")
+        or not manifest.get("retrieved_at")
+        or not manifest.get("release")
+        or manifest.get("acknowledgement") != ACKNOWLEDGEMENTS[key]
     ):
-        raise ValueError("Gaia snapshot metadata points at an unexpected raw file")
+        raise ValueError(f"{key} manifest provenance is incomplete or unpinned")
+    if key in {"gcns", "cns5"} and not manifest.get("upstream_updated_at"):
+        raise ValueError(f"{key} manifest lacks the upstream data-update timestamp")
+    if manifest.get("row_count") != len(rows) or manifest.get("normalised_sha256") != csv_sha(columns, rows):
+        raise ValueError(f"{key} manifest checksum or row count differs from its committed extract")
+    if not path.exists() or not csv_path.exists():
+        raise ValueError(f"{key} normalized extract is missing")
+    expected_csv = io.StringIO(newline="")
+    writer = csv.DictWriter(expected_csv, fieldnames=columns, lineterminator="\n")
+    writer.writeheader()
+    writer.writerows(rows)
+    if csv_path.read_bytes() != expected_csv.getvalue().encode():
+        raise ValueError(f"{key} committed CSV differs from its normalized JSON rows")
+    keys = [row.get(id_key, "") for row in rows]
+    if not keys or len(keys) != len(set(keys)):
+        raise ValueError(f"{key} extract has missing or duplicate {id_key}")
+    return manifest, rows
+
+
+def validate_wds(
+    cns5_rows: list[dict[str, str]],
+    review: dict[str, Any] | None = None,
+    gcns_rows: list[dict[str, str]] | None = None,
+    gaia_rows: list[dict[str, str]] | None = None,
+    candidates: dict[str, Any] | None = None,
+) -> None:
+    manifest_path = SOURCE_DIR / "wds-membership.json"
+    document = read_json(manifest_path)
+    validate_schema(
+        document,
+        SOURCE_EXTRACT_SCHEMA_PATH,
+        "WDS source artifact",
+    )
+    manifest = document.get("source", {})
+    if (
+        document.get("schema_version") != "1.0.0"
+        or manifest.get("schema_version") != "2.0.0"
+        or manifest.get("catalogue") != "wds"
+        or manifest.get("endpoint") != WDS_URL
+        or manifest.get("format_url") != WDS_FORMAT_URL
+        or not manifest.get("retrieved_at")
+        or "last_modified" not in manifest
+        or "format_last_modified" not in manifest
+    ):
+        raise ValueError("WDS manifest does not pin the complete source contract")
+    if not WDS_PATH.exists() or not WDS_FORMAT_PATH.exists():
+        raise ValueError("Complete pinned WDS snapshot or format contract is missing")
+    contents = read_gzip(WDS_PATH)
+    if manifest.get("compressed_sha256") != sha256(WDS_PATH) or manifest.get("uncompressed_sha256") != sha256_bytes(contents):
+        raise ValueError("WDS snapshot checksums differ from its manifest")
+    if manifest.get("format_sha256") != sha256(WDS_FORMAT_PATH):
+        raise ValueError("WDS format checksum differs from its manifest")
+    if manifest.get("row_count") != len([line for line in contents.splitlines() if line.strip()]):
+        raise ValueError("WDS row count differs from its manifest")
+    if manifest.get("acknowledgement") != ACKNOWLEDGEMENTS["wds"]:
+        raise ValueError("WDS acknowledgement differs from the required credit")
+    candidates = wds_membership_candidates(
+        cns5_rows,
+        contents,
+        (review or {}).get("wds_decisions", []),
+        gcns_rows,
+        gaia_rows,
+        reviewed_landmark_source_identities(candidates),
+    )
+    if document.get("rows") != candidates or manifest.get("candidate_row_count") != len(candidates) or manifest.get("candidate_sha256") != value_sha256(candidates):
+        raise ValueError("WDS candidate selection differs from a fresh derivation over the complete snapshot")
+
+
+def validate_wds_candidate_binding(
+    candidates: dict[str, Any],
+    wds_document: dict[str, Any],
+) -> None:
+    rows = wds_document["rows"]
+    if candidates.get("wds_candidate_sha256") != value_sha256(rows):
+        raise ValueError("System candidates are not bound to the exact WDS evidence")
+    expected_by_system: dict[str, list[dict[str, str]]] = {}
+    for row in rows:
+        if row.get("system_id") and row.get("selection_reason", "").startswith(
+            "accepted project review:"
+        ):
+            expected_by_system.setdefault(row["system_id"], []).append(row)
+    for values in expected_by_system.values():
+        values.sort(
+            key=lambda row: (
+                row["system_id"],
+                row["wds_coordinate"],
+                row["discoverer"],
+                row["components"],
+            )
+        )
+    systems = {entry["id"]: entry for entry in candidates["systems"]}
+    if not set(expected_by_system).issubset(systems):
+        raise ValueError("Accepted WDS evidence references a missing candidate system")
+    for system_id, system in systems.items():
+        if system.get("wds_membership_evidence") != expected_by_system.get(
+            system_id, []
+        ):
+            raise ValueError(
+                "Candidate system membership omits accepted WDS review evidence"
+            )
+
+
+def validate_registry(registry: dict[str, Any]) -> None:
+    if registry.get("schema_version") != "1.0.0":
+        raise ValueError("Identity registry has an unsupported schema version")
+    for kind, prefix in (("components", "stellar-component-"), ("systems", "stellar-system-")):
+        entries = registry.get(kind)
+        if not isinstance(entries, list):
+            raise ValueError(f"Identity registry lacks {kind}")
+        ids = [entry.get("id") for entry in entries]
+        keys = [entry.get("key") for entry in entries]
+        if len(ids) != len(set(ids)) or len(keys) != len(set(keys)):
+            raise ValueError(f"Identity registry has duplicate {kind} IDs or keys")
+        numbers = []
+        for entry in entries:
+            identifier = entry.get("id", "")
+            if not isinstance(identifier, str) or not identifier.startswith(prefix):
+                raise ValueError(f"Identity registry has an invalid {kind} ID")
+            try:
+                numbers.append(int(identifier.removeprefix(prefix)))
+            except ValueError as error:
+                raise ValueError(f"Identity registry has an invalid {kind} sequence") from error
+            if entry.get("state") not in {"active", "tombstoned"}:
+                raise ValueError("Identity registry has an invalid lifecycle state")
+        high_watermark = registry.get(
+            "component_sequence_high_watermark"
+            if kind == "components"
+            else "system_sequence_high_watermark"
+        )
+        if (
+            not isinstance(high_watermark, int)
+            or high_watermark < 0
+            or high_watermark < max(numbers, default=0)
+        ):
+            raise ValueError(
+                f"Identity registry {kind} has an invalid sequence high-water mark"
+            )
+        if numbers != sorted(numbers) or any(number < 1 for number in numbers):
+            raise ValueError(f"Identity registry {kind} IDs are not monotonic")
+        if kind == "components":
+            active_source_keys = [
+                source_key
+                for entry in entries
+                if entry["state"] == "active"
+                for source_key in entry.get("source_keys", [entry["key"]])
+            ]
+            if len(active_source_keys) != len(set(active_source_keys)):
+                raise ValueError(
+                    "Active component identities claim one exact source key twice"
+                )
+
+
+def validate_join_accounting(
+    gcns_rows: list[dict[str, str]],
+    cns5_rows: list[dict[str, str]],
+    gaia_rows: list[dict[str, str]],
+    gaia_manifest: dict[str, Any],
+) -> None:
+    if (
+        gaia_manifest.get("release") != "Gaia DR3"
+        or gaia_manifest.get("table")
+        != "gaiadr3.gaia_source + pinned left joins"
+    ):
+        raise ValueError("Gaia enrichment attempts an unsupported release join")
+    input_ids = sorted(
+        {
+            identifier
+            for identifier in (
+                [decimal_id(row["source_id"]) for row in gcns_rows]
+                + [decimal_id(row["gaia_dr3_id"]) for row in cns5_rows]
+            )
+            if identifier is not None
+        },
+    )
+    returned_ids = [row["source_id"] for row in gaia_rows]
+    if len(returned_ids) != len(set(returned_ids)):
+        raise ValueError("Gaia enrichment contains duplicate source IDs")
+    if not set(returned_ids).issubset(input_ids):
+        raise ValueError("Gaia enrichment returned an ID outside its left-join input")
+    expected_unmatched = sorted(set(input_ids) - set(returned_ids))
+    if gaia_manifest.get("unmatched_source_ids") != expected_unmatched:
+        raise ValueError("Gaia enrichment matched/unmatched accounting is incomplete")
+    if gaia_manifest.get("input_source_id_sha256") != sha256_bytes(
+        "\n".join(input_ids).encode()
+    ):
+        raise ValueError("Gaia enrichment input-ID checksum is incorrect")
+    expected_queries = []
+    returned_set = set(returned_ids)
+    for start in range(0, len(input_ids), 500):
+        chunk = input_ids[start:start + 500]
+        expected_queries.append(
+            {
+                "adql": gaia_query(chunk),
+                "input_count": len(chunk),
+                "input_source_id_sha256": sha256_bytes(
+                    "\n".join(chunk).encode()
+                ),
+                "returned_count": len(returned_set.intersection(chunk)),
+            }
+        )
+    if gaia_manifest.get("queries") != expected_queries:
+        raise ValueError("Gaia enrichment chunk accounting is incomplete")
 
 
 def validate_acquisition_queries(
-    snapshot: dict[str, Any],
-    radius_ly: float,
-    records_by_id: dict[str, dict[str, Any]],
+    gcns_manifest: dict[str, Any],
+    cns5_manifest: dict[str, Any],
+    gcns_rows: list[dict[str, str]],
+    cns5_rows: list[dict[str, str]],
     review: dict[str, Any],
-    anchors: list[str],
+    config: dict[str, Any],
+    anchor_ids: list[str],
 ) -> None:
-    review_by_id = {system["id"]: system for system in review["systems"]}
-    expected_queries = []
-    for anchor_id in anchors:
-        anchor = None
-        if anchor_id != "sol":
-            reviewed_anchor = review_by_id.get(anchor_id)
-            if reviewed_anchor is None:
-                raise ValueError(
-                    f"Mapped anchor lacks a Gaia review record: {anchor_id}"
-                )
-            anchor_source_id = reviewed_anchor["adopt_gaia_source_id"]
-            anchor = records_by_id.get(anchor_source_id)
-            if anchor is None:
-                raise ValueError(
-                    f"Mapped anchor source is absent from Gaia snapshot: {anchor_id}"
-                )
-        expected_queries.append(
+    radius_pc = config["context_radius_ly"] / LY_PER_PC
+    non_sol = [anchor for anchor in anchor_ids if anchor != "sol"]
+    bootstrap_by_anchor = {
+        entry["anchor_id"]: entry
+        for entry in review.get("anchor_bootstraps", [])
+    }
+    gcns_bootstrap_anchors = [
+        anchor
+        for anchor in non_sol
+        if bootstrap_by_anchor[anchor]["catalogue"] == "gcns"
+    ]
+    cns5_bootstrap_anchors = [
+        anchor
+        for anchor in non_sol
+        if bootstrap_by_anchor[anchor]["catalogue"] == "cns5"
+    ]
+    expected_cns5 = [{"stage": "local-census", "adql": cns5_query()}]
+    if cns5_bootstrap_anchors:
+        identifiers = [
+            str(bootstrap_by_anchor[anchor]["source_id"])
+            for anchor in cns5_bootstrap_anchors
+        ]
+        expected_cns5.append(
             {
-                "anchor_id": anchor_id,
-                "adql": expected_neighbourhood_query(radius_ly, anchor),
+                "stage": "bootstrap",
+                "anchor_ids": cns5_bootstrap_anchors,
+                "adql": exact_source_query(
+                    "cns5update.main", CNS5_COLUMNS, "cns5_id", identifiers
+                ),
             }
         )
-    if snapshot.get("queries") != expected_queries:
-        raise ValueError("Gaia acquisition queries do not match mapped narrative anchors")
+    if (
+        cns5_manifest.get("adql") != cns5_query()
+        or cns5_manifest.get("queries") != expected_cns5
+    ):
+        raise ValueError("CNS5 acquisition queries differ from the exact plan")
 
-
-def canonical_position(record: dict[str, Any]) -> dict[str, float]:
-    coordinate = SkyCoord(
-        ra=record["ra"] * u.deg,
-        dec=record["dec"] * u.deg,
-        distance=(1000 / record["parallax"]) * u.pc,
-        frame=ICRS(),
-    ).galactic.cartesian
-    return {
-        "xg": coordinate.x.to_value(u.pc),
-        "yg": coordinate.y.to_value(u.pc),
-        "zg": coordinate.z.to_value(u.pc),
-    }
-
-
-def distance(first: dict[str, float], second: dict[str, float]) -> float:
-    return math.sqrt(
-        sum((first[axis] - second[axis]) ** 2 for axis in ("xg", "yg", "zg"))
-    )
-
-
-def expected_color_family(bp_rp: float | None) -> str:
-    if bp_rp is None:
-        return "neutral"
-    thresholds = [
-        (0, "blue"),
-        (0.5, "blue-white"),
-        (0.8, "white"),
-        (1.2, "yellow"),
-        (1.8, "orange"),
+    sol_query = gcns_query(radius_pc)
+    expected_gcns = [
+        {"stage": "coverage", "anchor_id": "sol", "adql": sol_query}
     ]
-    for maximum, family in thresholds:
-        if bp_rp < maximum:
-            return family
-    return "red"
-
-
-def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Validate Gaia source, coverage, and generated runtime data."
-    )
-    parser.parse_args()
-
-    config = read_json(CONFIG_PATH)
-    document = read_json(GENERATED_PATH)
-    snapshot = read_json(SNAPSHOT_PATH)
-    review = read_json(REVIEW_PATH)
-    validate_schema(config, CONFIG_SCHEMA_PATH, "Map display configuration")
-    validate_schema(
-        document,
-        ROOT / "data" / "schema" / "nearby-systems.schema.json",
-        "Nearby systems",
-    )
-
-    validate_snapshot_metadata(snapshot)
-    if snapshot["raw_snapshot"]["sha256"] != sha256(RAW_SNAPSHOT_PATH):
-        raise ValueError("Gaia raw snapshot checksum does not match metadata")
-    records = read_source_rows()
-    if snapshot["raw_snapshot"]["row_count"] != len(records):
-        raise ValueError("Gaia raw snapshot row count does not match metadata")
-    source_ids = [record["source_id"] for record in records]
-    if len(source_ids) != len(set(source_ids)):
-        raise ValueError("Gaia raw snapshot contains duplicate source IDs")
-    if source_ids != sorted(source_ids, key=int):
-        raise ValueError("Gaia raw snapshot is not normalized by numeric source ID")
-    for record in records:
-        numeric = [
-            record["ra"],
-            record["dec"],
-            record["parallax"],
-            record["parallax_error"],
-            record["parallax_over_error"],
-            record["ruwe"],
+    if gcns_bootstrap_anchors:
+        identifiers = [
+            str(bootstrap_by_anchor[anchor]["source_id"])
+            for anchor in gcns_bootstrap_anchors
         ]
-        if not all(math.isfinite(value) for value in numeric):
-            raise ValueError(f"Gaia source {record['source_id']} is non-finite")
-        if record["parallax"] <= 0 or record["parallax_error"] <= 0:
-            raise ValueError(f"Gaia source {record['source_id']} has invalid parallax")
-        if record["astrometric_params_solved"] not in (31, 95):
-            raise ValueError(f"Gaia source {record['source_id']} lacks full astrometry")
-        if record["parallax_over_error"] < 10:
-            raise ValueError(f"Gaia source {record['source_id']} is below signal budget")
-        if record["visibility_periods_used"] < 8:
-            raise ValueError(f"Gaia source {record['source_id']} has too few periods")
-        if record["ruwe"] >= 1.4:
-            raise ValueError(f"Gaia source {record['source_id']} exceeds RUWE budget")
-
-    if document["metadata"]["configuration"]["context_radius_ly"] != config[
-        "context_radius_ly"
-    ]:
-        raise ValueError("Runtime context radius differs from the owned configuration")
-    expected_runtime_source = {
-        **snapshot["source"],
-        "snapshot_sha256": sha256(RAW_SNAPSHOT_PATH),
-    }
-    if document["metadata"]["source"] != expected_runtime_source:
-        raise ValueError("Runtime source provenance differs from the pinned snapshot")
-    if GENERATED_PATH.stat().st_size > MAX_RUNTIME_BYTES:
-        raise ValueError("Runtime astronomy JSON exceeds the 5 MiB budget")
-
-    records_by_id = {record["source_id"]: record for record in records}
-    positions_by_id = {
-        source_id: canonical_position(record)
-        for source_id, record in records_by_id.items()
-    }
-    review_claims: dict[str, str] = {}
-    candidate_systems: dict[str, dict[str, Any]] = {}
-    for reviewed in review["systems"]:
-        review_ids = reviewed["gaia_source_ids"]
-        present = [source_id for source_id in review_ids if source_id in records_by_id]
-        if not present:
-            continue
-        missing = sorted(set(review_ids) - records_by_id.keys())
-        if missing:
-            raise ValueError(
-                f"Reviewed system {reviewed['id']} is partially absent: {missing}"
-            )
-        for source_id in review_ids:
-            if source_id in review_claims:
-                raise ValueError(f"Reviewed Gaia source is claimed twice: {source_id}")
-            review_claims[source_id] = reviewed["id"]
-        adopted_id = reviewed["adopt_gaia_source_id"]
-        if adopted_id not in review_ids:
-            raise ValueError(f"Reviewed system {reviewed['id']} has invalid adoption")
-        candidate_systems[reviewed["id"]] = {
-            "position": positions_by_id[adopted_id],
-            "source_ids": review_ids,
-            "adopted_source_id": adopted_id,
-        }
-    for source_id in source_ids:
-        if source_id in review_claims:
-            continue
-        candidate_systems[f"gaia-dr3-{source_id}"] = {
-            "position": positions_by_id[source_id],
-            "source_ids": [source_id],
-            "adopted_source_id": source_id,
-        }
-
-    anchors = mapped_anchor_ids()
-    validate_acquisition_queries(
-        snapshot,
-        config["context_radius_ly"],
-        records_by_id,
-        review,
-        anchors,
-    )
-    anchor_positions: dict[str, dict[str, float]] = {
-        "sol": {"xg": 0.0, "yg": 0.0, "zg": 0.0}
-    }
-    for anchor_id in anchors:
-        if anchor_id == "sol":
-            continue
-        if anchor_id not in candidate_systems:
-            raise ValueError(
-                f"Mapped anchor is absent from candidate systems: {anchor_id}"
-            )
-        anchor_positions[anchor_id] = candidate_systems[anchor_id]["position"]
-
-    radius_pc = config["context_radius_ly"] / LIGHT_YEARS_PER_PARSEC
-    expected_systems = {
-        system_id: candidate
-        for system_id, candidate in candidate_systems.items()
-        if any(
-            distance(candidate["position"], anchor_position)
-            <= radius_pc + 1e-12
-            for anchor_position in anchor_positions.values()
-        )
-    }
-    systems = document["systems"]
-    if len(systems) > MAX_SYSTEMS:
-        raise ValueError("Runtime astronomy data exceeds the 2,000-system budget")
-    system_ids = [system["id"] for system in systems]
-    if len(system_ids) != len(set(system_ids)) or system_ids[0] != "sol":
-        raise ValueError("Dataset must begin with Sol and contain unique system IDs")
-    if set(system_ids[1:]) != set(expected_systems):
-        missing = sorted(set(expected_systems) - set(system_ids))
-        unexpected = sorted(set(system_ids) - {"sol"} - set(expected_systems))
-        raise ValueError(
-            f"Generated neighbourhood differs from Gaia coverage: "
-            f"missing={missing}, unexpected={unexpected}"
-        )
-    distances = [system["distance_from_sol_pc"] for system in systems]
-    if distances != sorted(distances):
-        raise ValueError("Systems must be ordered by adopted distance from Sol")
-
-    emitted_source_ids: set[str] = set()
-    expected_source_ids = {
-        source_id
-        for candidate in expected_systems.values()
-        for source_id in candidate["source_ids"]
-    }
-    systems_by_id = {system["id"]: system for system in systems}
-    for system in systems:
-        position = system["position_pc"]
-        render = system["render_position"]
-        values = [
-            *position.values(),
-            *render.values(),
-            system["distance_from_sol_pc"],
-        ]
-        if not all(math.isfinite(value) for value in values):
-            raise ValueError(f"{system['id']} has a non-finite coordinate")
-        if render != {
-            "x": position["xg"],
-            "y": position["zg"],
-            "z": -position["yg"],
-        }:
-            raise ValueError(f"{system['id']} violates canonical scene mapping")
-        if system["id"] != "sol":
-            expected_system = expected_systems[system["id"]]
-            expected_position = expected_system["position"]
-            for axis in ("xg", "yg", "zg"):
-                if not math.isclose(
-                    position[axis],
-                    expected_position[axis],
-                    rel_tol=0,
-                    abs_tol=1e-10,
-                ):
-                    raise ValueError(
-                        f"{system['id']} does not match independently transformed Gaia astrometry"
-                    )
-            expected_distance = distance(
-                expected_position, {"xg": 0.0, "yg": 0.0, "zg": 0.0}
-            )
-            if not math.isclose(
-                system["distance_from_sol_pc"],
-                expected_distance,
-                rel_tol=0,
-                abs_tol=1e-10,
-            ):
-                raise ValueError(
-                    f"{system['id']} has an incorrect distance from Sol"
-                )
-            adopted_source = records_by_id[expected_system["adopted_source_id"]]
-            expected_uncertainty = (
-                1000
-                * adopted_source["parallax_error"]
-                / adopted_source["parallax"] ** 2
-            )
-            if not math.isclose(
-                system["distance_uncertainty_pc"],
-                expected_uncertainty,
-                rel_tol=0,
-                abs_tol=1e-10,
-            ):
-                raise ValueError(
-                    f"{system['id']} has an incorrect distance uncertainty"
-                )
-            component_source_ids = [
-                component["gaia_source_id"] for component in system["components"]
-            ]
-            if component_source_ids != expected_system["source_ids"]:
-                raise ValueError(
-                    f"{system['id']} components differ from reviewed Gaia membership"
-                )
-            if system["provenance"] != {
-                "catalogue": EXPECTED_SOURCE["catalogue"],
-                "release": EXPECTED_SOURCE["release"],
-                "source_object_ids": expected_system["source_ids"],
-                "adopted_source_object_id": expected_system[
-                    "adopted_source_id"
-                ],
-                "transformation": (
-                    "Astropy ICRS to Galactic Cartesian; Sun-centered; pc"
+        expected_gcns.append(
+            {
+                "stage": "bootstrap",
+                "anchor_ids": gcns_bootstrap_anchors,
+                "adql": exact_source_query(
+                    "gcns.main", GCNS_COLUMNS, "source_id", identifiers
                 ),
-                "review_version": review["review_version"],
-            }:
-                raise ValueError(
-                    f"{system['id']} has incorrect system provenance"
-                )
-        elif (
-            system["distance_from_sol_pc"] != 0
-            or system["distance_uncertainty_pc"] != 0
+            }
+        )
+    gcns = {row["source_id"]: row for row in gcns_rows}
+    cns5 = {row["cns5_id"]: row for row in cns5_rows}
+    for anchor in non_sol:
+        bootstrap = bootstrap_by_anchor[anchor]
+        if bootstrap["catalogue"] == "gcns":
+            row = gcns[str(bootstrap["source_id"])]
+            position = {
+                "xg": float(row["xcoord_50"]),
+                "yg": float(row["ycoord_50"]),
+                "zg": float(row["zcoord_50"]),
+            }
+        else:
+            row = cns5[str(bootstrap["source_id"])]
+            coordinate = SkyCoord(
+                ra=float(row["ra"]) * u.deg,
+                dec=float(row["dec"]) * u.deg,
+                distance=(1000 / float(row["parallax"])) * u.pc,
+                frame=ICRS(),
+            ).galactic.cartesian
+            position = {
+                "xg": round(coordinate.x.to_value(u.pc), 12),
+                "yg": round(coordinate.y.to_value(u.pc), 12),
+                "zg": round(coordinate.z.to_value(u.pc), 12),
+            }
+        expected_gcns.append(
+            {
+                "stage": "coverage",
+                "anchor_id": anchor,
+                "adql": gcns_anchor_query(position, radius_pc),
+            }
+        )
+    if (
+        gcns_manifest.get("adql") != sol_query
+        or gcns_manifest.get("queries") != expected_gcns
+    ):
+        raise ValueError("GCNS acquisition queries differ from the exact plan")
+
+
+def validate_source_union(
+    gcns_rows: list[dict[str, str]],
+    cns5_rows: list[dict[str, str]],
+    candidates: dict[str, Any],
+) -> None:
+    cns5_by_id = {row["cns5_id"]: row for row in cns5_rows}
+    expected = {
+        resolved_cns5_identity(row, cns5_by_id) for row in cns5_rows
+    } | {f"gaia-dr3:{row['source_id']}" for row in gcns_rows}
+    actual = {component["source_identity"] for component in candidates["components"]}
+    if actual != expected:
+        raise ValueError(
+            "Candidate components differ from the CNS5/GCNS retained-source union"
+        )
+    for component in candidates["components"]:
+        if component.get("membership_reason") not in {
+            "CNS5 grouping",
+            "singleton retained source",
+        }:
+            raise ValueError("Candidate component lacks a supported membership reason")
+
+
+def validate_cns5_astrometry_overrides(
+    review: dict[str, Any], cns5_rows: list[dict[str, str]]
+) -> None:
+    rows = {row["cns5_id"]: row for row in cns5_rows}
+    seen: set[str] = set()
+    for override in review.get("cns5_astrometry_overrides", []):
+        identifier = str(override.get("cns5_id", ""))
+        if (
+            identifier in seen
+            or identifier not in rows
+            or override.get("decision") not in {"accept", "reject"}
+            or not override.get("reason")
+            or (
+                override.get("decision") == "accept"
+                and cns5_astrometry_issue(rows[identifier])
+                != "CNS5 remarks flag a possible astrometry or identity conflict"
+            )
         ):
-            raise ValueError("Sol must retain zero distance and uncertainty")
+            raise ValueError("CNS5 astrometry review override is invalid")
+        seen.add(identifier)
+
+
+def validate_candidate_geometry(
+    gcns_rows: list[dict[str, str]],
+    cns5_rows: list[dict[str, str]],
+    candidates: dict[str, Any],
+    cns5_astrometry_overrides: list[dict[str, Any]] | None = None,
+) -> None:
+    gcns = {row["source_id"]: row for row in gcns_rows}
+    cns5 = {row["cns5_id"]: row for row in cns5_rows}
+    astrometry_decisions = {
+        str(entry["cns5_id"]): str(entry["decision"])
+        for entry in (cns5_astrometry_overrides or [])
+    }
+    for row in gcns_rows:
+        distance_kpc = float(row["dist_50"])
+        if distance_kpc <= 0:
+            raise ValueError("GCNS median distance must be positive")
+        cartesian = SkyCoord(
+            ra=float(row["ra"]) * u.deg,
+            dec=float(row["dec"]) * u.deg,
+            distance=distance_kpc * u.kpc,
+            frame=ICRS(),
+        ).galactic.cartesian
+        transformed = {
+            "xg": cartesian.x.to_value(u.pc),
+            "yg": cartesian.y.to_value(u.pc),
+            "zg": cartesian.z.to_value(u.pc),
+        }
+        retained = {
+            "xg": float(row["xcoord_50"]),
+            "yg": float(row["ycoord_50"]),
+            "zg": float(row["zcoord_50"]),
+        }
+        if any(
+            not math.isclose(transformed[axis], retained[axis], abs_tol=1e-5)
+            for axis in ("xg", "yg", "zg")
+        ):
+            raise ValueError(
+                "GCNS Cartesian units, origin, axis orientation, or handedness "
+                f"do not match an independent ICRS transform: {row['source_id']}"
+            )
+    for component in candidates["components"]:
+        expected = None
+        expected_reason = None
+        gcns_row = gcns.get(component.get("gaia_source_id"))
+        if gcns_row is not None:
+            expected = {
+                "xg": float(gcns_row["xcoord_50"]),
+                "yg": float(gcns_row["ycoord_50"]),
+                "zg": float(gcns_row["zcoord_50"]),
+            }
+            expected_reason = "gcns median Bayesian Cartesian geometry"
+        else:
+            cns5_row = cns5.get(component.get("cns5_id"))
+            if cns5_row is not None and all(
+                cns5_row.get(field) for field in ("ra", "dec", "parallax")
+            ) and (
+                (
+                    cns5_astrometry_issue(cns5_row) is None
+                    and astrometry_decisions.get(cns5_row["cns5_id"])
+                    != "reject"
+                )
+                or (
+                    cns5_astrometry_issue(cns5_row)
+                    == "CNS5 remarks flag a possible astrometry or identity conflict"
+                    and astrometry_decisions.get(cns5_row["cns5_id"])
+                    == "accept"
+                )
+            ):
+                parallax = float(cns5_row["parallax"])
+                if parallax > 0:
+                    cartesian = SkyCoord(
+                        ra=float(cns5_row["ra"]) * u.deg,
+                        dec=float(cns5_row["dec"]) * u.deg,
+                        distance=(1000 / parallax) * u.pc,
+                        frame=ICRS(),
+                    ).galactic.cartesian
+                    expected = {
+                        "xg": round(cartesian.x.to_value(u.pc), 12),
+                        "yg": round(cartesian.y.to_value(u.pc), 12),
+                        "zg": round(cartesian.z.to_value(u.pc), 12),
+                    }
+                    expected_reason = "CNS5 astrometry transformed by Astropy"
+        if component.get("position_pc") != expected:
+            raise ValueError(
+                f"{component['id']} position does not follow GCNS/CNS5 precedence"
+            )
+        if component.get("position_derivation") != expected_reason:
+            raise ValueError(
+                f"{component['id']} position provenance does not match its source"
+            )
+
+
+def validate_candidates(candidates: dict[str, Any], review: dict[str, Any], registry: dict[str, Any]) -> None:
+    if candidates.get("schema_version") != "1.0.0":
+        raise ValueError("System candidates has an unsupported schema version")
+    if review.get("accepted_candidate_sha256") != value_sha256(candidates):
+        raise ValueError("System candidates checksum is stale or was not explicitly accepted")
+    if review.get("unresolved_ambiguities"):
+        raise ValueError("System review contains unresolved ambiguity")
+    components = candidates.get("components", [])
+    systems = candidates.get("systems", [])
+    component_ids = [component.get("id") for component in components]
+    system_ids = [system.get("id") for system in systems]
+    if len(component_ids) != len(set(component_ids)) or len(system_ids) != len(set(system_ids)):
+        raise ValueError("Candidates contain duplicate stable identities")
+    registry_component_ids = {entry["id"] for entry in registry["components"] if entry["state"] == "active"}
+    registry_system_ids = {entry["id"] for entry in registry["systems"] if entry["state"] == "active"}
+    if not set(component_ids).issubset(registry_component_ids) or not set(system_ids).issubset(registry_system_ids):
+        raise ValueError("Candidates use IDs absent from the identity registry")
+    registry_components_by_id = {
+        entry["id"]: entry
+        for entry in registry["components"]
+        if entry["state"] == "active"
+    }
+    for component in components:
+        if sorted(component.get("source_identities", [])) != sorted(
+            registry_components_by_id[component["id"]].get(
+                "source_keys",
+                [registry_components_by_id[component["id"]]["key"]],
+            )
+        ):
+            raise ValueError(
+                "Candidate source identities differ from their stable registry key"
+            )
+    ownership: dict[str, str] = {}
+    review_overrides = {
+        entry.get("candidate_system_id"): entry
+        for entry in review.get("overrides", [])
+    }
+    for system in systems:
+        members = system.get("component_ids", [])
+        if not members or any(member not in component_ids for member in members):
+            raise ValueError("Candidate system has an invalid component membership")
+        for member in members:
+            if member in ownership:
+                raise ValueError("A component is assigned to two candidate systems")
+            ownership[member] = system["id"]
+        adopted = system.get("adopted_component_candidate")
+        reviewed_adopted = review_overrides.get(system["id"], {}).get(
+            "adopted_component_id"
+        )
+        if adopted not in members and not (
+            adopted is None
+            and (
+                reviewed_adopted in members
+                or not any(
+                    component["position_pc"] is not None
+                    for component in components
+                    if component["id"] in members
+                )
+            )
+        ):
+            raise ValueError("Candidate system lacks an adopted member component")
+        if system.get("requires_review") and reviewed_adopted not in members:
+            raise ValueError(
+                "Ambiguous multiple system lacks a reviewed adopted component"
+            )
+    if set(ownership) != set(component_ids):
+        raise ValueError("An ungrouped retained source was omitted instead of becoming a singleton system")
+    registry_systems_by_id = {
+        entry["id"]: entry
+        for entry in registry["systems"]
+        if entry["state"] == "active"
+    }
+    for system in systems:
+        if registry_systems_by_id[system["id"]]["key"] != "|".join(
+            sorted(system["component_ids"])
+        ):
+            raise ValueError(
+                "Candidate system membership differs from its stable registry key"
+            )
+    for component in components:
+        if not component.get("preferred_name_candidate"):
+            raise ValueError("Automatically retained component lacks a source-backed fallback name")
+        if component.get("position_pc") is not None:
+            if not all(math.isfinite(component["position_pc"][axis]) for axis in ("xg", "yg", "zg")):
+                raise ValueError("Candidate component has non-finite source geometry")
+    override_ids = [entry.get("candidate_system_id") for entry in review.get("overrides", [])]
+    if len(override_ids) != len(set(override_ids)) or not set(override_ids).issubset(system_ids):
+        raise ValueError("System review has an invalid or duplicate system override")
+    component_override_ids = [entry.get("candidate_component_id") for entry in review.get("component_overrides", [])]
+    if len(component_override_ids) != len(set(component_override_ids)) or not set(component_override_ids).issubset(component_ids):
+        raise ValueError("System review has an invalid or duplicate component override")
+    component_review_names = {
+        entry["candidate_component_id"]: entry.get("name", "")
+        for entry in review.get("component_overrides", [])
+    }
+    wds_keys: list[tuple[str, str, str, str]] = []
+    for decision in review.get("wds_decisions", []):
+        key = (
+            decision.get("system_id", ""),
+            decision.get("wds_coordinate", ""),
+            decision.get("discoverer", ""),
+            decision.get("components", ""),
+        )
+        system = next(
+            (entry for entry in systems if entry["id"] == key[0]), None
+        )
+        reviewed_component_ids = decision.get("component_ids")
+        if (
+            key[0] not in system_ids
+            or not all(isinstance(value, str) for value in key)
+            or not key[1]
+            or not key[2]
+            or decision.get("membership_action") not in {"confirm", "replace"}
+            or not isinstance(reviewed_component_ids, list)
+            or not reviewed_component_ids
+            or system is None
+            or not set(reviewed_component_ids).issubset(
+                system["component_ids"]
+            )
+            or not decision.get("reason")
+        ):
+            raise ValueError("System review has an invalid WDS membership decision")
+        component_labels = re.findall(r"[A-Z](?:[a-z])?", key[3])
+        if len(component_labels) == len(reviewed_component_ids) and any(
+            not component_review_names.get(component_id, "").endswith(
+                f" {component_label}"
+            )
+            for component_id, component_label in zip(
+                reviewed_component_ids,
+                component_labels,
+                strict=True,
+            )
+        ):
+            raise ValueError(
+                "WDS membership component IDs do not follow reviewed component order"
+            )
+        wds_keys.append(key)
+    if len(wds_keys) != len(set(wds_keys)):
+        raise ValueError("System review has a duplicate WDS membership decision")
+    registry_system_ids = {entry["id"] for entry in registry["systems"]}
+    all_registry_component_ids = {entry["id"] for entry in registry["components"]}
+    for transition in review.get("identity_transitions", []):
+        if "from_component_ids" in transition:
+            from_component_ids = transition.get("from_component_ids")
+            to_source_identities = transition.get("to_source_identities")
+            survivor = transition.get("surviving_component_id")
+            if (
+                not isinstance(from_component_ids, list)
+                or not from_component_ids
+                or not set(from_component_ids).issubset(
+                    all_registry_component_ids
+                )
+                or not isinstance(to_source_identities, list)
+                or not to_source_identities
+                or survivor is not None
+                and survivor not in from_component_ids
+                or not transition.get("reason")
+            ):
+                raise ValueError(
+                    "System review has an invalid component identity transition"
+                )
+            continue
+        from_ids = transition.get("from_system_ids")
+        to_ids = transition.get("to_component_ids")
+        if (
+            not isinstance(from_ids, list)
+            or not from_ids
+            or not set(from_ids).issubset(registry_system_ids)
+            or not isinstance(to_ids, list)
+            or not to_ids
+            or not set(to_ids).issubset(component_ids)
+            or not transition.get("reason")
+        ):
+            raise ValueError("System review has an invalid identity transition")
+
+
+def validate_anchor_bootstraps(
+    review: dict[str, Any],
+    candidates: dict[str, Any],
+    gcns_rows: list[dict[str, str]],
+    cns5_rows: list[dict[str, str]],
+    expected_anchor_ids: list[str],
+) -> None:
+    bootstraps = review.get("anchor_bootstraps", [])
+    by_anchor = {entry.get("anchor_id"): entry for entry in bootstraps}
+    non_sol = set(expected_anchor_ids) - {"sol"}
+    if len(by_anchor) != len(bootstraps) or set(by_anchor) != non_sol:
+        raise ValueError(
+            "Mapped anchors lack one exact reviewed source-backed bootstrap record"
+        )
+    systems = {entry["id"]: entry for entry in candidates["systems"]}
+    components = {entry["id"]: entry for entry in candidates["components"]}
+    gcns_ids = {row["source_id"] for row in gcns_rows}
+    cns5_ids = {row["cns5_id"] for row in cns5_rows}
+    for anchor_id, bootstrap in by_anchor.items():
+        system = systems.get(bootstrap.get("system_id"))
+        catalogue = bootstrap.get("catalogue")
+        source_id = str(bootstrap.get("source_id", ""))
+        if system is None or catalogue not in {"gcns", "cns5"}:
+            raise ValueError(f"{anchor_id} has an invalid reviewed bootstrap")
+        members = [components[identifier] for identifier in system["component_ids"]]
+        exact = (
+            catalogue == "gcns"
+            and source_id in gcns_ids
+            and any(member.get("gaia_source_id") == source_id for member in members)
+        ) or (
+            catalogue == "cns5"
+            and source_id in cns5_ids
+            and any(member.get("cns5_id") == source_id for member in members)
+        )
+        if not exact:
+            raise ValueError(
+                f"{anchor_id} bootstrap is not an exact source identity in its system"
+            )
+
+
+def expected_presentation(
+    enrichment: dict[str, str] | None,
+    bp_rp: float | None,
+    wds_spectral_type: str | None = None,
+) -> tuple[str, str]:
+    if enrichment and enrichment.get("teff_gspphot"):
+        temperature = float(enrichment["teff_gspphot"])
+        family = (
+            "blue" if temperature >= 10_000 else
+            "blue-white" if temperature >= 7_500 else
+            "white" if temperature >= 6_000 else
+            "yellow" if temperature >= 5_200 else
+            "orange" if temperature >= 3_700 else
+            "red"
+        )
+        return (
+            family,
+            "Gaia DR3 effective temperature; approximate fixed temperature bands",
+        )
+    spectral = (
+        enrichment.get("spectraltype_esphs", "").strip().upper()
+        if enrichment
+        else ""
+    )
+    if spectral[:1] in {"O", "B", "A", "F", "G", "K", "M"}:
+        family = {
+            "O": "blue", "B": "blue-white", "A": "white", "F": "white",
+            "G": "yellow", "K": "orange", "M": "red",
+        }[spectral[0]]
+        return (
+            family,
+            "Gaia DR3 spectral classification; approximate class family",
+        )
+    if bp_rp is not None:
+        family = (
+        "blue" if bp_rp < 0 else
+        "blue-white" if bp_rp < 0.5 else
+        "white" if bp_rp < 0.8 else
+        "yellow" if bp_rp < 1.2 else
+        "orange" if bp_rp < 1.8 else
+        "red")
+        return family, "Gaia DR3 bp_rp fixed bands; neutral when unavailable"
+    spectral = (wds_spectral_type or "").strip().upper()
+    spectral_class = next(
+        (character for character in spectral if character in "OBAFGKM"),
+        None,
+    )
+    if spectral_class:
+        family = {
+            "O": "blue", "B": "blue-white", "A": "white", "F": "white",
+            "G": "yellow", "K": "orange", "M": "red",
+        }[spectral_class]
+        return family, "Reviewed WDS spectral type; approximate class family"
+    return "neutral", "Gaia DR3 bp_rp fixed bands; neutral when unavailable"
+
+
+def validate_runtime_presentation(
+    document: dict[str, Any],
+    gcns_rows: list[dict[str, str]],
+    cns5_rows: list[dict[str, str]],
+    gaia_rows: list[dict[str, str]],
+    candidates: dict[str, Any],
+    review: dict[str, Any],
+) -> None:
+    gcns = {row["source_id"]: row for row in gcns_rows}
+    cns5 = {row["cns5_id"]: row for row in cns5_rows}
+    gaia = {row["source_id"]: row for row in gaia_rows}
+    candidates_by_id = {
+        component["id"]: component for component in candidates["components"]
+    }
+    component_overrides = {
+        entry["candidate_component_id"]: entry
+        for entry in review.get("component_overrides", [])
+    }
+    wds_spectral_by_component: dict[str, str] = {}
+    for system in candidates["systems"]:
+        for evidence in system.get("wds_membership_evidence", []):
+            for component_id, spectral_type in (
+                wds_component_spectral_types(evidence).items()
+            ):
+                wds_spectral_by_component.setdefault(
+                    component_id, spectral_type
+                )
+    for system in document["systems"]:
+        if system["id"] == "sol":
+            continue
         for component in system["components"]:
-            source_id = component["gaia_source_id"]
-            if source_id is None:
-                if system["id"] != "sol":
-                    raise ValueError(
-                        f"{system['id']} has a generated catalogue component"
+            candidate_component = candidates_by_id[component["id"]]
+            gaia_id = component["gaia_source_id"]
+            enrichment = gaia.get(gaia_id)
+            if component["source_identities"] != candidate_component[
+                "source_identities"
+            ]:
+                raise ValueError(
+                    f"{component['id']} drops accepted source identities"
+                )
+            bp_rp = (
+                float(enrichment["bp_rp"])
+                if enrichment and enrichment.get("bp_rp")
+                else None
+            )
+            gcns_row = gcns.get(gaia_id)
+            if bp_rp is None and gcns_row:
+                bp = gcns_row.get("phot_bp_mean_mag")
+                rp = gcns_row.get("phot_rp_mean_mag")
+                bp_rp = float(bp) - float(rp) if bp and rp else None
+            wds_spectral_type = wds_spectral_by_component.get(component["id"])
+            family, derivation = expected_presentation(
+                enrichment, bp_rp, wds_spectral_type
+            )
+            visual = component["visual"]
+            if (
+                visual["color_family"] != family
+                or visual["derivation"] != derivation
+                or visual["source_facts"] != {
+                    "effective_temperature_k": (
+                        float(enrichment["teff_gspphot"])
+                        if enrichment and enrichment.get("teff_gspphot")
+                        else None
+                    ),
+                    "spectral_type": (
+                        enrichment.get("spectraltype_esphs") or None
+                        if enrichment else None
+                    ),
+                    "bp_rp": bp_rp,
+                    "wds_spectral_type": wds_spectral_type,
+                }
+            ):
+                raise ValueError(
+                    f"{component['id']} presentation violates source precedence"
+                )
+            cns5_row = cns5.get(component["cns5_id"])
+            expected_identifiers = {
+                "gaia_dr3_source_id": gaia_id,
+                "gcns_source_id": gaia_id if gcns_row else None,
+                "cns5_id": component["cns5_id"],
+                "gj_id": cns5_row.get("gj_id") or None if cns5_row else None,
+                "hip_id": cns5_row.get("hip_id") or None if cns5_row else None,
+                "cns5_component_id": (
+                    cns5_row.get("component_id") or None if cns5_row else None
+                ),
+                "cns6_system_id": (
+                    cns5_row.get("cns6_system_id") or None
+                    if cns5_row else None
+                ),
+            }
+            if component["identifiers"] != expected_identifiers:
+                raise ValueError(
+                    f"{component['id']} does not retain its source identifiers"
+                )
+            expected_enrichment = None
+            if enrichment:
+                numeric_fields = {
+                    "phot_g_mean_mag": "phot_g_mean_mag",
+                    "phot_bp_mean_mag": "phot_bp_mean_mag",
+                    "phot_rp_mean_mag": "phot_rp_mean_mag",
+                    "bp_rp": "bp_rp",
+                    "radial_velocity_km_s": "radial_velocity",
+                    "radial_velocity_error_km_s": "radial_velocity_error",
+                    "effective_temperature_k": "teff_gspphot",
+                    "logg_gspphot": "logg_gspphot",
+                    "luminosity_solar": "lum_flame",
+                    "radius_solar": "radius_flame",
+                    "star_class_probability": "classprob_dsc_combmod_star",
+                    "variability_class_score": "best_class_score",
+                }
+                expected_enrichment = {
+                    output: (
+                        float(enrichment[source])
+                        if enrichment[source]
+                        else None
                     )
-                continue
-            if source_id in emitted_source_ids:
-                raise ValueError(f"Duplicate Gaia component reference: {source_id}")
-            emitted_source_ids.add(source_id)
-            source = records_by_id.get(source_id)
-            if source is None:
-                raise ValueError(f"Generated component is absent from Gaia: {source_id}")
-            expected_component = {
-                "id": f"gaia-dr3:{source_id}",
-                "gaia_source_id": source_id,
-                "designation": source["designation"],
+                    for output, source in numeric_fields.items()
+                }
+                expected_enrichment.update(
+                    {
+                        "phot_variable_flag": enrichment[
+                            "phot_variable_flag"
+                        ] or None,
+                        "non_single_star": enrichment["non_single_star"] or None,
+                        "spectral_type": enrichment["spectraltype_esphs"] or None,
+                        "variability_class": enrichment["best_class_name"] or None,
+                    }
+                )
+            if component["gaia_enrichment"] != expected_enrichment:
+                raise ValueError(
+                    f"{component['id']} drops Gaia enrichment provenance"
+                )
+            astrometry = gcns_row or cns5_row or {}
+
+            def optional_number(value: str | None) -> float | None:
+                return float(value) if value not in {None, ""} else None
+
+            expected_component_facts = {
+                "gaia_source_id": candidate_component["gaia_source_id"],
+                "cns5_id": candidate_component["cns5_id"],
+                "designation": component_overrides.get(
+                    component["id"], {}
+                ).get(
+                    "name",
+                    candidate_component["preferred_name_candidate"],
+                ),
                 "icrs": {
-                    "ra_deg": source["ra"],
-                    "dec_deg": source["dec"],
-                    "epoch_year": source["ref_epoch"],
-                    "parallax_mas": source["parallax"],
-                    "parallax_error_mas": source["parallax_error"],
+                    "ra_deg": optional_number(astrometry.get("ra")),
+                    "dec_deg": optional_number(astrometry.get("dec")),
+                    "epoch_year": optional_number(
+                        astrometry.get("ref_epoch")
+                        or astrometry.get("epoch")
+                    ),
+                    "parallax_mas": optional_number(
+                        astrometry.get("parallax")
+                    ),
+                    "parallax_error_mas": optional_number(
+                        astrometry.get("parallax_error")
+                    ),
                 },
                 "astrometry_quality": {
-                    "parallax_over_error": source["parallax_over_error"],
-                    "visibility_periods_used": source[
-                        "visibility_periods_used"
-                    ],
-                    "ruwe": source["ruwe"],
+                    "parallax_over_error": None,
+                    "visibility_periods_used": None,
+                    "ruwe": optional_number(gcns_row.get("ruwe"))
+                    if gcns_row
+                    else None,
                 },
                 "photometry": {
-                    "g_magnitude": source["phot_g_mean_mag"],
-                    "bp_rp": source["bp_rp"],
+                    "g_magnitude": (
+                        optional_number(enrichment.get("phot_g_mean_mag"))
+                        if enrichment
+                        else optional_number(
+                            astrometry.get("g_mag")
+                            or astrometry.get("phot_g_mean_mag")
+                        )
+                    ),
+                    "bp_rp": bp_rp,
                 },
-                "visual": {
-                    "color_family": expected_color_family(source["bp_rp"]),
-                    "marker_radius": 0.09,
-                    "derivation": (
-                        "Gaia DR3 bp_rp fixed bands; neutral when unavailable"
+                "provenance": {
+                    "position": candidate_component["position_derivation"],
+                    "catalogues": [
+                        catalogue
+                        for catalogue, source_row in (
+                            ("GCNS", gcns_row),
+                            ("CNS5", cns5_row),
+                            ("Gaia DR3", enrichment),
+                        )
+                        if source_row
+                    ],
+                    "enrichment": (
+                        "Gaia DR3 left join" if enrichment else None
                     ),
                 },
             }
-            if component != expected_component:
+            for field, expected in expected_component_facts.items():
+                if component[field] != expected:
+                    raise ValueError(
+                        f"{component['id']} {field} differs from its deterministic source"
+                    )
+            if visual["marker_radius"] != 0.09:
                 raise ValueError(
-                    f"Generated component differs from Gaia source {source_id}"
+                    f"{component['id']} marker radius differs from the fixed contract"
                 )
-            if component["visual"]["color_family"] != expected_color_family(
-                source["bp_rp"]
-            ):
-                raise ValueError(f"Gaia source {source_id} has an invalid colour family")
-            if component["photometry"]["bp_rp"] != source["bp_rp"]:
-                raise ValueError(f"Gaia source {source_id} has altered BP-RP photometry")
-    if emitted_source_ids != expected_source_ids:
-        raise ValueError("Generated component IDs do not equal covered Gaia source IDs")
 
-    coverage_by_id = {
-        entry["anchor_id"]: entry for entry in document["metadata"]["coverage"]
+
+def validate_runtime_uncertainty(
+    document: dict[str, Any],
+    candidates: dict[str, Any],
+    gcns_rows: list[dict[str, str]],
+    cns5_rows: list[dict[str, str]],
+) -> None:
+    candidates_by_system = {entry["id"]: entry for entry in candidates["systems"]}
+    candidates_by_component = {
+        entry["id"]: entry for entry in candidates["components"]
     }
-    if set(coverage_by_id) != set(anchor_positions):
-        raise ValueError("Runtime coverage metadata does not match mapped anchors")
-    for anchor_id, anchor_position in anchor_positions.items():
-        covered_ids = [
-            system_id
-            for system_id, candidate in expected_systems.items()
-            if distance(candidate["position"], anchor_position)
-            <= radius_pc + 1e-12
+    gcns = {row["source_id"]: row for row in gcns_rows}
+    cns5 = {row["cns5_id"]: row for row in cns5_rows}
+    for system in document["systems"]:
+        if system["id"] == "sol":
+            if system["distance_uncertainty_pc"] != 0:
+                raise ValueError("Sol distance uncertainty must be zero")
+            continue
+        candidate = candidates_by_system[system["id"]]
+        adopted = candidates_by_component[
+            system["provenance"]["adopted_component_id"]
         ]
-        coverage = coverage_by_id[anchor_id]
-        expected_records = sum(
-            len(expected_systems[system_id]["source_ids"])
-            for system_id in covered_ids
-        )
-        if coverage["system_count"] != len(covered_ids):
-            raise ValueError(f"{anchor_id} has an incorrect system coverage count")
-        if coverage["source_record_count"] != expected_records:
-            raise ValueError(f"{anchor_id} has an incorrect source coverage count")
-        if coverage["radius_ly"] != config["context_radius_ly"]:
-            raise ValueError(f"{anchor_id} has an incorrect coverage radius")
-        for axis in ("xg", "yg", "zg"):
-            if not math.isclose(
-                coverage["anchor_position_pc"][axis],
-                anchor_position[axis],
-                rel_tol=0,
-                abs_tol=1e-10,
-            ):
-                raise ValueError(
-                    f"{anchor_id} has an incorrect coverage anchor position"
+        gcns_row = gcns.get(adopted.get("gaia_source_id"))
+        expected = None
+        if gcns_row:
+            median = float(gcns_row["dist_50"])
+            expected = round(
+                max(
+                    abs(median - float(gcns_row["dist_16"])),
+                    abs(float(gcns_row["dist_84"]) - median),
                 )
-        generated_anchor = systems_by_id.get(anchor_id)
-        if anchor_id != "sol" and generated_anchor is None:
-            raise ValueError(f"Mapped anchor is absent from runtime: {anchor_id}")
+                * 1000,
+                12,
+            )
+        else:
+            cns5_row = cns5.get(adopted.get("cns5_id"))
+            if (
+                cns5_row
+                and cns5_row.get("parallax")
+                and cns5_row.get("parallax_error")
+            ):
+                parallax = float(cns5_row["parallax"])
+                expected = round(
+                    1000
+                    * float(cns5_row["parallax_error"])
+                    / (parallax * parallax),
+                    12,
+                )
+        if system["distance_uncertainty_pc"] != expected:
+            raise ValueError(
+                f"{candidate['id']} distance uncertainty is not source-derived"
+            )
 
-    print(
-        f"Validated {len(systems)} systems, {len(emitted_source_ids)} Gaia records, "
-        f"and {len(anchor_positions)} complete neighbourhood"
-        f"{'' if len(anchor_positions) == 1 else 's'}"
+
+def validate_runtime(document: dict[str, Any], manifests: dict[str, Any], candidates: dict[str, Any], review: dict[str, Any], landmarks: dict[str, Any], config: dict[str, Any]) -> None:
+    validate_schema(document, ROOT / "data" / "schema" / "nearby-systems.schema.json", "Nearby systems")
+    if GENERATED_PATH.stat().st_size > MAX_RUNTIME_BYTES or len(document["systems"]) > MAX_SYSTEMS:
+        raise ValueError("Runtime astronomy output exceeds a reviewed size budget")
+    if document["metadata"]["configuration"]["context_radius_ly"] != config["context_radius_ly"]:
+        raise ValueError("Runtime context radius differs from its sole configuration owner")
+    if (
+        document["metadata"]["generated_at"]
+        != max(manifest["retrieved_at"] for manifest in manifests.values())
+        or document["metadata"]["coordinate_frame"]
+        != "Sun-centered Galactic Cartesian"
+        or document["metadata"]["units"] != "pc"
+        or document["metadata"]["render_mapping"]
+        != "scene.x=Xg; scene.y=Zg; scene.z=-Yg"
+    ):
+        raise ValueError(
+            "Runtime metadata differs from its deterministic source contract"
+        )
+    for key, manifest in manifests.items():
+        runtime_source = document["metadata"]["sources"].get(key)
+        if key == "wds":
+            expected = {
+                "snapshot_sha256": manifest["uncompressed_sha256"],
+                "candidate_sha256": manifest["candidate_sha256"],
+                "row_count": manifest["row_count"],
+                "candidate_row_count": manifest["candidate_row_count"],
+                "acknowledgement": manifest["acknowledgement"],
+            }
+        else:
+            expected = {
+                field: manifest[field]
+                for field in ("normalised_sha256", "row_count", "acknowledgement")
+            }
+        if runtime_source != expected:
+            raise ValueError(f"Runtime {key} provenance differs from its pinned manifest")
+    system_ids = [system["id"] for system in document["systems"]]
+    if document["systems"][0]["id"] != "sol" or len(system_ids) != len(set(system_ids)):
+        raise ValueError("Runtime systems must start with Sol and have unique IDs")
+    expected_sol = {
+        "id": "sol",
+        "name": "Sol",
+        "alternates": ["Sun"],
+        "position_pc": {"xg": 0.0, "yg": 0.0, "zg": 0.0},
+        "render_position": {"x": 0.0, "y": 0.0, "z": 0.0},
+        "distance_from_sol_pc": 0.0,
+        "distance_uncertainty_pc": 0.0,
+        "components": [
+            {
+                "id": "stellar-component-sol",
+                "gaia_source_id": None,
+                "cns5_id": None,
+                "source_identities": [],
+                "gaia_enrichment": None,
+                "designation": "Sol",
+                "identifiers": {
+                    "gaia_dr3_source_id": None,
+                    "gcns_source_id": None,
+                    "cns5_id": None,
+                    "gj_id": None,
+                    "hip_id": None,
+                    "cns5_component_id": None,
+                    "cns6_system_id": None,
+                },
+                "icrs": {
+                    "ra_deg": None,
+                    "dec_deg": None,
+                    "epoch_year": None,
+                    "parallax_mas": None,
+                    "parallax_error_mas": None,
+                },
+                "astrometry_quality": {
+                    "parallax_over_error": None,
+                    "visibility_periods_used": None,
+                    "ruwe": None,
+                },
+                "photometry": {
+                    "g_magnitude": None,
+                    "bp_rp": None,
+                },
+                "visual": {
+                    "color_family": "yellow",
+                    "marker_radius": 0.09,
+                    "derivation": "generated Sol origin",
+                    "source_facts": {
+                        "effective_temperature_k": None,
+                        "spectral_type": None,
+                        "bp_rp": None,
+                        "wds_spectral_type": None,
+                    },
+                },
+                "provenance": {
+                    "position": "generated canonical origin",
+                    "catalogues": [],
+                    "enrichment": None,
+                },
+            }
+        ],
+        "provenance": {
+            "catalogues": ["Generated canonical origin"],
+            "source_object_ids": [],
+            "adopted_component_id": "stellar-component-sol",
+            "review_version": review["schema_version"],
+            "wds_designations": [],
+        },
+    }
+    if document["systems"][0] != expected_sol:
+        raise ValueError(
+            "Sol differs from the deterministic canonical-origin contract"
+        )
+    runtime_components = [component for system in document["systems"] for component in system["components"]]
+    component_ids = [component["id"] for component in runtime_components]
+    if len(component_ids) != len(set(component_ids)):
+        raise ValueError("Runtime components are assigned to more than one system")
+    for system in document["systems"]:
+        position, render = system["position_pc"], system["render_position"]
+        if render != {"x": position["xg"], "y": position["zg"], "z": -position["yg"]}:
+            raise ValueError(f"{system['id']} violates the canonical scene mapping")
+        if not all(math.isfinite(position[axis]) for axis in ("xg", "yg", "zg")):
+            raise ValueError(f"{system['id']} has a non-finite canonical coordinate")
+    reviewed_wds: dict[str, list[dict[str, Any]]] = {}
+    for decision in review.get("wds_decisions", []):
+        reviewed_wds.setdefault(decision["system_id"], []).append(
+            {
+                "wds_coordinate": decision["wds_coordinate"],
+                "discoverer": decision["discoverer"],
+                "components": decision["components"],
+                "component_ids": list(decision["component_ids"]),
+                "membership_action": decision["membership_action"],
+                "reason": decision["reason"],
+            }
+        )
+    for values in reviewed_wds.values():
+        values.sort(
+            key=lambda item: (
+                item["wds_coordinate"],
+                item["discoverer"],
+                item["components"],
+                item["membership_action"],
+            )
+        )
+    for system in document["systems"]:
+        if system["id"] == "sol":
+            expected_source_ids: list[str] = []
+        else:
+            expected_source_ids = sorted(
+                {
+                    *{
+                        identity
+                        for component in system["components"]
+                        for identity in component["source_identities"]
+                    },
+                    *{
+                        "wds:"
+                        + decision["wds_coordinate"]
+                        + ":"
+                        + decision["discoverer"]
+                        + decision["components"]
+                        for decision in reviewed_wds.get(system["id"], [])
+                    },
+                }
+            )
+        if (
+            system["provenance"]["wds_designations"]
+            != reviewed_wds.get(system["id"], [])
+            or system["provenance"]["source_object_ids"]
+            != expected_source_ids
+        ):
+            raise ValueError(
+                f"{system['id']} has incomplete WDS or source-identity provenance"
+            )
+    radius_pc = config["context_radius_ly"] / LY_PER_PC
+    if radius_pc >= 100:
+        raise ValueError("Required context sphere crosses the 100 pc GCNS boundary")
+    candidates_by_id = {candidate["id"]: candidate for candidate in candidates["systems"]}
+    overrides = {entry["candidate_system_id"]: entry for entry in review.get("overrides", [])}
+    components_by_id = {component["id"]: component for component in candidates["components"]}
+    anchor_positions = {"sol": {"xg": 0.0, "yg": 0.0, "zg": 0.0}}
+    for bootstrap in review.get("anchor_bootstraps", []):
+        candidate = candidates_by_id.get(bootstrap.get("system_id"))
+        if candidate is None:
+            raise ValueError("Reviewed anchor bootstrap references a missing candidate system")
+        adopted_id = overrides.get(candidate["id"], {}).get("adopted_component_id", candidate["adopted_component_candidate"])
+        position = components_by_id[adopted_id]["position_pc"]
+        if position is None:
+            raise ValueError("Reviewed anchor bootstrap lacks source-backed geometry")
+        if distance(position, {"xg": 0.0, "yg": 0.0, "zg": 0.0}) + radius_pc > 100:
+            raise ValueError("Required context sphere crosses the 100 pc GCNS boundary")
+        anchor_positions[bootstrap["anchor_id"]] = position
+    if set(anchor_positions) != set(mapped_anchor_ids()):
+        raise ValueError("Mapped anchors lack reviewed source-backed bootstrap records")
+    expected_ids = {"sol"}
+    expected_systems: list[
+        tuple[float, str, dict[str, Any], str, dict[str, float]]
+    ] = []
+    for system_id, candidate in candidates_by_id.items():
+        adopted_id = overrides.get(system_id, {}).get("adopted_component_id", candidate["adopted_component_candidate"])
+        if adopted_id is None:
+            continue
+        adopted = components_by_id[adopted_id]["position_pc"]
+        if adopted and any(distance(adopted, anchor) <= radius_pc + 1e-12 for anchor in anchor_positions.values()):
+            expected_ids.add(system_id)
+            expected_systems.append(
+                (
+                    round(
+                        distance(
+                            adopted,
+                            {"xg": 0.0, "yg": 0.0, "zg": 0.0},
+                        ),
+                        12,
+                    ),
+                    system_id,
+                    candidate,
+                    adopted_id,
+                    adopted,
+                )
+            )
+    if set(system_ids) != expected_ids:
+        raise ValueError("Runtime systems do not equal the required reconciled source union")
+    expected_systems.sort(key=lambda item: (item[0], item[1]))
+    expected_system_order = ["sol", *[item[1] for item in expected_systems]]
+    if system_ids != expected_system_order:
+        raise ValueError(
+            "Runtime system ordering differs from deterministic distance ordering"
+        )
+    runtime_by_id = {system["id"]: system for system in document["systems"]}
+    component_overrides = {
+        entry["candidate_component_id"]: entry
+        for entry in review.get("component_overrides", [])
+    }
+    for (
+        expected_distance,
+        system_id,
+        candidate,
+        adopted_id,
+        adopted_position,
+    ) in expected_systems:
+        runtime_system = runtime_by_id[system_id]
+        override = overrides.get(system_id, {})
+        expected_name = override.get(
+            "name", candidate["preferred_name_candidate"]
+        )
+        expected_alternates = sorted(
+            set(
+                override.get(
+                    "alternates",
+                    candidate["alternate_name_candidates"],
+                )
+            )
+        )
+        expected_component_ids = candidate["component_ids"]
+        actual_component_ids = [
+            component["id"] for component in runtime_system["components"]
+        ]
+        expected_catalogues = sorted(
+            {
+                *{
+                    catalogue
+                    for component in runtime_system["components"]
+                    for catalogue in component["provenance"]["catalogues"]
+                },
+                *(
+                    ["WDS"]
+                    if reviewed_wds.get(system_id)
+                    else []
+                ),
+            }
+        )
+        expected_system_facts = {
+            "name": expected_name,
+            "alternates": expected_alternates,
+            "position_pc": adopted_position,
+            "render_position": {
+                "x": adopted_position["xg"],
+                "y": adopted_position["zg"],
+                "z": -adopted_position["yg"],
+            },
+            "distance_from_sol_pc": expected_distance,
+        }
+        for field, expected in expected_system_facts.items():
+            if runtime_system[field] != expected:
+                raise ValueError(
+                    f"{system_id} {field} differs from its deterministic source"
+                )
+        if actual_component_ids != expected_component_ids:
+            raise ValueError(
+                f"{system_id} component order differs from its accepted candidate"
+            )
+        if (
+            runtime_system["provenance"]["adopted_component_id"]
+            != adopted_id
+            or runtime_system["provenance"]["review_version"]
+            != review["schema_version"]
+            or runtime_system["provenance"]["catalogues"]
+            != expected_catalogues
+        ):
+            raise ValueError(
+                f"{system_id} provenance differs from its deterministic source"
+            )
+        for component in runtime_system["components"]:
+            expected_designation = component_overrides.get(
+                component["id"], {}
+            ).get(
+                "name",
+                components_by_id[component["id"]][
+                    "preferred_name_candidate"
+                ],
+            )
+            if component["designation"] != expected_designation:
+                raise ValueError(
+                    f"{component['id']} designation differs from review"
+                )
+    coverage = document["metadata"]["coverage"]
+    coverage_by_id = {entry["anchor_id"]: entry for entry in coverage}
+    if set(coverage_by_id) != set(anchor_positions):
+        raise ValueError("Runtime coverage proof does not describe every selected neighbourhood")
+    for anchor_id, anchor_position in anchor_positions.items():
+        covered = [system for system in document["systems"][1:] if distance(system["position_pc"], anchor_position) <= radius_pc + 1e-12]
+        proof = coverage_by_id[anchor_id]
+        if (
+            proof["anchor_position_pc"] != anchor_position
+            or proof["radius_ly"] != config["context_radius_ly"]
+            or proof["system_count"] != len(covered)
+            or proof["source_record_count"]
+            != sum(len(system["components"]) for system in covered)
+            or proof["gcns_boundary_pc"] != 100
+        ):
+            raise ValueError("Runtime coverage proof is incorrect")
+    validate_schema(
+        landmarks,
+        ROOT / "data" / "schema" / "major-local-systems.schema.json",
+        "Major local systems",
     )
+    landmark_ids = [entry["system_id"] for entry in landmarks["systems"]]
+    if len(landmark_ids) != len(set(landmark_ids)):
+        raise ValueError("Landmark roster contains duplicate stable system IDs")
+    runtime_by_id = {system["id"]: system for system in document["systems"]}
+    for landmark in landmarks["systems"]:
+        system = runtime_by_id.get(landmark.get("system_id"))
+        if system is None or system["name"] != landmark.get("name"):
+            raise ValueError("Mandatory local landmark system is missing")
+        runtime_components = {
+            component["id"]: component["designation"]
+            for component in system["components"]
+        }
+        expected_components = {
+            component["component_id"]: component["name"]
+            for component in landmark["components"]
+        }
+        if not expected_components.items() <= runtime_components.items():
+            raise ValueError(
+                "Mandatory local landmark stable membership is incomplete"
+            )
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Independently validate the reconciled BOB-013 astronomy inputs and runtime output.")
+    parser.parse_args()
+    config = read_json(CONFIG_PATH)
+    validate_schema(config, CONFIG_SCHEMA_PATH, "Map display configuration")
+    gcns_manifest, gcns_rows = validate_extract("gcns", GCNS_COLUMNS, "source_id")
+    cns5_manifest, cns5_rows = validate_extract("cns5", CNS5_COLUMNS, "cns5_id")
+    gaia_manifest, gaia_rows = validate_extract("gaia_dr3", GAIA_COLUMNS, "source_id")
+    registry = read_json(IDENTITY_REGISTRY_PATH)
+    candidates = read_json(CANDIDATES_PATH)
+    review = read_json(REVIEW_PATH)
+    landmarks = read_json(LANDMARKS_PATH)
+    validate_wds(
+        cns5_rows, review, gcns_rows, gaia_rows, candidates
+    )
+    wds_document = read_json(SOURCE_DIR / "wds-membership.json")
+    validate_wds_candidate_binding(candidates, wds_document)
+    validate_registry(registry)
+    validate_acquisition_queries(
+        gcns_manifest,
+        cns5_manifest,
+        gcns_rows,
+        cns5_rows,
+        review,
+        config,
+        mapped_anchor_ids(),
+    )
+    validate_join_accounting(gcns_rows, cns5_rows, gaia_rows, gaia_manifest)
+    validate_source_union(gcns_rows, cns5_rows, candidates)
+    validate_cns5_astrometry_overrides(review, cns5_rows)
+    validate_candidate_geometry(
+        gcns_rows,
+        cns5_rows,
+        candidates,
+        review.get("cns5_astrometry_overrides", []),
+    )
+    validate_candidates(candidates, review, registry)
+    validate_anchor_bootstraps(
+        review, candidates, gcns_rows, cns5_rows, mapped_anchor_ids()
+    )
+    wds_manifest = wds_document["source"]
+    runtime = read_json(GENERATED_PATH)
+    validate_runtime_presentation(
+        runtime, gcns_rows, cns5_rows, gaia_rows, candidates, review
+    )
+    validate_runtime_uncertainty(runtime, candidates, gcns_rows, cns5_rows)
+    validate_runtime(runtime, {"gcns": gcns_manifest, "cns5": cns5_manifest, "gaia_dr3": gaia_manifest, "wds": wds_manifest}, candidates, review, landmarks, config)
+    print(f"Validated {len(read_json(GENERATED_PATH)['systems'])} reconciled systems and four pinned astronomy sources")
 
 
 if __name__ == "__main__":

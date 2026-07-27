@@ -18,7 +18,36 @@ export type ColorFamily =
 export interface Component {
   id: string;
   gaia_source_id: string | null;
+  cns5_id: string | null;
+  source_identities: string[];
+  gaia_enrichment: {
+    phot_g_mean_mag: number | null;
+    phot_bp_mean_mag: number | null;
+    phot_rp_mean_mag: number | null;
+    bp_rp: number | null;
+    radial_velocity_km_s: number | null;
+    radial_velocity_error_km_s: number | null;
+    phot_variable_flag: string | null;
+    non_single_star: string | null;
+    effective_temperature_k: number | null;
+    logg_gspphot: number | null;
+    luminosity_solar: number | null;
+    radius_solar: number | null;
+    spectral_type: string | null;
+    star_class_probability: number | null;
+    variability_class: string | null;
+    variability_class_score: number | null;
+  } | null;
   designation: string;
+  identifiers: {
+    gaia_dr3_source_id: string | null;
+    gcns_source_id: string | null;
+    cns5_id: string | null;
+    gj_id: string | null;
+    hip_id: string | null;
+    cns5_component_id: string | null;
+    cns6_system_id: string | null;
+  };
   icrs: {
     ra_deg: number | null;
     dec_deg: number | null;
@@ -39,6 +68,17 @@ export interface Component {
     color_family: ColorFamily;
     marker_radius: number;
     derivation: string;
+    source_facts: {
+      effective_temperature_k: number | null;
+      spectral_type: string | null;
+      bp_rp: number | null;
+      wds_spectral_type: string | null;
+    };
+  };
+  provenance: {
+    position: string | null;
+    catalogues: string[];
+    enrichment: string | null;
   };
 }
 
@@ -52,12 +92,18 @@ export interface StellarSystem {
   distance_uncertainty_pc: number | null;
   components: Component[];
   provenance: {
-    catalogue: string;
-    release?: string;
+    catalogues: string[];
     source_object_ids: string[];
-    adopted_source_object_id?: string;
-    transformation?: string;
-    review_version?: string;
+    adopted_component_id: string;
+    review_version: string;
+    wds_designations: {
+      wds_coordinate: string;
+      discoverer: string;
+      components: string;
+      component_ids: string[];
+      membership_action: "confirm" | "replace";
+      reason: string;
+    }[];
   };
 }
 
@@ -67,23 +113,39 @@ export interface CoverageProof {
   radius_ly: number;
   system_count: number;
   source_record_count: number;
+  gcns_boundary_pc: number;
 }
 
 export interface NearbySystemsData {
-  schema_version: "2.0.0";
+  schema_version: "3.0.0";
   metadata: {
     generated_at: string;
     coordinate_frame: string;
     units: "pc";
     render_mapping: string;
-    source: {
-      catalogue: string;
-      release: string;
-      archive_url: string;
-      documentation_url: string;
-      retrieved_at: string;
-      acknowledgement: string;
-      snapshot_sha256: string;
+    sources: {
+      gcns: {
+        normalised_sha256: string;
+        row_count: number;
+        acknowledgement: string;
+      };
+      cns5: {
+        normalised_sha256: string;
+        row_count: number;
+        acknowledgement: string;
+      };
+      gaia_dr3: {
+        normalised_sha256: string;
+        row_count: number;
+        acknowledgement: string;
+      };
+      wds: {
+        snapshot_sha256: string;
+        candidate_sha256: string;
+        row_count: number;
+        candidate_row_count: number;
+        acknowledgement: string;
+      };
     };
     configuration: { context_radius_ly: number };
     coverage: CoverageProof[];

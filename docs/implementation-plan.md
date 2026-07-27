@@ -99,7 +99,7 @@ acceptance; later work must not restore the tool without a new approved task.
 
 ## 5. Phase 1B: catalogue expansion and contextual coverage
 
-Status: Reopened; implementation pending explicit authorization
+Status: Done by BOB-013
 
 Goal: expand the accepted Phase 1A pipeline without weakening system identity,
 provenance, true geometry, or offline reproducibility.
@@ -109,7 +109,7 @@ superseded. Phase 2 needs guaranteed catalogue neighbourhoods around every mappe
 narrative stellar-system anchor, not an arbitrary Sol-centred count. BOB-013 owns the
 source decision and implementation of that coverage model.
 
-Planned work:
+Implemented BOB-013 work:
 
 - Replace the fixed 20-system validation and fixture count with a documented,
   validated context-radius configuration that defaults to 20 light-years.
@@ -117,14 +117,9 @@ Planned work:
   of each mapped narrative anchor.
 - Fail rather than silently present incomplete neighbourhoods at a source boundary.
 - Reconcile additional multi-star membership, aliases, and uncertain source records.
-- Measure rendering, labeling, picking, and search performance at the generated size.
-- Introduce label-density rules without changing true positions.
-- Add richer component and planet details only to selected systems.
+- Preserve the existing label-density, picking, and search behavior at the generated
+  catalogue size.
 - Record catalogue acknowledgements and refresh instructions.
-- Add the BOB-005 permanent Galactic-coordinate starfield backdrop as a separate
-  visual refinement: use a documented, locally derived real-sky texture with required
-  attribution, preserve the canonical coordinate frame and all interaction behavior,
-  and do not distort geometry or introduce runtime astronomy requests.
 
 Exit criteria:
 
@@ -136,9 +131,9 @@ Exit criteria:
 Rebaseline note: the 2026-07-26 Gaia DR3-only implementation was reproducible but
 failed recognizable local-completeness review: Sirius and Procyon were absent and
 Alpha Centauri was reduced to Proxima. ADR-0011 supersedes that source decision.
-BOB-013 is Ready to implement the reconciled CNS5/GCNS inclusion model, Gaia DR3
-enrichment, CNS5/WDS membership, landmark fixtures, and revised coverage proof.
-BOB-014 is blocked until that work passes.
+BOB-013 implements the reconciled CNS5/GCNS inclusion model, Gaia DR3 enrichment,
+CNS5/WDS membership, landmark fixtures, and revised coverage proof. BOB-014 is Ready
+now that the catalogue dependency is complete.
 
 ## 6. Phase 2: narrative foundation and chapter timeline
 

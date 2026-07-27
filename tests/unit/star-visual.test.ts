@@ -17,7 +17,19 @@ import type { Component } from "../../src/domain/types";
 const component = (id: string): Component => ({
   id,
   gaia_source_id: id.split(":")[1] ?? null,
+  cns5_id: null,
+  source_identities: [id],
+  gaia_enrichment: null,
   designation: id,
+  identifiers: {
+    gaia_dr3_source_id: id.split(":")[1] ?? null,
+    gcns_source_id: null,
+    cns5_id: null,
+    gj_id: null,
+    hip_id: null,
+    cns5_component_id: null,
+    cns6_system_id: null,
+  },
   icrs: {
     ra_deg: null,
     dec_deg: null,
@@ -38,7 +50,14 @@ const component = (id: string): Component => ({
     color_family: "yellow",
     marker_radius: 0.09,
     derivation: "test",
+    source_facts: {
+      effective_temperature_k: null,
+      spectral_type: null,
+      bp_rp: null,
+      wds_spectral_type: null,
+    },
   },
+  provenance: { position: null, catalogues: [], enrichment: null },
 });
 
 describe("star visual encodings", () => {

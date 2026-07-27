@@ -1,6 +1,6 @@
 # BOB-014: narrative-aware map integration
 
-Status: Blocked
+Status: Ready
 Phase: 2 (narrative foundation and chapter timeline)
 Last updated: 2026-07-27
 
@@ -11,9 +11,9 @@ Last updated: 2026-07-27
 - BOB-013 provides the validated astronomy neighbourhood catalogue and radius
   configuration.
 
-BOB-013 was reopened under ADR-0011 after the Gaia-only catalogue failed recognizable
-local-completeness review. This task remains blocked until the reconciled
-GCNS/Gaia/CNS5/WDS catalogue passes BOB-013.
+BOB-013 was completed under ADR-0011 after replacing the Gaia-only catalogue with
+the validated reconciled GCNS/Gaia/CNS5/WDS catalogue. All prerequisites are now
+satisfied; implementation still requires explicit authorization from the Captain.
 
 ## Objective
 

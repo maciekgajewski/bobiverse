@@ -1,6 +1,6 @@
 # BOB-013: guaranteed astronomy neighbourhood catalogue
 
-Status: Ready
+Status: Done
 Phase: 1B (required by Phase 2)
 Last updated: 2026-07-27
 
@@ -269,17 +269,25 @@ Automated validation must reject:
 - Performance optimization may add level-of-detail rendering, but it must preserve
   stable identity, canonical positions, searchability, and picking.
 
-## Current implementation gap
+## Implementation record
 
-The 2026-07-26 Gaia-only implementation remains useful historical evidence but does
-not satisfy this revised task:
+Implementation began with the Captain's explicit `proceed` authorization on
+2026-07-27. The accepted candidate snapshot contains 6,072 retained components in
+5,404 stable candidate systems. The configured Sol neighbourhood emits 96 non-Sol
+systems plus Sol, including the complete reviewed landmark roster and its required
+multiple-system membership.
 
-- its source-relative snapshot contains 73 Gaia DR3 records grouped into 70 non-Sol
-  systems plus Sol;
-- Sirius and Procyon are absent;
-- Alpha Centauri is represented only by the Proxima Gaia source; and
-- its validators prove the obsolete Gaia-only contract rather than the ADR-0011
-  source union.
+The live refresh on 2026-07-27 pinned 147 conservative-envelope GCNS rows, 6,521
+CNS5 rows, 5,477 Gaia DR3 enrichment rows, and the complete WDS snapshot. Review
+confirmed that the refreshed candidate graph preserved membership and stable IDs;
+54 components changed only from the CNS5 Astropy position fallback to preferred GCNS
+median Bayesian geometry.
 
-No implementation of ADR-0011 is authorized merely by this task becoming Ready. The
-Captain must explicitly say `proceed` or `make it so`.
+The final generated runtime contains 97 system nodes and is 352,754 bytes, within
+both committed-data budgets. All listed validation commands pass. The Playwright
+suite passed 24 tests across Chromium, Firefox, and WebKit against the expanded
+catalogue, covering responsive map interaction, selection and deselection, viewport
+containment, and the existing browser/inspector flows. The Captain completed the
+required real-browser visual test for the 97-node catalogue and explicitly accepted
+its rendered density and interaction behavior. The final independent implementation
+review returned `No findings.`

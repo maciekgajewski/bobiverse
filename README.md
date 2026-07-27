@@ -5,17 +5,13 @@ Taylor. Its central feature is a true-scale, interactive 3D map that helps reade
 understand the relative orientation and distances of nearby stellar systems. Later
 phases connect that map to chapters, characters, travel, events, and Bob genealogy.
 
-The checked-in implementation maps a pinned Gaia DR3 neighbourhood within 20
-light-years of each mapped narrative stellar system. Visual review found that this
-Gaia-only intermediate omits recognizable local systems, so BOB-013 is Ready to
-replace it with the accepted GCNS/Gaia DR3/CNS5/WDS pipeline in ADR-0011. The current
-runtime still contains 70 non-Sol system nodes plus Sol, with true-scale Galactic
-geometry, selection, distance-unit display, and a permanent local Deep Star Maps 2020
-Galactic backdrop. A spoiler-safe projected-object browser, search, and type-aware
-inspector expose narrative objects allowed by the selected knowledge chapter and
-story date. The application makes no runtime astronomy or image-host request; see the
-[astronomy pipeline](docs/data/astronomy-pipeline.md) and [backdrop provenance and
-attribution record](docs/data/galactic-starfield-backdrop.md).
+The checked-in astronomy runtime is generated from pinned GCNS, CNS5, Gaia DR3, and
+WDS inputs under ADR-0011. It contains Sol plus 96 source-backed systems within the
+configured 20-light-year neighbourhood, including reviewed landmark multiples such
+as Alpha Centauri A/B/Proxima, Sirius A/B, and Procyon A/B. The application makes no
+runtime astronomy or image-host request; see the [astronomy
+pipeline](docs/data/astronomy-pipeline.md) and [backdrop provenance and attribution
+record](docs/data/galactic-starfield-backdrop.md).
 
 ## Project documentation
 

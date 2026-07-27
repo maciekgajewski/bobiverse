@@ -2,10 +2,9 @@
 
 ## Status and runtime boundary
 
-This document defines the target BOB-013 extraction pipeline under ADR-0011. The
-checked-in implementation is still the superseded Gaia-only intermediate and must not
-be treated as satisfying this design until BOB-013 passes its revised acceptance
-criteria.
+This document defines the implemented BOB-013 extraction pipeline under ADR-0011.
+The checked-in source snapshots, review artifacts, and generated runtime are validated
+offline; only the explicit refresh command performs network access.
 
 The browser imports one generated `src/data/nearby-systems.json` document at build
 time. It makes no catalogue request. Canonical runtime positions remain Sun-centred
@@ -241,7 +240,6 @@ data/source/gaia-dr3-enrichment.csv
 data/source/gaia-dr3-enrichment.json
 data/source/wds-precise.txt.gz
 data/source/wdsweb-format.txt
-data/source/wds-membership.csv
 data/source/wds-membership.json
 data/source/identity-registry.json
 data/source/system-candidates.json
@@ -252,6 +250,11 @@ data/source/major-local-systems.json
 Exact filenames may change during implementation only if the task, schemas, and this
 document are updated together. Raw extracts remain source-specific. The pipeline must
 not flatten conflicting source facts before provenance is recorded.
+
+`data/schema/astronomy-source-extract.schema.json` validates the normalized
+source-specific row shapes, nullable-as-empty-string representation, and pinned
+manifest provenance. `data/schema/nearby-systems.schema.json` validates the static
+runtime including WDS review designations and source checksums.
 
 For a continuously updated source such as WDS, the manifest must identify the
 upstream snapshot date and checksum used for extraction. A later remote response is
@@ -336,7 +339,10 @@ the major-local-system fixtures. Retrieve the relevant WDS rows using pinned
 identifiers or conservative positional envelopes.
 
 Normalize WDS pair designations and component labels without inferring a physical
-hierarchy. Record unmatched candidates and ambiguous matches for review.
+hierarchy. A reviewed decision lists component IDs in the same primary-to-secondary
+order as the WDS component label; combined spectral types are split only when their
+cardinality matches that ordered list. Record unmatched candidates and ambiguous
+matches for review.
 
 ### Stage 7: reconcile source identities
 

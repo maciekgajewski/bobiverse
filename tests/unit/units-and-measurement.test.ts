@@ -43,10 +43,13 @@ describe("units and system measurement", () => {
     if (!nearbySystems) throw new Error("Fixture dataset failed validation");
     const sol = nearbySystems.systems.find((system) => system.id === "sol");
     const alpha = nearbySystems.systems.find(
-      (system) => system.id === "alpha-centauri",
+      (system) => system.id === "stellar-system-005413",
     );
+    expect(sol).toBeDefined();
+    expect(alpha).toBeDefined();
+    expect(alpha?.distance_from_sol_pc).toBeGreaterThan(1);
     expect(measurementDistancePc(sol, alpha)).toBeCloseTo(
-      alpha?.distance_from_sol_pc ?? 0,
+      alpha!.distance_from_sol_pc,
       10,
     );
   });

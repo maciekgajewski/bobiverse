@@ -1,0 +1,211 @@
+{
+  "schema_version": "1.0.0",
+  "systems": [
+    {
+      "system_id": "stellar-system-005413",
+      "name": "Alpha Centauri",
+      "components": [
+        {
+          "component_id": "stellar-component-000291",
+          "name": "Alpha Centauri A"
+        },
+        {
+          "component_id": "stellar-component-000536",
+          "name": "Alpha Centauri B"
+        },
+        {
+          "component_id": "stellar-component-005297",
+          "name": "Proxima Centauri"
+        }
+      ]
+    },
+    {
+      "system_id": "stellar-system-005543",
+      "name": "Barnard's Star",
+      "components": []
+    },
+    {
+      "system_id": "stellar-system-002966",
+      "name": "Wolf 359",
+      "components": []
+    },
+    {
+      "system_id": "stellar-system-005649",
+      "name": "Lalande 21185",
+      "components": []
+    },
+    {
+      "system_id": "stellar-system-000072",
+      "name": "Sirius",
+      "components": [
+        { "component_id": "stellar-component-000072", "name": "Sirius A" },
+        { "component_id": "stellar-component-002731", "name": "Sirius B" }
+      ]
+    },
+    {
+      "system_id": "stellar-system-003894",
+      "name": "Luyten 726-8",
+      "components": [
+        {
+          "component_id": "stellar-component-004695",
+          "name": "Luyten 726-8 A"
+        },
+        {
+          "component_id": "stellar-component-004696",
+          "name": "Luyten 726-8 B"
+        }
+      ]
+    },
+    {
+      "system_id": "stellar-system-003097",
+      "name": "Ross 154",
+      "components": []
+    },
+    {
+      "system_id": "stellar-system-001537",
+      "name": "Ross 248",
+      "components": []
+    },
+    {
+      "system_id": "stellar-system-005582",
+      "name": "Epsilon Eridani",
+      "components": []
+    },
+    {
+      "system_id": "stellar-system-005635",
+      "name": "Lacaille 9352",
+      "components": []
+    },
+    {
+      "system_id": "stellar-system-005524",
+      "name": "Ross 128",
+      "components": []
+    },
+    {
+      "system_id": "stellar-system-002010",
+      "name": "EZ Aquarii",
+      "components": []
+    },
+    {
+      "system_id": "stellar-system-000096",
+      "name": "Procyon",
+      "components": [
+        { "component_id": "stellar-component-000096", "name": "Procyon A" },
+        { "component_id": "stellar-component-000938", "name": "Procyon B" }
+      ]
+    },
+    {
+      "system_id": "stellar-system-001497",
+      "name": "61 Cygni",
+      "components": [
+        { "component_id": "stellar-component-001815", "name": "61 Cygni A" },
+        { "component_id": "stellar-component-001814", "name": "61 Cygni B" }
+      ]
+    },
+    {
+      "system_id": "stellar-system-005455",
+      "name": "Struve 2398",
+      "components": []
+    },
+    {
+      "system_id": "stellar-system-005526",
+      "name": "Groombridge 34",
+      "components": []
+    },
+    {
+      "system_id": "stellar-system-005197",
+      "name": "DX Cancri",
+      "components": []
+    },
+    {
+      "system_id": "stellar-system-005631",
+      "name": "Epsilon Indi",
+      "components": []
+    },
+    {
+      "system_id": "stellar-system-005567",
+      "name": "GJ 1061",
+      "components": []
+    },
+    {
+      "system_id": "stellar-system-005472",
+      "name": "Tau Ceti",
+      "components": []
+    },
+    {
+      "system_id": "stellar-system-005501",
+      "name": "Luyten's Star",
+      "components": []
+    },
+    {
+      "system_id": "stellar-system-005471",
+      "name": "Teegarden's Star",
+      "components": []
+    },
+    {
+      "system_id": "stellar-system-002424",
+      "name": "40 Eridani",
+      "components": [
+        {
+          "component_id": "stellar-component-002943",
+          "name": "40 Eridani A"
+        },
+        {
+          "component_id": "stellar-component-002942",
+          "name": "40 Eridani B"
+        },
+        {
+          "component_id": "stellar-component-002941",
+          "name": "40 Eridani C"
+        }
+      ]
+    },
+    {
+      "system_id": "stellar-system-000416",
+      "name": "Altair",
+      "components": []
+    },
+    {
+      "system_id": "stellar-system-003406",
+      "name": "70 Ophiuchi",
+      "components": [
+        {
+          "component_id": "stellar-component-004085",
+          "name": "70 Ophiuchi A"
+        },
+        {
+          "component_id": "stellar-component-004084",
+          "name": "70 Ophiuchi B"
+        }
+      ]
+    },
+    {
+      "system_id": "stellar-system-001772",
+      "name": "Sigma Draconis",
+      "components": []
+    },
+    {
+      "system_id": "stellar-system-003237",
+      "name": "Eta Cassiopeiae",
+      "components": []
+    },
+    {
+      "system_id": "stellar-system-003124",
+      "name": "36 Ophiuchi",
+      "components": [
+        {
+          "component_id": "stellar-component-003763",
+          "name": "36 Ophiuchi A"
+        },
+        {
+          "component_id": "stellar-component-003762",
+          "name": "36 Ophiuchi B"
+        },
+        {
+          "component_id": "stellar-component-003764",
+          "name": "36 Ophiuchi C"
+        }
+      ]
+    }
+  ]
+}

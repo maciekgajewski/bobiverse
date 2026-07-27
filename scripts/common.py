@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import gzip
 from pathlib import Path
 from typing import Any
 
@@ -9,10 +10,19 @@ ROOT = Path(__file__).resolve().parent.parent
 SOURCE_DIR = ROOT / "data" / "source"
 CONFIG_PATH = ROOT / "data" / "config" / "map-display.json"
 CONFIG_SCHEMA_PATH = ROOT / "data" / "schema" / "map-display.schema.json"
+SOURCE_EXTRACT_SCHEMA_PATH = (
+    ROOT / "data" / "schema" / "astronomy-source-extract.schema.json"
+)
 GENERATED_PATH = ROOT / "src" / "data" / "nearby-systems.json"
 REVIEW_PATH = SOURCE_DIR / "system-review.json"
-RAW_SNAPSHOT_PATH = SOURCE_DIR / "gaia-dr3-neighbourhood.csv"
-SNAPSHOT_PATH = SOURCE_DIR / "gaia-dr3-neighbourhood.json"
+IDENTITY_REGISTRY_PATH = SOURCE_DIR / "identity-registry.json"
+CANDIDATES_PATH = SOURCE_DIR / "system-candidates.json"
+LANDMARKS_PATH = SOURCE_DIR / "major-local-systems.json"
+GCNS_PATH = SOURCE_DIR / "gcns-neighbourhood.json"
+CNS5_PATH = SOURCE_DIR / "cns5-nearby-components.json"
+GAIA_ENRICHMENT_PATH = SOURCE_DIR / "gaia-dr3-enrichment.json"
+WDS_PATH = SOURCE_DIR / "wds-precise.txt.gz"
+WDS_FORMAT_PATH = SOURCE_DIR / "wdsweb-format.txt"
 
 LIGHT_YEARS_PER_PARSEC = 3.261563777
 GAIA_CATALOGUE = "Gaia DR3 gaiadr3.gaia_source"
@@ -38,6 +48,23 @@ def read_json(path: Path) -> Any:
 
 def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def sha256_bytes(value: bytes) -> str:
+    return hashlib.sha256(value).hexdigest()
+
+
+def canonical_json_bytes(value: Any) -> bytes:
+    return (json.dumps(value, indent=2, sort_keys=True) + "\n").encode("utf-8")
+
+
+def value_sha256(value: Any) -> str:
+    return sha256_bytes(canonical_json_bytes(value))
+
+
+def read_gzip(path: Path) -> bytes:
+    with gzip.open(path, "rb") as handle:
+        return handle.read()
 
 
 def mapped_anchor_ids() -> list[str]:

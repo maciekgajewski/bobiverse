@@ -1,361 +1,319 @@
 from __future__ import annotations
 
 import argparse
-import csv
 import math
 from typing import Any
 
-import astropy.units as u
-from astropy.coordinates import ICRS, SkyCoord
-
-from common import (
-    CONFIG_PATH,
-    GENERATED_PATH,
-    LIGHT_YEARS_PER_PARSEC,
-    RAW_SNAPSHOT_PATH,
-    REVIEW_PATH,
-    SNAPSHOT_PATH,
-    mapped_anchor_ids,
-    read_json,
-    write_json,
+from astronomy_pipeline import (
+    LY_PER_PC,
+    accepted_candidates,
+    distance,
+    optional_float,
+    wds_component_spectral_types,
 )
+from common import CONFIG_PATH, GENERATED_PATH, mapped_anchor_ids, read_json, sha256, write_json
 
 MARKER_RADIUS = 0.09
 
 
-def finite(value: float | None, label: str) -> float:
-    if value is None or not math.isfinite(value):
-        raise ValueError(f"Missing or non-finite {label}")
-    return value
-
-
-def optional_float(value: str) -> float | None:
-    return None if value == "" else float(value)
-
-
-def read_rows() -> list[dict[str, Any]]:
-    with RAW_SNAPSHOT_PATH.open(encoding="utf-8", newline="") as handle:
-        rows = list(csv.DictReader(handle))
-    return [
-        {
-            "source_id": row["source_id"],
-            "designation": row["designation"],
-            "ref_epoch": float(row["ref_epoch"]),
-            "ra": float(row["ra"]),
-            "dec": float(row["dec"]),
-            "parallax": float(row["parallax"]),
-            "parallax_error": float(row["parallax_error"]),
-            "parallax_over_error": float(row["parallax_over_error"]),
-            "astrometric_params_solved": int(row["astrometric_params_solved"]),
-            "visibility_periods_used": int(row["visibility_periods_used"]),
-            "ruwe": float(row["ruwe"]),
-            "phot_g_mean_mag": optional_float(row["phot_g_mean_mag"]),
-            "bp_rp": optional_float(row["bp_rp"]),
-        }
-        for row in rows
-    ]
-
-
-def canonical_position(record: dict[str, Any]) -> dict[str, float]:
-    parallax_mas = finite(record["parallax"], "parallax")
-    coordinate = SkyCoord(
-        ra=finite(record["ra"], "right ascension") * u.deg,
-        dec=finite(record["dec"], "declination") * u.deg,
-        distance=(1000 / parallax_mas) * u.pc,
-        frame=ICRS(),
-    ).galactic.cartesian
-    return {
-        "xg": round(coordinate.x.to_value(u.pc), 12),
-        "yg": round(coordinate.y.to_value(u.pc), 12),
-        "zg": round(coordinate.z.to_value(u.pc), 12),
-    }
-
-
-def distance_between(
-    first: dict[str, float], second: dict[str, float]
-) -> float:
-    return math.sqrt(
-        sum((first[axis] - second[axis]) ** 2 for axis in ("xg", "yg", "zg"))
-    )
-
-
-def color_family(bp_rp: float | None) -> str:
+def colour_from_bp_rp(bp_rp: float | None) -> str:
     if bp_rp is None:
         return "neutral"
-    if bp_rp < 0:
-        return "blue"
-    if bp_rp < 0.5:
-        return "blue-white"
-    if bp_rp < 0.8:
-        return "white"
-    if bp_rp < 1.2:
-        return "yellow"
-    if bp_rp < 1.8:
-        return "orange"
+    for maximum, family in ((0, "blue"), (0.5, "blue-white"), (0.8, "white"), (1.2, "yellow"), (1.8, "orange")):
+        if bp_rp < maximum:
+            return family
     return "red"
 
 
-def component(record: dict[str, Any]) -> dict[str, Any]:
+def presentation(
+    enrichment: dict[str, str] | None,
+    bp_rp: float | None,
+    wds_spectral_type: str | None = None,
+) -> tuple[str, str]:
+    if enrichment:
+        temperature = optional_float(enrichment.get("teff_gspphot"))
+        if temperature is not None:
+            if temperature >= 10_000:
+                family = "blue"
+            elif temperature >= 7_500:
+                family = "blue-white"
+            elif temperature >= 6_000:
+                family = "white"
+            elif temperature >= 5_200:
+                family = "yellow"
+            elif temperature >= 3_700:
+                family = "orange"
+            else:
+                family = "red"
+            return family, "Gaia DR3 effective temperature; approximate fixed temperature bands"
+        spectral = str(enrichment.get("spectraltype_esphs", "")).strip().upper()
+        if spectral[:1] in {"O", "B", "A", "F", "G", "K", "M"}:
+            family = {"O": "blue", "B": "blue-white", "A": "white", "F": "white", "G": "yellow", "K": "orange", "M": "red"}[spectral[0]]
+            return family, "Gaia DR3 spectral classification; approximate class family"
+    if bp_rp is not None:
+        return colour_from_bp_rp(bp_rp), "Gaia DR3 bp_rp fixed bands; neutral when unavailable"
+    spectral = (wds_spectral_type or "").strip().upper()
+    spectral_class = next(
+        (character for character in spectral if character in "OBAFGKM"),
+        None,
+    )
+    if spectral_class:
+        family = {
+            "O": "blue", "B": "blue-white", "A": "white", "F": "white",
+            "G": "yellow", "K": "orange", "M": "red",
+        }[spectral_class]
+        return family, "Reviewed WDS spectral type; approximate class family"
+    return "neutral", "Gaia DR3 bp_rp fixed bands; neutral when unavailable"
+
+
+def component_runtime(component: dict[str, Any], gcns: dict[str, dict[str, str]], cns5: dict[str, dict[str, str]], gaia: dict[str, dict[str, str]], override: dict[str, Any], wds_spectral_type: str | None = None) -> dict[str, Any]:
+    gaia_id = component["gaia_source_id"]
+    gcns_row = gcns.get(gaia_id)
+    cns_row = cns5.get(component["cns5_id"])
+    enrichment = gaia.get(gaia_id)
+    astrometry = gcns_row or cns_row or {}
+    bp_rp = optional_float(enrichment.get("bp_rp")) if enrichment else None
+    if bp_rp is None and gcns_row:
+        bp, rp = optional_float(gcns_row["phot_bp_mean_mag"]), optional_float(gcns_row["phot_rp_mean_mag"])
+        bp_rp = bp - rp if bp is not None and rp is not None else None
+    color_family, visual_derivation = presentation(
+        enrichment, bp_rp, wds_spectral_type
+    )
+    gaia_enrichment = None
+    if enrichment:
+        gaia_enrichment = {
+            "phot_g_mean_mag": optional_float(enrichment["phot_g_mean_mag"]),
+            "phot_bp_mean_mag": optional_float(enrichment["phot_bp_mean_mag"]),
+            "phot_rp_mean_mag": optional_float(enrichment["phot_rp_mean_mag"]),
+            "bp_rp": optional_float(enrichment["bp_rp"]),
+            "radial_velocity_km_s": optional_float(
+                enrichment["radial_velocity"]
+            ),
+            "radial_velocity_error_km_s": optional_float(
+                enrichment["radial_velocity_error"]
+            ),
+            "phot_variable_flag": enrichment["phot_variable_flag"] or None,
+            "non_single_star": enrichment["non_single_star"] or None,
+            "effective_temperature_k": optional_float(
+                enrichment["teff_gspphot"]
+            ),
+            "logg_gspphot": optional_float(enrichment["logg_gspphot"]),
+            "luminosity_solar": optional_float(enrichment["lum_flame"]),
+            "radius_solar": optional_float(enrichment["radius_flame"]),
+            "spectral_type": enrichment["spectraltype_esphs"] or None,
+            "star_class_probability": optional_float(
+                enrichment["classprob_dsc_combmod_star"]
+            ),
+            "variability_class": enrichment["best_class_name"] or None,
+            "variability_class_score": optional_float(
+                enrichment["best_class_score"]
+            ),
+        }
+    identifiers = {
+        "gaia_dr3_source_id": gaia_id,
+        "gcns_source_id": gaia_id if gcns_row else None,
+        "cns5_id": component["cns5_id"],
+        "gj_id": cns_row.get("gj_id") or None if cns_row else None,
+        "hip_id": cns_row.get("hip_id") or None if cns_row else None,
+        "cns5_component_id": cns_row.get("component_id") or None if cns_row else None,
+        "cns6_system_id": cns_row.get("cns6_system_id") or None if cns_row else None,
+    }
     return {
-        "id": f"gaia-dr3:{record['source_id']}",
-        "gaia_source_id": record["source_id"],
-        "designation": record["designation"],
+        "id": component["id"], "gaia_source_id": gaia_id, "cns5_id": component["cns5_id"],
+        "source_identities": component["source_identities"],
+        "gaia_enrichment": gaia_enrichment,
+        "designation": override.get("name", component["preferred_name_candidate"]), "identifiers": identifiers,
         "icrs": {
-            "ra_deg": record["ra"],
-            "dec_deg": record["dec"],
-            "epoch_year": record["ref_epoch"],
-            "parallax_mas": record["parallax"],
-            "parallax_error_mas": record["parallax_error"],
+            "ra_deg": optional_float(astrometry.get("ra")), "dec_deg": optional_float(astrometry.get("dec")),
+            "epoch_year": optional_float(astrometry.get("ref_epoch") or astrometry.get("epoch")),
+            "parallax_mas": optional_float(astrometry.get("parallax")), "parallax_error_mas": optional_float(astrometry.get("parallax_error")),
         },
         "astrometry_quality": {
-            "parallax_over_error": record["parallax_over_error"],
-            "visibility_periods_used": record["visibility_periods_used"],
-            "ruwe": record["ruwe"],
+            "parallax_over_error": None, "visibility_periods_used": None,
+            "ruwe": optional_float(gcns_row.get("ruwe")) if gcns_row else None,
         },
         "photometry": {
-            "g_magnitude": record["phot_g_mean_mag"],
-            "bp_rp": record["bp_rp"],
+            "g_magnitude": optional_float(enrichment.get("phot_g_mean_mag")) if enrichment else optional_float(astrometry.get("g_mag") or astrometry.get("phot_g_mean_mag")),
+            "bp_rp": bp_rp,
         },
         "visual": {
-            "color_family": color_family(record["bp_rp"]),
+            "color_family": color_family,
             "marker_radius": MARKER_RADIUS,
-            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "derivation": visual_derivation,
+            "source_facts": {
+                "effective_temperature_k": optional_float(
+                    enrichment.get("teff_gspphot")
+                ) if enrichment else None,
+                "spectral_type": (
+                    enrichment.get("spectraltype_esphs") or None
+                    if enrichment else None
+                ),
+                "bp_rp": bp_rp,
+                "wds_spectral_type": wds_spectral_type,
+            },
+        },
+        "provenance": {
+            "position": component["position_derivation"], "catalogues": [name for name, record in (("GCNS", gcns_row), ("CNS5", cns_row), ("Gaia DR3", enrichment)) if record],
+            "enrichment": "Gaia DR3 left join" if enrichment else None,
         },
     }
 
 
-def candidate_systems(
-    records: list[dict[str, Any]], review: dict[str, Any], release: str
-) -> list[dict[str, Any]]:
-    records_by_id = {record["source_id"]: record for record in records}
-    claimed_ids: set[str] = set()
-    systems: list[dict[str, Any]] = []
-
-    for reviewed in review["systems"]:
-        source_ids = reviewed["gaia_source_ids"]
-        duplicate_claims = claimed_ids.intersection(source_ids)
-        if duplicate_claims:
-            raise ValueError(
-                f"Gaia source IDs appear in multiple reviewed systems: {sorted(duplicate_claims)}"
-            )
-        matches = [
-            records_by_id[source_id]
-            for source_id in source_ids
-            if source_id in records_by_id
-        ]
-        if not matches:
-            continue
-        missing = sorted(set(source_ids) - records_by_id.keys())
-        if missing:
-            raise ValueError(
-                f"Reviewed system {reviewed['id']} is partially absent from the Gaia snapshot: {missing}"
-            )
-        adopted_id = reviewed["adopt_gaia_source_id"]
-        if adopted_id not in source_ids:
-            raise ValueError(
-                f"Reviewed system {reviewed['id']} adopts an unlisted Gaia source"
-            )
-        adopted = records_by_id[adopted_id]
-        position = canonical_position(adopted)
-        parallax = finite(adopted["parallax"], "parallax")
-        uncertainty = round(
-            1000 * adopted["parallax_error"] / parallax**2, 12
-        )
-        systems.append(
-            {
-                "id": reviewed["id"],
-                "name": reviewed["name"],
-                "alternates": [
-                    *reviewed["alternates"],
-                    *[
-                        record["designation"]
-                        for record in matches
-                        if record["designation"] not in reviewed["alternates"]
-                    ],
-                ],
-                "position_pc": position,
-                "render_position": {
-                    "x": position["xg"],
-                    "y": position["zg"],
-                    "z": -position["yg"],
-                },
-                "distance_from_sol_pc": round(
-                    distance_between(position, {"xg": 0, "yg": 0, "zg": 0}),
-                    12,
-                ),
-                "distance_uncertainty_pc": uncertainty,
-                "components": [component(record) for record in matches],
-                "provenance": {
-                    "catalogue": "Gaia DR3 gaiadr3.gaia_source",
-                    "release": release,
-                    "source_object_ids": source_ids,
-                    "adopted_source_object_id": adopted_id,
-                    "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc",
-                    "review_version": review["review_version"],
-                },
-            }
-        )
-        claimed_ids.update(source_ids)
-
-    for record in records:
-        if record["source_id"] in claimed_ids:
-            continue
-        position = canonical_position(record)
-        parallax = finite(record["parallax"], "parallax")
-        source_id = record["source_id"]
-        systems.append(
-            {
-                "id": f"gaia-dr3-{source_id}",
-                "name": record["designation"],
-                "alternates": [],
-                "position_pc": position,
-                "render_position": {
-                    "x": position["xg"],
-                    "y": position["zg"],
-                    "z": -position["yg"],
-                },
-                "distance_from_sol_pc": round(
-                    distance_between(position, {"xg": 0, "yg": 0, "zg": 0}),
-                    12,
-                ),
-                "distance_uncertainty_pc": round(
-                    1000 * record["parallax_error"] / parallax**2, 12
-                ),
-                "components": [component(record)],
-                "provenance": {
-                    "catalogue": "Gaia DR3 gaiadr3.gaia_source",
-                    "release": release,
-                    "source_object_ids": [source_id],
-                    "adopted_source_object_id": source_id,
-                    "transformation": "Astropy ICRS to Galactic Cartesian; Sun-centered; pc",
-                    "review_version": review["review_version"],
-                },
-            }
-        )
-    return systems
+def distance_uncertainty_pc(
+    component: dict[str, Any],
+    gcns: dict[str, dict[str, str]],
+    cns5: dict[str, dict[str, str]],
+) -> float | None:
+    gcns_row = gcns.get(component.get("gaia_source_id"))
+    if gcns_row:
+        median = optional_float(gcns_row.get("dist_50"))
+        lower = optional_float(gcns_row.get("dist_16"))
+        upper = optional_float(gcns_row.get("dist_84"))
+        if median is not None and lower is not None and upper is not None:
+            return round(max(abs(median - lower), abs(upper - median)) * 1000, 12)
+    cns5_row = cns5.get(component.get("cns5_id"))
+    if cns5_row:
+        parallax = optional_float(cns5_row.get("parallax"))
+        error = optional_float(cns5_row.get("parallax_error"))
+        if parallax is not None and parallax > 0 and error is not None:
+            return round(1000 * error / (parallax * parallax), 12)
+    return None
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Generate the static Gaia neighbourhood runtime dataset."
-    )
+    parser = argparse.ArgumentParser(description="Generate the static reconciled astronomy runtime catalogue.")
     parser.parse_args()
-
+    candidates, review, manifests, gcns_rows, cns5_rows, gaia_rows = accepted_candidates()
     config = read_json(CONFIG_PATH)
-    review = read_json(REVIEW_PATH)
-    snapshot = read_json(SNAPSHOT_PATH)
-    records = read_rows()
     radius_ly = float(config["context_radius_ly"])
-    radius_pc = radius_ly / LIGHT_YEARS_PER_PARSEC
-    candidates = candidate_systems(
-        records, review, snapshot["source"]["release"]
-    )
-    candidates_by_id = {system["id"]: system for system in candidates}
-    anchor_positions: dict[str, dict[str, float]] = {
-        "sol": {"xg": 0.0, "yg": 0.0, "zg": 0.0}
-    }
-    for anchor_id in mapped_anchor_ids():
-        if anchor_id == "sol":
+    radius_pc = radius_ly / LY_PER_PC
+    if radius_pc >= 100:
+        raise ValueError("Configured context sphere crosses the 100 pc GCNS boundary")
+    overrides = {entry["candidate_system_id"]: entry for entry in review["overrides"]}
+    component_overrides = {entry["candidate_component_id"]: entry for entry in review.get("component_overrides", [])}
+    components = {entry["id"]: entry for entry in candidates["components"]}
+    candidate_by_id = {entry["id"]: entry for entry in candidates["systems"]}
+    anchor_positions = {"sol": {"xg": 0.0, "yg": 0.0, "zg": 0.0}}
+    for bootstrap in review.get("anchor_bootstraps", []):
+        anchor_id = bootstrap["anchor_id"]
+        candidate = candidate_by_id.get(bootstrap.get("system_id"))
+        if candidate is None:
+            raise ValueError(f"{anchor_id} bootstrap does not identify a candidate system")
+        adopted_id = overrides.get(candidate["id"], {}).get("adopted_component_id", candidate["adopted_component_candidate"])
+        position = components[adopted_id]["position_pc"]
+        if position is None:
+            raise ValueError(f"{anchor_id} bootstrap system has no source-backed position")
+        if distance(position, {"xg": 0.0, "yg": 0.0, "zg": 0.0}) + radius_pc > 100:
+            raise ValueError(f"Required context sphere crosses the 100 pc GCNS boundary: {anchor_id}")
+        anchor_positions[anchor_id] = position
+    if set(anchor_positions) != set(mapped_anchor_ids()):
+        raise ValueError("Generation needs one reviewed source-backed bootstrap per mapped anchor")
+    gcns = {row["source_id"]: row for row in gcns_rows}
+    cns5 = {row["cns5_id"]: row for row in cns5_rows}
+    gaia = {row["source_id"]: row for row in gaia_rows}
+    wds_by_system: dict[str, list[dict[str, Any]]] = {}
+    for decision in review.get("wds_decisions", []):
+        wds_by_system.setdefault(decision["system_id"], []).append(
+            {
+                "wds_coordinate": decision["wds_coordinate"],
+                "discoverer": decision["discoverer"],
+                "components": decision["components"],
+                "component_ids": list(decision["component_ids"]),
+                "membership_action": decision["membership_action"],
+                "reason": decision["reason"],
+            }
+        )
+    wds_spectral_by_component: dict[str, str] = {}
+    for candidate in candidates["systems"]:
+        for evidence in candidate.get("wds_membership_evidence", []):
+            for component_id, spectral_type in (
+                wds_component_spectral_types(evidence).items()
+            ):
+                wds_spectral_by_component.setdefault(
+                    component_id, spectral_type
+                )
+    systems: list[dict[str, Any]] = []
+    for candidate in candidates["systems"]:
+        override = overrides.get(candidate["id"], {})
+        adopted_id = override.get("adopted_component_id", candidate["adopted_component_candidate"])
+        if adopted_id is None:
             continue
-        anchor = candidates_by_id.get(anchor_id)
-        if anchor is None:
-            raise ValueError(
-                f"Mapped astronomy anchor is absent from Gaia candidates: {anchor_id}"
-            )
-        anchor_positions[anchor_id] = anchor["position_pc"]
-
-    included = [
-        system
-        for system in candidates
-        if any(
-            distance_between(system["position_pc"], anchor_position)
-            <= radius_pc + 1e-12
-            for anchor_position in anchor_positions.values()
-        )
-    ]
-    included.sort(
-        key=lambda system: (system["distance_from_sol_pc"], system["id"])
-    )
-    sol = {
-        "id": "sol",
-        "name": "Sol",
-        "alternates": ["Sun"],
-        "position_pc": {"xg": 0.0, "yg": 0.0, "zg": 0.0},
-        "render_position": {"x": 0.0, "y": 0.0, "z": 0.0},
-        "distance_from_sol_pc": 0.0,
-        "distance_uncertainty_pc": 0.0,
-        "components": [
-            {
-                "id": "generated:sol",
-                "gaia_source_id": None,
-                "designation": "Sol",
-                "icrs": {
-                    "ra_deg": None,
-                    "dec_deg": None,
-                    "epoch_year": None,
-                    "parallax_mas": None,
-                    "parallax_error_mas": None,
-                },
-                "astrometry_quality": {
-                    "parallax_over_error": None,
-                    "visibility_periods_used": None,
-                    "ruwe": None,
-                },
-                "photometry": {"g_magnitude": None, "bp_rp": None},
-                "visual": {
-                    "color_family": "yellow",
-                    "marker_radius": MARKER_RADIUS,
-                    "derivation": "generated Sol origin",
-                },
-            }
-        ],
-        "provenance": {
-            "catalogue": "Generated canonical origin",
-            "source_object_ids": [],
-        },
-    }
-    systems = [sol, *included]
-    coverage = []
-    for anchor_id, anchor_position in sorted(anchor_positions.items()):
-        covered = [
-            system
-            for system in included
-            if distance_between(system["position_pc"], anchor_position)
-            <= radius_pc + 1e-12
-        ]
-        coverage.append(
-            {
-                "anchor_id": anchor_id,
-                "anchor_position_pc": anchor_position,
-                "radius_ly": radius_ly,
-                "system_count": len(covered),
-                "source_record_count": sum(
-                    len(system["components"]) for system in covered
+        if adopted_id not in candidate["component_ids"]:
+            raise ValueError(f"{candidate['id']} adopts a component outside its system")
+        adopted = components[adopted_id]
+        if adopted["position_pc"] is None:
+            # An unmapped source remains in the reviewed candidate graph.  It cannot
+            # become a spatial runtime node or coverage member without invented
+            # geometry; a required narrative anchor would have failed before here.
+            continue
+        position = adopted["position_pc"]
+        if not any(distance(position, anchor) <= radius_pc + 1e-12 for anchor in anchor_positions.values()):
+            continue
+        members = [component_runtime(components[component_id], gcns, cns5, gaia, component_overrides.get(component_id, {}), wds_spectral_by_component.get(component_id)) for component_id in candidate["component_ids"]]
+        name = override.get("name", candidate["preferred_name_candidate"])
+        alternates = sorted(set(override.get("alternates", candidate["alternate_name_candidates"])))
+        systems.append({
+            "id": candidate["id"], "name": name, "alternates": alternates,
+            "position_pc": position, "render_position": {"x": position["xg"], "y": position["zg"], "z": -position["yg"]},
+            "distance_from_sol_pc": round(distance(position, {"xg": 0.0, "yg": 0.0, "zg": 0.0}), 12),
+            "distance_uncertainty_pc": distance_uncertainty_pc(
+                adopted, gcns, cns5
+            ), "components": members,
+            "provenance": {
+                "catalogues": sorted(
+                    {
+                        *{
+                            catalogue
+                            for member in members
+                            for catalogue in member["provenance"]["catalogues"]
+                        },
+                        *(["WDS"] if candidate["id"] in wds_by_system else []),
+                    }
                 ),
-            }
-        )
-
-    output = {
-        "schema_version": "2.0.0",
-        "metadata": {
-            "source": {
-                **snapshot["source"],
-                "snapshot_sha256": snapshot["raw_snapshot"]["sha256"],
+                "source_object_ids": sorted(
+                    {
+                        *{
+                            identifier
+                            for member in members
+                            for identifier in member["source_identities"]
+                        },
+                        *{
+                            "wds:"
+                            + decision["wds_coordinate"]
+                            + ":"
+                            + decision["discoverer"]
+                            + decision["components"]
+                            for decision in wds_by_system.get(
+                                candidate["id"], []
+                            )
+                        },
+                    }
+                ),
+                "adopted_component_id": adopted_id,
+                "review_version": review["schema_version"],
+                "wds_designations": sorted(
+                    wds_by_system.get(candidate["id"], []),
+                    key=lambda item: (
+                        item["wds_coordinate"],
+                        item["discoverer"],
+                        item["components"],
+                        item["membership_action"],
+                    ),
+                ),
             },
-            "generated_at": snapshot["source"]["retrieved_at"],
-            "coordinate_frame": "Sun-centered Galactic Cartesian",
-            "units": "pc",
-            "render_mapping": "scene.x=Xg; scene.y=Zg; scene.z=-Yg",
-            "configuration": {"context_radius_ly": radius_ly},
-            "coverage": coverage,
-        },
-        "systems": systems,
+        })
+    systems.sort(key=lambda system: (system["distance_from_sol_pc"], system["id"]))
+    sol = {
+        "id": "sol", "name": "Sol", "alternates": ["Sun"], "position_pc": {"xg": 0.0, "yg": 0.0, "zg": 0.0}, "render_position": {"x": 0.0, "y": 0.0, "z": 0.0}, "distance_from_sol_pc": 0.0, "distance_uncertainty_pc": 0.0,
+        "components": [{"id": "stellar-component-sol", "gaia_source_id": None, "cns5_id": None, "source_identities": [], "gaia_enrichment": None, "designation": "Sol", "identifiers": {"gaia_dr3_source_id": None, "gcns_source_id": None, "cns5_id": None, "gj_id": None, "hip_id": None, "cns5_component_id": None, "cns6_system_id": None}, "icrs": {"ra_deg": None, "dec_deg": None, "epoch_year": None, "parallax_mas": None, "parallax_error_mas": None}, "astrometry_quality": {"parallax_over_error": None, "visibility_periods_used": None, "ruwe": None}, "photometry": {"g_magnitude": None, "bp_rp": None}, "visual": {"color_family": "yellow", "marker_radius": MARKER_RADIUS, "derivation": "generated Sol origin", "source_facts": {"effective_temperature_k": None, "spectral_type": None, "bp_rp": None, "wds_spectral_type": None}}, "provenance": {"position": "generated canonical origin", "catalogues": [], "enrichment": None}}],
+        "provenance": {"catalogues": ["Generated canonical origin"], "source_object_ids": [], "adopted_component_id": "stellar-component-sol", "review_version": review["schema_version"], "wds_designations": []},
     }
+    coverage = [{"anchor_id": anchor_id, "anchor_position_pc": anchor_position, "radius_ly": radius_ly, "system_count": sum(1 for system in systems if distance(system["position_pc"], anchor_position) <= radius_pc + 1e-12), "source_record_count": sum(len(system["components"]) for system in systems if distance(system["position_pc"], anchor_position) <= radius_pc + 1e-12), "gcns_boundary_pc": 100.0} for anchor_id, anchor_position in sorted(anchor_positions.items())]
+    runtime_sources = {name: {"normalised_sha256": manifest["normalised_sha256"], "row_count": manifest["row_count"], "acknowledgement": manifest["acknowledgement"]} for name, manifest in manifests.items() if name != "wds"}
+    runtime_sources["wds"] = {"snapshot_sha256": manifests["wds"]["uncompressed_sha256"], "candidate_sha256": manifests["wds"]["candidate_sha256"], "row_count": manifests["wds"]["row_count"], "candidate_row_count": manifests["wds"]["candidate_row_count"], "acknowledgement": manifests["wds"]["acknowledgement"]}
+    output = {"schema_version": "3.0.0", "metadata": {"generated_at": max(manifest["retrieved_at"] for manifest in manifests.values()), "coordinate_frame": "Sun-centered Galactic Cartesian", "units": "pc", "render_mapping": "scene.x=Xg; scene.y=Zg; scene.z=-Yg", "configuration": {"context_radius_ly": radius_ly}, "coverage": coverage, "sources": runtime_sources}, "systems": [sol, *systems]}
     write_json(GENERATED_PATH, output)
-    print(
-        f"Wrote {len(systems)} system markers from {len(records)} Gaia DR3 records "
-        f"to {GENERATED_PATH.relative_to(GENERATED_PATH.parent.parent)}"
-    )
+    print(f"Wrote {len(output['systems'])} reconciled system markers to {GENERATED_PATH.relative_to(GENERATED_PATH.parent.parent)}")
 
 
 if __name__ == "__main__":
