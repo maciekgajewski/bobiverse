@@ -486,3 +486,24 @@ test("desktop surfaces stay on one projection through chapter and date changes",
     sharedChapterStatus,
   );
 });
+
+test("chapter 1.11 Bob selection resolves through New Handeltown to Sol", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/");
+  await page.getByLabel("Read through").selectOption("1.11");
+  await page.getByRole("button", { name: "Confirm read through" }).click();
+
+  await page.getByRole("button", { name: "Bob Active", exact: true }).click();
+
+  const inspector = page.getByRole("complementary", {
+    name: "Object inspector",
+  });
+  await expect(inspector.getByRole("heading", { name: "Bob" })).toBeVisible();
+  await expect(
+    inspector.getByRole("button", { name: "New Handeltown" }),
+  ).toBeVisible();
+  await expect(page.locator(".selection-label")).toHaveText("Sol");
+  await expect(page.locator(".selection-status")).toHaveText("Bob selected.");
+});

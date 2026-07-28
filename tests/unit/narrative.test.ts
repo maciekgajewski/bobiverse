@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import canonicalChapter1 from "../../data/narrative/chapters/1/1.json";
 import canonicalChapter10 from "../../data/narrative/chapters/1/10.json";
+import canonicalChapter11 from "../../data/narrative/chapters/1/11.json";
 import canonicalChapter2 from "../../data/narrative/chapters/1/2.json";
 import canonicalChapter3 from "../../data/narrative/chapters/1/3.json";
 import canonicalChapter4 from "../../data/narrative/chapters/1/4.json";
@@ -10,8 +11,10 @@ import canonicalChapter7 from "../../data/narrative/chapters/1/7.json";
 import canonicalChapter8 from "../../data/narrative/chapters/1/8.json";
 import canonicalChapter9 from "../../data/narrative/chapters/1/9.json";
 import { buildNarrativeBrowserGroups } from "../../src/narrative/browser";
+import { focusSystemIdForSelection } from "../../src/narrative/map";
 import {
   compareNarrativeDates,
+  compareNarrativeMoments,
   generateNarrativeWorld,
   narrativeSchemaErrors,
   validateNarrativeCorpus,
@@ -563,6 +566,27 @@ describe("narrative corpus validation and projection", () => {
     expect(compareNarrativeDates("2200.1", "2200.2")).toBeLessThan(0);
   });
 
+  it("orders equal year-only narrative moments by canonical chapter only", () => {
+    expect(
+      compareNarrativeMoments(
+        { date: "2200", sourceChapter: "1.2" },
+        { date: "2200", sourceChapter: "1.11" },
+      ),
+    ).toBeLessThan(0);
+    expect(
+      compareNarrativeMoments(
+        { date: "2200.1", sourceChapter: "1.11" },
+        { date: "2200.1", sourceChapter: "1.2" },
+      ),
+    ).toBe(0);
+    expect(
+      compareNarrativeMoments(
+        { date: "2200", sourceChapter: "1.2" },
+        { date: "2200.1", sourceChapter: "1.11" },
+      ),
+    ).toBeNull();
+  });
+
   it("accepts important mentions for every direct entity type without changing world state", () => {
     const corpus = createNarrativeFixtureCorpus();
     corpus.zeroState.entities = [
@@ -693,15 +717,118 @@ describe("narrative corpus validation and projection", () => {
         (entity) => entity.id === "event:fixture-unplaced",
       ),
     ).toBe(false);
-    expect(activity.map((record) => record.source_chapter)).toEqual(
-      [...activity.map((record) => record.source_chapter)].sort(
-        (left, right) => {
-          const [leftBook, leftChapter] = left.split(".").map(Number);
-          const [rightBook, rightChapter] = right.split(".").map(Number);
-          return leftBook - rightBook || leftChapter - rightChapter;
+    const placed = activity.filter((record) => record.effective_date !== null);
+    for (let index = 1; index < placed.length; index += 1) {
+      const previous = placed[index - 1]!;
+      const current = placed[index]!;
+      expect(
+        compareNarrativeMoments(
+          {
+            date: previous.effective_date!,
+            sourceChapter: previous.source_chapter,
+          },
+          {
+            date: current.effective_date!,
+            sourceChapter: current.source_chapter,
+          },
+        ),
+      ).toBeLessThanOrEqual(0);
+    }
+  });
+
+  it("topologically orders activity without overriding mixed-precision boundaries", () => {
+    const corpus = createNarrativeFixtureCorpus();
+    const moments = [
+      {
+        chapterIndex: 0,
+        event: {
+          id: "event:fixture-indexed-late",
+          name: "Fixture indexed late event",
+          date: "2200.2",
         },
-      ),
+      },
+      {
+        chapterIndex: 1,
+        event: {
+          id: "event:fixture-year-only",
+          name: "Fixture year-only event",
+          date: "2200",
+        },
+      },
+      {
+        chapterIndex: 2,
+        event: {
+          id: "event:fixture-indexed-early",
+          name: "Fixture indexed early event",
+          date: "2200.1",
+        },
+      },
+    ];
+    for (const { chapterIndex, event } of moments) {
+      const chapter = corpus.chapters[chapterIndex]!;
+      const introductions = (chapter.introducing ??= []) as Array<
+        Record<string, unknown>
+      >;
+      introductions.push(event);
+    }
+
+    const first = generateNarrativeWorld(corpus, "1.3").activity;
+    const second = generateNarrativeWorld(corpus, "1.3").activity;
+    expect(second).toEqual(first);
+    const eventOrder = first
+      .filter((record) => record.reasons.includes("event"))
+      .map((record) => record.entity_id);
+    expect(eventOrder.indexOf("event:fixture-indexed-early")).toBeLessThan(
+      eventOrder.indexOf("event:fixture-indexed-late"),
     );
+  });
+
+  it("keeps event-derived equal-indexed and mixed-precision activity unresolved", () => {
+    const lastEventParticipantActivity = (
+      leftDate: string,
+      rightDate: string,
+    ) => {
+      const corpus = createNarrativeFixtureCorpus();
+      for (const [chapterIndex, event] of [
+        [
+          0,
+          {
+            id: "event:fixture-left",
+            name: "Fixture left event",
+            date: leftDate,
+            participant_ids: ["character:fixture-alex"],
+          },
+        ],
+        [
+          1,
+          {
+            id: "event:fixture-right",
+            name: "Fixture right event",
+            date: rightDate,
+            participant_ids: ["character:fixture-alex"],
+          },
+        ],
+      ] as const) {
+        const chapter = corpus.chapters[chapterIndex]!;
+        const introductions = (chapter.introducing ??= []) as Array<
+          Record<string, unknown>
+        >;
+        introductions.push(event);
+      }
+      const world = generateNarrativeWorld(corpus, "1.3");
+      world.view.display_date = "2300";
+      world.activity = world.activity.filter(
+        (record) =>
+          record.entity_id === "character:fixture-alex" &&
+          record.reasons.includes("event_participant"),
+      );
+      return buildNarrativeBrowserGroups(world, "date")[0]?.items.find(
+        ({ entity }) => entity.id === "character:fixture-alex",
+      )?.lastActivity;
+    };
+
+    expect(lastEventParticipantActivity("2200.1", "2200.1")).toBeNull();
+    expect(lastEventParticipantActivity("2200", "2200.1")).toBeNull();
   });
 
   it("projects only one uniquely latest eligible character sighting", () => {
@@ -730,5 +857,85 @@ describe("narrative corpus validation and projection", () => {
         (entity) => entity.id === "character:fixture-alex",
       )?.last_known_location,
     ).toBeUndefined();
+
+    const yearOnly = createNarrativeFixtureCorpus();
+    for (const chapter of yearOnly.chapters) chapter.date = "2200";
+    yearOnly.chapters[1]!.appearances = [
+      {
+        character_id: "character:fixture-alex",
+        role: "lead",
+        location_id: "location:mars",
+      },
+    ];
+    expect(
+      generateNarrativeWorld(yearOnly, "1.3").entities.find(
+        (entity) => entity.id === "character:fixture-alex",
+      )?.last_known_location,
+    ).toEqual({
+      location_id: "location:earth",
+      source_chapter: "1.3",
+      effective_date: "2200",
+    });
+
+    const equalIndexed = createNarrativeFixtureCorpus();
+    for (const chapter of equalIndexed.chapters) {
+      chapter.date = "2200.1";
+      delete chapter.updates;
+    }
+    expect(
+      generateNarrativeWorld(equalIndexed, "1.3").entities.find(
+        (entity) => entity.id === "character:fixture-alex",
+      )?.last_known_location,
+    ).toBeUndefined();
+
+    const mixedPrecision = createNarrativeFixtureCorpus();
+    mixedPrecision.chapters[1]!.date = "2200";
+    mixedPrecision.chapters[2]!.date = "2300";
+    mixedPrecision.chapters[2]!.introducing = [
+      { id: "character:fixture-other", name: "Fixture Other" },
+    ];
+    mixedPrecision.chapters[2]!.appearances = [
+      { character_id: "character:fixture-other", role: "lead" },
+    ];
+    for (const chapter of mixedPrecision.chapters) delete chapter.updates;
+    expect(
+      generateNarrativeWorld(mixedPrecision, "1.3").entities.find(
+        (entity) => entity.id === "character:fixture-alex",
+      )?.last_known_location,
+    ).toBeUndefined();
+  });
+
+  it("projects canonical Bob at New Handeltown and resolves Sol through chapter 1.11", () => {
+    const corpus = createNarrativeFixtureCorpus();
+    corpus.chapters = [
+      structuredClone(canonicalChapter1),
+      structuredClone(canonicalChapter2),
+      structuredClone(canonicalChapter3),
+      structuredClone(canonicalChapter4),
+      structuredClone(canonicalChapter5),
+      structuredClone(canonicalChapter6),
+      structuredClone(canonicalChapter7),
+      structuredClone(canonicalChapter8),
+      structuredClone(canonicalChapter9),
+      structuredClone(canonicalChapter10),
+      structuredClone(canonicalChapter11),
+    ];
+
+    const world = generateNarrativeWorld(corpus, "1.11");
+    expect(
+      world.entities.find((entity) => entity.id === "character:bob-replicant")
+        ?.last_known_location,
+    ).toEqual({
+      location_id: "location:new-handeltown",
+      source_chapter: "1.11",
+      effective_date: "2133",
+    });
+    expect(
+      focusSystemIdForSelection(
+        { kind: "narrative", id: "character:bob-replicant" },
+        world,
+        new Set(["sol"]),
+      ),
+    ).toBe("sol");
   });
 });

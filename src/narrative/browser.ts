@@ -1,6 +1,7 @@
 import {
   compareNarrativeChapters,
   compareNarrativeDates,
+  compareNarrativeMoments,
   type NarrativeActivity,
   type NarrativeEntity,
   type NarrativeWorld,
@@ -116,14 +117,20 @@ function latestActivity(
       eligible.every((other, otherIndex) => {
         if (candidateIndex === otherIndex) return true;
         if (!candidate.effective_date || !other.effective_date) return false;
-        const ordering = compareNarrativeDates(
-          other.effective_date,
-          candidate.effective_date,
+        const ordering = compareNarrativeMoments(
+          {
+            date: other.effective_date,
+            sourceChapter: other.source_chapter,
+          },
+          {
+            date: candidate.effective_date,
+            sourceChapter: candidate.source_chapter,
+          },
         );
-        return ordering !== null && ordering <= 0;
+        return ordering !== null && ordering < 0;
       }),
     );
-    return uniquelyLatest[0] ?? null;
+    return uniquelyLatest.length === 1 ? uniquelyLatest[0]! : null;
   }
   return eligible.reduce((latest, candidate) => {
     return compareNarrativeChapters(
@@ -174,9 +181,15 @@ function compareItems(
             left.lastActivity.source_chapter,
           )
         : left.lastActivity.effective_date && right.lastActivity.effective_date
-          ? (compareNarrativeDates(
-              right.lastActivity.effective_date,
-              left.lastActivity.effective_date,
+          ? (compareNarrativeMoments(
+              {
+                date: right.lastActivity.effective_date,
+                sourceChapter: right.lastActivity.source_chapter,
+              },
+              {
+                date: left.lastActivity.effective_date,
+                sourceChapter: left.lastActivity.source_chapter,
+              },
             ) ?? 0)
           : 0;
     if (recency !== 0) return recency;

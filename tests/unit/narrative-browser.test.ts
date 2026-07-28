@@ -139,6 +139,67 @@ describe("narrative object browser projection", () => {
     ).toBeNull();
   });
 
+  it("orders equal year-only activity and event facts by canonical chapter", () => {
+    const candidate = world();
+    candidate.activity.push(
+      {
+        entity_id: "character:ada",
+        source_chapter: "1.2",
+        effective_date: "2200",
+        reasons: ["mention"],
+      },
+      {
+        entity_id: "event:arrival",
+        source_chapter: "1.1",
+        effective_date: "2200",
+        reasons: ["event"],
+      },
+      {
+        entity_id: "event:arrival",
+        source_chapter: "1.2",
+        effective_date: "2200",
+        reasons: ["update"],
+      },
+    );
+
+    const groups = buildNarrativeBrowserGroups(candidate, "date");
+    expect(
+      groups[0]?.items.find(({ entity }) => entity.id === "character:ada")
+        ?.lastActivity,
+    ).toMatchObject({ source_chapter: "1.2", effective_date: "2200" });
+    expect(
+      groups
+        .find(({ id }) => id === "events")
+        ?.items.find(({ entity }) => entity.id === "event:arrival")
+        ?.lastActivity,
+    ).toMatchObject({ source_chapter: "1.2", effective_date: "2200" });
+  });
+
+  it("keeps equal indexed activity ambiguous", () => {
+    const candidate = world();
+    candidate.view.display_date = "2300";
+    candidate.activity = [
+      {
+        entity_id: "character:ada",
+        source_chapter: "1.1",
+        effective_date: "2200.1",
+        reasons: ["appearance"],
+      },
+      {
+        entity_id: "character:ada",
+        source_chapter: "1.2",
+        effective_date: "2200.1",
+        reasons: ["mention"],
+      },
+    ];
+
+    expect(
+      buildNarrativeBrowserGroups(candidate, "date")[0]?.items.find(
+        ({ entity }) => entity.id === "character:ada",
+      )?.lastActivity,
+    ).toBeNull();
+  });
+
   it("matches projected names and aliases without case or diacritics", () => {
     expect(normalizeBrowserSearch("  ZOË  ")).toBe("zoe");
     const byName = buildNarrativeBrowserGroups(world(), "chapter", "zoe");

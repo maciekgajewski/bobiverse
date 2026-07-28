@@ -180,6 +180,21 @@ character with one **Last seen** mapped location; each must focus the canonical 
 without changing viewing angle. Select an unmapped event/location and a locationless
 entity; their inspectors remain available but the camera must not move.
 
+## BOB-027 generalized narrative-moment ordering
+
+Run the development server and connect from a remote workstation in a real supported
+WebGL browser. Set **Read through** and **Knowledge through** to chapter 1.11, then
+select Bob from **Characters**. Confirm Bob remains selected in the inspector and
+shows **Last seen** at New Handeltown, Chapter 1.11, 2133. On the map, Sol must receive
+the selected label and outer corner frame, and the camera must focus Sol without
+changing canonical coordinates or the established viewing angle.
+
+Switch between Chapter and Date modes and confirm equal year-only activity uses the
+later canonical chapter for recency while chronologically unplaced activity remains
+Chapter-mode only. Confirm the Bob-to-Sol result is derived from the shared projection;
+disabling WebGL must leave Bob and the New Handeltown relationship inspectable even
+though precise camera focus and the WebGL frame are unavailable.
+
 ## BOB-015 Phase 2 desktop integration
 
 At 1200-by-700 and 1440-by-1000 CSS pixels, confirm the object browser, true-scale

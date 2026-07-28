@@ -98,6 +98,11 @@ preserved FAITH's prior reviewed description while adding the newly revealed pol
 The production build retained its pre-existing advisory warning about a JavaScript
 chunk larger than 500 kB.
 
+ADR-0013 and BOB-027 subsequently promote this task's narrative-moment comparator
+semantics to appearances, dated events, and generated activity. Indexed ties,
+mixed-precision incomparability, and date-only display controls retain the boundaries
+established here.
+
 ## Risks and cautions
 
 - Reusing the generic date comparator would lose the source chapter required for the

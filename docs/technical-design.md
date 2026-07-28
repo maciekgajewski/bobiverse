@@ -496,8 +496,9 @@ supersedes its sole-source boundary with the zero state; ADR-0004 establishes th
 unversioned narrative schema contract; ADR-0005 refines the chapter, location, and
 date-projection contracts; ADR-0006 generalizes the zero-state record; and ADR-0007
 expands the direct narrative entity union. ADR-0008 defines important mentions and
-the generated narrative-activity index. ADR-0009 defines chapter ordering for
-competing state-property writes whose effective dates are both year-only and equal.
+the generated narrative-activity index. ADR-0009 first defined chapter ordering for
+competing state-property writes whose effective dates are both year-only and equal;
+ADR-0013 promotes that ordering to every dated chapter-authored narrative fact.
 
 Spoiler safety has two independent dimensions:
 
@@ -512,16 +513,18 @@ facts the reader may know; story time then decides which of those facts form the
 represented world state at `viewChapter.date`. A future story-state change must not alter an
 earlier in-universe view merely because its chapter was read first. Conversely, a fact
 first revealed later must not alter an earlier reader-knowledge view, even if it was
-already true in-universe. ADR-0002, as refined by ADR-0005 and ADR-0009, defines this
-two-stage projection and its temporal validation rules.
+already true in-universe. ADR-0002, as refined by ADR-0005, ADR-0009, and ADR-0013,
+defines this two-stage projection and its temporal validation rules.
 
-State-property projection compares an effective story date together with its source
-chapter. Different years use year order. Two indexed dates in one year use their
-explicit indices, and an equal explicit index remains invalid. Two equal year-only
+Dated chapter-authored facts compare an effective story date together with their
+source chapter. Different years use year order. Two indexed dates in one year use
+their explicit indices, and equal explicit indices remain tied. Two equal year-only
 dates use canonical numeric chapter order. A year-only date and an indexed date in the
-same year remain incomparable. This chapter fallback applies only to competing
-state-property writes; generic dates, event occurrence, narrative activity, and
-requested display-date comparison retain the partial date order.
+same year remain incomparable. This fact-to-fact rule applies to state writes,
+appearances, dated events, and generated narrative activity. Generic date comparison
+remains date-only for temporal eligibility against a requested display date,
+meaningful-date coordinates, and any value without a source chapter. Chronologically
+unplaced event activity has no narrative moment and remains Chapter-mode context only.
 
 The first confirmed **Read through** choice initializes `viewChapter` to that same
 chapter and uses its story date, so onboarding moves from zero state to one complete
@@ -548,17 +551,23 @@ mentions, and mapped stellar-system ancestry. Each record preserves its target, 
 chapter, nullable comparable effective date, and one or more controlled reasons.
 Reasons coalesce only for the same target, chapter, and effective date; unplaced event
 activity remains available in Chapter mode but is never date-positioned. Activity
-supports Chapter-mode reader-order recency and Date-mode story-time recency. It is not
-a source of entity state, relationships, continuous presence, or coordinates, and UI
-code must not reconstruct it independently. Important mentions target only an already
-visible direct narrative entity or location not structurally represented in that chapter;
-they do not assert presence, participation, ownership, membership, location, or use.
+supports Chapter-mode reader-order recency and Date-mode narrative-moment recency.
+Equal year-only activity facts use canonical chapter order; equal indexed or
+mixed-precision moments do not gain a semantic fallback. The generated array uses a
+deterministic topological order that preserves every definite moment relation;
+stable placement among undated, tied, or incomparable records carries no story
+chronology. Activity is not a source of entity state, relationships, continuous
+presence, or coordinates, and UI code must not reconstruct it independently.
+Important mentions target only an already visible direct narrative entity or location
+not structurally represented in that chapter; they do not assert presence,
+participation, ownership, membership, location, or use.
 
 The same projection emits a character's `last_known_location` only when
-reader-visible appearances at or before the displayed date have one uniquely latest,
-definitively comparable sighting. It records the sighting location, source chapter,
-and effective date; tied or incomparable sightings produce no singular result, and
-the value never asserts current presence.
+reader-visible appearances at or before the displayed date have one uniquely latest
+narrative moment. Equal year-only sightings use canonical chapter order. Equal
+indexed or mixed-precision sightings remain tied or incomparable and produce no
+singular result. The generated value records the sighting location, source chapter,
+and effective date and never asserts current presence.
 
 The normal development, test, and build paths first generate the ignored
 `generated/narrative/chapter-manifest.json` from authored chapter paths. The manifest

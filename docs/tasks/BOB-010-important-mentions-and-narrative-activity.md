@@ -157,6 +157,11 @@ The 2026-07-26 defect-first review found and corrected event activity that could
 been incorrectly date-positioned when an event had no own story date. A fresh review
 then reported `No findings.` All documented validation commands pass.
 
+ADR-0013 and BOB-027 subsequently promote canonical chapter order to equal year-only
+dated activity facts. Chapter mode remains reader-order based; Date-mode eligibility
+remains date-only before fact-to-fact recency uses narrative moments. Undated event
+activity remains Chapter-mode context only.
+
 ## Risks and cautions
 
 - The word “mention” exists in both source analysis and canonical authoring. The

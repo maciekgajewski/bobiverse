@@ -13,7 +13,7 @@ this document rather than redefining their syntax. The first definitions are `da
 
 This document does not add book-derived records or source text. It records only
 the data contract needed before those records are authored. ADR-0001, as refined by
-ADR-0003, ADR-0005, ADR-0006, ADR-0007, and ADR-0009, is binding for the
+ADR-0003, ADR-0005, ADR-0006, ADR-0007, ADR-0009, and ADR-0013, is binding for the
 chapter-authored source and generated-projection boundary.
 
 ## Shared JSON Schema definitions
@@ -1100,12 +1100,18 @@ participants use that same effective event date. Every active narrative location
 activates its mapped narrative star-system ancestor, if one exists, without copying
 astronomy identity or physical facts into the narrative record.
 
-Chapter-mode consumers use source chapter reader order. Date-mode consumers consider
-only records with a comparable effective date at or before the requested display date;
-unplaced records remain available to chapter context but are not date-positioned.
-Activity is a read-only presentation index. It never changes entity visibility, world
-state, relationships, coordinates, or the eligible-appearance calculation for a
-character's **Last seen** location.
+Chapter-mode consumers use source chapter reader order. Date-mode consumers first
+retain only records with a comparable effective date at or before the requested
+display date, then compare two dated activity facts by their narrative moments.
+Different years and explicit indices retain story order; equal year-only dates use
+canonical chapter order; equal indexed and mixed-precision moments remain unresolved.
+Unplaced records remain available to chapter context but have no narrative moment and
+are not date-positioned. The generated activity array uses a deterministic topological
+order that preserves every definite narrative-moment relation. Stable array placement
+among undated, tied, or incomparable records is serialization order only and does not
+assert story chronology. Activity is a read-only presentation index. It never changes
+entity visibility, world state, relationships, coordinates, or the
+eligible-appearance calculation for a character's **Last seen** location.
 
 Image files are the sole manually curated non-generated content besides the zero-state
 source. They live in an asset registry with stable `asset:` IDs, safe static paths, and
@@ -1146,19 +1152,19 @@ infer a later chapter merely because that chapter has an earlier effective date.
 result is therefore the world state inferred from the reader's selected chapter
 knowledge, not an assertion of the complete in-universe state at that date.
 
-State-property writes compare an ordering moment made from the effective story date and
-source chapter. Different years use numeric year order. Two indexed values in one year
-use their explicit indices; equal explicit indices remain an invalid tie. Two
+Dated chapter-authored facts compare an ordering moment made from the effective story
+date and source chapter. Different years use numeric year order. Two indexed values in
+one year use their explicit indices; equal explicit indices remain tied. Two
 year-only values in one year use canonical numeric chapter order. A year-only value
-remains unordered relative to an indexed value in the same year, so mixed-precision
-competing writes are invalid. Once one competing write requires an explicit index,
-every competing write for that property in that year requires comparable indexed
-precision.
+remains unordered relative to an indexed value in the same year. State-property writes
+still reject equal indexed and mixed-precision competing moments. Appearances, dated
+events, and generated activity use the same fact-to-fact ordering contract wherever a
+unique latest fact is required.
 
 The chapter fallback does not change the generic `date` partial order. Identical dates
-remain equal when deciding whether a state value is eligible at a requested display
-date. Event occurrence, narrative activity, and arbitrary display-date consumers do
-not acquire story chronology from chapter order.
+remain equal when deciding whether a fact is eligible at a requested display date.
+Meaningful-date controls and other values without a source chapter remain date-only.
+Chronologically unplaced events remain reader-visible but have no narrative moment.
 
 An event uses its projected optional `date` for its in-universe occurrence. If that
 value is absent, it remains reader-visible after its introduction but is not placed at
@@ -1501,12 +1507,12 @@ imposed between `birth_date` and `death_date`.
 `current_state` does not establish a character location. A character location is only
 confirmed by an appearance with an effective location. From reader-visible appearances
 whose effective story dates are definitively at or before the requested display date,
-the generated projection exposes a `last_known_location` only when one appearance
-has a uniquely latest, definitively comparable story date. That generated value records
-`location_id`, `source_chapter`, and `effective_date`; it is labelled as a last-known
-sighting and must not be treated as current presence or used to position the character
-on the map. Tied or incomparable appearance dates produce no singular last-known
-location.
+the generated projection exposes a `last_known_location` only when one appearance has
+a uniquely latest narrative moment. Equal year-only appearances use canonical chapter
+order. Equal indexed or mixed-precision appearances remain tied or incomparable and
+produce no singular result. The generated value records `location_id`,
+`source_chapter`, and `effective_date`; it is labelled as a last-known sighting and
+must not be treated as current presence or used to position the character on the map.
 
 ### Species
 

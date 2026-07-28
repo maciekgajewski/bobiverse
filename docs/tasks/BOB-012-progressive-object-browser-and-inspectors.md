@@ -177,6 +177,10 @@ Projection tests cover unique latest sightings, tied sightings, and Date-mode
 exclusion of unplaced events; the BOB-011 completion evidence and integrated data
 model were updated consistently. No authored narrative or astronomy data changed.
 
+ADR-0013 and BOB-027 subsequently promote equal year-only chapter ordering to
+appearances and Date-mode activity recency. The centralized projector still owns
+`last_known_location`; inspectors do not infer it locally.
+
 All documented validation commands pass after the icon and astronomy-directory
 changes: narrative validation accepts the zero state and 2 chapter sources; format,
 lint, and typecheck pass; 95 unit/component tests pass across 20 files; the production

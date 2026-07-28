@@ -77,6 +77,22 @@ Description updates replace the complete field. Preserve useful prior reviewed
 knowledge and integrate the newly revealed information rather than emitting only the
 latest chapter fact.
 
+## Narrative-moment ordering
+
+Every dated fact authored by a chapter carries an ordering moment made from its
+effective story date and canonical source chapter. Different years use numeric year
+order. Same-year indexed dates use their explicit numeric indices; equal indexed
+moments remain tied. Same-year year-only facts use canonical numeric chapter order.
+A year-only date and an indexed date in the same year remain incomparable.
+
+Apply this rule consistently during reconciliation to state writes, appearances,
+dated events, and any generated activity those facts will produce. Do not add
+mechanical indices merely to reproduce canonical chapter order. If the source reveals
+that within-year chronology differs from chapter order, surface the conflict for
+review and use supported consistent indices rather than silently overriding it.
+Requested display dates and chronologically unplaced events have no source-chapter
+moment and remain outside this fact-to-fact fallback.
+
 ## Event significance
 
 A canonical event is a major, memorable turning point in the book timeline whose

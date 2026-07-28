@@ -188,6 +188,10 @@ generated value is derived only from reader-visible, temporally eligible appeara
 and is omitted when their story dates are tied or incomparable; UI code does not scan
 chapter sources or infer a current location.
 
+ADR-0013 and BOB-027 subsequently refine that rule: equal year-only appearances use
+canonical chapter order, while equal indexed and mixed-precision appearances remain
+tied or incomparable. Requested display dates remain date-only controls.
+
 ## Dependencies and cautions
 
 - The existing projector already separates reader order and story time; extend that

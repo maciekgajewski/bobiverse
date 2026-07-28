@@ -175,6 +175,10 @@ selection, reset the camera, and verify the Galactic backdrop remains subordinat
   the elliptical marker and sampled reference-cyan refinement, and authorized task
   closure.
 
+ADR-0013 and BOB-027 subsequently allow a character's equal year-only appearances to
+resolve by canonical chapter. Map focus continues to consume only the centralized
+projected `last_known_location`; it does not add a separate location fallback.
+
 ## Risks and cautions
 
 - Selection brackets, active rings, and component sprites occupy different semantic

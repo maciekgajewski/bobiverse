@@ -180,14 +180,14 @@ export function compareNarrativeDates(
   return Number(leftIndexText) - Number(rightIndexText);
 }
 
-interface StateWriteMoment {
+export interface NarrativeMoment {
   date: string;
   sourceChapter: string;
 }
 
-function compareStateWriteMoments(
-  left: StateWriteMoment,
-  right: StateWriteMoment,
+export function compareNarrativeMoments(
+  left: NarrativeMoment,
+  right: NarrativeMoment,
 ): number | null {
   const dateOrdering = compareNarrativeDates(left.date, right.date);
   if (dateOrdering === null || dateOrdering !== 0) return dateOrdering;
@@ -348,10 +348,10 @@ function sourceProperties(
 }
 
 function assertTemporalWrites(chapters: NarrativeRecord[]): void {
-  const writes = new Map<string, StateWriteMoment[]>();
+  const writes = new Map<string, NarrativeMoment[]>();
   const addWrites = (
     record: NarrativeRecord,
-    moment: StateWriteMoment,
+    moment: NarrativeMoment,
     excludes: readonly string[],
   ) => {
     const id = asString(
@@ -362,7 +362,7 @@ function assertTemporalWrites(chapters: NarrativeRecord[]): void {
       const key = `${id}\u0000${property}`;
       const previousMoments = writes.get(key) ?? [];
       for (const previousMoment of previousMoments) {
-        const ordering = compareStateWriteMoments(previousMoment, moment);
+        const ordering = compareNarrativeMoments(previousMoment, moment);
         if (ordering === null || ordering === 0) {
           throw new Error(
             `State writes for ${id}.${property} have equal or incomparable moments (${previousMoment.date} @ ${previousMoment.sourceChapter}, ${moment.date} @ ${moment.sourceChapter}).`,
@@ -601,8 +601,8 @@ export function validateNarrativeCorpus(corpus: NarrativeCorpus): void {
 function applyProperties(
   entity: NarrativeEntity,
   write: NarrativeRecord,
-  moment: StateWriteMoment,
-  latestMoments: Map<string, StateWriteMoment>,
+  moment: NarrativeMoment,
+  latestMoments: Map<string, NarrativeMoment>,
   excludes: readonly string[],
 ): void {
   for (const property of sourceProperties(write, excludes)) {
@@ -610,7 +610,7 @@ function applyProperties(
     const priorMoment = latestMoments.get(key);
     if (
       !priorMoment ||
-      (compareStateWriteMoments(priorMoment, moment) ?? -1) < 0
+      (compareNarrativeMoments(priorMoment, moment) ?? -1) < 0
     ) {
       entity[property] = structuredClone(write[property]);
       latestMoments.set(key, moment);
@@ -675,9 +675,15 @@ function deriveLastKnownLocations(
     const uniquelyLatest = candidates.filter((candidate, candidateIndex) =>
       candidates.every((other, otherIndex) => {
         if (candidateIndex === otherIndex) return true;
-        const ordering = compareNarrativeDates(
-          other.effective_date,
-          candidate.effective_date,
+        const ordering = compareNarrativeMoments(
+          {
+            date: other.effective_date,
+            sourceChapter: other.source_chapter,
+          },
+          {
+            date: candidate.effective_date,
+            sourceChapter: candidate.source_chapter,
+          },
         );
         return ordering !== null && ordering < 0;
       }),
@@ -706,11 +712,59 @@ function isDateAtOrBefore(date: string, displayDate: string | null): boolean {
   return ordering !== null && ordering <= 0;
 }
 
-function activityDateOrder(left: string | null, right: string | null): number {
-  if (left === right) return 0;
-  if (left === null) return 1;
-  if (right === null) return -1;
-  return compareNarrativeDates(left, right) ?? left.localeCompare(right);
+function activityStableTieOrder(
+  left: NarrativeActivity,
+  right: NarrativeActivity,
+): number {
+  return (
+    compareChapter(left.source_chapter, right.source_chapter) ||
+    (left.effective_date ?? "").localeCompare(right.effective_date ?? "") ||
+    left.entity_id.localeCompare(right.entity_id)
+  );
+}
+
+function activityDefinitivelyPrecedes(
+  left: NarrativeActivity,
+  right: NarrativeActivity,
+): boolean {
+  if (!left.effective_date || !right.effective_date) return false;
+  const ordering = compareNarrativeMoments(
+    {
+      date: left.effective_date,
+      sourceChapter: left.source_chapter,
+    },
+    {
+      date: right.effective_date,
+      sourceChapter: right.source_chapter,
+    },
+  );
+  return ordering !== null && ordering < 0;
+}
+
+function orderNarrativeActivity(
+  records: NarrativeActivity[],
+): NarrativeActivity[] {
+  const remaining = [...records];
+  const ordered: NarrativeActivity[] = [];
+  while (remaining.length > 0) {
+    const available = remaining
+      .filter(
+        (candidate) =>
+          !remaining.some(
+            (other) =>
+              other !== candidate &&
+              activityDefinitivelyPrecedes(other, candidate),
+          ),
+      )
+      .sort(activityStableTieOrder);
+    const next = available[0];
+    if (!next) {
+      throw new Error("Narrative activity ordering contains a cycle.");
+    }
+    ordered.push(next);
+    remaining.splice(remaining.indexOf(next), 1);
+  }
+  return ordered;
 }
 
 function mappedSystemForLocation(
@@ -883,19 +937,14 @@ function generateNarrativeActivity(
         addEventActivity(event, sourceChapter);
     }
   }
-  return [...activityByKey.values()]
-    .map((activity) => ({
+  return orderNarrativeActivity(
+    [...activityByKey.values()].map((activity) => ({
       ...activity,
       reasons: [...activity.reasons].sort(
         (left, right) => reasonOrder.get(left)! - reasonOrder.get(right)!,
       ),
-    }))
-    .sort(
-      (left, right) =>
-        compareChapter(left.source_chapter, right.source_chapter) ||
-        activityDateOrder(left.effective_date, right.effective_date) ||
-        left.entity_id.localeCompare(right.entity_id),
-    );
+    })),
+  );
 }
 
 /** Builds the reader-safe world state for a selected chapter, or the pre-book zero state. */
@@ -936,7 +985,7 @@ export function generateNarrativeWorld(
     corpus.knownAstronomyObjectIds,
   ).map((entity) => structuredClone(entity));
   const byId = new Map(entities.map((entity) => [entity.id, entity]));
-  const latestMoments = new Map<string, StateWriteMoment>();
+  const latestMoments = new Map<string, NarrativeMoment>();
   const readerVisible = selectedChapter
     ? chapters.filter(
         (chapter) =>
