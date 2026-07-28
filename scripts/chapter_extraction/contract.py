@@ -17,7 +17,7 @@ class ContractError(ValueError):
     """A source-free description of an invalid draft ledger."""
 
 
-STRING_OR_NULL = {"type": ["string", "null"]}
+STRING_OR_NULL = {"type": ["string", "null"], "minLength": 1}
 MENTION_ID_ARRAY = {
     "type": "array",
     "items": {"type": "string", "pattern": MENTION_ID_RE.pattern},

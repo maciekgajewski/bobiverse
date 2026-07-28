@@ -145,14 +145,16 @@ class OllamaClient:
             raise OllamaError("Local Ollama returned a non-object response.")
         return value
 
-    def verify(self, model: str) -> dict[str, Any]:
+    def verify(self, model: str, *, require_thinking: bool) -> dict[str, Any]:
         version_response = self._request("/api/version")
         version = version_response.get("version")
         if not isinstance(version, str) or _version_tuple(version) < (0, 5, 0):
             raise OllamaError("Ollama 0.5.0 or newer is required.")
         show = self._request("/api/show", payload={"model": model})
         capabilities = show.get("capabilities")
-        if not isinstance(capabilities, list) or "thinking" not in capabilities:
+        if not isinstance(capabilities, list):
+            raise OllamaError("Configured model returned invalid capabilities.")
+        if require_thinking and "thinking" not in capabilities:
             raise OllamaError("Configured model does not report thinking capability.")
         return {
             "ollama_version": version,

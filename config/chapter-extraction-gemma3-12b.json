@@ -1,0 +1,19 @@
+{
+  "format_version": 1,
+  "provider": "ollama",
+  "endpoint": "http://127.0.0.1:11434",
+  "model": "gemma3:12b",
+  "api_path": "/api/chat",
+  "stream": false,
+  "think": false,
+  "temperature": 0,
+  "seed": 42,
+  "num_ctx": 32768,
+  "num_predict": 8192,
+  "connect_timeout_seconds": 5,
+  "response_timeout_seconds": 1800,
+  "keep_alive": "5m",
+  "max_attempts": 3,
+  "chunk_bytes": 6000,
+  "overlap_bytes": 256
+}

@@ -91,8 +91,10 @@ class ExtractionConfig:
             raise ExtractionError("Unsupported extraction config version or provider.")
         if self.api_path != "/api/chat" or self.stream is not False:
             raise ExtractionError("Provider must use non-streaming /api/chat.")
-        if self.think is not True or self.temperature != 0:
-            raise ExtractionError("Thinking must be enabled and temperature must be zero.")
+        if not isinstance(self.think, bool) or self.temperature != 0:
+            raise ExtractionError(
+                "Thinking must be an explicit boolean and temperature must be zero."
+            )
         for label, value in (
             ("seed", self.seed),
             ("num_ctx", self.num_ctx),
@@ -571,7 +573,7 @@ def run_extraction(
         connect_timeout_seconds=config.connect_timeout_seconds,
         response_timeout_seconds=config.response_timeout_seconds,
     )
-    provider_info = client.verify(config.model)
+    provider_info = client.verify(config.model, require_thinking=config.think)
     client.ensure_unloaded(config.model)
     source, output_dir = validate_paths(repository_root, source_path, output_dir)
     _require_unused_outputs(output_dir, chapter)

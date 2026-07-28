@@ -38,6 +38,10 @@ from scripts.chapter_extraction.contract import LEDGER_SCHEMA
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 CONFIG_PATH = REPOSITORY_ROOT / "config/chapter-extraction-qwen3-14b.json"
+NO_THINK_CONFIG_PATH = (
+    REPOSITORY_ROOT / "config/chapter-extraction-qwen3-14b-no-think.json"
+)
+GEMMA_CONFIG_PATH = REPOSITORY_ROOT / "config/chapter-extraction-gemma3-12b.json"
 SOURCE_TEXT = "Avery enters the laboratory and activates the beacon.\n"
 
 
@@ -106,7 +110,12 @@ class FakeClient:
         self.payloads: list[dict[str, object]] = []
         self.unloaded = False
 
-    def verify(self, model: str) -> dict[str, object]:
+    def verify(
+        self,
+        model: str,
+        *,
+        require_thinking: bool,
+    ) -> dict[str, object]:
         return {
             "ollama_version": "0.30.8",
             "model_capabilities": ["completion", "thinking"],
@@ -147,6 +156,13 @@ def response(
 
 
 class ContractTests(unittest.TestCase):
+    def test_machine_schema_rejects_empty_nullable_strings(self) -> None:
+        mention_schema = LEDGER_SCHEMA["properties"]["source_mentions"]["items"]
+        uncertainty = mention_schema["properties"]["uncertainty"]
+
+        self.assertEqual(uncertainty["type"], ["string", "null"])
+        self.assertEqual(uncertainty["minLength"], 1)
+
     def test_accepts_complete_redacted_ledger(self) -> None:
         ledger = draft_ledger()
 
@@ -211,6 +227,32 @@ class SafetyTests(unittest.TestCase):
                 "overlap_bytes": 256,
             },
         )
+
+    def test_no_think_experiment_changes_only_thinking_flag(self) -> None:
+        baseline, _ = ExtractionConfig.load(CONFIG_PATH)
+        experiment, _ = ExtractionConfig.load(NO_THINK_CONFIG_PATH)
+        differences = {
+            field
+            for field in baseline.__dict__
+            if baseline.__dict__[field] != experiment.__dict__[field]
+        }
+
+        self.assertEqual(differences, {"think"})
+        self.assertTrue(baseline.think)
+        self.assertFalse(experiment.think)
+
+    def test_gemma_experiment_changes_only_model_from_no_think_config(self) -> None:
+        qwen, _ = ExtractionConfig.load(NO_THINK_CONFIG_PATH)
+        gemma, _ = ExtractionConfig.load(GEMMA_CONFIG_PATH)
+        differences = {
+            field
+            for field in qwen.__dict__
+            if qwen.__dict__[field] != gemma.__dict__[field]
+        }
+
+        self.assertEqual(differences, {"model"})
+        self.assertEqual(gemma.model, "gemma3:12b")
+        self.assertFalse(gemma.think)
 
     def test_config_rejects_unknown_fields_and_wrong_retry_limit(self) -> None:
         config, _ = ExtractionConfig.load(CONFIG_PATH)
@@ -283,6 +325,47 @@ class SafetyTests(unittest.TestCase):
         proxy_handler = build_opener.call_args.args[0]
         self.assertIsInstance(proxy_handler, urllib.request.ProxyHandler)
         self.assertEqual(proxy_handler.proxies, {})
+
+    def test_non_thinking_model_does_not_require_thinking_capability(self) -> None:
+        client = OllamaClient(
+            LocalEndpoint(
+                configured="http://127.0.0.1:11434",
+                canonical="http://127.0.0.1:11434",
+            ),
+            connect_timeout_seconds=5,
+            response_timeout_seconds=30,
+        )
+        with patch.object(
+            client,
+            "_request",
+            side_effect=[
+                {"version": "0.30.8"},
+                {"capabilities": ["completion"]},
+            ],
+        ):
+            result = client.verify("gemma3:12b", require_thinking=False)
+
+        self.assertEqual(result["model_capabilities"], ["completion"])
+
+    def test_thinking_config_still_requires_thinking_capability(self) -> None:
+        client = OllamaClient(
+            LocalEndpoint(
+                configured="http://127.0.0.1:11434",
+                canonical="http://127.0.0.1:11434",
+            ),
+            connect_timeout_seconds=5,
+            response_timeout_seconds=30,
+        )
+        with patch.object(
+            client,
+            "_request",
+            side_effect=[
+                {"version": "0.30.8"},
+                {"capabilities": ["completion"]},
+            ],
+        ):
+            with self.assertRaisesRegex(OllamaError, "thinking capability"):
+                client.verify("gemma3:12b", require_thinking=True)
 
     def test_rejects_repository_source_and_output(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -673,7 +756,12 @@ class WorkflowTests(unittest.TestCase):
             def __init__(self, *args: object, **kwargs: object) -> None:
                 pass
 
-            def verify(self, model: str) -> dict[str, object]:
+            def verify(
+                self,
+                model: str,
+                *,
+                require_thinking: bool,
+            ) -> dict[str, object]:
                 raise OllamaError("capability check failed")
 
         with tempfile.TemporaryDirectory() as directory:
