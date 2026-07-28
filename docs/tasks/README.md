@@ -41,6 +41,7 @@ derived from `../implementation-plan.md` and must remain consistent with
 | [BOB-023](BOB-023-settlement-scale-location-authoring.md)               | Done   | Keep extracted locations at settlement or base scale.                      |
 | [BOB-024](BOB-024-significant-narrative-event-authoring.md)             | Done   | Reserve events for consequential, memorable narrative turning points.      |
 | [BOB-025](BOB-025-fixed-light-year-presentation.md)                     | Done   | Remove unit selection and use light-years for all displayed distances.     |
+| [BOB-026](BOB-026-ultracool-dwarf-identity-and-presentation.md)         | Ready  | Give CNS5-only ultracool objects recognizable names and presentation.     |
 
 ## Task requirements
 

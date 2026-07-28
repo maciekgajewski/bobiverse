@@ -1,7 +1,7 @@
 # Implementation plan
 
 Status: Initial approved roadmap  
-Last updated: 2026-07-27
+Last updated: 2026-07-28
 
 ## 1. How to use this plan
 
@@ -138,6 +138,13 @@ Alpha Centauri was reduced to Proxima. ADR-0011 supersedes that source decision.
 BOB-013 implements the reconciled CNS5/GCNS inclusion model, Gaia DR3 enrichment,
 CNS5/WDS membership, landmark fixtures, and revised coverage proof. BOB-014 is Ready
 now that the catalogue dependency is complete.
+
+Accepted corrective follow-up: BOB-026 adds a pinned, 20-pc-bounded identity and
+presentation-enrichment role for the Kirkpatrick et al. 2024 full-sky 20-pc census.
+Its purpose is to replace obscure GJ fallbacks and misleading neutral bright markers
+for known T/Y brown dwarfs without changing ADR-0011 inclusion, geometry, or coverage.
+The Captain accepted ADR-0012 on 2026-07-28, so BOB-026 is Ready. Acceptance and
+Ready status do not authorize implementation.
 
 ## 6. Phase 2: narrative foundation and chapter timeline
 
