@@ -1,6 +1,6 @@
 # BOB-027: generalized narrative-moment ordering
 
-Status: In progress
+Status: Done
 Phase: 2 (narrative foundation and chapter timeline)
 Last updated: 2026-07-28
 
@@ -168,8 +168,10 @@ Automated validation completed on 2026-07-28:
   the Bob-to-Sol selection regression in each engine; and
 - the final fresh independent implementation review returned `No findings.`
 
-The required remote-workstation WebGL frame and camera-focus acceptance remains
-pending, so the task stays `In progress`.
+On 2026-07-28, the Captain completed and accepted the required remote-workstation
+WebGL review: Bob remained selected with New Handeltown as the chapter 1.11
+last-known location, Sol received its selected frame and label, and the camera focused
+Sol. BOB-027 is complete.
 
 ## Documentation and generated artifacts
 
@@ -193,8 +195,8 @@ pending, so the task stays `In progress`.
   as provenance. Do not replace the event date with the enclosing chapter date.
 - Equal indexed and mixed-precision moments must not fall back to lexical order where
   a unique semantic result is required.
-- The current browser regression suite does not assert the DOM-backed selection label
-  after choosing a character; add that automated assertion and reserve the WebGL frame
-  and camera-focus checks for manual acceptance.
+- Browser regression asserts the DOM-backed selection label after choosing a
+  character; the WebGL frame and camera-focus checks remain manual acceptance
+  responsibilities.
 - Preserve unrelated and pre-existing worktree changes, including the authorized
   New Handeltown parent relationship.

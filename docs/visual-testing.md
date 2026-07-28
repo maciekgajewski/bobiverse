@@ -195,6 +195,10 @@ Chapter-mode only. Confirm the Bob-to-Sol result is derived from the shared proj
 disabling WebGL must leave Bob and the New Handeltown relationship inspectable even
 though precise camera focus and the WebGL frame are unavailable.
 
+On 2026-07-28, the Captain accepted the real-browser BOB-027 review at chapter 1.11:
+Bob retained the New Handeltown last-seen relationship, Sol displayed its selected
+frame and label, and the camera focused Sol.
+
 ## BOB-015 Phase 2 desktop integration
 
 At 1200-by-700 and 1440-by-1000 CSS pixels, confirm the object browser, true-scale
