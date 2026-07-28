@@ -9,6 +9,8 @@
       "id": "location:new-handeltown",
       "name": "New Handeltown",
       "kind": "locale",
+      "parent_location_id": "location:earth",
+      "parent_relation": "located_on",
       "map_status": "unmapped"
     },
     {
