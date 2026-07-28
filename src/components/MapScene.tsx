@@ -11,8 +11,12 @@ import {
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { GalacticPlaneGrid } from "./GalacticPlaneGrid";
 import { GalacticStarfield } from "./GalacticStarfield";
-import type { DistanceUnit, StellarSystem } from "../domain/types";
-import { calculateMapScale, formatDistance } from "../domain/units";
+import type { StellarSystem } from "../domain/types";
+import {
+  DISPLAY_DISTANCE_UNIT,
+  calculateMapScale,
+  formatDistance,
+} from "../domain/units";
 import {
   cameraPositionForFraming,
   easeInOutQuad,
@@ -36,7 +40,6 @@ interface MapSceneProps {
   selectedId: string | null;
   knownSystemIds: ReadonlySet<string>;
   activeSystemIds: ReadonlySet<string>;
-  unit: DistanceUnit;
   resetToken: number;
   onSelect: (id: string) => void;
   onDeselect: () => void;
@@ -177,7 +180,6 @@ function StarMarker({
   active,
   captionVisible,
   onHover,
-  unit,
 }: {
   system: StellarSystem;
   selected: boolean;
@@ -186,7 +188,6 @@ function StarMarker({
   active: boolean;
   captionVisible: boolean;
   onHover: (id: string | null) => void;
-  unit: DistanceUnit;
 }) {
   const [hovered, setHovered] = useState(false);
   const position = system.render_position;
@@ -255,8 +256,7 @@ function StarMarker({
             {system.name}
             {selectedDistance !== null && (
               <small>
-                {formatDistance(selectedDistance, unit)} from{" "}
-                {selectedSystem?.name}
+                {formatDistance(selectedDistance)} from {selectedSystem?.name}
               </small>
             )}
           </div>
@@ -353,10 +353,8 @@ function SelectionFrame({ name }: { name: string }) {
 }
 
 function CameraScaleReporter({
-  unit,
   onScaleChange,
 }: {
-  unit: DistanceUnit;
   onScaleChange: (scale: MapScale) => void;
 }) {
   const { camera, size } = useThree();
@@ -376,11 +374,10 @@ function CameraScaleReporter({
     const { displayDistance, pixelWidth } = calculateMapScale(
       worldWidthPc,
       size.width,
-      unit,
     );
     const label = `${displayDistance.toLocaleString(undefined, {
       maximumFractionDigits: 4,
-    })} ${unit}`;
+    })} ${DISPLAY_DISTANCE_UNIT}`;
     const next = `${label}:${pixelWidth}`;
     if (next !== lastScale.current) {
       lastScale.current = next;
@@ -455,7 +452,6 @@ function Scene({
   selectedId,
   knownSystemIds,
   activeSystemIds,
-  unit,
   resetToken,
   onSelect,
   onReady,
@@ -503,7 +499,6 @@ function Scene({
             active={activeSystemIds.has(system.id)}
             captionVisible={captionIds.has(system.id)}
             onHover={setHoveredId}
-            unit={unit}
           />
         ))}
       </group>
@@ -512,7 +507,7 @@ function Scene({
         selected={selected}
         systems={systems}
       />
-      <CameraScaleReporter unit={unit} onScaleChange={onScaleChange} />
+      <CameraScaleReporter onScaleChange={onScaleChange} />
       <CaptionController
         systems={systems}
         knownSystemIds={knownSystemIds}

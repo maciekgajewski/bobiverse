@@ -1,6 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ObjectInspector } from "../../src/components/ObjectInspector";
+import { nearbySystems } from "../../src/domain/data";
 import type { NarrativeBrowserItem } from "../../src/narrative/browser";
 import type {
   NarrativeEntity,
@@ -67,7 +68,6 @@ describe("object inspector", () => {
         world={world}
         systems={[]}
         assets={{ assets: [] }}
-        unit="ly"
         onSelect={onSelect}
       />,
     );
@@ -79,7 +79,6 @@ describe("object inspector", () => {
           world={world}
           systems={[]}
           assets={{ assets: [] }}
-          unit="ly"
           onSelect={onSelect}
         />,
       );
@@ -131,7 +130,6 @@ describe("object inspector", () => {
         world={linkedWorld}
         systems={[]}
         assets={{ assets: [] }}
-        unit="ly"
         onSelect={vi.fn()}
       />,
     );
@@ -140,5 +138,40 @@ describe("object inspector", () => {
       screen.getByRole("button", { name: "Eligible place" }),
     ).toBeInTheDocument();
     expect(screen.queryByText(/current location/i)).not.toBeInTheDocument();
+  });
+
+  it("renders astronomy distances and coordinates only in light-years", () => {
+    expect(nearbySystems).not.toBeNull();
+    if (!nearbySystems) throw new Error("Fixture dataset failed validation");
+    const system = nearbySystems.systems.find(
+      (candidate) => candidate.id !== "sol",
+    );
+    expect(system).toBeDefined();
+    if (!system) throw new Error("Fixture dataset has no non-Sol system");
+
+    render(
+      <ObjectInspector
+        selection={{ kind: "astronomy", id: system.id }}
+        narrativeItem={null}
+        world={world}
+        systems={[system]}
+        assets={{ assets: [] }}
+        onSelect={vi.fn()}
+      />,
+    );
+
+    expect(
+      screen.getByText(
+        `${(system.distance_from_sol_pc * 3.261563777).toFixed(2)} ly`,
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        `${(system.position_pc.xg * 3.261563777).toFixed(3)}, ${(
+          system.position_pc.yg * 3.261563777
+        ).toFixed(3)}, ${(system.position_pc.zg * 3.261563777).toFixed(3)} ly`,
+      ),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/\bpc$/)).not.toBeInTheDocument();
   });
 });

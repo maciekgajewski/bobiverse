@@ -1,7 +1,7 @@
 # Bobiverse visual companion: technical design
 
 Status: Approved baseline  
-Last updated: 2026-07-26
+Last updated: 2026-07-27
 
 ## 1. Purpose
 
@@ -20,8 +20,8 @@ system count.
 
 - Display nearby stellar systems in an interactive, rotatable, zoomable 3D map.
 - Preserve true relative orientation and linear interstellar distance.
-- Make distance understandable through orientation aids, a persistent scale, and unit
-  selection without distorting canonical geometry.
+- Make distance understandable through orientation aids, a persistent light-year
+  scale, and consistent light-year formatting without distorting canonical geometry.
 - Run as a static site with no application server or database.
 - Produce astronomy data through a reproducible, offline import pipeline.
 - Support later chapter timelines, character histories, travel paths, system
@@ -250,8 +250,10 @@ scene mapping.
 
 ### 8.4 Units and scale
 
-Parsecs are canonical storage units. The UI displays light-years by default and
-offers a parsec toggle. Unit conversion occurs only at presentation boundaries.
+Parsecs are canonical storage and calculation units. The UI displays interstellar
+distances and Galactic coordinate components in light-years only; it offers no
+display-unit selector. Parsec-to-light-year conversion occurs only at presentation
+boundaries.
 
 System positions use a single linear scene scale. Camera projection can affect visual
 perspective, but no logarithmic or piecewise distance compression is permitted.
@@ -359,9 +361,9 @@ The map must provide:
 - Rotate, zoom, pan, smooth focus, and reset controls.
 - Sol as a visible origin reference.
 - A visible Galactic plane and labeled orientation references.
-- A persistent scale indication.
+- A persistent light-year scale indication.
 - Selection of a system and a basic detail panel; no system is selected initially.
-- Light-year and parsec display modes.
+- Fixed light-year presentation for displayed interstellar distances and coordinates.
 - Clear empty, loading, unsupported-WebGL, and error states.
 
 Camera controls must not modify domain coordinates. A reset returns to a documented,

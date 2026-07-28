@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import type { SelectionIdentity } from "../domain/selection";
-import type { DistanceUnit, StellarSystem } from "../domain/types";
+import type { StellarSystem } from "../domain/types";
 import type { NarrativeBrowserItem } from "../narrative/browser";
 import type {
   NarrativeEntity,
@@ -107,7 +107,6 @@ function NarrativeDetails({
   world,
   systems,
   assets,
-  unit,
   headingId,
   onSelect,
 }: {
@@ -115,7 +114,6 @@ function NarrativeDetails({
   world: NarrativeWorld;
   systems: StellarSystem[];
   assets: NarrativeRecord;
-  unit: DistanceUnit;
   headingId: string;
   onSelect: (selection: SelectionIdentity) => void;
 }) {
@@ -302,12 +300,7 @@ function NarrativeDetails({
       {astronomySystem && (
         <section className="joined-astronomy">
           <h3>Mapped astronomy</h3>
-          <SystemDetails
-            system={astronomySystem}
-            unit={unit}
-            embedded
-            storyKnown
-          />
+          <SystemDetails system={astronomySystem} embedded storyKnown />
         </section>
       )}
     </section>
@@ -321,7 +314,6 @@ export function ObjectInspector({
   systems,
   knownAstronomySystemIds,
   assets,
-  unit,
   headingId = "details-heading",
   onSelect,
 }: {
@@ -331,7 +323,6 @@ export function ObjectInspector({
   systems: StellarSystem[];
   knownAstronomySystemIds?: ReadonlySet<string>;
   assets: NarrativeRecord;
-  unit: DistanceUnit;
   headingId?: string;
   onSelect: (selection: SelectionIdentity) => void;
 }) {
@@ -351,7 +342,6 @@ export function ObjectInspector({
         world={world}
         systems={systems}
         assets={assets}
-        unit={unit}
         headingId={headingId}
         onSelect={onSelect}
       />
@@ -370,7 +360,6 @@ export function ObjectInspector({
     return (
       <SystemDetails
         system={system}
-        unit={unit}
         storyKnown={storyKnown}
         headingId={headingId}
       />

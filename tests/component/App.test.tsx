@@ -129,11 +129,16 @@ describe("atlas shell", () => {
     ).toBeInTheDocument();
   });
 
-  it("keeps unit controls and removes the measurement tool", async () => {
-    const user = userEvent.setup();
+  it("uses fixed light-year presentation without unit or measurement controls", () => {
     render(<App />);
-    await user.click(screen.getByRole("button", { name: "pc" }));
-    expect(screen.getByTestId("map-scale-label")).toHaveTextContent("pc");
+    expect(screen.queryByLabelText("Distance unit")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "pc" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "ly" }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByTestId("map-scale-label")).toHaveTextContent("ly");
     expect(
       screen.queryByRole("button", { name: "Measure" }),
     ).not.toBeInTheDocument();

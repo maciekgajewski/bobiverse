@@ -17,7 +17,8 @@ import {
   GALACTIC_STARFIELD_UI_CREDIT,
 } from "./domain/galactic-starfield";
 import type { SelectionIdentity } from "./domain/selection";
-import type { DistanceUnit, StellarSystem } from "./domain/types";
+import type { StellarSystem } from "./domain/types";
+import { DISPLAY_DISTANCE_UNIT } from "./domain/units";
 import { buildNarrativeBrowserGroups } from "./narrative/browser";
 import {
   focusSystemIdForSelection,
@@ -91,7 +92,6 @@ function canRenderWebgl(): boolean {
 }
 
 export default function App() {
-  const [unit, setUnit] = useState<DistanceUnit>("ly");
   const [selection, setSelection] = useState<SelectionIdentity | null>(null);
   const [browserQuery, setBrowserQuery] = useState("");
   const [selectionStatus, setSelectionStatus] = useState("");
@@ -117,7 +117,7 @@ export default function App() {
     null,
   );
   const [mapScale, setMapScale] = useState<MapScale>({
-    label: "1 ly",
+    label: `1 ${DISPLAY_DISTANCE_UNIT}`,
     pixelWidth: 50,
   });
   const systems = nearbySystems?.systems ?? EMPTY_SYSTEMS;
@@ -217,19 +217,6 @@ export default function App() {
     );
     return () => window.clearTimeout(check);
   }, []);
-  useEffect(() => {
-    const update = window.setTimeout(
-      () =>
-        setMapScale((current) =>
-          current.label.endsWith(` ${unit}`)
-            ? current
-            : { label: `1 ${unit}`, pixelWidth: 50 },
-        ),
-      0,
-    );
-    return () => window.clearTimeout(update);
-  }, [unit]);
-
   useEffect(() => {
     persistReaderProgress(progress);
   }, [progress]);
@@ -479,20 +466,6 @@ export default function App() {
           >
             Timeline and progress
           </button>
-          <div className="unit-switch" aria-label="Distance unit">
-            <button
-              className={unit === "ly" ? "active" : ""}
-              onClick={() => setUnit("ly")}
-            >
-              ly
-            </button>
-            <button
-              className={unit === "pc" ? "active" : ""}
-              onClick={() => setUnit("pc")}
-            >
-              pc
-            </button>
-          </div>
           <button
             className="button quiet"
             onClick={() => setResetToken((value) => value + 1)}
@@ -557,7 +530,6 @@ export default function App() {
                   selectedId={selectedMapId}
                   knownSystemIds={mapProjection.knownSystemIds}
                   activeSystemIds={mapProjection.activeSystemIds}
-                  unit={unit}
                   resetToken={resetToken}
                   onSelect={(id) => {
                     const narrativeId =
@@ -605,7 +577,6 @@ export default function App() {
             systems={mapProjection.contextSystems}
             knownAstronomySystemIds={mapProjection.knownSystemIds}
             assets={narrativeCorpus.assets}
-            unit={unit}
             headingId="desktop-object-details-heading"
             onSelect={selectObject}
           />
@@ -686,7 +657,6 @@ export default function App() {
                 systems={mapProjection.contextSystems}
                 knownAstronomySystemIds={mapProjection.knownSystemIds}
                 assets={narrativeCorpus.assets}
-                unit={unit}
                 headingId="compact-object-details-heading"
                 onSelect={selectObject}
               />

@@ -49,7 +49,7 @@ schemas, contracts, tooling, or includes broader editorial remediation.
 - One map node represents one stellar system. Components and planets belong to the
   system detail model.
 - Canonical positions use a Sun-centered Galactic Cartesian frame and parsecs. The
-  UI displays light-years by default and may toggle to parsecs.
+  UI displays interstellar distances and coordinates in light-years only.
 - Interstellar geometry is true linear scale. Never distort stored or measured
   distances for presentation.
 - Measurements are calculated from canonical coordinates, not rendered screen or
@@ -121,4 +121,3 @@ schemas, contracts, tooling, or includes broader editorial remediation.
 - Record significant architecture changes in `docs/adrs/` using the process defined
   in `docs/adrs/README.md`.
 - After implementing a task, use [$review-agent] to review the document. Address all findings, repeat the review until it comes clean.
-

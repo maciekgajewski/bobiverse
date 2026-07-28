@@ -1,7 +1,7 @@
 # Implementation plan
 
 Status: Initial approved roadmap  
-Last updated: 2026-07-26
+Last updated: 2026-07-27
 
 ## 1. How to use this plan
 
@@ -68,7 +68,7 @@ Workstreams:
 3. Domain model and correctness
    - Implement system identifiers, units, coordinate types, and runtime validation.
    - Add known-axis and known-distance fixtures.
-   - Implement light-year/parsec formatting and 3D separation.
+   - Implement parsec-to-light-year presentation formatting and 3D separation.
 
 4. Interactive map
    - Render Sol, systems, Galactic plane, orientation aids, and scale.
@@ -96,6 +96,10 @@ pre-publication acceptance gap.
 Rebaseline note: BOB-003 retires the two-system distance-measurement user interface
 after this completed slice. BOB-001 remains the historical record of its former
 acceptance; later work must not restore the tool without a new approved task.
+
+Rebaseline note: BOB-025 removes the distance-unit selector and fixes every displayed
+interstellar distance and coordinate component to light-years. Canonical astronomy
+storage and calculations remain in parsecs.
 
 ## 5. Phase 1B: catalogue expansion and contextual coverage
 

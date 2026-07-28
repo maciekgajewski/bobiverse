@@ -4,16 +4,15 @@ import { measurementDistancePc } from "../../src/domain/measurement";
 import {
   LIGHT_YEARS_PER_PARSEC,
   calculateMapScale,
-  convertParsecs,
+  convertParsecsToLightYears,
   formatDistance,
   niceScaleDistance,
 } from "../../src/domain/units";
 
 describe("units and system measurement", () => {
-  it("converts presentation values without changing canonical pc", () => {
-    expect(convertParsecs(1, "ly")).toBe(LIGHT_YEARS_PER_PARSEC);
-    expect(convertParsecs(1, "pc")).toBe(1);
-    expect(formatDistance(1, "ly")).toBe("3.26 ly");
+  it("converts canonical parsecs to the fixed light-year presentation", () => {
+    expect(convertParsecsToLightYears(1)).toBe(LIGHT_YEARS_PER_PARSEC);
+    expect(formatDistance(1)).toBe("3.26 ly");
   });
 
   it("uses readable 1–2–5 scale distances", () => {
@@ -23,19 +22,18 @@ describe("units and system measurement", () => {
   });
 
   it("adapts the map ruler's physical value and pixel width as camera width changes", () => {
-    expect(calculateMapScale(10, 400, "pc")).toEqual({
-      displayDistance: 2,
-      pixelWidth: 80,
+    expect(calculateMapScale(10, 400)).toEqual({
+      displayDistance: 10,
+      pixelWidth: 123,
     });
-    expect(calculateMapScale(20, 400, "pc")).toEqual({
-      displayDistance: 5,
-      pixelWidth: 100,
+    expect(calculateMapScale(20, 400)).toEqual({
+      displayDistance: 20,
+      pixelWidth: 123,
     });
-    expect(calculateMapScale(12, 400, "pc")).toEqual({
-      displayDistance: 5,
-      pixelWidth: 167,
+    expect(calculateMapScale(12, 400)).toEqual({
+      displayDistance: 10,
+      pixelWidth: 102,
     });
-    expect(calculateMapScale(10, 400, "ly").displayDistance).toBe(10);
   });
 
   it("calculates an actual system separation from canonical positions", () => {

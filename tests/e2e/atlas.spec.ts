@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test("phone browser opens, selection opens inspector, and units remain available", async ({
+test("phone browser opens, selection opens inspector, and light-years remain fixed", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
@@ -19,8 +19,10 @@ test("phone browser opens, selection opens inspector, and units remain available
     .getByRole("dialog", { name: "Selected object" })
     .getByRole("button", { name: "Close" })
     .click();
-  await page.getByRole("button", { name: "pc" }).click();
-  await expect(page.getByTestId("map-scale-label")).toContainText("pc");
+  await expect(page.getByLabel("Distance unit")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "pc" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "ly" })).toHaveCount(0);
+  await expect(page.getByTestId("map-scale-label")).toContainText("ly");
 });
 
 test("empty map clicks clear inspection selection", async ({ page }) => {
@@ -168,6 +170,10 @@ test("desktop integration keeps all four surfaces usable with the map largest", 
   ]) {
     await page.setViewportSize(viewport);
     await page.goto("/");
+    await expect(page.getByLabel("Distance unit")).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "pc" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "ly" })).toHaveCount(0);
+    await expect(page.getByTestId("map-scale-label")).toContainText("ly");
 
     const browser = page.getByRole("complementary", {
       name: "Object browser",

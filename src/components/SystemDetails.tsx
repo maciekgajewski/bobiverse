@@ -1,15 +1,17 @@
-import type { DistanceUnit, StellarSystem } from "../domain/types";
-import { formatDistance } from "../domain/units";
+import type { StellarSystem } from "../domain/types";
+import {
+  DISPLAY_DISTANCE_UNIT,
+  convertParsecsToLightYears,
+  formatDistance,
+} from "../domain/units";
 
 export function SystemDetails({
   system,
-  unit,
   storyKnown = false,
   embedded = false,
   headingId = "details-heading",
 }: {
   system: StellarSystem | null;
-  unit: DistanceUnit;
   storyKnown?: boolean;
   embedded?: boolean;
   headingId?: string;
@@ -50,7 +52,7 @@ export function SystemDetails({
       <dl>
         <div>
           <dt>Distance from Sol</dt>
-          <dd>{formatDistance(system.distance_from_sol_pc, unit)}</dd>
+          <dd>{formatDistance(system.distance_from_sol_pc)}</dd>
         </div>
         <div>
           <dt>Components</dt>
@@ -59,9 +61,10 @@ export function SystemDetails({
         <div>
           <dt>Galactic coordinates</dt>
           <dd>
-            {system.position_pc.xg.toFixed(3)},{" "}
-            {system.position_pc.yg.toFixed(3)},{" "}
-            {system.position_pc.zg.toFixed(3)} pc
+            {convertParsecsToLightYears(system.position_pc.xg).toFixed(3)},{" "}
+            {convertParsecsToLightYears(system.position_pc.yg).toFixed(3)},{" "}
+            {convertParsecsToLightYears(system.position_pc.zg).toFixed(3)}{" "}
+            {DISPLAY_DISTANCE_UNIT}
           </dd>
         </div>
       </dl>

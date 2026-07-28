@@ -1,5 +1,3 @@
-export type DistanceUnit = "ly" | "pc";
-
 export interface GalacticPosition {
   xg: number;
   yg: number;

@@ -19,9 +19,9 @@ dependency.
 For manual acceptance, start `npm run dev` and open
 `http://<development-host>:5173` from a trusted-LAN workstation. Test current Chrome,
 Firefox, Safari, and Edge where available. Check rotate, zoom, pan, marker picking,
-directory selection, reset, unit conversion, command-bar browser opening,
-selected-system inspector behavior, and the phone-sized layout. Verify reduced-motion
-behavior with the operating-system setting.
+directory selection, reset, fixed light-year scale and detail formatting, command-bar
+browser opening, selected-system inspector behavior, and the phone-sized layout.
+Verify reduced-motion behavior with the operating-system setting.
 
 The headless development environment cannot substitute for manual GPU/browser review.
 Record each unavailable browser explicitly as an acceptance gap before publication.
@@ -32,12 +32,13 @@ At desktop, compact, and phone widths, confirm that the permanent backdrop remai
 subordinate to markers, labels, selected frames, the Galactic plane, orientation
 aids, and the scale. The Galactic-plane grid should stay readable near the camera and
 smoothly vanish in the distance rather than building visual density against the
-backdrop. Orbit, pan, zoom, select, focus, reset, and switch both units; the
-background and grid must not pick, obscure, clip, show a seam, or develop parallax.
-At the documented reset pose, verify manually that the bright Galactic-centre feature
-is in the `+Xg` direction. Verify the visible text-only source credit can receive
-keyboard focus and opens the NASA source page. The backdrop does not animate, so
-reduced-motion behaviour is unchanged.
+backdrop. Orbit, pan, zoom, select, focus, and reset; confirm the scale, hover
+separations, system distances, and displayed Galactic coordinates remain in
+light-years. The background and grid must not pick, obscure, clip, show a seam, or
+develop parallax. At the documented reset pose, verify manually that the bright
+Galactic-centre feature is in the `+Xg` direction. Verify the visible text-only source
+credit can receive keyboard focus and opens the NASA source page. The backdrop does
+not animate, so reduced-motion behaviour is unchanged.
 
 ## BOB-005 manual acceptance
 
@@ -213,6 +214,14 @@ modal focus containment and return, reduced motion, and attribution reachability
 Real Safari remains the explicit pre-publication gap because no Apple test workstation
 is available.
 
+## BOB-025 fixed light-year presentation acceptance
+
+On 2026-07-28, the Captain confirmed that the browser test passed and accepted the
+fixed light-year presentation change. The unit selector is removed, and displayed
+interstellar distances, Galactic coordinate components, hover separations, and map
+scale remain in light-years. This does not alter the project-wide Safari
+pre-publication gap.
+
 ## Default and reset camera
 
 The repeatable default camera pose preserves the documented Three.js viewing
@@ -227,6 +236,6 @@ canvas aspect ratio:
 
 Reset cancels any in-progress automatic focus motion and restores both the fitted
 camera position and controls target to this pose. It does not change the selected
-system, or active distance unit. During manual acceptance, move and rotate the
-camera, press Reset view, and confirm that Sol is targeted from this same repeatable
-orientation with every known system visible.
+system. During manual acceptance, move and rotate the camera, press Reset view, and
+confirm that Sol is targeted from this same repeatable orientation with every known
+system visible.

@@ -118,8 +118,7 @@ h2 {
   font-weight: 590;
   margin-bottom: 0.45rem;
 }
-.topbar-actions,
-.unit-switch {
+.topbar-actions {
   display: flex;
   align-items: center;
   gap: 0.55rem;
@@ -131,13 +130,6 @@ h2 {
   font-size: 0.75rem;
   line-height: 1.35;
 }
-.unit-switch {
-  padding: 0.2rem;
-  background: #101b30;
-  border: 1px solid #263c5e;
-  border-radius: 0.4rem;
-}
-.unit-switch button,
 .button {
   border: 1px solid #365173;
   color: #c9d8ef;
@@ -145,15 +137,6 @@ h2 {
   border-radius: 0.3rem;
   padding: 0.45rem 0.68rem;
   cursor: pointer;
-}
-.unit-switch button {
-  border: 0;
-  padding: 0.3rem 0.48rem;
-}
-.unit-switch button.active {
-  color: #06101a;
-  background: #7de9ff;
-  border-color: #7de9ff;
 }
 .button.quiet {
   background: transparent;

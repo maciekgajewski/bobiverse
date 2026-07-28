@@ -1,7 +1,7 @@
 # Phase 2 desktop narrative workspace
 
 Status: Approved design  
-Last updated: 2026-07-26
+Last updated: 2026-07-27
 
 ## 1. Purpose
 
@@ -79,7 +79,7 @@ At desktop width (`>= 1200px`), the application uses one viewport-height workspa
 
 ```text
 +-----------------------------------------------------------------------+
-| Command bar: identity | view status | units | reset                   |
+| Command bar: identity | view status | reset                           |
 +----------------+----------------------------------+-------------------+
 | Object browser |                                  | Object inspector  |
 |                |          True-scale map          |                   |
@@ -97,9 +97,10 @@ space and keeps a definite height so the React Three Fiber canvas cannot collaps
 The bottom timeline dock spans the browser, map, and inspector columns. The existing
 source-attribution footer remains visible.
 
-The command bar retains only implemented global controls, including distance units
-and reset. Search belongs at the top of the object browser. The map contains a compact
-read-only context badge such as:
+The command bar retains only implemented global controls, including reset. Displayed
+interstellar distances, Galactic coordinate components, and map scale use light-years
+without a unit selector. Search belongs at the top of the object browser. The map
+contains a compact read-only context badge such as:
 
 ```text
 Universe in 2133 · Knowledge through Chapter 12
