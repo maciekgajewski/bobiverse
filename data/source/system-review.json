@@ -1,11 +1,198 @@
 {
   "schema_version": "1.0.0",
-  "accepted_candidate_sha256": "4bff4c23579b1618f7b402a4c2f43b588b862926aef8cee16dd4ab01a9b2db93",
-  "reviewer": "Codex best-effort review under Captain authorization",
-  "reviewed_at": "2026-07-27",
+  "accepted_candidate_sha256": "34230a226ee7aefdd098f241e1d32deeb5155c9f826b11c05d448a30e38fc5b8",
+  "reviewer": "Codex BOB-026 source-mapping review under Captain authorization",
+  "reviewed_at": "2026-07-28",
   "anchor_bootstraps": [],
   "identity_transitions": [],
   "cns5_astrometry_overrides": [],
+  "c20pc_mappings": [
+    {
+      "candidate_component_id": "stellar-component-001037",
+      "cns5_id": "965",
+      "source_key": "c20pc-2024:30f0a3a6028bacd82232ad5d9edac6714566c32e33c080e836c475740b39432b",
+      "source_recno": 672,
+      "match_method": "reviewed_mapping",
+      "preferred_name": "WISE 0350-5658",
+      "preferred_name_source": {
+        "field": "Name",
+        "value": "WISE J035000.32-565830.2",
+        "transformation": "coordinate-short"
+      },
+      "reason": "Reviewed CNS5 965 to the published WISE J035000.32-565830.2 Y1 census row using the BOB-026 astrometric audit; position nominated the row but this explicit decision establishes identity."
+    },
+    {
+      "candidate_component_id": "stellar-component-000009",
+      "cns5_id": "1054",
+      "source_key": "c20pc-2024:7a5ade0a7c4142214da60d6d6fa427bc027e0c659327cc8a7df628f0303606f8",
+      "source_recno": 748,
+      "match_method": "reviewed_mapping",
+      "preferred_name": "2MASS 0415-0935",
+      "preferred_name_source": {
+        "field": "Name",
+        "value": "2MASSI J0415195-093506",
+        "transformation": "coordinate-short"
+      },
+      "reason": "Reviewed CNS5 1054 to the published 2MASSI J0415195-093506 T8 census row using the BOB-026 astrometric audit; position nominated the row but this explicit decision establishes identity."
+    },
+    {
+      "candidate_component_id": "stellar-component-000089",
+      "cns5_id": "1828",
+      "source_key": "c20pc-2024:8202c4676b85502a64ce8092ade16632d308847b30e0f6b30d1d7d8a5bfeecdf",
+      "source_recno": 1323,
+      "match_method": "reviewed_mapping",
+      "preferred_name": "UGPS 0722-0540",
+      "preferred_name_source": {
+        "field": "Name",
+        "value": "UGPS J072227.51-054031.2",
+        "transformation": "coordinate-short"
+      },
+      "reason": "Reviewed CNS5 1828 to the published UGPS J072227.51-054031.2 T9 census row using the BOB-026 astrometric audit; position nominated the row but this explicit decision establishes identity."
+    },
+    {
+      "candidate_component_id": "stellar-component-000138",
+      "cns5_id": "2194",
+      "source_key": "c20pc-2024:72c9f88026e926f6cfa9d08dd156badeb7d078a05afdf1c49111216867beab79",
+      "source_recno": 1632,
+      "match_method": "reviewed_mapping",
+      "preferred_name": "WISE 0855-0714",
+      "preferred_name_source": {
+        "field": "Name",
+        "value": "WISE J085510.83-071442.5",
+        "transformation": "coordinate-short"
+      },
+      "object_class_override": "brown_dwarf",
+      "reason": "Reviewed CNS5 2194 to WISE J085510.83-071442.5. The census has no published spectral type, so its 250 K effective temperature and Teff-based adopted mass evidence explicitly support the brown-dwarf classification."
+    },
+    {
+      "candidate_component_id": "stellar-component-000158",
+      "cns5_id": "2383",
+      "source_key": "c20pc-2024:fec5fc1ada6c766a8a60930789eaefa5866e64d362561c2f6a9394d362c481af",
+      "source_recno": 1790,
+      "match_method": "reviewed_mapping",
+      "preferred_name": "2MASS 0937+2931",
+      "preferred_name_source": {
+        "field": "Name",
+        "value": "2MASSI J0937347+293142",
+        "transformation": "coordinate-short"
+      },
+      "reason": "Reviewed CNS5 2383 to the published 2MASSI J0937347+293142 T6 peculiar census row using the BOB-026 astrometric audit; position nominated the row but this explicit decision establishes identity."
+    },
+    {
+      "candidate_component_id": "stellar-component-000159",
+      "cns5_id": "2389",
+      "source_key": "c20pc-2024:2662c7b8c71830ee8a8c4fb6d8b39be86760cdbd77b652f0d04ff22845dfd23f",
+      "source_recno": 1794,
+      "match_method": "reviewed_mapping",
+      "preferred_name": "2MASS 0939-2448",
+      "preferred_name_source": {
+        "field": "2MASS",
+        "value": "2MASS J09393548-2448279",
+        "transformation": "coordinate-short"
+      },
+      "reason": "Reviewed CNS5 2389 to the published unresolved 2MASS J09393548-2448279 T8 census system row without changing the existing application topology."
+    },
+    {
+      "candidate_component_id": "stellar-component-000201",
+      "cns5_id": "2747",
+      "source_key": "c20pc-2024:0e624bb249f56013371c6c13903bbc4c0408af032ab6dd53d47db433a8a2706e",
+      "source_recno": 2067,
+      "match_method": "reviewed_mapping",
+      "preferred_name": "2MASS 1114-2618",
+      "preferred_name_source": {
+        "field": "Name",
+        "value": "2MASS J11145133-2618235",
+        "transformation": "coordinate-short"
+      },
+      "reason": "Reviewed CNS5 2747 to the published 2MASS J11145133-2618235 T7.5 census row using the BOB-026 astrometric audit; position nominated the row but this explicit decision establishes identity."
+    },
+    {
+      "candidate_component_id": "stellar-component-000319",
+      "cns5_id": "3866",
+      "source_key": "c20pc-2024:8d1e6f78beba3623567856714dae6e828c968d9b1d2cd2093e0c2f30a1dd946f",
+      "source_recno": 2858,
+      "match_method": "reviewed_mapping",
+      "preferred_name": "WISE 1541-2250",
+      "preferred_name_source": {
+        "field": "Name",
+        "value": "WISEPA J154151.66-225025.2",
+        "transformation": "coordinate-short"
+      },
+      "reason": "Reviewed CNS5 3866 to the published WISEPA J154151.66-225025.2 Y1 census row using the BOB-026 astrometric audit; position nominated the row but this explicit decision establishes identity."
+    },
+    {
+      "candidate_component_id": "stellar-component-000350",
+      "cns5_id": "4091",
+      "source_key": "c20pc-2024:8b3a53a99c2812f02d120f4aa63c82a25a521ec65b80da46c435553d1fa4d822",
+      "source_recno": 3027,
+      "match_method": "reviewed_mapping",
+      "preferred_name": "WISE 1639-6847",
+      "preferred_name_source": {
+        "field": "Name",
+        "value": "WISE J163940.86-684744.6",
+        "transformation": "coordinate-short"
+      },
+      "reason": "Reviewed CNS5 4091 to the published WISE J163940.86-684744.6 Y0 peculiar census row using the BOB-026 astrometric audit; position nominated the row but this explicit decision establishes identity."
+    },
+    {
+      "candidate_component_id": "stellar-component-000376",
+      "cns5_id": "4370",
+      "source_key": "c20pc-2024:588381cf26099e97c0d1913887ae904019c96532c76f317b16c8c58b2a538e79",
+      "source_recno": 3257,
+      "match_method": "reviewed_mapping",
+      "preferred_name": "WISE 1741+2553",
+      "preferred_name_source": {
+        "field": "Name",
+        "value": "WISEPA J174124.26+255319.5",
+        "transformation": "coordinate-short"
+      },
+      "reason": "Reviewed CNS5 4370 to the published WISEPA J174124.26+255319.5 T9 census row using the BOB-026 astrometric audit; position nominated the row but this explicit decision establishes identity."
+    },
+    {
+      "candidate_component_id": "stellar-component-000066",
+      "cns5_id": "1610",
+      "source_key": "c20pc-2024:61db33ba042b7cd9c8a78cd1ecd300bf406d71bb3d2c3678254083e3741c406c",
+      "source_recno": 1135,
+      "match_method": "reviewed_mapping",
+      "preferred_name": "Ross 614",
+      "preferred_name_source": {
+        "field": "Name",
+        "value": "Ross 614 AB",
+        "transformation": "reviewed-system-shortening"
+      },
+      "reason": "Reviewed CNS5 1610 and its HIP 30920/GJ 234 evidence against the Ross 614 AB hierarchy and child designations without splitting the existing application component."
+    },
+    {
+      "candidate_component_id": "stellar-component-000362",
+      "cns5_id": "4217",
+      "source_key": "c20pc-2024:f7dd4218a2986c830feebacbe9ab5df6ac88cf1ea5b6ead3b0f42dcf2e6d6204",
+      "source_recno": 3138,
+      "match_method": "reviewed_mapping",
+      "preferred_name": "HD 155876",
+      "preferred_name_source": {
+        "field": "HD",
+        "value": "HD 155876",
+        "transformation": "published"
+      },
+      "reason": "The normalized GJ 661 and HIP 84140 identifiers nominate the same published HD 155876 AB census row, but the CNS5/census component cardinalities differ; this reviewed mapping accepts the identity while leaving hierarchy unchanged."
+    },
+    {
+      "candidate_component_id": "stellar-component-000485",
+      "cns5_id": "5550",
+      "source_key": "c20pc-2024:d94a95d331fc029007351543e27201ecc39744bac63fc2c558c681752b2a7ba0",
+      "source_recno": 4136,
+      "match_method": "reviewed_mapping",
+      "preferred_name": "Kruger 60",
+      "preferred_name_source": {
+        "field": "Mult children",
+        "value": "** KR 60A / ** KR 60B",
+        "transformation": "reviewed-expansion"
+      },
+      "retained_aliases": ["HD 239960", "** KR 60A", "** KR 60B"],
+      "supporting_source_recnos": [4137, 4138],
+      "reason": "Reviewed CNS5 5550/GJ 860 against the HD 239960 AB parent and its GJ 860 A/B and KR 60A/B child rows without splitting the existing application component."
+    }
+  ],
   "wds_decisions": [
     {
       "system_id": "stellar-system-005413",

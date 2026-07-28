@@ -30,6 +30,7 @@ import {
   STAR_SPRITE_FRAGMENT_SHADER,
   colorFamilyColor,
   componentOffset,
+  componentPickRadius,
   narrativeMarkerGeometry,
   narrativeRingSegments,
   selectionFrameSegments,
@@ -221,6 +222,21 @@ function StarMarker({
         return (
           <Billboard key={component.id} position={offset} follow>
             <mesh userData={{ systemId: system.id }}>
+              <planeGeometry
+                args={[
+                  componentPickRadius(component) * 2,
+                  componentPickRadius(component) * 2,
+                ]}
+              />
+              <meshBasicMaterial
+                transparent
+                opacity={0}
+                depthWrite={false}
+                colorWrite={false}
+                side={DoubleSide}
+              />
+            </mesh>
+            <mesh userData={{ systemId: system.id }}>
               <planeGeometry args={[radius * 2, radius * 2]} />
               <shaderMaterial
                 transparent
@@ -233,6 +249,7 @@ function StarMarker({
                       colorFamilyColor(component.visual.color_family),
                     ),
                   },
+                  uIntensity: { value: component.visual.intensity },
                 }}
                 vertexShader="varying vec2 vUv; varying float vCameraDistance; void main() { vUv = uv; vCameraDistance = length((modelViewMatrix * vec4(0.0, 0.0, 0.0, 1.0)).xyz); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }"
                 fragmentShader={STAR_SPRITE_FRAGMENT_SHADER}

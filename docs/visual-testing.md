@@ -214,6 +214,33 @@ modal focus containment and return, reduced motion, and attribution reachability
 Real Safari remains the explicit pre-publication gap because no Apple test workstation
 is available.
 
+## BOB-026 ultracool-dwarf presentation
+
+At the reset Sol 20-light-year view, search for `WISE 0855-0714`, `GJ 11286`, and
+`WISEA J085510.74-071442.5`; all three must select the same system. Confirm its
+catalogue inspector shows brown-dwarf classification, approximately `250 ± 50 K`,
+the 20-pc census source, and full aliases without describing marker size as physical
+radius or luminosity.
+
+Compare all ten WISE/2MASS/UGPS ultracool systems with nearby ordinary stars. Their
+purple/brown false-infrared glyphs must be visibly smaller and dimmer, must not read
+as bright pale stars, and must not dominate map density. Rotate and zoom, then hover
+and select the smallest glyphs directly; the independent normal-sized hit target must
+keep selection practical, while the selected corner frame and label remain clear.
+Verify ordinary stellar markers retain their prior colors, apparent size,
+brightness, component clusters, narrative marks, and measurement behavior.
+
+Record the real Chrome, Firefox, and Edge result here. Real Safari remains an
+explicit pre-publication gap when no Apple workstation is available.
+
+On 2026-07-28, the Captain accepted the required real-browser BOB-026 visual and
+interaction review at the reset Sol 20-light-year view. The accepted review covered
+the three-name WISE 0855-0714 identity search, census classification and temperature
+facts, the ten brown dwarfs' smaller and dimmer false-infrared hierarchy, direct
+selection of the smallest glyphs, selected-state clarity, and preservation of
+ordinary stellar-marker presentation. The existing real-Safari pre-publication gap
+remains unchanged.
+
 ## BOB-025 fixed light-year presentation acceptance
 
 On 2026-07-28, the Captain confirmed that the browser test passed and accepted the

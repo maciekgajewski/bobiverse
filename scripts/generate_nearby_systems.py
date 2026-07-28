@@ -14,6 +14,8 @@ from astronomy_pipeline import (
 from common import CONFIG_PATH, GENERATED_PATH, mapped_anchor_ids, read_json, sha256, write_json
 
 MARKER_RADIUS = 0.09
+BROWN_DWARF_MARKER_RADIUS = 0.05
+MINIMUM_PICK_RADIUS = 0.09
 
 
 def colour_from_bp_rp(bp_rp: float | None) -> str:
@@ -29,7 +31,19 @@ def presentation(
     enrichment: dict[str, str] | None,
     bp_rp: float | None,
     wds_spectral_type: str | None = None,
+    c20pc: dict[str, Any] | None = None,
 ) -> tuple[str, str]:
+    if c20pc and c20pc.get("object_class") == "brown_dwarf":
+        family = c20pc.get("visual_family")
+        if family not in {"infrared-cool", "infrared-warm"}:
+            raise ValueError(
+                "Accepted 20-pc brown dwarf lacks a supported visual family"
+            )
+        return (
+            family,
+            "Kirkpatrick et al. 2024 brown-dwarf type/temperature; "
+            "approximate false-infrared presentation",
+        )
     if enrichment:
         temperature = optional_float(enrichment.get("teff_gspphot"))
         if temperature is not None:
@@ -76,8 +90,16 @@ def component_runtime(component: dict[str, Any], gcns: dict[str, dict[str, str]]
     if bp_rp is None and gcns_row:
         bp, rp = optional_float(gcns_row["phot_bp_mean_mag"]), optional_float(gcns_row["phot_rp_mean_mag"])
         bp_rp = bp - rp if bp is not None and rp is not None else None
+    c20pc = (
+        component["c20pc_match"]["enrichment"]
+        if component.get("c20pc_match")
+        else None
+    )
     color_family, visual_derivation = presentation(
-        enrichment, bp_rp, wds_spectral_type
+        enrichment, bp_rp, wds_spectral_type, c20pc
+    )
+    is_brown_dwarf = bool(
+        c20pc and c20pc.get("object_class") == "brown_dwarf"
     )
     gaia_enrichment = None
     if enrichment:
@@ -117,11 +139,17 @@ def component_runtime(component: dict[str, Any], gcns: dict[str, dict[str, str]]
         "hip_id": cns_row.get("hip_id") or None if cns_row else None,
         "cns5_component_id": cns_row.get("component_id") or None if cns_row else None,
         "cns6_system_id": cns_row.get("cns6_system_id") or None if cns_row else None,
+        "c20pc_source_key": c20pc.get("source_key") if c20pc else None,
+        "wise_id": c20pc.get("wise_id") if c20pc else None,
+        "twomass_id": c20pc.get("twomass_id") if c20pc else None,
+        "published_name": c20pc.get("published_name") if c20pc else None,
     }
     return {
         "id": component["id"], "gaia_source_id": gaia_id, "cns5_id": component["cns5_id"],
         "source_identities": component["source_identities"],
         "gaia_enrichment": gaia_enrichment,
+        "c20pc_enrichment": c20pc,
+        "object_class": c20pc.get("object_class") if c20pc else None,
         "designation": override.get("name", component["preferred_name_candidate"]), "identifiers": identifiers,
         "icrs": {
             "ra_deg": optional_float(astrometry.get("ra")), "dec_deg": optional_float(astrometry.get("dec")),
@@ -138,7 +166,11 @@ def component_runtime(component: dict[str, Any], gcns: dict[str, dict[str, str]]
         },
         "visual": {
             "color_family": color_family,
-            "marker_radius": MARKER_RADIUS,
+            "marker_radius": (
+                BROWN_DWARF_MARKER_RADIUS if is_brown_dwarf else MARKER_RADIUS
+            ),
+            "intensity": 0.25 if is_brown_dwarf else 1.0,
+            "pick_radius": MINIMUM_PICK_RADIUS,
             "derivation": visual_derivation,
             "source_facts": {
                 "effective_temperature_k": optional_float(
@@ -150,11 +182,26 @@ def component_runtime(component: dict[str, Any], gcns: dict[str, dict[str, str]]
                 ),
                 "bp_rp": bp_rp,
                 "wds_spectral_type": wds_spectral_type,
+                "c20pc_effective_temperature_k": (
+                    c20pc.get("effective_temperature_k") if c20pc else None
+                ),
+                "c20pc_spectral_type": (
+                    c20pc.get("spectral_type") if c20pc else None
+                ),
+                "object_class": c20pc.get("object_class") if c20pc else None,
             },
         },
         "provenance": {
-            "position": component["position_derivation"], "catalogues": [name for name, record in (("GCNS", gcns_row), ("CNS5", cns_row), ("Gaia DR3", enrichment)) if record],
-            "enrichment": "Gaia DR3 left join" if enrichment else None,
+            "position": component["position_derivation"], "catalogues": [name for name, record in (("GCNS", gcns_row), ("CNS5", cns_row), ("Gaia DR3", enrichment), ("Kirkpatrick et al. 2024 20-pc census", c20pc)) if record],
+            "enrichment": (
+                "Gaia DR3 left join; reviewed Kirkpatrick et al. 2024 20-pc census"
+                if enrichment and c20pc
+                else "Gaia DR3 left join"
+                if enrichment
+                else "Reviewed Kirkpatrick et al. 2024 20-pc census"
+                if c20pc
+                else None
+            ),
         },
     }
 
@@ -183,7 +230,15 @@ def distance_uncertainty_pc(
 def main() -> None:
     parser = argparse.ArgumentParser(description="Generate the static reconciled astronomy runtime catalogue.")
     parser.parse_args()
-    candidates, review, manifests, gcns_rows, cns5_rows, gaia_rows = accepted_candidates()
+    (
+        candidates,
+        review,
+        manifests,
+        gcns_rows,
+        cns5_rows,
+        gaia_rows,
+        _c20pc_rows,
+    ) = accepted_candidates()
     config = read_json(CONFIG_PATH)
     radius_ly = float(config["context_radius_ly"])
     radius_pc = radius_ly / LY_PER_PC
@@ -302,16 +357,42 @@ def main() -> None:
                 ),
             },
         })
+    preferred_names = ["sol", *[system["name"].casefold() for system in systems]]
+    if len(preferred_names) != len(set(preferred_names)):
+        raise ValueError(
+            "Generated system preferred names collide after review overrides"
+        )
     systems.sort(key=lambda system: (system["distance_from_sol_pc"], system["id"]))
     sol = {
         "id": "sol", "name": "Sol", "alternates": ["Sun"], "position_pc": {"xg": 0.0, "yg": 0.0, "zg": 0.0}, "render_position": {"x": 0.0, "y": 0.0, "z": 0.0}, "distance_from_sol_pc": 0.0, "distance_uncertainty_pc": 0.0,
-        "components": [{"id": "stellar-component-sol", "gaia_source_id": None, "cns5_id": None, "source_identities": [], "gaia_enrichment": None, "designation": "Sol", "identifiers": {"gaia_dr3_source_id": None, "gcns_source_id": None, "cns5_id": None, "gj_id": None, "hip_id": None, "cns5_component_id": None, "cns6_system_id": None}, "icrs": {"ra_deg": None, "dec_deg": None, "epoch_year": None, "parallax_mas": None, "parallax_error_mas": None}, "astrometry_quality": {"parallax_over_error": None, "visibility_periods_used": None, "ruwe": None}, "photometry": {"g_magnitude": None, "bp_rp": None}, "visual": {"color_family": "yellow", "marker_radius": MARKER_RADIUS, "derivation": "generated Sol origin", "source_facts": {"effective_temperature_k": None, "spectral_type": None, "bp_rp": None, "wds_spectral_type": None}}, "provenance": {"position": "generated canonical origin", "catalogues": [], "enrichment": None}}],
+        "components": [{"id": "stellar-component-sol", "gaia_source_id": None, "cns5_id": None, "source_identities": [], "gaia_enrichment": None, "c20pc_enrichment": None, "object_class": "star", "designation": "Sol", "identifiers": {"gaia_dr3_source_id": None, "gcns_source_id": None, "cns5_id": None, "gj_id": None, "hip_id": None, "cns5_component_id": None, "cns6_system_id": None, "c20pc_source_key": None, "wise_id": None, "twomass_id": None, "published_name": None}, "icrs": {"ra_deg": None, "dec_deg": None, "epoch_year": None, "parallax_mas": None, "parallax_error_mas": None}, "astrometry_quality": {"parallax_over_error": None, "visibility_periods_used": None, "ruwe": None}, "photometry": {"g_magnitude": None, "bp_rp": None}, "visual": {"color_family": "yellow", "marker_radius": MARKER_RADIUS, "intensity": 1.0, "pick_radius": MINIMUM_PICK_RADIUS, "derivation": "generated Sol origin", "source_facts": {"effective_temperature_k": None, "spectral_type": None, "bp_rp": None, "wds_spectral_type": None, "c20pc_effective_temperature_k": None, "c20pc_spectral_type": None, "object_class": "star"}}, "provenance": {"position": "generated canonical origin", "catalogues": [], "enrichment": None}}],
         "provenance": {"catalogues": ["Generated canonical origin"], "source_object_ids": [], "adopted_component_id": "stellar-component-sol", "review_version": review["schema_version"], "wds_designations": []},
     }
     coverage = [{"anchor_id": anchor_id, "anchor_position_pc": anchor_position, "radius_ly": radius_ly, "system_count": sum(1 for system in systems if distance(system["position_pc"], anchor_position) <= radius_pc + 1e-12), "source_record_count": sum(len(system["components"]) for system in systems if distance(system["position_pc"], anchor_position) <= radius_pc + 1e-12), "gcns_boundary_pc": 100.0} for anchor_id, anchor_position in sorted(anchor_positions.items())]
-    runtime_sources = {name: {"normalised_sha256": manifest["normalised_sha256"], "row_count": manifest["row_count"], "acknowledgement": manifest["acknowledgement"]} for name, manifest in manifests.items() if name != "wds"}
+    runtime_sources = {name: {"normalised_sha256": manifest["normalised_sha256"], "row_count": manifest["row_count"], "acknowledgement": manifest["acknowledgement"]} for name, manifest in manifests.items() if name not in {"wds", "c20pc"}}
     runtime_sources["wds"] = {"snapshot_sha256": manifests["wds"]["uncompressed_sha256"], "candidate_sha256": manifests["wds"]["candidate_sha256"], "row_count": manifests["wds"]["row_count"], "candidate_row_count": manifests["wds"]["candidate_row_count"], "acknowledgement": manifests["wds"]["acknowledgement"]}
-    output = {"schema_version": "3.0.0", "metadata": {"generated_at": max(manifest["retrieved_at"] for manifest in manifests.values()), "coordinate_frame": "Sun-centered Galactic Cartesian", "units": "pc", "render_mapping": "scene.x=Xg; scene.y=Zg; scene.z=-Yg", "configuration": {"context_radius_ly": radius_ly}, "coverage": coverage, "sources": runtime_sources}, "systems": [sol, *systems]}
+    runtime_sources["c20pc"] = {
+        "table4_sha256": manifests["c20pc"]["queries"]["table4"][
+            "normalised_sha256"
+        ],
+        "notes_sha256": manifests["c20pc"]["queries"]["notes4"][
+            "normalised_sha256"
+        ],
+        "references_sha256": manifests["c20pc"]["queries"]["refs"][
+            "normalised_sha256"
+        ],
+        "table4_row_count": manifests["c20pc"]["queries"]["table4"][
+            "row_count"
+        ],
+        "notes_row_count": manifests["c20pc"]["queries"]["notes4"][
+            "row_count"
+        ],
+        "reference_row_count": manifests["c20pc"]["queries"]["refs"][
+            "row_count"
+        ],
+        "acknowledgement": manifests["c20pc"]["acknowledgement"],
+    }
+    output = {"schema_version": "4.0.0", "metadata": {"generated_at": max(manifest["retrieved_at"] for manifest in manifests.values()), "coordinate_frame": "Sun-centered Galactic Cartesian", "units": "pc", "render_mapping": "scene.x=Xg; scene.y=Zg; scene.z=-Yg", "configuration": {"context_radius_ly": radius_ly}, "coverage": coverage, "sources": runtime_sources}, "systems": [sol, *systems]}
     write_json(GENERATED_PATH, output)
     print(f"Wrote {len(output['systems'])} reconciled system markers to {GENERATED_PATH.relative_to(GENERATED_PATH.parent.parent)}")
 

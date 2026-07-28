@@ -11,6 +11,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from astronomy_pipeline import (
     allocate_components,
     allocate_systems,
+    c20pc_distance_warning,
     gcns_anchor_query,
     position_from_cns5,
     proposed_position_component,
@@ -21,6 +22,8 @@ from astronomy_pipeline import (
     wds_membership_candidates,
 )
 from common import (
+    C20PC_PATH,
+    C20PC_SCHEMA_PATH,
     CANDIDATES_PATH,
     CONFIG_PATH,
     GAIA_ENRICHMENT_PATH,
@@ -32,6 +35,15 @@ from common import (
     read_json,
     mapped_anchor_ids,
     value_sha256,
+)
+from c20pc_census import (
+    census_identifier_tokens,
+    coordinate_short_name,
+    derive_object_class,
+    exact_identifier_candidates,
+    parse_identifier,
+    reconstruct_note_continuations,
+    resolve_coordinate_short_names,
 )
 from generate_nearby_systems import presentation
 from validate_data import (
@@ -637,6 +649,7 @@ class MultiCatalogueContractTest(unittest.TestCase):
             "wds": read_json(
                 ROOT / "data" / "source" / "wds-membership.json"
             )["source"],
+            "c20pc": read_json(C20PC_PATH)["source"],
         }
         review = read_json(
             ROOT / "data" / "source" / "system-review.json"
@@ -825,6 +838,254 @@ class MultiCatalogueContractTest(unittest.TestCase):
         review["accepted_candidate_sha256"] = value_sha256(candidates)
         with self.assertRaisesRegex(ValueError, "adopted member"):
             validate_candidates(candidates, review, self.registry)
+
+
+class TwentyParsecCensusContractTest(unittest.TestCase):
+    def test_identifier_grammar_normalises_exact_catalogue_tokens(self) -> None:
+        self.assertEqual(
+            parse_identifier("GJ 11286"),
+            ("gj", "", "11286", ""),
+        )
+        self.assertNotEqual(
+            parse_identifier("GJ 42 A"),
+            parse_identifier("GJ 42"),
+        )
+        self.assertEqual(
+            parse_identifier("WD 0747+073.2"),
+            ("wd", "", "0747+073.2", ""),
+        )
+        self.assertEqual(
+            parse_identifier(
+                "PM J17121+4539,PM J17121+4539E,PM J17121+4539W",
+                "pmjid",
+            ),
+            (
+                "pmjid",
+                "",
+                "J17121+4539,J17121+4539E,J17121+4539W",
+                "COMPOSITE/3",
+            ),
+        )
+        self.assertEqual(
+            parse_identifier(
+                "pmj17121+4539, PM j17121+4539e,pm J17121+4539W",
+                "pmjid",
+            ),
+            parse_identifier(
+                "PM J17121+4539,PM J17121+4539E,PM J17121+4539W",
+                "pmjid",
+            ),
+        )
+        self.assertEqual(
+            parse_identifier("WISEA J085510.74-071442.5"),
+            ("wisea", "", "J085510.74-071442.5", ""),
+        )
+
+    def test_coordinate_short_names_escalate_only_on_collision(self) -> None:
+        names = [
+            "WISE J085510.83-071442.5",
+            "WISEA J085510.74-071442.5",
+        ]
+        self.assertEqual(coordinate_short_name(names[0]), "WISE 0855-0714")
+        self.assertEqual(
+            resolve_coordinate_short_names(names),
+            {
+                names[0]: "WISE 085510.83-071442.5",
+                names[1]: "WISE 085510.74-071442.5",
+            },
+        )
+
+    def test_object_class_requires_source_type_or_reviewed_evidence(self) -> None:
+        typed = {"SpTNIR": "T9", "r_SpTNIR": "Kirkpatrick2011"}
+        self.assertEqual(derive_object_class(typed), "brown_dwarf")
+        self.assertEqual(
+            derive_object_class({"SpTOpt": "M4 V", "r_SpTOpt": "SIMBAD"}),
+            "star",
+        )
+        self.assertEqual(
+            derive_object_class(
+                {"SpTOpt": "DA7", "r_SpTOpt": "SIMBAD", "WD": "WD 0000+000"}
+            ),
+            "white_dwarf",
+        )
+        self.assertIsNone(
+            derive_object_class({"SpTNIR": "L5", "r_SpTNIR": "SIMBAD"})
+        )
+        with self.assertRaisesRegex(ValueError, "conflicting object classes"):
+            derive_object_class(
+                {
+                    "SpTOpt": "M4 V",
+                    "r_SpTOpt": "SIMBAD",
+                    "SpTNIR": "T8",
+                    "r_SpTNIR": "SIMBAD",
+                }
+            )
+        with self.assertRaisesRegex(ValueError, "temperature and mass"):
+            derive_object_class({}, "brown_dwarf")
+
+    def test_duplicate_exact_identifier_stays_ambiguous(self) -> None:
+        cns5 = [{"cns5_id": "1", "gj_id": "GJ 00042"}]
+        census = [
+            {
+                "Name": name,
+                "GJ": "GJ 42",
+                "NcTR": 1,
+                "RAJ2000": ra,
+                "DEJ2000": 0,
+                "SystCode": code,
+            }
+            for name, ra, code in (("A", 1, 1), ("B", 2, 2))
+        ]
+        candidates = exact_identifier_candidates(cns5, census)["1"]
+        self.assertEqual(len(candidates), 2)
+        self.assertTrue(all(candidate["ambiguous"] for candidate in candidates))
+
+    def test_identifier_disagreement_stays_ambiguous(self) -> None:
+        cns5 = [
+            {
+                "cns5_id": "1",
+                "gj_id": "GJ 42",
+                "hip_id": "HIP 99",
+            }
+        ]
+        census = [
+            {
+                "Name": name,
+                field: value,
+                "NcTR": 1,
+                "RAJ2000": ra,
+                "DEJ2000": 0,
+                "SystCode": code,
+            }
+            for name, field, value, ra, code in (
+                ("A", "GJ", "GJ 42", 1, 1),
+                ("B", "HIP", "HIP 99", 2, 2),
+            )
+        ]
+        candidates = exact_identifier_candidates(cns5, census)["1"]
+        self.assertEqual(len(candidates), 2)
+        self.assertTrue(all(candidate["ambiguous"] for candidate in candidates))
+
+    def test_positional_coincidence_does_not_create_an_identity_edge(self) -> None:
+        candidates = exact_identifier_candidates(
+            [{"cns5_id": "1", "gj_id": None, "ra": "42", "dec": "-7"}],
+            [
+                {
+                    "Name": "Unidentified",
+                    "NcTR": 1,
+                    "RAJ2000": 42,
+                    "DEJ2000": -7,
+                    "SystCode": 1,
+                }
+            ],
+        )
+        self.assertEqual(candidates["1"], [])
+
+    def test_unique_same_cardinality_identifier_is_an_exact_candidate(self) -> None:
+        candidates = exact_identifier_candidates(
+            [
+                {
+                    "cns5_id": "1",
+                    "gj_id": "GJ 42",
+                    "n_components": "2",
+                }
+            ],
+            [
+                {
+                    "Name": "Fixture AB",
+                    "GJ": "GJ 42",
+                    "NcTR": 2,
+                    "RAJ2000": 1,
+                    "DEJ2000": 2,
+                    "SystCode": 3,
+                }
+            ],
+        )["1"]
+        self.assertEqual(len(candidates), 1)
+        self.assertFalse(candidates[0]["ambiguous"])
+
+    def test_note_continuation_normalization_is_byte_stable(self) -> None:
+        transport = [
+            {
+                "recno": 1,
+                "Name": "Fixture",
+                "NcTR": 2,
+                "RAJ2000": 1,
+                "DEJ2000": 2,
+                "Note": "first",
+            },
+            {
+                "recno": 2,
+                "Name": "Fixture",
+                "NcTR": 2,
+                "RAJ2000": 1,
+                "DEJ2000": 2,
+                "Note": "second",
+            },
+        ]
+        first = reconstruct_note_continuations(transport)
+        second = reconstruct_note_continuations(copy.deepcopy(transport))
+        self.assertEqual(value_sha256(first), value_sha256(second))
+        self.assertEqual(first[0]["continuation_recnos"], [2])
+
+    def test_canonical_distance_disagreement_is_a_review_warning_only(self) -> None:
+        warning = c20pc_distance_warning(
+            {"Plx": 50, "e_Plx": 0.1},
+            {"xg": 10, "yg": 0, "zg": 0},
+            None,
+            {"parallax": "100", "parallax_error": "0.1"},
+        )
+        self.assertIsNotNone(warning)
+        self.assertEqual(warning["canonical_distance_pc"], 10)
+        self.assertEqual(warning["census_distance_pc"], 20)
+        self.assertIsNone(
+            c20pc_distance_warning(
+                {"Plx": 100, "e_Plx": 1},
+                {"xg": 10, "yg": 0, "zg": 0},
+                None,
+                {"parallax": "100", "parallax_error": "1"},
+            )
+        )
+
+    def test_pinned_notes_preserve_the_single_tap_continuation(self) -> None:
+        document = read_json(C20PC_PATH)
+        continuations = [
+            row for row in document["notes4"] if row["continuation_recnos"]
+        ]
+        self.assertEqual(
+            [(row["recno"], row["continuation_recnos"]) for row in continuations],
+            [(1979, [1980])],
+        )
+        wise0855 = document["table4"][1631]
+        self.assertIn(
+            "wisea||J085510.74-071442.5|",
+            census_identifier_tokens(wise0855),
+        )
+
+    def test_table_membership_is_the_only_census_boundary_predicate(self) -> None:
+        rows = {
+            row["recno"]: row for row in read_json(C20PC_PATH)["table4"]
+        }
+        boundary = rows[764]
+        self.assertEqual(boundary["Name"], "2MASS J04210718-6306022")
+        self.assertEqual(1000 / boundary["Plx"], 20)
+
+        uncertain = rows[338]
+        self.assertGreater(uncertain["e_Plx"], uncertain["Plx"])
+        self.assertGreater(1000 / uncertain["Plx"], 20)
+
+        source_names = {row["Name"] for row in rows.values()}
+        self.assertNotIn("ABSENT REVIEW CANDIDATE", source_names)
+
+    def test_census_schema_rejects_malformed_numeric_field(self) -> None:
+        document = read_json(C20PC_PATH)
+        document["table4"][0]["Teff"] = "not-a-number"
+        with self.assertRaisesRegex(ValueError, "schema validation"):
+            validate_schema(
+                document,
+                C20PC_SCHEMA_PATH,
+                "20-pc census fixture",
+            )
 
 
 if __name__ == "__main__":

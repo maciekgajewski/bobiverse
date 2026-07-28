@@ -25,6 +25,8 @@ import astropy.units as u
 from astropy.coordinates import ICRS, SkyCoord
 
 from common import (
+    C20PC_PATH,
+    C20PC_README_PATH,
     CANDIDATES_PATH,
     CNS5_PATH,
     CONFIG_PATH,
@@ -44,6 +46,29 @@ from common import (
     sha256_bytes,
     value_sha256,
     write_json,
+)
+from c20pc_census import (
+    C20PC_ACKNOWLEDGEMENT,
+    C20PC_BIBCODE,
+    C20PC_CATALOGUE,
+    C20PC_CATALOGUE_DOI,
+    C20PC_NOTES_COLUMNS,
+    C20PC_NOTES_QUERY,
+    C20PC_PUBLICATION_DOI,
+    C20PC_README_HISTORY_DATE,
+    C20PC_README_URL,
+    C20PC_REFS_COLUMNS,
+    C20PC_REFS_QUERY,
+    C20PC_TABLE_COLUMNS,
+    C20PC_TABLE_QUERY,
+    C20PC_TAP_URL,
+    EXPECTED_EXTERNAL_REFERENCE_CODES,
+    c20pc_enrichment,
+    census_rows_by_key,
+    exact_identifier_candidates,
+    normalize_census_tables,
+    normalize_text,
+    resolve_coordinate_short_names,
 )
 
 GAVO_URL = "https://dc.g-vo.org/tap/sync"
@@ -254,6 +279,97 @@ def read_extract(key: str) -> tuple[dict[str, Any], list[dict[str, str]]]:
     if document.get("schema_version") != "2.0.0" or not isinstance(document.get("rows"), list):
         raise ValueError(f"{path.name} has an unsupported extract schema")
     return document["source"], document["rows"]
+
+
+def read_c20pc() -> tuple[
+    dict[str, Any],
+    list[dict[str, Any]],
+    list[dict[str, Any]],
+    list[dict[str, Any]],
+]:
+    document = read_json(C20PC_PATH)
+    if document.get("schema_version") != "1.0.0":
+        raise ValueError("20-pc census has an unsupported extract schema")
+    return (
+        document["source"],
+        document["table4"],
+        document["notes4"],
+        document["references"],
+    )
+
+
+def refresh_c20pc_snapshot() -> None:
+    table, notes, references = normalize_census_tables(
+        tap_csv(C20PC_TAP_URL, C20PC_TABLE_QUERY),
+        tap_csv(C20PC_TAP_URL, C20PC_NOTES_QUERY),
+        tap_csv(C20PC_TAP_URL, C20PC_REFS_QUERY),
+    )
+    request = urllib.request.Request(
+        C20PC_README_URL,
+        headers={"User-Agent": "bobiverse-astronomy-import/3.0"},
+    )
+    with urllib.request.urlopen(request, timeout=180) as response:
+        readme = response.read()
+    readme_text = readme.decode("utf-8")
+    if (
+        C20PC_README_HISTORY_DATE not in readme_text
+        or C20PC_BIBCODE not in readme_text
+    ):
+        raise ValueError("20-pc ReadMe does not identify the pinned catalogue version")
+    C20PC_README_PATH.write_bytes(readme)
+    queries = {
+        "table4": {
+            "table": f"{C20PC_CATALOGUE}/table4",
+            "media_type": "text/csv",
+            "adql": C20PC_TABLE_QUERY,
+            "columns": C20PC_TABLE_COLUMNS,
+            "row_count": len(table),
+            "normalised_sha256": value_sha256(table),
+        },
+        "notes4": {
+            "table": f"{C20PC_CATALOGUE}/notes4",
+            "media_type": "text/csv",
+            "adql": C20PC_NOTES_QUERY,
+            "columns": C20PC_NOTES_COLUMNS,
+            "row_count": len(notes),
+            "transport_row_count": sum(
+                1 + len(row["continuation_recnos"]) for row in notes
+            ),
+            "normalised_sha256": value_sha256(notes),
+        },
+        "refs": {
+            "table": f"{C20PC_CATALOGUE}/refs",
+            "media_type": "text/csv",
+            "adql": C20PC_REFS_QUERY,
+            "columns": C20PC_REFS_COLUMNS,
+            "row_count": len(references),
+            "normalised_sha256": value_sha256(references),
+        },
+    }
+    write_json(
+        C20PC_PATH,
+        {
+            "schema_version": "1.0.0",
+            "source": {
+                "catalogue": C20PC_CATALOGUE,
+                "catalogue_doi": C20PC_CATALOGUE_DOI,
+                "publication_doi": C20PC_PUBLICATION_DOI,
+                "publication_bibcode": C20PC_BIBCODE,
+                "endpoint": C20PC_TAP_URL,
+                "readme_url": C20PC_README_URL,
+                "readme_history_date": C20PC_README_HISTORY_DATE,
+                "readme_media_type": "text/plain; charset=utf-8",
+                "readme_sha256": sha256_bytes(readme),
+                "retrieved_at": now(),
+                "acknowledgement": C20PC_ACKNOWLEDGEMENT,
+                "external_reference_codes": EXPECTED_EXTERNAL_REFERENCE_CODES,
+                "queries": queries,
+            },
+            "table4": table,
+            "notes4": notes,
+            "references": references,
+        },
+    )
 
 
 def gcns_query(radius_pc: float) -> str:
@@ -864,10 +980,72 @@ def proposed_position_component(
     )
 
 
+def c20pc_distance_warning(
+    row: dict[str, Any],
+    position: dict[str, float] | None,
+    gcns_row: dict[str, str] | None,
+    cns5_row: dict[str, str] | None,
+) -> dict[str, float | str] | None:
+    parallax = optional_float(row.get("Plx"))
+    if position is None or parallax is None or parallax <= 0:
+        return None
+    canonical_distance = math.sqrt(
+        sum(position[axis] ** 2 for axis in ("xg", "yg", "zg"))
+    )
+    census_distance = 1000 / parallax
+    census_parallax_error = optional_float(row.get("e_Plx"))
+    census_sigma = (
+        1000 * census_parallax_error / (parallax * parallax)
+        if census_parallax_error is not None
+        else 0.0
+    )
+    canonical_sigma = 0.0
+    if gcns_row:
+        median = optional_float(gcns_row.get("dist_50"))
+        lower = optional_float(gcns_row.get("dist_16"))
+        upper = optional_float(gcns_row.get("dist_84"))
+        if median is not None and lower is not None and upper is not None:
+            canonical_sigma = 1000 * max(
+                abs(median - lower), abs(upper - median)
+            )
+    elif cns5_row:
+        canonical_parallax = optional_float(cns5_row.get("parallax"))
+        canonical_parallax_error = optional_float(
+            cns5_row.get("parallax_error")
+        )
+        if (
+            canonical_parallax is not None
+            and canonical_parallax > 0
+            and canonical_parallax_error is not None
+        ):
+            canonical_sigma = (
+                1000
+                * canonical_parallax_error
+                / (canonical_parallax * canonical_parallax)
+            )
+    threshold = max(
+        0.1,
+        3 * math.hypot(canonical_sigma, census_sigma),
+    )
+    delta = abs(canonical_distance - census_distance)
+    if delta <= threshold:
+        return None
+    return {
+        "canonical_distance_pc": round(canonical_distance, 6),
+        "census_distance_pc": round(census_distance, 6),
+        "difference_pc": round(delta, 6),
+        "warning_threshold_pc": round(threshold, 6),
+        "criterion": "difference exceeds max(0.1 pc, 3-sigma combined uncertainty)",
+    }
+
+
 def build_candidates(
     gcns: list[dict[str, str]],
     cns5: list[dict[str, str]],
     registry: dict[str, Any],
+    c20pc_rows: list[dict[str, Any]] | None = None,
+    c20pc_mappings: list[dict[str, Any]] | None = None,
+    protected_names: list[str] | None = None,
     identity_transitions: list[dict[str, Any]] | None = None,
     cns5_astrometry_overrides: list[dict[str, Any]] | None = None,
     wds_rows: list[dict[str, Any]] | None = None,
@@ -895,6 +1073,142 @@ def build_candidates(
     for identity in identities:
         source_groups[identity].add(identity)
     migrate_component_registry(registry, prior_candidates)
+    census_rows = c20pc_rows or []
+    census_by_key = census_rows_by_key(census_rows)
+    exact_candidates = exact_identifier_candidates(cns5, census_rows)
+    mappings = c20pc_mappings or []
+    mapping_by_cns5: dict[str, dict[str, Any]] = {}
+    coordinate_name_values: list[str] = []
+    registry_by_id = {entry["id"]: entry for entry in registry["components"]}
+    for mapping in mappings:
+        cns5_id = str(mapping.get("cns5_id", ""))
+        source_key = str(mapping.get("source_key", ""))
+        component_id = str(mapping.get("candidate_component_id", ""))
+        method = mapping.get("match_method")
+        if (
+            not cns5_id
+            or cns5_id in mapping_by_cns5
+            or cns5_id not in cns5_by_id
+            or source_key not in census_by_key
+            or not component_id
+            or method not in {"exact_identifier", "reviewed_mapping"}
+            or not mapping.get("reason")
+            or not mapping.get("preferred_name")
+            or not isinstance(mapping.get("preferred_name_source"), dict)
+        ):
+            raise ValueError("20-pc review contains an invalid or duplicate mapping")
+        census_row = census_by_key[source_key]
+        if census_row["recno"] != mapping.get("source_recno"):
+            raise ValueError("20-pc review mapping recno and source key disagree")
+        preferred_source = mapping["preferred_name_source"]
+        field = preferred_source.get("field")
+        source_value = normalize_text(preferred_source.get("value"))
+        transformation = preferred_source.get("transformation")
+        if field == "Mult children":
+            supporting_rows = [
+                census_rows[int(recno) - 1]
+                for recno in mapping.get("supporting_source_recnos", [])
+                if isinstance(recno, int)
+                and 0 < recno <= len(census_rows)
+            ]
+            expected_value = " / ".join(
+                str(row["Mult"]) for row in supporting_rows if row.get("Mult")
+            )
+        else:
+            expected_value = (
+                normalize_text(census_row.get(field))
+                if isinstance(field, str)
+                else None
+            )
+        if (
+            source_value is None
+            or source_value != expected_value
+            or transformation
+            not in {
+                "coordinate-short",
+                "published",
+                "reviewed-system-shortening",
+                "reviewed-expansion",
+            }
+        ):
+            raise ValueError(
+                "20-pc preferred name does not cite exact source evidence"
+            )
+        if transformation == "published" and mapping["preferred_name"] != source_value:
+            raise ValueError("Published 20-pc preferred name was changed")
+        if transformation == "coordinate-short":
+            coordinate_name_values.append(source_value)
+        if method == "exact_identifier":
+            matching = [
+                candidate
+                for candidate in exact_candidates[cns5_id]
+                if candidate["source_key"] == source_key
+                and not candidate["ambiguous"]
+            ]
+            if len(matching) != 1:
+                raise ValueError(
+                    "Reviewed exact 20-pc match is not one unique typed identifier edge"
+                )
+        identity = resolved_cns5_identity(cns5_by_id[cns5_id], cns5_by_id)
+        if identity not in source_groups:
+            raise ValueError("20-pc mapping resolves outside the retained source union")
+        source_groups[identity].add(source_key)
+        registry_entry = registry_by_id.get(component_id)
+        if (
+            registry_entry is None
+            or f"cns5:{cns5_id}" not in registry_entry.get(
+                "source_keys", [registry_entry["key"]]
+            )
+        ):
+            raise ValueError(
+                "20-pc review mapping references a stale stable component identity"
+            )
+        registry_entry.setdefault("source_keys", [registry_entry["key"]])
+        registry_entry["source_keys"] = sorted(
+            {
+                *(
+                    key
+                    for key in registry_entry["source_keys"]
+                    if not key.startswith("c20pc-2024:")
+                ),
+                source_key,
+            }
+        )
+        mapping_by_cns5[cns5_id] = mapping
+    occupied_names = [
+        source_name(row)[0]
+        for row in cns5
+        if str(row["cns5_id"]) not in mapping_by_cns5
+    ]
+    occupied_names.extend(protected_names or [])
+    occupied_names.extend(
+        f"Gaia DR3 {identity.removeprefix('gaia-dr3:')}"
+        for identity in identities
+        if identity.startswith("gaia-dr3:")
+        and identity not in cns5_by_identity
+    )
+    occupied_names.extend(
+        mapping["preferred_name"]
+        for mapping in mappings
+        if mapping["preferred_name_source"]["transformation"]
+        != "coordinate-short"
+    )
+    coordinate_names = resolve_coordinate_short_names(
+        coordinate_name_values, occupied_names
+    )
+    for mapping in mappings:
+        if (
+            mapping["preferred_name_source"]["transformation"]
+            == "coordinate-short"
+            and mapping["preferred_name"]
+            != coordinate_names[mapping["preferred_name_source"]["value"]]
+        ):
+            raise ValueError(
+                "20-pc coordinate preferred name is not collision-safe"
+            )
+    mapped_names = [mapping["preferred_name"].casefold() for mapping in mappings]
+    if len(mapped_names) != len(set(mapped_names)):
+        raise ValueError("20-pc reviewed preferred names collide")
     component_ids = allocate_components(
         registry, source_groups, identity_transitions or []
     )
@@ -924,6 +1238,60 @@ def build_candidates(
             group_key = str(cns.get("cns6_system_id") or cns.get("gj_system_primary") or cns.get("reference_object_cns5_id") or identity).strip() or identity
         else:
             preferred, alternates, group_key = f"Gaia DR3 {gaia_id}", [], identity
+        mapping = mapping_by_cns5.get(cns["cns5_id"]) if cns else None
+        census_enrichment = None
+        census_distance_warning = None
+        if mapping is not None:
+            if component_ids[identity] != mapping["candidate_component_id"]:
+                raise ValueError(
+                    "20-pc mapping changed the stable component identity"
+                )
+            census_row = census_by_key[mapping["source_key"]]
+            census_enrichment = c20pc_enrichment(census_row, mapping)
+            census_distance_warning = c20pc_distance_warning(
+                census_row,
+                geometry,
+                gcns_by_gaia.get(gaia_id),
+                cns,
+            )
+            original_preferred = preferred
+            preferred = mapping["preferred_name"]
+            source_aliases = [
+                census_row.get(field)
+                for field in (
+                    "Name",
+                    "OName",
+                    "WISE",
+                    "2MASS",
+                    "HD",
+                    "Ross",
+                    "WD",
+                    "Gaia",
+                    "HIP",
+                    "GJ",
+                    "PMJID",
+                    "Mult",
+                )
+            ]
+            pmjid_aliases = [
+                identifier.strip()
+                for identifier in str(census_row.get("PMJID") or "").split(",")
+                if identifier.strip()
+            ]
+            alternates = sorted(
+                {
+                    original_preferred,
+                    *alternates,
+                    *mapping.get("retained_aliases", []),
+                    *pmjid_aliases,
+                    *(
+                        str(value).strip()
+                        for value in source_aliases
+                        if value is not None and str(value).strip()
+                    ),
+                }
+                - {preferred}
+            )
         component = {
             "id": component_ids[identity], "source_identity": identity, "gaia_source_id": gaia_id,
             "source_identities": sorted(source_groups[identity]),
@@ -932,6 +1300,14 @@ def build_candidates(
             "position_derivation": geometry_source, "membership_key": group_key,
             "membership_reason": "CNS5 grouping" if cns and group_key != identity else "singleton retained source",
             "is_cns5_primary": bool(cns and str(cns.get("primary_flag", "")).strip().lower() in {"1", "true", "t", "y", "yes"}),
+            "c20pc_candidates": exact_candidates.get(
+                cns.get("cns5_id"), []
+            ) if cns else [],
+            "c20pc_match": {
+                "mapping": mapping,
+                "enrichment": census_enrichment,
+                "canonical_distance_warning": census_distance_warning,
+            } if mapping is not None else None,
         }
         candidate_components.append(component)
         membership[group_key].append(component["id"])
@@ -1048,10 +1424,11 @@ def build_candidates(
             )
         system["wds_membership_evidence"] = evidence
     return {
-        "schema_version": "1.0.0",
+        "schema_version": "2.0.0",
         "components": candidate_components,
         "systems": systems,
         "wds_candidate_sha256": value_sha256(wds_rows or []),
+        "c20pc_source_sha256": value_sha256(census_rows),
     }
 
 
@@ -1165,6 +1542,7 @@ def refresh() -> None:
         gaia_rows.extend(returned)
     gaia = normalise_rows(GAIA_COLUMNS, gaia_rows, "source_id")
     write_extract("gaia_dr3", GAIA_COLUMNS, gaia, manifest("gaia_dr3", endpoint=GAIA_URL, table="gaiadr3.gaia_source + pinned left joins", query="\n\n".join(queries), rows=gaia, columns=GAIA_COLUMNS, extra={"release": "Gaia DR3", "queries": query_accounting, "input_source_id_sha256": sha256_bytes("\n".join(selected_ids).encode()), "unmatched_source_ids": sorted(set(selected_ids) - {row["source_id"] for row in gaia})}))
+    refresh_c20pc_snapshot()
     wds_manifest = _write_wds()
     prior_candidates = (
         read_json(CANDIDATES_PATH) if CANDIDATES_PATH.exists() else None
@@ -1193,6 +1571,7 @@ def reconcile_committed_sources() -> str:
     _, gcns = read_extract("gcns")
     _, cns5 = read_extract("cns5")
     _, gaia = read_extract("gaia_dr3")
+    _, c20pc_rows, _, _ = read_c20pc()
     wds_document = read_json(SOURCE_DIR / "wds-membership.json")
     review = read_json(REVIEW_PATH) if REVIEW_PATH.exists() else {}
     prior_candidates = (
@@ -1215,6 +1594,13 @@ def reconcile_committed_sources() -> str:
         gcns,
         cns5,
         registry,
+        c20pc_rows=c20pc_rows,
+        c20pc_mappings=review.get("c20pc_mappings", []),
+        protected_names=[
+            entry["name"]
+            for entry in review.get("overrides", [])
+            if entry.get("name")
+        ],
         identity_transitions=review.get("identity_transitions", []),
         cns5_astrometry_overrides=review.get(
             "cns5_astrometry_overrides", []
@@ -1222,12 +1608,88 @@ def reconcile_committed_sources() -> str:
         wds_rows=wds_candidates,
         prior_candidates=prior_candidates,
     )
+    report_c20pc_candidate_diff(prior_candidates, candidates)
     write_json(IDENTITY_REGISTRY_PATH, registry)
     write_json(CANDIDATES_PATH, candidates)
     return value_sha256(candidates)
 
 
-def accepted_candidates() -> tuple[dict[str, Any], dict[str, Any], dict[str, Any], list[dict[str, str]], list[dict[str, str]], list[dict[str, str]]]:
+def report_c20pc_candidate_diff(
+    previous: dict[str, Any] | None,
+    current: dict[str, Any],
+) -> None:
+    """Print the review-sensitive census delta before replacing candidates."""
+
+    def records(document: dict[str, Any] | None) -> dict[str, dict[str, Any]]:
+        if document is None:
+            return {}
+        result: dict[str, dict[str, Any]] = {}
+        for component in document.get("components", []):
+            match = component.get("c20pc_match")
+            proposals = component.get("c20pc_candidates", [])
+            enrichment = match.get("enrichment", {}) if match else {}
+            mapping = match.get("mapping", {}) if match else {}
+            result[component["id"]] = {
+                "accepted_source_key": enrichment.get("source_key"),
+                "preferred_name": component.get("preferred_name_candidate"),
+                "object_class": enrichment.get("object_class"),
+                "temperature_k": enrichment.get("effective_temperature_k"),
+                "hierarchy": enrichment.get("system_hierarchy"),
+                "presentation": enrichment.get("visual_family"),
+                "canonical_distance_warning": (
+                    match.get("canonical_distance_warning") if match else None
+                ),
+                "proposal_keys": sorted(
+                    proposal["source_key"] for proposal in proposals
+                ),
+                "ambiguous": any(
+                    proposal.get("ambiguous", False) for proposal in proposals
+                ),
+                "match_method": mapping.get("match_method"),
+            }
+        return result
+
+    before, after = records(previous), records(current)
+    changed: list[dict[str, Any]] = []
+    for component_id in sorted(set(before) | set(after)):
+        old, new = before.get(component_id), after.get(component_id)
+        if old != new:
+            changed.append(
+                {"component_id": component_id, "before": old, "after": new}
+            )
+    accepted_before = {
+        key
+        for record in before.values()
+        if (key := record["accepted_source_key"]) is not None
+    }
+    accepted_after = {
+        key
+        for record in after.values()
+        if (key := record["accepted_source_key"]) is not None
+    }
+    print(
+        "20-pc candidate diff: "
+        f"accepted +{len(accepted_after - accepted_before)}"
+        f"/-{len(accepted_before - accepted_after)}, "
+        f"changed components={len(changed)}, "
+        f"ambiguous proposals={sum(record['ambiguous'] for record in after.values())}"
+    )
+    for entry in changed:
+        print(
+            "20-pc candidate change "
+            + json.dumps(entry, ensure_ascii=False, sort_keys=True)
+        )
+
+
+def accepted_candidates() -> tuple[
+    dict[str, Any],
+    dict[str, Any],
+    dict[str, Any],
+    list[dict[str, str]],
+    list[dict[str, str]],
+    list[dict[str, str]],
+    list[dict[str, Any]],
+]:
     candidates = read_json(CANDIDATES_PATH)
     review = read_json(REVIEW_PATH)
     actual = value_sha256(candidates)
@@ -1238,5 +1700,20 @@ def accepted_candidates() -> tuple[dict[str, Any], dict[str, Any], dict[str, Any
     gcns_manifest, gcns = read_extract("gcns")
     cns5_manifest, cns5 = read_extract("cns5")
     gaia_manifest, gaia = read_extract("gaia_dr3")
+    c20pc_manifest, c20pc_rows, _, _ = read_c20pc()
     wds_manifest = read_json(SOURCE_DIR / "wds-membership.json")["source"]
-    return candidates, review, {"gcns": gcns_manifest, "cns5": cns5_manifest, "gaia_dr3": gaia_manifest, "wds": wds_manifest}, gcns, cns5, gaia
+    return (
+        candidates,
+        review,
+        {
+            "gcns": gcns_manifest,
+            "cns5": cns5_manifest,
+            "gaia_dr3": gaia_manifest,
+            "wds": wds_manifest,
+            "c20pc": c20pc_manifest,
+        },
+        gcns,
+        cns5,
+        gaia,
+        c20pc_rows,
+    )

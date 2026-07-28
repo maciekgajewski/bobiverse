@@ -1,11 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://bobiverse.local/schema/nearby-systems-3.0.0.json",
+  "$id": "https://bobiverse.local/schema/nearby-systems-4.0.0.json",
   "type": "object",
   "additionalProperties": false,
   "required": ["schema_version", "metadata", "systems"],
   "properties": {
-    "schema_version": { "const": "3.0.0" },
+    "schema_version": { "const": "4.0.0" },
     "metadata": {
       "type": "object",
       "additionalProperties": false,
@@ -39,12 +39,13 @@
         "sources": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["gcns", "cns5", "gaia_dr3", "wds"],
+          "required": ["gcns", "cns5", "gaia_dr3", "wds", "c20pc"],
           "properties": {
             "gcns": { "$ref": "#/$defs/source" },
             "cns5": { "$ref": "#/$defs/source" },
             "gaia_dr3": { "$ref": "#/$defs/source" },
-            "wds": { "$ref": "#/$defs/wds_source" }
+            "wds": { "$ref": "#/$defs/wds_source" },
+            "c20pc": { "$ref": "#/$defs/c20pc_source" }
           }
         }
       }
@@ -58,6 +59,72 @@
   },
   "$defs": {
     "nullable_number": { "type": ["number", "null"] },
+    "nullable_object_class": {
+      "type": ["string", "null"],
+      "enum": ["star", "white_dwarf", "brown_dwarf", null]
+    },
+    "c20pc_enrichment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_key",
+        "published_name",
+        "common_name",
+        "wise_id",
+        "twomass_id",
+        "hd_id",
+        "ross_id",
+        "wd_id",
+        "gaia_id",
+        "hip_id",
+        "gj_id",
+        "pmjid",
+        "multiple_designations",
+        "spectral_type",
+        "spectral_type_optical",
+        "spectral_type_near_infrared",
+        "effective_temperature_k",
+        "effective_temperature_error_k",
+        "object_class",
+        "visual_family",
+        "system_hierarchy",
+        "system_code",
+        "reference_codes"
+      ],
+      "properties": {
+        "source_key": { "type": "string", "minLength": 1 },
+        "published_name": { "type": ["string", "null"] },
+        "common_name": { "type": ["string", "null"] },
+        "wise_id": { "type": ["string", "null"] },
+        "twomass_id": { "type": ["string", "null"] },
+        "hd_id": { "type": ["string", "null"] },
+        "ross_id": { "type": ["string", "null"] },
+        "wd_id": { "type": ["string", "null"] },
+        "gaia_id": { "type": ["string", "null"] },
+        "hip_id": { "type": ["string", "null"] },
+        "gj_id": { "type": ["string", "null"] },
+        "pmjid": { "type": ["string", "null"] },
+        "multiple_designations": { "type": ["string", "null"] },
+        "spectral_type": { "type": ["string", "null"] },
+        "spectral_type_optical": { "type": ["string", "null"] },
+        "spectral_type_near_infrared": { "type": ["string", "null"] },
+        "effective_temperature_k": { "$ref": "#/$defs/nullable_number" },
+        "effective_temperature_error_k": {
+          "$ref": "#/$defs/nullable_number"
+        },
+        "object_class": { "$ref": "#/$defs/nullable_object_class" },
+        "visual_family": {
+          "type": ["string", "null"],
+          "enum": ["infrared-cool", "infrared-warm", null]
+        },
+        "system_hierarchy": { "type": ["string", "null"] },
+        "system_code": { "type": ["integer", "null"] },
+        "reference_codes": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
     "position": {
       "type": "object",
       "additionalProperties": false,
@@ -112,6 +179,31 @@
         "acknowledgement": { "type": "string", "minLength": 1 }
       }
     },
+    "c20pc_source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "table4_sha256",
+        "notes_sha256",
+        "references_sha256",
+        "table4_row_count",
+        "notes_row_count",
+        "reference_row_count",
+        "acknowledgement"
+      ],
+      "properties": {
+        "table4_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "notes_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "references_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "table4_row_count": { "type": "integer", "minimum": 1 },
+        "notes_row_count": { "type": "integer", "minimum": 1 },
+        "reference_row_count": { "type": "integer", "minimum": 1 },
+        "acknowledgement": { "type": "string", "minLength": 1 }
+      }
+    },
     "coverage": {
       "type": "object",
       "additionalProperties": false,
@@ -141,6 +233,8 @@
         "cns5_id",
         "source_identities",
         "gaia_enrichment",
+        "c20pc_enrichment",
+        "object_class",
         "designation",
         "identifiers",
         "icrs",
@@ -213,6 +307,10 @@
             }
           ]
         },
+        "c20pc_enrichment": {
+          "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/c20pc_enrichment" }]
+        },
+        "object_class": { "$ref": "#/$defs/nullable_object_class" },
         "designation": { "type": "string", "minLength": 1 },
         "identifiers": {
           "type": "object",
@@ -224,7 +322,11 @@
             "gj_id",
             "hip_id",
             "cns5_component_id",
-            "cns6_system_id"
+            "cns6_system_id",
+            "c20pc_source_key",
+            "wise_id",
+            "twomass_id",
+            "published_name"
           ],
           "properties": {
             "gaia_dr3_source_id": { "type": ["string", "null"] },
@@ -233,7 +335,11 @@
             "gj_id": { "type": ["string", "null"] },
             "hip_id": { "type": ["string", "null"] },
             "cns5_component_id": { "type": ["string", "null"] },
-            "cns6_system_id": { "type": ["string", "null"] }
+            "cns6_system_id": { "type": ["string", "null"] },
+            "c20pc_source_key": { "type": ["string", "null"] },
+            "wise_id": { "type": ["string", "null"] },
+            "twomass_id": { "type": ["string", "null"] },
+            "published_name": { "type": ["string", "null"] }
           }
         },
         "icrs": {
@@ -283,6 +389,8 @@
           "required": [
             "color_family",
             "marker_radius",
+            "intensity",
+            "pick_radius",
             "derivation",
             "source_facts"
           ],
@@ -295,10 +403,14 @@
                 "yellow",
                 "orange",
                 "red",
-                "neutral"
+                "neutral",
+                "infrared-cool",
+                "infrared-warm"
               ]
             },
             "marker_radius": { "type": "number", "exclusiveMinimum": 0 },
+            "intensity": { "type": "number", "minimum": 0, "maximum": 1 },
+            "pick_radius": { "type": "number", "exclusiveMinimum": 0 },
             "derivation": { "type": "string", "minLength": 1 },
             "source_facts": {
               "type": "object",
@@ -307,7 +419,10 @@
                 "effective_temperature_k",
                 "spectral_type",
                 "bp_rp",
-                "wds_spectral_type"
+                "wds_spectral_type",
+                "c20pc_effective_temperature_k",
+                "c20pc_spectral_type",
+                "object_class"
               ],
               "properties": {
                 "effective_temperature_k": {
@@ -315,7 +430,12 @@
                 },
                 "spectral_type": { "type": ["string", "null"] },
                 "bp_rp": { "$ref": "#/$defs/nullable_number" },
-                "wds_spectral_type": { "type": ["string", "null"] }
+                "wds_spectral_type": { "type": ["string", "null"] },
+                "c20pc_effective_temperature_k": {
+                  "$ref": "#/$defs/nullable_number"
+                },
+                "c20pc_spectral_type": { "type": ["string", "null"] },
+                "object_class": { "$ref": "#/$defs/nullable_object_class" }
               }
             }
           }

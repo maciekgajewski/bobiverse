@@ -80,7 +80,9 @@ describe("reconciled astronomy runtime data", () => {
     for (const system of nearbySystems.systems.slice(1)) {
       for (const component of system.components) {
         expect(component.visual.marker_radius).toBeGreaterThan(0);
-        expect(component.visual.derivation).toMatch(/^(Gaia DR3|Reviewed WDS)/);
+        expect(component.visual.derivation).toMatch(
+          /^(Gaia DR3|Reviewed WDS|Kirkpatrick et al. 2024)/,
+        );
         expect(component.visual.derivation).toMatch(/approximate|fixed bands/);
       }
     }
@@ -91,5 +93,54 @@ describe("reconciled astronomy runtime data", () => {
         visual: { color_family: "yellow", marker_radius: 0.09 },
       },
     ]);
+  });
+
+  it("presents reviewed ultracool dwarfs as dim selectable substellar objects", () => {
+    if (!nearbySystems) throw new Error("Fixture dataset failed validation");
+    const brownDwarfs = nearbySystems.systems
+      .flatMap((system) => system.components)
+      .filter((component) => component.object_class === "brown_dwarf");
+    expect(brownDwarfs).toHaveLength(10);
+    expect(
+      brownDwarfs.every(
+        (component) =>
+          component.visual.marker_radius === 0.05 &&
+          component.visual.intensity === 0.25 &&
+          component.visual.pick_radius >= 0.09 &&
+          component.visual.color_family.startsWith("infrared-"),
+      ),
+    ).toBe(true);
+
+    const wise0855 = nearbySystems.systems.find(
+      (system) => system.name === "WISE 0855-0714",
+    );
+    expect(wise0855?.alternates).toEqual(
+      expect.arrayContaining(["GJ 11286", "WISEA J085510.74-071442.5"]),
+    );
+    expect(wise0855?.components[0]?.c20pc_enrichment).toMatchObject({
+      gaia_id: null,
+      hip_id: null,
+      pmjid: null,
+      effective_temperature_k: 250,
+      effective_temperature_error_k: 50,
+      object_class: "brown_dwarf",
+    });
+
+    const hd155876 = nearbySystems.systems.find(
+      (system) => system.name === "HD 155876",
+    );
+    expect(hd155876?.alternates).toEqual(
+      expect.arrayContaining([
+        "HIP 84140",
+        "PM J17121+4539",
+        "PM J17121+4539E",
+        "PM J17121+4539W",
+      ]),
+    );
+    expect(hd155876?.components[0]?.c20pc_enrichment).toMatchObject({
+      gaia_id: null,
+      hip_id: "HIP 84140",
+      pmjid: "PM J17121+4539,PM J17121+4539E,PM J17121+4539W",
+    });
   });
 });

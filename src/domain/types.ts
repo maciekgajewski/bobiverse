@@ -11,7 +11,43 @@ export interface RenderPosition {
 }
 
 export type ColorFamily =
-  "blue" | "blue-white" | "white" | "yellow" | "orange" | "red" | "neutral";
+  | "blue"
+  | "blue-white"
+  | "white"
+  | "yellow"
+  | "orange"
+  | "red"
+  | "neutral"
+  | "infrared-cool"
+  | "infrared-warm";
+
+export type ObjectClass = "star" | "white_dwarf" | "brown_dwarf";
+
+export interface TwentyParsecEnrichment {
+  source_key: string;
+  published_name: string | null;
+  common_name: string | null;
+  wise_id: string | null;
+  twomass_id: string | null;
+  hd_id: string | null;
+  ross_id: string | null;
+  wd_id: string | null;
+  gaia_id: string | null;
+  hip_id: string | null;
+  gj_id: string | null;
+  pmjid: string | null;
+  multiple_designations: string | null;
+  spectral_type: string | null;
+  spectral_type_optical: string | null;
+  spectral_type_near_infrared: string | null;
+  effective_temperature_k: number | null;
+  effective_temperature_error_k: number | null;
+  object_class: ObjectClass | null;
+  visual_family: "infrared-cool" | "infrared-warm" | null;
+  system_hierarchy: string | null;
+  system_code: number | null;
+  reference_codes: string[];
+}
 
 export interface Component {
   id: string;
@@ -36,6 +72,8 @@ export interface Component {
     variability_class: string | null;
     variability_class_score: number | null;
   } | null;
+  c20pc_enrichment: TwentyParsecEnrichment | null;
+  object_class: ObjectClass | null;
   designation: string;
   identifiers: {
     gaia_dr3_source_id: string | null;
@@ -45,6 +83,10 @@ export interface Component {
     hip_id: string | null;
     cns5_component_id: string | null;
     cns6_system_id: string | null;
+    c20pc_source_key: string | null;
+    wise_id: string | null;
+    twomass_id: string | null;
+    published_name: string | null;
   };
   icrs: {
     ra_deg: number | null;
@@ -65,12 +107,17 @@ export interface Component {
   visual: {
     color_family: ColorFamily;
     marker_radius: number;
+    intensity: number;
+    pick_radius: number;
     derivation: string;
     source_facts: {
       effective_temperature_k: number | null;
       spectral_type: string | null;
       bp_rp: number | null;
       wds_spectral_type: string | null;
+      c20pc_effective_temperature_k: number | null;
+      c20pc_spectral_type: string | null;
+      object_class: ObjectClass | null;
     };
   };
   provenance: {
@@ -115,7 +162,7 @@ export interface CoverageProof {
 }
 
 export interface NearbySystemsData {
-  schema_version: "3.0.0";
+  schema_version: "4.0.0";
   metadata: {
     generated_at: string;
     coordinate_frame: string;
@@ -142,6 +189,15 @@ export interface NearbySystemsData {
         candidate_sha256: string;
         row_count: number;
         candidate_row_count: number;
+        acknowledgement: string;
+      };
+      c20pc: {
+        table4_sha256: string;
+        notes_sha256: string;
+        references_sha256: string;
+        table4_row_count: number;
+        notes_row_count: number;
+        reference_row_count: number;
         acknowledgement: string;
       };
     };

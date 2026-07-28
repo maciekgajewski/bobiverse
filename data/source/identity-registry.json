@@ -62,7 +62,10 @@
     {
       "id": "stellar-component-000009",
       "key": "cns5:1054",
-      "source_keys": ["cns5:1054"],
+      "source_keys": [
+        "c20pc-2024:7a5ade0a7c4142214da60d6d6fa427bc027e0c659327cc8a7df628f0303606f8",
+        "cns5:1054"
+      ],
       "state": "active"
     },
     {
@@ -404,7 +407,10 @@
     {
       "id": "stellar-component-000066",
       "key": "cns5:1610",
-      "source_keys": ["cns5:1610"],
+      "source_keys": [
+        "c20pc-2024:61db33ba042b7cd9c8a78cd1ecd300bf406d71bb3d2c3678254083e3741c406c",
+        "cns5:1610"
+      ],
       "state": "active"
     },
     {
@@ -542,7 +548,10 @@
     {
       "id": "stellar-component-000089",
       "key": "cns5:1828",
-      "source_keys": ["cns5:1828"],
+      "source_keys": [
+        "c20pc-2024:8202c4676b85502a64ce8092ade16632d308847b30e0f6b30d1d7d8a5bfeecdf",
+        "cns5:1828"
+      ],
       "state": "active"
     },
     {
@@ -818,7 +827,10 @@
     {
       "id": "stellar-component-000138",
       "key": "cns5:2194",
-      "source_keys": ["cns5:2194"],
+      "source_keys": [
+        "c20pc-2024:72c9f88026e926f6cfa9d08dd156badeb7d078a05afdf1c49111216867beab79",
+        "cns5:2194"
+      ],
       "state": "active"
     },
     {
@@ -938,13 +950,19 @@
     {
       "id": "stellar-component-000158",
       "key": "cns5:2383",
-      "source_keys": ["cns5:2383"],
+      "source_keys": [
+        "c20pc-2024:fec5fc1ada6c766a8a60930789eaefa5866e64d362561c2f6a9394d362c481af",
+        "cns5:2383"
+      ],
       "state": "active"
     },
     {
       "id": "stellar-component-000159",
       "key": "cns5:2389",
-      "source_keys": ["cns5:2389"],
+      "source_keys": [
+        "c20pc-2024:2662c7b8c71830ee8a8c4fb6d8b39be86760cdbd77b652f0d04ff22845dfd23f",
+        "cns5:2389"
+      ],
       "state": "active"
     },
     {
@@ -1202,7 +1220,10 @@
     {
       "id": "stellar-component-000201",
       "key": "cns5:2747",
-      "source_keys": ["cns5:2747"],
+      "source_keys": [
+        "c20pc-2024:0e624bb249f56013371c6c13903bbc4c0408af032ab6dd53d47db433a8a2706e",
+        "cns5:2747"
+      ],
       "state": "active"
     },
     {
@@ -1910,7 +1931,10 @@
     {
       "id": "stellar-component-000319",
       "key": "cns5:3866",
-      "source_keys": ["cns5:3866"],
+      "source_keys": [
+        "c20pc-2024:8d1e6f78beba3623567856714dae6e828c968d9b1d2cd2093e0c2f30a1dd946f",
+        "cns5:3866"
+      ],
       "state": "active"
     },
     {
@@ -2096,7 +2120,10 @@
     {
       "id": "stellar-component-000350",
       "key": "cns5:4091",
-      "source_keys": ["cns5:4091"],
+      "source_keys": [
+        "c20pc-2024:8b3a53a99c2812f02d120f4aa63c82a25a521ec65b80da46c435553d1fa4d822",
+        "cns5:4091"
+      ],
       "state": "active"
     },
     {
@@ -2168,7 +2195,10 @@
     {
       "id": "stellar-component-000362",
       "key": "cns5:4217",
-      "source_keys": ["cns5:4217"],
+      "source_keys": [
+        "c20pc-2024:f7dd4218a2986c830feebacbe9ab5df6ac88cf1ea5b6ead3b0f42dcf2e6d6204",
+        "cns5:4217"
+      ],
       "state": "active"
     },
     {
@@ -2252,7 +2282,10 @@
     {
       "id": "stellar-component-000376",
       "key": "cns5:4370",
-      "source_keys": ["cns5:4370"],
+      "source_keys": [
+        "c20pc-2024:588381cf26099e97c0d1913887ae904019c96532c76f317b16c8c58b2a538e79",
+        "cns5:4370"
+      ],
       "state": "active"
     },
     {
@@ -2900,7 +2933,10 @@
     {
       "id": "stellar-component-000485",
       "key": "cns5:5550",
-      "source_keys": ["cns5:5550"],
+      "source_keys": [
+        "c20pc-2024:d94a95d331fc029007351543e27201ecc39744bac63fc2c558c681752b2a7ba0",
+        "cns5:5550"
+      ],
       "state": "active"
     },
     {
@@ -3620,7 +3656,10 @@
     {
       "id": "stellar-component-001037",
       "key": "cns5:965",
-      "source_keys": ["cns5:965"],
+      "source_keys": [
+        "c20pc-2024:30f0a3a6028bacd82232ad5d9edac6714566c32e33c080e836c475740b39432b",
+        "cns5:965"
+      ],
       "state": "active"
     },
     {

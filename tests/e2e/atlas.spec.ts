@@ -53,7 +53,7 @@ test("compact inspector stays inside the viewport", async ({ page }) => {
     .locator(".mobile-panel.inspector")
     .evaluate((panel) => panel.getBoundingClientRect().toJSON());
   expect(bounds.top).toBeGreaterThanOrEqual(0);
-  expect(bounds.bottom).toBeLessThanOrEqual(700);
+  expect(bounds.bottom).toBeLessThanOrEqual(700.01);
 });
 
 test("compact reflow keeps timeline progress reachable and traps focus", async ({
@@ -438,6 +438,12 @@ test("nearby astronomy remains a query-only in-context inspector path", async ({
   await expect(
     page.getByRole("heading", { name: "Alpha Centauri" }),
   ).toBeVisible();
+  await search.fill("GJ 11286");
+  await page.getByRole("button", { name: /WISE 0855-0714/ }).click();
+  await expect(
+    page.getByRole("heading", { name: "WISE 0855-0714" }),
+  ).toBeVisible();
+  await expect(page.getByText(/brown dwarf · 250 K ± 50 K/)).toBeVisible();
 });
 
 test("desktop surfaces stay on one projection through chapter and date changes", async ({

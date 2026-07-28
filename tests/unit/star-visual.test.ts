@@ -10,6 +10,7 @@ import {
   STAR_SPRITE_FRAGMENT_SHADER,
   colorFamilyColor,
   componentOffset,
+  componentPickRadius,
   narrativeMarkerGeometry,
   narrativeRingSegments,
   selectionFrameSegments,
@@ -23,6 +24,8 @@ const component = (id: string): Component => ({
   cns5_id: null,
   source_identities: [id],
   gaia_enrichment: null,
+  c20pc_enrichment: null,
+  object_class: null,
   designation: id,
   identifiers: {
     gaia_dr3_source_id: id.split(":")[1] ?? null,
@@ -32,6 +35,10 @@ const component = (id: string): Component => ({
     hip_id: null,
     cns5_component_id: null,
     cns6_system_id: null,
+    c20pc_source_key: null,
+    wise_id: null,
+    twomass_id: null,
+    published_name: null,
   },
   icrs: {
     ra_deg: null,
@@ -52,12 +59,17 @@ const component = (id: string): Component => ({
   visual: {
     color_family: "yellow",
     marker_radius: 0.09,
+    intensity: 1,
+    pick_radius: 0.09,
     derivation: "test",
     source_facts: {
       effective_temperature_k: null,
       spectral_type: null,
       bp_rp: null,
       wds_spectral_type: null,
+      c20pc_effective_temperature_k: null,
+      c20pc_spectral_type: null,
+      object_class: null,
     },
   },
   provenance: { position: null, catalogues: [], enrichment: null },
@@ -74,6 +86,8 @@ describe("star visual encodings", () => {
     expect(colorFamilyColor("yellow")).toBe("#ffd884");
     expect(colorFamilyColor("red")).toBe("#ff6b55");
     expect(colorFamilyColor("neutral")).toBe("#d8e6ff");
+    expect(colorFamilyColor("infrared-cool")).toBe("#725a82");
+    expect(colorFamilyColor("infrared-warm")).toBe("#9a6548");
   });
 
   it("attenuates additive sprite contribution exactly once", () => {
@@ -87,6 +101,15 @@ describe("star visual encodings", () => {
     expect(STAR_SPRITE_FRAGMENT_SHADER).not.toContain(
       "(halo + core * 0.75) * attenuation",
     );
+    expect(STAR_SPRITE_FRAGMENT_SHADER).toContain("uniform float uIntensity;");
+    expect(STAR_SPRITE_FRAGMENT_SHADER.match(/\* uIntensity/g)).toHaveLength(1);
+  });
+
+  it("keeps the brown-dwarf hit target at ordinary marker size", () => {
+    const brownDwarf = component("cns5:2194");
+    brownDwarf.visual.marker_radius = 0.05;
+    brownDwarf.visual.pick_radius = 0.09;
+    expect(componentPickRadius(brownDwarf)).toBe(0.09);
   });
 
   it("keeps multi-source decorative offsets stable and non-zero", () => {

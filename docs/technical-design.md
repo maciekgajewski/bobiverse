@@ -158,7 +158,8 @@ GPU, driver, and software renderer.
 
 ### 8.1 Sources
 
-ADR-0011 assigns complementary authority to GCNS, Gaia DR3, CNS5, and WDS:
+ADR-0011 and ADR-0012 assign complementary authority to GCNS, Gaia DR3, CNS5,
+WDS, and the Kirkpatrick et al. 2024 full-sky 20-pc census:
 
 - CNS5 controls recognizable local inclusion inside 25 pc and supplies the initial
   local component-to-system grouping.
@@ -168,6 +169,9 @@ ADR-0011 assigns complementary authority to GCNS, Gaia DR3, CNS5, and WDS:
   shared EDR3/DR3 `source_id`.
 - WDS supplements multiple-system membership, subject to deterministic
   reconciliation or explicit project review.
+- The 20-pc census supplies identity, names, classification, temperature, and
+  presentation enrichment for accepted matches inside its published Sun-centred
+  boundary. It never controls inclusion, geometry, distance, or system membership.
 
 Inside 25 pc the inclusion set is the union of CNS5 and GCNS, so a bright or multiple
 CNS5 object is not lost merely because Gaia has no suitable source. Between 25 and
@@ -176,7 +180,8 @@ the 100 pc GCNS boundary fails validation rather than being presented as complet
 The binding acquisition contract is the one in
 `docs/data/astronomy-pipeline.md`: GAVO TAP tables `gcns.main` and
 `cns5update.main`, the explicitly projected Gaia DR3 tables, and the pinned precise
-WDS catalogue plus its format file. The complete WDS input is committed in
+WDS catalogue plus its format file, and the exact VizieR `J/ApJS/271/55` Table 4,
+notes, references, and ReadMe projections. The complete WDS input is committed in
 deterministic compressed form so offline validation can repeat candidate selection;
 builds do not choose alternate services or tables.
 
@@ -186,6 +191,7 @@ References:
 - [Gaia DR3 documentation](https://gea.esac.esa.int/archive/documentation/GDR3/)
 - [CNS5 publication](https://doi.org/10.1051/0004-6361/202244250)
 - [Washington Double Star Catalog](https://www.astro.gsu.edu/wds/)
+- [Kirkpatrick et al. 2024 20-pc census](https://doi.org/10.3847/1538-4365/ad24e2)
 - [Astropy coordinates](https://docs.astropy.org/en/stable/coordinates/)
 
 Catalogue sources are not automatically stellar systems. Stable application system
@@ -203,16 +209,18 @@ normalized candidate snapshot by checksum and records explicit overrides for
 conflicts, landmarks, and ambiguous multiple systems; refresh cannot accept its own
 candidate checksum implicitly.
 
-The checked-in runtime implements ADR-0011 through pinned GCNS, CNS5, Gaia DR3, and
-WDS inputs, a reviewed stable-identity layer, and independently validated static
-generation. BOB-013 records that implementation and its acceptance evidence.
+The checked-in runtime implements ADR-0011 and ADR-0012 through pinned GCNS, CNS5,
+Gaia DR3, WDS, and 20-pc-census inputs, a reviewed stable-identity layer, and
+independently validated static generation. BOB-013 records the neighbourhood
+implementation; BOB-026 records the census enrichment.
 
 ### 8.2 Provenance
 
 Every generated system record must identify:
 
 - Every contributing source catalogue and release or snapshot.
-- Source-specific object identifiers and accepted cross-match reason.
+- Source-specific object identifiers and accepted cross-match reason, including the
+  content-derived census key for every accepted 20-pc match.
 - Imported astrometric values and units.
 - Adopted distance and uncertainty when available.
 - Transformation version and generation timestamp.
@@ -258,13 +266,17 @@ boundaries.
 System positions use a single linear scene scale. Camera projection can affect visual
 perspective, but no logarithmic or piecewise distance compression is permitted.
 Marker glyphs may have a minimum screen-readable size and use a non-linear visual
-scale. The current catalogue markers use one fixed readable radius; this presentation
-choice must not affect positions or measurements.
+scale. Ordinary stellar components use presentation radius `0.09` and intensity
+`1.0`; accepted brown dwarfs use radius `0.05` and intensity `0.25`. These fixed
+values are not physical radius or luminosity and never affect positions or
+measurements. Visible glyph radius and pointer hit radius are independent; every
+component retains a minimum `0.09` hit target.
 
 Markers are camera-facing shader sprites with a luminous core and soft radial halo.
-Presentation follows the documented source precedence: accepted Gaia DR3
-temperature or classification, then Gaia `bp_rp`, then an accepted CNS5/WDS spectral
-value, then the neutral family. A reviewed multi-component system remains one
+An accepted 20-pc brown-dwarf classification first selects its dedicated
+`infrared-cool` or `infrared-warm` false-colour treatment. Other presentation follows
+accepted Gaia DR3 temperature or classification, then Gaia `bp_rp`, then an accepted
+CNS5/WDS spectral value, then the neutral family. A reviewed multi-component system remains one
 canonical map node, but renders its components as a small deterministic, decorative
 cluster around that node. Its radial decorative offset is bounded to
 0.036–0.0576 map units and its vertical offset to 0.0216 map units. Those offsets are
@@ -276,17 +288,18 @@ runtime retains the selected source fact and derivation. The neutral fallback is
 explicit and never removes a selected source or component.
 
 Star-sprite brightness smoothly attenuates from 100% at 6 map units to 35% at
-45 map units as a presentation aid. This does not affect marker position,
-labels, or measurement.
+45 map units as a presentation aid. Per-component intensity multiplies final shader
+alpha exactly once and does not also scale RGB under additive blending. Neither
+attenuation affects marker position, labels, or measurement.
 
 Selection frames do not participate in raycasting, but every star-marker glyph,
 including the selected one, does. Canvas picking explicitly resolves the closest
 marker hit to the camera; this preserves selected-star tooltips and re-selection while
 ensuring an overlapping closer system is selected instead of the decorative frame.
 
-Every rendered catalogue component retains every applicable GCNS/Gaia, CNS5, and WDS
-identifier plus the fact and provenance used for presentation. Sol is an explicit
-generated origin using the same marker pipeline.
+Every rendered catalogue component retains every applicable GCNS/Gaia, CNS5, WDS,
+and accepted 20-pc-census identifier plus the fact and provenance used for
+presentation. Sol is an explicit generated origin using the same marker pipeline.
 
 ### 8.5 Stellar-system model
 
@@ -309,10 +322,11 @@ added selectively when story relevance or product needs justify them.
 
 Marker presentation is deliberately approximate. It follows the documented
 multi-source precedence and uses the neutral family when no accepted presentation
-fact is available. Catalogue components share one fixed readable marker radius. The
-runtime retains the source value and derivation method and does not promote an
-approximation into a more precise claim. No browser request resolves or refreshes
-visual properties.
+fact is available. Accepted census T/Y brown dwarfs use the two false-infrared
+families and the smaller/dimmer fixed values above; other components retain the
+ordinary values. The runtime retains the source value and derivation method and does
+not promote an approximation into a more precise claim. No browser request resolves
+or refreshes visual properties.
 
 Phase 2 replaces a fixed nearest-system presentation with contextual neighbourhoods.
 The offline pipeline must guarantee every source-available stellar system within one

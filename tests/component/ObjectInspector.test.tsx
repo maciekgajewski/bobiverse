@@ -174,4 +174,32 @@ describe("object inspector", () => {
     ).toBeInTheDocument();
     expect(screen.queryByText(/\bpc$/)).not.toBeInTheDocument();
   });
+
+  it("shows accepted census identity and substellar facts without physical-size claims", () => {
+    expect(nearbySystems).not.toBeNull();
+    if (!nearbySystems) throw new Error("Fixture dataset failed validation");
+    const system = nearbySystems.systems.find(
+      (candidate) => candidate.name === "WISE 0855-0714",
+    );
+    if (!system) throw new Error("WISE 0855-0714 fixture is missing");
+
+    render(
+      <ObjectInspector
+        selection={{ kind: "astronomy", id: system.id }}
+        narrativeItem={null}
+        world={world}
+        systems={[system]}
+        assets={{ assets: [] }}
+        onSelect={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText(/GJ 11286/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/brown dwarf · 250 K ± 50 K · 20-pc census/),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText(/physical radius|luminosity/i),
+    ).not.toBeInTheDocument();
+  });
 });

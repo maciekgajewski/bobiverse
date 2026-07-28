@@ -2,7 +2,8 @@
 
 ## Status and runtime boundary
 
-This document defines the implemented BOB-013 extraction pipeline under ADR-0011.
+This document defines the implemented BOB-013/BOB-026 extraction pipeline under
+ADR-0011 and ADR-0012.
 The checked-in source snapshots, review artifacts, and generated runtime are validated
 offline; only the explicit refresh command performs network access.
 
@@ -102,6 +103,25 @@ include optical or uncertain associations. Therefore:
 
 Gaia non-single-star indicators may support review but never override accepted
 CNS5/WDS membership automatically.
+
+### Kirkpatrick et al. 2024 20-pc census: identity and presentation enrichment
+
+The full-sky census in VizieR catalogue `J/ApJS/271/55` enriches only an accepted
+match to a published Table 4 row. Presence in that table is the eligibility
+predicate; the importer does not recompute the catalogue boundary from parallax.
+The census may supply recognizable names, identifiers, hierarchy evidence, spectral
+type, effective temperature, object class, and a false-infrared presentation tier.
+It never supplies application inclusion, canonical position, distance, coverage, or
+automatic component topology.
+
+An automatic identity candidate requires one compatible typed identifier unique on
+both sides. Coordinates may nominate a review candidate but never form an identity
+edge. Ambiguous, contradictory, composite, or scope-incompatible identifiers remain
+unaccepted until an explicit reviewed mapping names both records and its reason.
+Unqualified identifiers on multi-component source rows receive an explicit
+`SYSTEM/N` scope, while a comma-delimited PMJID value remains one
+`COMPOSITE/N` token. Neither is interchangeable with a singleton or
+component-qualified token.
 
 ## Binding source contracts
 
@@ -209,6 +229,33 @@ selection. A checksum without the corresponding complete bytes is not sufficient
 The required acknowledgement is: “This research has made use of the Washington
 Double Star Catalog maintained at the U.S. Naval Observatory.”
 
+### VizieR 20-pc census snapshot
+
+The census refresh pins the catalogue ReadMe with history date `04-Jun-2024` and the
+exact Table 4, notes, and references ADQL projections specified by BOB-026. The
+logical baseline is 4,407 Table 4 rows, 4,407 notes, and 688 references. VizieR TAP
+currently transports the long `BD+39 2376 AB` note as two adjacent rows, so the
+manifest records 4,408 transport rows and deterministic normalization reconstructs
+one logical note using continuation `recno` 1980. `recno` is source sequence only and
+never becomes an identity.
+
+The committed artifact records exact query bytes, projected columns, endpoint,
+catalogue and publication DOIs, publication bibcode, retrieval timestamp, counts,
+checksums, and the required VizieR acknowledgement. Identity uses a content-derived
+`c20pc-2024:<sha256>` key. The source is:
+
+```text
+https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
+J/ApJS/271/55/table4
+J/ApJS/271/55/notes4
+J/ApJS/271/55/refs
+```
+
+Every reference code retained from the projected Table 4 fields must resolve through
+the pinned references table or the exact source-documented external-code baseline:
+`Allen1899`, `Gaia DR2`, `Gaia DR3`, `Gaia DR3-NSS`, `Gaia EDR3`, `IAU`, and
+`SIMBAD`. Any other unresolved code fails refresh and independent validation.
+
 ## Pinned acquisition artifacts
 
 Network acquisition is one explicit operator action:
@@ -217,7 +264,7 @@ Network acquisition is one explicit operator action:
 npm run data:refresh
 ```
 
-The implemented command will orchestrate four independently inspectable acquisition
+The implemented command orchestrates five independently inspectable acquisition
 stages. Each user-facing acquisition script must implement `--help`.
 
 Each source produces:
@@ -241,6 +288,8 @@ data/source/gaia-dr3-enrichment.json
 data/source/wds-precise.txt.gz
 data/source/wdsweb-format.txt
 data/source/wds-membership.json
+data/source/twenty-parsec-census.json
+data/source/twenty-parsec-census-readme.txt
 data/source/identity-registry.json
 data/source/system-candidates.json
 data/source/system-review.json
@@ -419,6 +468,23 @@ or naming is ambiguous. It may supply:
 
 Stable IDs do not encode GCNS, Gaia, CNS5, WDS, GJ, or HIP identifiers.
 
+After the base graph is stable, the importer derives typed census-identifier
+candidates and applies only exact unique edges or the explicit `c20pc_mappings` in
+the accepted review artifact. Accepted census keys attach to existing registry
+components without allocating, merging, splitting, or renumbering them. The
+candidate artifact retains every exact proposal, ambiguity flag, accepted mapping,
+source fact, and content key for review.
+
+For a GJ/CNS5 fallback with an accepted census match, explicit landmark/project names
+remain first and the reviewed census preferred name may replace only that fallback.
+Coordinate names use collision-safe `WISE`, `2MASS`, or `UGPS HHMM±DDMM` display
+forms while the complete published spelling and original prefix remain aliases.
+Accepted runtime enrichment retains the complete projected Gaia, HIP, HD, Ross, WD,
+WISE, 2MASS, GJ, PMJID, multiple-star, published-name, and common-name identifier
+fields as nullable source facts. Comma-separated PMJID members are additionally
+projected as individual searchable aliases without changing the retained source
+value.
+
 ### Stage 8: choose canonical system geometry
 
 For each accepted component:
@@ -436,6 +502,13 @@ through the reviewed candidate-snapshot checksum described in Stage 9. A missing
 required value, conflicting cross-match, or source warning that disputes the identity
 or astrometry requires an explicit per-system override; review may reject the
 coordinate but may not invent a replacement.
+
+The 20-pc census parallax never replaces that canonical geometry. For an accepted
+match, the candidate artifact records a review warning when the absolute difference
+between canonical and census distances exceeds the larger of `0.1 pc` and three
+times their combined propagated one-sigma distance uncertainty. Missing or unusable
+uncertainty narrows only the statistical term; it does not turn census astrometry
+into geometry authority.
 
 Before adopting GCNS Cartesian values, validation confirms their parsec units, origin,
 axis orientation, and handedness against independently transformed fixtures. Any
@@ -483,14 +556,20 @@ scalable without bypassing ADR-0011's review layer.
 
 Presentation values are deliberately approximate:
 
-1. prefer an accepted Gaia DR3 effective-temperature or classification product;
-2. otherwise use Gaia `bp_rp`;
-3. otherwise use an accepted CNS5/WDS spectral value when supplied with provenance;
-4. otherwise use the explicit neutral family.
+1. an accepted census brown dwarf uses its reviewed `infrared-cool` or
+   `infrared-warm` tier;
+2. otherwise prefer an accepted Gaia DR3 effective-temperature or classification
+   product;
+3. otherwise use Gaia `bp_rp`;
+4. otherwise use an accepted CNS5/WDS spectral value when supplied with provenance;
+5. otherwise use the explicit neutral family.
 
 The derivation and source record are retained with each component. Missing
-presentation data does not remove the component. Marker glyph radius remains a
-readability constant unless a later approved task changes that presentation rule.
+presentation data does not remove the component. Brown dwarfs use visible radius
+`0.05` and additive intensity `0.25`; ordinary markers retain `0.09` and `1.0`.
+Intensity multiplies final sprite alpha exactly once. Every component keeps at least
+a `0.09` pointer target independently of visible size. These fixed values are
+presentation, not physical radius or luminosity.
 
 Multiple components render as a deterministic decorative cluster around one system
 node. The offsets are not orbital or Cartesian component coordinates.
@@ -565,6 +644,9 @@ does not contain invented coordinates or replace source provenance.
 
 - every manifest's source identity, release, endpoint, query or selection, row count,
   checksum, and acknowledgement;
+- the census ReadMe/version evidence, exact projections, 4,407/4,407/688 logical
+  counts, 4,408-note transport count, continuation reconstruction, content keys, and
+  accepted mapping bindings;
 - the committed full WDS catalogue's compressed and uncompressed checksums, format
   file, row count, and exact candidate selection;
 - the exact GCNS/CNS5 inclusion union inside 25 pc and GCNS selection from 25 to
@@ -587,7 +669,8 @@ does not contain invented coordinates or replace source provenance.
 - per-anchor coverage counts and proof that no sphere crosses a source boundary;
 - canonical-to-scene mapping, units, ordering, uniqueness, and finite values;
 - exact equality between expected and emitted system/component IDs;
-- presentation derivation and null fallback;
+- presentation derivation, object class, census facts, marker size/intensity/pick
+  separation, and null fallback;
 - deterministic regeneration from committed inputs; and
 - the runtime node-count and file-size budgets.
 
@@ -614,16 +697,21 @@ Validation must include negative fixtures for:
 
 Before committing a refresh, review:
 
-- all four source-manifest diffs;
+- all five source-manifest diffs;
 - the compressed full WDS snapshot and format diff, checksums, and row count;
 - added and removed systems and components;
 - unmatched and multiply matched identifiers;
 - changed GCNS distances or positions;
 - changed CNS5/WDS membership;
 - lost or newly available Gaia enrichment;
+- new, removed, ambiguous, or changed census candidates, accepted names,
+  classifications, temperatures, hierarchy evidence, and presentation tiers;
 - every landmark fixture;
 - coverage and runtime-size changes; and
 - all acknowledgement changes.
 
 Ordinary `npm run build`, `npm run test`, and browser runtime never access GCNS,
-Gaia, CNS5, or WDS. Refresh is never implicit.
+Gaia, CNS5, WDS, or VizieR. Refresh is never implicit. For a source-only census
+refresh, `npm run data:refresh -- --c20pc-only` pins the new source bytes; a separate
+`npm run data:refresh -- --reconcile` emits the review-sensitive candidate diff and
+never updates its own accepted checksum.

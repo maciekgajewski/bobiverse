@@ -22,11 +22,29 @@ export function SystemDetails({
         <p>Select a stellar system to inspect its catalogue facts.</p>
       </section>
     );
-  const identifiers = system.components
-    .map((component) =>
-      component.gaia_source_id ? `Gaia DR3 ${component.gaia_source_id}` : null,
-    )
-    .filter(Boolean);
+  const identifiers = Array.from(
+    new Set(
+      system.components.flatMap((component) =>
+        [
+          component.identifiers.gaia_dr3_source_id
+            ? `Gaia DR3 ${component.identifiers.gaia_dr3_source_id}`
+            : null,
+          component.identifiers.gj_id,
+          component.identifiers.hip_id,
+          component.identifiers.wise_id,
+          component.identifiers.twomass_id,
+          component.identifiers.published_name,
+          component.c20pc_enrichment?.hd_id,
+          component.c20pc_enrichment?.ross_id,
+          component.c20pc_enrichment?.wd_id,
+          component.c20pc_enrichment?.gaia_id,
+          component.c20pc_enrichment?.hip_id,
+          component.c20pc_enrichment?.pmjid,
+          component.c20pc_enrichment?.multiple_designations,
+        ].filter((value): value is string => Boolean(value)),
+      ),
+    ),
+  );
   return (
     <section
       className={`details ${embedded ? "embedded-details" : ""}`}
@@ -73,6 +91,39 @@ export function SystemDetails({
           <span>Catalogue IDs</span>
           {identifiers.join("; ")}
         </p>
+      )}
+      {system.components.some(
+        (component) => component.c20pc_enrichment || component.object_class,
+      ) && (
+        <div className="component-list">
+          <span>Component classification</span>
+          {system.components.map((component) => {
+            const census = component.c20pc_enrichment;
+            const classification = component.object_class
+              ? component.object_class.replaceAll("_", " ")
+              : "unclassified";
+            const spectralType =
+              census?.spectral_type_near_infrared ??
+              census?.spectral_type_optical ??
+              census?.spectral_type;
+            const temperature =
+              census?.effective_temperature_k == null
+                ? null
+                : `${census.effective_temperature_k.toLocaleString()} K${
+                    census.effective_temperature_error_k == null
+                      ? ""
+                      : ` ± ${census.effective_temperature_error_k.toLocaleString()} K`
+                  }`;
+            return (
+              <div key={component.id}>
+                {component.designation}: {classification}
+                {spectralType ? ` · ${spectralType}` : ""}
+                {temperature ? ` · ${temperature}` : ""}
+                {census ? " · 20-pc census" : ""}
+              </div>
+            );
+          })}
+        </div>
       )}
       <p className="provenance">{system.provenance.catalogues.join(" · ")}</p>
     </section>

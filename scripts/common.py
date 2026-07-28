@@ -23,6 +23,9 @@ CNS5_PATH = SOURCE_DIR / "cns5-nearby-components.json"
 GAIA_ENRICHMENT_PATH = SOURCE_DIR / "gaia-dr3-enrichment.json"
 WDS_PATH = SOURCE_DIR / "wds-precise.txt.gz"
 WDS_FORMAT_PATH = SOURCE_DIR / "wdsweb-format.txt"
+C20PC_PATH = SOURCE_DIR / "twenty-parsec-census.json"
+C20PC_README_PATH = SOURCE_DIR / "twenty-parsec-census-readme.txt"
+C20PC_SCHEMA_PATH = ROOT / "data" / "schema" / "twenty-parsec-census.schema.json"
 
 LIGHT_YEARS_PER_PARSEC = 3.261563777
 GAIA_CATALOGUE = "Gaia DR3 gaiadr3.gaia_source"

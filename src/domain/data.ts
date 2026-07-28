@@ -15,7 +15,10 @@ const colorFamily = z.enum([
   "orange",
   "red",
   "neutral",
+  "infrared-cool",
+  "infrared-warm",
 ]);
+const objectClass = z.enum(["star", "white_dwarf", "brown_dwarf"]);
 const component = z.object({
   id: z.string().min(1),
   gaia_source_id: z
@@ -44,6 +47,34 @@ const component = z.object({
       variability_class_score: finite.nullable(),
     })
     .nullable(),
+  c20pc_enrichment: z
+    .object({
+      source_key: z.string().min(1),
+      published_name: z.string().nullable(),
+      common_name: z.string().nullable(),
+      wise_id: z.string().nullable(),
+      twomass_id: z.string().nullable(),
+      hd_id: z.string().nullable(),
+      ross_id: z.string().nullable(),
+      wd_id: z.string().nullable(),
+      gaia_id: z.string().nullable(),
+      hip_id: z.string().nullable(),
+      gj_id: z.string().nullable(),
+      pmjid: z.string().nullable(),
+      multiple_designations: z.string().nullable(),
+      spectral_type: z.string().nullable(),
+      spectral_type_optical: z.string().nullable(),
+      spectral_type_near_infrared: z.string().nullable(),
+      effective_temperature_k: finite.nullable(),
+      effective_temperature_error_k: finite.nullable(),
+      object_class: objectClass.nullable(),
+      visual_family: z.enum(["infrared-cool", "infrared-warm"]).nullable(),
+      system_hierarchy: z.string().nullable(),
+      system_code: z.number().int().nullable(),
+      reference_codes: z.array(z.string()),
+    })
+    .nullable(),
+  object_class: objectClass.nullable(),
   designation: z.string().min(1),
   identifiers: z.object({
     gaia_dr3_source_id: z.string().nullable(),
@@ -53,6 +84,10 @@ const component = z.object({
     hip_id: z.string().nullable(),
     cns5_component_id: z.string().nullable(),
     cns6_system_id: z.string().nullable(),
+    c20pc_source_key: z.string().nullable(),
+    wise_id: z.string().nullable(),
+    twomass_id: z.string().nullable(),
+    published_name: z.string().nullable(),
   }),
   icrs: z.object({
     ra_deg: finite.nullable(),
@@ -73,12 +108,17 @@ const component = z.object({
   visual: z.object({
     color_family: colorFamily,
     marker_radius: finite.positive(),
+    intensity: finite.min(0).max(1),
+    pick_radius: finite.positive(),
     derivation: z.string().min(1),
     source_facts: z.object({
       effective_temperature_k: finite.nullable(),
       spectral_type: z.string().nullable(),
       bp_rp: finite.nullable(),
       wds_spectral_type: z.string().nullable(),
+      c20pc_effective_temperature_k: finite.nullable(),
+      c20pc_spectral_type: z.string().nullable(),
+      object_class: objectClass.nullable(),
     }),
   }),
   provenance: z.object({
@@ -89,7 +129,7 @@ const component = z.object({
 });
 
 const dataSchema = z.object({
-  schema_version: z.literal("3.0.0"),
+  schema_version: z.literal("4.0.0"),
   metadata: z.object({
     generated_at: z.string().min(1),
     coordinate_frame: z.literal("Sun-centered Galactic Cartesian"),
@@ -116,6 +156,15 @@ const dataSchema = z.object({
         candidate_sha256: z.string().regex(/^[0-9a-f]{64}$/),
         row_count: z.number().int().positive(),
         candidate_row_count: z.number().int().nonnegative(),
+        acknowledgement: z.string().min(1),
+      }),
+      c20pc: z.object({
+        table4_sha256: z.string().regex(/^[0-9a-f]{64}$/),
+        notes_sha256: z.string().regex(/^[0-9a-f]{64}$/),
+        references_sha256: z.string().regex(/^[0-9a-f]{64}$/),
+        table4_row_count: z.number().int().positive(),
+        notes_row_count: z.number().int().positive(),
+        reference_row_count: z.number().int().positive(),
         acknowledgement: z.string().min(1),
       }),
     }),

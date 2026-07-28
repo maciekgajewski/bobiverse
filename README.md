@@ -5,10 +5,12 @@ Taylor. Its central feature is a true-scale, interactive 3D map that helps reade
 understand the relative orientation and distances of nearby stellar systems. Later
 phases connect that map to chapters, characters, travel, events, and Bob genealogy.
 
-The checked-in astronomy runtime is generated from pinned GCNS, CNS5, Gaia DR3, and
-WDS inputs under ADR-0011. It contains Sol plus 96 source-backed systems within the
-configured 20-light-year neighbourhood, including reviewed landmark multiples such
-as Alpha Centauri A/B/Proxima, Sirius A/B, and Procyon A/B. The application makes no
+The checked-in astronomy runtime is generated from pinned GCNS, CNS5, Gaia DR3, WDS,
+and Kirkpatrick et al. 2024 20-pc-census inputs under ADR-0011 and ADR-0012. It
+contains Sol plus 96 source-backed systems within the configured 20-light-year
+neighbourhood, including reviewed landmark multiples such as Alpha Centauri
+A/B/Proxima, Sirius A/B, and Procyon A/B, plus recognizable source-backed names and
+substellar presentation for ten ultracool brown dwarfs. The application makes no
 runtime astronomy or image-host request; see the [astronomy
 pipeline](docs/data/astronomy-pipeline.md) and [backdrop provenance and attribution
 record](docs/data/galactic-starfield-backdrop.md).

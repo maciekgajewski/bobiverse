@@ -1,6 +1,6 @@
 # BOB-026: ultracool-dwarf identity and presentation enrichment
 
-Status: Ready
+Status: Done
 Phase: 1B corrective refinement
 Last updated: 2026-07-28
 
@@ -23,8 +23,8 @@ without inventing component membership.
 The Captain accepted
 `../adrs/0012-20pc-census-identity-and-substellar-presentation.md` on 2026-07-28, so
 this task is `Ready`. ADR acceptance and Ready status do not authorize
-implementation. Implementation still requires a later explicit `proceed` or
-`make it so`.
+implementation. The Captain authorized implementation with `proceed to
+implementation` on 2026-07-28.
 
 ## Baseline evidence
 
@@ -129,7 +129,10 @@ FROM "J/ApJS/271/55/refs"
 ORDER BY "Ref", "BibCode"
 ```
 
-The pinned baseline is 4,407 Table 4 rows, 4,407 notes rows, and 688 reference rows.
+The pinned baseline is 4,407 Table 4 rows, 4,407 logical notes rows, and 688
+reference rows. VizieR TAP currently transports the long `BD+39 2376 AB` note as two
+adjacent rows; normalization records the 4,408 transport count and reconstructs one
+logical note with continuation `recno` 1980.
 Refresh must reject a missing projected column, duplicate normalized row, unstable
 ordering, a missing/duplicate/non-contiguous `recno` in Table 4 or notes, an
 unresolved retained reference code, or catalogue identity other than
@@ -155,7 +158,9 @@ Presence in the pinned Table 4 is the sole 20-pc eligibility predicate for this
 enrichment role. Do not recompute membership from parallax or coordinates. A matched
 row is eligible at the catalogue's inclusive boundary even when its parallax is
 uncertain; an absent row is ineligible. A canonical-distance disagreement is a
-review warning and never replaces canonical geometry.
+review warning and never replaces canonical geometry. Warn when the absolute
+distance difference exceeds the larger of `0.1 pc` and three times the combined
+propagated one-sigma uncertainty.
 
 ### Identifier grammar
 
@@ -169,7 +174,9 @@ Implement ADR-0012 identifiers as typed
 - preserve every coordinate digit, sign, decimal point, and the distinct `WISE`,
   `WISEA`, `WISEPA`, `2MASS`, `2MASSI`, and `UGPS` namespaces;
 - split only source-documented `Name` ampersands and `Mult` commas; and
-- never equate qualified, unqualified, composite, or system-level scopes.
+- retain a comma-delimited PMJID as one `COMPOSITE/N` token, scope an unqualified
+  identifier on an `N`-component source row as `SYSTEM/N`, and never equate
+  qualified, unqualified, composite, or system-level scopes.
 
 An automatic edge requires one compatible typed token unique on each side. All
 shared tokens must nominate the same edge. Duplicates, collisions, incompatible
@@ -406,8 +413,8 @@ accept its own generated review checksum implicitly.
 
 ## Generated-artifact and documentation expectations
 
-- Commit one normalized 20-pc census extract and manifest plus the pinned references
-  and only those notes required by accepted decisions.
+- Commit one normalized 20-pc census extract and manifest plus the exact pinned
+  Table 4, notes, references, and ReadMe inputs.
 - Extend source schemas, candidate/review artifacts, the stable identity registry
   only when accepted mappings require it, and the runtime schema together.
 - Regenerate `src/data/nearby-systems.json`; do not hand-edit generated runtime
@@ -437,3 +444,34 @@ accept its own generated review checksum implicitly.
 - **Risk:** The 20-pc source is applied around a distant narrative anchor.
   **Mitigation:** Validate the Sun-centred source boundary before accepting any
   enrichment row.
+
+## Implementation record
+
+Implementation began with the Captain's explicit `proceed` authorization on
+2026-07-28. The committed VizieR snapshot contains 4,407 Table 4 rows, 4,407
+logical note rows reconstructed from 4,408 TAP transport rows, 688 reference rows,
+and the pinned ReadMe. Reconciliation accepts 13 reviewed census mappings, retains
+142 ambiguous proposals for review, and records candidate checksum
+`34230a226ee7aefdd098f241e1d32deeb5155c9f826b11c05d448a30e38fc5b8`.
+
+The generated runtime contains 97 systems and is 422,789 bytes. Ten accepted
+components are brown dwarfs with the task's false-infrared colour, visible-radius,
+intensity, and independent pick-target contracts. Stable identity-set review found
+no system or component ID churn.
+
+Automated validation passed on 2026-07-28:
+
+- `npm run data:refresh -- --c20pc-only` acquired and normalized the pinned census;
+- repeated `npm run data:refresh -- --reconcile` reported accepted `+0/-0`, zero
+  changed components, 142 ambiguous proposals, and the checksum above;
+- `npm run data:generate`, `npm run data:test` (53 tests),
+  `npm run data:validate`, `npm run format:check`, `npm run lint`,
+  `npm run typecheck`, `npm run test` (119 tests), `npm run build`,
+  `npm run validate`, and `git diff --check` passed; and
+- `npm run test:e2e` passed 39 tests across Chromium, Firefox, and WebKit.
+
+The required independent implementation review completed with `No findings.` On
+2026-07-28, the Captain accepted the required real-browser Sol 20-light-year visual
+and interaction review, including identity search, inspector facts, brown-dwarf
+visual hierarchy, practical selection, and preservation of ordinary stellar-marker
+presentation. All completion gates are satisfied.

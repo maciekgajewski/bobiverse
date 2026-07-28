@@ -23,6 +23,7 @@ from astronomy_pipeline import (
     decimal_id,
     cns5_query,
     cns5_astrometry_issue,
+    c20pc_distance_warning,
     distance,
     exact_source_query,
     gaia_query,
@@ -35,10 +36,32 @@ from astronomy_pipeline import (
     wds_membership_candidates,
 )
 from common import (
-    CANDIDATES_PATH, CNS5_PATH, CONFIG_PATH, CONFIG_SCHEMA_PATH, GAIA_ENRICHMENT_PATH,
+    C20PC_PATH, C20PC_README_PATH, C20PC_SCHEMA_PATH, CANDIDATES_PATH, CNS5_PATH, CONFIG_PATH, CONFIG_SCHEMA_PATH, GAIA_ENRICHMENT_PATH,
     GCNS_PATH, GENERATED_PATH, IDENTITY_REGISTRY_PATH, LANDMARKS_PATH, REVIEW_PATH,
     ROOT, SOURCE_DIR, SOURCE_EXTRACT_SCHEMA_PATH, WDS_FORMAT_PATH, WDS_PATH,
     mapped_anchor_ids, read_gzip, read_json, sha256, sha256_bytes, value_sha256,
+)
+from c20pc_census import (
+    C20PC_ACKNOWLEDGEMENT,
+    C20PC_BIBCODE,
+    C20PC_CATALOGUE,
+    C20PC_CATALOGUE_DOI,
+    C20PC_NOTES_COLUMNS,
+    C20PC_NOTES_QUERY,
+    C20PC_PUBLICATION_DOI,
+    C20PC_README_HISTORY_DATE,
+    C20PC_README_URL,
+    C20PC_REFS_COLUMNS,
+    C20PC_REFS_QUERY,
+    C20PC_TABLE_COLUMNS,
+    C20PC_TABLE_QUERY,
+    C20PC_TAP_URL,
+    EXPECTED_ROW_COUNTS,
+    EXPECTED_EXTERNAL_REFERENCE_CODES,
+    c20pc_enrichment,
+    census_source_key,
+    exact_identifier_candidates,
+    unresolved_reference_codes,
 )
 
 MAX_RUNTIME_BYTES = 5 * 1024 * 1024
@@ -104,6 +127,100 @@ def validate_extract(key: str, columns: list[str], id_key: str) -> tuple[dict[st
     if not keys or len(keys) != len(set(keys)):
         raise ValueError(f"{key} extract has missing or duplicate {id_key}")
     return manifest, rows
+
+
+def validate_c20pc() -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    document = read_json(C20PC_PATH)
+    validate_schema(document, C20PC_SCHEMA_PATH, "20-pc census")
+    source = document["source"]
+    expected_source = {
+        "endpoint": C20PC_TAP_URL,
+        "catalogue": C20PC_CATALOGUE,
+        "catalogue_doi": C20PC_CATALOGUE_DOI,
+        "publication_doi": C20PC_PUBLICATION_DOI,
+        "publication_bibcode": C20PC_BIBCODE,
+        "readme_url": C20PC_README_URL,
+        "readme_history_date": C20PC_README_HISTORY_DATE,
+        "readme_media_type": "text/plain; charset=utf-8",
+        "acknowledgement": C20PC_ACKNOWLEDGEMENT,
+        "external_reference_codes": EXPECTED_EXTERNAL_REFERENCE_CODES,
+    }
+    if any(source.get(key) != value for key, value in expected_source.items()):
+        raise ValueError("20-pc census source provenance differs from its contract")
+    if (
+        not source.get("retrieved_at")
+        or not C20PC_README_PATH.exists()
+        or source.get("readme_sha256") != sha256(C20PC_README_PATH)
+        or C20PC_README_HISTORY_DATE
+        not in C20PC_README_PATH.read_text(encoding="utf-8")
+    ):
+        raise ValueError("20-pc census ReadMe contract is incomplete or stale")
+    query_contracts = {
+        "table4": (
+            C20PC_TABLE_QUERY,
+            C20PC_TABLE_COLUMNS,
+            EXPECTED_ROW_COUNTS["table4"],
+            document["table4"],
+        ),
+        "notes4": (
+            C20PC_NOTES_QUERY,
+            C20PC_NOTES_COLUMNS,
+            EXPECTED_ROW_COUNTS["notes4"],
+            document["notes4"],
+        ),
+        "refs": (
+            C20PC_REFS_QUERY,
+            C20PC_REFS_COLUMNS,
+            EXPECTED_ROW_COUNTS["refs"],
+            document["references"],
+        ),
+    }
+    for name, (adql, columns, count, rows) in query_contracts.items():
+        query = source["queries"][name]
+        if (
+            query["adql"] != adql
+            or query["media_type"] != "text/csv"
+            or query["columns"] != columns
+            or query["row_count"] != count
+            or len(rows) != count
+            or query["normalised_sha256"] != value_sha256(rows)
+        ):
+            raise ValueError(f"20-pc {name} projection or checksum differs")
+    notes_query = source["queries"]["notes4"]
+    if notes_query.get("transport_row_count") != EXPECTED_ROW_COUNTS[
+        "notes4_transport"
+    ]:
+        raise ValueError("20-pc notes transport count differs from its contract")
+    if [row["recno"] for row in document["table4"]] != list(
+        range(1, EXPECTED_ROW_COUNTS["table4"] + 1)
+    ):
+        raise ValueError("20-pc Table 4 recno sequence is not contiguous")
+    continuations = [
+        row for row in document["notes4"] if row["continuation_recnos"]
+    ]
+    if (
+        len(continuations) != 1
+        or continuations[0]["recno"] != 1979
+        or continuations[0]["continuation_recnos"] != [1980]
+    ):
+        raise ValueError("20-pc logical note reconstruction differs")
+    note_sequence = [
+        recno
+        for row in document["notes4"]
+        for recno in [row["recno"], *row["continuation_recnos"]]
+    ]
+    if note_sequence != list(
+        range(1, EXPECTED_ROW_COUNTS["notes4_transport"] + 1)
+    ):
+        raise ValueError("20-pc notes transport recno sequence is not contiguous")
+    if (
+        unresolved_reference_codes(
+            document["table4"], document["references"]
+        )
+        != EXPECTED_EXTERNAL_REFERENCE_CODES
+    ):
+        raise ValueError("20-pc retained reference codes are unresolved")
+    return source, document["table4"]
 
 
 def validate_wds(
@@ -530,7 +647,7 @@ def validate_candidate_geometry(
 
 
 def validate_candidates(candidates: dict[str, Any], review: dict[str, Any], registry: dict[str, Any]) -> None:
-    if candidates.get("schema_version") != "1.0.0":
+    if candidates.get("schema_version") != "2.0.0":
         raise ValueError("System candidates has an unsupported schema version")
     if review.get("accepted_candidate_sha256") != value_sha256(candidates):
         raise ValueError("System candidates checksum is stale or was not explicitly accepted")
@@ -705,6 +822,90 @@ def validate_candidates(candidates: dict[str, Any], review: dict[str, Any], regi
             raise ValueError("System review has an invalid identity transition")
 
 
+def validate_c20pc_bindings(
+    source: dict[str, Any],
+    rows: list[dict[str, Any]],
+    candidates: dict[str, Any],
+    review: dict[str, Any],
+    gcns_rows: list[dict[str, str]],
+    cns5_rows: list[dict[str, str]],
+) -> None:
+    if (
+        candidates.get("c20pc_source_sha256")
+        != source["queries"]["table4"]["normalised_sha256"]
+    ):
+        raise ValueError("System candidates are not bound to the 20-pc snapshot")
+    rows_by_key = {census_source_key(row): row for row in rows}
+    components = {
+        component["id"]: component for component in candidates["components"]
+    }
+    mappings = review.get("c20pc_mappings", [])
+    gcns = {row["source_id"]: row for row in gcns_rows}
+    cns5 = {row["cns5_id"]: row for row in cns5_rows}
+    if len(mappings) != 13:
+        raise ValueError("System review does not contain the 13 accepted 20-pc mappings")
+    seen_components: set[str] = set()
+    seen_sources: set[str] = set()
+    exact_candidates = exact_identifier_candidates(cns5_rows, rows)
+    for mapping in mappings:
+        component_id = mapping.get("candidate_component_id")
+        source_key = mapping.get("source_key")
+        row = rows_by_key.get(source_key)
+        component = components.get(component_id)
+        if (
+            component is None
+            or row is None
+            or component_id in seen_components
+            or source_key in seen_sources
+            or mapping.get("source_recno") != row["recno"]
+            or mapping.get("cns5_id") != component.get("cns5_id")
+            or mapping.get("match_method")
+            not in {"reviewed_mapping", "exact_identifier"}
+            or not mapping.get("preferred_name")
+            or not mapping.get("preferred_name_source")
+            or not mapping.get("reason")
+        ):
+            raise ValueError("System review has an invalid 20-pc mapping")
+        if mapping["match_method"] == "exact_identifier":
+            accepted_exact = [
+                candidate
+                for candidate in exact_candidates[mapping["cns5_id"]]
+                if candidate["source_key"] == source_key
+                and not candidate["ambiguous"]
+            ]
+            if len(accepted_exact) != 1:
+                raise ValueError(
+                    "Reviewed exact 20-pc mapping is not independently unique"
+                )
+        seen_components.add(component_id)
+        seen_sources.add(source_key)
+        expected_match = {
+            "mapping": mapping,
+            "enrichment": c20pc_enrichment(row, mapping),
+            "canonical_distance_warning": c20pc_distance_warning(
+                row,
+                component.get("position_pc"),
+                gcns.get(component.get("gaia_source_id")),
+                cns5.get(component.get("cns5_id")),
+            ),
+        }
+        if component.get("c20pc_match") != expected_match:
+            raise ValueError(
+                f"{component_id} 20-pc match differs from reviewed source evidence"
+            )
+        if component["preferred_name_candidate"] != mapping["preferred_name"]:
+            raise ValueError(
+                f"{component_id} does not use its accepted census name"
+            )
+    accepted_components = {
+        component["id"]
+        for component in candidates["components"]
+        if component.get("c20pc_match") is not None
+    }
+    if accepted_components != seen_components:
+        raise ValueError("Candidate 20-pc matches differ from reviewed mappings")
+
+
 def validate_anchor_bootstraps(
     review: dict[str, Any],
     candidates: dict[str, Any],
@@ -749,7 +950,17 @@ def expected_presentation(
     enrichment: dict[str, str] | None,
     bp_rp: float | None,
     wds_spectral_type: str | None = None,
+    c20pc: dict[str, Any] | None = None,
 ) -> tuple[str, str]:
+    if c20pc and c20pc.get("object_class") == "brown_dwarf":
+        family = c20pc.get("visual_family")
+        if family not in {"infrared-cool", "infrared-warm"}:
+            raise ValueError("Accepted 20-pc brown dwarf lacks a visual family")
+        return (
+            family,
+            "Kirkpatrick et al. 2024 brown-dwarf type/temperature; "
+            "approximate false-infrared presentation",
+        )
     if enrichment and enrichment.get("teff_gspphot"):
         temperature = float(enrichment["teff_gspphot"])
         family = (
@@ -852,8 +1063,13 @@ def validate_runtime_presentation(
                 rp = gcns_row.get("phot_rp_mean_mag")
                 bp_rp = float(bp) - float(rp) if bp and rp else None
             wds_spectral_type = wds_spectral_by_component.get(component["id"])
+            c20pc = (
+                candidate_component["c20pc_match"]["enrichment"]
+                if candidate_component.get("c20pc_match")
+                else None
+            )
             family, derivation = expected_presentation(
-                enrichment, bp_rp, wds_spectral_type
+                enrichment, bp_rp, wds_spectral_type, c20pc
             )
             visual = component["visual"]
             if (
@@ -871,6 +1087,16 @@ def validate_runtime_presentation(
                     ),
                     "bp_rp": bp_rp,
                     "wds_spectral_type": wds_spectral_type,
+                    "c20pc_effective_temperature_k": (
+                        c20pc.get("effective_temperature_k")
+                        if c20pc else None
+                    ),
+                    "c20pc_spectral_type": (
+                        c20pc.get("spectral_type") if c20pc else None
+                    ),
+                    "object_class": (
+                        c20pc.get("object_class") if c20pc else None
+                    ),
                 }
             ):
                 raise ValueError(
@@ -889,6 +1115,14 @@ def validate_runtime_presentation(
                 "cns6_system_id": (
                     cns5_row.get("cns6_system_id") or None
                     if cns5_row else None
+                ),
+                "c20pc_source_key": (
+                    c20pc.get("source_key") if c20pc else None
+                ),
+                "wise_id": c20pc.get("wise_id") if c20pc else None,
+                "twomass_id": c20pc.get("twomass_id") if c20pc else None,
+                "published_name": (
+                    c20pc.get("published_name") if c20pc else None
                 ),
             }
             if component["identifiers"] != expected_identifiers:
@@ -932,6 +1166,14 @@ def validate_runtime_presentation(
             if component["gaia_enrichment"] != expected_enrichment:
                 raise ValueError(
                     f"{component['id']} drops Gaia enrichment provenance"
+                )
+            if (
+                component["c20pc_enrichment"] != c20pc
+                or component["object_class"]
+                != (c20pc.get("object_class") if c20pc else None)
+            ):
+                raise ValueError(
+                    f"{component['id']} drops accepted 20-pc enrichment"
                 )
             astrometry = gcns_row or cns5_row or {}
 
@@ -987,11 +1229,21 @@ def validate_runtime_presentation(
                             ("GCNS", gcns_row),
                             ("CNS5", cns5_row),
                             ("Gaia DR3", enrichment),
+                            (
+                                "Kirkpatrick et al. 2024 20-pc census",
+                                c20pc,
+                            ),
                         )
                         if source_row
                     ],
                     "enrichment": (
-                        "Gaia DR3 left join" if enrichment else None
+                        "Gaia DR3 left join; reviewed Kirkpatrick et al. 2024 20-pc census"
+                        if enrichment and c20pc
+                        else "Gaia DR3 left join"
+                        if enrichment
+                        else "Reviewed Kirkpatrick et al. 2024 20-pc census"
+                        if c20pc
+                        else None
                     ),
                 },
             }
@@ -1000,9 +1252,18 @@ def validate_runtime_presentation(
                     raise ValueError(
                         f"{component['id']} {field} differs from its deterministic source"
                     )
-            if visual["marker_radius"] != 0.09:
+            is_brown_dwarf = bool(
+                c20pc and c20pc.get("object_class") == "brown_dwarf"
+            )
+            if (
+                visual["marker_radius"]
+                != (0.05 if is_brown_dwarf else 0.09)
+                or visual["intensity"]
+                != (0.25 if is_brown_dwarf else 1.0)
+                or visual["pick_radius"] != 0.09
+            ):
                 raise ValueError(
-                    f"{component['id']} marker radius differs from the fixed contract"
+                    f"{component['id']} marker presentation differs from contract"
                 )
 
 
@@ -1087,6 +1348,28 @@ def validate_runtime(document: dict[str, Any], manifests: dict[str, Any], candid
                 "candidate_row_count": manifest["candidate_row_count"],
                 "acknowledgement": manifest["acknowledgement"],
             }
+        elif key == "c20pc":
+            expected = {
+                "table4_sha256": manifest["queries"]["table4"][
+                    "normalised_sha256"
+                ],
+                "notes_sha256": manifest["queries"]["notes4"][
+                    "normalised_sha256"
+                ],
+                "references_sha256": manifest["queries"]["refs"][
+                    "normalised_sha256"
+                ],
+                "table4_row_count": manifest["queries"]["table4"][
+                    "row_count"
+                ],
+                "notes_row_count": manifest["queries"]["notes4"][
+                    "row_count"
+                ],
+                "reference_row_count": manifest["queries"]["refs"][
+                    "row_count"
+                ],
+                "acknowledgement": manifest["acknowledgement"],
+            }
         else:
             expected = {
                 field: manifest[field]
@@ -1095,8 +1378,11 @@ def validate_runtime(document: dict[str, Any], manifests: dict[str, Any], candid
         if runtime_source != expected:
             raise ValueError(f"Runtime {key} provenance differs from its pinned manifest")
     system_ids = [system["id"] for system in document["systems"]]
+    system_names = [system["name"].casefold() for system in document["systems"]]
     if document["systems"][0]["id"] != "sol" or len(system_ids) != len(set(system_ids)):
         raise ValueError("Runtime systems must start with Sol and have unique IDs")
+    if len(system_names) != len(set(system_names)):
+        raise ValueError("Runtime preferred system names are not catalogue-unique")
     expected_sol = {
         "id": "sol",
         "name": "Sol",
@@ -1112,6 +1398,8 @@ def validate_runtime(document: dict[str, Any], manifests: dict[str, Any], candid
                 "cns5_id": None,
                 "source_identities": [],
                 "gaia_enrichment": None,
+                "c20pc_enrichment": None,
+                "object_class": "star",
                 "designation": "Sol",
                 "identifiers": {
                     "gaia_dr3_source_id": None,
@@ -1121,6 +1409,10 @@ def validate_runtime(document: dict[str, Any], manifests: dict[str, Any], candid
                     "hip_id": None,
                     "cns5_component_id": None,
                     "cns6_system_id": None,
+                    "c20pc_source_key": None,
+                    "wise_id": None,
+                    "twomass_id": None,
+                    "published_name": None,
                 },
                 "icrs": {
                     "ra_deg": None,
@@ -1141,12 +1433,17 @@ def validate_runtime(document: dict[str, Any], manifests: dict[str, Any], candid
                 "visual": {
                     "color_family": "yellow",
                     "marker_radius": 0.09,
+                    "intensity": 1.0,
+                    "pick_radius": 0.09,
                     "derivation": "generated Sol origin",
                     "source_facts": {
                         "effective_temperature_k": None,
                         "spectral_type": None,
                         "bp_rp": None,
                         "wds_spectral_type": None,
+                        "c20pc_effective_temperature_k": None,
+                        "c20pc_spectral_type": None,
+                        "object_class": "star",
                     },
                 },
                 "provenance": {
@@ -1421,6 +1718,7 @@ def main() -> None:
     gcns_manifest, gcns_rows = validate_extract("gcns", GCNS_COLUMNS, "source_id")
     cns5_manifest, cns5_rows = validate_extract("cns5", CNS5_COLUMNS, "cns5_id")
     gaia_manifest, gaia_rows = validate_extract("gaia_dr3", GAIA_COLUMNS, "source_id")
+    c20pc_manifest, c20pc_rows = validate_c20pc()
     registry = read_json(IDENTITY_REGISTRY_PATH)
     candidates = read_json(CANDIDATES_PATH)
     review = read_json(REVIEW_PATH)
@@ -1450,6 +1748,14 @@ def main() -> None:
         review.get("cns5_astrometry_overrides", []),
     )
     validate_candidates(candidates, review, registry)
+    validate_c20pc_bindings(
+        c20pc_manifest,
+        c20pc_rows,
+        candidates,
+        review,
+        gcns_rows,
+        cns5_rows,
+    )
     validate_anchor_bootstraps(
         review, candidates, gcns_rows, cns5_rows, mapped_anchor_ids()
     )
@@ -1459,8 +1765,8 @@ def main() -> None:
         runtime, gcns_rows, cns5_rows, gaia_rows, candidates, review
     )
     validate_runtime_uncertainty(runtime, candidates, gcns_rows, cns5_rows)
-    validate_runtime(runtime, {"gcns": gcns_manifest, "cns5": cns5_manifest, "gaia_dr3": gaia_manifest, "wds": wds_manifest}, candidates, review, landmarks, config)
-    print(f"Validated {len(read_json(GENERATED_PATH)['systems'])} reconciled systems and four pinned astronomy sources")
+    validate_runtime(runtime, {"gcns": gcns_manifest, "cns5": cns5_manifest, "gaia_dr3": gaia_manifest, "wds": wds_manifest, "c20pc": c20pc_manifest}, candidates, review, landmarks, config)
+    print(f"Validated {len(read_json(GENERATED_PATH)['systems'])} reconciled systems and five pinned astronomy sources")
 
 
 if __name__ == "__main__":

@@ -17,6 +17,8 @@ const COLOR_FAMILIES: Record<ColorFamily, string> = {
   orange: "#ffac69",
   red: "#ff6b55",
   neutral: "#d8e6ff",
+  "infrared-cool": "#725a82",
+  "infrared-warm": "#9a6548",
 } as const;
 
 function clamp(value: number, minimum: number, maximum: number): number {
@@ -36,6 +38,7 @@ export function starDistanceAttenuation(cameraDistance: number): number {
 
 export const STAR_SPRITE_FRAGMENT_SHADER = `
 uniform vec3 uColor;
+uniform float uIntensity;
 varying vec2 vUv;
 varying float vCameraDistance;
 
@@ -44,13 +47,17 @@ void main() {
   float halo = pow(max(1.0 - distanceFromCenter, 0.0), 2.2);
   float core = smoothstep(0.5, 0.0, distanceFromCenter);
   float attenuation = 1.0 - smoothstep(${STAR_DISTANCE_FADE_START.toFixed(1)}, ${STAR_DISTANCE_FADE_END.toFixed(1)}, vCameraDistance) * ${(1 - STAR_DISTANCE_FAR_BRIGHTNESS).toFixed(2)};
-  float alpha = (halo * 0.7 + core * 0.3) * attenuation;
+  float alpha = (halo * 0.7 + core * 0.3) * attenuation * uIntensity;
   gl_FragColor = vec4(uColor * (halo + core * 0.75), alpha);
 }
 `;
 
 export function colorFamilyColor(colorFamily: ColorFamily): string {
   return COLOR_FAMILIES[colorFamily];
+}
+
+export function componentPickRadius(component: Component): number {
+  return Math.max(component.visual.marker_radius, component.visual.pick_radius);
 }
 
 function stableHash(value: string): number {

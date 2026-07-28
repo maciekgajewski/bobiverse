@@ -689,7 +689,7 @@ export default function App() {
         </>
       )}
       <footer>
-        <span>GCNS · CNS5 · Gaia DR3 · WDS</span>
+        <span>GCNS · CNS5 · Gaia DR3 · WDS · Kirkpatrick 20-pc census</span>
         <span>
           {Object.values(nearbySystems.metadata.sources)
             .map((source) => source.acknowledgement)

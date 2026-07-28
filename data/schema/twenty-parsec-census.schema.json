@@ -1,0 +1,270 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bobiverse.local/schema/twenty-parsec-census-1.0.0.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "source", "table4", "notes4", "references"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "source": { "$ref": "#/$defs/source" },
+    "table4": {
+      "type": "array",
+      "minItems": 4407,
+      "maxItems": 4407,
+      "items": { "$ref": "#/$defs/table4_row" }
+    },
+    "notes4": {
+      "type": "array",
+      "minItems": 4407,
+      "maxItems": 4407,
+      "items": { "$ref": "#/$defs/note_row" }
+    },
+    "references": {
+      "type": "array",
+      "minItems": 688,
+      "maxItems": 688,
+      "items": { "$ref": "#/$defs/reference_row" }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "nullable_string": { "type": ["string", "null"] },
+    "nullable_number": { "type": ["number", "null"] },
+    "nullable_integer": { "type": ["integer", "null"] },
+    "query": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "table",
+        "media_type",
+        "adql",
+        "columns",
+        "row_count",
+        "normalised_sha256"
+      ],
+      "properties": {
+        "table": { "type": "string", "minLength": 1 },
+        "media_type": { "const": "text/csv" },
+        "adql": { "type": "string", "minLength": 1 },
+        "columns": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "row_count": { "type": "integer", "minimum": 1 },
+        "transport_row_count": { "type": "integer", "minimum": 1 },
+        "normalised_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "catalogue",
+        "catalogue_doi",
+        "publication_doi",
+        "publication_bibcode",
+        "endpoint",
+        "readme_url",
+        "readme_history_date",
+        "readme_media_type",
+        "readme_sha256",
+        "retrieved_at",
+        "acknowledgement",
+        "external_reference_codes",
+        "queries"
+      ],
+      "properties": {
+        "catalogue": { "const": "J/ApJS/271/55" },
+        "catalogue_doi": { "const": "10.26093/cds/vizier.22710055" },
+        "publication_doi": { "const": "10.3847/1538-4365/ad24e2" },
+        "publication_bibcode": { "const": "2024ApJS..271...55K" },
+        "endpoint": {
+          "const": "https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync"
+        },
+        "readme_url": {
+          "const": "https://cdsarc.cds.unistra.fr/ftp/J/ApJS/271/55/ReadMe"
+        },
+        "readme_history_date": { "const": "04-Jun-2024" },
+        "readme_media_type": { "const": "text/plain; charset=utf-8" },
+        "readme_sha256": { "$ref": "#/$defs/sha256" },
+        "retrieved_at": { "type": "string", "minLength": 1 },
+        "acknowledgement": { "type": "string", "minLength": 1 },
+        "external_reference_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "queries": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["table4", "notes4", "refs"],
+          "properties": {
+            "table4": { "$ref": "#/$defs/query" },
+            "notes4": { "$ref": "#/$defs/query" },
+            "refs": { "$ref": "#/$defs/query" }
+          }
+        }
+      }
+    },
+    "table4_row": {
+      "type": "object",
+      "minProperties": 53,
+      "maxProperties": 53,
+      "propertyNames": {
+        "enum": [
+          "recno",
+          "Name",
+          "NcTR",
+          "IMass",
+          "e_IMass",
+          "n_IMass",
+          "Mass",
+          "e_Mass",
+          "n_Mass",
+          "r_Mass",
+          "Massl",
+          "e_Massl",
+          "n_Massl",
+          "r_Massl",
+          "Teff",
+          "e_Teff",
+          "Syst",
+          "Ncomp",
+          "SystCode",
+          "OName",
+          "HD",
+          "Ross",
+          "WD",
+          "2MASS",
+          "WISE",
+          "Gaia",
+          "HIP",
+          "GJ",
+          "PMJID",
+          "Mult",
+          "NamesRef",
+          "RAJ2000",
+          "DEJ2000",
+          "RAPdeg",
+          "e_RAPdeg",
+          "DEPdeg",
+          "e_DEPdeg",
+          "NoteEpoch",
+          "Plx",
+          "e_Plx",
+          "pmRA",
+          "e_pmRA",
+          "pmDE",
+          "e_pmDE",
+          "PlxPMRef",
+          "SpTOpt",
+          "SpTOptCode",
+          "r_SpTOpt",
+          "SpTNIR",
+          "SpTNIRCode",
+          "r_SpTNIR",
+          "2Mcont",
+          "WISEcont"
+        ]
+      },
+      "additionalProperties": false,
+      "properties": {
+        "recno": { "type": "integer", "minimum": 1 },
+        "Name": { "$ref": "#/$defs/nullable_string" },
+        "NcTR": { "$ref": "#/$defs/nullable_integer" },
+        "IMass": { "$ref": "#/$defs/nullable_number" },
+        "e_IMass": { "$ref": "#/$defs/nullable_number" },
+        "n_IMass": { "$ref": "#/$defs/nullable_string" },
+        "Mass": { "$ref": "#/$defs/nullable_number" },
+        "e_Mass": { "$ref": "#/$defs/nullable_number" },
+        "n_Mass": { "$ref": "#/$defs/nullable_string" },
+        "r_Mass": { "$ref": "#/$defs/nullable_string" },
+        "Massl": { "$ref": "#/$defs/nullable_number" },
+        "e_Massl": { "$ref": "#/$defs/nullable_number" },
+        "n_Massl": { "$ref": "#/$defs/nullable_string" },
+        "r_Massl": { "$ref": "#/$defs/nullable_string" },
+        "Teff": { "$ref": "#/$defs/nullable_integer" },
+        "e_Teff": { "$ref": "#/$defs/nullable_integer" },
+        "Syst": { "$ref": "#/$defs/nullable_string" },
+        "Ncomp": { "$ref": "#/$defs/nullable_integer" },
+        "SystCode": { "$ref": "#/$defs/nullable_integer" },
+        "OName": { "$ref": "#/$defs/nullable_string" },
+        "HD": { "$ref": "#/$defs/nullable_string" },
+        "Ross": { "$ref": "#/$defs/nullable_string" },
+        "WD": { "$ref": "#/$defs/nullable_string" },
+        "2MASS": { "$ref": "#/$defs/nullable_string" },
+        "WISE": { "$ref": "#/$defs/nullable_string" },
+        "Gaia": { "$ref": "#/$defs/nullable_string" },
+        "HIP": { "$ref": "#/$defs/nullable_string" },
+        "GJ": { "$ref": "#/$defs/nullable_string" },
+        "PMJID": { "$ref": "#/$defs/nullable_string" },
+        "Mult": { "$ref": "#/$defs/nullable_string" },
+        "NamesRef": { "$ref": "#/$defs/nullable_string" },
+        "RAJ2000": { "$ref": "#/$defs/nullable_number" },
+        "DEJ2000": { "$ref": "#/$defs/nullable_number" },
+        "RAPdeg": { "$ref": "#/$defs/nullable_number" },
+        "e_RAPdeg": { "$ref": "#/$defs/nullable_number" },
+        "DEPdeg": { "$ref": "#/$defs/nullable_number" },
+        "e_DEPdeg": { "$ref": "#/$defs/nullable_number" },
+        "NoteEpoch": { "$ref": "#/$defs/nullable_number" },
+        "Plx": { "$ref": "#/$defs/nullable_number" },
+        "e_Plx": { "$ref": "#/$defs/nullable_number" },
+        "pmRA": { "$ref": "#/$defs/nullable_number" },
+        "e_pmRA": { "$ref": "#/$defs/nullable_number" },
+        "pmDE": { "$ref": "#/$defs/nullable_number" },
+        "e_pmDE": { "$ref": "#/$defs/nullable_number" },
+        "PlxPMRef": { "$ref": "#/$defs/nullable_string" },
+        "SpTOpt": { "$ref": "#/$defs/nullable_string" },
+        "SpTOptCode": { "$ref": "#/$defs/nullable_number" },
+        "r_SpTOpt": { "$ref": "#/$defs/nullable_string" },
+        "SpTNIR": { "$ref": "#/$defs/nullable_string" },
+        "SpTNIRCode": { "$ref": "#/$defs/nullable_number" },
+        "r_SpTNIR": { "$ref": "#/$defs/nullable_string" },
+        "2Mcont": { "$ref": "#/$defs/nullable_string" },
+        "WISEcont": { "$ref": "#/$defs/nullable_string" }
+      }
+    },
+    "note_row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "recno",
+        "continuation_recnos",
+        "Name",
+        "NcTR",
+        "RAJ2000",
+        "DEJ2000",
+        "Note"
+      ],
+      "properties": {
+        "recno": { "type": "integer", "minimum": 1 },
+        "continuation_recnos": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "integer", "minimum": 1 }
+        },
+        "Name": { "type": ["string", "null"] },
+        "NcTR": { "type": ["integer", "null"] },
+        "RAJ2000": { "type": ["number", "null"] },
+        "DEJ2000": { "type": ["number", "null"] },
+        "Note": { "type": ["string", "null"] }
+      }
+    },
+    "reference_row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["Ref", "Auth", "BibCode", "Comm"],
+      "properties": {
+        "Ref": { "type": ["string", "null"] },
+        "Auth": { "type": ["string", "null"] },
+        "BibCode": { "type": ["string", "null"] },
+        "Comm": { "type": ["string", "null"] }
+      }
+    }
+  }
+}
