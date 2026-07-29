@@ -1,0 +1,35 @@
+{
+  "chapter": "1.14",
+  "title": "14",
+  "summary": "In August 2144, Bob surveys Epsilon Eridani for usable resources while preparing an ambush for an approaching Brazilian probe. With asteroid materials located, miners deployed, and factory systems ready, he accepts a months-long delay to reproduction in order to prepare for a possible battle.",
+  "date": "2144",
+  "location_id": "location:epsilon-eridani",
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead",
+      "location_id": "location:epsilon-eridani"
+    }
+  ],
+  "mentions": [
+    "technology:guppi-interface",
+    "technology:roamers",
+    "technology:nanites",
+    "technology:surge-drive"
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "At Epsilon Eridani, preparing an ambush for an approaching Brazilian probe; the work will delay reproduction by months."
+    },
+    {
+      "entity_id": "technology:suddar",
+      "description": "A subspace technology enabled by the same theoretical breakthrough as the SURGE drive and associated with the new possibility of interstellar probes and colonization. It can be used to monitor distance, scan for threats, and detect dense objects within a light-hour radius."
+    },
+    {
+      "entity_id": "vessel:heaven-1",
+      "description": "A converted interplanetary freighter equipped as a Von Neumann probe. It is a small, light, resilient design intended to build copies of itself. It has a SURGE drive ring, fusion reactor, ramscoop generator, fabrication equipment including three large 3D printers, communications and sensor systems, and ROAMer and nanite systems; its autonomous cargo carriers move miners and materials; it has no weapons and little spare room.",
+      "current_state": "At Epsilon Eridani, its miners are deployed, sufficient material has been located, and its factory systems are ready to manufacture."
+    }
+  ]
+}

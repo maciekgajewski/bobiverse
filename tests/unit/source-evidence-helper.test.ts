@@ -178,6 +178,18 @@ describe("blind Pass 1 boundary", () => {
       "querying an interface for documentation",
     );
     expect(compactBlindMaterials).toContain(
+      "Do not apply an importance or curation threshold.",
+    );
+    expect(compactBlindMaterials).toContain(
+      "Each qualifying canonical `mentions` entry is mandatory",
+    );
+    expect(compactBlindMaterials).toContain(
+      "every resolved source mention, its stable ID when resolved, structural-redundancy decision, classification, and sealed evidence ID",
+    );
+    expect(compactBlindMaterials).toContain(
+      "character `species_id` and `death_event_id`, species `homeworld_id`",
+    );
+    expect(compactBlindMaterials).toContain(
       "read `references/reconciliation-exceptions.md`",
     );
     expect(blindMaterials).not.toContain("personal-time adjustment");

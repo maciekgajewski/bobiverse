@@ -97,7 +97,7 @@ ADR rather than expanding the task silently.
   - technology entities introduced by this chapter only, linked;
   - all appearing characters, deduplicated by character ID in first-appearance order,
     as one condensed linked list near the end.
-- Important mentions, entity updates, event updates, organizations, species, and
+- Supplemental mentions, entity updates, event updates, organizations, species, and
   introduced locations do not implicitly enter the Events, Vessels, Technologies, or
   Characters lists.
 - Relationship lists reuse the left browser's shared item-bullet visual treatment
@@ -200,7 +200,7 @@ ADR rather than expanding the task silently.
 - Chapter search, bookmarks, deep links, browser-session history integration,
   chronology views, genealogy, or accumulated cross-chapter character appearance
   histories.
-- Showing all important mentions, updated entities, introduced organizations/species/
+- Showing all supplemental mentions, updated entities, introduced organizations/species/
   locations, or all activity records in chapter detail.
 - Showing events updated or merely mentioned in the selected chapter.
 - Adding chapter illustrations to existing canonical data or sourcing visual assets.

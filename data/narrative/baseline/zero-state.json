@@ -27,13 +27,35 @@
             "id": "location:earth",
             "name": "Earth",
             "kind": "planet",
-            "parent_relation": "orbits"
+            "parent_relation": "orbits",
+            "children": [
+              {
+                "id": "location:moon",
+                "name": "Moon",
+                "kind": "moon",
+                "parent_relation": "orbits"
+              }
+            ]
           },
           {
             "id": "location:mars",
             "name": "Mars",
             "kind": "planet",
-            "parent_relation": "orbits"
+            "parent_relation": "orbits",
+            "children": [
+              {
+                "id": "location:phobos",
+                "name": "Phobos",
+                "kind": "moon",
+                "parent_relation": "orbits"
+              },
+              {
+                "id": "location:deimos",
+                "name": "Deimos",
+                "kind": "moon",
+                "parent_relation": "orbits"
+              }
+            ]
           },
           {
             "id": "location:asteroid-belt",
@@ -45,25 +67,129 @@
             "id": "location:jupiter",
             "name": "Jupiter",
             "kind": "planet",
-            "parent_relation": "orbits"
+            "parent_relation": "orbits",
+            "children": [
+              {
+                "id": "location:io",
+                "name": "Io",
+                "kind": "moon",
+                "parent_relation": "orbits"
+              },
+              {
+                "id": "location:europa",
+                "name": "Europa",
+                "kind": "moon",
+                "parent_relation": "orbits"
+              },
+              {
+                "id": "location:ganymede",
+                "name": "Ganymede",
+                "kind": "moon",
+                "parent_relation": "orbits"
+              },
+              {
+                "id": "location:callisto",
+                "name": "Callisto",
+                "kind": "moon",
+                "parent_relation": "orbits"
+              }
+            ]
           },
           {
             "id": "location:saturn",
             "name": "Saturn",
             "kind": "planet",
-            "parent_relation": "orbits"
+            "parent_relation": "orbits",
+            "children": [
+              {
+                "id": "location:dione",
+                "name": "Dione",
+                "kind": "moon",
+                "parent_relation": "orbits"
+              },
+              {
+                "id": "location:rhea",
+                "name": "Rhea",
+                "kind": "moon",
+                "parent_relation": "orbits"
+              },
+              {
+                "id": "location:titan",
+                "name": "Titan",
+                "kind": "moon",
+                "parent_relation": "orbits"
+              },
+              {
+                "id": "location:iapetus",
+                "name": "Iapetus",
+                "kind": "moon",
+                "parent_relation": "orbits"
+              }
+            ]
           },
           {
             "id": "location:uranus",
             "name": "Uranus",
             "kind": "planet",
-            "parent_relation": "orbits"
+            "parent_relation": "orbits",
+            "children": [
+              {
+                "id": "location:ariel",
+                "name": "Ariel",
+                "kind": "moon",
+                "parent_relation": "orbits"
+              },
+              {
+                "id": "location:umbriel",
+                "name": "Umbriel",
+                "kind": "moon",
+                "parent_relation": "orbits"
+              },
+              {
+                "id": "location:titania",
+                "name": "Titania",
+                "kind": "moon",
+                "parent_relation": "orbits"
+              },
+              {
+                "id": "location:oberon",
+                "name": "Oberon",
+                "kind": "moon",
+                "parent_relation": "orbits"
+              }
+            ]
           },
           {
             "id": "location:neptune",
             "name": "Neptune",
             "kind": "planet",
-            "parent_relation": "orbits"
+            "parent_relation": "orbits",
+            "children": [
+              {
+                "id": "location:larissa",
+                "name": "Larissa",
+                "kind": "moon",
+                "parent_relation": "orbits"
+              },
+              {
+                "id": "location:proteus",
+                "name": "Proteus",
+                "kind": "moon",
+                "parent_relation": "orbits"
+              },
+              {
+                "id": "location:triton",
+                "name": "Triton",
+                "kind": "moon",
+                "parent_relation": "orbits"
+              },
+              {
+                "id": "location:nereid",
+                "name": "Nereid",
+                "kind": "moon",
+                "parent_relation": "orbits"
+              }
+            ]
           },
           {
             "id": "location:kuiper-belt",

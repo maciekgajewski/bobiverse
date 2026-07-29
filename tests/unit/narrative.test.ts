@@ -37,6 +37,96 @@ function collectDescriptions(value: unknown): string[] {
   ];
 }
 
+const canonicalMoons = [
+  { id: "location:moon", name: "Moon", parent_location_id: "location:earth" },
+  {
+    id: "location:phobos",
+    name: "Phobos",
+    parent_location_id: "location:mars",
+  },
+  {
+    id: "location:deimos",
+    name: "Deimos",
+    parent_location_id: "location:mars",
+  },
+  { id: "location:io", name: "Io", parent_location_id: "location:jupiter" },
+  {
+    id: "location:europa",
+    name: "Europa",
+    parent_location_id: "location:jupiter",
+  },
+  {
+    id: "location:ganymede",
+    name: "Ganymede",
+    parent_location_id: "location:jupiter",
+  },
+  {
+    id: "location:callisto",
+    name: "Callisto",
+    parent_location_id: "location:jupiter",
+  },
+  {
+    id: "location:dione",
+    name: "Dione",
+    parent_location_id: "location:saturn",
+  },
+  {
+    id: "location:rhea",
+    name: "Rhea",
+    parent_location_id: "location:saturn",
+  },
+  {
+    id: "location:titan",
+    name: "Titan",
+    parent_location_id: "location:saturn",
+  },
+  {
+    id: "location:iapetus",
+    name: "Iapetus",
+    parent_location_id: "location:saturn",
+  },
+  {
+    id: "location:ariel",
+    name: "Ariel",
+    parent_location_id: "location:uranus",
+  },
+  {
+    id: "location:umbriel",
+    name: "Umbriel",
+    parent_location_id: "location:uranus",
+  },
+  {
+    id: "location:titania",
+    name: "Titania",
+    parent_location_id: "location:uranus",
+  },
+  {
+    id: "location:oberon",
+    name: "Oberon",
+    parent_location_id: "location:uranus",
+  },
+  {
+    id: "location:larissa",
+    name: "Larissa",
+    parent_location_id: "location:neptune",
+  },
+  {
+    id: "location:proteus",
+    name: "Proteus",
+    parent_location_id: "location:neptune",
+  },
+  {
+    id: "location:triton",
+    name: "Triton",
+    parent_location_id: "location:neptune",
+  },
+  {
+    id: "location:nereid",
+    name: "Nereid",
+    parent_location_id: "location:neptune",
+  },
+] as const;
+
 describe("narrative corpus validation and projection", () => {
   it("isolates and freezes prepared input before projection", () => {
     const raw = createNarrativeFixtureCorpus();
@@ -269,7 +359,7 @@ describe("narrative corpus validation and projection", () => {
     expect(() => validateNarrativeCorpus(corpus)).not.toThrow();
     const world = generateNarrativeWorld(prepareNarrativeCorpus(corpus));
     expect(world.view).toEqual({ chapter: null, display_date: null });
-    expect(world.entities).toHaveLength(15);
+    expect(world.entities).toHaveLength(34);
     expect(world.entities).toContainEqual(
       expect.objectContaining({
         id: "species:human",
@@ -299,6 +389,64 @@ describe("narrative corpus validation and projection", () => {
       "location:kuiper-belt",
       "location:oort-cloud",
     ]);
+    const moons = world.entities.filter((entity) => entity.kind === "moon");
+    expect(moons).toHaveLength(canonicalMoons.length);
+    for (const expected of canonicalMoons) {
+      expect(
+        world.entities.find((entity) => entity.id === expected.id),
+      ).toEqual({
+        ...expected,
+        kind: "moon",
+        parent_relation: "orbits",
+        entity_type: "location",
+        child_ids: [],
+      });
+    }
+    for (const [planetId, childIds] of [
+      ["location:earth", ["location:moon"]],
+      ["location:mars", ["location:phobos", "location:deimos"]],
+      [
+        "location:jupiter",
+        [
+          "location:io",
+          "location:europa",
+          "location:ganymede",
+          "location:callisto",
+        ],
+      ],
+      [
+        "location:saturn",
+        [
+          "location:dione",
+          "location:rhea",
+          "location:titan",
+          "location:iapetus",
+        ],
+      ],
+      [
+        "location:uranus",
+        [
+          "location:ariel",
+          "location:umbriel",
+          "location:titania",
+          "location:oberon",
+        ],
+      ],
+      [
+        "location:neptune",
+        [
+          "location:larissa",
+          "location:proteus",
+          "location:triton",
+          "location:nereid",
+        ],
+      ],
+    ] as const) {
+      expect(
+        world.entities.find((entity) => entity.id === planetId)?.child_ids,
+      ).toEqual(childIds);
+      expect(childIds).toHaveLength(Math.min(4, childIds.length));
+    }
   });
 
   it("uses story time rather than reader order for the selected chapter world", () => {
@@ -882,7 +1030,7 @@ describe("narrative corpus validation and projection", () => {
     ).toBeNull();
   });
 
-  it("accepts important mentions for every direct entity type without changing world state", () => {
+  it("accepts supplemental mentions for every direct entity type without changing world state", () => {
     const corpus = createNarrativeFixtureCorpus();
     corpus.zeroState.entities = [
       { id: "character:fixture-known", name: "Known fixture character" },
@@ -934,7 +1082,31 @@ describe("narrative corpus validation and projection", () => {
     );
   });
 
-  it("rejects unknown, later, and structurally redundant important mentions", () => {
+  it("derives mapped-system ancestry for a mention-only mapped location", () => {
+    const corpus = createNarrativeFixtureCorpus();
+    corpus.knownAstronomyObjectIds = ["sol", "fixture-system"];
+    (corpus.chapters[0]!.introducing as Array<Record<string, unknown>>).push({
+      id: "location:fixture-system",
+      name: "Fixture System",
+      kind: "star_system",
+      astronomy_object_id: "fixture-system",
+    });
+    corpus.chapters[1]!.mentions = ["location:fixture-system"];
+
+    const activity = generateNarrativeWorld(
+      prepareNarrativeCorpus(corpus),
+      "1.2",
+    ).activity;
+
+    expect(activity).toContainEqual({
+      entity_id: "location:fixture-system",
+      source_chapter: "1.2",
+      effective_date: "2200.2",
+      reasons: ["mention", "mapped_system_ancestry"],
+    });
+  });
+
+  it("rejects unknown, later, and structurally redundant supplemental mentions", () => {
     expect(
       narrativeSchemaErrors("chapter_source", {
         chapter: "1.1",
@@ -949,7 +1121,7 @@ describe("narrative corpus validation and projection", () => {
     const unknown = createNarrativeFixtureCorpus();
     unknown.chapters[0]!.mentions = ["technology:missing"];
     expect(() => validateNarrativeCorpus(unknown)).toThrow(
-      "Chapter 1.1 /mentions/0: important mention target is unknown: technology:missing.",
+      "Chapter 1.1 /mentions/0: supplemental mention target is unknown: technology:missing.",
     );
 
     const later = createNarrativeFixtureCorpus();
@@ -958,14 +1130,138 @@ describe("narrative corpus validation and projection", () => {
     ];
     later.chapters[0]!.mentions = ["technology:future"];
     expect(() => validateNarrativeCorpus(later)).toThrow(
-      "Chapter 1.1 /mentions/0: important mention target is introduced later in chapter 1.2: technology:future.",
+      "Chapter 1.1 /mentions/0: supplemental mention target is introduced later in chapter 1.2: technology:future.",
     );
 
     const structural = createNarrativeFixtureCorpus();
     structural.chapters[0]!.mentions = ["character:fixture-alex"];
     expect(() => validateNarrativeCorpus(structural)).toThrow(
-      "Chapter 1.1 /mentions/0: important mention target is already represented structurally in this chapter: character:fixture-alex.",
+      "Chapter 1.1 /mentions/0: supplemental mention target is already represented structurally in this chapter: character:fixture-alex.",
     );
+  });
+
+  it.each([
+    {
+      field: "character species",
+      target: "species:human",
+      apply: (chapter: Record<string, unknown>) => {
+        chapter.updates = [
+          {
+            entity_id: "character:fixture-alex",
+            species_id: "species:human",
+          },
+        ];
+      },
+    },
+    {
+      field: "character death event",
+      target: "event:fixture-known",
+      apply: (chapter: Record<string, unknown>) => {
+        chapter.updates = [
+          {
+            entity_id: "character:fixture-alex",
+            death_event_id: "event:fixture-known",
+          },
+        ];
+      },
+    },
+    {
+      field: "species homeworld",
+      target: "location:mars",
+      apply: (chapter: Record<string, unknown>) => {
+        chapter.updates = [
+          {
+            entity_id: "species:fixture-human",
+            homeworld_id: "location:mars",
+          },
+        ];
+      },
+    },
+    {
+      field: "location parent",
+      target: "location:mars",
+      apply: (chapter: Record<string, unknown>) => {
+        chapter.introducing = [
+          {
+            id: "location:fixture-base",
+            name: "Fixture Base",
+            kind: "locale",
+            parent_location_id: "location:mars",
+            parent_relation: "located_on",
+          },
+        ];
+      },
+    },
+    {
+      field: "transit origin",
+      target: "location:mars",
+      apply: (chapter: Record<string, unknown>) => {
+        chapter.introducing = [
+          {
+            id: "location:fixture-transit",
+            name: "Fixture Transit",
+            kind: "transit",
+            map_status: "unmapped",
+            origin_location_id: "location:mars",
+            destination_location_id: "location:venus",
+          },
+        ];
+      },
+    },
+    {
+      field: "transit destination",
+      target: "location:venus",
+      apply: (chapter: Record<string, unknown>) => {
+        chapter.introducing = [
+          {
+            id: "location:fixture-transit",
+            name: "Fixture Transit",
+            kind: "transit",
+            map_status: "unmapped",
+            origin_location_id: "location:mars",
+            destination_location_id: "location:venus",
+          },
+        ];
+      },
+    },
+  ])(
+    "rejects a supplemental mention repeated through $field",
+    ({ target, apply }) => {
+      const corpus = createNarrativeFixtureCorpus();
+      (corpus.zeroState.entities as Array<Record<string, unknown>>).push({
+        id: "event:fixture-known",
+        name: "Known fixture event",
+      });
+      const chapter: Record<string, unknown> = {
+        chapter: "1.14",
+        title: "Fixture supplemental-mention boundary",
+        summary: "A fictional structural-reference validation fixture.",
+        date: "2201",
+        location_id: "location:earth",
+      };
+      apply(chapter);
+      chapter.mentions = [target];
+      corpus.chapters.push(chapter);
+
+      expect(() => validateNarrativeCorpus(corpus)).toThrow(
+        `Chapter 1.14 /mentions/0: supplemental mention target is already represented structurally in this chapter: ${target}.`,
+      );
+    },
+  );
+
+  it("does not treat an ID-shaped prose string as structural", () => {
+    const corpus = createNarrativeFixtureCorpus();
+    corpus.zeroState.entities = [
+      {
+        id: "technology:fixture-known",
+        name: "Known fixture technology",
+      },
+    ];
+    corpus.chapters[0]!.summary =
+      "The fictional prose contains technology:fixture-known as plain text.";
+    corpus.chapters[0]!.mentions = ["technology:fixture-known"];
+
+    expect(() => validateNarrativeCorpus(corpus)).not.toThrow();
   });
 
   it("coalesces same-date reasons while retaining distinct and unplaced event dates", () => {

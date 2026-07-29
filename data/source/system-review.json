@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0.0",
-  "accepted_candidate_sha256": "34230a226ee7aefdd098f241e1d32deeb5155c9f826b11c05d448a30e38fc5b8",
-  "reviewer": "Codex BOB-026 source-mapping review under Captain authorization",
-  "reviewed_at": "2026-07-28",
+  "accepted_candidate_sha256": "15ca441036f463e2bb91de366b839e50d04dffe40b0a2d5c9077dd22d919606a",
+  "reviewer": "Codex BOB-026 source-mapping and BOB-030 deterministic coverage-refresh review under Captain authorization",
+  "reviewed_at": "2026-07-29",
   "anchor_bootstraps": [],
   "identity_transitions": [],
   "cns5_astrometry_overrides": [],

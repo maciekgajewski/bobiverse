@@ -11,7 +11,15 @@ from astronomy_pipeline import (
     optional_float,
     wds_component_spectral_types,
 )
-from common import CONFIG_PATH, GENERATED_PATH, mapped_anchor_ids, read_json, sha256, write_json
+from common import (
+    CONFIG_PATH,
+    GENERATED_PATH,
+    mapped_anchor_names,
+    read_json,
+    resolve_anchor_bootstraps,
+    sha256,
+    write_json,
+)
 
 MARKER_RADIUS = 0.09
 BROWN_DWARF_MARKER_RADIUS = 0.05
@@ -248,8 +256,12 @@ def main() -> None:
     component_overrides = {entry["candidate_component_id"]: entry for entry in review.get("component_overrides", [])}
     components = {entry["id"]: entry for entry in candidates["components"]}
     candidate_by_id = {entry["id"]: entry for entry in candidates["systems"]}
+    anchor_names = mapped_anchor_names()
+    bootstraps = resolve_anchor_bootstraps(
+        anchor_names, review, candidates
+    )
     anchor_positions = {"sol": {"xg": 0.0, "yg": 0.0, "zg": 0.0}}
-    for bootstrap in review.get("anchor_bootstraps", []):
+    for bootstrap in bootstraps:
         anchor_id = bootstrap["anchor_id"]
         candidate = candidate_by_id.get(bootstrap.get("system_id"))
         if candidate is None:
@@ -261,8 +273,8 @@ def main() -> None:
         if distance(position, {"xg": 0.0, "yg": 0.0, "zg": 0.0}) + radius_pc > 100:
             raise ValueError(f"Required context sphere crosses the 100 pc GCNS boundary: {anchor_id}")
         anchor_positions[anchor_id] = position
-    if set(anchor_positions) != set(mapped_anchor_ids()):
-        raise ValueError("Generation needs one reviewed source-backed bootstrap per mapped anchor")
+    if set(anchor_positions) != set(anchor_names):
+        raise ValueError("Generation needs one source-backed bootstrap per mapped anchor")
     gcns = {row["source_id"]: row for row in gcns_rows}
     cns5 = {row["cns5_id"]: row for row in cns5_rows}
     gaia = {row["source_id"]: row for row in gaia_rows}

@@ -37,7 +37,7 @@
         { "$ref": "#/$defs/technology_id" },
         { "$ref": "#/$defs/vessel_id" }
       ],
-      "description": "A supported direct narrative entity or location that may be an important chapter mention."
+      "description": "A previously visible direct narrative entity or location eligible for a supplemental chapter mention; from Chapter 1.14 onward, eligibility requires absence from every other typed chapter reference."
     },
     "character_id": {
       "type": "string",

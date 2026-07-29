@@ -63,7 +63,7 @@ the identical listing below documents its shared definitions.
         { "$ref": "#/$defs/technology_id" },
         { "$ref": "#/$defs/vessel_id" }
       ],
-      "description": "A supported direct narrative entity or location that may be an important chapter mention."
+      "description": "A previously visible direct narrative entity or location eligible for a supplemental chapter mention; from Chapter 1.14 onward, eligibility requires absence from every other typed chapter reference."
     },
     "character_id": {
       "type": "string",
@@ -1072,9 +1072,10 @@ There are exactly three sources of domain truth:
    not contain coordinates, distances, sizes, colours, or other measured astronomy
    facts.
 3. The chapter source owns book revelations: new entities, visible state changes to
-   seeded or previously introduced entities, appearances, events, optional important
-   `mentions`, and chapter reveal order. A mention is a curated reference, not a
-   relationship or state assertion.
+   seeded or previously introduced entities, appearances, events, optional
+   supplemental `mentions`, and chapter reveal order. Beginning with Chapter `1.14`,
+   a mention is an exhaustive source-supported reference otherwise absent from typed
+   chapter data, not a relationship or state assertion.
 
 The following are generated data and must never be edited manually: the stable entity
 registry, an entity's state at a selected chapter, location child lists, character
@@ -1083,16 +1084,21 @@ render-ready join of astronomy and narrative locations, and the narrative-activi
 index. Deterministic generated caches or checkpoints are permitted only as rebuildable
 optimizations.
 
-## Important mentions and narrative activity
+## Supplemental mentions and narrative activity
 
 `chapter_source.mentions`, when present, is a nonempty, duplicate-free array of stable
 IDs. Its targets may be locations and the direct character, event, species, technology,
-organization, and vessel entity forms; assets are not valid targets. An author uses
-it only for an important source-supported reference not already captured by the same
-chapter's introduction, update, appearance, default location, event participant, or
-event location. The target must already be reader-visible before the chapter or be a
-valid previously seeded entity; a target introduced later is invalid. It does not assert
-presence, participation, ownership, membership, location, use, relationship, or state.
+organization, and vessel entity forms; assets are not valid targets. Beginning with
+Chapter `1.14`, an author includes every source-supported reference to a previously
+visible target that is absent from all other typed direct narrative references in the
+chapter. Structural references include introduction and update targets, appearances,
+chapter locations, event participants and locations, character species and death
+events, species homeworlds, and location parent/origin/destination fields. Explicit
+typed fields, not ID-shaped prose, define this boundary. A target introduced in the
+same or a later chapter is invalid. A mention does not assert presence,
+participation, ownership, membership, location, use, relationship, or state.
+Chapters `1.1` through `1.13` retain ADR-0008's accepted structural-redundancy
+boundary and are not retroactively audited.
 
 The generated world contains an `activity` array of `narrative_activity` records. Each
 record has an `entity_id`, `source_chapter`, nullable `effective_date`, and one or more
@@ -1102,8 +1108,10 @@ records. Its controlled reasons are `introduction`, `update`, `appearance`,
 `appearance_location`, `chapter_location`, `event`, `event_participant`,
 `event_location`, `mention`, and `mapped_system_ancestry`.
 
-Non-event introductions and updates, appearances, default chapter locations, important
-mentions, and their mapped-system ancestry use the enclosing chapter date. Event
+Non-event introductions and updates, appearances, default chapter locations,
+supplemental mentions, and their mapped-system ancestry use the enclosing chapter
+date. `mention` is the supplemental reference's only direct reason; a mentioned mapped
+location also derives `mapped_system_ancestry`. Event
 introductions and updates use the event's own date when it is known; otherwise they
 remain chronologically unplaced with `effective_date: null`. Event locations and
 participants use that same effective event date. Every active narrative location also
@@ -1263,8 +1271,13 @@ It requires Sol's child array to contain, in inner-to-outer order, exactly the e
 planet IDs from Mercury through Neptune, plus the asteroid belt between Mars and
 Jupiter, then the Kuiper belt and Oort cloud after Neptune. It rejects a seeded
 `dwarf_planet`, Kuiper-belt objects, duplicate IDs, or more than four moons under any
-planet. Each planet's up-to-four moon entries are a deliberately curated subset rather
-than a physical-astronomy-derived definition of "major".
+planet. The canonical zero state includes all moons when a planet has four or fewer
+and otherwise selects the four satellites with the greatest numeric mean radius in
+the reviewed JPL Solar System Dynamics physical-parameter table. Satellites without a
+numeric JPL mean radius are outside that comparison. Selection uses size, while the
+authored child array remains inner-to-outer by the reviewed JPL mean elements. The
+source stores only identity and topology, never the measured values used to review the
+selection.
 
 The initial `entities` array contains exactly `species:human`, named `Human`, with
 `homeworld_id: "location:earth"`. It does not contain Robert Johansson, Las Vegas, or
@@ -1693,7 +1706,7 @@ layer. It rejects at least:
 - a chapter missing its required title, summary, date, or default location; an empty
   authored optional array; or an appearance array with no `lead` appearance;
 - a malformed, duplicate, unresolved, later-introduced, or structurally redundant
-  important mention target; or an asset/non-direct entity ID in `mentions`;
+  supplemental mention target; or an asset/non-direct entity ID in `mentions`;
 - competing state writes with equal indexed moments, the same source chapter, or
   incomparable mixed-precision effective dates; or a year-only requested display date
   that cannot determine a needed indexed transition;

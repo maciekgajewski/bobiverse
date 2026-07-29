@@ -314,14 +314,19 @@ not assumed equivalent.
 ### Stage 1: bootstrap source-backed anchor geometry
 
 1. Inventory every canonical mapped stellar-system anchor as its stable application
-   ID; Sol is the canonical origin.
-2. Resolve each non-Sol ID through the identity registry and reviewed crosswalk to an
-   exact GCNS or CNS5 source identifier.
+   ID; Sol is the canonical origin. Replay effective location state from zero state
+   through chapter introductions and updates in reading order, recording every
+   effective narrative name-to-anchor pairing, including independent name-only and
+   astronomy-ID-only updates.
+2. Resolve each non-Sol ID to an exact GCNS or CNS5 source identifier. Derive the
+   bootstrap automatically only when ADR-0016's exact normalized accepted-name or
+   alias match and unambiguous accepted-position rules pass. Otherwise require one
+   explicit reviewed bootstrap record.
 3. Query those exact source records from the pinned GAVO tables before any
    neighbourhood envelope is planned.
 4. Choose the anchor coordinate through the normal GCNS-then-CNS5 source precedence.
 5. Fail if an anchor has no accepted source identity, has no source-backed coordinate,
-   or resolves ambiguously.
+   has only a fuzzy or partial name match, or resolves ambiguously.
 
 Anchor lookup queries and returned rows are part of the corresponding GCNS or CNS5
 extract and manifest; they are not an untracked preliminary cache. When a prior
@@ -541,6 +546,8 @@ document.
 `data/source/system-review.json` records:
 
 - the exact accepted candidate-snapshot SHA-256;
+- explicit narrative-anchor bootstrap exceptions that cannot be derived by
+  ADR-0016's exact deterministic rule;
 - explicit overrides and their reasons;
 - unresolved ambiguities; and
 - reviewer and review-date metadata.
