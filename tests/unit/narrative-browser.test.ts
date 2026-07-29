@@ -46,8 +46,8 @@ function world(): NarrativeWorld {
         name: "Test organization",
       },
       {
-        id: "vessel_type:test",
-        entity_type: "vessel_type",
+        id: "vessel:test",
+        entity_type: "vessel",
         name: "Test vessel",
       },
     ],
@@ -87,7 +87,7 @@ describe("narrative object browser projection", () => {
       "species",
       "technologies",
       "organizations",
-      "vessel-types",
+      "vessels",
     ]);
   });
 
@@ -212,10 +212,15 @@ describe("narrative object browser projection", () => {
   });
 
   it("migrates absent and partial saved group state safely", () => {
-    expect(normalizeBrowserGroupState({ characters: false })).toMatchObject({
+    expect(
+      normalizeBrowserGroupState({
+        characters: false,
+        "vessel-types": false,
+      }),
+    ).toMatchObject({
       characters: false,
       events: true,
-      "vessel-types": true,
+      vessels: true,
     });
     expect(normalizeBrowserGroupState("corrupt")).toMatchObject({
       characters: true,

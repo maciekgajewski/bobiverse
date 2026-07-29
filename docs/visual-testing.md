@@ -121,8 +121,8 @@ neither should appear as a CSS-drawn proxy. Verify the icons remain crisp, align
 and subordinate to the semantic labels at normal and 200% zoom.
 
 Confirm and view Chapter 1.2. Check that Characters, Events, Star Systems, Other
-Locations, Species, Technologies, and Organizations appear, while the empty Vessel
-Types group does not. Group headings must report visible counts and nonzero active
+Locations, Species, Technologies, and Organizations appear, while the empty Vessels
+group does not. Group headings must report visible counts and nonzero active
 counts. In Chapter mode, selected-chapter objects precede older activity; in Date
 mode, active-at-date objects precede the latest comparable activity at or before the
 chosen year. Names break equal-recency ties consistently.
@@ -145,6 +145,15 @@ mention alone does not become a relationship. New Handeltown must say
 **Chronologically unplaced** in Chapter mode and be absent in Date mode. Character
 details must label the eligible appearance as **Last seen**, with chapter and year,
 and must never call activity or `current_state` a current location.
+
+With a vessel fixture or reviewed chapter available, verify the browser group is
+labelled **Vessels**, the inspector type is **Vessel**, and optional description and
+current state render sparsely. Confirm a vessel may describe a named spacecraft,
+design, or family without exposing a separate vessel-type object.
+
+Inspect the descriptions visible through the latest canonical chapter. They must
+state supported positive knowledge without reader-facing notices that a detail is
+unrevealed, unknown, unexplained, unavailable, or unspecified.
 
 With a Chapter 1.2-only narrative object selected, change **Knowledge through** to
 Chapter 1.1. Its details must disappear in the same state transition, selection must

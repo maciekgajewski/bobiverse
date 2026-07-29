@@ -21,7 +21,7 @@ export interface NarrativeEntity extends NarrativeRecord {
     | "organization"
     | "species"
     | "technology"
-    | "vessel_type";
+    | "vessel";
   last_known_location?: {
     location_id: string;
     source_chapter: string;
@@ -149,7 +149,7 @@ function entityType(id: string): NarrativeEntity["entity_type"] {
     prefix !== "organization" &&
     prefix !== "species" &&
     prefix !== "technology" &&
-    prefix !== "vessel_type"
+    prefix !== "vessel"
   ) {
     throw new Error(`Unsupported narrative entity ID: ${id}.`);
   }

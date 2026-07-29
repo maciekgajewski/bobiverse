@@ -84,7 +84,7 @@ export function ObjectGroupIcon({ type }: { type: BrowserGroupId }) {
         </>
       );
       break;
-    case "vessel-types":
+    case "vessels":
       drawing = (
         <>
           <path d="M12 3c3.6 2.7 5.5 6.2 5.5 10.4L14 17h-4l-3.5-3.6C6.5 9.2 8.4 5.7 12 3Z" />

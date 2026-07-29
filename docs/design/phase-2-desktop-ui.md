@@ -1,7 +1,7 @@
 # Phase 2 desktop narrative workspace
 
 Status: Approved design  
-Last updated: 2026-07-27
+Last updated: 2026-07-28
 
 ## 1. Purpose
 
@@ -162,7 +162,7 @@ The browser uses this fixed group order:
 5. Species
 6. Technologies
 7. Organizations
-8. Vessel Types
+8. Vessels
 
 Characters, Events, and Star Systems are the core groups. Every group, including a
 core group, is rendered only when at least one eligible object exists. This keeps the
@@ -302,7 +302,7 @@ the selected projection provides one unambiguous mapped stellar-system context:
 - a character focuses the mapped system of the latest eligible appearance and labels
   it **Last seen**;
 - an unmapped or locationless object leaves the camera unchanged;
-- technology, organization, species, and vessel-type selection leaves the camera
+- technology, organization, species, and vessel selection leaves the camera
   unchanged unless a future accepted relationship supplies an explicit location;
 - an astronomy-only search or map selection focuses that system.
 
@@ -337,7 +337,7 @@ the current projection:
 - **Species:** description, picture, and homeworld.
 - **Technology:** description.
 - **Organization:** description and current state.
-- **Vessel type:** description.
+- **Vessel:** description and current state.
 - **Astronomy-only system:** catalogue name, alternate designations, components,
   position/distance facts, provenance, and an explicit **Not story-known at this
   view** notice.
@@ -455,7 +455,8 @@ date. It does not place a character, event, or object at the chapter location.
 - Fuzzy or full-description search, bookmarks, saved searches, or a command palette.
 - Inferred organization membership, vessel ownership, technology use, or continuous
   character location.
-- Individual-vessel entities, travel paths, chronicles, or genealogy.
+- Separate vessel-instance/design identity layers, travel paths, chronicles, or
+  genealogy.
 - Draggable/resizable desktop panels.
 - A second 3D engine, distorted map distances, or equally spaced chronological
   events.

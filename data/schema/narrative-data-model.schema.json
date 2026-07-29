@@ -20,7 +20,7 @@
     "state": {
       "type": "string",
       "minLength": 1,
-      "description": "Reader-visible plain-text current state; no controlled vocabulary is imposed."
+      "description": "One or two concise sentences describing only the latest reader-visible condition; no controlled vocabulary is imposed."
     },
     "entity_id": {
       "type": "string",
@@ -35,7 +35,7 @@
         { "$ref": "#/$defs/organization_id" },
         { "$ref": "#/$defs/species_id" },
         { "$ref": "#/$defs/technology_id" },
-        { "$ref": "#/$defs/vessel_type_id" }
+        { "$ref": "#/$defs/vessel_id" }
       ],
       "description": "A supported direct narrative entity or location that may be an important chapter mention."
     },
@@ -59,10 +59,10 @@
       "pattern": "^organization:[a-z0-9][a-z0-9-]*$",
       "description": "Globally unique reference to an organization entity."
     },
-    "vessel_type_id": {
+    "vessel_id": {
       "type": "string",
-      "pattern": "^vessel_type:[a-z0-9][a-z0-9-]*$",
-      "description": "Globally unique reference to a vessel-type entity."
+      "pattern": "^vessel:[a-z0-9][a-z0-9-]*$",
+      "description": "Globally unique reference to a vessel entity."
     },
     "asset_id": {
       "type": "string",
@@ -291,27 +291,35 @@
       ],
       "additionalProperties": false
     },
-    "vessel_type": {
+    "vessel": {
       "type": "object",
       "required": ["id", "name"],
       "properties": {
-        "id": { "$ref": "#/$defs/vessel_type_id" },
+        "id": { "$ref": "#/$defs/vessel_id" },
         "name": { "type": "string", "minLength": 1 },
-        "description": { "$ref": "#/$defs/description" }
+        "description": { "$ref": "#/$defs/description" },
+        "current_state": { "$ref": "#/$defs/state" }
       },
       "additionalProperties": false
     },
-    "vessel_type_update": {
+    "vessel_update": {
       "type": "object",
       "required": ["entity_id"],
       "properties": {
-        "entity_id": { "$ref": "#/$defs/vessel_type_id" },
+        "entity_id": { "$ref": "#/$defs/vessel_id" },
         "name": { "type": "string", "minLength": 1 },
         "description": {
           "anyOf": [{ "$ref": "#/$defs/description" }, { "type": "null" }]
+        },
+        "current_state": {
+          "anyOf": [{ "$ref": "#/$defs/state" }, { "type": "null" }]
         }
       },
-      "anyOf": [{ "required": ["name"] }, { "required": ["description"] }],
+      "anyOf": [
+        { "required": ["name"] },
+        { "required": ["description"] },
+        { "required": ["current_state"] }
+      ],
       "additionalProperties": false
     },
     "event": {
@@ -743,7 +751,7 @@
         { "$ref": "#/$defs/species" },
         { "$ref": "#/$defs/technology" },
         { "$ref": "#/$defs/organization" },
-        { "$ref": "#/$defs/vessel_type" },
+        { "$ref": "#/$defs/vessel" },
         { "$ref": "#/$defs/event" }
       ]
     },
@@ -771,7 +779,7 @@
         { "$ref": "#/$defs/species_update" },
         { "$ref": "#/$defs/technology_update" },
         { "$ref": "#/$defs/organization_update" },
-        { "$ref": "#/$defs/vessel_type_update" },
+        { "$ref": "#/$defs/vessel_update" },
         { "$ref": "#/$defs/event_update" },
         { "$ref": "#/$defs/location_update" }
       ]

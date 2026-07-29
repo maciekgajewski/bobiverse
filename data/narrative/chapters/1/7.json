@@ -8,12 +8,12 @@
     {
       "id": "technology:surge-drive",
       "name": "SURGE drive",
-      "description": "A recently developed drive technology enabled by a breakthrough in subspace theory and used to equip spacecraft for interstellar operations. Beyond prototypes, only a small number of SURGE-equipped vessels are in active service. Its operating principle and the expansion of SURGE have not yet been revealed."
+      "description": "A recently developed drive technology enabled by a breakthrough in subspace theory and used to equip spacecraft for interstellar operations. Beyond prototypes, only a small number of SURGE-equipped vessels are in active service."
     },
     {
       "id": "technology:suddar",
       "name": "SUDDAR",
-      "description": "A subspace technology enabled by the same theoretical breakthrough as the SURGE drive and associated with the new possibility of interstellar probes and colonization. Its specific function, operating principle, capabilities, limitations, and acronym expansion have not yet been revealed."
+      "description": "A subspace technology enabled by the same theoretical breakthrough as the SURGE drive and associated with the new possibility of interstellar probes and colonization."
     },
     {
       "id": "organization:united-states-of-eurasia",
@@ -33,7 +33,7 @@
     {
       "id": "organization:australia",
       "name": "Australia",
-      "description": "A suspected participant in the international interstellar-probe race, referred to as Australia. Dr. Landers's organization suspects it of operating a probe project. Its exact political identity, relationship to the separately mentioned Australian Federation, project capabilities, and other defining characteristics have not yet been revealed."
+      "description": "A suspected participant in the international interstellar-probe race, referred to as Australia. Dr. Landers's organization suspects it of operating a probe project."
     }
   ],
   "appearances": [
@@ -51,7 +51,7 @@
   "updates": [
     {
       "entity_id": "character:bob-replicant",
-      "current_state": "A nightly backed-up computer simulation made from a copy of Robert Johansson's mind, now one of two candidates for controlling a Von Neumann probe. He has complete project and library access, is regarded as adaptable and resilient, and is training for the mission while still lacking a visible face."
+      "current_state": "Training as one of two remaining probe candidates with complete project and library access."
     },
     {
       "entity_id": "organization:free-american-independent-theocratic-hegemony",

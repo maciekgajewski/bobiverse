@@ -8,6 +8,10 @@ import { browserGroupDefinitions } from "../../src/narrative/browser";
 
 describe("object browser icons", () => {
   it("renders one project-owned SVG icon for every browser group type", () => {
+    expect(browserGroupDefinitions.at(-1)).toEqual({
+      id: "vessels",
+      label: "Vessels",
+    });
     const { container } = render(
       <>
         {browserGroupDefinitions.map(({ id }) => (

@@ -16,7 +16,7 @@ const typeLabels: Record<NarrativeEntity["entity_type"], string> = {
   organization: "Organization",
   species: "Species",
   technology: "Technology",
-  vessel_type: "Vessel type",
+  vessel: "Vessel",
 };
 
 function stringValue(value: unknown): string | null {
@@ -284,6 +284,7 @@ function NarrativeDetails({
             </Detail>
           )}
         {(entity.entity_type === "organization" ||
+          entity.entity_type === "vessel" ||
           entity.entity_type === "location") &&
           stringValue(entity.current_state ?? entity.state) && (
             <Detail label="Current state">

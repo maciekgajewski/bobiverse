@@ -8,7 +8,7 @@
     {
       "id": "technology:roamers",
       "name": "ROAMers",
-      "description": "Remote observation and manipulation devices that Bob directs through the GUPPI interface."
+      "description": "Remote observation and manipulation devices directed through the GUPPI interface."
     },
     {
       "id": "technology:vast",

@@ -83,9 +83,13 @@ Capture source locations and movement even when they occur inside a room, corrid
 laboratory, office, floor, individual building, or other internal facility space.
 Pass 1 must preserve those facts and their evidence without deciding canonical
 location eligibility. During Pass 2, settlement scale is the minimum ordinary
-location granularity: cities, towns, settlements, and distinct bases or installations
-may become locations, while finer internal spaces are explicitly classified
-`not-modeled` for granularity and retained as prose context where relevant.
+location granularity. Cities, towns, settlements, and durable, independently useful
+bases or stations may become locations; ordinary stations and bases use `locale`,
+while `megastructure` is reserved for exceptional physical scale. Incidental,
+unnamed, short-lived, and finer internal places are explicitly classified
+`not-modeled` and retained as prose context where relevant. Structured location
+references fall back to the nearest established reader-visible parent when the finer
+locale is unavailable or omitted.
 
 Capture every source-supported occurrence that may be an event, including separate
 claims for its participants, cause, immediate outcome, durable consequences, affected
@@ -116,11 +120,23 @@ Record unrevealed or uncertain checklist items in the mention's `uncertainty` or
 ledger's `unresolved_questions`. Do not manufacture a claim merely to complete the
 entry. If the source primarily uses an acronym and supplies no expansion, preserve the
 acronym as the mention label and explicitly record that its expansion is unrevealed.
-Pass 2 may then author a partial description that says so.
+Pass 2 keeps that gap in reconciliation, uncertainty, and human-review artifacts; it
+must not turn the absence into a reader-facing description sentence.
 
 A relationship such as who uses, owns, mentions, or discusses an entity is not by
 itself an `entity_definition`. Keep that relationship as its own claim so Pass 2
 cannot mistake narrative context for an encyclopedic explanation.
+
+Pass 2 states capabilities in entity-centered general language such as `It can` or
+`It is used to`; named-character usage is not the definition unless the relationship
+is itself defining. A capability belongs to an entity only when the evidence assigns
+it there; querying an interface for documentation or observing a capability through
+an interface does not assign that capability to the interface. Pass 2 omits all
+semantic disclosure-gap statements from descriptions, including unknown, unrevealed,
+unexplained, unavailable, and unspecified detail notices. A `current_state` contains
+only one or two concise sentences about the latest condition. A unified `vessel:*`
+record may describe a named ship, its design, or the ship family associated with the
+first ship and may own optional brief `current_state`.
 
 Claims describe only what the source says. They do not say `introducing`, `update`, or
 `already-known`; Pass 2 owns those classifications.

@@ -1,7 +1,7 @@
 # Bobiverse visual companion: technical design
 
 Status: Approved baseline  
-Last updated: 2026-07-27
+Last updated: 2026-07-28
 
 ## 1. Purpose
 
@@ -486,7 +486,7 @@ Canonical authoring uses JSON validated by JSON Schema Draft 2020-12, without
 source-level schema-version fields or a compatibility contract. One generalized
 zero-state source is the atomic, reader-visible entity registry before any book chapter
 is selected: it contains the nested Solar-System location tree and any pre-book
-characters, species, technologies, organizations, vessel types, or events. Chapter
+characters, species, technologies, organizations, vessels, or events. Chapter
 records then introduce book-specific entities and record ordered visible patches,
 appearances, events, and optional important references in `mentions`. A mention
 creates no relationship or state change. The stable entity registry
@@ -499,6 +499,21 @@ expands the direct narrative entity union. ADR-0008 defines important mentions a
 the generated narrative-activity index. ADR-0009 first defined chapter ordering for
 competing state-property writes whose effective dates are both year-only and equal;
 ADR-0013 promotes that ordering to every dated chapter-authored narrative fact.
+ADR-0014 replaces the former classification-only vessel type with one `vessel`
+entity that can represent a named spacecraft, its reusable design, or the family
+named after its first vessel. Vessel state is projected through the same ordered
+chapter-patch rules as other mutable entity state.
+ADR-0015 keeps disclosure gaps in extraction evidence and reconciliation rather than
+reader-facing descriptions.
+
+Every authored `current_state` is one or two concise sentences describing only the
+latest known condition, not identity, history, a chapter synopsis, or an accumulated
+adventure log. Every authored description is an entity-centered encyclopedia entry.
+Capabilities use general language such as “It can” or “It is used to”; named-character
+relationships remain only when defining or when a source-supported assessment needs
+attribution. Descriptions omit statements whose purpose is to announce unrevealed,
+unknown, unexplained, unavailable, unspecified, or otherwise missing knowledge. A
+short positive description remains valid; authors must not invent completeness.
 
 Spoiler safety has two independent dimensions:
 
@@ -594,10 +609,18 @@ explicitly unmapped roots with origin and destination references. Unknown or amb
 book locations remain valid only when explicitly unmapped; they may appear in timelines
 and lists but not at invented map coordinates.
 
+`megastructure` is reserved for engineered structures exceptional in physical scale;
+ordinary durable stations and bases use `locale`. Incidental, unnamed, or short-lived
+places are omitted rather than promoted merely to supply a chapter or appearance
+location. Authoring uses the most specific supported reader-visible location. If a
+fine-grained locale is unavailable or intentionally omitted, it climbs the established
+hierarchy to the nearest supported reader-visible parent without inventing a
+placeholder or containment relation.
+
 Astronomy remains authoritative for stellar and interstellar physical positions,
 components, sizes, colours, and measured render facts. The zero-state source owns the
 known Solar-System location topology and its pre-book character, species, technology,
-organization, vessel-type, and event
+organization, vessel, and event
 registry; its locations use a deliberately non-metric local render order and must not
 contain coordinates, radii, distances, colours, or other measured astronomy facts. A
 mapped narrative star system may reference an astronomy node; mapped

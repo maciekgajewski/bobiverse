@@ -13,7 +13,7 @@
     {
       "id": "technology:translation-routine",
       "name": "translation routine",
-      "description": "A routine integrated into Bob's system that interprets the standard twenty-second-century accent so smoothly that he no longer notices the differing speech patterns. Its implementation and language scope have not yet been revealed."
+      "description": "A routine that interprets the standard twenty-second-century accent so smoothly that differing speech patterns become effectively transparent to its user."
     },
     {
       "id": "location:old-handeltown",
@@ -21,7 +21,7 @@
       "kind": "locale",
       "parent_location_id": "location:earth",
       "parent_relation": "located_on",
-      "description": "A historic Oregon city identified as Salem, Oregon and as Handel's birthplace. After Handel's death, the city changed its name and a large memorial was established in his honor. An unidentified person later destroyed the memorial with a pocket nuclear weapon after objecting. It was the only nuclear weapon deployed in North America. Advanced radiation treatment limited deaths relative to Bob's expectation."
+      "description": "A historic Oregon city identified as Salem, Oregon and as Handel's birthplace. After Handel's death, the city changed its name and a large memorial was established in his honor. An unidentified person later destroyed the memorial with a pocket nuclear weapon after objecting. It was the only nuclear weapon deployed in North America, and advanced radiation treatment limited the resulting deaths."
     }
   ],
   "appearances": [
@@ -39,15 +39,15 @@
   "updates": [
     {
       "entity_id": "character:bob-replicant",
-      "current_state": "A nightly backed-up computer simulation made from a copy of Robert Johansson's mind and the remaining candidate for controlling a Von Neumann probe. Restored from backups after an attack destroyed the replicant matrices, he considers himself conscious, alive, and Bob in the important respects. He has complete project access and expanded library access, is regarded as adaptable and resilient, and is training for the mission while still lacking a visible face. He will remain online except for a nightly half-hour semi-sleep during backup. According to Dr. Doucette, his software contains safeguards intended to ensure mission objectives are met; their operation has not been revealed."
+      "current_state": "Continuing training and assembly as the sole remaining probe candidate. His software safeguards remain incompletely understood."
     },
     {
       "entity_id": "character:dr-landers",
-      "current_state": "A specialist trained to deal with replicants who has studied Bob's era."
+      "current_state": "Away from the project while Dr. Doucette covers for him."
     },
     {
       "entity_id": "technology:roamers",
-      "description": "Remote observation and manipulation devices that Bob directs through GUPPI. They come in varied sizes, can coordinate across scales, and need minimal supervision once their tasks, dependencies, and interruption conditions are defined. Without Bob's active interference, they can work up to ten times faster. They can travel along floors, walls, and ceilings, carry video cameras for remote observation, and pick up vibrations transmitted through a wall when pressed against it. Bob has written scripts for many of their activities, so routine assembly work often requires little more than his presence."
+      "description": "Remote observation and manipulation devices directed through GUPPI. They come in varied sizes, can coordinate across scales, and need minimal supervision once their tasks, dependencies, and interruption conditions are defined. Without active intervention, they can work up to ten times faster. They can travel along floors, walls, and ceilings, carry video cameras for remote observation, and pick up vibrations transmitted through a wall when pressed against it. Reusable scripts automate many routine activities, leaving assembly work largely self-directed."
     }
   ],
   "mentions": ["organization:ministry-of-proper-thought"]

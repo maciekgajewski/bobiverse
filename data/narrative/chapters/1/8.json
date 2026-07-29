@@ -8,22 +8,22 @@
     {
       "id": "character:kenneth-martins",
       "name": "Kenneth Martins",
-      "current_state": "One of the project candidates, represented by one of the two glowing cubes in the project computer room; no other reader-visible details have been revealed."
+      "current_state": "Represented by one of the two candidate cubes that remain powered on."
     },
     {
       "id": "character:jiro-tanaka",
       "name": "Jiro Tanaka",
-      "current_state": "A project candidate identified only by a cube label; the individual cube state and other reader-visible details have not been revealed."
+      "current_state": "Represented by a candidate cube that is powered down."
     },
     {
       "id": "character:neves-reijnder",
       "name": "Neves Reijnder",
-      "current_state": "A project candidate identified only by a cube label; the individual cube state and other reader-visible details have not been revealed."
+      "current_state": "Represented by a candidate cube that is powered down."
     },
     {
       "id": "character:joana-almeida",
       "name": "Joana Almeida",
-      "current_state": "A project candidate identified only by a cube label; the individual cube state and other reader-visible details have not been revealed."
+      "current_state": "Represented by a candidate cube that is powered down."
     }
   ],
   "appearances": [
@@ -41,7 +41,7 @@
   "updates": [
     {
       "entity_id": "technology:roamers",
-      "description": "Remote observation and manipulation devices that Bob directs through GUPPI. They come in varied sizes, can coordinate across scales, and need minimal supervision once their tasks, dependencies, and interruption conditions are defined. Without Bob's active interference, they can work up to ten times faster. They can travel along floors, walls, and ceilings, and carry video cameras for remote observation."
+      "description": "Remote observation and manipulation devices directed through GUPPI. They come in varied sizes, can coordinate across scales, and need minimal supervision once their tasks, dependencies, and interruption conditions are defined. Without active intervention, they can work up to ten times faster. They can travel along floors, walls, and ceilings, and carry video cameras for remote observation."
     }
   ]
 }

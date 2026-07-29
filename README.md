@@ -108,7 +108,7 @@ versioned `bobiverse.app-state.v1` localStorage record.
 
 The desktop left rail groups only eligible projected objects in this fixed order:
 Characters, Events, Star Systems, Other Locations, Species, Technologies,
-Organizations, and Vessel Types. Empty groups stay hidden. Group headings show
+Organizations, and Vessels. Empty groups stay hidden. Group headings show
 visible and active counts, and each group can be collapsed independently. Collapse
 preferences share the versioned `bobiverse.app-state.v1` record with reader progress.
 
@@ -123,6 +123,9 @@ links only when their targets are eligible in the same projection; unmapped and
 chronologically unplaced states remain explicit. Character location context is
 labelled **Last seen** and never treated as current presence. Each group heading has
 an original type-specific SVG icon, and each object row uses a shared SVG bullet.
+Vessels use one identity for a named spacecraft, its reusable design, or the ship
+family named after its first vessel; optional operational state follows the same
+spoiler-safe chapter projection as other mutable state.
 The map renders the deduplicated union of the configured-radius neighbourhoods around
 reader-safe mapped systems. Narrative-known systems receive a segmented ring; systems
 active at the selected chapter or date receive a double ring and outward tick. These
@@ -151,4 +154,6 @@ Convenience shell wrappers and the same examples are in [bin/README.md](bin/READ
 
 Use the repository-local Codex skill to turn one plaintext chapter into a reviewed
 candidate chapter object. See [chapter extraction](docs/chapter-extraction.md) for
-the one-line invocation and approval workflow.
+the one-line invocation and approval workflow. Entity descriptions contain supported
+positive knowledge and omit notices about details that have not been revealed;
+uncertainty remains available in the extraction review package.
