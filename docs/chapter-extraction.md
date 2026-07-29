@@ -25,8 +25,19 @@ untitled chapter uses `1.3.txt`; a titled chapter uses
    that chapter.
 3. Builds and validates a temporary candidate outside the canonical corpus.
 4. Shows the candidate, evidence, open questions, validation result, and exact diff.
-   A proposed canonical `mentions` entry is separately classified as an important,
-   non-redundant reference, with sealed evidence and an explicit human-review row.
+   Every resolved source mention receives an explicit human-review row with sealed
+   evidence and its structural-redundancy decision.
+
+Beginning with Chapter `1.14`, every source-supported reference to a previously
+reader-visible direct narrative entity or location must become a supplemental
+`mentions` entry when the target is absent from every other typed direct narrative
+reference in that chapter. Introductions, updates, appearances, chapter locations,
+event participants and locations, character species and death events, species
+homeworlds, and location parent/origin/destination fields are structural. ID-shaped
+prose is not. A supplemental mention advances otherwise-absent narrative activity; it
+does not assert presence, participation, ownership, membership, location, use,
+relationship, or state. A mentioned mapped location also derives the existing
+`mapped_system_ancestry` activity.
 
 Entity names preserve the source's primary surface form. When the source primarily
 uses an acronym, that acronym remains the canonical visible and searchable `name`;

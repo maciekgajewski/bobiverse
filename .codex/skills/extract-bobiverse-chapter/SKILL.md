@@ -198,7 +198,7 @@ Resolve `source_mentions` against known entities and aliases. Classify each clai
 - `introducing`;
 - `update`;
 - `appearance`;
-- `important-mention`;
+- `supplemental-mention`;
 - `already-known`;
 - `not-modeled`;
 - `unsupported`;
@@ -370,12 +370,20 @@ violating ordering or inventing a workaround.
 Ask the Captain one question at a time for material ambiguities. Keep the sealed source
 claim unchanged; record the reconciliation decision separately.
 
-Promote a claim to `important-mention` only when it is a source-supported reference to
-an already visible direct narrative entity or location, and no chapter introduction,
-update, appearance, default location, event participant, or event location already
-records that relevance. Do not infer presence, participation, ownership, membership,
-location, use, or state from this classification. Each proposed canonical `mentions`
-entry requires sealed evidence and its own explicit row in the human-review table.
+For Chapter `1.14` and later, classify every resolved source mention against
+supplemental-mention completeness. Promote it to `supplemental-mention` when it is a
+source-supported reference to an already visible direct narrative entity or location
+and the target is absent from every other typed direct narrative reference in the
+chapter. Structural references include introduction/update targets, appearances,
+chapter locations, event participants and locations, character `species_id` and
+`death_event_id`, species `homeworld_id`, and location `parent_location_id`,
+`origin_location_id`, and `destination_location_id`. Asset and astronomy IDs are not
+mention targets, and ID-shaped prose is not structural. Do not apply an importance or
+curation threshold. Do not infer presence, participation, ownership, membership,
+location, use, or state from this classification. Each qualifying canonical
+`mentions` entry is mandatory, requires sealed evidence, and receives its own explicit
+row in the human-review table. A mentioned mapped location retains derived
+`mapped_system_ancestry` activity.
 
 ## Assemble and validate the candidate
 
@@ -429,8 +437,10 @@ Present:
 - requested model, reasoning, and fork configuration for Pass 1 and Pass 2;
 - the candidate JSON;
 - a claim-to-classification table;
-- every proposed canonical important mention, its resolved stable ID, redundancy
-  decision, classification, and sealed evidence ID;
+- every resolved source mention, its stable ID when resolved, structural-redundancy
+  decision, classification, and sealed evidence ID, including qualifying
+  supplemental mentions, structurally represented references, later or unresolved
+  targets, and intentionally unmodeled mentions;
 - evidence IDs with bounded excerpts rendered by `source_evidence.py review`;
 - unresolved or low-confidence items;
 - narrative and astronomy preflight output, including any automatically resolved

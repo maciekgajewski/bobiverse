@@ -192,8 +192,10 @@ Planned work:
   including 200% desktop zoom, retain the map-first compact browser and inspector
   panels and expose the shared timeline/progress controls through a focus-contained
   command-bar modal.
-- Add optional important chapter `mentions` and generate one cross-type narrative
-  activity index for browser recency, map emphasis, and inspector context.
+- Add optional supplemental chapter `mentions` and generate one cross-type narrative
+  activity index for browser recency, map emphasis, and inspector context. Beginning
+  with Chapter `1.14`, extraction includes every source-supported reference to a
+  previously visible object when it is absent from all other typed chapter data.
 - Add the Phase 2 searchable grouped object browser. Groups appear progressively for
   eligible characters, events, star systems, other locations, species, technologies,
   organizations, and vessels, and sort by mode-appropriate recent activity.

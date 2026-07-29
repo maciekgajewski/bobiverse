@@ -496,15 +496,20 @@ zero-state source is the atomic, reader-visible entity registry before any book 
 is selected: it contains the nested Solar-System location tree and any pre-book
 characters, species, technologies, organizations, vessels, or events. Chapter
 records then introduce book-specific entities and record ordered visible patches,
-appearances, events, and optional important references in `mentions`. A mention
-creates no relationship or state change. The stable entity registry
+appearances, events, and optional supplemental references in `mentions`. Beginning
+with Chapter `1.14`, every source-supported reference to a previously visible direct
+narrative object is included when the object is absent from every other typed chapter
+reference. A mention creates no relationship or state change. The stable entity registry
 and every selected-chapter state are deterministic generated projections, never
 manually edited snapshots. ADR-0001 establishes chapter-authored patches; ADR-0003
 supersedes its sole-source boundary with the zero state; ADR-0004 establishes the
 unversioned narrative schema contract; ADR-0005 refines the chapter, location, and
 date-projection contracts; ADR-0006 generalizes the zero-state record; and ADR-0007
-expands the direct narrative entity union. ADR-0008 defines important mentions and
-the generated narrative-activity index. ADR-0009 first defined chapter ordering for
+expands the direct narrative entity union. ADR-0008 defines mentions and the generated
+narrative-activity index; ADR-0017 replaces its discretionary importance gate with
+supplemental-mention completeness and, beginning with Chapter `1.14`, broadens
+structural nonredundancy to every typed direct narrative reference. Chapters `1.1`
+through `1.13` retain ADR-0008's accepted boundary. ADR-0009 first defined chapter ordering for
 competing state-property writes whose effective dates are both year-only and equal;
 ADR-0013 promotes that ordering to every dated chapter-authored narrative fact.
 ADR-0014 replaces the former classification-only vessel type with one `vessel`
@@ -569,7 +574,7 @@ one shared visibility policy. A UI component may not implement an independent sp
 filter.
 
 The generator also emits read-only narrative activity derived from introductions,
-updates, appearances, chapter and event locations, event participation, important
+updates, appearances, chapter and event locations, event participation, supplemental
 mentions, and mapped stellar-system ancestry. Each record preserves its target, source
 chapter, nullable comparable effective date, and one or more controlled reasons.
 Reasons coalesce only for the same target, chapter, and effective date; unplaced event
@@ -581,9 +586,13 @@ deterministic topological order that preserves every definite moment relation;
 stable placement among undated, tied, or incomparable records carries no story
 chronology. Activity is not a source of entity state, relationships, continuous
 presence, or coordinates, and UI code must not reconstruct it independently.
-Important mentions target only an already visible direct narrative entity or location
-not structurally represented in that chapter; they do not assert presence,
-participation, ownership, membership, location, or use.
+From Chapter `1.14` onward, supplemental mentions target only an already visible
+direct narrative entity or location absent from every other typed direct narrative
+reference in that chapter, and every qualifying source-supported reference is
+required. Chapters `1.1` through `1.13` retain ADR-0008's accepted boundary.
+They do not assert presence, participation, ownership, membership, location, or use.
+`mention` is their only direct activity reason; a mentioned mapped location also
+derives `mapped_system_ancestry`.
 
 The same projection emits a character's `last_known_location` only when
 reader-visible appearances at or before the displayed date have one uniquely latest

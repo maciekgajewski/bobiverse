@@ -332,6 +332,12 @@ function collectReferences(record: NarrativeRecord): string[] {
   return references;
 }
 
+function isMentionTargetId(value: string): boolean {
+  return /^(character|event|location|organization|species|technology|vessel):/.test(
+    value,
+  );
+}
+
 function assertReferencesResolve(
   record: NarrativeRecord,
   availableIds: ReadonlySet<string>,
@@ -621,8 +627,8 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
       ...updatedIds,
       defaultLocationId,
     ]);
-    for (const appearance of (chapter.appearances as unknown[] | undefined) ??
-      []) {
+    const appearances = (chapter.appearances as unknown[] | undefined) ?? [];
+    for (const appearance of appearances) {
       const record = asRecord(appearance, `Appearance in ${id}`);
       const characterId = record.character_id;
       if (typeof characterId === "string")
@@ -643,6 +649,19 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
         }
       }
     }
+    if (compareChapter(id, "1.14") >= 0) {
+      const structuralRecords = [...introductions, ...updates, ...appearances];
+      for (const [index, candidate] of structuralRecords.entries()) {
+        const record = asRecord(
+          candidate,
+          `Structural chapter record ${index} in ${id}`,
+        );
+        for (const reference of collectReferences(record)) {
+          if (isMentionTargetId(reference))
+            structuralMentionTargets.add(reference);
+        }
+      }
+    }
     for (const [index, target] of (
       (chapter.mentions as unknown[] | undefined) ?? []
     ).entries()) {
@@ -654,20 +673,20 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
           throw chapterSemanticError(
             id,
             pointer,
-            `important mention target is introduced later in chapter ${introducedIn}: ${target}.`,
+            `supplemental mention target is introduced later in chapter ${introducedIn}: ${target}.`,
           );
         }
         throw chapterSemanticError(
           id,
           pointer,
-          `important mention target is unknown: ${target}.`,
+          `supplemental mention target is unknown: ${target}.`,
         );
       }
       if (structuralMentionTargets.has(target)) {
         throw chapterSemanticError(
           id,
           pointer,
-          `important mention target is already represented structurally in this chapter: ${target}.`,
+          `supplemental mention target is already represented structurally in this chapter: ${target}.`,
         );
       }
     }
@@ -1083,8 +1102,12 @@ function generateNarrativeActivity(
       "chapter_location",
     );
     for (const target of (chapter.mentions as unknown[] | undefined) ?? []) {
-      if (typeof target === "string")
+      if (typeof target !== "string") continue;
+      if (byId.get(target)?.entity_type === "location") {
+        addLocationActivity(target, sourceChapter, date, "mention");
+      } else {
         add(target, sourceChapter, date, "mention");
+      }
     }
     for (const eventId of eventIds) {
       const event = byId.get(eventId);

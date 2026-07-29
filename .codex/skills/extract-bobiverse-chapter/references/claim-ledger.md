@@ -44,8 +44,10 @@ Pass 1 writes a draft JSON object outside the repository:
 
 Use stable, ordered `claim:NNN` and source-local `mention:*` IDs in
 `source_mentions`. These source-local identity anchors are distinct from a reviewed
-canonical chapter `mentions` array, whose entries are stable narrative entity IDs and
-record only important non-redundant references. Use only these
+canonical chapter `mentions` array, whose entries are stable narrative entity IDs.
+Beginning with Chapter `1.14`, canonical entries exhaustively record source-supported
+references to previously visible objects that are absent from all other typed direct
+narrative references in the chapter. Use only these
 confidence values:
 
 Use the source's primary surface form for each source mention `label`. If the source

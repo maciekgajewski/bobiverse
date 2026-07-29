@@ -49,6 +49,7 @@ derived from `../implementation-plan.md` and must remain consistent with
 | [BOB-035](BOB-035-unified-vessels-and-authoring-quality.md)             | Done    | Unify vessel records and enforce durable, concise narrative authoring.     |
 | [BOB-036](BOB-036-chapter-inspector-and-compact-timeline.md)            | Ready   | Make chapters inspectable and simplify Chapter-mode timeline labels.       |
 | [BOB-037](BOB-037-seed-largest-planetary-moons.md)                      | Done    | Seed up to four largest moons per planet in the pre-book zero state.       |
+| [BOB-038](BOB-038-supplemental-mention-completeness.md)                 | Done    | Enforce complete supplemental mentions from Chapter 1.14 onward.           |
 
 ## Task requirements
 
