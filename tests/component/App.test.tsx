@@ -231,7 +231,7 @@ describe("atlas shell", () => {
     const user = userEvent.setup();
     render(<App />);
     const group = screen.getByRole("button", {
-      name: /Other Locations, 12 visible/,
+      name: /Other Locations, 31 visible/,
     });
     await user.click(group);
     expect(group).toHaveAttribute("aria-expanded", "false");

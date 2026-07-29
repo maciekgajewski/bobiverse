@@ -625,11 +625,15 @@ Zero-state and chapter locations share one closed kind vocabulary and explicit p
 relations. Nested zero-state locations declare whether they are members of the system,
 orbit their parent, or are located on it; only the authored order of orbital siblings
 asserts inner-to-outer order. Leaves omit `children`, and a planet has at most four
-curated moon children. Chapter locations author the same relation directly, with
-additional containment support for locales and megastructures. Transit locations are
-explicitly unmapped roots with origin and destination references. Unknown or ambiguous
-book locations remain valid only when explicitly unmapped; they may appear in timelines
-and lists but not at invented map coordinates.
+moon children. The seed includes every moon when a planet has four or fewer and
+otherwise selects the four satellites with the greatest reviewed numeric JPL mean
+radius; satellites without a numeric value are outside that comparison. The selected
+children remain authored in inner-to-outer orbital order, and their measured selection
+evidence never enters narrative JSON. Chapter locations author the same relation
+directly, with additional containment support for locales and megastructures. Transit
+locations are explicitly unmapped roots with origin and destination references.
+Unknown or ambiguous book locations remain valid only when explicitly unmapped; they
+may appear in timelines and lists but not at invented map coordinates.
 
 `megastructure` is reserved for engineered structures exceptional in physical scale;
 ordinary durable stations and bases use `locale`. Incidental, unnamed, or short-lived

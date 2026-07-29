@@ -36,6 +36,96 @@ function collectDescriptions(value: unknown): string[] {
   ];
 }
 
+const canonicalMoons = [
+  { id: "location:moon", name: "Moon", parent_location_id: "location:earth" },
+  {
+    id: "location:phobos",
+    name: "Phobos",
+    parent_location_id: "location:mars",
+  },
+  {
+    id: "location:deimos",
+    name: "Deimos",
+    parent_location_id: "location:mars",
+  },
+  { id: "location:io", name: "Io", parent_location_id: "location:jupiter" },
+  {
+    id: "location:europa",
+    name: "Europa",
+    parent_location_id: "location:jupiter",
+  },
+  {
+    id: "location:ganymede",
+    name: "Ganymede",
+    parent_location_id: "location:jupiter",
+  },
+  {
+    id: "location:callisto",
+    name: "Callisto",
+    parent_location_id: "location:jupiter",
+  },
+  {
+    id: "location:dione",
+    name: "Dione",
+    parent_location_id: "location:saturn",
+  },
+  {
+    id: "location:rhea",
+    name: "Rhea",
+    parent_location_id: "location:saturn",
+  },
+  {
+    id: "location:titan",
+    name: "Titan",
+    parent_location_id: "location:saturn",
+  },
+  {
+    id: "location:iapetus",
+    name: "Iapetus",
+    parent_location_id: "location:saturn",
+  },
+  {
+    id: "location:ariel",
+    name: "Ariel",
+    parent_location_id: "location:uranus",
+  },
+  {
+    id: "location:umbriel",
+    name: "Umbriel",
+    parent_location_id: "location:uranus",
+  },
+  {
+    id: "location:titania",
+    name: "Titania",
+    parent_location_id: "location:uranus",
+  },
+  {
+    id: "location:oberon",
+    name: "Oberon",
+    parent_location_id: "location:uranus",
+  },
+  {
+    id: "location:larissa",
+    name: "Larissa",
+    parent_location_id: "location:neptune",
+  },
+  {
+    id: "location:proteus",
+    name: "Proteus",
+    parent_location_id: "location:neptune",
+  },
+  {
+    id: "location:triton",
+    name: "Triton",
+    parent_location_id: "location:neptune",
+  },
+  {
+    id: "location:nereid",
+    name: "Nereid",
+    parent_location_id: "location:neptune",
+  },
+] as const;
+
 describe("narrative corpus validation and projection", () => {
   it("isolates and freezes prepared input before projection", () => {
     const raw = createNarrativeFixtureCorpus();
@@ -152,7 +242,7 @@ describe("narrative corpus validation and projection", () => {
     expect(() => validateNarrativeCorpus(corpus)).not.toThrow();
     const world = generateNarrativeWorld(prepareNarrativeCorpus(corpus));
     expect(world.view).toEqual({ chapter: null, display_date: null });
-    expect(world.entities).toHaveLength(15);
+    expect(world.entities).toHaveLength(34);
     expect(world.entities).toContainEqual(
       expect.objectContaining({
         id: "species:human",
@@ -182,6 +272,64 @@ describe("narrative corpus validation and projection", () => {
       "location:kuiper-belt",
       "location:oort-cloud",
     ]);
+    const moons = world.entities.filter((entity) => entity.kind === "moon");
+    expect(moons).toHaveLength(canonicalMoons.length);
+    for (const expected of canonicalMoons) {
+      expect(
+        world.entities.find((entity) => entity.id === expected.id),
+      ).toEqual({
+        ...expected,
+        kind: "moon",
+        parent_relation: "orbits",
+        entity_type: "location",
+        child_ids: [],
+      });
+    }
+    for (const [planetId, childIds] of [
+      ["location:earth", ["location:moon"]],
+      ["location:mars", ["location:phobos", "location:deimos"]],
+      [
+        "location:jupiter",
+        [
+          "location:io",
+          "location:europa",
+          "location:ganymede",
+          "location:callisto",
+        ],
+      ],
+      [
+        "location:saturn",
+        [
+          "location:dione",
+          "location:rhea",
+          "location:titan",
+          "location:iapetus",
+        ],
+      ],
+      [
+        "location:uranus",
+        [
+          "location:ariel",
+          "location:umbriel",
+          "location:titania",
+          "location:oberon",
+        ],
+      ],
+      [
+        "location:neptune",
+        [
+          "location:larissa",
+          "location:proteus",
+          "location:triton",
+          "location:nereid",
+        ],
+      ],
+    ] as const) {
+      expect(
+        world.entities.find((entity) => entity.id === planetId)?.child_ids,
+      ).toEqual(childIds);
+      expect(childIds).toHaveLength(Math.min(4, childIds.length));
+    }
   });
 
   it("uses story time rather than reader order for the selected chapter world", () => {

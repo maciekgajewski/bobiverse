@@ -172,9 +172,11 @@ Planned work:
   vessel, event, and location entities. A unified vessel may represent a named
   spacecraft, its reusable design, or the family named after its first vessel; no
   separate instance/design identity is authored.
-- Store the zero-state Solar-System tree and pre-book entities, plus each authored chapter, in validated source
-  JSON; derive the ordered chapter manifest from chapter files and the minimal
-  `books.json` catalogue.
+- Store the zero-state Solar-System tree and pre-book entities, plus each authored
+  chapter, in validated source JSON. Seed all planetary moons when there are four or
+  fewer and otherwise the four largest by reviewed numeric JPL mean radius, authored
+  in inner-to-outer orbital order without measured values. Derive the ordered chapter
+  manifest from chapter files and the minimal `books.json` catalogue.
 - Manually encode a small, representative chapter set in a later task, using the
   already-proven validation and projection path.
 - Generate stable entity registries and selected-chapter state from the zero-state

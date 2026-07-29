@@ -1260,8 +1260,13 @@ It requires Sol's child array to contain, in inner-to-outer order, exactly the e
 planet IDs from Mercury through Neptune, plus the asteroid belt between Mars and
 Jupiter, then the Kuiper belt and Oort cloud after Neptune. It rejects a seeded
 `dwarf_planet`, Kuiper-belt objects, duplicate IDs, or more than four moons under any
-planet. Each planet's up-to-four moon entries are a deliberately curated subset rather
-than a physical-astronomy-derived definition of "major".
+planet. The canonical zero state includes all moons when a planet has four or fewer
+and otherwise selects the four satellites with the greatest numeric mean radius in
+the reviewed JPL Solar System Dynamics physical-parameter table. Satellites without a
+numeric JPL mean radius are outside that comparison. Selection uses size, while the
+authored child array remains inner-to-outer by the reviewed JPL mean elements. The
+source stores only identity and topology, never the measured values used to review the
+selection.
 
 The initial `entities` array contains exactly `species:human`, named `Human`, with
 `homeworld_id: "location:earth"`. It does not contain Robert Johansson, Las Vegas, or

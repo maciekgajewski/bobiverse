@@ -1,0 +1,52 @@
+{
+  "chapter": "1.13",
+  "title": "13",
+  "summary": "En route to Epsilon Eridani, Bob detours past Saturn, finds and removes a sabotage device, and builds a virtual environment to make disembodied travel bearable. He uses a sandboxed copy to isolate and filter a transmitted kill trigger, then learns that escalating conflict on Earth has killed Dr. Landers and sent a Brazilian probe after him. While planning defenses and confronting his suppressed grief, Bob detects signs of nuclear detonations on Earth and concludes that he may be on his own.",
+  "date": "2133",
+  "location_id": "location:saturn",
+  "introducing": [
+    {
+      "id": "technology:vr",
+      "name": "VR",
+      "description": "A virtual-reality interface Bob builds aboard Heaven-1 to provide sensory input and an embodied experience while he travels as a bodiless mind. It initially needs hardware modifications and remains an ongoing software project."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead",
+      "location_id": "location:saturn"
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "location:titan",
+      "description": "Saturn's largest moon, where primitive life has been found. USE operates a space station there to study that life."
+    },
+    {
+      "entity_id": "location:earth",
+      "state": "Groundside nuclear detonations have been detected."
+    },
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "Travelling toward Epsilon Eridani while preparing defenses against a Brazilian probe. He has reenabled his capacity to mourn and is monitoring Earth after signs of nuclear detonations."
+    },
+    {
+      "entity_id": "character:dr-landers",
+      "current_state": "Killed when Brazilian Empire forces bombed the Newhaven facility.",
+      "death_date": "2133"
+    },
+    {
+      "entity_id": "technology:roamers",
+      "description": "Remote observation and manipulation devices directed through GUPPI. They come in varied sizes, can coordinate across scales, and need minimal supervision once their tasks, dependencies, and interruption conditions are defined. Without active intervention, they can work up to ten times faster. They can inspect ship circuitry with gnat-sized units, carry video cameras for remote observation, and pick up vibrations transmitted through a wall when pressed against it. Reusable scripts automate many routine activities, leaving assembly work largely self-directed."
+    },
+    {
+      "entity_id": "technology:surge-drive",
+      "description": "A recently developed drive technology enabled by a breakthrough in subspace theory and used to equip spacecraft for interstellar operations. Beyond prototypes, only a small number of SURGE-equipped vessels are in active service. On Heaven-1, it provides reactionless propulsion rather than using gathered hydrogen as reaction mass. It can also accelerate a projectile through an axial launch tube, requiring the vessel to rotate to aim and to stop its drive before firing. Bob believes it may push against the fabric of space."
+    },
+    {
+      "entity_id": "organization:united-states-of-eurasia",
+      "description": "The United States of Eurasia controls Europe and most of western Russia. It began an interstellar probe project two years earlier, and Dr. Landers considers it the strongest long-term competitor, with a substantial lead in colonization readiness. It operates a space station on Titan to study primitive life found there."
+    }
+  ]
+}
