@@ -198,7 +198,7 @@ Resolve `source_mentions` against known entities and aliases. Classify each clai
 - `introducing`;
 - `update`;
 - `appearance`;
-- `important-mention`;
+- `supplemental-mention`;
 - `already-known`;
 - `not-modeled`;
 - `unsupported`;
@@ -370,12 +370,20 @@ violating ordering or inventing a workaround.
 Ask the Captain one question at a time for material ambiguities. Keep the sealed source
 claim unchanged; record the reconciliation decision separately.
 
-Promote a claim to `important-mention` only when it is a source-supported reference to
-an already visible direct narrative entity or location, and no chapter introduction,
-update, appearance, default location, event participant, or event location already
-records that relevance. Do not infer presence, participation, ownership, membership,
-location, use, or state from this classification. Each proposed canonical `mentions`
-entry requires sealed evidence and its own explicit row in the human-review table.
+For Chapter `1.14` and later, classify every resolved source mention against
+supplemental-mention completeness. Promote it to `supplemental-mention` when it is a
+source-supported reference to an already visible direct narrative entity or location
+and the target is absent from every other typed direct narrative reference in the
+chapter. Structural references include introduction/update targets, appearances,
+chapter locations, event participants and locations, character `species_id` and
+`death_event_id`, species `homeworld_id`, and location `parent_location_id`,
+`origin_location_id`, and `destination_location_id`. Asset and astronomy IDs are not
+mention targets, and ID-shaped prose is not structural. Do not apply an importance or
+curation threshold. Do not infer presence, participation, ownership, membership,
+location, use, or state from this classification. Each qualifying canonical
+`mentions` entry is mandatory, requires sealed evidence, and receives its own explicit
+row in the human-review table. A mentioned mapped location retains derived
+`mapped_system_ancestry` activity.
 
 ## Assemble and validate the candidate
 
@@ -392,6 +400,8 @@ Validate with:
 ```bash
 ./node_modules/.bin/tsx scripts/narrative-cli.ts validate \
   --root /absolute/path/to/temporary/narrative-root
+npm run data:validate -- \
+  --narrative-root /absolute/path/to/temporary/narrative-root
 ```
 
 Repair representation errors only. Do not manufacture source facts to make validation
@@ -406,6 +416,15 @@ The repository narrative validator is authoritative. A local JSON Schema check i
 useful but does not replace temporary-corpus validation because repository rules also
 enforce cross-record ownership and reader-order constraints.
 
+Astronomy validation is also mandatory before canonical promotion. Under ADR-0016,
+an exact normalized narrative name that is unique across one accepted astronomy
+system's effective name and aliases receives a deterministic source-backed bootstrap
+without separate Captain approval. Normalization only case-folds, trims, and
+collapses whitespace. Never remove punctuation or use fuzzy, partial, phonetic,
+coordinate, or model-confidence matching. If the accepted candidate identity,
+adopted component, source-backed geometry, or pinned coverage cannot support the new
+anchor, stop before any canonical write and report the required astronomy work.
+
 For a dry-run evaluation, read the existing target chapter only after the candidate
 validates. Compare omissions, unsupported claims, reconciliation choices, and review
 effort. Do not silently alter the candidate to resemble the existing file.
@@ -418,23 +437,29 @@ Present:
 - requested model, reasoning, and fork configuration for Pass 1 and Pass 2;
 - the candidate JSON;
 - a claim-to-classification table;
-- every proposed canonical important mention, its resolved stable ID, redundancy
-  decision, classification, and sealed evidence ID;
+- every resolved source mention, its stable ID when resolved, structural-redundancy
+  decision, classification, and sealed evidence ID, including qualifying
+  supplemental mentions, structurally represented references, later or unresolved
+  targets, and intentionally unmodeled mentions;
 - evidence IDs with bounded excerpts rendered by `source_evidence.py review`;
 - unresolved or low-confidence items;
-- validation output;
+- narrative and astronomy preflight output, including any automatically resolved
+  mapped-anchor bootstrap;
 - the exact canonical diff that approval would create.
 
 An ordinary invocation may write canonical JSON only after the Captain explicitly
 approves that exact candidate. A task-scoped dry run must stop without writing even if
 the candidate is approved for quality.
 
-After an authorized routine canonical write, run the standard validation documented
-in `docs/chapter-extraction.md` and append one row to
-`docs/chapter-promotion-log.md`. When an active task exists for broader work, also run
-its validation commands and update its directly affected documentation. Never commit
-source text, evidence excerpts, draft or sealed ledgers, temporary candidates, or
-temporary narrative roots.
+Before an authorized routine canonical write, rebuild the temporary narrative root
+from current canonical inputs plus the exact approved candidate and rerun both
+temporary-root validators documented in `docs/chapter-extraction.md`. If either
+fails, leave canonical chapter files and `docs/chapter-promotion-log.md` byte-for-byte
+unchanged. After a successful write, run the documented canonical narrative and
+astronomy validation, then append one promotion-log row. When an active task exists
+for broader work, also run its validation commands and update its directly affected
+documentation. Never commit source text, evidence excerpts, draft or sealed ledgers,
+temporary candidates, or temporary narrative roots.
 
 ## Deferred source fallback
 

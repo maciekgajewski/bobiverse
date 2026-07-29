@@ -360,8 +360,16 @@ locationless selections leave the camera unchanged. A chapter/date change atomic
 clears an astronomy-only selection that has left the rendered union.
 
 A new non-Sol anchor is bootstrapped from an exact GCNS or CNS5 source identity before
-its acquisition sphere is planned; a coordinate from the previous generated runtime
-is comparison evidence only. A reviewed landmark roster makes recognizable local
+its acquisition sphere is planned. Under ADR-0016, the pipeline derives that
+bootstrap without separate review only when the mapped narrative name exactly matches
+the accepted effective system name or alias after case-folding and whitespace
+normalization, and the accepted candidate has one unambiguous adopted source-backed
+position. Mapped name-to-anchor pairs are discovered by replaying effective location
+state from zero state through chapter introductions and updates, so independent name
+or astronomy-ID updates receive the same check. All fuzzy, partial, multiple,
+unsupported, or otherwise ambiguous matches stop for explicit review. A coordinate
+from the previous generated runtime is comparison evidence only. A reviewed landmark
+roster makes recognizable local
 completeness testable. The complete initial roster and its multiple-system membership
 expectations are binding in `docs/data/astronomy-pipeline.md`; they include Sirius,
 Procyon, and Alpha Centauri with Alpha Centauri A, Alpha Centauri B, and Proxima
@@ -498,15 +506,20 @@ zero-state source is the atomic, reader-visible entity registry before any book 
 is selected: it contains the nested Solar-System location tree and any pre-book
 characters, species, technologies, organizations, vessels, or events. Chapter
 records then introduce book-specific entities and record ordered visible patches,
-appearances, events, and optional important references in `mentions`. A mention
-creates no relationship or state change. The stable entity registry
+appearances, events, and optional supplemental references in `mentions`. Beginning
+with Chapter `1.14`, every source-supported reference to a previously visible direct
+narrative object is included when the object is absent from every other typed chapter
+reference. A mention creates no relationship or state change. The stable entity registry
 and every selected-chapter state are deterministic generated projections, never
 manually edited snapshots. ADR-0001 establishes chapter-authored patches; ADR-0003
 supersedes its sole-source boundary with the zero state; ADR-0004 establishes the
 unversioned narrative schema contract; ADR-0005 refines the chapter, location, and
 date-projection contracts; ADR-0006 generalizes the zero-state record; and ADR-0007
-expands the direct narrative entity union. ADR-0008 defines important mentions and
-the generated narrative-activity index. ADR-0009 first defined chapter ordering for
+expands the direct narrative entity union. ADR-0008 defines mentions and the generated
+narrative-activity index; ADR-0017 replaces its discretionary importance gate with
+supplemental-mention completeness and, beginning with Chapter `1.14`, broadens
+structural nonredundancy to every typed direct narrative reference. Chapters `1.1`
+through `1.13` retain ADR-0008's accepted boundary. ADR-0009 first defined chapter ordering for
 competing state-property writes whose effective dates are both year-only and equal;
 ADR-0013 promotes that ordering to every dated chapter-authored narrative fact.
 ADR-0014 replaces the former classification-only vessel type with one `vessel`
@@ -571,7 +584,7 @@ one shared visibility policy. A UI component may not implement an independent sp
 filter.
 
 The generator also emits read-only narrative activity derived from introductions,
-updates, appearances, chapter and event locations, event participation, important
+updates, appearances, chapter and event locations, event participation, supplemental
 mentions, and mapped stellar-system ancestry. Each record preserves its target, source
 chapter, nullable comparable effective date, and one or more controlled reasons.
 Reasons coalesce only for the same target, chapter, and effective date; unplaced event
@@ -583,9 +596,13 @@ deterministic topological order that preserves every definite moment relation;
 stable placement among undated, tied, or incomparable records carries no story
 chronology. Activity is not a source of entity state, relationships, continuous
 presence, or coordinates, and UI code must not reconstruct it independently.
-Important mentions target only an already visible direct narrative entity or location
-not structurally represented in that chapter; they do not assert presence,
-participation, ownership, membership, location, or use.
+From Chapter `1.14` onward, supplemental mentions target only an already visible
+direct narrative entity or location absent from every other typed direct narrative
+reference in that chapter, and every qualifying source-supported reference is
+required. Chapters `1.1` through `1.13` retain ADR-0008's accepted boundary.
+They do not assert presence, participation, ownership, membership, location, or use.
+`mention` is their only direct activity reason; a mentioned mapped location also
+derives `mapped_system_ancestry`.
 
 The same projection emits a character's `last_known_location` only when
 reader-visible appearances at or before the displayed date have one uniquely latest
@@ -639,11 +656,15 @@ Zero-state and chapter locations share one closed kind vocabulary and explicit p
 relations. Nested zero-state locations declare whether they are members of the system,
 orbit their parent, or are located on it; only the authored order of orbital siblings
 asserts inner-to-outer order. Leaves omit `children`, and a planet has at most four
-curated moon children. Chapter locations author the same relation directly, with
-additional containment support for locales and megastructures. Transit locations are
-explicitly unmapped roots with origin and destination references. Unknown or ambiguous
-book locations remain valid only when explicitly unmapped; they may appear in timelines
-and lists but not at invented map coordinates.
+moon children. The seed includes every moon when a planet has four or fewer and
+otherwise selects the four satellites with the greatest reviewed numeric JPL mean
+radius; satellites without a numeric value are outside that comparison. The selected
+children remain authored in inner-to-outer orbital order, and their measured selection
+evidence never enters narrative JSON. Chapter locations author the same relation
+directly, with additional containment support for locales and megastructures. Transit
+locations are explicitly unmapped roots with origin and destination references.
+Unknown or ambiguous book locations remain valid only when explicitly unmapped; they
+may appear in timelines and lists but not at invented map coordinates.
 
 `megastructure` is reserved for engineered structures exceptional in physical scale;
 ordinary durable stations and bases use `locale`. Incidental, unnamed, or short-lived

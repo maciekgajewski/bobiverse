@@ -182,9 +182,12 @@ expanded state. Clearing search restores the reader's prior group arrangement.
 
 ### 7.2 Activity and ordering
 
-`mentions` records only important chapter references that are not already represented
-by structural chapter data. They do not assert presence, participation, ownership,
-location, or state change. ADR-0008 defines their source and projection contract.
+Beginning with Chapter `1.14`, `mentions` records every source-supported reference to
+a previously visible object that is absent from all other typed direct narrative
+references in that chapter. Chapters `1.1` through `1.13` retain ADR-0008's accepted
+boundary. Mentions do not assert presence, participation, ownership, location, or
+state change. ADR-0008, as superseded by ADR-0017, defines their source and projection
+contract.
 
 The generator derives narrative activity from:
 
@@ -192,7 +195,7 @@ The generator derives narrative activity from:
 - character appearances and their effective locations;
 - the chapter location;
 - events, their effective dates, participants, and locations;
-- important `mentions`;
+- supplemental `mentions`;
 - mapped stellar-system ancestry of an active narrative location.
 
 It does not treat every ordinary entity reference, such as a species link or
@@ -453,8 +456,10 @@ inspector recency:
 | Active system         | Mapped ancestry of selected-chapter activity           | Mapped ancestry of activity at selected date      |
 | Current list priority | Active objects, then reader-order recency              | Active objects, then story-time recency           |
 
-An important mention contributes activity for its target at the enclosing chapter's
-date. It does not place a character, event, or object at the chapter location.
+A supplemental mention contributes direct `mention` activity for its target at the
+enclosing chapter's date. It does not place a character, event, or object at the
+chapter location. A mentioned mapped location also retains derived
+`mapped_system_ancestry` activity.
 
 ## 12. Accessibility and resilient states
 
@@ -494,7 +499,7 @@ date. It does not place a character, event, or object at the chapter location.
 
 The implementation is divided into:
 
-1. BOB-010: important mentions and generated narrative activity;
+1. BOB-010 and ADR-0017: supplemental mentions and generated narrative activity;
 2. BOB-011: reader progress and temporal navigation;
 3. BOB-012: progressive browser and inspectors;
 4. BOB-013: Phase 1B guaranteed astronomy neighbourhood catalogue required by Phase

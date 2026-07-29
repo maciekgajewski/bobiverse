@@ -172,9 +172,11 @@ Planned work:
   vessel, event, and location entities. A unified vessel may represent a named
   spacecraft, its reusable design, or the family named after its first vessel; no
   separate instance/design identity is authored.
-- Store the zero-state Solar-System tree and pre-book entities, plus each authored chapter, in validated source
-  JSON; derive the ordered chapter manifest from chapter files and the minimal
-  `books.json` catalogue.
+- Store the zero-state Solar-System tree and pre-book entities, plus each authored
+  chapter, in validated source JSON. Seed all planetary moons when there are four or
+  fewer and otherwise the four largest by reviewed numeric JPL mean radius, authored
+  in inner-to-outer orbital order without measured values. Derive the ordered chapter
+  manifest from chapter files and the minimal `books.json` catalogue.
 - Manually encode a small, representative chapter set in a later task, using the
   already-proven validation and projection path.
 - Generate stable entity registries and selected-chapter state from the zero-state
@@ -190,8 +192,10 @@ Planned work:
   including 200% desktop zoom, retain the map-first compact browser and inspector
   panels and expose the shared timeline/progress controls through a focus-contained
   command-bar modal.
-- Add optional important chapter `mentions` and generate one cross-type narrative
-  activity index for browser recency, map emphasis, and inspector context.
+- Add optional supplemental chapter `mentions` and generate one cross-type narrative
+  activity index for browser recency, map emphasis, and inspector context. Beginning
+  with Chapter `1.14`, extraction includes every source-supported reference to a
+  previously visible object when it is absent from all other typed chapter data.
 - Add the Phase 2 searchable grouped object browser. Groups appear progressively for
   eligible characters, events, star systems, other locations, species, technologies,
   organizations, and vessels, and sort by mode-appropriate recent activity.

@@ -53,10 +53,12 @@ There are 3 NPC AI characters that could be used as app assitants, clippy-style:
 - There is no need for user accounts initially. Browser `localStorage` will remember
   the visitor's last read chapter and preferences.
 - The reader-visible world begins with a validated zero-state Solar-System location
-  source, then book chapters act as ordered patches: they introduce book-specific
+  source. It includes all moons for planets with four or fewer and otherwise the four
+  largest moons by reviewed mean radius, stored in orbital order without measured
+  values. Book chapters then act as ordered patches: they introduce book-specific
   entities, record visible updates to seeded or previously introduced entities, and
-  reference stable IDs. Entity registries and chapter-state datasets are generated from
-  those inputs and are never edited manually. A chapter contains:
+  reference stable IDs. Entity registries and chapter-state datasets are generated
+  from those inputs and are never edited manually. A chapter contains:
 
   - a date
   - a main character(s)
