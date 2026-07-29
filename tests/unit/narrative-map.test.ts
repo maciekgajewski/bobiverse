@@ -133,12 +133,22 @@ describe("narrative map projection", () => {
     expect(
       focusSystemIdForSelection({ kind: "astronomy", id: "near" }, world, ids),
     ).toBe("near");
+    expect(
+      focusSystemIdForSelection({ kind: "chapter", id: "1.1" }, world, ids),
+    ).toBeNull();
   });
 
   it("invalidates astronomy-only selections when their context disappears", () => {
     expect(
       isSelectionEligibleForMap(
         { kind: "astronomy", id: "far" },
+        world,
+        new Set(["known"]),
+      ),
+    ).toBe(false);
+    expect(
+      isSelectionEligibleForMap(
+        { kind: "chapter", id: "1.1" },
         world,
         new Set(["known"]),
       ),

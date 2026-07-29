@@ -197,6 +197,13 @@ Planned work:
   organizations, and vessels, and sort by mode-appropriate recent activity.
 - Add type-aware selected-object inspectors and coordinated selection across browser,
   map, and inspector.
+- Make unlocked Chapter-mode timeline entries inspectable in the shared wide and
+  compact inspector through a prepared-corpus-derived detail view. Include optional
+  curated chapter assets and linked reader-safe chapter relationships without a
+  second world projection.
+- Keep Chapter-mode navigation labels concise: local number alone for numeric titles,
+  preserve accepted number-prefixed descriptive titles, otherwise add the local
+  number once; do not repeat story years or chronology notes along the rail.
 - Highlight the selected chapter's visible locations, characters, and events.
 - Mark narrative-known and active stellar systems without altering spectral markers
   or true geometry. Render searchable, astronomy-only context within one explicit,

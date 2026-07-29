@@ -3,6 +3,7 @@ import type {
   NarrativeChapterSummary,
   ReaderProgress,
 } from "../narrative/progress";
+import { chapterTimelineLabel } from "../narrative/progress";
 import { compareNarrativeChapters } from "../narrative/model";
 
 function year(date: string): string {
@@ -15,17 +16,6 @@ function numericYear(date: string): number {
 
 function linearYearOffset(date: string, firstDate: string): number {
   return numericYear(date) - numericYear(firstDate);
-}
-
-function chronologyDirection(
-  chapter: NarrativeChapterSummary,
-  previous: NarrativeChapterSummary | undefined,
-): string | null {
-  if (!previous) return null;
-  const difference = numericYear(chapter.date) - numericYear(previous.date);
-  if (difference > 0) return "Story time moves forward";
-  if (difference < 0) return "Story time moves backward";
-  return "Same story year";
 }
 
 function ShieldIcon() {
@@ -50,6 +40,7 @@ interface TimelineDockProps {
   onCancelReadThrough: () => void;
   onReturnToZeroState: () => void;
   onKnowledgeChapter: (chapter: string) => void;
+  onChapterTimeline?: (chapter: string) => void;
   onDate: (date: string) => void;
   onChapterMode: () => void;
   onZoom: (delta: number) => void;
@@ -276,6 +267,7 @@ export function TimelineDock({
   onCancelReadThrough,
   onReturnToZeroState,
   onKnowledgeChapter,
+  onChapterTimeline,
   onDate,
   onChapterMode,
   onZoom,
@@ -413,11 +405,10 @@ export function TimelineDock({
                   chapter.chapter,
                   progress.furthestChapterRead,
                 ) > 0;
-              const direction = chronologyDirection(
-                chapter,
-                chapters[index - 1],
-              );
               const selected = chapter.chapter === progress.viewChapter;
+              const label = chapterTimelineLabel(chapter);
+              const bookNumber = chapter.chapter.split(".")[0]!;
+              const localNumber = chapter.chapter.split(".")[1]!;
               return (
                 <Fragment key={chapter.chapter}>
                   {(index === 0 ||
@@ -432,35 +423,25 @@ export function TimelineDock({
                   )}
                   <li key={chapter.chapter} className="chapter-track-entry">
                     <button
+                      data-chapter={chapter.chapter}
                       className={`${selected ? "selected" : ""} ${locked ? "locked" : ""}`}
                       disabled={locked}
                       aria-current={selected ? "true" : undefined}
                       aria-label={
                         locked
-                          ? `Book ${chapter.chapter.split(".")[0]}, Chapter ${chapter.chapter.split(".")[1]}, locked`
-                          : undefined
+                          ? `Book ${bookNumber}, Chapter ${localNumber}, locked`
+                          : `Book ${bookNumber}, ${label}`
                       }
-                      onClick={() => onKnowledgeChapter(chapter.chapter)}
+                      onClick={() =>
+                        (onChapterTimeline ?? onKnowledgeChapter)(
+                          chapter.chapter,
+                        )
+                      }
                     >
                       <span className="chapter-above">
-                        Chapter {chapter.chapter}
+                        {locked ? `Chapter ${chapter.chapter}` : label}
                       </span>
                       <span className="chapter-dot" />
-                      <span className="chapter-details">
-                        {!locked && (
-                          <span className="chapter-title">{chapter.title}</span>
-                        )}
-                        {!locked && (
-                          <span className="chapter-year">
-                            {year(chapter.date)}
-                          </span>
-                        )}
-                        {!locked && direction && (
-                          <span className="chronology-indicator">
-                            {direction}
-                          </span>
-                        )}
-                      </span>
                     </button>
                   </li>
                 </Fragment>

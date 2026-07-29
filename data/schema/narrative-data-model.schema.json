@@ -793,6 +793,7 @@
         "summary": { "$ref": "#/$defs/description" },
         "date": { "$ref": "#/$defs/date" },
         "location_id": { "$ref": "#/$defs/location_id" },
+        "picture_id": { "$ref": "#/$defs/asset_id" },
         "introducing": {
           "type": "array",
           "minItems": 1,

@@ -20,6 +20,7 @@ import {
   narrativeSchemaErrors,
   narrativeValidatorCompilationCounts,
   prepareNarrativeCorpus,
+  projectNarrativeChapterDetail,
   validateNarrativeCorpus,
 } from "../../src/narrative/model";
 import { createNarrativeFixtureCorpus } from "../fixtures/narrative";
@@ -71,6 +72,122 @@ describe("narrative corpus validation and projection", () => {
 
     expect(after).toEqual(before);
     expect([...after.values()].every((count) => count === 1)).toBe(true);
+  });
+
+  it("validates optional chapter pictures and reports unavailable assets at the chapter field", () => {
+    const structurallyValid = createNarrativeFixtureCorpus();
+    structurallyValid.chapters[0]!.picture_id = "asset:fixture-chapter";
+    structurallyValid.assets = {
+      assets: [
+        {
+          id: "asset:fixture-chapter",
+          path: "assets/fixture-chapter.webp",
+          source: "Test-only chapter illustration.",
+        },
+      ],
+    };
+    expect(() => validateNarrativeCorpus(structurallyValid)).not.toThrow();
+
+    const unknown = createNarrativeFixtureCorpus();
+    unknown.chapters[0]!.picture_id = "asset:missing";
+    expect(() => validateNarrativeCorpus(unknown)).toThrow(
+      "Chapter 1.1 /picture_id: chapter picture references unavailable asset asset:missing.",
+    );
+
+    expect(
+      narrativeSchemaErrors("chapter_source", {
+        ...createNarrativeFixtureCorpus().chapters[0],
+        picture_id: "character:not-an-asset",
+      }),
+    ).not.toEqual([]);
+  });
+
+  it("derives immutable chapter detail from the prepared source and exact existing world", () => {
+    const corpus = createNarrativeFixtureCorpus();
+    corpus.assets = {
+      assets: [
+        {
+          id: "asset:fixture-chapter",
+          path: "assets/fixture-chapter.webp",
+          source: "Test-only chapter illustration.",
+        },
+      ],
+    };
+    corpus.chapters[0]!.picture_id = "asset:fixture-chapter";
+    const introductions = corpus.chapters[0]!.introducing as Array<
+      Record<string, unknown>
+    >;
+    introductions.push(
+      { id: "character:fixture-riley", name: "Fixture Riley" },
+      {
+        id: "event:fixture-present",
+        name: "Fixture present event",
+        date: "2199",
+        participant_ids: ["character:fixture-alex"],
+      },
+      {
+        id: "event:fixture-future",
+        name: "Fixture future event",
+        date: "2201",
+      },
+      { id: "vessel:fixture-ship", name: "Fixture ship" },
+      { id: "technology:fixture-drive", name: "Fixture drive" },
+      { id: "organization:fixture-group", name: "Fixture group" },
+    );
+    corpus.chapters[0]!.appearances = [
+      { character_id: "character:fixture-alex", role: "lead" },
+      { character_id: "character:fixture-alex", role: "lead" },
+      { character_id: "character:fixture-riley", role: "lead" },
+      { character_id: "character:fixture-riley", role: "other" },
+    ];
+    const prepared = prepareNarrativeCorpus(corpus);
+    const world = generateNarrativeWorld(prepared, "1.1");
+    const detail = projectNarrativeChapterDetail(prepared, "1.1", world);
+
+    expect(detail).toMatchObject({
+      chapter: "1.1",
+      bookNumber: "1",
+      bookTitle: "Fixture volume",
+      localNumber: "1",
+      title: "Fixture introduction",
+      pictureId: "asset:fixture-chapter",
+      location: { id: "location:earth", name: "Earth" },
+      leadCharacters: [
+        { id: "character:fixture-alex", name: "Fixture Alex" },
+        { id: "character:fixture-riley", name: "Fixture Riley" },
+      ],
+      events: [{ id: "event:fixture-present", name: "Fixture present event" }],
+      vessels: [{ id: "vessel:fixture-ship", name: "Fixture ship" }],
+      technologies: [{ id: "technology:fixture-drive", name: "Fixture drive" }],
+      appearingCharacters: [
+        { id: "character:fixture-alex", name: "Fixture Alex" },
+        { id: "character:fixture-riley", name: "Fixture Riley" },
+      ],
+    });
+    expect(detail.events).not.toContainEqual(
+      expect.objectContaining({ id: "event:fixture-future" }),
+    );
+    expect(Object.isFrozen(detail)).toBe(true);
+    expect(() =>
+      projectNarrativeChapterDetail(
+        prepared,
+        "1.1",
+        generateNarrativeWorld(prepared, "1.1", "2199"),
+      ),
+    ).toThrow("requires its exact Chapter-mode projection");
+  });
+
+  it("omits both character groups for a valid chapter without appearances", () => {
+    const corpus = createNarrativeFixtureCorpus();
+    delete corpus.chapters[0]!.appearances;
+    const prepared = prepareNarrativeCorpus(corpus);
+    const detail = projectNarrativeChapterDetail(
+      prepared,
+      "1.1",
+      generateNarrativeWorld(prepared, "1.1"),
+    );
+    expect(detail.leadCharacters).toEqual([]);
+    expect(detail.appearingCharacters).toEqual([]);
   });
 
   it("keeps canonical state brief and descriptions entity-centered without disclosure gaps", () => {

@@ -117,6 +117,7 @@ export function focusSystemIdForSelection(
   contextSystemIds: ReadonlySet<string>,
 ): string | null {
   if (!selection) return null;
+  if (selection.kind === "chapter") return null;
   if (selection.kind === "astronomy")
     return contextSystemIds.has(selection.id) ? selection.id : null;
 
@@ -140,6 +141,7 @@ export function isSelectionEligibleForMap(
   contextSystemIds: ReadonlySet<string>,
 ): boolean {
   if (!selection) return true;
+  if (selection.kind === "chapter") return false;
   if (selection.kind === "astronomy") return contextSystemIds.has(selection.id);
   return world.entities.some((entity) => entity.id === selection.id);
 }

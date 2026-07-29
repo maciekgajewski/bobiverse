@@ -46,7 +46,7 @@ derived from `../implementation-plan.md` and must remain consistent with
 | [BOB-028](BOB-028-pin-chapter-extraction-agent-configuration.md)        | Done   | Pin chapter extraction and reconciliation to explicit Terra/high agents.   |
 | [BOB-029](BOB-029-responsive-chapter-projection-pipeline.md)            | Done   | Prepare narrative data once and keep chapter transitions responsive.       |
 | [BOB-035](BOB-035-unified-vessels-and-authoring-quality.md)             | Done   | Unify vessel records and enforce durable, concise narrative authoring.     |
-| [BOB-036](BOB-036-chapter-inspector-and-compact-timeline.md)            | Ready  | Make chapters inspectable and simplify Chapter-mode timeline labels.       |
+| [BOB-036](BOB-036-chapter-inspector-and-compact-timeline.md)            | Done   | Make chapters inspectable and simplify Chapter-mode timeline labels.       |
 
 ## Task requirements
 

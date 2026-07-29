@@ -62,6 +62,27 @@ export interface MeaningfulNarrativeDate {
   source_chapters: readonly string[];
 }
 
+export interface NarrativeChapterRelationship {
+  id: string;
+  name: string;
+}
+
+export interface NarrativeChapterDetail {
+  chapter: string;
+  bookNumber: string;
+  bookTitle: string;
+  localNumber: string;
+  title: string;
+  summary: string;
+  pictureId: string | null;
+  location: NarrativeChapterRelationship;
+  leadCharacters: readonly NarrativeChapterRelationship[];
+  events: readonly NarrativeChapterRelationship[];
+  vessels: readonly NarrativeChapterRelationship[];
+  technologies: readonly NarrativeChapterRelationship[];
+  appearingCharacters: readonly NarrativeChapterRelationship[];
+}
+
 export interface NarrativeWorld {
   entities: NarrativeEntity[];
   activity: NarrativeActivity[];
@@ -574,6 +595,16 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
         `Chapter ${id} default location must be a location entity.`,
       );
     }
+    if (
+      typeof chapter.picture_id === "string" &&
+      !assetIds.has(chapter.picture_id)
+    ) {
+      throw chapterSemanticError(
+        id,
+        "/picture_id",
+        `chapter picture references unavailable asset ${chapter.picture_id}.`,
+      );
+    }
     const updates = (chapter.updates as unknown[] | undefined) ?? [];
     const updatedIds = new Set<string>();
     for (const candidate of updates) {
@@ -685,7 +716,24 @@ export function validateNarrativeCorpus(corpus: NarrativeCorpus): void {
 interface PreparedNarrativeIndexes {
   chapters: readonly NarrativeRecord[];
   chapterById: ReadonlyMap<string, NarrativeRecord>;
+  chapterDetailSourceById: ReadonlyMap<string, PreparedChapterDetailSource>;
   meaningfulDateOptions: Map<string, readonly MeaningfulNarrativeDate[]>;
+}
+
+interface PreparedChapterDetailSource {
+  chapter: string;
+  bookNumber: string;
+  bookTitle: string;
+  localNumber: string;
+  title: string;
+  summary: string;
+  pictureId: string | null;
+  locationId: string;
+  leadCharacterIds: readonly string[];
+  eventIds: readonly string[];
+  vesselIds: readonly string[];
+  technologyIds: readonly string[];
+  appearingCharacterIds: readonly string[];
 }
 
 const preparedNarrativeIndexes = new WeakMap<
@@ -699,6 +747,67 @@ function deepFreeze<T>(value: T): T {
     return value;
   for (const child of Object.values(value)) deepFreeze(child);
   return Object.freeze(value);
+}
+
+function uniqueStringsInOrder(values: readonly string[]): string[] {
+  return [...new Set(values)];
+}
+
+function prepareChapterDetailSource(
+  chapter: NarrativeRecord,
+  books: NarrativeRecord,
+): PreparedChapterDetailSource {
+  const reference = chapterId(chapter);
+  const [bookNumber, localNumber] = reference.split(".");
+  const book = asRecord(
+    books[bookNumber!],
+    `Book catalogue entry ${bookNumber}`,
+  );
+  const appearances = (
+    (chapter.appearances as NarrativeRecord[] | undefined) ?? []
+  ).map((appearance) => asRecord(appearance, `Appearance in ${reference}`));
+  const introductions = (
+    (chapter.introducing as NarrativeRecord[] | undefined) ?? []
+  ).map((introduction) =>
+    asRecord(introduction, `Introduction in ${reference}`),
+  );
+  const appearanceCharacterIds = appearances.map((appearance) =>
+    asString(appearance.character_id, `Appearance character in ${reference}`),
+  );
+  const introducedIds = (prefix: string) =>
+    introductions
+      .map((introduction) =>
+        asString(introduction.id, `Introduction ID in ${reference}`),
+      )
+      .filter((id) => id.startsWith(`${prefix}:`));
+  return deepFreeze({
+    chapter: reference,
+    bookNumber: bookNumber!,
+    bookTitle: asString(book.title, `Book ${bookNumber} title`),
+    localNumber: localNumber!,
+    title: asString(chapter.title, `Chapter ${reference} title`),
+    summary: asString(chapter.summary, `Chapter ${reference} summary`),
+    pictureId:
+      typeof chapter.picture_id === "string" ? chapter.picture_id : null,
+    locationId: asString(
+      chapter.location_id,
+      `Chapter ${reference} default location`,
+    ),
+    leadCharacterIds: uniqueStringsInOrder(
+      appearances
+        .filter((appearance) => appearance.role === "lead")
+        .map((appearance) =>
+          asString(
+            appearance.character_id,
+            `Lead appearance character in ${reference}`,
+          ),
+        ),
+    ),
+    eventIds: introducedIds("event"),
+    vesselIds: introducedIds("vessel"),
+    technologyIds: introducedIds("technology"),
+    appearingCharacterIds: uniqueStringsInOrder(appearanceCharacterIds),
+  });
 }
 
 export interface PrepareNarrativeCorpusOptions {
@@ -722,10 +831,17 @@ export function prepareNarrativeCorpus(
   const chapters = [...prepared.chapters].sort((left, right) =>
     compareChapter(chapterId(left), chapterId(right)),
   );
+  const books = asRecord(prepared.books.books, "Book catalogue books");
   preparedNarrativeIndexes.set(prepared, {
     chapters,
     chapterById: new Map(
       chapters.map((chapter) => [chapterId(chapter), chapter]),
+    ),
+    chapterDetailSourceById: new Map(
+      chapters.map((chapter) => [
+        chapterId(chapter),
+        prepareChapterDetailSource(chapter, books),
+      ]),
     ),
     meaningfulDateOptions: new Map(),
   });
@@ -1230,6 +1346,88 @@ export function generateNarrativeWorld(
   };
   assertSchema("narrative_world", world, "Generated narrative world");
   return world;
+}
+
+/**
+ * Resolves one prepared chapter-detail index against the exact reader-safe
+ * Chapter-mode world already generated for the same chapter.
+ */
+export function projectNarrativeChapterDetail(
+  corpus: PreparedNarrativeCorpus,
+  selectedChapterId: string,
+  world: NarrativeWorld,
+): NarrativeChapterDetail {
+  const indexes = indexesFor(corpus);
+  const source = indexes.chapterDetailSourceById.get(selectedChapterId);
+  if (!source) {
+    throw new Error(`Requested chapter does not exist: ${selectedChapterId}.`);
+  }
+  const sourceChapter = indexes.chapterById.get(selectedChapterId);
+  if (!sourceChapter) {
+    throw new Error(
+      `Prepared chapter index is incomplete: ${selectedChapterId}.`,
+    );
+  }
+  if (
+    world.view.chapter !== selectedChapterId ||
+    world.view.display_date !== chapterDate(sourceChapter)
+  ) {
+    throw new Error(
+      `Chapter ${selectedChapterId} detail requires its exact Chapter-mode projection.`,
+    );
+  }
+  const entities = new Map(
+    world.entities.map((entity) => [entity.id, entity] as const),
+  );
+  const resolveRequired = (
+    id: string,
+    label: string,
+  ): NarrativeChapterRelationship => {
+    const entity = entities.get(id);
+    if (!entity || typeof entity.name !== "string") {
+      throw new Error(
+        `Chapter ${selectedChapterId} ${label} is unavailable in its reader-safe projection: ${id}.`,
+      );
+    }
+    return { id, name: entity.name };
+  };
+  const resolveEligible = (
+    ids: readonly string[],
+    label: string,
+  ): NarrativeChapterRelationship[] =>
+    ids.flatMap((id) => {
+      const entity = entities.get(id);
+      if (!entity) return [];
+      if (typeof entity.name !== "string") {
+        throw new Error(
+          `Chapter ${selectedChapterId} ${label} has no reader-visible name: ${id}.`,
+        );
+      }
+      return [{ id, name: entity.name }];
+    });
+  const resolveAll = (
+    ids: readonly string[],
+    label: string,
+  ): NarrativeChapterRelationship[] =>
+    ids.map((id) => resolveRequired(id, label));
+  return deepFreeze({
+    chapter: source.chapter,
+    bookNumber: source.bookNumber,
+    bookTitle: source.bookTitle,
+    localNumber: source.localNumber,
+    title: source.title,
+    summary: source.summary,
+    pictureId: source.pictureId,
+    location: resolveRequired(source.locationId, "default location"),
+    leadCharacters: resolveAll(source.leadCharacterIds, "lead character"),
+    events: resolveEligible(source.eventIds, "introduced event"),
+    vessels: resolveAll(source.vesselIds, "introduced vessel"),
+    technologies: resolveAll(source.technologyIds, "introduced technology"),
+    appearingCharacters: resolveAll(
+      source.appearingCharacterIds,
+      "appearing character",
+    ),
+  });
 }
 
 /**

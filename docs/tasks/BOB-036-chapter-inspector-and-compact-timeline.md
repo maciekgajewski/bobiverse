@@ -1,6 +1,6 @@
 # BOB-036: chapter inspector and compact timeline
 
-Status: Ready
+Status: Done
 Phase: 2 (narrative foundation and chapter timeline)
 Last updated: 2026-07-29
 
@@ -128,6 +128,11 @@ ADR rather than expanding the task silently.
   broader phone/tablet composition owned by BOB-016.
 - Chapter inspection selection is transient UI state and is not added to
   `bobiverse.app-state.v1`.
+- Inspector relationship traversal uses a transient panel-owned Back/Forward stack.
+  Internal relationship selections append after the current entry and truncate the
+  forward branch; map, browser, and timeline selections begin a new stack. Projection
+  changes discard ineligible entries. The stack is shared by wide and compact
+  inspectors, is not persisted, and does not use browser session history or URLs.
 
 ## In scope
 
@@ -154,6 +159,9 @@ ADR rather than expanding the task silently.
   because Date mode was entered.
 - Preserve the existing compact inspector trigger, panel focus containment, Escape
   dismissal, close control, and focus return.
+- Add accessible panel-owned Back and Forward controls for inspector relationship
+  traversal, external-selection reset, forward-branch truncation, and eligibility
+  filtering.
 - Add unit, component, and browser regression coverage for schema validation, detail
   derivation, all relationship groups, selection coordination, Date-mode clearing,
   compact inspection, timeline labels, and locked-content absence.
@@ -189,8 +197,9 @@ ADR rather than expanding the task silently.
 - Full BOB-016 phone/tablet composition, navigation, or acceptance.
 - Treating chapters as direct narrative entities, browser-group items, activity
   targets, map markers, or map-focus locations.
-- Chapter search, bookmarks, deep links, histories, chronology views, genealogy, or
-  accumulated cross-chapter character appearance histories.
+- Chapter search, bookmarks, deep links, browser-session history integration,
+  chronology views, genealogy, or accumulated cross-chapter character appearance
+  histories.
 - Showing all important mentions, updated entities, introduced organizations/species/
   locations, or all activity records in chapter detail.
 - Showing events updated or merely mentioned in the selected chapter.
@@ -244,28 +253,33 @@ Chapter <local number>` for a numeric-only title, and appends `, <title>` for an
 11. Below the simultaneous-layout breakpoint, selecting a chapter enables the existing
     **Inspect selection** path and shows the same detail component. Its close, Escape,
     focus containment, and focus-return behavior remain correct.
-12. An unlocked Chapter-mode timeline entry displays only `<local number>` when its
+12. Every nonempty wide or compact inspector exposes accessible Back and Forward
+    controls. Inspector relationships append to the transient path and truncate its
+    forward branch; map, browser, and timeline selections reset the path. Progress
+    changes remove ineligible entries. Disabled endpoints, reader-progress
+    independence, and browser-history independence remain explicit.
+13. An unlocked Chapter-mode timeline entry displays only `<local number>` when its
     trimmed title is the same numeric value, displays a trimmed title matching
     `^<local number>\s*(?:-|–|—|:)\s+\S` once without duplication, and otherwise
     displays `<local number> — <trimmed title>`. Focused cases cover all three forms
     and each accepted separator. Story year and chronology-progression text are absent
     from visible and accessible chapter-entry content.
-13. Book grouping, the selected state, the continuous rail, zero-state affordance,
+14. Book grouping, the selected state, the continuous rail, zero-state affordance,
     keyboard operation, and locked entry behavior remain intact. Locked chapters
     expose no title, synopsis, year, chronology note, picture, location, character,
     event, vessel, technology, or other chapter-derived metadata.
-14. Chapter-detail React code consumes the typed prepared-corpus-derived view model;
+15. Chapter-detail React code consumes the typed prepared-corpus-derived view model;
     it does not import or scan source chapter modules, reconstruct spoiler filtering,
     or add a committed/generated chapter-detail snapshot.
-15. Focused tests cover numeric and nonnumeric titles, multiple leads, no appearances,
+16. Focused tests cover numeric and nonnumeric titles, multiple leads, no appearances,
     duplicate appearances, long character lists, empty optional introduction groups,
     every supported introduction group, valid/missing/invalid pictures, relationship
     selection, Date-mode clearing, ineligible selection, compact inspection, and
     locked-content absence.
-16. README, technical design, data-model definition, desktop design, implementation
+17. README, technical design, data-model definition, desktop design, implementation
     plan, visual-testing guidance, task index, and completion evidence agree with the
     delivered selection, asset, content, responsive, and timeline contracts.
-17. All documented validation commands pass, the Captain completes manual visual
+18. All documented validation commands pass, the Captain completes manual visual
     acceptance in the wide and compact desktop layouts, and a fresh independent
     implementation review reports `No findings.`
 
@@ -309,6 +323,14 @@ temporary or canonical narrative-data edits.
 - BOB-029's prepared-corpus and one-projection transition budget remains binding.
   Chapter detail derivation must not return schema compilation or corpus scanning to
   timeline clicks.
+- BOB-029's exact performance gate remains authoritative for its production build,
+  actual chapter-button click boundary, warm-up, sample count, and timing budgets.
+  Its selected-object retention assertion is deliberately superseded: under
+  BOB-036, an unlocked chapter-button click replaces any current selection with the
+  matching chapter inspector. The second scenario restores an existing Solar System
+  selection before every warm-up and measured transition, outside the timing window,
+  then verifies the specified replacement. Knowledge-only changes retain separate
+  coverage for preserving eligible narrative and astronomy selections.
 - `summary`, introductions, and appearances are canonical authored claims. The
   inspector may present their reader-safe structure but must not reinterpret activity
   as a relationship or reconstruct a chapter from generated recency records.
@@ -323,3 +345,79 @@ temporary or canonical narrative-data edits.
   fixture to prove the conditional title rule without editing book-derived data.
 - This UI task remains `In progress` after automated validation until the Captain
   explicitly accepts the required wide and compact visual review.
+
+## Implementation evidence
+
+- `chapter_source.picture_id` now uses the shared asset ID contract and receives
+  source-located unknown-asset diagnostics. Corpus preparation builds an immutable
+  chapter-detail source index once; `projectNarrativeChapterDetail` resolves it
+  against the exact existing Chapter-mode `NarrativeWorld`.
+- The shared selection union includes chapters without adding them to the narrative
+  registry. Timeline selection coordinates the knowledge chapter and chapter
+  inspection in one React transition, chapter selection never supplies map focus, and
+  Date mode emits the exact accessible close status.
+- The shared wide/compact inspector owns an unpersisted Back/Forward stack for
+  relationship traversal. External selections reset it, internal branches truncate
+  forward history, and projection changes remove ineligible entries without touching
+  browser history or reader progress. Its controls are a small framed arrow pair with
+  accessible names and strongly differentiated disabled states.
+- `ObjectInspector` renders one shared wide/compact chapter component with optional
+  illustration, synopsis, required location, deduplicated leads, eligible events,
+  introduced vessels and technologies, and a bounded first-appearance-ordered
+  character list. Relationship rows reuse the project-owned ring-and-dot bullet and
+  span one restrained full-width dossier frame below the synopsis.
+- Chapter labels implement all numeric, accepted-prefix separator, and unprefixed
+  title cases without story-year or chronology-note content. Locked entries retain
+  only spoiler-safe book/chapter identity.
+- Focused domain, component, application, CLI-diagnostic, map-focus, browser, and
+  performance-harness coverage exercises valid, absent, and invalid pictures;
+  duplicate/multiple/no appearances; long lists; future events; relationship
+  selection; compact focus behavior; Date-mode and spoiler-ceiling invalidation; and
+  locked metadata absence.
+- The initially clean branch contained a stale public-world equivalence snapshot
+  predating its already-committed canonical narrative wording. The existing snapshot
+  was refreshed without changing canonical chapter content.
+
+## Validation status
+
+Passed on 2026-07-29:
+
+```text
+npm run narrative:manifest
+npm run narrative:validate
+npm run format:check
+npm run lint
+npm run typecheck
+npm run test                         # 149 tests
+npm run test:e2e                    # 45 browser tests
+npx tsc -b && npx vite build        # scoped production compilation
+xvfb-run -a npx playwright test --config playwright.performance.config.ts
+                                     # scoped production benchmark
+git diff --check
+```
+
+The scoped production benchmark passed both actual chapter-button scenarios on the
+reference host: the unselected median/maximum were 49.45/53.30 ms and the
+selected-object-replacement median/maximum were 49.10/51.50 ms.
+
+The exact `npm run build` and `npm run performance` commands currently stop in the
+pre-existing astronomy validation step before BOB-036 compilation:
+
+```text
+KeyError: 'stellar-system-005582'
+```
+
+The clean starting branch canonically promoted Chapter 1.12 with Epsilon Eridani as a
+mapped narrative anchor, while `data/source/system-review.json` still has no reviewed
+`anchor_bootstraps` record for that system and the generated coverage metadata still
+contains only Sol. Repair requires the owning astronomy acquisition/review workflow;
+BOB-036 does not invent a source bootstrap, weaken coverage validation, or remove the
+canonical mapping.
+
+A fresh independent implementation closure review reported `No findings.` after the
+performance-protocol, compact-browser, full-width relationship layout, and transient
+inspector-history changes were resolved. The Captain accepted the wide/compact visual
+result on 2026-07-29. On the same date, the Captain explicitly accepted the documented
+`npm run build` and `npm run performance` deviation and assigned the pre-existing
+astronomy review-record gap to separate work. With the BOB-036 scoped production build
+and benchmark passing, the task is closed as `Done`.

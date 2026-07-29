@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { TimelineDock } from "../../src/components/TimelineDock";
 import { defaultBrowserGroupState } from "../../src/narrative/browser";
+import { chapterTimelineLabel } from "../../src/narrative/progress";
 import type {
   NarrativeChapterSummary,
   ReaderProgress,
@@ -61,11 +62,58 @@ describe("timeline dock", () => {
         onPan={vi.fn()}
       />,
     );
-    expect(screen.getByText("Visible chapter")).toBeInTheDocument();
+    expect(screen.getByText("1 — Visible chapter")).toBeInTheDocument();
     expect(screen.queryByText("Future chapter")).not.toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: "Book 1, Chapter 2, locked" }),
     ).toBeDisabled();
+  });
+
+  it("formats concise chapter labels without duplicated numeric prefixes", () => {
+    expect(chapterTimelineLabel({ chapter: "1.3", title: " 3 " })).toBe("3");
+    for (const separator of ["-", "–", "—", ":"]) {
+      expect(
+        chapterTimelineLabel({
+          chapter: "1.3",
+          title: ` 3 ${separator} Descriptive fixture `,
+        }),
+      ).toBe(`3 ${separator} Descriptive fixture`);
+    }
+    expect(
+      chapterTimelineLabel({
+        chapter: "1.3",
+        title: "Unprefixed fixture",
+      }),
+    ).toBe("3 — Unprefixed fixture");
+  });
+
+  it("removes story years and chronology notes from unlocked chapter entries", () => {
+    render(
+      <TimelineDock
+        chapters={chapters}
+        progress={{ ...progress, furthestChapterRead: "1.3" }}
+        meaningfulDates={["2000"]}
+        meaningfulDateSources={noDateSources}
+        pendingReadThrough={null}
+        onReadThroughChoice={vi.fn()}
+        onConfirmReadThrough={vi.fn()}
+        onCancelReadThrough={vi.fn()}
+        onReturnToZeroState={vi.fn()}
+        onKnowledgeChapter={vi.fn()}
+        onDate={vi.fn()}
+        onChapterMode={vi.fn()}
+        onZoom={vi.fn()}
+        onPan={vi.fn()}
+      />,
+    );
+    const timeline = screen.getByRole("list", {
+      name: "Reading-order chapter timeline",
+    });
+    expect(within(timeline).queryByText("2000")).not.toBeInTheDocument();
+    expect(within(timeline).queryByText("2010")).not.toBeInTheDocument();
+    expect(
+      within(timeline).queryByText(/story time|story year/i),
+    ).not.toBeInTheDocument();
   });
 
   it("uses the read-through selector itself as the confirmation gate", async () => {

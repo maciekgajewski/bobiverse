@@ -819,6 +819,7 @@ the identical listing below documents its shared definitions.
         "summary": { "$ref": "#/$defs/description" },
         "date": { "$ref": "#/$defs/date" },
         "location_id": { "$ref": "#/$defs/location_id" },
+        "picture_id": { "$ref": "#/$defs/asset_id" },
         "introducing": {
           "type": "array",
           "minItems": 1,
@@ -1157,8 +1158,9 @@ to the zero state:
 Raw zero-state, asset, book, and chapter records must first cross
 `prepareNarrativeCorpus`. That boundary performs one complete structural and semantic
 validation pass, clones and deeply freezes the accepted corpus, and privately indexes
-canonical numeric chapter order, chapter lookup, and immutable meaningful-date
-inputs. Later mutation of raw authoring objects cannot affect prepared projections.
+canonical numeric chapter order, chapter lookup, immutable meaningful-date inputs,
+and immutable chapter-detail source fields. Later mutation of raw authoring objects
+cannot affect prepared projections.
 The indexes are not generated narrative fields and must never be serialized into
 `NarrativeWorld`.
 
@@ -1169,10 +1171,11 @@ lifetime; source-located CLI diagnostics are emitted during the structural porti
 preparation rather than by a preliminary duplicate pass.
 
 A reader-progress transition has one application-owned projection result: normalized
-progress, meaningful dates, one generated world, its map join, and selection
-eligibility. All reader-facing surfaces commit that result together. State that does
-not change the knowledge chapter, display date, or mode does not generate another
-world.
+progress, meaningful dates, one generated world, its map join, selection eligibility,
+and the optional chapter detail resolved against that same world. All reader-facing
+surfaces commit that result together. Chapter detail is a typed immutable runtime
+view, not a second world or generated snapshot. State that does not change the
+knowledge chapter, display date, or mode does not generate another world.
 
 A future date-exploration UI may request any valid story date in place of
 `viewChapter.date`, including a date earlier or later than the selected chapter. It
@@ -1291,6 +1294,9 @@ chronology. Its `path` and `source` may be corrected there, while the `id` remai
 stable. A chapter-controlled entity `picture_id` references an asset ID, so assigning
 or changing a visible image remains spoiler-safe narrative state. Multiple entities may
 reference one asset ID, but no two asset IDs may register the same static path.
+The chapter source record itself may also contain optional `picture_id`. It uses the
+same registry and validation rules, does not make the chapter a narrative entity, and
+is shown only when that exact chapter is eligible for Chapter-mode inspection.
 
 `books.json` is the sole manually authored book catalogue. It uses a numeric-keyed
 object: each key is the canonical positive book number and each value initially
@@ -1334,6 +1340,8 @@ It requires the canonical `chapter` reference, nonempty reader-visible `title`,
 original plain-text `summary`, story `date`, and a default `location_id`. The default
 location may resolve to the zero state, an earlier chapter, or a location introduced in
 the same chapter. It must never be an invented coordinate or an implicit unknown.
+Optional `picture_id` references one registered curated asset. Unknown IDs and
+non-asset IDs fail at the chapter source field; existing chapters need no assignment.
 
 `introducing`, `appearances`, and `updates` are optional. An absent array means that
 the chapter supplies none of that category; an authored array is always nonempty. When
@@ -1355,6 +1363,7 @@ introduce an ID already supplied by the zero state or an earlier chapter.
   "summary": "The crew reaches a newly established research base on Earth.",
   "date": "2133.77",
   "location_id": "location:earth",
+  "picture_id": "asset:chapter-1-2",
   "introducing": [
     {
       "id": "location:earth-research-base",

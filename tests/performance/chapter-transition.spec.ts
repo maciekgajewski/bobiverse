@@ -8,11 +8,7 @@ const chapterStatus = (chapter: string) =>
   `Knowledge through Chapter ${chapter}`;
 
 function chapterButton(page: Page, chapter: string) {
-  return page.locator(".chapter-track-entry button").filter({
-    has: page.locator(".chapter-above", {
-      hasText: new RegExp(`^Chapter ${chapter.replace(".", "\\.")}$`),
-    }),
-  });
+  return page.locator(`.chapter-track-entry button[data-chapter="${chapter}"]`);
 }
 
 async function assertRendered(page: Page, chapter: string): Promise<void> {
@@ -37,11 +33,46 @@ async function assertSelectionRetained(page: Page): Promise<void> {
   );
 }
 
+async function assertChapterInspected(
+  page: Page,
+  chapter: string,
+): Promise<void> {
+  const inspector = page.getByRole("complementary", {
+    name: "Object inspector",
+  });
+  await expect(
+    inspector.locator(`.chapter-inspector-details[data-chapter="${chapter}"]`),
+  ).toBeVisible();
+}
+
+async function prepareSourceSelection(
+  page: Page,
+  selectedObjectExpected: boolean,
+): Promise<void> {
+  if (selectedObjectExpected) {
+    await page
+      .getByRole("button", { name: /^Solar System(?: Active)?$/ })
+      .first()
+      .click();
+    await assertSelectionRetained(page);
+    return;
+  }
+  await page
+    .getByTestId("star-map-canvas")
+    .click({ position: { x: 100, y: 40 } });
+  await expect(
+    page.getByText(
+      "Select a map marker or browser item to inspect its reader-safe details.",
+    ),
+  ).toBeVisible();
+}
+
 async function transition(
   page: Page,
   chapter: string,
-  selectionExpected: boolean,
+  selectedObjectExpected: boolean,
 ): Promise<number> {
+  await prepareSourceSelection(page, selectedObjectExpected);
   const button = chapterButton(page, chapter);
   await button.evaluate((element, targetChapter) => {
     window.__bob029Duration = undefined;
@@ -79,15 +110,12 @@ async function transition(
   }, chapter);
   await button.click();
   await assertRendered(page, chapter);
-  if (selectionExpected) await assertSelectionRetained(page);
+  await assertChapterInspected(page, chapter);
   await page.waitForFunction(() => window.__bob029Duration !== undefined);
   return page.evaluate(() => window.__bob029Duration!);
 }
 
-async function loadPreparedState(
-  page: Page,
-  selectionExpected: boolean,
-): Promise<void> {
+async function loadPreparedState(page: Page): Promise<void> {
   await page.addInitScript(() => {
     window.localStorage.setItem(
       "bobiverse.app-state.v1",
@@ -103,19 +131,15 @@ async function loadPreparedState(
   });
   await page.goto("/");
   await assertRendered(page, "1.10");
-  if (selectionExpected) {
-    await page
-      .getByRole("button", { name: /^Solar System(?: Active)?$/ })
-      .first()
-      .click();
-    await assertSelectionRetained(page);
-  }
 }
 
-async function warm(page: Page, selectionExpected: boolean): Promise<void> {
+async function warm(
+  page: Page,
+  selectedObjectExpected: boolean,
+): Promise<void> {
   for (let cycle = 0; cycle < 2; cycle += 1) {
-    await transition(page, "1.11", selectionExpected);
-    await transition(page, "1.10", selectionExpected);
+    await transition(page, "1.11", selectedObjectExpected);
+    await transition(page, "1.10", selectedObjectExpected);
   }
 }
 
@@ -137,8 +161,8 @@ test("warmed production chapter transitions stay within budget", async ({
     maximum: number;
   }> = [];
 
-  for (const selectionExpected of [false, true]) {
-    await loadPreparedState(page, selectionExpected);
+  for (const selectedObjectExpected of [false, true]) {
+    await loadPreparedState(page);
     const bundleIdentity = await page.evaluate(() =>
       performance
         .getEntriesByType("resource")
@@ -147,13 +171,15 @@ test("warmed production chapter transitions stay within budget", async ({
         .sort()
         .join(","),
     );
-    await warm(page, selectionExpected);
+    await warm(page, selectedObjectExpected);
     const samples: number[] = [];
     for (let index = 0; index < samplesPerScenario; index += 1) {
       const chapter = index % 2 === 0 ? "1.11" : "1.10";
-      samples.push(await transition(page, chapter, selectionExpected));
+      samples.push(await transition(page, chapter, selectedObjectExpected));
     }
-    const scenario = selectionExpected ? "selected-object" : "unselected";
+    const scenario = selectedObjectExpected
+      ? "selected-object-replacement"
+      : "unselected";
     const scenarioMedian = median(samples);
     const scenarioMaximum = Math.max(...samples);
     console.log(

@@ -3,11 +3,14 @@ import type { SelectionIdentity } from "../domain/selection";
 import type { StellarSystem } from "../domain/types";
 import type { NarrativeBrowserItem } from "../narrative/browser";
 import type {
+  NarrativeChapterDetail,
+  NarrativeChapterRelationship,
   NarrativeEntity,
   NarrativeRecord,
   NarrativeWorld,
 } from "../narrative/model";
 import { SystemDetails } from "./SystemDetails";
+import { ObjectItemBullet } from "./ObjectBrowserIcons";
 
 const typeLabels: Record<NarrativeEntity["entity_type"], string> = {
   character: "Character",
@@ -83,11 +86,11 @@ function mappedAstronomyId(
 function Picture({
   pictureId,
   assets,
-  name,
+  alt,
 }: {
   pictureId: string | null;
   assets: NarrativeRecord;
-  name: string;
+  alt: string;
 }) {
   if (!pictureId || !Array.isArray(assets.assets)) return null;
   const asset = assets.assets.find(
@@ -99,7 +102,7 @@ function Picture({
   ) as NarrativeRecord | undefined;
   const path = asset ? stringValue(asset.path) : null;
   if (!path) return null;
-  return <img className="inspector-picture" src={`/${path}`} alt={name} />;
+  return <img className="inspector-picture" src={`/${path}`} alt={alt} />;
 }
 
 function NarrativeDetails({
@@ -161,7 +164,7 @@ function NarrativeDetails({
       <Picture
         pictureId={stringValue(entity.picture_id)}
         assets={assets}
-        name={name}
+        alt={name}
       />
       <dl>
         {entity.entity_type === "character" && (
@@ -308,23 +311,181 @@ function NarrativeDetails({
   );
 }
 
+function ChapterRelationshipList({
+  label,
+  relationships,
+  onSelect,
+  condensed = false,
+}: {
+  label: string;
+  relationships: readonly NarrativeChapterRelationship[];
+  onSelect: (selection: SelectionIdentity) => void;
+  condensed?: boolean;
+}) {
+  if (relationships.length === 0) return null;
+  return (
+    <section className="inspector-section chapter-relationship-section">
+      <h3>{label}</h3>
+      <ul
+        className={`chapter-relationship-list ${condensed ? "condensed" : ""}`}
+      >
+        {relationships.map((relationship) => (
+          <li key={relationship.id}>
+            <button
+              type="button"
+              aria-label={`${label}: ${relationship.name}`}
+              onClick={() =>
+                onSelect({ kind: "narrative", id: relationship.id })
+              }
+            >
+              <ObjectItemBullet active={false} />
+              <span>{relationship.name}</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+function ChapterDetails({
+  detail,
+  assets,
+  headingId,
+  onSelect,
+}: {
+  detail: NarrativeChapterDetail;
+  assets: NarrativeRecord;
+  headingId: string;
+  onSelect: (selection: SelectionIdentity) => void;
+}) {
+  const trimmedTitle = detail.title.trim();
+  const numericOnly = trimmedTitle === detail.localNumber;
+  const pictureAlt = `Illustration for Book ${detail.bookNumber}, Chapter ${detail.localNumber}${
+    numericOnly ? "" : `, ${trimmedTitle}`
+  }`;
+  return (
+    <article
+      className="details chapter-inspector-details"
+      data-chapter={detail.chapter}
+      aria-live="polite"
+      aria-labelledby={headingId}
+    >
+      <p className="eyebrow">
+        Book {detail.bookNumber} · Chapter {detail.localNumber}
+      </p>
+      <h2 id={headingId}>{detail.title}</h2>
+      <p className="chapter-book-title">{detail.bookTitle}</p>
+      <Picture pictureId={detail.pictureId} assets={assets} alt={pictureAlt} />
+      <section className="inspector-section chapter-synopsis">
+        <h3>Synopsis</h3>
+        <p>{detail.summary}</p>
+      </section>
+      <div className="chapter-relationship-frame">
+        <ChapterRelationshipList
+          label="Location"
+          relationships={[detail.location]}
+          onSelect={onSelect}
+        />
+        <ChapterRelationshipList
+          label={
+            detail.leadCharacters.length === 1
+              ? "Lead character"
+              : "Lead characters"
+          }
+          relationships={detail.leadCharacters}
+          onSelect={onSelect}
+        />
+        <ChapterRelationshipList
+          label="Events"
+          relationships={detail.events}
+          onSelect={onSelect}
+        />
+        <ChapterRelationshipList
+          label="Vessels"
+          relationships={detail.vessels}
+          onSelect={onSelect}
+        />
+        <ChapterRelationshipList
+          label="Technologies"
+          relationships={detail.technologies}
+          onSelect={onSelect}
+        />
+        <ChapterRelationshipList
+          label="Characters"
+          relationships={detail.appearingCharacters}
+          onSelect={onSelect}
+          condensed
+        />
+      </div>
+    </article>
+  );
+}
+
+function InspectorHistoryControls({
+  canGoBack,
+  canGoForward,
+  onBack,
+  onForward,
+}: {
+  canGoBack: boolean;
+  canGoForward: boolean;
+  onBack: () => void;
+  onForward: () => void;
+}) {
+  return (
+    <nav className="inspector-history" aria-label="Inspector history">
+      <button
+        className="button quiet inspector-history-button"
+        type="button"
+        aria-label="Back"
+        title="Back"
+        disabled={!canGoBack}
+        onClick={onBack}
+      >
+        <span aria-hidden="true">←</span>
+      </button>
+      <button
+        className="button quiet inspector-history-button"
+        type="button"
+        aria-label="Forward"
+        title="Forward"
+        disabled={!canGoForward}
+        onClick={onForward}
+      >
+        <span aria-hidden="true">→</span>
+      </button>
+    </nav>
+  );
+}
+
 export function ObjectInspector({
   selection,
   narrativeItem,
+  chapterDetail,
   world,
   systems,
   knownAstronomySystemIds,
   assets,
   headingId = "details-heading",
+  canGoBack = false,
+  canGoForward = false,
+  onBack = () => undefined,
+  onForward = () => undefined,
   onSelect,
 }: {
   selection: SelectionIdentity | null;
   narrativeItem: NarrativeBrowserItem | null;
+  chapterDetail?: NarrativeChapterDetail | null;
   world: NarrativeWorld;
   systems: StellarSystem[];
   knownAstronomySystemIds?: ReadonlySet<string>;
   assets: NarrativeRecord;
   headingId?: string;
+  canGoBack?: boolean;
+  canGoForward?: boolean;
+  onBack?: () => void;
+  onForward?: () => void;
   onSelect: (selection: SelectionIdentity) => void;
 }) {
   if (!selection)
@@ -336,8 +497,28 @@ export function ObjectInspector({
         </p>
       </section>
     );
+  const withHistory = (details: ReactNode) => (
+    <div className="inspector-detail-stack">
+      <InspectorHistoryControls
+        canGoBack={canGoBack}
+        canGoForward={canGoForward}
+        onBack={onBack}
+        onForward={onForward}
+      />
+      {details}
+    </div>
+  );
+  if (selection.kind === "chapter" && chapterDetail)
+    return withHistory(
+      <ChapterDetails
+        detail={chapterDetail}
+        assets={assets}
+        headingId={headingId}
+        onSelect={onSelect}
+      />,
+    );
   if (selection.kind === "narrative" && narrativeItem)
-    return (
+    return withHistory(
       <NarrativeDetails
         item={narrativeItem}
         world={world}
@@ -345,7 +526,7 @@ export function ObjectInspector({
         assets={assets}
         headingId={headingId}
         onSelect={onSelect}
-      />
+      />,
     );
   if (selection.kind === "astronomy") {
     const system =
@@ -358,17 +539,17 @@ export function ObjectInspector({
             entity.kind === "star_system" &&
             entity.astronomy_object_id === selection.id,
         );
-    return (
+    return withHistory(
       <SystemDetails
         system={system}
         storyKnown={storyKnown}
         headingId={headingId}
-      />
+      />,
     );
   }
-  return (
+  return withHistory(
     <section className="details empty-details" aria-live="polite">
       <p>The selected object is not eligible in this view.</p>
-    </section>
+    </section>,
   );
 }

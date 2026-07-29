@@ -63,7 +63,7 @@ The workspace has four related but independent values:
 | `furthestChapterRead` | Explicitly confirmed spoiler ceiling, shown as **Read through**                   | Optional; advancing requires a deliberate confirmation     |
 | `viewChapter`         | Chapter whose reader-visible claims are available, shown as **Knowledge through** | Optional and never later than `furthestChapterRead`        |
 | `displayDate`         | Meaningful story date used for world-state projection                             | Optional; in Chapter mode it follows the knowledge chapter |
-| `selectedObject`      | One projected narrative object or in-scope astronomy system                       | Must be cleared if a state change makes it ineligible      |
+| `selectedObject`      | One projected narrative object, in-scope astronomy system, or inspectable chapter | Must be cleared if a state change makes it ineligible      |
 
 Before progress is set, both chapter values and the display date are absent. The
 workspace renders the complete zero state, with Sol as the initial mapped narrative
@@ -305,12 +305,19 @@ the selected projection provides one unambiguous mapped stellar-system context:
 - technology, organization, species, and vessel selection leaves the camera
   unchanged unless a future accepted relationship supplies an explicit location;
 - an astronomy-only search or map selection focuses that system.
+- chapter inspection never focuses the map.
 
 Programmatic focus retains the existing true-coordinate, viewing-angle,
 distance-aware, cancellation, and reduced-motion rules. Selecting empty map space
 clears selection. Changing knowledge chapter or display date clears selection when
 the selected object is no longer eligible and announces the change in DOM status
 content.
+
+A chapter selection is eligible only in Chapter mode when its reference equals the
+current non-null `viewChapter`. Entering Date mode, returning to zero state, lowering
+the spoiler ceiling past it, or another ineligible transition clears it through the
+shared accessible status. A chapter is inspectable but does not enter the narrative
+entity registry.
 
 ## 9. Right object inspector
 
@@ -341,10 +348,27 @@ the current projection:
 - **Astronomy-only system:** catalogue name, alternate designations, components,
   position/distance facts, provenance, and an explicit **Not story-known at this
   view** notice.
+- **Chapter:** book and local chapter identity, title, optional registered
+  illustration, synopsis, required default location, deduplicated leads, eligible
+  introduced events, introduced vessels and technologies, and a condensed
+  first-appearance-ordered character list. Empty optional groups are omitted.
+
+Chapter detail is an immutable runtime view derived from the prepared chapter index
+and the exact already-generated Chapter-mode world. A future-dated or temporally
+incomparable introduced event is absent because it is not eligible in that world.
+Components never scan authored chapter JSON or reconstruct spoiler filtering.
 
 Entity names and relationships in the inspector are selection controls when their
 targets are eligible. The inspector must not infer relationships absent from the
 projection. In particular, a mention does not create a relationship.
+
+The inspector owns a small framed arrow pair above nonempty detail, with accessible
+**Back** and **Forward** names and visibly distinct disabled states. Following an
+inspector relationship appends to that transient path and truncates its forward
+branch. A map, browser, or timeline selection begins a new path. Progress transitions
+remove ineligible entries; the controls never mutate reader progress, browser
+history, or URLs. The same controls and disabled states appear in the wide and compact
+inspectors.
 
 ## 10. Bottom progress and timeline dock
 
@@ -372,16 +396,20 @@ Chapter mode is the default timeline:
 - chapters appear in numeric book/chapter reading order and are grouped by book;
 - chapters after **Read through** are visibly locked and cannot be inspected;
 - selecting an unlocked chapter sets **Knowledge through** and sets `displayDate` to
-  that chapter's date;
-- story-year labels and forward/backward chronology indicators appear only on
-  unlocked chapters and reveal non-chronological narration without reordering them;
+  that chapter's date; selecting its timeline entry also replaces the current
+  inspection selection with that chapter without focusing the map;
+- an unlocked label is the local chapter number alone for the same numeric-only
+  title, preserves a title already prefixed with that number and `-`, `–`, `—`, or
+  `:`, and otherwise displays `<number> — <title>`;
+- unlocked entries do not repeat story years or chronology direction;
 - locked entries expose only spoiler-safe book/chapter identity, not title, story
   year, chronology direction, activity, location, characters, events, or other
   chapter-derived metadata;
 - the status line states both chapter and represented year.
 
-The chapter selector and the timeline are two controls over the same value. Selection
-and keyboard focus remain synchronized.
+The chapter selector and the timeline are two controls over the same knowledge value.
+Only the timeline entry additionally opens chapter inspection. Selection and keyboard
+focus remain synchronized.
 
 ### 10.3 Date mode
 

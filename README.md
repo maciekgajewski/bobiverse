@@ -107,6 +107,13 @@ state; if several story states share that year, the marker opens a compact spoil
 choice list. Reader progress, selected mode, timeline zoom, and pan are stored in the
 versioned `bobiverse.app-state.v1` localStorage record.
 
+Unlocked Chapter-mode timeline entries are also inspection controls. Their compact
+labels use the local chapter number, retaining a descriptive title without duplicating
+an existing numeric prefix; story years and chronology notes remain in the represented
+view rather than the chapter rail. Selecting an entry opens the chapter in the shared
+inspector. Date mode, zero state, or a lower spoiler ceiling closes an ineligible
+chapter inspection without persisting it.
+
 ### Object browser and inspector
 
 The desktop left rail groups only eligible projected objects in this fixed order:
@@ -126,9 +133,18 @@ links only when their targets are eligible in the same projection; unmapped and
 chronologically unplaced states remain explicit. Character location context is
 labelled **Last seen** and never treated as current presence. Each group heading has
 an original type-specific SVG icon, and each object row uses a shared SVG bullet.
+Relationship traversal uses the inspector's own Back and Forward controls; map,
+browser, and timeline selections begin a new inspection path without changing browser
+history.
 Vessels use one identity for a named spacecraft, its reusable design, or the ship
 family named after its first vessel; optional operational state follows the same
 spoiler-safe chapter projection as other mutable state.
+Selecting an unlocked chapter timeline entry uses the same wide or compact inspector
+for its book/chapter identity, synopsis, default location, lead and appearing
+characters, and eligible introduced events, vessels, and technologies. Every listed
+relationship selects the eligible narrative entity without changing the knowledge
+chapter. A chapter illustration appears only when its optional registered asset is
+assigned; no placeholder is rendered.
 The map renders the deduplicated union of the configured-radius neighbourhoods around
 reader-safe mapped systems. Narrative-known systems receive a segmented ring; systems
 active at the selected chapter or date receive a double ring and outward tick. These

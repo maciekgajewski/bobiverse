@@ -14,6 +14,16 @@ export interface NarrativeChapterSummary {
   bookTitle: string;
 }
 
+export function chapterTimelineLabel(
+  chapter: Pick<NarrativeChapterSummary, "chapter" | "title">,
+): string {
+  const localNumber = chapter.chapter.split(".")[1]!;
+  const title = chapter.title.trim();
+  if (title === localNumber) return localNumber;
+  const prefixedTitle = new RegExp(`^${localNumber}\\s*(?:-|–|—|:)\\s+\\S`);
+  return prefixedTitle.test(title) ? title : `${localNumber} — ${title}`;
+}
+
 export interface ReaderProgress {
   furthestChapterRead: string | null;
   viewChapter: string | null;

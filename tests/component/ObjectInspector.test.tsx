@@ -1,4 +1,5 @@
 import { cleanup, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ObjectInspector } from "../../src/components/ObjectInspector";
 import { nearbySystems } from "../../src/domain/data";
@@ -114,6 +115,161 @@ describe("object inspector", () => {
     expect(screen.getByText("Current state")).toBeInTheDocument();
     expect(
       screen.getByText("Departing the fixture system."),
+    ).toBeInTheDocument();
+  });
+
+  it("renders one sparse-safe chapter detail surface and selects relationships", async () => {
+    const user = userEvent.setup();
+    const onSelect = vi.fn();
+    const { container } = render(
+      <ObjectInspector
+        selection={{ kind: "chapter", id: "1.7" }}
+        narrativeItem={null}
+        chapterDetail={{
+          chapter: "1.7",
+          bookNumber: "1",
+          bookTitle: "Fixture volume",
+          localNumber: "7",
+          title: "An unprefixed fixture title",
+          summary: "A compact original fixture synopsis.",
+          pictureId: "asset:fixture-chapter",
+          location: { id: "location:fixture", name: "Fixture location" },
+          leadCharacters: [
+            { id: "character:lead-one", name: "Lead One" },
+            { id: "character:lead-two", name: "Lead Two" },
+          ],
+          events: [{ id: "event:fixture", name: "Fixture event" }],
+          vessels: [{ id: "vessel:fixture", name: "Fixture vessel" }],
+          technologies: [
+            { id: "technology:fixture", name: "Fixture technology" },
+          ],
+          appearingCharacters: Array.from({ length: 24 }, (_, index) => ({
+            id: `character:fixture-${index}`,
+            name: `Fixture Character ${index}`,
+          })),
+        }}
+        world={world}
+        systems={[]}
+        assets={{
+          assets: [
+            {
+              id: "asset:fixture-chapter",
+              path: "assets/fixture-chapter.webp",
+              source: "Test-only chapter illustration.",
+            },
+          ],
+        }}
+        onSelect={onSelect}
+      />,
+    );
+
+    expect(screen.getByText("Book 1 · Chapter 7")).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "An unprefixed fixture title" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Synopsis")).toBeInTheDocument();
+    expect(screen.getByText("Lead characters")).toBeInTheDocument();
+    expect(screen.getByText("Events")).toBeInTheDocument();
+    expect(screen.getByText("Vessels")).toBeInTheDocument();
+    expect(screen.getByText("Technologies")).toBeInTheDocument();
+    expect(screen.getByText("Characters")).toBeInTheDocument();
+    expect(
+      screen.getByRole("img", {
+        name: "Illustration for Book 1, Chapter 7, An unprefixed fixture title",
+      }),
+    ).toHaveAttribute("src", "/assets/fixture-chapter.webp");
+    expect(
+      document.querySelector(".chapter-relationship-list.condensed"),
+    ).toBeInTheDocument();
+    expect(
+      container.querySelector(".chapter-inspector-details"),
+    ).toBeInTheDocument();
+    expect(container.querySelector(".chapter-details")).not.toBeInTheDocument();
+    expect(
+      container.querySelector(".chapter-relationship-frame"),
+    ).toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole("button", { name: "Location: Fixture location" }),
+    );
+    expect(onSelect).toHaveBeenCalledWith({
+      kind: "narrative",
+      id: "location:fixture",
+    });
+  });
+
+  it("omits chapter illustration and empty optional relationship groups", () => {
+    const { container } = render(
+      <ObjectInspector
+        selection={{ kind: "chapter", id: "1.1" }}
+        narrativeItem={null}
+        chapterDetail={{
+          chapter: "1.1",
+          bookNumber: "1",
+          bookTitle: "Fixture volume",
+          localNumber: "1",
+          title: "1",
+          summary: "A compact original fixture synopsis.",
+          pictureId: null,
+          location: { id: "location:fixture", name: "Fixture location" },
+          leadCharacters: [],
+          events: [],
+          vessels: [],
+          technologies: [],
+          appearingCharacters: [],
+        }}
+        world={world}
+        systems={[]}
+        assets={{ assets: [] }}
+        onSelect={vi.fn()}
+      />,
+    );
+    expect(container.querySelector("img")).not.toBeInTheDocument();
+    expect(screen.queryByText("Lead character")).not.toBeInTheDocument();
+    expect(screen.queryByText("Events")).not.toBeInTheDocument();
+    expect(screen.queryByText("Vessels")).not.toBeInTheDocument();
+    expect(screen.queryByText("Technologies")).not.toBeInTheDocument();
+    expect(screen.queryByText("Characters")).not.toBeInTheDocument();
+  });
+
+  it("uses the concise numeric-only alternative text for chapter illustrations", () => {
+    render(
+      <ObjectInspector
+        selection={{ kind: "chapter", id: "1.1" }}
+        narrativeItem={null}
+        chapterDetail={{
+          chapter: "1.1",
+          bookNumber: "1",
+          bookTitle: "Fixture volume",
+          localNumber: "1",
+          title: "1",
+          summary: "A compact original fixture synopsis.",
+          pictureId: "asset:fixture-chapter",
+          location: { id: "location:fixture", name: "Fixture location" },
+          leadCharacters: [],
+          events: [],
+          vessels: [],
+          technologies: [],
+          appearingCharacters: [],
+        }}
+        world={world}
+        systems={[]}
+        assets={{
+          assets: [
+            {
+              id: "asset:fixture-chapter",
+              path: "assets/fixture-chapter.webp",
+              source: "Test-only chapter illustration.",
+            },
+          ],
+        }}
+        onSelect={vi.fn()}
+      />,
+    );
+    expect(
+      screen.getByRole("img", {
+        name: "Illustration for Book 1, Chapter 1",
+      }),
     ).toBeInTheDocument();
   });
 

@@ -457,11 +457,21 @@ JSON. Group expansion preferences are a compatible field in the existing
 `bobiverse.app-state.v1` record. Search expansion is transient and never rewrites
 those preferences.
 
-Selection is one tagged identity: either a narrative entity ID or an astronomy
-catalogue system ID. `ObjectInspector` resolves narrative selections only against the
-current projected entity registry and renders sparse type-specific fields and
-eligible relationship links. A projection change makes an absent narrative
-selection ineligible immediately, clears it, and announces the change. Type-specific
+Selection is one tagged identity: a narrative entity ID, an astronomy catalogue
+system ID, or an inspectable chapter reference. Chapters do not enter the narrative
+entity registry. A chapter selection is eligible only in Chapter mode when it equals
+the current non-null `viewChapter`; Date mode, zero state, a lower ceiling, or another
+ineligible transition clears it through the shared accessible status. Chapter
+selection never supplies a map-focus target. `ObjectInspector` resolves narrative
+selections only against the current projected entity registry and renders sparse
+type-specific fields and eligible relationship links. A projection change makes an
+absent narrative selection ineligible immediately, clears it, and announces the
+change. Inspector relationship traversal is recorded in a transient, unpersisted
+selection stack shared by the wide and compact inspector. Relationship links append
+after the current entry and discard any forward branch; Back and Forward restore only
+eligible entries without changing reader progress. Map, browser, and timeline
+selections start a new stack, while projection changes remove ineligible history
+entries. Browser session history and URLs are unchanged. Type-specific
 group SVGs and the shared row-bullet SVG are presentation-only and carry no selection
 or domain semantics. The legacy astronomy directory is removed; catalogue selection
 is map-driven until BOB-014 supplies the final query-only contextual astronomy DOM
@@ -595,9 +605,10 @@ The browser and CLI share one explicit narrative preparation boundary:
 `raw authored sources -> prepared corpus -> reader-safe projection`. Preparation
 evaluates every raw source once against the shared structural validators, completes
 the cross-record semantic pass, clones the accepted data away from its mutable input,
-deeply freezes it, and builds private chapter-order, chapter-lookup, and
-meaningful-date indexes. Projection APIs accept only this prepared corpus. Prepared
-indexes are implementation state and never appear in a public `NarrativeWorld`.
+deeply freezes it, and builds private chapter-order, chapter-lookup, meaningful-date,
+and immutable chapter-detail source indexes. Projection APIs accept only this
+prepared corpus. Prepared indexes are implementation state and never appear in a
+public `NarrativeWorld`.
 
 One Draft 2020-12 Ajv registry lives for the application or CLI module lifetime. Each
 named schema validator is resolved and cached once, including the generated-world
@@ -608,10 +619,13 @@ schema-validation pass.
 
 Application-level projection coordination owns each reader-progress transition. It
 normalizes progress, obtains prepared meaningful-date options, generates exactly one
-world, derives the map projection and selection eligibility from that world, and
-commits the coherent result atomically. Timeline, browser, map, and inspector consume
-that shared result. Search, group expansion, compact-panel state, timeline viewport,
-and map-scale changes do not regenerate the narrative world.
+world, resolves the selected Chapter-mode detail against that exact world, derives the
+map projection and selection eligibility, and commits the coherent result atomically.
+Chapter detail contains book/chapter identity, optional asset ID, the authored
+summary, and resolved eligible relationship IDs; it is neither a second world nor a
+committed snapshot. Timeline, browser, map, and inspector consume that shared result.
+Search, group expansion, compact-panel state, timeline viewport, and map-scale changes
+do not regenerate the narrative world.
 
 Locations form a one-parent tree: every non-root location has exactly one parent and
 child lists are generated. This supports systems, planets, moons, locales, and
@@ -651,9 +665,10 @@ systems carry that direct reference; descendants inherit the system context. The
 layer derives the current map join at runtime from validated stellar astronomy data,
 the reader-safe projection of the zero-state registry, and selected narrative patches;
 it does not create a second generated authority. Images are manually curated assets,
-while an entity's
-`picture_id` assignment is zero-state or chapter-controlled narrative state and remains
-subject to the shared visibility policy. The zero-state source contains no asset files;
+while an entity's `picture_id` assignment is zero-state or chapter-controlled
+narrative state. A chapter source may also assign its own optional `picture_id`; both
+references use the same registry, path, provenance, and validation rules. The
+zero-state source contains no asset files;
 any zero-state `description` or `state` value is original plain text, not measured
 astronomy data or rich text.
 The direct, unversioned asset registry maps each stable asset ID to one safe static path

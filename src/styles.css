@@ -830,6 +830,46 @@ h2 {
 .empty-details {
   color: #9badc7;
 }
+.inspector-detail-stack {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+}
+.inspector-history {
+  display: inline-flex;
+  justify-self: end;
+  gap: 0.12rem;
+  width: max-content;
+  margin-bottom: 0.35rem;
+  padding: 0.12rem;
+  border: 1px solid var(--line-subtle);
+  border-radius: var(--radius-control);
+  background: rgb(8 16 29 / 72%);
+  box-shadow: inset 0 1px 0 rgb(116 144 174 / 8%);
+}
+.inspector-history-button {
+  display: grid;
+  place-items: center;
+  width: 1.55rem;
+  height: 1.4rem;
+  border-color: transparent;
+  padding: 0;
+  color: #c9d8ef;
+  background: rgb(19 35 58 / 82%);
+  font-size: 0.78rem;
+  line-height: 1;
+}
+.inspector-history-button:not(:disabled):hover {
+  border-color: var(--line-accent);
+  color: #fff;
+  background: #15243b;
+}
+.inspector-history-button:disabled {
+  cursor: not-allowed;
+  color: #60738e;
+  background: transparent;
+  opacity: 0.28;
+}
 .aliases,
 .provenance,
 .hint {
@@ -884,6 +924,71 @@ h2 {
   margin-top: 0.8rem;
   border: 1px solid var(--line-accent);
   border-radius: 0.45rem;
+}
+.chapter-book-title {
+  margin: -0.2rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+.chapter-inspector-details {
+  width: 100%;
+  min-width: 0;
+}
+.chapter-relationship-frame {
+  width: 100%;
+  min-width: 0;
+  margin-top: 1rem;
+  overflow: hidden;
+  border: 1px solid var(--line-subtle);
+  border-radius: var(--radius-control);
+  background: rgb(8 16 29 / 42%);
+  box-shadow: inset 0 1px 0 rgb(116 144 174 / 8%);
+}
+.chapter-relationship-frame .chapter-relationship-section {
+  width: 100%;
+  margin: 0;
+  padding: 0.78rem 0.72rem;
+  border-top: 1px solid var(--line-subtle);
+}
+.chapter-relationship-frame .chapter-relationship-section:first-child {
+  border-top: 0;
+}
+.chapter-relationship-list {
+  display: grid;
+  gap: 0.18rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.chapter-relationship-list.condensed {
+  max-height: 12rem;
+  overflow-y: auto;
+  padding-right: 0.2rem;
+  scrollbar-color: var(--line-accent) transparent;
+  scrollbar-width: thin;
+}
+.chapter-relationship-list button {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  width: 100%;
+  gap: 0.5rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  color: #b8c9df;
+  background: transparent;
+  padding: 0.42rem 0.5rem;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.75rem;
+}
+.chapter-relationship-list button:hover {
+  border-color: var(--line-accent);
+  color: #fff;
+  background: #15243b;
+}
+.chapter-relationship-list button:active {
+  transform: translateY(1px);
 }
 .embedded-details {
   margin: 0;

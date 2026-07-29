@@ -31,11 +31,19 @@ concurrent repository build, test, benchmark, DevTools recording, or CPU throttl
 
 The benchmark seeds reading progress through Chapter 1.11 with Chapter 1.10 selected,
 performs two excluded 1.10/1.11 warm-up cycles, then measures ten alternating
-transitions beginning with 1.11. It repeats from the prepared initial state with
-**Solar System** selected and verifies the selection is never cleared. Each sample
-begins at the capture-phase chapter-button click and ends after the target button,
-shared map badge, and two animation frames have completed. Each scenario must have a
-median at or below 100 ms and no sample above 150 ms.
+transitions beginning with 1.11 through the actual chapter buttons. Before every
+excluded warm-up and measured transition, the first scenario clears inspection and
+the second selects **Solar System**; each subsequent chapter click must replace that
+prepared source state with the matching chapter inspector. Source-state preparation
+is outside the timing window. Each sample begins at the capture-phase chapter-button
+click and ends after the target button, shared map badge, and two animation frames
+have completed. Each scenario must have a median at or below 100 ms and no sample
+above 150 ms.
+
+BOB-036 deliberately supersedes BOB-029's selected-object retention assertion for
+chapter-button clicks because those buttons now select the chapter for inspection.
+Knowledge-only changes still preserve eligible narrative and astronomy selections,
+and retain separate application regression coverage.
 
 The gate prints all samples, median, maximum, bundle assets, browser, Node, host,
 platform, and CPU identity. These production measurements are authoritative.
@@ -97,8 +105,9 @@ At a desktop width of at least 1200 CSS pixels, begin with a cleared
 `bobiverse.app-state.v1` localStorage record. Confirm that the map badge says
 **Pre-book zero state** and no chapter title, story year, chronology indicator, or
 other chapter metadata is visible. Choose **Read through**, verify that a confirmation
-appears immediately when the selector changes, then confirm Chapter 1. Check that Chapter mode selects the same chapter,
-shows its year, and updates the badge. Advance the ceiling while viewing an earlier
+appears immediately when the selector changes, then confirm Chapter 1. Check that
+Chapter mode selects the same chapter and that the status and badge show its
+represented year. Advance the ceiling while viewing an earlier
 chapter and verify that the view, date, and mode remain unchanged; lower it again and
 verify that no later knowledge, date, or selection remains. Select **Pre-book zero
 state** in the spoiler-limit selector and confirm that the confirmation hides every
@@ -113,7 +122,8 @@ appears beside both **Read through** and the confirmation heading.
 
 In Chapter mode, use both the selector and chapter buttons with a keyboard. Confirm
 that locked entries expose only book/chapter identity and cannot change knowledge.
-Verify that the chapter timeline is one horizontal reading-order line of dots. In Date
+Verify that the chapter timeline is one horizontal reading-order line of dots with
+concise local-number/conditional-title labels and no story year or chronology note. In Date
 mode, use the mouse wheel to zoom and drag to pan; confirm the focused axis also accepts
 `+`/`−` and arrow keys. Verify that the year axis has linear spacing (a 100-year
 interval is visibly ten times a 10-year interval at one zoom). Click a year marker
@@ -133,8 +143,7 @@ the panel closes.
 The dock remains one compact, fixed-height desktop row while switching between Chapter
 and Date modes; no mode change should move the map or footer vertically. The
 spoiler-limit card stays narrow, the mode controls stack vertically, and the chapter
-rail uses one uninterrupted central line with references above and unlocked metadata
-below.
+rail uses one uninterrupted central line with concise labels above.
 
 ## BOB-012 progressive object browser and inspectors
 
@@ -267,6 +276,38 @@ short desktop viewport, 200% zoom compact reflow, shared chapter/date projection
 modal focus containment and return, reduced motion, and attribution reachability.
 Real Safari remains the explicit pre-publication gap because no Apple test workstation
 is available.
+
+## BOB-036 chapter inspector and compact timeline
+
+At a wide desktop viewport, unlock representative canonical chapters and select them
+through the Chapter-mode rail. Confirm the rail uses the local number once: a
+numeric-only title shows the number alone, an accepted number-prefixed descriptive
+title remains unchanged, and story years or chronology notes are absent. Locked
+entries must retain only spoiler-safe book/chapter identity.
+
+The right inspector must show book and local chapter identity, title, **Synopsis**,
+the linked default **Location**, and only the nonempty eligible Lead character(s),
+Events, Vessels, Technologies, and condensed Characters sections. Follow several
+relationships and confirm the knowledge chapter remains unchanged while ordinary
+entity-to-map focus rules apply. Use the inspector's Back and Forward controls to
+retrace that path, then follow a different relationship after going back and confirm
+the discarded forward branch stays unavailable. A new map, browser, or timeline
+selection must begin a new path. Selecting the chapter itself must not move the
+camera. A chapter without an illustration must not render an image placeholder or
+empty wrapper.
+
+Enter Date mode while a chapter is inspected. The chapter detail must disappear, the
+empty inspector must return, and the live status must say **Chapter inspection closed
+in Date mode**. Repeat invalidation through zero state and by lowering **Read
+through** past the inspected chapter. An eligible narrative or astronomy selection
+must remain selected merely because Date mode was entered.
+
+Below 1200 CSS pixels and at 200% desktop zoom, repeat chapter selection through the
+timeline and open **Inspect selection**. Confirm the same detail hierarchy, usable
+scrolling for long character lists, visible focus on every relationship, focus
+containment, Escape and close dismissal, and focus return. Optional chapter
+illustrations, multiple leads, no appearances, long lists, and future-dated introduced
+events are synthetic component-test cases and do not require canonical data edits.
 
 ## BOB-026 ultracool-dwarf presentation
 

@@ -36,6 +36,14 @@ function runGenerator(...argumentsList: string[]) {
   );
 }
 
+function runCli(command: string, root: string) {
+  return spawnSync(
+    "./node_modules/.bin/tsx",
+    ["scripts/narrative-cli.ts", command, "--root", root],
+    { cwd: repositoryRoot, encoding: "utf8" },
+  );
+}
+
 describe("narrative generator output", () => {
   beforeAll(async () => {
     corpusRoot = await createZeroStateCorpus();
@@ -80,5 +88,40 @@ describe("narrative generator output", () => {
     expect(JSON.parse(result.stdout)).toMatchObject({
       view: { chapter: null, display_date: null },
     });
+  });
+
+  it("reports an unavailable chapter picture at its source location", async () => {
+    const root = await createZeroStateCorpus();
+    try {
+      await mkdir(path.join(root, "chapters", "1"), { recursive: true });
+      await writeFile(
+        path.join(root, "books.json"),
+        '{"books":{"1":{"title":"Fixture volume"}}}\n',
+      );
+      await writeFile(
+        path.join(root, "chapters", "1", "1.json"),
+        `${JSON.stringify(
+          {
+            chapter: "1.1",
+            title: "Fixture chapter",
+            summary: "A fictional source-aware diagnostic fixture.",
+            date: "2200",
+            location_id: "location:earth",
+            picture_id: "asset:missing",
+          },
+          null,
+          2,
+        )}\n`,
+      );
+
+      const result = runCli("validate", root);
+
+      expect(result.status).toBe(1);
+      expect(result.stderr).toMatch(
+        /chapters\/1\/1\.json:\d+:\d+: error: Chapter 1\.1 \/picture_id: chapter picture references unavailable asset asset:missing\./,
+      );
+    } finally {
+      await rm(root, { recursive: true, force: true });
+    }
   });
 });

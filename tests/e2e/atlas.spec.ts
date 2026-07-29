@@ -56,6 +56,76 @@ test("compact inspector stays inside the viewport", async ({ page }) => {
   expect(bounds.bottom).toBeLessThanOrEqual(700.01);
 });
 
+test("compact chapter inspection shares relationships and focus behavior", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 900, height: 700 });
+  await page.addInitScript(() => {
+    window.localStorage.setItem(
+      "bobiverse.app-state.v1",
+      JSON.stringify({
+        furthestChapterRead: "1.2",
+        viewChapter: "1.1",
+        displayDate: "2016",
+        mode: "chapter",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+  });
+  await page.goto("/");
+
+  await page.getByRole("button", { name: "Timeline and progress" }).click();
+  const timeline = page.getByRole("dialog", {
+    name: "Timeline and progress",
+  });
+  await timeline
+    .getByRole("button", { name: "Book 1, 2 - Bob Version 2.0" })
+    .click();
+
+  const inspector = page.getByRole("dialog", { name: "Selected object" });
+  await expect(
+    inspector.getByRole("heading", { name: "2 - Bob Version 2.0" }),
+  ).toBeVisible();
+  await expect(inspector.getByRole("button", { name: "Close" })).toBeFocused();
+  await page.keyboard.press("Shift+Tab");
+  expect(
+    await inspector.evaluate((element) =>
+      element.contains(document.activeElement),
+    ),
+  ).toBe(true);
+  const location = inspector.getByRole("button", {
+    name: "Location: New Handeltown",
+  });
+  await location.focus();
+  await page.keyboard.press("Enter");
+  await expect(
+    inspector.getByRole("heading", { name: "New Handeltown" }),
+  ).toBeVisible();
+  const back = inspector.getByRole("button", { name: "Back" });
+  const forward = inspector.getByRole("button", { name: "Forward" });
+  await expect(back).toBeEnabled();
+  await expect(forward).toBeDisabled();
+  await back.click();
+  await expect(
+    inspector.getByRole("heading", { name: "2 - Bob Version 2.0" }),
+  ).toBeVisible();
+  await expect(forward).toBeEnabled();
+  await forward.click();
+  await expect(
+    inspector.getByRole("heading", { name: "New Handeltown" }),
+  ).toBeVisible();
+  await expect(page.locator(".map-narrative-badge")).toContainText(
+    "Knowledge through Chapter 1.2",
+  );
+
+  await page.keyboard.press("Escape");
+  await expect(inspector).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "Inspect selection" }),
+  ).toBeFocused();
+});
+
 test("compact reflow keeps timeline progress reachable and traps focus", async ({
   page,
 }) => {
@@ -319,6 +389,43 @@ test("reader progress is confirmed before chapter data is unlocked", async ({
   );
   await page.getByLabel("Read through").selectOption("1.2");
   await page.getByRole("button", { name: "Confirm read through" }).click();
+  await page
+    .getByRole("button", { name: "Book 1, 2 - Bob Version 2.0" })
+    .click();
+  const chapterInspector = page.getByRole("complementary", {
+    name: "Object inspector",
+  });
+  await expect(
+    chapterInspector.getByRole("heading", { name: "2 - Bob Version 2.0" }),
+  ).toBeVisible();
+  await expect(chapterInspector.getByText("Synopsis")).toBeVisible();
+  await expect(
+    chapterInspector.getByRole("button", {
+      name: "Location: New Handeltown",
+    }),
+  ).toBeVisible();
+  await chapterInspector
+    .getByRole("button", { name: "Location: New Handeltown" })
+    .click();
+  await expect(
+    chapterInspector.getByRole("heading", { name: "New Handeltown" }),
+  ).toBeVisible();
+  await expect(page.locator(".map-narrative-badge")).toContainText(
+    "Knowledge through Chapter 1.2",
+  );
+  await page
+    .getByRole("button", { name: "Book 1, 2 - Bob Version 2.0" })
+    .click();
+  await page.getByRole("button", { name: "Date mode" }).click();
+  await expect(page.locator(".selection-status")).toHaveText(
+    "Chapter inspection closed in Date mode.",
+  );
+  await expect(
+    chapterInspector.getByText(
+      "Select a map marker or browser item to inspect its reader-safe details.",
+    ),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Chapter mode" }).click();
   const chapterDotTops = await page
     .locator(".chapter-track .chapter-dot")
     .evaluateAll((dots) => dots.map((dot) => dot.getBoundingClientRect().top));
@@ -330,15 +437,12 @@ test("reader progress is confirmed before chapter data is unlocked", async ({
   );
   const above = await selectedChapter.locator(".chapter-above").boundingBox();
   const dot = await selectedChapter.locator(".chapter-dot").boundingBox();
-  const details = await selectedChapter
-    .locator(".chapter-details")
-    .boundingBox();
   expect(
     above && dot && above.y + above.height / 2 < dot.y + dot.height / 2,
   ).toBe(true);
-  expect(
-    dot && details && dot.y + dot.height / 2 < details.y + details.height / 2,
-  ).toBe(true);
+  await expect(selectedChapter.locator(".chapter-details")).toHaveCount(0);
+  await expect(selectedChapter).not.toContainText("2133");
+  await expect(selectedChapter).not.toContainText(/story time|story year/i);
   const readThroughWidth = await page
     .locator(".spoiler-limit")
     .evaluate((element) => element.getBoundingClientRect().width);
@@ -504,6 +608,26 @@ test("chapter 1.11 Bob selection resolves through New Handeltown to Sol", async 
   await expect(
     inspector.getByRole("button", { name: "New Handeltown" }),
   ).toBeVisible();
+  const back = inspector.getByRole("button", { name: "Back" });
+  const forward = inspector.getByRole("button", { name: "Forward" });
+  await expect(back).toBeDisabled();
+  await inspector.getByRole("button", { name: "New Handeltown" }).click();
+  await expect(
+    inspector.getByRole("heading", { name: "New Handeltown" }),
+  ).toBeVisible();
+  await expect(back).toBeEnabled();
+  await expect(forward).toBeDisabled();
+  await back.click();
+  await expect(inspector.getByRole("heading", { name: "Bob" })).toBeVisible();
+  await expect(forward).toBeEnabled();
+  await forward.click();
+  await expect(
+    inspector.getByRole("heading", { name: "New Handeltown" }),
+  ).toBeVisible();
+  await back.click();
+  await expect(inspector.getByRole("heading", { name: "Bob" })).toBeVisible();
   await expect(page.locator(".selection-label")).toHaveText("Sol");
-  await expect(page.locator(".selection-status")).toHaveText("Bob selected.");
+  await expect(page.locator(".selection-status")).toHaveText(
+    "Bob restored from inspector history.",
+  );
 });

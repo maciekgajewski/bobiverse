@@ -28,7 +28,9 @@ import {
 import {
   generateNarrativeWorld,
   meaningfulNarrativeDateOptions,
+  projectNarrativeChapterDetail,
   type MeaningfulNarrativeDate,
+  type NarrativeChapterDetail,
   type NarrativeWorld,
 } from "./narrative/model";
 import {
@@ -61,9 +63,18 @@ interface ApplicationProjection {
   progress: ReaderProgress;
   dateOptions: readonly MeaningfulNarrativeDate[];
   world: NarrativeWorld;
+  chapterDetail: NarrativeChapterDetail | null;
   map: NarrativeMapProjection;
   error: string | null;
 }
+interface InspectorHistory {
+  entries: readonly SelectionIdentity[];
+  index: number;
+}
+const EMPTY_INSPECTOR_HISTORY: InspectorHistory = {
+  entries: [],
+  index: -1,
+};
 const FOCUSABLE_PANEL_ELEMENTS =
   'a[href], button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])';
 
@@ -81,6 +92,17 @@ function emptyMapProjection(): NarrativeMapProjection {
     activeSystemIds: new Set(),
     contextSystems: [],
   };
+}
+
+function sameSelection(
+  left: SelectionIdentity,
+  right: SelectionIdentity,
+): boolean {
+  return left.kind === right.kind && left.id === right.id;
+}
+
+function rootInspectorHistory(selection: SelectionIdentity): InspectorHistory {
+  return { entries: [selection], index: 0 };
 }
 
 function projectReaderProgress(
@@ -111,10 +133,19 @@ function projectReaderProgress(
     progress.viewChapter,
     progress.mode === "date" ? progress.displayDate : null,
   );
+  const chapterDetail =
+    progress.mode === "chapter" && progress.viewChapter
+      ? projectNarrativeChapterDetail(
+          narrativeCorpus,
+          progress.viewChapter,
+          world,
+        )
+      : null;
   return {
     progress,
     dateOptions,
     world,
+    chapterDetail,
     map: projectNarrativeMap(
       world,
       systems,
@@ -150,6 +181,7 @@ function loadInitialProjection(
       progress: preliminary,
       dateOptions: [],
       world: EMPTY_NARRATIVE_WORLD,
+      chapterDetail: null,
       map: emptyMapProjection(),
       error: projectionErrorMessage(error),
     };
@@ -168,6 +200,9 @@ function canRenderWebgl(): boolean {
 export default function App() {
   const systems = nearbySystems?.systems ?? EMPTY_SYSTEMS;
   const [selection, setSelection] = useState<SelectionIdentity | null>(null);
+  const [inspectorHistory, setInspectorHistory] = useState<InspectorHistory>(
+    EMPTY_INSPECTOR_HISTORY,
+  );
   const [browserQuery, setBrowserQuery] = useState("");
   const [selectionStatus, setSelectionStatus] = useState("");
   const [mobilePanel, setMobilePanel] = useState<
@@ -208,6 +243,11 @@ export default function App() {
     [meaningfulDateOptions],
   );
   const narrativeWorld = applicationProjection.world;
+  const selectedChapterDetail =
+    selection?.kind === "chapter" &&
+    applicationProjection.chapterDetail?.chapter === selection.id
+      ? applicationProjection.chapterDetail
+      : null;
   const allBrowserGroups = useMemo(
     () => buildNarrativeBrowserGroups(narrativeWorld, progress.mode),
     [narrativeWorld, progress.mode],
@@ -327,37 +367,130 @@ export default function App() {
     compactLayout.addEventListener("change", closeAtDesktop);
     return () => compactLayout.removeEventListener("change", closeAtDesktop);
   }, [mobilePanel]);
-  const selectObject = (nextSelection: SelectionIdentity) => {
-    setSelection(nextSelection);
+  const selectionName = (nextSelection: SelectionIdentity): string => {
     const name =
       nextSelection.kind === "astronomy"
         ? systems.find((system) => system.id === nextSelection.id)?.name
-        : narrativeWorld.entities.find(
-            (entity) => entity.id === nextSelection.id,
-          )?.name;
-    setSelectionStatus(`${String(name ?? "Object")} selected.`);
+        : nextSelection.kind === "narrative"
+          ? narrativeWorld.entities.find(
+              (entity) => entity.id === nextSelection.id,
+            )?.name
+          : `Chapter ${nextSelection.id}`;
+    return String(name ?? "Object");
+  };
+  const showSelection = (nextSelection: SelectionIdentity) => {
+    setSelection(nextSelection);
+    setSelectionStatus(`${selectionName(nextSelection) || "Object"} selected.`);
     if (
       typeof window.matchMedia === "function" &&
       window.matchMedia("(max-width: 1199px)").matches
     )
       setMobilePanel("inspector");
   };
-  const updateProgress = (next: ReaderProgress) => {
+  const selectExternalObject = (nextSelection: SelectionIdentity) => {
+    setInspectorHistory(rootInspectorHistory(nextSelection));
+    showSelection(nextSelection);
+  };
+  const selectInspectorRelationship = (nextSelection: SelectionIdentity) => {
+    setInspectorHistory((current) => {
+      const currentEntry = current.entries[current.index];
+      const base =
+        selection && currentEntry && sameSelection(currentEntry, selection)
+          ? current.entries.slice(0, current.index + 1)
+          : selection
+            ? [selection]
+            : [];
+      const previous = base.at(-1);
+      if (previous && sameSelection(previous, nextSelection))
+        return { entries: base, index: base.length - 1 };
+      return {
+        entries: [...base, nextSelection],
+        index: base.length,
+      };
+    });
+    showSelection(nextSelection);
+  };
+  const navigateInspectorHistory = (offset: -1 | 1) => {
+    const nextIndex = inspectorHistory.index + offset;
+    const nextSelection = inspectorHistory.entries[nextIndex];
+    if (!nextSelection) return;
+    setInspectorHistory((current) => ({ ...current, index: nextIndex }));
+    setSelection(nextSelection);
+    setSelectionStatus(
+      `${selectionName(nextSelection) || "Object"} restored from inspector history.`,
+    );
+  };
+  const updateProgress = (
+    next: ReaderProgress,
+    requestedSelection?: SelectionIdentity | null,
+  ) => {
     try {
       const projected = projectReaderProgress(next, systems);
-      if (selection) {
-        const nextContextIds = new Set(
-          projected.map.contextSystems.map((system) => system.id),
-        );
-        if (
-          !isSelectionEligibleForMap(selection, projected.world, nextContextIds)
-        ) {
-          setSelection(null);
+      let nextSelection =
+        requestedSelection === undefined ? selection : requestedSelection;
+      const nextContextIds = new Set(
+        projected.map.contextSystems.map((system) => system.id),
+      );
+      const isEligible = (candidate: SelectionIdentity): boolean =>
+        candidate.kind === "chapter"
+          ? projected.progress.mode === "chapter" &&
+            projected.progress.viewChapter === candidate.id &&
+            projected.chapterDetail?.chapter === candidate.id
+          : isSelectionEligibleForMap(
+              candidate,
+              projected.world,
+              nextContextIds,
+            );
+      if (nextSelection) {
+        if (!isEligible(nextSelection)) {
+          const closedInDateMode =
+            nextSelection.kind === "chapter" &&
+            projected.progress.mode === "date";
+          nextSelection = null;
           setSelectionStatus(
-            "Selection cleared because the object is not eligible in this view.",
+            closedInDateMode
+              ? "Chapter inspection closed in Date mode."
+              : "Selection cleared because the object is not eligible in this view.",
           );
         }
       }
+      if (requestedSelection !== undefined) {
+        setInspectorHistory(
+          nextSelection
+            ? rootInspectorHistory(nextSelection)
+            : EMPTY_INSPECTOR_HISTORY,
+        );
+      } else if (nextSelection) {
+        const retained = inspectorHistory.entries
+          .map((entry, originalIndex) => ({ entry, originalIndex }))
+          .filter(({ entry }) => isEligible(entry));
+        let retainedIndex = retained.findIndex(
+          ({ originalIndex }) => originalIndex === inspectorHistory.index,
+        );
+        if (
+          retainedIndex < 0 ||
+          !sameSelection(retained[retainedIndex]!.entry, nextSelection)
+        ) {
+          retainedIndex = -1;
+          for (let index = retained.length - 1; index >= 0; index -= 1) {
+            if (sameSelection(retained[index]!.entry, nextSelection)) {
+              retainedIndex = index;
+              break;
+            }
+          }
+        }
+        setInspectorHistory(
+          retainedIndex >= 0
+            ? {
+                entries: retained.map(({ entry }) => entry),
+                index: retainedIndex,
+              }
+            : rootInspectorHistory(nextSelection),
+        );
+      } else {
+        setInspectorHistory(EMPTY_INSPECTOR_HISTORY);
+      }
+      setSelection(nextSelection);
       setApplicationProjection(projected);
     } catch (error) {
       setApplicationProjection((current) => ({
@@ -366,10 +499,23 @@ export default function App() {
       }));
     }
   };
-  const selectKnowledge = (chapter: string) =>
-    updateProgress(
-      selectKnowledgeChapter(progress, chapter, narrativeChapters),
-    );
+  const selectKnowledge = (chapter: string) => {
+    const next = selectKnowledgeChapter(progress, chapter, narrativeChapters);
+    if (next === progress) return;
+    updateProgress(next);
+  };
+  const selectTimelineChapter = (chapter: string) => {
+    const next = selectKnowledgeChapter(progress, chapter, narrativeChapters);
+    if (next === progress) return;
+    updateProgress(next, { kind: "chapter", id: chapter });
+    setSelectionStatus(`Chapter ${chapter} selected.`);
+    if (
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(max-width: 1199px)").matches
+    ) {
+      setMobilePanel("inspector");
+    }
+  };
   const selectDate = (date: string) =>
     updateProgress(selectDisplayDate(progress, date, meaningfulDates));
   const toggleBrowserGroup = (group: keyof ReaderProgress["browserGroups"]) =>
@@ -528,7 +674,7 @@ export default function App() {
             selection={selection}
             onQuery={setBrowserQuery}
             onToggle={toggleBrowserGroup}
-            onSelect={selectObject}
+            onSelect={selectExternalObject}
           />
         </aside>
         <section
@@ -569,7 +715,7 @@ export default function App() {
                   onSelect={(id) => {
                     const narrativeId =
                       mapProjection.narrativeSystemIdsByAstronomyId.get(id);
-                    selectObject(
+                    selectExternalObject(
                       narrativeId
                         ? { kind: "narrative", id: narrativeId }
                         : { kind: "astronomy", id },
@@ -577,6 +723,7 @@ export default function App() {
                   }}
                   onDeselect={() => {
                     setSelection(null);
+                    setInspectorHistory(EMPTY_INSPECTOR_HISTORY);
                     setSelectionStatus("Selection cleared.");
                   }}
                   onReady={() => undefined}
@@ -608,12 +755,20 @@ export default function App() {
           <ObjectInspector
             selection={selection}
             narrativeItem={selectedNarrativeItem}
+            chapterDetail={selectedChapterDetail}
             world={narrativeWorld}
             systems={mapProjection.contextSystems}
             knownAstronomySystemIds={mapProjection.knownSystemIds}
             assets={narrativeCorpus.assets}
             headingId="desktop-object-details-heading"
-            onSelect={selectObject}
+            canGoBack={inspectorHistory.index > 0}
+            canGoForward={
+              inspectorHistory.index >= 0 &&
+              inspectorHistory.index < inspectorHistory.entries.length - 1
+            }
+            onBack={() => navigateInspectorHistory(-1)}
+            onForward={() => navigateInspectorHistory(1)}
+            onSelect={selectInspectorRelationship}
           />
         </aside>
       </section>
@@ -630,6 +785,7 @@ export default function App() {
         onCancelReadThrough={() => setPendingReadThrough(null)}
         onReturnToZeroState={returnToZeroKnowledge}
         onKnowledgeChapter={selectKnowledge}
+        onChapterTimeline={selectTimelineChapter}
         onDate={selectDate}
         onChapterMode={returnToChapterMode}
         onZoom={zoomTimeline}
@@ -682,18 +838,26 @@ export default function App() {
                 selection={selection}
                 onQuery={setBrowserQuery}
                 onToggle={toggleBrowserGroup}
-                onSelect={selectObject}
+                onSelect={selectExternalObject}
               />
             ) : mobilePanel === "inspector" ? (
               <ObjectInspector
                 selection={selection}
                 narrativeItem={selectedNarrativeItem}
+                chapterDetail={selectedChapterDetail}
                 world={narrativeWorld}
                 systems={mapProjection.contextSystems}
                 knownAstronomySystemIds={mapProjection.knownSystemIds}
                 assets={narrativeCorpus.assets}
                 headingId="compact-object-details-heading"
-                onSelect={selectObject}
+                canGoBack={inspectorHistory.index > 0}
+                canGoForward={
+                  inspectorHistory.index >= 0 &&
+                  inspectorHistory.index < inspectorHistory.entries.length - 1
+                }
+                onBack={() => navigateInspectorHistory(-1)}
+                onForward={() => navigateInspectorHistory(1)}
+                onSelect={selectInspectorRelationship}
               />
             ) : (
               <>
@@ -713,6 +877,7 @@ export default function App() {
                   onCancelReadThrough={() => setPendingReadThrough(null)}
                   onReturnToZeroState={returnToZeroKnowledge}
                   onKnowledgeChapter={selectKnowledge}
+                  onChapterTimeline={selectTimelineChapter}
                   onDate={selectDate}
                   onChapterMode={returnToChapterMode}
                   onZoom={zoomTimeline}

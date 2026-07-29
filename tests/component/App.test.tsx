@@ -16,6 +16,7 @@ describe("atlas shell", () => {
   afterEach(() => {
     cleanup();
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
   beforeEach(() => {
     window.localStorage.clear();
@@ -133,6 +134,286 @@ describe("atlas shell", () => {
     );
 
     expect(generate).toHaveBeenCalledTimes(afterInitialLoad + 1);
+  });
+
+  it("selects an unlocked timeline chapter for inspection without a second projection", async () => {
+    window.localStorage.setItem(
+      "bobiverse.app-state.v1",
+      JSON.stringify({
+        furthestChapterRead: "1.2",
+        viewChapter: "1.2",
+        displayDate: "2133",
+        mode: "chapter",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+    const generate = vi.spyOn(narrativeModel, "generateNarrativeWorld");
+    const user = userEvent.setup();
+    render(<App />);
+    const afterInitialLoad = generate.mock.calls.length;
+
+    await user.click(
+      screen.getByRole("button", {
+        name: "Book 1, 1 - Bob Version 1.0",
+      }),
+    );
+
+    expect(generate).toHaveBeenCalledTimes(afterInitialLoad + 1);
+    const inspector = screen.getByRole("complementary", {
+      name: "Object inspector",
+    });
+    expect(
+      within(inspector).getByText("Book 1 · Chapter 1"),
+    ).toBeInTheDocument();
+    expect(
+      within(inspector).getByRole("heading", {
+        name: "1 - Bob Version 1.0",
+      }),
+    ).toBeInTheDocument();
+    expect(within(inspector).getByText("Synopsis")).toBeInTheDocument();
+    expect(
+      within(inspector).getByRole("button", {
+        name: "Location: Las Vegas",
+      }),
+    ).toBeInTheDocument();
+  });
+
+  it("keeps relationship traversal in panel history and resets it for external selections", async () => {
+    window.localStorage.setItem(
+      "bobiverse.app-state.v1",
+      JSON.stringify({
+        furthestChapterRead: "1.2",
+        viewChapter: "1.2",
+        displayDate: "2133",
+        mode: "chapter",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(
+      screen.getByRole("button", {
+        name: "Book 1, 2 - Bob Version 2.0",
+      }),
+    );
+    const inspector = screen.getByRole("complementary", {
+      name: "Object inspector",
+    });
+    const back = within(inspector).getByRole("button", { name: "Back" });
+    const forward = within(inspector).getByRole("button", { name: "Forward" });
+    expect(back).toBeDisabled();
+    expect(forward).toBeDisabled();
+
+    await user.click(
+      within(inspector).getByRole("button", {
+        name: "Location: New Handeltown",
+      }),
+    );
+    expect(
+      within(inspector).getByRole("heading", { name: "New Handeltown" }),
+    ).toBeInTheDocument();
+    expect(back).toBeEnabled();
+    expect(forward).toBeDisabled();
+
+    await user.click(back);
+    expect(
+      within(inspector).getByRole("heading", {
+        name: "2 - Bob Version 2.0",
+      }),
+    ).toBeInTheDocument();
+    expect(forward).toBeEnabled();
+    await user.click(forward);
+    expect(
+      within(inspector).getByRole("heading", { name: "New Handeltown" }),
+    ).toBeInTheDocument();
+
+    await user.click(back);
+    await user.click(
+      within(inspector).getByRole("button", {
+        name: "Lead character: Bob",
+      }),
+    );
+    expect(
+      within(inspector).getByRole("heading", { name: "Bob" }),
+    ).toBeInTheDocument();
+    expect(forward).toBeDisabled();
+
+    await user.click(
+      screen.getByRole("button", {
+        name: "Book 1, 1 - Bob Version 1.0",
+      }),
+    );
+    expect(
+      within(inspector).getByRole("heading", {
+        name: "1 - Bob Version 1.0",
+      }),
+    ).toBeInTheDocument();
+    expect(back).toBeDisabled();
+    expect(forward).toBeDisabled();
+
+    await user.click(
+      screen.getByRole("button", { name: /^Solar System(?:Active)?$/ }),
+    );
+    expect(
+      within(inspector).getByRole("heading", { name: "Solar System" }),
+    ).toBeInTheDocument();
+    expect(back).toBeDisabled();
+    expect(forward).toBeDisabled();
+  });
+
+  it("clears chapter inspection in Date mode while preserving eligible object selections", async () => {
+    window.localStorage.setItem(
+      "bobiverse.app-state.v1",
+      JSON.stringify({
+        furthestChapterRead: "1.2",
+        viewChapter: "1.2",
+        displayDate: "2133",
+        mode: "chapter",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(
+      screen.getByRole("button", {
+        name: "Book 1, 2 - Bob Version 2.0",
+      }),
+    );
+    expect(
+      within(
+        screen.getByRole("complementary", { name: "Object inspector" }),
+      ).getByText("Book 1 · Chapter 2"),
+    ).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Date mode" }));
+    expect(
+      await screen.findByText("Chapter inspection closed in Date mode."),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Select a map marker or browser item to inspect its reader-safe details.",
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("navigation", { name: "Inspector history" }),
+    ).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Chapter mode" }));
+    await user.click(
+      screen.getByRole("button", { name: /^Solar System(?:Active)?$/ }),
+    );
+    await user.click(screen.getByRole("button", { name: "Date mode" }));
+    expect(
+      screen.getByRole("heading", { name: "Solar System" }),
+    ).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Chapter mode" }));
+    const search = screen.getByRole("searchbox", {
+      name: "Search visible objects",
+    });
+    await user.type(search, "alpha centauri");
+    await user.click(screen.getByRole("button", { name: /Alpha Centauri/ }));
+    expect(
+      screen.getByRole("heading", { name: "Alpha Centauri" }),
+    ).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Date mode" }));
+    expect(
+      screen.getByRole("heading", { name: "Alpha Centauri" }),
+    ).toBeInTheDocument();
+  });
+
+  it("cannot retain chapter detail after the spoiler ceiling is lowered past it", async () => {
+    window.localStorage.setItem(
+      "bobiverse.app-state.v1",
+      JSON.stringify({
+        furthestChapterRead: "1.2",
+        viewChapter: "1.2",
+        displayDate: "2133",
+        mode: "chapter",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(
+      screen.getByRole("button", {
+        name: "Book 1, 2 - Bob Version 2.0",
+      }),
+    );
+    await user.selectOptions(screen.getByLabelText("Read through"), "1.1");
+    await user.click(
+      screen.getByRole("button", { name: "Confirm read through" }),
+    );
+
+    expect(
+      await screen.findByText(
+        "Selection cleared because the object is not eligible in this view.",
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Select a map marker or browser item to inspect its reader-safe details.",
+      ),
+    ).toBeInTheDocument();
+    expect(
+      within(
+        screen.getByRole("complementary", { name: "Object inspector" }),
+      ).queryByText("Book 1 · Chapter 2"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("uses the shared chapter inspector in compact layout and returns focus on Escape", async () => {
+    vi.stubGlobal("matchMedia", (query: string) => ({
+      matches: query === "(max-width: 1199px)",
+      media: query,
+      onchange: null,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    }));
+    window.localStorage.setItem(
+      "bobiverse.app-state.v1",
+      JSON.stringify({
+        furthestChapterRead: "1.1",
+        viewChapter: "1.1",
+        displayDate: "2016",
+        mode: "chapter",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(
+      screen.getByRole("button", {
+        name: "Book 1, 1 - Bob Version 1.0",
+      }),
+    );
+    const dialog = await screen.findByRole("dialog", {
+      name: "Selected object",
+    });
+    expect(
+      within(dialog).getByRole("heading", {
+        name: "1 - Bob Version 1.0",
+      }),
+    ).toBeInTheDocument();
+
+    await user.keyboard("{Escape}");
+    expect(
+      screen.queryByRole("dialog", { name: "Selected object" }),
+    ).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: "Inspect selection" }),
+      ).toHaveFocus(),
+    );
   });
 
   it("generates at most one world for zero-state and date-mode transitions", async () => {
