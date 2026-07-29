@@ -1,27 +1,32 @@
 # BOB-030: enforce mapped-anchor bootstrap integrity
 
-Status: Ready
+Status: Done
 Phase: 2 (narrative and astronomy integration)
 Last updated: 2026-07-29
 
 ## Objective
 
 Restore the repository-wide contract that every canonically mapped non-Sol narrative
-location has exactly one reviewed, source-backed astronomy bootstrap before
-acquisition planning, generation, validation, or build proceeds.
+location has exactly one source-backed astronomy bootstrap before acquisition
+planning, generation, validation, or build proceeds.
 
-Repair the immediate Epsilon Eridani omission, replace the current uncontrolled
-dictionary lookup with one shared fail-fast bootstrap check, and add a staged
-routine-promotion preflight so a candidate with an unsupported mapped anchor never
-enters the canonical corpus.
+Repair the immediate Epsilon Eridani omission, automatically derive bootstraps for
+exact unambiguous matches already established by the accepted astronomy corpus,
+replace uncontrolled dictionary lookups with one shared fail-fast resolver, and add
+a staged routine-promotion preflight so an unsupported or ambiguous mapped anchor
+never enters the canonical corpus.
 
 ## User-visible outcome
 
 Chapter 1.12's Epsilon Eridani location remains mapped to the existing true-scale
-astronomy system. Production builds succeed from a self-consistent static corpus.
-If a future chapter introduces another mapped stellar system without reviewed source
-identity and geometry, promotion stops with a direct, actionable error instead of a
-raw `KeyError` or a later broken build.
+astronomy system without requiring a redundant manual astronomy approval. Production
+builds succeed from a self-consistent static corpus.
+
+When a future chapter introduces a mapped stellar system whose exact normalized name
+or alias resolves to one accepted source-backed astronomy system, extraction derives
+the bootstrap automatically. Fuzzy, partial, multiple, unsupported, or
+source-incomplete matches stop with a direct actionable error before canonical
+chapter data or the promotion log changes.
 
 ## Binding references
 
@@ -33,46 +38,104 @@ raw `KeyError` or a later broken build.
 - `../chapter-extraction.md`
 - `../adrs/0011-multi-catalogue-astronomy-authority.md`
 - `../adrs/0012-20pc-census-identity-and-substellar-presentation.md`
+- `../adrs/0016-deterministic-narrative-anchor-bootstrap.md`
 - `BOB-013-astronomy-neighbourhood-catalogue.md`
 - `BOB-035-unified-vessels-and-authoring-quality.md`
 - `BOB-037-seed-largest-planetary-moons.md`
 - `../../.codex/skills/extract-bobiverse-chapter/SKILL.md`
 - `../../AGENTS.md`
 
-No ADR is expected. This task restores the accepted reviewed-bootstrap and offline
-static-data contracts; it does not change catalogue authority, coordinates, source
+ADR-0016 authorizes deterministic automatic bootstrapping for exact unambiguous
+accepted matches. This task does not change catalogue authority, coordinates, source
 precedence, narrative mapping semantics, or runtime architecture. If implementation
-would permit an unreviewed anchor, infer coordinates, or change source authority,
-stop and propose an ADR rather than expanding scope silently.
+would permit fuzzy or positional matching, infer coordinates, or change source
+authority, stop and propose a superseding ADR rather than expanding scope silently.
 
 ## Root-cause evidence
 
-- Canonical Chapter 1.12 maps `location:epsilon-eridani` to
+- Canonical Chapter 1.12 names Epsilon Eridani and maps it to
   `stellar-system-005582`.
 - `mapped_anchor_ids()` therefore returns `sol` and
   `stellar-system-005582`.
-- `data/source/system-review.json` currently has no `anchor_bootstraps` entries.
-- The accepted astronomy candidate `stellar-system-005582` adopts
-  `stellar-component-004725`. That component has GCNS/Gaia source ID
-  `5164707970261890560` and GCNS median Bayesian Cartesian geometry.
+- `data/source/system-review.json` has no `anchor_bootstraps` entries.
+- The accepted astronomy review gives `stellar-system-005582` the effective name
+  `Epsilon Eridani`. The accepted candidate has no system review requirement, adopts
+  `stellar-component-004725`, and that component has GCNS/Gaia source ID
+  `5164707970261890560` with GCNS median Bayesian Cartesian geometry.
+- The narrative name and accepted effective astronomy name are therefore an exact
+  normalized match with one unambiguous source-backed result.
 - `validate_acquisition_queries()` builds a bootstrap dictionary and immediately
-  indexes `bootstrap_by_anchor[anchor]`. The missing Epsilon Eridani record therefore
-  raises raw `KeyError: 'stellar-system-005582'`.
-- The validator's controlled exact-bootstrap check runs later and cannot report the
-  inconsistency first. Refresh and generation contain separate versions of the same
-  structural rule, allowing their diagnostics and behavior to drift.
+  indexes `bootstrap_by_anchor[anchor]`. The absent manual record raises raw
+  `KeyError: 'stellar-system-005582'` before the later controlled integrity check.
+- Refresh, validation, and generation contain separate versions of the structural
+  bootstrap rule, allowing their decisions and diagnostics to drift.
 - BOB-035 validated Chapter 1.12 in a temporary narrative corpus while canonical
   astronomy validation still saw only the preceding canonical chapters. Routine
-  promotion subsequently made Chapter 1.12 canonical, but the documented promotion
-  checks neither presented that temporary root to astronomy validation nor ran
-  `npm run data:validate`. The cross-domain invariant therefore escaped until a
-  later production build.
+  promotion neither presented the temporary root to astronomy validation nor ran
+  `npm run data:validate`, so the cross-domain invariant escaped until a later
+  production build.
 
 ## Ratified repair
 
-### Epsilon Eridani review record
+### Deterministic exact bootstrap resolution
 
-Add this exact reviewed bootstrap to `data/source/system-review.json`:
+Add one pure resolver in `scripts/common.py` and use it from every bootstrap consumer:
+acquisition refresh, offline validation, runtime generation, and exact-source
+validation.
+
+Extend mapped-anchor discovery to replay effective location state in reading order:
+start from the nested zero-state hierarchy, apply chapter introductions, and then
+apply location updates in authored order. Return each stable astronomy ID with every
+narrative location name paired with it during that replay, including name-only and
+astronomy-ID-only updates. Accept an optional narrative-root path, defaulting to
+canonical `data/narrative`.
+
+For each mapped non-Sol anchor, the resolver must:
+
+1. require its `astronomy_object_id` to identify exactly one accepted candidate
+   system;
+2. obtain the system's effective accepted name and aliases from the review override,
+   falling back to the candidate names only when no override exists;
+3. normalize names only through Unicode-aware case folding, trimming, and collapsing
+   whitespace;
+4. require every narrative name for the anchor to equal one effective accepted name
+   or alias after that normalization and require that normalized name not to be
+   accepted for another candidate system;
+5. reject unresolved review requirements or ambiguities; an accepted
+   adopted-component override may resolve the candidate's original position review
+   requirement;
+6. select the adopted component through the accepted system override or deterministic
+   candidate adoption;
+7. require source-backed position geometry;
+8. derive `gcns` plus the exact Gaia/GCNS source ID for GCNS geometry, or `cns5` plus
+   the exact CNS5 ID for the reviewed CNS5 fallback; and
+9. return one ordered bootstrap containing `anchor_id`, `system_id`, `catalogue`, and
+   decimal-string `source_id`.
+
+Normalization must not remove punctuation, expand abbreviations, or perform fuzzy,
+partial, phonetic, coordinate, or model-based matching.
+
+Optional explicit reviewed `anchor_bootstraps` remain available only for exceptions
+that automatic resolution cannot establish. Require every explicit record to keep
+`system_id == anchor_id`; an exception may authorize only the otherwise non-automatic
+narrative name-to-system link. Its catalogue and source ID must still match the
+accepted adopted position component and that component's GCNS-then-CNS5 position
+derivation. It may not redirect the narrative mapping, select a secondary component,
+or change source precedence. Reject duplicate, missing, extra, mismatched-system,
+non-adopted-source, wrong-precedence, and malformed explicit records. An explicit
+exception and automatic resolution must produce only one effective bootstrap for an
+anchor. Preserve mapped-anchor order and raise stable anchor-specific `ValueError`
+diagnostics before any consumer indexes a record or source row.
+
+The shared resolver proves that the final `system_id` exists and that the bootstrap
+catalogue/source is the exact accepted identity and derivation of its adopted
+position component. Existing deeper checks remain responsible for proving source-row
+presence, source-backed geometry, and coverage within the GCNS boundary.
+
+### Epsilon Eridani result
+
+Do not add a redundant manual Epsilon Eridani record to `system-review.json`.
+Deterministic resolution must produce exactly:
 
 ```json
 {
@@ -83,44 +146,26 @@ Add this exact reviewed bootstrap to `data/source/system-review.json`:
 }
 ```
 
-GCNS is used because the accepted component's adopted position is explicitly
-derived from GCNS median Bayesian Cartesian geometry. The record identifies an
-existing accepted candidate and source row; it does not create a new astronomical
-identity or invent coordinates.
+The result identifies an existing accepted candidate and source row. It does not
+create a new astronomical identity, infer coordinates, or require new review
+metadata. Existing BOB-026 review attribution remains unchanged because no new manual
+astronomy decision is recorded there.
 
-### Shared fail-fast contract
+### Explicit narrative-root validation
 
-Add one pure bootstrap-index helper in `scripts/common.py` and use it from every
-bootstrap consumer: acquisition refresh, offline validation, runtime generation, and
-the validator's exact-source check.
+Add `--narrative-root <path>` to `scripts/validate_data.py`. Discover one anchor set
+from that root and use it consistently for acquisition-query, exact-source, coverage,
+and runtime checks in the validation run. Refresh and generation continue to use the
+canonical default.
 
-Given the ordered mapped-anchor IDs and the review document, the helper must:
-
-- exclude `sol` from the required reviewed records;
-- require exactly one record per mapped non-Sol anchor;
-- reject duplicate, missing, and extra anchor records;
-- require a non-empty `system_id`;
-- accept only `gcns` or `cns5`;
-- require a non-empty decimal-string `source_id`;
-- preserve mapped-anchor order in its returned index or records; and
-- raise stable `ValueError` diagnostics that identify the affected anchors.
-
-The existing deeper checks remain responsible for proving that `system_id` exists,
-that `source_id` is an exact member identity in that candidate system, and that the
-adopted component has source-backed geometry within the GCNS coverage boundary.
-No consumer may index a bootstrap record before the shared structural helper has
-validated it.
-
-Extend `mapped_anchor_ids()` with an optional narrative-root path, defaulting to the
-canonical `data/narrative` root. Add `--narrative-root <path>` to
-`scripts/validate_data.py` and ensure every mapped-anchor check in that validation run
-uses the one anchor set discovered from the selected root. Refresh and generation
-continue to use the canonical default.
+Add `--review-path <path>` as a validation-only fixture input, defaulting to canonical
+`data/source/system-review.json`, so an ambiguity can be exercised without mutating
+accepted astronomy evidence.
 
 ### Acquisition artifacts
 
-Run the sole networked command, `npm run data:refresh`, after adding the reviewed
-record. This must record:
+Run the sole networked command, `npm run data:refresh`, after deterministic resolution
+is implemented. It must record:
 
 - an exact GCNS bootstrap query for source `5164707970261890560`;
 - an Epsilon Eridani GCNS coverage query;
@@ -129,8 +174,8 @@ record. This must record:
 
 Epsilon Eridani is already present in the committed GCNS, CNS5, Gaia-enrichment,
 candidate, identity-registry, and runtime artifacts. Review the complete refresh
-diff. Its stable system/component IDs, accepted source identity, and adopted
-GCNS geometry must remain unchanged.
+diff. Stable system/component IDs, accepted source identity, effective name, and
+adopted GCNS geometry must remain unchanged.
 
 Because the live catalogue can drift, do not silently fold unrelated upstream
 changes into this repair. If refresh changes records outside the new bootstrap,
@@ -148,54 +193,43 @@ Update both `docs/chapter-extraction.md` and the repository's
    and chapters plus the exact approved candidate at its intended chapter path.
 2. Run narrative validation against that temporary root.
 3. Run `npm run data:validate -- --narrative-root <temporary-root>`.
-4. Only if both preflight checks pass, write the exact candidate to the canonical
-   chapter path.
-5. Re-run canonical narrative and astronomy validation before logging success.
+4. Allow an exact unambiguous bootstrap to resolve automatically without separate
+   Captain approval.
+5. If either preflight fails, leave canonical chapters and the promotion log
+   byte-for-byte unchanged.
+6. Only if both preflight checks pass, write the exact candidate canonically.
+7. Re-run canonical narrative and astronomy validation before logging success.
 
 The temporary-root astronomy run uses canonical reviewed astronomy inputs and
 generated runtime, changing only the narrative root used to discover mapped anchors.
-If a candidate introduces an anchor without a reviewed exact bootstrap and generated
-coverage, preflight fails with the shared actionable `ValueError`; the canonical
-chapter files and promotion log remain byte-for-byte unchanged. That broader
-astronomy addition requires its own authorized task before promotion can resume.
+An ambiguous or unsupported anchor requires its own authorized astronomy task before
+promotion can resume.
 
 The focused astronomy checks are required even when the candidate itself changes
-only narrative JSON, because narrative mappings are an input to astronomy acquisition
-and runtime validation. A full production build remains part of task completion
-below but is not added to every routine editorial promotion.
-
-### Review provenance
-
-When adding the BOB-030 bootstrap decision, update `system-review.json`'s `reviewer`
-and `reviewed_at` metadata so it truthfully covers both the existing BOB-026 mappings
-and the newly authorized BOB-030 anchor-bootstrap review. Do not leave the new
-decision attributed solely to the 2026-07-28 BOB-026 review. Use the actual BOB-030
-review date and wording that names both review scopes under Captain authorization.
+only narrative JSON. A full production build remains part of BOB-030 completion but
+is not added to every routine editorial promotion.
 
 ## In scope
 
-- Add the exact reviewed GCNS bootstrap for canonical Epsilon Eridani.
-- Introduce and adopt the shared structural bootstrap-index helper across all
+- Derive the exact Epsilon Eridani GCNS bootstrap automatically.
+- Introduce and adopt the shared deterministic bootstrap resolver across all
   acquisition, validation, and generation consumers.
-- Allow offline astronomy validation to discover mapped anchors from an explicit
-  temporary narrative root while retaining the canonical default for all existing
-  invocations.
-- Preserve the existing exact source-identity, geometry, coverage, and generated
-  runtime checks after the structural check.
-- Refresh and review the pinned astronomy source/query artifacts required by the new
-  mapped anchor, then regenerate the static astronomy runtime.
-- Add regression tests for missing, duplicate, extra, malformed, and valid mapped
-  anchor bootstrap records, including proof that offline validation reports a
-  controlled `ValueError` rather than `KeyError`.
-- Add staged narrative/astronomy preflight and post-write validation to the routine
-  chapter-promotion documentation and local extraction skill.
-- Update the astronomy review metadata to truthfully include the BOB-030 bootstrap
-  decision.
+- Preserve optional explicit reviewed exception records without requiring one for an
+  exact deterministic match.
+- Allow offline astronomy validation to discover mapped anchors and their names from
+  an explicit temporary narrative root.
+- Preserve exact source-identity, geometry, coverage, and generated-runtime checks.
+- Refresh and review pinned astronomy source/query artifacts required by the new
+  anchor, then regenerate static astronomy runtime.
+- Add regression tests for exact normalized accepted-name and alias matches; case and
+  whitespace normalization; fuzzy, partial, punctuation-different, multiple,
+  unsupported, review-required, source-incomplete, duplicate, extra, and malformed
+  records; and controlled errors rather than incidental lookup exceptions.
+- Add staged narrative/astronomy preflight and post-write validation to routine
+  chapter-promotion documentation and the local extraction skill.
 - Correct BOB-037's completion evidence, record BOB-030 closure, and mark BOB-037
-  `Done` only after its previously blocked production build and all BOB-030
-  validation pass.
-- Update directly affected astronomy-pipeline documentation if the shared
-  validation ownership or operator sequence needs to be stated explicitly.
+  `Done` only after its blocked production build and all BOB-030 validation pass.
+- Update directly affected integrated and operator documentation.
 
 ## Out of scope
 
@@ -203,59 +237,60 @@ review date and wording that names both review scopes under Captain authorizatio
   candidate content.
 - Changing stable astronomy system/component IDs, coordinate authority, catalogue
   precedence, context radius, projection semantics, or browser-time behavior.
-- Allowing a mapped non-Sol anchor without reviewed exact source identity.
-- Adding fallback coordinates, fuzzy identity matching, automatic anchor selection,
-  or compatibility behavior for malformed review records.
+- Fuzzy, partial, phonetic, coordinate-based, or model-confidence identity matching.
+- Automatically accepting a candidate with unresolved review requirements.
+- Adding fallback coordinates, automatic source-authority changes, or compatibility
+  behavior for malformed records.
 - Accepting unrelated live-catalogue drift without explicit Captain review.
 - Redesigning the complete astronomy review schema or chapter-extraction workflow.
 
 ## Acceptance criteria
 
-1. `system-review.json` contains exactly one Epsilon Eridani bootstrap with the
-   ratified anchor ID, system ID, GCNS catalogue, and source ID.
-2. Every mapped non-Sol canonical anchor has exactly one structurally valid reviewed
+1. Epsilon Eridani resolves automatically to system `stellar-system-005582`,
+   component `stellar-component-004725`, GCNS source `5164707970261890560`, and its
+   accepted median Bayesian Cartesian geometry without a manual anchor record.
+2. Every mapped non-Sol canonical anchor has exactly one structurally valid effective
    bootstrap before any consumer accesses its fields.
 3. Refresh, offline validation, generation, and exact-source validation share one
-   bootstrap-index implementation rather than duplicating missing/invalid-record
-   logic.
-4. Missing, duplicate, extra, malformed-catalogue, malformed-source-ID, and missing
-   system-ID fixtures fail with stable, anchor-specific `ValueError` messages. No
-   such fixture can raise `KeyError`, `StopIteration`, or another incidental lookup
-   exception.
-5. The existing deeper validator proves Epsilon Eridani's source ID is an exact
-   identity in `stellar-system-005582`, and generation uses its accepted
-   source-backed GCNS position.
-6. The refreshed GCNS manifest contains the exact bootstrap and coverage queries for
-   Epsilon Eridani, with valid query accounting and checksums. Generated astronomy
-   data remains offline and reproducible.
-7. Epsilon Eridani retains stable system ID `stellar-system-005582`, component ID
-   `stellar-component-004725`, source ID `5164707970261890560`, and its accepted GCNS
-   median Bayesian Cartesian geometry.
-8. The complete refresh diff contains no silently accepted unrelated catalogue
-   drift and no manually fabricated source or manifest content.
-9. `data:validate` accepts an explicit narrative root and uses that root consistently
-   for every mapped-anchor check, while its default invocation remains canonical and
-   backward compatible.
-10. Both routine-promotion instruction surfaces require temporary-root narrative and
-    astronomy preflight before any canonical write, then canonical validation before
+   resolver rather than duplicating missing/invalid-record logic.
+4. Exact accepted-name and alias matches succeed after case-folding and whitespace
+   normalization only.
+5. Fuzzy, partial, punctuation-different, multiple, unsupported, review-required,
+   and source-incomplete matches fail with stable anchor-specific `ValueError`
+   messages.
+6. Duplicate, extra, mismatched-system, non-adopted-component source,
+   CNS5-when-GCNS-adopted, malformed-catalogue, malformed-source-ID, and
+   missing-system-ID explicit fixtures fail without `KeyError`, `StopIteration`, or
+   another incidental lookup exception.
+7. The deeper validator proves the derived Epsilon source ID is an exact identity in
+   its accepted system, and generation uses its accepted source-backed GCNS position.
+8. The refreshed GCNS manifest contains exact bootstrap and coverage queries for
+   Epsilon Eridani with valid accounting and checksums.
+9. Epsilon Eridani's stable IDs, accepted effective name, source ID, position
+   derivation, and coordinates remain unchanged.
+10. The refresh diff contains no silently accepted unrelated catalogue drift and no
+    manually fabricated source or manifest content.
+11. `data:validate` accepts an explicit narrative root and uses it consistently for
+    every mapped-anchor check; default invocation remains canonical.
+12. Both promotion instruction surfaces require temporary-root narrative and
+    astronomy preflight before canonical write, then canonical validation before
     recording success.
-11. A fixture candidate with an unbootstrapped mapped non-Sol anchor fails preflight
-    with an actionable `ValueError`; before/after hashes prove that canonical chapter
-    files and the promotion log remain unchanged.
-12. Final `system-review.json` reviewer/date metadata truthfully attributes the
-    BOB-030 bootstrap decision as well as the retained BOB-026 review scope.
-13. Canonical Chapters 1.12 and 1.13, the moon-complete zero state, and all existing
+13. A staged exact-match fixture resolves automatically. Unsupported and ambiguous
+    fixture candidates fail before canonical files or the promotion log change, with
+    before/after hashes proving atomicity.
+14. `system-review.json` truthfully attributes acceptance of the refreshed candidate
+    snapshot while containing no redundant manual Epsilon anchor decision.
+15. Canonical Chapters 1.12 and 1.13, the moon-complete zero state, and all existing
     narrative projections remain valid and unchanged except for intended generated
     manifest effects.
-14. BOB-037's inaccurate “unrelated” failure classification is corrected. Once the
-    production build and all documented checks pass, BOB-037 and its index entry are
-    `Done` with BOB-030 validation evidence.
-15. Every documented validation command passes, or an exact blocking deviation is
+16. BOB-037's inaccurate “unrelated” failure classification is corrected and, after
+    successful production validation, BOB-037 and its index entry are `Done`.
+17. Every documented validation command passes, or an exact blocking deviation is
     recorded without reducing scope.
 
 ## Validation commands
 
-Focused regression checks during implementation:
+Focused regression checks:
 
 ```bash
 npm run data:test
@@ -264,18 +299,21 @@ npm run data:validate -- --narrative-root /tmp/bobiverse-bob030-valid-narrative-
 npm run data:generate
 ```
 
-Also prepare `/tmp/bobiverse-bob030-invalid-narrative-root` with one otherwise-valid
-candidate that adds an unbootstrapped mapped anchor, then run:
+Prepare temporary exact-match and unsupported narrative roots, plus a temporary
+review fixture that gives a second accepted system the exact Epsilon Eridani alias.
+Run astronomy validation against each. The exact match must pass; the other two are
+expected failures with actionable `ValueError` diagnostics:
 
 ```bash
-npm run data:validate -- --narrative-root /tmp/bobiverse-bob030-invalid-narrative-root
+npm run data:validate -- --narrative-root /tmp/bobiverse-bob030-exact-narrative-root
+npm run data:validate -- --narrative-root /tmp/bobiverse-bob030-unsupported-narrative-root
+npm run data:validate -- --narrative-root /tmp/bobiverse-bob030-exact-narrative-root --review-path /tmp/bobiverse-bob030-ambiguous-review.json
 ```
 
-This is an expected-failure check. Capture canonical narrative and promotion-log
-hashes before and after; the command must fail with the expected `ValueError`, and
-both hashes must remain unchanged.
+Capture canonical narrative and promotion-log hashes before and after the
+expected-failure checks. They must remain unchanged.
 
-The authorized networked refresh and deterministic follow-up:
+Authorized network refresh and deterministic follow-up:
 
 ```bash
 npm run data:refresh
@@ -284,9 +322,9 @@ npm run data:test
 npm run data:validate
 ```
 
-Before accepting refreshed artifacts, inspect `git diff -- data/source
-src/data/nearby-systems.json` and verify the stable Epsilon Eridani identities,
-source ID, position derivation, and coordinates.
+Before accepting refreshed artifacts, inspect
+`git diff -- data/source src/data/nearby-systems.json` and verify stable Epsilon
+Eridani identity, source, name, position derivation, and coordinates.
 
 Full repository closure:
 
@@ -304,41 +342,133 @@ git diff --check
 
 ## Documentation and generated artifacts
 
-- Commit the reviewed `system-review.json` record and every deterministically
-  refreshed source manifest/extract or generated runtime artifact required by the
-  new anchor.
+- Commit every deterministically refreshed source manifest/extract or generated
+  runtime artifact required by the new anchor.
 - Keep source snapshots, query accounting, checksums, candidate reconciliation, and
   generated runtime mutually consistent.
-- Update `docs/chapter-extraction.md`, the repository extraction skill,
-  astronomy-pipeline operator documentation, BOB-037, this task's completion
-  evidence, and `docs/tasks/README.md`.
-- Update `system-review.json` review metadata without erasing the retained BOB-026
-  review scope.
+- Update ADR-0016, `docs/technical-design.md`,
+  `docs/data/astronomy-pipeline.md`, `docs/chapter-extraction.md`, the repository
+  extraction skill, BOB-037, this task's completion evidence, ADR/task indexes where
+  applicable, and `docs/tasks/README.md`.
 - Do not commit source book text, temporary chapter evidence, local virtual
   environments, test output, or unrelated live-catalogue drift.
 
 ## Risks and unresolved decisions
 
+- Exact normalized matching intentionally rejects punctuation differences and
+  plausible synonyms. Those cases require explicit review rather than broader
+  automatic matching.
 - The explicit network refresh may observe catalogue changes since the committed
-  snapshot. The task has a stop condition for unrelated drift rather than assuming
-  it is safe.
+  snapshot. The task has a stop condition for unrelated drift.
 - Epsilon Eridani is already within the current Sol-centred extract, but its explicit
-  bootstrap and anchor-centred coverage queries are still required for reproducible
-  future coverage if the configured radius or canonical anchor set changes.
-- Running astronomy validation for every promotion adds an offline validation step
-  but closes a real cross-domain consistency gap.
+  bootstrap and anchor-centred coverage queries remain required for reproducible
+  future coverage.
+- Running astronomy validation for every promotion adds an offline step but closes a
+  demonstrated cross-domain consistency gap.
 - No unresolved architecture or product decision remains.
 
 ## Preparation evidence
 
-- Root cause reproduced on 2026-07-29 with the current canonical corpus:
-  `scripts/validate_data.py` raised
+- Root cause reproduced on 2026-07-29 against the current canonical corpus:
+  `npm run data:validate` raises raw
   `KeyError: 'stellar-system-005582'` in `validate_acquisition_queries()`.
-- The exact Epsilon Eridani candidate system, adopted component, GCNS source ID, and
-  position derivation were verified against the committed source, candidate, and
-  runtime artifacts.
-- Independent pre-implementation task review raised two findings: promotion needed
-  a pre-write atomicity guard, and the astronomy review metadata needed truthful
-  BOB-030 provenance. Both were incorporated through the staged narrative-root
-  preflight and explicit metadata requirements.
-- Independent review pass 2 returned `No findings.`
+- `npm run data:generate` fails with the controlled missing-bootstrap error.
+- `npm run narrative:validate` passes with zero state and 13 chapter source files,
+  proving the immediate failure is the cross-domain astronomy contract.
+- The exact Epsilon Eridani candidate system, effective reviewed name, adopted
+  component, GCNS source ID, position derivation, committed source row, and runtime
+  entry were verified.
+- The Captain ratified automatic resolution only for exact normalized accepted system
+  name or alias matches. Fuzzy, partial, and multiple matches remain fail-closed.
+
+## Implementation evidence
+
+Implementation began after the Captain's `make it so` authorization and the bounded
+decision that automatic resolution accepts only exact normalized effective names or
+aliases. ADR-0016 records that architecture. The required independent
+pre-implementation review raised two findings: explicit exceptions could redirect an
+anchor to another system or select a non-adopted/wrong-precedence source. Both were
+closed by requiring `system_id == anchor_id` and requiring every explicit
+catalogue/source to equal the adopted position component's deterministic source.
+Fresh closure review returned `No findings.`
+
+The shared resolver in `scripts/common.py` now:
+
+- discovers mapped anchor IDs and all narrative names from the canonical or explicit
+  narrative root;
+- normalizes only through case folding and whitespace collapse;
+- requires each automatic name to be unique across effective accepted system names
+  and aliases;
+- derives the exact adopted GCNS or CNS5 source identity;
+- validates optional explicit exceptions without permitting system redirection,
+  secondary-component selection, or source-precedence changes; and
+- returns stable anchor-specific `ValueError` diagnostics before lookup.
+
+Refresh, validation, generation, exact-source validation, runtime coverage
+validation, and the extraction/promotion workflow use that shared result. Epsilon
+Eridani resolves automatically to:
+
+```json
+{
+  "anchor_id": "stellar-system-005582",
+  "system_id": "stellar-system-005582",
+  "catalogue": "gcns",
+  "source_id": "5164707970261890560"
+}
+```
+
+`system-review.json` contains no manual Epsilon bootstrap record. Its accepted
+candidate checksum and review metadata instead truthfully record inspection of the
+deterministic BOB-030 coverage-refresh candidate snapshot.
+
+The authorized 2026-07-29 refresh:
+
+- retained all 147 prior GCNS rows without structured-record changes;
+- added exactly 50 GCNS rows from the Epsilon Eridani bootstrap and coverage queries;
+- retained CNS5, Gaia DR3, the pinned WDS source snapshot, and 20-pc census content
+  unchanged apart from retrieval metadata;
+- retained all 6,072 component IDs and 5,404 system IDs without additions,
+  removals, or renumbering;
+- applied GCNS geometry precedence to the 50 newly covered stable components and
+  supplied deterministic adopted components for two previously positionless systems;
+  and
+- retained Epsilon Eridani's stable system/component IDs, source identity, effective
+  name, position derivation, and coordinates.
+
+The generated runtime contains 119 system nodes. Its independent coverage proof
+records 96 non-Sol systems around Sol and 85 systems around Epsilon Eridani, with
+overlap deduplicated by stable system identity.
+
+Temporary-root promotion checks used
+`/tmp/bobiverse-bob030-roots.zrVtQg`:
+
+- all exact, unsupported-name, and non-accepted-catalogue-name roots passed narrative
+  validation with zero state and 13 chapter files;
+- the exact canonical root passed astronomy validation;
+- the unsupported Alpha Centauri name failed with an anchor-specific exact-name
+  `ValueError`;
+- the non-accepted `GJ 144` name for Epsilon Eridani failed with the same controlled
+  contract;
+- a temporary review fixture assigning `Epsilon Eridani` to a second accepted system
+  failed with the controlled “not unique across accepted astronomy systems”
+  `ValueError`; and
+- canonical narrative aggregate SHA-256
+  `b0e0db9614795feb4af37e2b6caf87ae28cdd007c692695bbcb0cac74b6bd12e`
+  and promotion-log SHA-256
+  `a8ef8785456dfdecac52255d539a9af325af72dd77e35a87ef255ea7eaf83c3d`
+  were unchanged before and after both expected failures.
+
+Validation completed on 2026-07-29:
+
+- `npm run data:test`: passed, 57 Python tests, including effective-state replay for
+  independent name-only and astronomy-ID-only location updates.
+- `npm run data:validate`: passed, 119 systems and five pinned sources.
+- explicit narrative-root exact-match validation: passed.
+- explicit unsupported, non-accepted-name, and duplicate-owner validations: failed
+  as expected with controlled anchor-specific `ValueError` diagnostics.
+- `npm run validate`: passed formatting, lint, typecheck, Python tests, astronomy
+  validation, 23 Vitest files and 135 tests, narrative manifest and validation, and
+  production build.
+- `npm run test:e2e`: passed 42 tests across Chromium, Firefox, and WebKit.
+- `git diff --check`: passed before the final documentation closure.
+- Fresh independent post-implementation review: `No findings.`

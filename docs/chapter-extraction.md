@@ -190,24 +190,47 @@ version control.
 ## Record an approved promotion
 
 Routine promotion of an exact, explicitly approved candidate does not require a new
-task. After applying the candidate:
+task. Before applying the candidate:
 
-1. Confirm the canonical JSON remains value-identical to the approved candidate;
-   standard formatting may change whitespace only.
-2. Run the shared validation below.
-3. Append one row to [the chapter-promotion log](chapter-promotion-log.md) with the
+1. Build a fresh temporary narrative root from the current canonical baseline,
+   assets, books, and chapters plus the exact approved candidate at its intended
+   chapter path.
+2. Run narrative validation against that temporary root.
+3. Run `npm run data:validate -- --narrative-root <temporary-root>`.
+4. If the mapped stellar-system name is an exact normalized match for one unique
+   accepted astronomy system name or alias, ADR-0016 permits the source-backed
+   bootstrap to resolve automatically without separate approval. Fuzzy, partial,
+   punctuation-different, multiple, unsupported, or source-incomplete matches stop
+   for an authorized astronomy task.
+5. If either preflight fails, do not change canonical chapter files or the promotion
+   log.
+6. Only after both checks pass, write the exact approved candidate canonically and
+   confirm the canonical JSON remains value-identical; standard formatting may
+   change whitespace only.
+7. Run the post-write validation below.
+8. Append one row to [the chapter-promotion log](chapter-promotion-log.md) with the
    chapter, approval date, canonical SHA-256, validation result, and any material
    editorial decision.
 
 Create a task instead when the work changes code, schemas, contracts, tooling, or
 includes broader editorial remediation beyond the approved chapter candidate.
 
-### Standard promotion validation
+### Standard promotion preflight
+
+```bash
+./node_modules/.bin/tsx scripts/narrative-cli.ts validate \
+  --root "/absolute/path/to/temporary/narrative-root"
+npm run data:validate -- \
+  --narrative-root "/absolute/path/to/temporary/narrative-root"
+```
+
+### Standard post-write validation
 
 ```bash
 chapter_ref="1.3" # Replace with the approved chapter.
 npm run narrative:manifest
 npm run narrative:validate
+npm run data:validate
 npm run narrative:generate -- --chapter "$chapter_ref" --output "/tmp/bobiverse-world-$chapter_ref.json"
 npm run format:check
 npm run lint

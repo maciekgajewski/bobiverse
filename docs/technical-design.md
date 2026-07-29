@@ -360,8 +360,16 @@ locationless selections leave the camera unchanged. A chapter/date change atomic
 clears an astronomy-only selection that has left the rendered union.
 
 A new non-Sol anchor is bootstrapped from an exact GCNS or CNS5 source identity before
-its acquisition sphere is planned; a coordinate from the previous generated runtime
-is comparison evidence only. A reviewed landmark roster makes recognizable local
+its acquisition sphere is planned. Under ADR-0016, the pipeline derives that
+bootstrap without separate review only when the mapped narrative name exactly matches
+the accepted effective system name or alias after case-folding and whitespace
+normalization, and the accepted candidate has one unambiguous adopted source-backed
+position. Mapped name-to-anchor pairs are discovered by replaying effective location
+state from zero state through chapter introductions and updates, so independent name
+or astronomy-ID updates receive the same check. All fuzzy, partial, multiple,
+unsupported, or otherwise ambiguous matches stop for explicit review. A coordinate
+from the previous generated runtime is comparison evidence only. A reviewed landmark
+roster makes recognizable local
 completeness testable. The complete initial roster and its multiple-system membership
 expectations are binding in `docs/data/astronomy-pipeline.md`; they include Sirius,
 Procyon, and Alpha Centauri with Alpha Centauri A, Alpha Centauri B, and Proxima

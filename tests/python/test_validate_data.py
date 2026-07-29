@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -31,10 +32,12 @@ from common import (
     IDENTITY_REGISTRY_PATH,
     SOURCE_EXTRACT_SCHEMA_PATH,
     WDS_PATH,
+    mapped_anchor_names,
     read_gzip,
     read_json,
-    mapped_anchor_ids,
+    resolve_anchor_bootstraps,
     value_sha256,
+    write_json,
 )
 from c20pc_census import (
     census_identifier_tokens,
@@ -62,6 +65,73 @@ from validate_data import (
 
 
 class MultiCatalogueContractTest(unittest.TestCase):
+    def test_mapped_anchor_names_replays_independent_location_updates(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            narrative_root = Path(temporary_directory)
+            write_json(
+                narrative_root / "baseline" / "zero-state.json",
+                {
+                    "entities": [],
+                    "locations": {
+                        "id": "location:baseline",
+                        "name": "Baseline",
+                        "kind": "star_system",
+                        "astronomy_object_id": "stellar-system-baseline",
+                        "children": [],
+                    },
+                },
+            )
+            write_json(
+                narrative_root / "chapters" / "1" / "1.json",
+                {
+                    "chapter": "1.1",
+                    "introducing": [
+                        {
+                            "id": "location:fixture",
+                            "name": "Fixture",
+                            "kind": "star_system",
+                            "astronomy_object_id": "stellar-system-first",
+                        }
+                    ],
+                    "updates": [],
+                },
+            )
+            write_json(
+                narrative_root / "chapters" / "1" / "2.json",
+                {
+                    "chapter": "1.2",
+                    "introducing": [],
+                    "updates": [
+                        {
+                            "entity_id": "location:fixture",
+                            "name": "Fixture Renamed",
+                        }
+                    ],
+                },
+            )
+            write_json(
+                narrative_root / "chapters" / "1" / "3.json",
+                {
+                    "chapter": "1.3",
+                    "introducing": [],
+                    "updates": [
+                        {
+                            "entity_id": "location:fixture",
+                            "astronomy_object_id": "stellar-system-second",
+                        }
+                    ],
+                },
+            )
+
+            self.assertEqual(
+                mapped_anchor_names(narrative_root),
+                {
+                    "stellar-system-baseline": ["Baseline"],
+                    "stellar-system-first": ["Fixture", "Fixture Renamed"],
+                    "stellar-system-second": ["Fixture Renamed"],
+                },
+            )
+
     @classmethod
     def setUpClass(cls) -> None:
         cls.candidates = read_json(CANDIDATES_PATH)
@@ -654,6 +724,11 @@ class MultiCatalogueContractTest(unittest.TestCase):
         review = read_json(
             ROOT / "data" / "source" / "system-review.json"
         )
+        anchor_names = mapped_anchor_names()
+        bootstraps = resolve_anchor_bootstraps(
+            anchor_names, review, self.candidates
+        )
+        anchor_ids = list(anchor_names)
         landmarks = read_json(
             ROOT / "data" / "source" / "major-local-systems.json"
         )
@@ -670,6 +745,8 @@ class MultiCatalogueContractTest(unittest.TestCase):
                 review,
                 landmarks,
                 config,
+                bootstraps,
+                anchor_ids,
             )
         name_drift = copy.deepcopy(read_json(GENERATED_PATH))
         name_drift["systems"][1]["name"] = "Hand-edited name"
@@ -682,6 +759,8 @@ class MultiCatalogueContractTest(unittest.TestCase):
                 review,
                 landmarks,
                 config,
+                bootstraps,
+                anchor_ids,
             )
         sol_drift = copy.deepcopy(read_json(GENERATED_PATH))
         sol_drift["systems"][0]["name"] = "Not Sol"
@@ -699,6 +778,8 @@ class MultiCatalogueContractTest(unittest.TestCase):
                 review,
                 landmarks,
                 config,
+                bootstraps,
+                anchor_ids,
             )
 
     def test_committed_join_accounting_and_source_union(self) -> None:
@@ -716,15 +797,21 @@ class MultiCatalogueContractTest(unittest.TestCase):
         cns5_manifest, cns5 = read_extract("cns5")
         gcns_manifest = copy.deepcopy(gcns_manifest)
         gcns_manifest["queries"][0]["adql"] += "\n-- truncated fixture"
+        review = read_json(
+            ROOT / "data" / "source" / "system-review.json"
+        )
+        anchor_names = mapped_anchor_names()
         with self.assertRaisesRegex(ValueError, "exact plan"):
             validate_acquisition_queries(
                 gcns_manifest,
                 cns5_manifest,
                 gcns,
                 cns5,
-                read_json(ROOT / "data" / "source" / "system-review.json"),
+                resolve_anchor_bootstraps(
+                    anchor_names, review, self.candidates
+                ),
                 read_json(CONFIG_PATH),
-                mapped_anchor_ids(),
+                list(anchor_names),
             )
 
     def test_rejects_cns5_source_lost_from_union(self) -> None:
@@ -764,6 +851,188 @@ class MultiCatalogueContractTest(unittest.TestCase):
                 }],
             )
 
+    def bootstrap_fixture(
+        self,
+    ) -> tuple[
+        dict[str, list[str]], dict[str, object], dict[str, object]
+    ]:
+        candidates = {
+            "systems": [
+                {
+                    "id": "stellar-system-fixture-1",
+                    "preferred_name_candidate": "GJ 144",
+                    "alternate_name_candidates": ["HIP 16537"],
+                    "component_ids": ["stellar-component-fixture-1"],
+                    "adopted_component_candidate": "stellar-component-fixture-1",
+                    "requires_review": False,
+                },
+                {
+                    "id": "stellar-system-fixture-2",
+                    "preferred_name_candidate": "Fixture Two",
+                    "alternate_name_candidates": [],
+                    "component_ids": ["stellar-component-fixture-2"],
+                    "adopted_component_candidate": "stellar-component-fixture-2",
+                    "requires_review": False,
+                },
+            ],
+            "components": [
+                {
+                    "id": "stellar-component-fixture-1",
+                    "gaia_source_id": "5164707970261890560",
+                    "cns5_id": "905",
+                    "position_pc": {"xg": -2.0, "yg": -0.5, "zg": -2.4},
+                    "position_derivation": "gcns median Bayesian Cartesian geometry",
+                },
+                {
+                    "id": "stellar-component-fixture-2",
+                    "gaia_source_id": "123456789",
+                    "cns5_id": "123",
+                    "position_pc": {"xg": 1.0, "yg": 2.0, "zg": 3.0},
+                    "position_derivation": "gcns median Bayesian Cartesian geometry",
+                },
+            ],
+        }
+        review = {
+            "overrides": [
+                {
+                    "candidate_system_id": "stellar-system-fixture-1",
+                    "name": "Epsilon Eridani",
+                    "alternates": ["Ran"],
+                },
+                {
+                    "candidate_system_id": "stellar-system-fixture-2",
+                    "name": "Fixture Two",
+                    "alternates": [],
+                },
+            ],
+            "anchor_bootstraps": [],
+        }
+        anchor_names = {
+            "sol": ["Solar System"],
+            "stellar-system-fixture-1": ["Epsilon Eridani"],
+        }
+        return anchor_names, review, candidates
+
+    def test_automatic_anchor_bootstrap_accepts_only_exact_normalized_names(
+        self,
+    ) -> None:
+        anchor_names, review, candidates = self.bootstrap_fixture()
+        anchor_names["stellar-system-fixture-1"] = [
+            "  EPSILON   ERIDANI  ",
+            " ran ",
+        ]
+        self.assertEqual(
+            resolve_anchor_bootstraps(anchor_names, review, candidates),
+            [{
+                "anchor_id": "stellar-system-fixture-1",
+                "system_id": "stellar-system-fixture-1",
+                "catalogue": "gcns",
+                "source_id": "5164707970261890560",
+            }],
+        )
+
+        for rejected_name in ("Epsilon", "Epsilon-Eridani"):
+            with self.subTest(rejected_name=rejected_name):
+                rejected = copy.deepcopy(anchor_names)
+                rejected["stellar-system-fixture-1"] = [rejected_name]
+                with self.assertRaisesRegex(ValueError, "not an exact accepted"):
+                    resolve_anchor_bootstraps(rejected, review, candidates)
+
+    def test_automatic_anchor_bootstrap_rejects_non_unique_review_and_source_gaps(
+        self,
+    ) -> None:
+        anchor_names, review, candidates = self.bootstrap_fixture()
+
+        duplicate_name_review = copy.deepcopy(review)
+        duplicate_name_review["overrides"][1]["alternates"] = [
+            "Epsilon Eridani"
+        ]
+        with self.assertRaisesRegex(ValueError, "not unique"):
+            resolve_anchor_bootstraps(
+                anchor_names, duplicate_name_review, candidates
+            )
+
+        unresolved = copy.deepcopy(candidates)
+        unresolved["systems"][0]["requires_review"] = True
+        with self.assertRaisesRegex(ValueError, "unresolved adopted-position"):
+            resolve_anchor_bootstraps(anchor_names, review, unresolved)
+
+        source_incomplete = copy.deepcopy(candidates)
+        source_incomplete["components"][0]["gaia_source_id"] = None
+        with self.assertRaisesRegex(ValueError, "exact decimal gcns"):
+            resolve_anchor_bootstraps(anchor_names, review, source_incomplete)
+
+    def test_explicit_anchor_bootstrap_is_structural_and_cannot_change_source(
+        self,
+    ) -> None:
+        anchor_names, review, candidates = self.bootstrap_fixture()
+        expected = {
+            "anchor_id": "stellar-system-fixture-1",
+            "system_id": "stellar-system-fixture-1",
+            "catalogue": "gcns",
+            "source_id": "5164707970261890560",
+        }
+
+        exception_review = copy.deepcopy(review)
+        exception_review["anchor_bootstraps"] = [expected]
+        exception_names = copy.deepcopy(anchor_names)
+        exception_names["stellar-system-fixture-1"] = ["Book-only Name"]
+        self.assertEqual(
+            resolve_anchor_bootstraps(
+                exception_names, exception_review, candidates
+            ),
+            [expected],
+        )
+
+        malformed_entries = [
+            [expected, expected],
+            [{**expected, "anchor_id": "stellar-system-extra", "system_id": "stellar-system-extra"}],
+            [{**expected, "system_id": "stellar-system-fixture-2"}],
+            [{**expected, "catalogue": "other"}],
+            [{**expected, "source_id": "not-decimal"}],
+            [{key: value for key, value in expected.items() if key != "system_id"}],
+        ]
+        messages = (
+            "duplicate",
+            "not a mapped",
+            "system_id equal",
+            "invalid catalogue",
+            "invalid decimal",
+            "non-empty system_id",
+        )
+        for entries, message in zip(malformed_entries, messages, strict=True):
+            with self.subTest(message=message):
+                invalid_review = copy.deepcopy(review)
+                invalid_review["anchor_bootstraps"] = entries
+                with self.assertRaisesRegex(ValueError, message):
+                    resolve_anchor_bootstraps(
+                        anchor_names, invalid_review, candidates
+                    )
+
+        wrong_source_candidates = copy.deepcopy(candidates)
+        wrong_source_candidates["systems"][0]["component_ids"].append(
+            "stellar-component-secondary"
+        )
+        wrong_source_candidates["components"].append(
+            {
+                "id": "stellar-component-secondary",
+                "gaia_source_id": "999999999",
+                "cns5_id": "999",
+                "position_pc": {"xg": -2.1, "yg": -0.6, "zg": -2.5},
+                "position_derivation": "gcns median Bayesian Cartesian geometry",
+            }
+        )
+        for wrong_entry in (
+            {**expected, "source_id": "999999999"},
+            {**expected, "catalogue": "cns5", "source_id": "905"},
+        ):
+            wrong_review = copy.deepcopy(review)
+            wrong_review["anchor_bootstraps"] = [wrong_entry]
+            with self.assertRaisesRegex(ValueError, "accepted adopted source"):
+                resolve_anchor_bootstraps(
+                    anchor_names, wrong_review, wrong_source_candidates
+                )
+
     def test_non_sol_anchor_requires_exact_source_identity(self) -> None:
         _, gcns = read_extract("gcns")
         _, cns5 = read_extract("cns5")
@@ -778,20 +1047,18 @@ class MultiCatalogueContractTest(unittest.TestCase):
             if component["id"] in item["component_ids"]
         )
         review = {
-            "anchor_bootstraps": [{
-                "anchor_id": "fixture-anchor",
-                "system_id": system["id"],
-                "catalogue": "gcns",
-                "source_id": "999999999999999999",
-            }]
+            "anchor_id": system["id"],
+            "system_id": system["id"],
+            "catalogue": "gcns",
+            "source_id": "999999999999999999",
         }
         with self.assertRaisesRegex(ValueError, "exact source identity"):
             validate_anchor_bootstraps(
-                review,
+                [review],
                 self.candidates,
                 gcns,
                 cns5,
-                ["sol", "fixture-anchor"],
+                ["sol", system["id"]],
             )
 
     def test_non_sol_anchor_accepts_exact_source_identity(self) -> None:
@@ -809,18 +1076,16 @@ class MultiCatalogueContractTest(unittest.TestCase):
             if component["id"] in item["component_ids"]
         )
         validate_anchor_bootstraps(
-            {
-                "anchor_bootstraps": [{
-                    "anchor_id": "fixture-anchor",
-                    "system_id": system["id"],
-                    "catalogue": "gcns",
-                    "source_id": component["gaia_source_id"],
-                }]
-            },
+            [{
+                "anchor_id": system["id"],
+                "system_id": system["id"],
+                "catalogue": "gcns",
+                "source_id": component["gaia_source_id"],
+            }],
             self.candidates,
             gcns,
             cns5,
-            ["sol", "fixture-anchor"],
+            ["sol", system["id"]],
         )
 
     def test_rejects_singleton_without_adopted_component(self) -> None:

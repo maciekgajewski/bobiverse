@@ -45,10 +45,10 @@ derived from `../implementation-plan.md` and must remain consistent with
 | [BOB-027](BOB-027-generalized-narrative-moment-ordering.md)             | Done    | Order equal year-only narrative facts by canonical chapter.                |
 | [BOB-028](BOB-028-pin-chapter-extraction-agent-configuration.md)        | Done    | Pin chapter extraction and reconciliation to explicit Terra/high agents.   |
 | [BOB-029](BOB-029-responsive-chapter-projection-pipeline.md)            | Done    | Prepare narrative data once and keep chapter transitions responsive.       |
-| [BOB-030](BOB-030-mapped-anchor-bootstrap-integrity.md)                 | Ready   | Keep mapped narrative anchors and astronomy bootstraps consistent.         |
+| [BOB-030](BOB-030-mapped-anchor-bootstrap-integrity.md)                 | Done    | Keep mapped narrative anchors and astronomy bootstraps consistent.         |
 | [BOB-035](BOB-035-unified-vessels-and-authoring-quality.md)             | Done    | Unify vessel records and enforce durable, concise narrative authoring.     |
 | [BOB-036](BOB-036-chapter-inspector-and-compact-timeline.md)            | Ready   | Make chapters inspectable and simplify Chapter-mode timeline labels.       |
-| [BOB-037](BOB-037-seed-largest-planetary-moons.md)                      | Blocked | Seed up to four largest moons per planet in the pre-book zero state.       |
+| [BOB-037](BOB-037-seed-largest-planetary-moons.md)                      | Done    | Seed up to four largest moons per planet in the pre-book zero state.       |
 
 ## Task requirements
 

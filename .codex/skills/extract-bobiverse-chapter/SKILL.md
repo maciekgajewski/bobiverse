@@ -392,6 +392,8 @@ Validate with:
 ```bash
 ./node_modules/.bin/tsx scripts/narrative-cli.ts validate \
   --root /absolute/path/to/temporary/narrative-root
+npm run data:validate -- \
+  --narrative-root /absolute/path/to/temporary/narrative-root
 ```
 
 Repair representation errors only. Do not manufacture source facts to make validation
@@ -405,6 +407,15 @@ when the same agent also prepares the chapter summary.
 The repository narrative validator is authoritative. A local JSON Schema check is
 useful but does not replace temporary-corpus validation because repository rules also
 enforce cross-record ownership and reader-order constraints.
+
+Astronomy validation is also mandatory before canonical promotion. Under ADR-0016,
+an exact normalized narrative name that is unique across one accepted astronomy
+system's effective name and aliases receives a deterministic source-backed bootstrap
+without separate Captain approval. Normalization only case-folds, trims, and
+collapses whitespace. Never remove punctuation or use fuzzy, partial, phonetic,
+coordinate, or model-confidence matching. If the accepted candidate identity,
+adopted component, source-backed geometry, or pinned coverage cannot support the new
+anchor, stop before any canonical write and report the required astronomy work.
 
 For a dry-run evaluation, read the existing target chapter only after the candidate
 validates. Compare omissions, unsupported claims, reconciliation choices, and review
@@ -422,19 +433,23 @@ Present:
   decision, classification, and sealed evidence ID;
 - evidence IDs with bounded excerpts rendered by `source_evidence.py review`;
 - unresolved or low-confidence items;
-- validation output;
+- narrative and astronomy preflight output, including any automatically resolved
+  mapped-anchor bootstrap;
 - the exact canonical diff that approval would create.
 
 An ordinary invocation may write canonical JSON only after the Captain explicitly
 approves that exact candidate. A task-scoped dry run must stop without writing even if
 the candidate is approved for quality.
 
-After an authorized routine canonical write, run the standard validation documented
-in `docs/chapter-extraction.md` and append one row to
-`docs/chapter-promotion-log.md`. When an active task exists for broader work, also run
-its validation commands and update its directly affected documentation. Never commit
-source text, evidence excerpts, draft or sealed ledgers, temporary candidates, or
-temporary narrative roots.
+Before an authorized routine canonical write, rebuild the temporary narrative root
+from current canonical inputs plus the exact approved candidate and rerun both
+temporary-root validators documented in `docs/chapter-extraction.md`. If either
+fails, leave canonical chapter files and `docs/chapter-promotion-log.md` byte-for-byte
+unchanged. After a successful write, run the documented canonical narrative and
+astronomy validation, then append one promotion-log row. When an active task exists
+for broader work, also run its validation commands and update its directly affected
+documentation. Never commit source text, evidence excerpts, draft or sealed ledgers,
+temporary candidates, or temporary narrative roots.
 
 ## Deferred source fallback
 

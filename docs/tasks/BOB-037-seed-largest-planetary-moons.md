@@ -1,6 +1,6 @@
 # BOB-037: seed largest planetary moons
 
-Status: Blocked
+Status: Done
 Phase: 2 (narrative foundation)
 Last updated: 2026-07-29
 
@@ -259,12 +259,12 @@ Subsequent separately authorized Chapter 1.13 promotion:
 - Canonical manifest generation, validation, Chapter 1.13 projection, format check,
   lint, typecheck, the 135-test suite, and `git diff --check` passed. The append-only
   chapter-promotion log records the result.
-- The production build stops in the astronomy validator with
-  `KeyError: 'stellar-system-005582'` before reaching narrative validation.
-  Diagnosis showed that canonical Chapter 1.12 added this mapped anchor without the
-  reviewed acquisition bootstrap required by the integrated narrative/astronomy
-  contract. [BOB-030](BOB-030-mapped-anchor-bootstrap-integrity.md) specifies the
-  repository-level repair and promotion guard.
+- At promotion time, the production build stopped in the astronomy validator with
+  `KeyError: 'stellar-system-005582'`. Diagnosis showed that canonical Chapter 1.12
+  added this mapped anchor without the required acquisition bootstrap.
+  [BOB-030](BOB-030-mapped-anchor-bootstrap-integrity.md) subsequently implemented
+  deterministic exact-match bootstrap resolution, refreshed Epsilon-centred
+  coverage, and the staged promotion guard.
 
 Validation results:
 
@@ -279,13 +279,20 @@ Validation results:
 - `npm run typecheck`: passed.
 - `npm run test`: passed, 23 files and 135 tests.
 - `git diff --check`: passed.
-- `npm run build`: blocked in astronomy-data validation before narrative validation
-  or compilation. `scripts/validate_data.py` raises
-  `KeyError: 'stellar-system-005582'` while resolving acquisition-query bootstrap
-  anchors. The immediate trigger is the canonical Chapter 1.12 narrative mapping;
-  the uncontrolled lookup and missing promotion guard are repository-level defects,
-  not an unrelated BOB-037 failure. BOB-037 stays `Blocked` pending BOB-030
-  implementation and a passing production build.
+- `npm run build`: initially blocked in astronomy-data validation by the canonical
+  Chapter 1.12 anchor inconsistency; after BOB-030, passed astronomy validation,
+  narrative manifest and validation, TypeScript compilation, and the Vite production
+  build.
+- `npm run data:test`: passed, 56 Python tests including automatic-bootstrap and
+  fail-closed exception fixtures.
+- `npm run data:validate`: passed with 119 reconciled systems and five pinned
+  astronomy sources.
+- `npm run test:e2e`: passed, 42 tests across Chromium, Firefox, and WebKit.
+- Final integrated narrative validation passed with zero state and 13 canonical
+  chapter sources.
+
+BOB-037 is complete: its moon-complete zero state, Chapter 1.13 update, narrative
+projections, production build, and cross-domain astronomy validation all pass.
 
 No source text, evidence ledger, candidate, temporary corpus, generated projection,
 `node_modules`, or `.venv` artifact is tracked.

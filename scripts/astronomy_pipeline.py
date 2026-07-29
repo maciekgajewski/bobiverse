@@ -39,9 +39,10 @@ from common import (
     WDS_FORMAT_PATH,
     WDS_PATH,
     canonical_json_bytes,
-    mapped_anchor_ids,
+    mapped_anchor_names,
     read_json,
     read_gzip,
+    resolve_anchor_bootstraps,
     sha256,
     sha256_bytes,
     value_sha256,
@@ -1437,22 +1438,35 @@ def refresh() -> None:
     radius_ly = float(config["context_radius_ly"])
     if radius_ly <= 0 or not math.isfinite(radius_ly):
         raise ValueError("context_radius_ly must be finite and positive")
-    anchors = mapped_anchor_ids()
+    anchor_names = mapped_anchor_names()
+    anchors = list(anchor_names)
     review = read_json(REVIEW_PATH) if REVIEW_PATH.exists() else {}
+    if not CANDIDATES_PATH.exists():
+        raise ValueError(
+            "Mapped anchor resolution requires an accepted candidate snapshot"
+        )
+    prior_candidates = read_json(CANDIDATES_PATH)
+    if (
+        review.get("accepted_candidate_sha256")
+        != value_sha256(prior_candidates)
+        or review.get("unresolved_ambiguities")
+    ):
+        raise ValueError(
+            "Mapped anchor resolution requires the accepted unambiguous candidate snapshot"
+        )
+    bootstraps = resolve_anchor_bootstraps(
+        anchor_names, review, prior_candidates
+    )
     cns5_astrometry_decisions = {
         str(entry["cns5_id"]): str(entry["decision"])
         for entry in review.get("cns5_astrometry_overrides", [])
     }
-    bootstrap_by_anchor = {entry.get("anchor_id"): entry for entry in review.get("anchor_bootstraps", [])}
+    bootstrap_by_anchor = {
+        entry["anchor_id"]: entry for entry in bootstraps
+    }
     non_sol = [anchor for anchor in anchors if anchor != "sol"]
-    missing = [anchor for anchor in non_sol if anchor not in bootstrap_by_anchor]
-    if missing:
-        raise ValueError(f"Mapped non-Sol anchors lack reviewed exact source bootstrap: {missing}")
     gcns_bootstraps = [str(bootstrap_by_anchor[anchor]["source_id"]) for anchor in non_sol if bootstrap_by_anchor[anchor].get("catalogue") == "gcns"]
     cns5_bootstraps = [str(bootstrap_by_anchor[anchor]["source_id"]) for anchor in non_sol if bootstrap_by_anchor[anchor].get("catalogue") == "cns5"]
-    invalid = [anchor for anchor in non_sol if bootstrap_by_anchor[anchor].get("catalogue") not in {"gcns", "cns5"} or not str(bootstrap_by_anchor[anchor].get("source_id", "")).isdigit()]
-    if invalid:
-        raise ValueError(f"Mapped non-Sol anchors have invalid reviewed bootstrap records: {invalid}")
     cns5_adql = cns5_query()
     cns5_queries = [{"stage": "local-census", "adql": cns5_adql}]
     cns5 = normalise_rows(CNS5_COLUMNS, tap_csv(GAVO_URL, cns5_adql), "cns5_id")
@@ -1493,13 +1507,23 @@ def refresh() -> None:
             }
         )
         gcns = normalise_rows(GCNS_COLUMNS, {row["source_id"]: row for row in [*gcns, *tap_csv(GAVO_URL, bootstrap_query)]}.values(), "source_id")
+    gcns_by_id = {row["source_id"]: row for row in gcns}
+    cns5_by_id = {row["cns5_id"]: row for row in cns5}
     for anchor in non_sol:
         bootstrap = bootstrap_by_anchor[anchor]
         if bootstrap["catalogue"] == "gcns":
-            record = next(row for row in gcns if row["source_id"] == str(bootstrap["source_id"]))
+            record = gcns_by_id.get(str(bootstrap["source_id"]))
+            if record is None:
+                raise ValueError(
+                    f"{anchor} bootstrap source was not returned by GCNS"
+                )
             position = {"xg": float(record["xcoord_50"]), "yg": float(record["ycoord_50"]), "zg": float(record["zcoord_50"])}
         else:
-            record = next(row for row in cns5 if row["cns5_id"] == str(bootstrap["source_id"]))
+            record = cns5_by_id.get(str(bootstrap["source_id"]))
+            if record is None:
+                raise ValueError(
+                    f"{anchor} bootstrap source was not returned by CNS5"
+                )
             position = position_from_cns5(
                 record,
                 review_decision=cns5_astrometry_decisions.get(

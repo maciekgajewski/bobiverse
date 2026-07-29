@@ -3,10 +3,10 @@ import { mapDisplayConfig } from "../../src/domain/config";
 import { nearbySystems, validateNearbySystems } from "../../src/domain/data";
 
 describe("reconciled astronomy runtime data", () => {
-  it("contains the generated Sol neighbourhood and its coverage proof", () => {
+  it("contains every generated mapped-anchor neighbourhood and its coverage proof", () => {
     expect(nearbySystems).not.toBeNull();
     if (!nearbySystems) throw new Error("Fixture dataset failed validation");
-    expect(nearbySystems.systems).toHaveLength(97);
+    expect(nearbySystems.systems).toHaveLength(119);
     expect(nearbySystems.systems[0]?.id).toBe("sol");
     expect(nearbySystems.metadata.coverage).toEqual([
       {
@@ -15,6 +15,18 @@ describe("reconciled astronomy runtime data", () => {
         radius_ly: mapDisplayConfig.context_radius_ly,
         source_record_count: 118,
         system_count: 96,
+        gcns_boundary_pc: 100,
+      },
+      {
+        anchor_id: "stellar-system-005582",
+        anchor_position_pc: {
+          xg: -2.0704846,
+          yg: -0.5874979,
+          zg: -2.3949034,
+        },
+        radius_ly: mapDisplayConfig.context_radius_ly,
+        source_record_count: 103,
+        system_count: 85,
         gcns_boundary_pc: 100,
       },
     ]);

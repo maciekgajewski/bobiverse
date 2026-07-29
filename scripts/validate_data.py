@@ -39,7 +39,8 @@ from common import (
     C20PC_PATH, C20PC_README_PATH, C20PC_SCHEMA_PATH, CANDIDATES_PATH, CNS5_PATH, CONFIG_PATH, CONFIG_SCHEMA_PATH, GAIA_ENRICHMENT_PATH,
     GCNS_PATH, GENERATED_PATH, IDENTITY_REGISTRY_PATH, LANDMARKS_PATH, REVIEW_PATH,
     ROOT, SOURCE_DIR, SOURCE_EXTRACT_SCHEMA_PATH, WDS_FORMAT_PATH, WDS_PATH,
-    mapped_anchor_ids, read_gzip, read_json, sha256, sha256_bytes, value_sha256,
+    mapped_anchor_names, read_gzip, read_json, resolve_anchor_bootstraps, sha256,
+    sha256_bytes, value_sha256,
 )
 from c20pc_census import (
     C20PC_ACKNOWLEDGEMENT,
@@ -413,15 +414,14 @@ def validate_acquisition_queries(
     cns5_manifest: dict[str, Any],
     gcns_rows: list[dict[str, str]],
     cns5_rows: list[dict[str, str]],
-    review: dict[str, Any],
+    bootstraps: list[dict[str, str]],
     config: dict[str, Any],
     anchor_ids: list[str],
 ) -> None:
     radius_pc = config["context_radius_ly"] / LY_PER_PC
     non_sol = [anchor for anchor in anchor_ids if anchor != "sol"]
     bootstrap_by_anchor = {
-        entry["anchor_id"]: entry
-        for entry in review.get("anchor_bootstraps", [])
+        entry["anchor_id"]: entry for entry in bootstraps
     }
     gcns_bootstrap_anchors = [
         anchor
@@ -477,14 +477,22 @@ def validate_acquisition_queries(
     for anchor in non_sol:
         bootstrap = bootstrap_by_anchor[anchor]
         if bootstrap["catalogue"] == "gcns":
-            row = gcns[str(bootstrap["source_id"])]
+            row = gcns.get(str(bootstrap["source_id"]))
+            if row is None:
+                raise ValueError(
+                    f"{anchor} bootstrap source is absent from the committed GCNS extract"
+                )
             position = {
                 "xg": float(row["xcoord_50"]),
                 "yg": float(row["ycoord_50"]),
                 "zg": float(row["zcoord_50"]),
             }
         else:
-            row = cns5[str(bootstrap["source_id"])]
+            row = cns5.get(str(bootstrap["source_id"]))
+            if row is None:
+                raise ValueError(
+                    f"{anchor} bootstrap source is absent from the committed CNS5 extract"
+                )
             coordinate = SkyCoord(
                 ra=float(row["ra"]) * u.deg,
                 dec=float(row["dec"]) * u.deg,
@@ -907,14 +915,13 @@ def validate_c20pc_bindings(
 
 
 def validate_anchor_bootstraps(
-    review: dict[str, Any],
+    bootstraps: list[dict[str, str]],
     candidates: dict[str, Any],
     gcns_rows: list[dict[str, str]],
     cns5_rows: list[dict[str, str]],
     expected_anchor_ids: list[str],
 ) -> None:
-    bootstraps = review.get("anchor_bootstraps", [])
-    by_anchor = {entry.get("anchor_id"): entry for entry in bootstraps}
+    by_anchor = {entry["anchor_id"]: entry for entry in bootstraps}
     non_sol = set(expected_anchor_ids) - {"sol"}
     if len(by_anchor) != len(bootstraps) or set(by_anchor) != non_sol:
         raise ValueError(
@@ -1320,7 +1327,16 @@ def validate_runtime_uncertainty(
             )
 
 
-def validate_runtime(document: dict[str, Any], manifests: dict[str, Any], candidates: dict[str, Any], review: dict[str, Any], landmarks: dict[str, Any], config: dict[str, Any]) -> None:
+def validate_runtime(
+    document: dict[str, Any],
+    manifests: dict[str, Any],
+    candidates: dict[str, Any],
+    review: dict[str, Any],
+    landmarks: dict[str, Any],
+    config: dict[str, Any],
+    bootstraps: list[dict[str, str]],
+    anchor_ids: list[str],
+) -> None:
     validate_schema(document, ROOT / "data" / "schema" / "nearby-systems.schema.json", "Nearby systems")
     if GENERATED_PATH.stat().st_size > MAX_RUNTIME_BYTES or len(document["systems"]) > MAX_SYSTEMS:
         raise ValueError("Runtime astronomy output exceeds a reviewed size budget")
@@ -1533,7 +1549,7 @@ def validate_runtime(document: dict[str, Any], manifests: dict[str, Any], candid
     overrides = {entry["candidate_system_id"]: entry for entry in review.get("overrides", [])}
     components_by_id = {component["id"]: component for component in candidates["components"]}
     anchor_positions = {"sol": {"xg": 0.0, "yg": 0.0, "zg": 0.0}}
-    for bootstrap in review.get("anchor_bootstraps", []):
+    for bootstrap in bootstraps:
         candidate = candidates_by_id.get(bootstrap.get("system_id"))
         if candidate is None:
             raise ValueError("Reviewed anchor bootstrap references a missing candidate system")
@@ -1544,8 +1560,8 @@ def validate_runtime(document: dict[str, Any], manifests: dict[str, Any], candid
         if distance(position, {"xg": 0.0, "yg": 0.0, "zg": 0.0}) + radius_pc > 100:
             raise ValueError("Required context sphere crosses the 100 pc GCNS boundary")
         anchor_positions[bootstrap["anchor_id"]] = position
-    if set(anchor_positions) != set(mapped_anchor_ids()):
-        raise ValueError("Mapped anchors lack reviewed source-backed bootstrap records")
+    if set(anchor_positions) != set(anchor_ids):
+        raise ValueError("Mapped anchors lack source-backed bootstrap records")
     expected_ids = {"sol"}
     expected_systems: list[
         tuple[float, str, dict[str, Any], str, dict[str, float]]
@@ -1712,7 +1728,18 @@ def validate_runtime(document: dict[str, Any], manifests: dict[str, Any], candid
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Independently validate the reconciled BOB-013 astronomy inputs and runtime output.")
-    parser.parse_args()
+    parser.add_argument(
+        "--narrative-root",
+        type=Path,
+        help="Narrative root used to discover mapped astronomy anchors",
+    )
+    parser.add_argument(
+        "--review-path",
+        type=Path,
+        default=REVIEW_PATH,
+        help="Astronomy review file to validate (defaults to the canonical review)",
+    )
+    args = parser.parse_args()
     config = read_json(CONFIG_PATH)
     validate_schema(config, CONFIG_SCHEMA_PATH, "Map display configuration")
     gcns_manifest, gcns_rows = validate_extract("gcns", GCNS_COLUMNS, "source_id")
@@ -1721,7 +1748,7 @@ def main() -> None:
     c20pc_manifest, c20pc_rows = validate_c20pc()
     registry = read_json(IDENTITY_REGISTRY_PATH)
     candidates = read_json(CANDIDATES_PATH)
-    review = read_json(REVIEW_PATH)
+    review = read_json(args.review_path)
     landmarks = read_json(LANDMARKS_PATH)
     validate_wds(
         cns5_rows, review, gcns_rows, gaia_rows, candidates
@@ -1729,14 +1756,20 @@ def main() -> None:
     wds_document = read_json(SOURCE_DIR / "wds-membership.json")
     validate_wds_candidate_binding(candidates, wds_document)
     validate_registry(registry)
+    validate_candidates(candidates, review, registry)
+    anchor_names = mapped_anchor_names(args.narrative_root)
+    anchor_ids = list(anchor_names)
+    bootstraps = resolve_anchor_bootstraps(
+        anchor_names, review, candidates
+    )
     validate_acquisition_queries(
         gcns_manifest,
         cns5_manifest,
         gcns_rows,
         cns5_rows,
-        review,
+        bootstraps,
         config,
-        mapped_anchor_ids(),
+        anchor_ids,
     )
     validate_join_accounting(gcns_rows, cns5_rows, gaia_rows, gaia_manifest)
     validate_source_union(gcns_rows, cns5_rows, candidates)
@@ -1747,7 +1780,6 @@ def main() -> None:
         candidates,
         review.get("cns5_astrometry_overrides", []),
     )
-    validate_candidates(candidates, review, registry)
     validate_c20pc_bindings(
         c20pc_manifest,
         c20pc_rows,
@@ -1757,7 +1789,7 @@ def main() -> None:
         cns5_rows,
     )
     validate_anchor_bootstraps(
-        review, candidates, gcns_rows, cns5_rows, mapped_anchor_ids()
+        bootstraps, candidates, gcns_rows, cns5_rows, anchor_ids
     )
     wds_manifest = wds_document["source"]
     runtime = read_json(GENERATED_PATH)
@@ -1765,7 +1797,22 @@ def main() -> None:
         runtime, gcns_rows, cns5_rows, gaia_rows, candidates, review
     )
     validate_runtime_uncertainty(runtime, candidates, gcns_rows, cns5_rows)
-    validate_runtime(runtime, {"gcns": gcns_manifest, "cns5": cns5_manifest, "gaia_dr3": gaia_manifest, "wds": wds_manifest, "c20pc": c20pc_manifest}, candidates, review, landmarks, config)
+    validate_runtime(
+        runtime,
+        {
+            "gcns": gcns_manifest,
+            "cns5": cns5_manifest,
+            "gaia_dr3": gaia_manifest,
+            "wds": wds_manifest,
+            "c20pc": c20pc_manifest,
+        },
+        candidates,
+        review,
+        landmarks,
+        config,
+        bootstraps,
+        anchor_ids,
+    )
     print(f"Validated {len(read_json(GENERATED_PATH)['systems'])} reconciled systems and five pinned astronomy sources")
 
 
