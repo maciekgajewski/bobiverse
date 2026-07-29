@@ -11,10 +11,12 @@ import { fileURLToPath } from "node:url";
 import { nearbySystems } from "../src/domain/data";
 import {
   generateNarrativeWorld,
-  narrativeSchemaErrors,
+  NarrativeStructureValidationError,
+  prepareNarrativeCorpus,
+  type FormatNarrativeStructureErrors,
   type NarrativeCorpus,
+  type PreparedNarrativeCorpus,
   type NarrativeRecord,
-  validateNarrativeCorpus,
 } from "../src/narrative/model";
 import {
   JsonSourceParseError,
@@ -196,7 +198,9 @@ function chapterManifest(loaded: LoadedCorpus): NarrativeRecord {
     .map((source) => {
       const chapter = source.value.chapter;
       if (typeof chapter !== "string")
-        throw new Error(`Invalid chapter source: ${displayPath(source.filePath)}.`);
+        throw new Error(
+          `Invalid chapter source: ${displayPath(source.filePath)}.`,
+        );
       const [book, number] = chapter.split(".");
       return { chapter, path: `chapters/${book}/${number}.json` };
     })
@@ -212,9 +216,15 @@ async function assertCanonicalManifest(
   rootArgument: string,
   loaded: LoadedCorpus,
 ): Promise<void> {
-  if (path.resolve(repositoryRoot, rootArgument) !== path.join(repositoryRoot, "data/narrative"))
+  if (
+    path.resolve(repositoryRoot, rootArgument) !==
+    path.join(repositoryRoot, "data/narrative")
+  )
     return;
-  const manifestPath = path.join(repositoryRoot, "generated/narrative/chapter-manifest.json");
+  const manifestPath = path.join(
+    repositoryRoot,
+    "generated/narrative/chapter-manifest.json",
+  );
   let candidate: unknown;
   try {
     candidate = JSON.parse(await readFile(manifestPath, "utf8"));
@@ -232,17 +242,19 @@ async function assertCanonicalManifest(
   }
 }
 
-function schemaErrorLines(loaded: LoadedCorpus): string[] {
-  return loaded.sources.flatMap((source) =>
-    formatSchemaDiagnostics(
-      narrativeSchemaErrors(source.definition, source.value),
-      source.value,
-      source.locations,
-    ).map(
+function sourceSchemaErrorFormatter(
+  loaded: LoadedCorpus,
+): FormatNarrativeStructureErrors {
+  return (definition, candidate, errors, label) => {
+    const source = loaded.sources.find(
+      (entry) => entry.definition === definition && entry.value === candidate,
+    );
+    if (!source) return [`${label} fails JSON Schema validation.`];
+    return formatSchemaDiagnostics(errors, source.value, source.locations).map(
       (diagnostic) =>
         `${displayPath(source.filePath)}:${diagnostic.location.line}:${diagnostic.location.column}: error: ${diagnostic.message}`,
-    ),
-  );
+    );
+  };
 }
 
 function sourceForSemanticError(
@@ -271,19 +283,25 @@ async function main(): Promise<void> {
     printUsage();
     return;
   }
-  if (command !== "validate" && command !== "generate" && command !== "manifest")
+  if (
+    command !== "validate" &&
+    command !== "generate" &&
+    command !== "manifest"
+  )
     usage();
   const root = option(argumentsList, "--root") ?? "data/narrative";
   const loaded = await loadCorpus(root);
-  const schemaErrors = schemaErrorLines(loaded);
-  if (schemaErrors.length > 0) {
-    console.error(schemaErrors.join("\n"));
-    process.exitCode = 1;
-    return;
-  }
+  let prepared: PreparedNarrativeCorpus;
   try {
-    validateNarrativeCorpus(loaded.corpus);
+    prepared = prepareNarrativeCorpus(loaded.corpus, {
+      formatStructureErrors: sourceSchemaErrorFormatter(loaded),
+    });
   } catch (error) {
+    if (error instanceof NarrativeStructureValidationError) {
+      console.error(error.diagnostics.join("\n"));
+      process.exitCode = 1;
+      return;
+    }
     const cause = error instanceof Error ? error : new Error("Unknown failure");
     throw errorAt(
       sourceForSemanticError(cause, loaded),
@@ -294,10 +312,14 @@ async function main(): Promise<void> {
   if (command === "manifest") {
     const outputPath = path.resolve(
       repositoryRoot,
-      option(argumentsList, "--output") ?? "generated/narrative/chapter-manifest.json",
+      option(argumentsList, "--output") ??
+        "generated/narrative/chapter-manifest.json",
     );
     await mkdir(path.dirname(outputPath), { recursive: true });
-    await writeFile(outputPath, `${JSON.stringify(chapterManifest(loaded), null, 2)}\n`);
+    await writeFile(
+      outputPath,
+      `${JSON.stringify(chapterManifest(loaded), null, 2)}\n`,
+    );
     console.log(`Generated chapter manifest at ${outputPath}.`);
     return;
   }
@@ -310,7 +332,7 @@ async function main(): Promise<void> {
   }
   const output = option(argumentsList, "--output");
   const world = generateNarrativeWorld(
-    loaded.corpus,
+    prepared,
     option(argumentsList, "--chapter") ?? null,
   );
   const serializedWorld = `${JSON.stringify(world, null, 2)}\n`;

@@ -28,7 +28,7 @@ import {
 import {
   generateNarrativeWorld,
   meaningfulNarrativeDateOptions,
-  meaningfulNarrativeDates,
+  type MeaningfulNarrativeDate,
   type NarrativeWorld,
 } from "./narrative/model";
 import {
@@ -43,7 +43,11 @@ import {
   setTimelineViewport,
   type ReaderProgress,
 } from "./narrative/progress";
-import { narrativeChapters, narrativeCorpus } from "./narrative/runtime";
+import {
+  narrativeChapters,
+  narrativeCorpus,
+  narrativePreparationError,
+} from "./narrative/runtime";
 import "./styles.css";
 
 const EMPTY_SYSTEMS: StellarSystem[] = [];
@@ -52,6 +56,14 @@ const EMPTY_NARRATIVE_WORLD: NarrativeWorld = {
   activity: [],
   view: { chapter: null, display_date: null },
 };
+type NarrativeMapProjection = ReturnType<typeof projectNarrativeMap>;
+interface ApplicationProjection {
+  progress: ReaderProgress;
+  dateOptions: readonly MeaningfulNarrativeDate[];
+  world: NarrativeWorld;
+  map: NarrativeMapProjection;
+  error: string | null;
+}
 const FOCUSABLE_PANEL_ELEMENTS =
   'a[href], button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])';
 
@@ -61,23 +73,85 @@ function projectionErrorMessage(error: unknown): string {
     : "Unknown narrative projection error.";
 }
 
-function loadInitialReaderState(): {
-  progress: ReaderProgress;
-  projectionError: string | null;
-} {
+function emptyMapProjection(): NarrativeMapProjection {
+  return {
+    knownSystemIds: new Set(),
+    missingAstronomySystemIds: new Set(),
+    narrativeSystemIdsByAstronomyId: new Map(),
+    activeSystemIds: new Set(),
+    contextSystems: [],
+  };
+}
+
+function projectReaderProgress(
+  next: ReaderProgress,
+  systems: readonly StellarSystem[],
+): ApplicationProjection {
+  if (!narrativeCorpus) {
+    throw new Error(
+      narrativePreparationError ?? "Narrative corpus preparation failed.",
+    );
+  }
+  const initialOptions = next.viewChapter
+    ? meaningfulNarrativeDateOptions(narrativeCorpus, next.viewChapter)
+    : [];
+  const progress = normalizeReaderProgress(
+    next,
+    narrativeChapters,
+    initialOptions.map(({ date }) => date),
+  );
+  const dateOptions =
+    progress.viewChapter === next.viewChapter
+      ? initialOptions
+      : progress.viewChapter
+        ? meaningfulNarrativeDateOptions(narrativeCorpus, progress.viewChapter)
+        : [];
+  const world = generateNarrativeWorld(
+    narrativeCorpus,
+    progress.viewChapter,
+    progress.mode === "date" ? progress.displayDate : null,
+  );
+  return {
+    progress,
+    dateOptions,
+    world,
+    map: projectNarrativeMap(
+      world,
+      systems,
+      mapDisplayConfig.context_radius_ly,
+      progress.mode,
+    ),
+    error: null,
+  };
+}
+
+function loadInitialProjection(
+  systems: readonly StellarSystem[],
+): ApplicationProjection {
   const preliminary = loadReaderProgress(narrativeChapters, []);
   try {
-    const dates = preliminary.viewChapter
-      ? meaningfulNarrativeDates(narrativeCorpus, preliminary.viewChapter)
+    if (!narrativeCorpus) {
+      throw new Error(
+        narrativePreparationError ?? "Narrative corpus preparation failed.",
+      );
+    }
+    const initialOptions = preliminary.viewChapter
+      ? meaningfulNarrativeDateOptions(narrativeCorpus, preliminary.viewChapter)
       : [];
-    return {
-      progress: loadReaderProgress(narrativeChapters, dates),
-      projectionError: null,
-    };
+    return projectReaderProgress(
+      loadReaderProgress(
+        narrativeChapters,
+        initialOptions.map(({ date }) => date),
+      ),
+      systems,
+    );
   } catch (error) {
     return {
       progress: preliminary,
-      projectionError: projectionErrorMessage(error),
+      dateOptions: [],
+      world: EMPTY_NARRATIVE_WORLD,
+      map: emptyMapProjection(),
+      error: projectionErrorMessage(error),
     };
   }
 }
@@ -92,6 +166,7 @@ function canRenderWebgl(): boolean {
 }
 
 export default function App() {
+  const systems = nearbySystems?.systems ?? EMPTY_SYSTEMS;
   const [selection, setSelection] = useState<SelectionIdentity | null>(null);
   const [browserQuery, setBrowserQuery] = useState("");
   const [selectionStatus, setSelectionStatus] = useState("");
@@ -106,13 +181,10 @@ export default function App() {
     "checking",
   );
   const [resetToken, setResetToken] = useState(0);
-  const [initialReaderState] = useState(loadInitialReaderState);
-  const [progress, setProgress] = useState<ReaderProgress>(
-    initialReaderState.progress,
+  const [applicationProjection, setApplicationProjection] = useState(() =>
+    loadInitialProjection(systems),
   );
-  const [transitionProjectionError, setTransitionProjectionError] = useState<
-    string | null
-  >(initialReaderState.projectionError);
+  const progress = applicationProjection.progress;
   const [pendingReadThrough, setPendingReadThrough] = useState<string | null>(
     null,
   );
@@ -120,27 +192,7 @@ export default function App() {
     label: `1 ${DISPLAY_DISTANCE_UNIT}`,
     pixelWidth: 50,
   });
-  const systems = nearbySystems?.systems ?? EMPTY_SYSTEMS;
-  const narrativeProjectionResult = useMemo(() => {
-    try {
-      const dateOptions = progress.viewChapter
-        ? meaningfulNarrativeDateOptions(narrativeCorpus, progress.viewChapter)
-        : [];
-      const world = generateNarrativeWorld(
-        narrativeCorpus,
-        progress.viewChapter,
-        progress.mode === "date" ? progress.displayDate : null,
-      );
-      return { dateOptions, error: null, world };
-    } catch (error) {
-      return {
-        dateOptions: [],
-        error: projectionErrorMessage(error),
-        world: EMPTY_NARRATIVE_WORLD,
-      };
-    }
-  }, [progress.displayDate, progress.mode, progress.viewChapter]);
-  const meaningfulDateOptions = narrativeProjectionResult.dateOptions;
+  const meaningfulDateOptions = applicationProjection.dateOptions;
   const meaningfulDates = useMemo(
     () => meaningfulDateOptions.map(({ date }) => date),
     [meaningfulDateOptions],
@@ -155,7 +207,7 @@ export default function App() {
       ),
     [meaningfulDateOptions],
   );
-  const narrativeWorld = narrativeProjectionResult.world;
+  const narrativeWorld = applicationProjection.world;
   const allBrowserGroups = useMemo(
     () => buildNarrativeBrowserGroups(narrativeWorld, progress.mode),
     [narrativeWorld, progress.mode],
@@ -165,16 +217,7 @@ export default function App() {
       buildNarrativeBrowserGroups(narrativeWorld, progress.mode, browserQuery),
     [browserQuery, narrativeWorld, progress.mode],
   );
-  const mapProjection = useMemo(
-    () =>
-      projectNarrativeMap(
-        narrativeWorld,
-        systems,
-        mapDisplayConfig.context_radius_ly,
-        progress.mode,
-      ),
-    [narrativeWorld, progress.mode, systems],
-  );
+  const mapProjection = applicationProjection.map;
   const contextSystemIds = useMemo(
     () => new Set(mapProjection.contextSystems.map((system) => system.id)),
     [mapProjection.contextSystems],
@@ -301,40 +344,26 @@ export default function App() {
   };
   const updateProgress = (next: ReaderProgress) => {
     try {
-      const dates = next.viewChapter
-        ? meaningfulNarrativeDates(narrativeCorpus, next.viewChapter)
-        : [];
-      const normalized = normalizeReaderProgress(
-        next,
-        narrativeChapters,
-        dates,
-      );
+      const projected = projectReaderProgress(next, systems);
       if (selection) {
-        const nextWorld = generateNarrativeWorld(
-          narrativeCorpus,
-          normalized.viewChapter,
-          normalized.mode === "date" ? normalized.displayDate : null,
-        );
-        const nextProjection = projectNarrativeMap(
-          nextWorld,
-          systems,
-          mapDisplayConfig.context_radius_ly,
-          normalized.mode,
-        );
         const nextContextIds = new Set(
-          nextProjection.contextSystems.map((system) => system.id),
+          projected.map.contextSystems.map((system) => system.id),
         );
-        if (!isSelectionEligibleForMap(selection, nextWorld, nextContextIds)) {
+        if (
+          !isSelectionEligibleForMap(selection, projected.world, nextContextIds)
+        ) {
           setSelection(null);
           setSelectionStatus(
             "Selection cleared because the object is not eligible in this view.",
           );
         }
       }
-      setProgress(normalized);
-      setTransitionProjectionError(null);
+      setApplicationProjection(projected);
     } catch (error) {
-      setTransitionProjectionError(projectionErrorMessage(error));
+      setApplicationProjection((current) => ({
+        ...current,
+        error: projectionErrorMessage(error),
+      }));
     }
   };
   const selectKnowledge = (chapter: string) =>
@@ -344,11 +373,14 @@ export default function App() {
   const selectDate = (date: string) =>
     updateProgress(selectDisplayDate(progress, date, meaningfulDates));
   const toggleBrowserGroup = (group: keyof ReaderProgress["browserGroups"]) =>
-    setProgress((current) => ({
+    setApplicationProjection((current) => ({
       ...current,
-      browserGroups: {
-        ...current.browserGroups,
-        [group]: !current.browserGroups[group],
+      progress: {
+        ...current.progress,
+        browserGroups: {
+          ...current.progress.browserGroups,
+          [group]: !current.progress.browserGroups[group],
+        },
       },
     }));
   const confirmPendingReadThrough = () => {
@@ -375,21 +407,23 @@ export default function App() {
     );
   };
   const zoomTimeline = (delta: number) =>
-    updateProgress(
-      setTimelineViewport(
-        progress,
-        progress.timelineZoom + delta,
-        progress.timelinePan,
+    setApplicationProjection((current) => ({
+      ...current,
+      progress: setTimelineViewport(
+        current.progress,
+        current.progress.timelineZoom + delta,
+        current.progress.timelinePan,
       ),
-    );
+    }));
   const panTimeline = (delta: number) =>
-    updateProgress(
-      setTimelineViewport(
-        progress,
-        progress.timelineZoom,
-        progress.timelinePan + delta,
+    setApplicationProjection((current) => ({
+      ...current,
+      progress: setTimelineViewport(
+        current.progress,
+        current.progress.timelineZoom,
+        current.progress.timelinePan + delta,
       ),
-    );
+    }));
 
   if (nearbySystemsResult.error || !nearbySystems)
     return (
@@ -413,8 +447,7 @@ export default function App() {
         </p>
       </main>
     );
-  const projectionError =
-    transitionProjectionError ?? narrativeProjectionResult.error;
+  const projectionError = applicationProjection.error;
   if (projectionError)
     return (
       <main className="terminal-state error-state">
@@ -425,6 +458,8 @@ export default function App() {
         </p>
       </main>
     );
+  if (!narrativeCorpus)
+    throw new Error("Narrative corpus is unavailable after preparation.");
 
   return (
     <main className="app-shell">

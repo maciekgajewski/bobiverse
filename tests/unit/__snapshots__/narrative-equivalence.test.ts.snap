@@ -1,0 +1,4772 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`canonical narrative equivalence > keeps the public zero-state, chapter, date-option, and date-mode matrix stable 1`] = `
+{
+  "meaningfulDates": [
+    {
+      "date": "2016",
+      "source_chapters": [
+        "1.1",
+      ],
+    },
+    {
+      "date": "2133",
+      "source_chapters": [
+        "1.2",
+        "1.3",
+        "1.4",
+        "1.5",
+        "1.6",
+        "1.7",
+        "1.8",
+        "1.9",
+        "1.10",
+        "1.11",
+      ],
+    },
+  ],
+  "worlds": {
+    "chapter": {
+      "1.1": {
+        "activity": [
+          {
+            "effective_date": "2016",
+            "entity_id": "character:robert-johansson",
+            "reasons": [
+              "introduction",
+              "appearance",
+            ],
+            "source_chapter": "1.1",
+          },
+          {
+            "effective_date": "2016",
+            "entity_id": "event:bob-road-incident",
+            "reasons": [
+              "event",
+            ],
+            "source_chapter": "1.1",
+          },
+          {
+            "effective_date": "2016",
+            "entity_id": "location:las-vegas",
+            "reasons": [
+              "introduction",
+              "appearance_location",
+              "chapter_location",
+              "event_location",
+            ],
+            "source_chapter": "1.1",
+          },
+          {
+            "effective_date": "2016",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.1",
+          },
+          {
+            "effective_date": "2016",
+            "entity_id": "organization:cryoeterna",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.1",
+          },
+          {
+            "effective_date": "2016",
+            "entity_id": "organization:intergator-software",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.1",
+          },
+        ],
+        "entities": [
+          {
+            "astronomy_object_id": "sol",
+            "child_ids": [
+              "location:sol",
+            ],
+            "entity_type": "location",
+            "id": "location:solar-system",
+            "kind": "star_system",
+            "name": "Solar System",
+          },
+          {
+            "child_ids": [
+              "location:mercury",
+              "location:venus",
+              "location:earth",
+              "location:mars",
+              "location:asteroid-belt",
+              "location:jupiter",
+              "location:saturn",
+              "location:uranus",
+              "location:neptune",
+              "location:kuiper-belt",
+              "location:oort-cloud",
+            ],
+            "entity_type": "location",
+            "id": "location:sol",
+            "kind": "star",
+            "name": "Sol",
+            "parent_location_id": "location:solar-system",
+            "parent_relation": "member_of_system",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:mercury",
+            "kind": "planet",
+            "name": "Mercury",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:venus",
+            "kind": "planet",
+            "name": "Venus",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [
+              "location:las-vegas",
+            ],
+            "entity_type": "location",
+            "id": "location:earth",
+            "kind": "planet",
+            "name": "Earth",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:mars",
+            "kind": "planet",
+            "name": "Mars",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:asteroid-belt",
+            "kind": "asteroid_belt",
+            "name": "Asteroid Belt",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:jupiter",
+            "kind": "planet",
+            "name": "Jupiter",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:saturn",
+            "kind": "planet",
+            "name": "Saturn",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:uranus",
+            "kind": "planet",
+            "name": "Uranus",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:neptune",
+            "kind": "planet",
+            "name": "Neptune",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:kuiper-belt",
+            "kind": "kuiper_belt",
+            "name": "Kuiper Belt",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:oort-cloud",
+            "kind": "oort_cloud",
+            "name": "Oort Cloud",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "entity_type": "species",
+            "homeworld_id": "location:earth",
+            "id": "species:human",
+            "name": "Human",
+          },
+          {
+            "description": "Artificial Machine Intelligence (AMI) is an artificial intelligence created directly as a machine mind rather than copied from a biological mind.",
+            "entity_type": "technology",
+            "id": "technology:ami",
+            "name": "AMI",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:las-vegas",
+            "kind": "locale",
+            "name": "Las Vegas",
+            "parent_location_id": "location:earth",
+            "parent_relation": "located_on",
+          },
+          {
+            "date": "2016",
+            "description": "While Bob crosses a Las Vegas street, a car approaches, he experiences sudden pain, and medical and legal voices accompany his fading awareness. The sequence strongly suggests a collision and death, although neither is stated directly.",
+            "entity_type": "event",
+            "id": "event:bob-road-incident",
+            "location_id": "location:las-vegas",
+            "name": "Bob's Road Incident",
+          },
+          {
+            "aliases": [
+              "Bob",
+            ],
+            "current_state": "Presumed dead after the road incident.",
+            "entity_type": "character",
+            "id": "character:robert-johansson",
+            "last_known_location": {
+              "effective_date": "2016",
+              "location_id": "location:las-vegas",
+              "source_chapter": "1.1",
+            },
+            "name": "Robert Johansson",
+            "species_id": "species:human",
+          },
+          {
+            "description": "A cryonics provider that contracts with Bob for post-death preservation.",
+            "entity_type": "organization",
+            "id": "organization:cryoeterna",
+            "name": "CryoEterna Inc.",
+          },
+          {
+            "current_state": "Sold.",
+            "description": "Bob's software company, built around a successful engineering application and sold after attracting a large acquisition offer.",
+            "entity_type": "organization",
+            "id": "organization:intergator-software",
+            "name": "InterGator Software",
+          },
+        ],
+        "view": {
+          "chapter": "1.1",
+          "display_date": "2016",
+        },
+      },
+      "1.10": {
+        "activity": [
+          {
+            "effective_date": "2016",
+            "entity_id": "character:robert-johansson",
+            "reasons": [
+              "introduction",
+              "appearance",
+            ],
+            "source_chapter": "1.1",
+          },
+          {
+            "effective_date": "2016",
+            "entity_id": "event:bob-road-incident",
+            "reasons": [
+              "event",
+            ],
+            "source_chapter": "1.1",
+          },
+          {
+            "effective_date": "2016",
+            "entity_id": "location:las-vegas",
+            "reasons": [
+              "introduction",
+              "appearance_location",
+              "chapter_location",
+              "event_location",
+            ],
+            "source_chapter": "1.1",
+          },
+          {
+            "effective_date": "2016",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.1",
+          },
+          {
+            "effective_date": "2016",
+            "entity_id": "organization:cryoeterna",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.1",
+          },
+          {
+            "effective_date": "2016",
+            "entity_id": "organization:intergator-software",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.1",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "introduction",
+              "appearance",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "introduction",
+              "appearance",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:robert-johansson",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "event:bob-road-incident",
+            "reasons": [
+              "mention",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "introduction",
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:applied-synergetics",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:cryoeterna",
+            "reasons": [
+              "mention",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:free-american-independent-theocratic-hegemony",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:guppi-interface",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.3",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.3",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.3",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.3",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:guppi-interface",
+            "reasons": [
+              "mention",
+            ],
+            "source_chapter": "1.3",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:roamers",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.3",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:vast",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.3",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.4",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.4",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.4",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.4",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:free-american-independent-theocratic-hegemony",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.4",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:minister-travis",
+            "reasons": [
+              "introduction",
+              "appearance",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:free-american-independent-theocratic-hegemony",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:ministry-of-proper-thought",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:ministry-of-truth",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:guppi-interface",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "update",
+              "appearance",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:minister-travis",
+            "reasons": [
+              "mention",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:free-american-independent-theocratic-hegemony",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:guppi-interface",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:nanites",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:roamers",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:von-neumann-probe",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "update",
+              "appearance",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:earth",
+            "reasons": [
+              "mention",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:australia",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:brazilian-empire",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:china",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:free-american-independent-theocratic-hegemony",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:united-states-of-eurasia",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:ami",
+            "reasons": [
+              "mention",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:suddar",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:surge-drive",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:von-neumann-probe",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:jiro-tanaka",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:joana-almeida",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:kenneth-martins",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:neves-reijnder",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:roamers",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.9",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.9",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:minister-jacoby",
+            "reasons": [
+              "introduction",
+              "appearance",
+            ],
+            "source_chapter": "1.9",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.9",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.9",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:ministry-of-truth",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.9",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:roamers",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.9",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "update",
+              "appearance",
+            ],
+            "source_chapter": "1.10",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.10",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:kenneth-martins",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.10",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.10",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.10",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:free-american-independent-theocratic-hegemony",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.10",
+          },
+        ],
+        "entities": [
+          {
+            "astronomy_object_id": "sol",
+            "child_ids": [
+              "location:sol",
+            ],
+            "entity_type": "location",
+            "id": "location:solar-system",
+            "kind": "star_system",
+            "name": "Solar System",
+          },
+          {
+            "child_ids": [
+              "location:mercury",
+              "location:venus",
+              "location:earth",
+              "location:mars",
+              "location:asteroid-belt",
+              "location:jupiter",
+              "location:saturn",
+              "location:uranus",
+              "location:neptune",
+              "location:kuiper-belt",
+              "location:oort-cloud",
+            ],
+            "entity_type": "location",
+            "id": "location:sol",
+            "kind": "star",
+            "name": "Sol",
+            "parent_location_id": "location:solar-system",
+            "parent_relation": "member_of_system",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:mercury",
+            "kind": "planet",
+            "name": "Mercury",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:venus",
+            "kind": "planet",
+            "name": "Venus",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [
+              "location:las-vegas",
+              "location:new-handeltown",
+            ],
+            "entity_type": "location",
+            "id": "location:earth",
+            "kind": "planet",
+            "name": "Earth",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:mars",
+            "kind": "planet",
+            "name": "Mars",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:asteroid-belt",
+            "kind": "asteroid_belt",
+            "name": "Asteroid Belt",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:jupiter",
+            "kind": "planet",
+            "name": "Jupiter",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:saturn",
+            "kind": "planet",
+            "name": "Saturn",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:uranus",
+            "kind": "planet",
+            "name": "Uranus",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:neptune",
+            "kind": "planet",
+            "name": "Neptune",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:kuiper-belt",
+            "kind": "kuiper_belt",
+            "name": "Kuiper Belt",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:oort-cloud",
+            "kind": "oort_cloud",
+            "name": "Oort Cloud",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "entity_type": "species",
+            "homeworld_id": "location:earth",
+            "id": "species:human",
+            "name": "Human",
+          },
+          {
+            "description": "Artificial Machine Intelligence (AMI) is an artificial intelligence created directly as a machine mind rather than copied from a biological mind.",
+            "entity_type": "technology",
+            "id": "technology:ami",
+            "name": "AMI",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:las-vegas",
+            "kind": "locale",
+            "name": "Las Vegas",
+            "parent_location_id": "location:earth",
+            "parent_relation": "located_on",
+          },
+          {
+            "date": "2016",
+            "description": "While Bob crosses a Las Vegas street, a car approaches, he experiences sudden pain, and medical and legal voices accompany his fading awareness. The sequence strongly suggests a collision and death, although neither is stated directly.",
+            "entity_type": "event",
+            "id": "event:bob-road-incident",
+            "location_id": "location:las-vegas",
+            "name": "Bob's Road Incident",
+          },
+          {
+            "aliases": [
+              "Bob",
+            ],
+            "current_state": "Dead.",
+            "death_date": "2016",
+            "death_event_id": "event:bob-road-incident",
+            "entity_type": "character",
+            "id": "character:robert-johansson",
+            "last_known_location": {
+              "effective_date": "2016",
+              "location_id": "location:las-vegas",
+              "source_chapter": "1.1",
+            },
+            "name": "Robert Johansson",
+            "species_id": "species:human",
+          },
+          {
+            "description": "A cryonics provider that contracts with Bob for post-death preservation.",
+            "entity_type": "organization",
+            "id": "organization:cryoeterna",
+            "name": "CryoEterna Inc.",
+          },
+          {
+            "current_state": "Sold.",
+            "description": "Bob's software company, built around a successful engineering application and sold after attracting a large acquisition offer.",
+            "entity_type": "organization",
+            "id": "organization:intergator-software",
+            "name": "InterGator Software",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:new-handeltown",
+            "kind": "locale",
+            "map_status": "unmapped",
+            "name": "New Handeltown",
+            "parent_location_id": "location:earth",
+            "parent_relation": "located_on",
+          },
+          {
+            "current_state": "A nightly backed-up computer simulation made from a copy of Robert Johansson's mind and the remaining candidate for controlling a Von Neumann probe. Restored from backups after an attack destroyed the replicant matrices, he considers himself conscious, alive, and Bob in the important respects. He has complete project access and expanded library access, is regarded as adaptable and resilient, and is training for the mission while still lacking a visible face. He will remain online except for a nightly half-hour semi-sleep during backup.",
+            "entity_type": "character",
+            "id": "character:bob-replicant",
+            "last_known_location": {
+              "effective_date": "2133",
+              "location_id": "location:new-handeltown",
+              "source_chapter": "1.10",
+            },
+            "name": "Bob",
+          },
+          {
+            "entity_type": "character",
+            "id": "character:dr-landers",
+            "last_known_location": {
+              "effective_date": "2133",
+              "location_id": "location:new-handeltown",
+              "source_chapter": "1.10",
+            },
+            "name": "Dr. Landers",
+          },
+          {
+            "description": "The Free American Independent Theocratic Hegemony, a theocratic U.S. government that makes criticism a felony and permits the deactivation of machine persons for it. It restricts information by default; the domestic internet no longer exists, and genealogy records are unavailable to the public. It is divided into factions and power blocs, including factions that regard artificial intelligence and replicants as abominations or advocate abandoning technology from steam power onward. It finances the replicant project and owns Bob. It controls most of North America, while several internal factions oppose Project HEAVEN, the Habitable Earths Abiogenic Vessel Exploration Network, and seek to stop it. Security personnel believe internal factions leaked the project's progress to provoke competing nations into reacting.",
+            "entity_type": "organization",
+            "id": "organization:free-american-independent-theocratic-hegemony",
+            "name": "FAITH",
+          },
+          {
+            "description": "A company that owns Bob as property and develops replicant-controlled machinery.",
+            "entity_type": "organization",
+            "id": "organization:applied-synergetics",
+            "name": "Applied Synergetics Inc.",
+          },
+          {
+            "description": "An interface that offloads tasks for replicants while retaining their human limits on multitasking. Its name expands to General Unit Primary Peripheral Interface. Its logs record Bob's monitoring interfaces and scripts.",
+            "entity_type": "technology",
+            "id": "technology:guppi-interface",
+            "name": "GUPPI",
+          },
+          {
+            "description": "Remote observation and manipulation devices that Bob directs through GUPPI. They come in varied sizes, can coordinate across scales, and need minimal supervision once their tasks, dependencies, and interruption conditions are defined. Without Bob's active interference, they can work up to ten times faster. They can travel along floors, walls, and ceilings, carry video cameras for remote observation, and pick up vibrations transmitted through a wall when pressed against it.",
+            "entity_type": "technology",
+            "id": "technology:roamers",
+            "name": "ROAMers",
+          },
+          {
+            "description": "Variable Attachment Surface Tension is a system that gives a ROAMer a secure grip.",
+            "entity_type": "technology",
+            "id": "technology:vast",
+            "name": "VAST",
+          },
+          {
+            "aliases": [
+              "Senior Minister Travis",
+            ],
+            "entity_type": "character",
+            "id": "character:minister-travis",
+            "last_known_location": {
+              "effective_date": "2133",
+              "location_id": "location:new-handeltown",
+              "source_chapter": "1.5",
+            },
+            "name": "Minister Travis",
+          },
+          {
+            "description": "A FAITH ministry that finances the replicant venture and has military, colonization, and diplomatic responsibilities. It officially supports and actively funds the replicant enterprise, and holds that the enterprise's machine minds are without souls but are based on God's creation rather than attempts to usurp divine authority.",
+            "entity_type": "organization",
+            "id": "organization:ministry-of-truth",
+            "name": "Ministry of Truth",
+          },
+          {
+            "description": "A FAITH ministry that uses direct neurological stimulation as part of re-education.",
+            "entity_type": "organization",
+            "id": "organization:ministry-of-proper-thought",
+            "name": "Ministry of Proper Thought",
+          },
+          {
+            "description": "A self-replicating spacecraft designed to travel between star systems and construct new copies of itself along the way. Interstellar use became possible after a breakthrough in subspace theory, and such probes are central to a competitive international colonization effort.",
+            "entity_type": "technology",
+            "id": "technology:von-neumann-probe",
+            "name": "Von Neumann probe",
+          },
+          {
+            "description": "Tiny, single-purpose devices used for work below ROAMer scale; their flexibility is limited.",
+            "entity_type": "technology",
+            "id": "technology:nanites",
+            "name": "nanites",
+          },
+          {
+            "description": "A recently developed drive technology enabled by a breakthrough in subspace theory and used to equip spacecraft for interstellar operations. Beyond prototypes, only a small number of SURGE-equipped vessels are in active service. Its operating principle and the expansion of SURGE have not yet been revealed.",
+            "entity_type": "technology",
+            "id": "technology:surge-drive",
+            "name": "SURGE drive",
+          },
+          {
+            "description": "A subspace technology enabled by the same theoretical breakthrough as the SURGE drive and associated with the new possibility of interstellar probes and colonization. Its specific function, operating principle, capabilities, limitations, and acronym expansion have not yet been revealed.",
+            "entity_type": "technology",
+            "id": "technology:suddar",
+            "name": "SUDDAR",
+          },
+          {
+            "description": "The United States of Eurasia controls Europe and most of western Russia. It began an interstellar probe project two years earlier, and Dr. Landers considers it the strongest long-term competitor, with a substantial lead in colonization readiness.",
+            "entity_type": "organization",
+            "id": "organization:united-states-of-eurasia",
+            "name": "USE",
+          },
+          {
+            "description": "A major power whose probe project is sacrificing other concerns for speed and is expected to use an AMI. Dr. Landers's organization considers its project the most likely to fail outright.",
+            "entity_type": "organization",
+            "id": "organization:china",
+            "name": "China",
+          },
+          {
+            "description": "A belligerent power believed by Dr. Landers's organization to be potentially arming its probes and to be the most likely sabotage threat. His organization expects it to launch multiple probes and, if it finds a suitable system, establish a military presence and reproduce there.",
+            "entity_type": "organization",
+            "id": "organization:brazilian-empire",
+            "name": "Brazilian Empire",
+          },
+          {
+            "description": "A suspected participant in the international interstellar-probe race, referred to as Australia. Dr. Landers's organization suspects it of operating a probe project. Its exact political identity, relationship to the separately mentioned Australian Federation, project capabilities, and other defining characteristics have not yet been revealed.",
+            "entity_type": "organization",
+            "id": "organization:australia",
+            "name": "Australia",
+          },
+          {
+            "current_state": "Gone after the attack that destroyed the replicant matrices; his precise fate has not been revealed.",
+            "entity_type": "character",
+            "id": "character:kenneth-martins",
+            "name": "Kenneth Martins",
+          },
+          {
+            "current_state": "A project candidate identified only by a cube label; the individual cube state and other reader-visible details have not been revealed.",
+            "entity_type": "character",
+            "id": "character:jiro-tanaka",
+            "name": "Jiro Tanaka",
+          },
+          {
+            "current_state": "A project candidate identified only by a cube label; the individual cube state and other reader-visible details have not been revealed.",
+            "entity_type": "character",
+            "id": "character:neves-reijnder",
+            "name": "Neves Reijnder",
+          },
+          {
+            "current_state": "A project candidate identified only by a cube label; the individual cube state and other reader-visible details have not been revealed.",
+            "entity_type": "character",
+            "id": "character:joana-almeida",
+            "name": "Joana Almeida",
+          },
+          {
+            "current_state": "A minister who condemns the replicant enterprise as spiritually dangerous and threatens Dr. Landers over his participation.",
+            "entity_type": "character",
+            "id": "character:minister-jacoby",
+            "last_known_location": {
+              "effective_date": "2133",
+              "location_id": "location:new-handeltown",
+              "source_chapter": "1.9",
+            },
+            "name": "Minister Jacoby",
+          },
+        ],
+        "view": {
+          "chapter": "1.10",
+          "display_date": "2133",
+        },
+      },
+      "1.11": {
+        "activity": [
+          {
+            "effective_date": "2016",
+            "entity_id": "character:robert-johansson",
+            "reasons": [
+              "introduction",
+              "appearance",
+            ],
+            "source_chapter": "1.1",
+          },
+          {
+            "effective_date": "2016",
+            "entity_id": "event:bob-road-incident",
+            "reasons": [
+              "event",
+            ],
+            "source_chapter": "1.1",
+          },
+          {
+            "effective_date": "2016",
+            "entity_id": "location:las-vegas",
+            "reasons": [
+              "introduction",
+              "appearance_location",
+              "chapter_location",
+              "event_location",
+            ],
+            "source_chapter": "1.1",
+          },
+          {
+            "effective_date": "2016",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.1",
+          },
+          {
+            "effective_date": "2016",
+            "entity_id": "organization:cryoeterna",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.1",
+          },
+          {
+            "effective_date": "2016",
+            "entity_id": "organization:intergator-software",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.1",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "introduction",
+              "appearance",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "introduction",
+              "appearance",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:robert-johansson",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "event:bob-road-incident",
+            "reasons": [
+              "mention",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "introduction",
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:applied-synergetics",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:cryoeterna",
+            "reasons": [
+              "mention",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:free-american-independent-theocratic-hegemony",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:guppi-interface",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.3",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.3",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.3",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.3",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:guppi-interface",
+            "reasons": [
+              "mention",
+            ],
+            "source_chapter": "1.3",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:roamers",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.3",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:vast",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.3",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.4",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.4",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.4",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.4",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:free-american-independent-theocratic-hegemony",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.4",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:minister-travis",
+            "reasons": [
+              "introduction",
+              "appearance",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:free-american-independent-theocratic-hegemony",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:ministry-of-proper-thought",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:ministry-of-truth",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:guppi-interface",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "update",
+              "appearance",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:minister-travis",
+            "reasons": [
+              "mention",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:free-american-independent-theocratic-hegemony",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:guppi-interface",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:nanites",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:roamers",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:von-neumann-probe",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "update",
+              "appearance",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:earth",
+            "reasons": [
+              "mention",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:australia",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:brazilian-empire",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:china",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:free-american-independent-theocratic-hegemony",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:united-states-of-eurasia",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:ami",
+            "reasons": [
+              "mention",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:suddar",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:surge-drive",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:von-neumann-probe",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:jiro-tanaka",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:joana-almeida",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:kenneth-martins",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:neves-reijnder",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:roamers",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.9",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.9",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:minister-jacoby",
+            "reasons": [
+              "introduction",
+              "appearance",
+            ],
+            "source_chapter": "1.9",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.9",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.9",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:ministry-of-truth",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.9",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:roamers",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.9",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "update",
+              "appearance",
+            ],
+            "source_chapter": "1.10",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.10",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:kenneth-martins",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.10",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.10",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.10",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:free-american-independent-theocratic-hegemony",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.10",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "update",
+              "appearance",
+            ],
+            "source_chapter": "1.11",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-doucette",
+            "reasons": [
+              "introduction",
+              "appearance",
+            ],
+            "source_chapter": "1.11",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.11",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.11",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:old-handeltown",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.11",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.11",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:ministry-of-proper-thought",
+            "reasons": [
+              "mention",
+            ],
+            "source_chapter": "1.11",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:roamers",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.11",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:translation-routine",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.11",
+          },
+        ],
+        "entities": [
+          {
+            "astronomy_object_id": "sol",
+            "child_ids": [
+              "location:sol",
+            ],
+            "entity_type": "location",
+            "id": "location:solar-system",
+            "kind": "star_system",
+            "name": "Solar System",
+          },
+          {
+            "child_ids": [
+              "location:mercury",
+              "location:venus",
+              "location:earth",
+              "location:mars",
+              "location:asteroid-belt",
+              "location:jupiter",
+              "location:saturn",
+              "location:uranus",
+              "location:neptune",
+              "location:kuiper-belt",
+              "location:oort-cloud",
+            ],
+            "entity_type": "location",
+            "id": "location:sol",
+            "kind": "star",
+            "name": "Sol",
+            "parent_location_id": "location:solar-system",
+            "parent_relation": "member_of_system",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:mercury",
+            "kind": "planet",
+            "name": "Mercury",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:venus",
+            "kind": "planet",
+            "name": "Venus",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [
+              "location:las-vegas",
+              "location:new-handeltown",
+              "location:old-handeltown",
+            ],
+            "entity_type": "location",
+            "id": "location:earth",
+            "kind": "planet",
+            "name": "Earth",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:mars",
+            "kind": "planet",
+            "name": "Mars",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:asteroid-belt",
+            "kind": "asteroid_belt",
+            "name": "Asteroid Belt",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:jupiter",
+            "kind": "planet",
+            "name": "Jupiter",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:saturn",
+            "kind": "planet",
+            "name": "Saturn",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:uranus",
+            "kind": "planet",
+            "name": "Uranus",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:neptune",
+            "kind": "planet",
+            "name": "Neptune",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:kuiper-belt",
+            "kind": "kuiper_belt",
+            "name": "Kuiper Belt",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:oort-cloud",
+            "kind": "oort_cloud",
+            "name": "Oort Cloud",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "entity_type": "species",
+            "homeworld_id": "location:earth",
+            "id": "species:human",
+            "name": "Human",
+          },
+          {
+            "description": "Artificial Machine Intelligence (AMI) is an artificial intelligence created directly as a machine mind rather than copied from a biological mind.",
+            "entity_type": "technology",
+            "id": "technology:ami",
+            "name": "AMI",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:las-vegas",
+            "kind": "locale",
+            "name": "Las Vegas",
+            "parent_location_id": "location:earth",
+            "parent_relation": "located_on",
+          },
+          {
+            "date": "2016",
+            "description": "While Bob crosses a Las Vegas street, a car approaches, he experiences sudden pain, and medical and legal voices accompany his fading awareness. The sequence strongly suggests a collision and death, although neither is stated directly.",
+            "entity_type": "event",
+            "id": "event:bob-road-incident",
+            "location_id": "location:las-vegas",
+            "name": "Bob's Road Incident",
+          },
+          {
+            "aliases": [
+              "Bob",
+            ],
+            "current_state": "Dead.",
+            "death_date": "2016",
+            "death_event_id": "event:bob-road-incident",
+            "entity_type": "character",
+            "id": "character:robert-johansson",
+            "last_known_location": {
+              "effective_date": "2016",
+              "location_id": "location:las-vegas",
+              "source_chapter": "1.1",
+            },
+            "name": "Robert Johansson",
+            "species_id": "species:human",
+          },
+          {
+            "description": "A cryonics provider that contracts with Bob for post-death preservation.",
+            "entity_type": "organization",
+            "id": "organization:cryoeterna",
+            "name": "CryoEterna Inc.",
+          },
+          {
+            "current_state": "Sold.",
+            "description": "Bob's software company, built around a successful engineering application and sold after attracting a large acquisition offer.",
+            "entity_type": "organization",
+            "id": "organization:intergator-software",
+            "name": "InterGator Software",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:new-handeltown",
+            "kind": "locale",
+            "map_status": "unmapped",
+            "name": "New Handeltown",
+            "parent_location_id": "location:earth",
+            "parent_relation": "located_on",
+          },
+          {
+            "current_state": "A nightly backed-up computer simulation made from a copy of Robert Johansson's mind and the remaining candidate for controlling a Von Neumann probe. Restored from backups after an attack destroyed the replicant matrices, he considers himself conscious, alive, and Bob in the important respects. He has complete project access and expanded library access, is regarded as adaptable and resilient, and is training for the mission while still lacking a visible face. He will remain online except for a nightly half-hour semi-sleep during backup. According to Dr. Doucette, his software contains safeguards intended to ensure mission objectives are met; their operation has not been revealed.",
+            "entity_type": "character",
+            "id": "character:bob-replicant",
+            "last_known_location": {
+              "effective_date": "2133",
+              "location_id": "location:new-handeltown",
+              "source_chapter": "1.11",
+            },
+            "name": "Bob",
+          },
+          {
+            "current_state": "A specialist trained to deal with replicants who has studied Bob's era.",
+            "entity_type": "character",
+            "id": "character:dr-landers",
+            "last_known_location": {
+              "effective_date": "2133",
+              "location_id": "location:new-handeltown",
+              "source_chapter": "1.10",
+            },
+            "name": "Dr. Landers",
+          },
+          {
+            "description": "The Free American Independent Theocratic Hegemony, a theocratic U.S. government that makes criticism a felony and permits the deactivation of machine persons for it. It restricts information by default; the domestic internet no longer exists, and genealogy records are unavailable to the public. It is divided into factions and power blocs, including factions that regard artificial intelligence and replicants as abominations or advocate abandoning technology from steam power onward. It finances the replicant project and owns Bob. It controls most of North America, while several internal factions oppose Project HEAVEN, the Habitable Earths Abiogenic Vessel Exploration Network, and seek to stop it. Security personnel believe internal factions leaked the project's progress to provoke competing nations into reacting.",
+            "entity_type": "organization",
+            "id": "organization:free-american-independent-theocratic-hegemony",
+            "name": "FAITH",
+          },
+          {
+            "description": "A company that owns Bob as property and develops replicant-controlled machinery.",
+            "entity_type": "organization",
+            "id": "organization:applied-synergetics",
+            "name": "Applied Synergetics Inc.",
+          },
+          {
+            "description": "An interface that offloads tasks for replicants while retaining their human limits on multitasking. Its name expands to General Unit Primary Peripheral Interface. Its logs record Bob's monitoring interfaces and scripts.",
+            "entity_type": "technology",
+            "id": "technology:guppi-interface",
+            "name": "GUPPI",
+          },
+          {
+            "description": "Remote observation and manipulation devices that Bob directs through GUPPI. They come in varied sizes, can coordinate across scales, and need minimal supervision once their tasks, dependencies, and interruption conditions are defined. Without Bob's active interference, they can work up to ten times faster. They can travel along floors, walls, and ceilings, carry video cameras for remote observation, and pick up vibrations transmitted through a wall when pressed against it. Bob has written scripts for many of their activities, so routine assembly work often requires little more than his presence.",
+            "entity_type": "technology",
+            "id": "technology:roamers",
+            "name": "ROAMers",
+          },
+          {
+            "description": "Variable Attachment Surface Tension is a system that gives a ROAMer a secure grip.",
+            "entity_type": "technology",
+            "id": "technology:vast",
+            "name": "VAST",
+          },
+          {
+            "aliases": [
+              "Senior Minister Travis",
+            ],
+            "entity_type": "character",
+            "id": "character:minister-travis",
+            "last_known_location": {
+              "effective_date": "2133",
+              "location_id": "location:new-handeltown",
+              "source_chapter": "1.5",
+            },
+            "name": "Minister Travis",
+          },
+          {
+            "description": "A FAITH ministry that finances the replicant venture and has military, colonization, and diplomatic responsibilities. It officially supports and actively funds the replicant enterprise, and holds that the enterprise's machine minds are without souls but are based on God's creation rather than attempts to usurp divine authority.",
+            "entity_type": "organization",
+            "id": "organization:ministry-of-truth",
+            "name": "Ministry of Truth",
+          },
+          {
+            "description": "A FAITH ministry that uses direct neurological stimulation as part of re-education.",
+            "entity_type": "organization",
+            "id": "organization:ministry-of-proper-thought",
+            "name": "Ministry of Proper Thought",
+          },
+          {
+            "description": "A self-replicating spacecraft designed to travel between star systems and construct new copies of itself along the way. Interstellar use became possible after a breakthrough in subspace theory, and such probes are central to a competitive international colonization effort.",
+            "entity_type": "technology",
+            "id": "technology:von-neumann-probe",
+            "name": "Von Neumann probe",
+          },
+          {
+            "description": "Tiny, single-purpose devices used for work below ROAMer scale; their flexibility is limited.",
+            "entity_type": "technology",
+            "id": "technology:nanites",
+            "name": "nanites",
+          },
+          {
+            "description": "A recently developed drive technology enabled by a breakthrough in subspace theory and used to equip spacecraft for interstellar operations. Beyond prototypes, only a small number of SURGE-equipped vessels are in active service. Its operating principle and the expansion of SURGE have not yet been revealed.",
+            "entity_type": "technology",
+            "id": "technology:surge-drive",
+            "name": "SURGE drive",
+          },
+          {
+            "description": "A subspace technology enabled by the same theoretical breakthrough as the SURGE drive and associated with the new possibility of interstellar probes and colonization. Its specific function, operating principle, capabilities, limitations, and acronym expansion have not yet been revealed.",
+            "entity_type": "technology",
+            "id": "technology:suddar",
+            "name": "SUDDAR",
+          },
+          {
+            "description": "The United States of Eurasia controls Europe and most of western Russia. It began an interstellar probe project two years earlier, and Dr. Landers considers it the strongest long-term competitor, with a substantial lead in colonization readiness.",
+            "entity_type": "organization",
+            "id": "organization:united-states-of-eurasia",
+            "name": "USE",
+          },
+          {
+            "description": "A major power whose probe project is sacrificing other concerns for speed and is expected to use an AMI. Dr. Landers's organization considers its project the most likely to fail outright.",
+            "entity_type": "organization",
+            "id": "organization:china",
+            "name": "China",
+          },
+          {
+            "description": "A belligerent power believed by Dr. Landers's organization to be potentially arming its probes and to be the most likely sabotage threat. His organization expects it to launch multiple probes and, if it finds a suitable system, establish a military presence and reproduce there.",
+            "entity_type": "organization",
+            "id": "organization:brazilian-empire",
+            "name": "Brazilian Empire",
+          },
+          {
+            "description": "A suspected participant in the international interstellar-probe race, referred to as Australia. Dr. Landers's organization suspects it of operating a probe project. Its exact political identity, relationship to the separately mentioned Australian Federation, project capabilities, and other defining characteristics have not yet been revealed.",
+            "entity_type": "organization",
+            "id": "organization:australia",
+            "name": "Australia",
+          },
+          {
+            "current_state": "Gone after the attack that destroyed the replicant matrices; his precise fate has not been revealed.",
+            "entity_type": "character",
+            "id": "character:kenneth-martins",
+            "name": "Kenneth Martins",
+          },
+          {
+            "current_state": "A project candidate identified only by a cube label; the individual cube state and other reader-visible details have not been revealed.",
+            "entity_type": "character",
+            "id": "character:jiro-tanaka",
+            "name": "Jiro Tanaka",
+          },
+          {
+            "current_state": "A project candidate identified only by a cube label; the individual cube state and other reader-visible details have not been revealed.",
+            "entity_type": "character",
+            "id": "character:neves-reijnder",
+            "name": "Neves Reijnder",
+          },
+          {
+            "current_state": "A project candidate identified only by a cube label; the individual cube state and other reader-visible details have not been revealed.",
+            "entity_type": "character",
+            "id": "character:joana-almeida",
+            "name": "Joana Almeida",
+          },
+          {
+            "current_state": "A minister who condemns the replicant enterprise as spiritually dangerous and threatens Dr. Landers over his participation.",
+            "entity_type": "character",
+            "id": "character:minister-jacoby",
+            "last_known_location": {
+              "effective_date": "2133",
+              "location_id": "location:new-handeltown",
+              "source_chapter": "1.9",
+            },
+            "name": "Minister Jacoby",
+          },
+          {
+            "current_state": "Covering for Dr. Landers while Bob continues his training and assembly work.",
+            "entity_type": "character",
+            "id": "character:dr-doucette",
+            "last_known_location": {
+              "effective_date": "2133",
+              "location_id": "location:new-handeltown",
+              "source_chapter": "1.11",
+            },
+            "name": "Dr. Doucette",
+          },
+          {
+            "description": "A routine integrated into Bob's system that interprets the standard twenty-second-century accent so smoothly that he no longer notices the differing speech patterns. Its implementation and language scope have not yet been revealed.",
+            "entity_type": "technology",
+            "id": "technology:translation-routine",
+            "name": "translation routine",
+          },
+          {
+            "child_ids": [],
+            "description": "A historic Oregon city identified as Salem, Oregon and as Handel's birthplace. After Handel's death, the city changed its name and a large memorial was established in his honor. An unidentified person later destroyed the memorial with a pocket nuclear weapon after objecting. It was the only nuclear weapon deployed in North America. Advanced radiation treatment limited deaths relative to Bob's expectation.",
+            "entity_type": "location",
+            "id": "location:old-handeltown",
+            "kind": "locale",
+            "name": "Old Handeltown",
+            "parent_location_id": "location:earth",
+            "parent_relation": "located_on",
+          },
+        ],
+        "view": {
+          "chapter": "1.11",
+          "display_date": "2133",
+        },
+      },
+    },
+    "date": {
+      "2016": {
+        "activity": [
+          {
+            "effective_date": "2016",
+            "entity_id": "character:robert-johansson",
+            "reasons": [
+              "introduction",
+              "appearance",
+            ],
+            "source_chapter": "1.1",
+          },
+          {
+            "effective_date": "2016",
+            "entity_id": "event:bob-road-incident",
+            "reasons": [
+              "event",
+            ],
+            "source_chapter": "1.1",
+          },
+          {
+            "effective_date": "2016",
+            "entity_id": "location:las-vegas",
+            "reasons": [
+              "introduction",
+              "appearance_location",
+              "chapter_location",
+              "event_location",
+            ],
+            "source_chapter": "1.1",
+          },
+          {
+            "effective_date": "2016",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.1",
+          },
+          {
+            "effective_date": "2016",
+            "entity_id": "organization:cryoeterna",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.1",
+          },
+          {
+            "effective_date": "2016",
+            "entity_id": "organization:intergator-software",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.1",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "introduction",
+              "appearance",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "introduction",
+              "appearance",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:robert-johansson",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "event:bob-road-incident",
+            "reasons": [
+              "mention",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "introduction",
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:applied-synergetics",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:cryoeterna",
+            "reasons": [
+              "mention",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:free-american-independent-theocratic-hegemony",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:guppi-interface",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.3",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.3",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.3",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.3",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:guppi-interface",
+            "reasons": [
+              "mention",
+            ],
+            "source_chapter": "1.3",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:roamers",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.3",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:vast",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.3",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.4",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.4",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.4",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.4",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:free-american-independent-theocratic-hegemony",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.4",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:minister-travis",
+            "reasons": [
+              "introduction",
+              "appearance",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:free-american-independent-theocratic-hegemony",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:ministry-of-proper-thought",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:ministry-of-truth",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:guppi-interface",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "update",
+              "appearance",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:minister-travis",
+            "reasons": [
+              "mention",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:free-american-independent-theocratic-hegemony",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:guppi-interface",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:nanites",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:roamers",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:von-neumann-probe",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "update",
+              "appearance",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:earth",
+            "reasons": [
+              "mention",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:australia",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:brazilian-empire",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:china",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:free-american-independent-theocratic-hegemony",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:united-states-of-eurasia",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:ami",
+            "reasons": [
+              "mention",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:suddar",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:surge-drive",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:von-neumann-probe",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:jiro-tanaka",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:joana-almeida",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:kenneth-martins",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:neves-reijnder",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:roamers",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.9",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.9",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:minister-jacoby",
+            "reasons": [
+              "introduction",
+              "appearance",
+            ],
+            "source_chapter": "1.9",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.9",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.9",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:ministry-of-truth",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.9",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:roamers",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.9",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "update",
+              "appearance",
+            ],
+            "source_chapter": "1.10",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.10",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:kenneth-martins",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.10",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.10",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.10",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:free-american-independent-theocratic-hegemony",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.10",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "update",
+              "appearance",
+            ],
+            "source_chapter": "1.11",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-doucette",
+            "reasons": [
+              "introduction",
+              "appearance",
+            ],
+            "source_chapter": "1.11",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.11",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.11",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:old-handeltown",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.11",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.11",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:ministry-of-proper-thought",
+            "reasons": [
+              "mention",
+            ],
+            "source_chapter": "1.11",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:roamers",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.11",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:translation-routine",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.11",
+          },
+        ],
+        "entities": [
+          {
+            "astronomy_object_id": "sol",
+            "child_ids": [
+              "location:sol",
+            ],
+            "entity_type": "location",
+            "id": "location:solar-system",
+            "kind": "star_system",
+            "name": "Solar System",
+          },
+          {
+            "child_ids": [
+              "location:mercury",
+              "location:venus",
+              "location:earth",
+              "location:mars",
+              "location:asteroid-belt",
+              "location:jupiter",
+              "location:saturn",
+              "location:uranus",
+              "location:neptune",
+              "location:kuiper-belt",
+              "location:oort-cloud",
+            ],
+            "entity_type": "location",
+            "id": "location:sol",
+            "kind": "star",
+            "name": "Sol",
+            "parent_location_id": "location:solar-system",
+            "parent_relation": "member_of_system",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:mercury",
+            "kind": "planet",
+            "name": "Mercury",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:venus",
+            "kind": "planet",
+            "name": "Venus",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [
+              "location:las-vegas",
+            ],
+            "entity_type": "location",
+            "id": "location:earth",
+            "kind": "planet",
+            "name": "Earth",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:mars",
+            "kind": "planet",
+            "name": "Mars",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:asteroid-belt",
+            "kind": "asteroid_belt",
+            "name": "Asteroid Belt",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:jupiter",
+            "kind": "planet",
+            "name": "Jupiter",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:saturn",
+            "kind": "planet",
+            "name": "Saturn",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:uranus",
+            "kind": "planet",
+            "name": "Uranus",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:neptune",
+            "kind": "planet",
+            "name": "Neptune",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:kuiper-belt",
+            "kind": "kuiper_belt",
+            "name": "Kuiper Belt",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:oort-cloud",
+            "kind": "oort_cloud",
+            "name": "Oort Cloud",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "entity_type": "species",
+            "homeworld_id": "location:earth",
+            "id": "species:human",
+            "name": "Human",
+          },
+          {
+            "description": "Artificial Machine Intelligence (AMI) is an artificial intelligence created directly as a machine mind rather than copied from a biological mind.",
+            "entity_type": "technology",
+            "id": "technology:ami",
+            "name": "AMI",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:las-vegas",
+            "kind": "locale",
+            "name": "Las Vegas",
+            "parent_location_id": "location:earth",
+            "parent_relation": "located_on",
+          },
+          {
+            "date": "2016",
+            "description": "While Bob crosses a Las Vegas street, a car approaches, he experiences sudden pain, and medical and legal voices accompany his fading awareness. The sequence strongly suggests a collision and death, although neither is stated directly.",
+            "entity_type": "event",
+            "id": "event:bob-road-incident",
+            "location_id": "location:las-vegas",
+            "name": "Bob's Road Incident",
+          },
+          {
+            "aliases": [
+              "Bob",
+            ],
+            "current_state": "Presumed dead after the road incident.",
+            "entity_type": "character",
+            "id": "character:robert-johansson",
+            "last_known_location": {
+              "effective_date": "2016",
+              "location_id": "location:las-vegas",
+              "source_chapter": "1.1",
+            },
+            "name": "Robert Johansson",
+            "species_id": "species:human",
+          },
+          {
+            "description": "A cryonics provider that contracts with Bob for post-death preservation.",
+            "entity_type": "organization",
+            "id": "organization:cryoeterna",
+            "name": "CryoEterna Inc.",
+          },
+          {
+            "current_state": "Sold.",
+            "description": "Bob's software company, built around a successful engineering application and sold after attracting a large acquisition offer.",
+            "entity_type": "organization",
+            "id": "organization:intergator-software",
+            "name": "InterGator Software",
+          },
+        ],
+        "view": {
+          "chapter": "1.11",
+          "display_date": "2016",
+        },
+      },
+      "2133": {
+        "activity": [
+          {
+            "effective_date": "2016",
+            "entity_id": "character:robert-johansson",
+            "reasons": [
+              "introduction",
+              "appearance",
+            ],
+            "source_chapter": "1.1",
+          },
+          {
+            "effective_date": "2016",
+            "entity_id": "event:bob-road-incident",
+            "reasons": [
+              "event",
+            ],
+            "source_chapter": "1.1",
+          },
+          {
+            "effective_date": "2016",
+            "entity_id": "location:las-vegas",
+            "reasons": [
+              "introduction",
+              "appearance_location",
+              "chapter_location",
+              "event_location",
+            ],
+            "source_chapter": "1.1",
+          },
+          {
+            "effective_date": "2016",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.1",
+          },
+          {
+            "effective_date": "2016",
+            "entity_id": "organization:cryoeterna",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.1",
+          },
+          {
+            "effective_date": "2016",
+            "entity_id": "organization:intergator-software",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.1",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "introduction",
+              "appearance",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "introduction",
+              "appearance",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:robert-johansson",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "event:bob-road-incident",
+            "reasons": [
+              "mention",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "introduction",
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:applied-synergetics",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:cryoeterna",
+            "reasons": [
+              "mention",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:free-american-independent-theocratic-hegemony",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:guppi-interface",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.3",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.3",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.3",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.3",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:guppi-interface",
+            "reasons": [
+              "mention",
+            ],
+            "source_chapter": "1.3",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:roamers",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.3",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:vast",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.3",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.4",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.4",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.4",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.4",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:free-american-independent-theocratic-hegemony",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.4",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:minister-travis",
+            "reasons": [
+              "introduction",
+              "appearance",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:free-american-independent-theocratic-hegemony",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:ministry-of-proper-thought",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:ministry-of-truth",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:guppi-interface",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.5",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "update",
+              "appearance",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:minister-travis",
+            "reasons": [
+              "mention",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:free-american-independent-theocratic-hegemony",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:guppi-interface",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:nanites",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:roamers",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:von-neumann-probe",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.6",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "update",
+              "appearance",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:earth",
+            "reasons": [
+              "mention",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:australia",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:brazilian-empire",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:china",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:free-american-independent-theocratic-hegemony",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:united-states-of-eurasia",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:ami",
+            "reasons": [
+              "mention",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:suddar",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:surge-drive",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:von-neumann-probe",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.7",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:jiro-tanaka",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:joana-almeida",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:kenneth-martins",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:neves-reijnder",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:roamers",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.8",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.9",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.9",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:minister-jacoby",
+            "reasons": [
+              "introduction",
+              "appearance",
+            ],
+            "source_chapter": "1.9",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.9",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.9",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:ministry-of-truth",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.9",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:roamers",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.9",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "update",
+              "appearance",
+            ],
+            "source_chapter": "1.10",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "appearance",
+            ],
+            "source_chapter": "1.10",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:kenneth-martins",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.10",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.10",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.10",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:free-american-independent-theocratic-hegemony",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.10",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:bob-replicant",
+            "reasons": [
+              "update",
+              "appearance",
+            ],
+            "source_chapter": "1.11",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-doucette",
+            "reasons": [
+              "introduction",
+              "appearance",
+            ],
+            "source_chapter": "1.11",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "character:dr-landers",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.11",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:new-handeltown",
+            "reasons": [
+              "appearance_location",
+              "chapter_location",
+            ],
+            "source_chapter": "1.11",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:old-handeltown",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.11",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "location:solar-system",
+            "reasons": [
+              "mapped_system_ancestry",
+            ],
+            "source_chapter": "1.11",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "organization:ministry-of-proper-thought",
+            "reasons": [
+              "mention",
+            ],
+            "source_chapter": "1.11",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:roamers",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.11",
+          },
+          {
+            "effective_date": "2133",
+            "entity_id": "technology:translation-routine",
+            "reasons": [
+              "introduction",
+            ],
+            "source_chapter": "1.11",
+          },
+        ],
+        "entities": [
+          {
+            "astronomy_object_id": "sol",
+            "child_ids": [
+              "location:sol",
+            ],
+            "entity_type": "location",
+            "id": "location:solar-system",
+            "kind": "star_system",
+            "name": "Solar System",
+          },
+          {
+            "child_ids": [
+              "location:mercury",
+              "location:venus",
+              "location:earth",
+              "location:mars",
+              "location:asteroid-belt",
+              "location:jupiter",
+              "location:saturn",
+              "location:uranus",
+              "location:neptune",
+              "location:kuiper-belt",
+              "location:oort-cloud",
+            ],
+            "entity_type": "location",
+            "id": "location:sol",
+            "kind": "star",
+            "name": "Sol",
+            "parent_location_id": "location:solar-system",
+            "parent_relation": "member_of_system",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:mercury",
+            "kind": "planet",
+            "name": "Mercury",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:venus",
+            "kind": "planet",
+            "name": "Venus",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [
+              "location:las-vegas",
+              "location:new-handeltown",
+              "location:old-handeltown",
+            ],
+            "entity_type": "location",
+            "id": "location:earth",
+            "kind": "planet",
+            "name": "Earth",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:mars",
+            "kind": "planet",
+            "name": "Mars",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:asteroid-belt",
+            "kind": "asteroid_belt",
+            "name": "Asteroid Belt",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:jupiter",
+            "kind": "planet",
+            "name": "Jupiter",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:saturn",
+            "kind": "planet",
+            "name": "Saturn",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:uranus",
+            "kind": "planet",
+            "name": "Uranus",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:neptune",
+            "kind": "planet",
+            "name": "Neptune",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:kuiper-belt",
+            "kind": "kuiper_belt",
+            "name": "Kuiper Belt",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:oort-cloud",
+            "kind": "oort_cloud",
+            "name": "Oort Cloud",
+            "parent_location_id": "location:sol",
+            "parent_relation": "orbits",
+          },
+          {
+            "entity_type": "species",
+            "homeworld_id": "location:earth",
+            "id": "species:human",
+            "name": "Human",
+          },
+          {
+            "description": "Artificial Machine Intelligence (AMI) is an artificial intelligence created directly as a machine mind rather than copied from a biological mind.",
+            "entity_type": "technology",
+            "id": "technology:ami",
+            "name": "AMI",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:las-vegas",
+            "kind": "locale",
+            "name": "Las Vegas",
+            "parent_location_id": "location:earth",
+            "parent_relation": "located_on",
+          },
+          {
+            "date": "2016",
+            "description": "While Bob crosses a Las Vegas street, a car approaches, he experiences sudden pain, and medical and legal voices accompany his fading awareness. The sequence strongly suggests a collision and death, although neither is stated directly.",
+            "entity_type": "event",
+            "id": "event:bob-road-incident",
+            "location_id": "location:las-vegas",
+            "name": "Bob's Road Incident",
+          },
+          {
+            "aliases": [
+              "Bob",
+            ],
+            "current_state": "Dead.",
+            "death_date": "2016",
+            "death_event_id": "event:bob-road-incident",
+            "entity_type": "character",
+            "id": "character:robert-johansson",
+            "last_known_location": {
+              "effective_date": "2016",
+              "location_id": "location:las-vegas",
+              "source_chapter": "1.1",
+            },
+            "name": "Robert Johansson",
+            "species_id": "species:human",
+          },
+          {
+            "description": "A cryonics provider that contracts with Bob for post-death preservation.",
+            "entity_type": "organization",
+            "id": "organization:cryoeterna",
+            "name": "CryoEterna Inc.",
+          },
+          {
+            "current_state": "Sold.",
+            "description": "Bob's software company, built around a successful engineering application and sold after attracting a large acquisition offer.",
+            "entity_type": "organization",
+            "id": "organization:intergator-software",
+            "name": "InterGator Software",
+          },
+          {
+            "child_ids": [],
+            "entity_type": "location",
+            "id": "location:new-handeltown",
+            "kind": "locale",
+            "map_status": "unmapped",
+            "name": "New Handeltown",
+            "parent_location_id": "location:earth",
+            "parent_relation": "located_on",
+          },
+          {
+            "current_state": "A nightly backed-up computer simulation made from a copy of Robert Johansson's mind and the remaining candidate for controlling a Von Neumann probe. Restored from backups after an attack destroyed the replicant matrices, he considers himself conscious, alive, and Bob in the important respects. He has complete project access and expanded library access, is regarded as adaptable and resilient, and is training for the mission while still lacking a visible face. He will remain online except for a nightly half-hour semi-sleep during backup. According to Dr. Doucette, his software contains safeguards intended to ensure mission objectives are met; their operation has not been revealed.",
+            "entity_type": "character",
+            "id": "character:bob-replicant",
+            "last_known_location": {
+              "effective_date": "2133",
+              "location_id": "location:new-handeltown",
+              "source_chapter": "1.11",
+            },
+            "name": "Bob",
+          },
+          {
+            "current_state": "A specialist trained to deal with replicants who has studied Bob's era.",
+            "entity_type": "character",
+            "id": "character:dr-landers",
+            "last_known_location": {
+              "effective_date": "2133",
+              "location_id": "location:new-handeltown",
+              "source_chapter": "1.10",
+            },
+            "name": "Dr. Landers",
+          },
+          {
+            "description": "The Free American Independent Theocratic Hegemony, a theocratic U.S. government that makes criticism a felony and permits the deactivation of machine persons for it. It restricts information by default; the domestic internet no longer exists, and genealogy records are unavailable to the public. It is divided into factions and power blocs, including factions that regard artificial intelligence and replicants as abominations or advocate abandoning technology from steam power onward. It finances the replicant project and owns Bob. It controls most of North America, while several internal factions oppose Project HEAVEN, the Habitable Earths Abiogenic Vessel Exploration Network, and seek to stop it. Security personnel believe internal factions leaked the project's progress to provoke competing nations into reacting.",
+            "entity_type": "organization",
+            "id": "organization:free-american-independent-theocratic-hegemony",
+            "name": "FAITH",
+          },
+          {
+            "description": "A company that owns Bob as property and develops replicant-controlled machinery.",
+            "entity_type": "organization",
+            "id": "organization:applied-synergetics",
+            "name": "Applied Synergetics Inc.",
+          },
+          {
+            "description": "An interface that offloads tasks for replicants while retaining their human limits on multitasking. Its name expands to General Unit Primary Peripheral Interface. Its logs record Bob's monitoring interfaces and scripts.",
+            "entity_type": "technology",
+            "id": "technology:guppi-interface",
+            "name": "GUPPI",
+          },
+          {
+            "description": "Remote observation and manipulation devices that Bob directs through GUPPI. They come in varied sizes, can coordinate across scales, and need minimal supervision once their tasks, dependencies, and interruption conditions are defined. Without Bob's active interference, they can work up to ten times faster. They can travel along floors, walls, and ceilings, carry video cameras for remote observation, and pick up vibrations transmitted through a wall when pressed against it. Bob has written scripts for many of their activities, so routine assembly work often requires little more than his presence.",
+            "entity_type": "technology",
+            "id": "technology:roamers",
+            "name": "ROAMers",
+          },
+          {
+            "description": "Variable Attachment Surface Tension is a system that gives a ROAMer a secure grip.",
+            "entity_type": "technology",
+            "id": "technology:vast",
+            "name": "VAST",
+          },
+          {
+            "aliases": [
+              "Senior Minister Travis",
+            ],
+            "entity_type": "character",
+            "id": "character:minister-travis",
+            "last_known_location": {
+              "effective_date": "2133",
+              "location_id": "location:new-handeltown",
+              "source_chapter": "1.5",
+            },
+            "name": "Minister Travis",
+          },
+          {
+            "description": "A FAITH ministry that finances the replicant venture and has military, colonization, and diplomatic responsibilities. It officially supports and actively funds the replicant enterprise, and holds that the enterprise's machine minds are without souls but are based on God's creation rather than attempts to usurp divine authority.",
+            "entity_type": "organization",
+            "id": "organization:ministry-of-truth",
+            "name": "Ministry of Truth",
+          },
+          {
+            "description": "A FAITH ministry that uses direct neurological stimulation as part of re-education.",
+            "entity_type": "organization",
+            "id": "organization:ministry-of-proper-thought",
+            "name": "Ministry of Proper Thought",
+          },
+          {
+            "description": "A self-replicating spacecraft designed to travel between star systems and construct new copies of itself along the way. Interstellar use became possible after a breakthrough in subspace theory, and such probes are central to a competitive international colonization effort.",
+            "entity_type": "technology",
+            "id": "technology:von-neumann-probe",
+            "name": "Von Neumann probe",
+          },
+          {
+            "description": "Tiny, single-purpose devices used for work below ROAMer scale; their flexibility is limited.",
+            "entity_type": "technology",
+            "id": "technology:nanites",
+            "name": "nanites",
+          },
+          {
+            "description": "A recently developed drive technology enabled by a breakthrough in subspace theory and used to equip spacecraft for interstellar operations. Beyond prototypes, only a small number of SURGE-equipped vessels are in active service. Its operating principle and the expansion of SURGE have not yet been revealed.",
+            "entity_type": "technology",
+            "id": "technology:surge-drive",
+            "name": "SURGE drive",
+          },
+          {
+            "description": "A subspace technology enabled by the same theoretical breakthrough as the SURGE drive and associated with the new possibility of interstellar probes and colonization. Its specific function, operating principle, capabilities, limitations, and acronym expansion have not yet been revealed.",
+            "entity_type": "technology",
+            "id": "technology:suddar",
+            "name": "SUDDAR",
+          },
+          {
+            "description": "The United States of Eurasia controls Europe and most of western Russia. It began an interstellar probe project two years earlier, and Dr. Landers considers it the strongest long-term competitor, with a substantial lead in colonization readiness.",
+            "entity_type": "organization",
+            "id": "organization:united-states-of-eurasia",
+            "name": "USE",
+          },
+          {
+            "description": "A major power whose probe project is sacrificing other concerns for speed and is expected to use an AMI. Dr. Landers's organization considers its project the most likely to fail outright.",
+            "entity_type": "organization",
+            "id": "organization:china",
+            "name": "China",
+          },
+          {
+            "description": "A belligerent power believed by Dr. Landers's organization to be potentially arming its probes and to be the most likely sabotage threat. His organization expects it to launch multiple probes and, if it finds a suitable system, establish a military presence and reproduce there.",
+            "entity_type": "organization",
+            "id": "organization:brazilian-empire",
+            "name": "Brazilian Empire",
+          },
+          {
+            "description": "A suspected participant in the international interstellar-probe race, referred to as Australia. Dr. Landers's organization suspects it of operating a probe project. Its exact political identity, relationship to the separately mentioned Australian Federation, project capabilities, and other defining characteristics have not yet been revealed.",
+            "entity_type": "organization",
+            "id": "organization:australia",
+            "name": "Australia",
+          },
+          {
+            "current_state": "Gone after the attack that destroyed the replicant matrices; his precise fate has not been revealed.",
+            "entity_type": "character",
+            "id": "character:kenneth-martins",
+            "name": "Kenneth Martins",
+          },
+          {
+            "current_state": "A project candidate identified only by a cube label; the individual cube state and other reader-visible details have not been revealed.",
+            "entity_type": "character",
+            "id": "character:jiro-tanaka",
+            "name": "Jiro Tanaka",
+          },
+          {
+            "current_state": "A project candidate identified only by a cube label; the individual cube state and other reader-visible details have not been revealed.",
+            "entity_type": "character",
+            "id": "character:neves-reijnder",
+            "name": "Neves Reijnder",
+          },
+          {
+            "current_state": "A project candidate identified only by a cube label; the individual cube state and other reader-visible details have not been revealed.",
+            "entity_type": "character",
+            "id": "character:joana-almeida",
+            "name": "Joana Almeida",
+          },
+          {
+            "current_state": "A minister who condemns the replicant enterprise as spiritually dangerous and threatens Dr. Landers over his participation.",
+            "entity_type": "character",
+            "id": "character:minister-jacoby",
+            "last_known_location": {
+              "effective_date": "2133",
+              "location_id": "location:new-handeltown",
+              "source_chapter": "1.9",
+            },
+            "name": "Minister Jacoby",
+          },
+          {
+            "current_state": "Covering for Dr. Landers while Bob continues his training and assembly work.",
+            "entity_type": "character",
+            "id": "character:dr-doucette",
+            "last_known_location": {
+              "effective_date": "2133",
+              "location_id": "location:new-handeltown",
+              "source_chapter": "1.11",
+            },
+            "name": "Dr. Doucette",
+          },
+          {
+            "description": "A routine integrated into Bob's system that interprets the standard twenty-second-century accent so smoothly that he no longer notices the differing speech patterns. Its implementation and language scope have not yet been revealed.",
+            "entity_type": "technology",
+            "id": "technology:translation-routine",
+            "name": "translation routine",
+          },
+          {
+            "child_ids": [],
+            "description": "A historic Oregon city identified as Salem, Oregon and as Handel's birthplace. After Handel's death, the city changed its name and a large memorial was established in his honor. An unidentified person later destroyed the memorial with a pocket nuclear weapon after objecting. It was the only nuclear weapon deployed in North America. Advanced radiation treatment limited deaths relative to Bob's expectation.",
+            "entity_type": "location",
+            "id": "location:old-handeltown",
+            "kind": "locale",
+            "name": "Old Handeltown",
+            "parent_location_id": "location:earth",
+            "parent_relation": "located_on",
+          },
+        ],
+        "view": {
+          "chapter": "1.11",
+          "display_date": "2133",
+        },
+      },
+    },
+    "zeroState": {
+      "activity": [],
+      "entities": [
+        {
+          "astronomy_object_id": "sol",
+          "child_ids": [
+            "location:sol",
+          ],
+          "entity_type": "location",
+          "id": "location:solar-system",
+          "kind": "star_system",
+          "name": "Solar System",
+        },
+        {
+          "child_ids": [
+            "location:mercury",
+            "location:venus",
+            "location:earth",
+            "location:mars",
+            "location:asteroid-belt",
+            "location:jupiter",
+            "location:saturn",
+            "location:uranus",
+            "location:neptune",
+            "location:kuiper-belt",
+            "location:oort-cloud",
+          ],
+          "entity_type": "location",
+          "id": "location:sol",
+          "kind": "star",
+          "name": "Sol",
+          "parent_location_id": "location:solar-system",
+          "parent_relation": "member_of_system",
+        },
+        {
+          "child_ids": [],
+          "entity_type": "location",
+          "id": "location:mercury",
+          "kind": "planet",
+          "name": "Mercury",
+          "parent_location_id": "location:sol",
+          "parent_relation": "orbits",
+        },
+        {
+          "child_ids": [],
+          "entity_type": "location",
+          "id": "location:venus",
+          "kind": "planet",
+          "name": "Venus",
+          "parent_location_id": "location:sol",
+          "parent_relation": "orbits",
+        },
+        {
+          "child_ids": [],
+          "entity_type": "location",
+          "id": "location:earth",
+          "kind": "planet",
+          "name": "Earth",
+          "parent_location_id": "location:sol",
+          "parent_relation": "orbits",
+        },
+        {
+          "child_ids": [],
+          "entity_type": "location",
+          "id": "location:mars",
+          "kind": "planet",
+          "name": "Mars",
+          "parent_location_id": "location:sol",
+          "parent_relation": "orbits",
+        },
+        {
+          "child_ids": [],
+          "entity_type": "location",
+          "id": "location:asteroid-belt",
+          "kind": "asteroid_belt",
+          "name": "Asteroid Belt",
+          "parent_location_id": "location:sol",
+          "parent_relation": "orbits",
+        },
+        {
+          "child_ids": [],
+          "entity_type": "location",
+          "id": "location:jupiter",
+          "kind": "planet",
+          "name": "Jupiter",
+          "parent_location_id": "location:sol",
+          "parent_relation": "orbits",
+        },
+        {
+          "child_ids": [],
+          "entity_type": "location",
+          "id": "location:saturn",
+          "kind": "planet",
+          "name": "Saturn",
+          "parent_location_id": "location:sol",
+          "parent_relation": "orbits",
+        },
+        {
+          "child_ids": [],
+          "entity_type": "location",
+          "id": "location:uranus",
+          "kind": "planet",
+          "name": "Uranus",
+          "parent_location_id": "location:sol",
+          "parent_relation": "orbits",
+        },
+        {
+          "child_ids": [],
+          "entity_type": "location",
+          "id": "location:neptune",
+          "kind": "planet",
+          "name": "Neptune",
+          "parent_location_id": "location:sol",
+          "parent_relation": "orbits",
+        },
+        {
+          "child_ids": [],
+          "entity_type": "location",
+          "id": "location:kuiper-belt",
+          "kind": "kuiper_belt",
+          "name": "Kuiper Belt",
+          "parent_location_id": "location:sol",
+          "parent_relation": "orbits",
+        },
+        {
+          "child_ids": [],
+          "entity_type": "location",
+          "id": "location:oort-cloud",
+          "kind": "oort_cloud",
+          "name": "Oort Cloud",
+          "parent_location_id": "location:sol",
+          "parent_relation": "orbits",
+        },
+        {
+          "entity_type": "species",
+          "homeworld_id": "location:earth",
+          "id": "species:human",
+          "name": "Human",
+        },
+        {
+          "description": "Artificial Machine Intelligence (AMI) is an artificial intelligence created directly as a machine mind rather than copied from a biological mind.",
+          "entity_type": "technology",
+          "id": "technology:ami",
+          "name": "AMI",
+        },
+      ],
+      "view": {
+        "chapter": null,
+        "display_date": null,
+      },
+    },
+  },
+}
+`;

@@ -576,6 +576,28 @@ source modules through it and rejects a missing, stale, out-of-order, or
 path-inconsistent manifest with an actionable diagnostic. Selected world projections
 remain deterministic in memory and are never committed as per-chapter snapshots.
 
+The browser and CLI share one explicit narrative preparation boundary:
+`raw authored sources -> prepared corpus -> reader-safe projection`. Preparation
+evaluates every raw source once against the shared structural validators, completes
+the cross-record semantic pass, clones the accepted data away from its mutable input,
+deeply freezes it, and builds private chapter-order, chapter-lookup, and
+meaningful-date indexes. Projection APIs accept only this prepared corpus. Prepared
+indexes are implementation state and never appear in a public `NarrativeWorld`.
+
+One Draft 2020-12 Ajv registry lives for the application or CLI module lifetime. Each
+named schema validator is resolved and cached once, including the generated-world
+validator; copied error arrays preserve diagnostics without exposing Ajv's mutable
+`errors` property. The CLI supplies source-aware structural formatting to the same
+preparation call, so file, line, and column diagnostics do not require a second
+schema-validation pass.
+
+Application-level projection coordination owns each reader-progress transition. It
+normalizes progress, obtains prepared meaningful-date options, generates exactly one
+world, derives the map projection and selection eligibility from that world, and
+commits the coherent result atomically. Timeline, browser, map, and inspector consume
+that shared result. Search, group expansion, compact-panel state, timeline viewport,
+and map-scale changes do not regenerate the narrative world.
+
 Locations form a one-parent tree: every non-root location has exactly one parent and
 child lists are generated. This supports systems, planets, moons, locales, and
 megastructures without fixing a shallow hierarchy. The zero-state `locations` branch

@@ -12,6 +12,12 @@ export interface NarrativeCorpus {
   knownAstronomyObjectIds: readonly string[];
 }
 
+declare const preparedNarrativeCorpusBrand: unique symbol;
+
+export interface PreparedNarrativeCorpus extends NarrativeCorpus {
+  readonly [preparedNarrativeCorpusBrand]: true;
+}
+
 export interface NarrativeEntity extends NarrativeRecord {
   id: string;
   entity_type:
@@ -53,7 +59,7 @@ export interface NarrativeActivity {
 
 export interface MeaningfulNarrativeDate {
   date: string;
-  source_chapters: string[];
+  source_chapters: readonly string[];
 }
 
 export interface NarrativeWorld {
@@ -87,6 +93,11 @@ function createAjv(): Ajv2020 {
   return new Ajv2020({ allErrors: true, strict: false, verbose: true });
 }
 
+const narrativeAjv = createAjv();
+narrativeAjv.addSchema(narrativeSchema);
+const narrativeValidators = new Map<string, ValidateFunction>();
+const validatorCompilationCounts = new Map<string, number>();
+
 function errorMessage(errors: ErrorObject[] | null | undefined): string {
   return (errors ?? [])
     .map(
@@ -97,11 +108,16 @@ function errorMessage(errors: ErrorObject[] | null | undefined): string {
 }
 
 function validatorFor(definition: string): ValidateFunction {
-  const ajv = createAjv();
-  ajv.addSchema(narrativeSchema);
-  const validator = ajv.getSchema(`${schemaId}#/$defs/${definition}`);
+  const cached = narrativeValidators.get(definition);
+  if (cached) return cached;
+  const validator = narrativeAjv.getSchema(`${schemaId}#/$defs/${definition}`);
   if (!validator)
     throw new Error(`Missing narrative schema definition: ${definition}.`);
+  narrativeValidators.set(definition, validator);
+  validatorCompilationCounts.set(
+    definition,
+    (validatorCompilationCounts.get(definition) ?? 0) + 1,
+  );
   return validator;
 }
 
@@ -126,6 +142,14 @@ export function narrativeSchemaErrors(
   const validator = validatorFor(definition);
   if (validator(candidate)) return [];
   return [...(validator.errors ?? [])];
+}
+
+/** Exposes module-lifetime validator compilation counts for deterministic tests. */
+export function narrativeValidatorCompilationCounts(): ReadonlyMap<
+  string,
+  number
+> {
+  return new Map(validatorCompilationCounts);
 }
 
 function asRecord(value: unknown, label: string): NarrativeRecord {
@@ -393,11 +417,66 @@ function assertTemporalWrites(chapters: NarrativeRecord[]): void {
   }
 }
 
-/** Validates the complete authored corpus, including rules that require cross-record knowledge. */
-export function validateNarrativeCorpus(corpus: NarrativeCorpus): void {
-  assertSchema("zero_state_source", corpus.zeroState, "Zero-state source");
-  assertSchema("assets_source", corpus.assets, "Asset registry");
-  assertSchema("books_source", corpus.books, "Book catalogue");
+export class NarrativeStructureValidationError extends Error {
+  constructor(public readonly diagnostics: readonly string[]) {
+    super(diagnostics.join("\n"));
+    this.name = "NarrativeStructureValidationError";
+  }
+}
+
+export type FormatNarrativeStructureErrors = (
+  definition: string,
+  candidate: unknown,
+  errors: readonly ErrorObject[],
+  label: string,
+) => readonly string[];
+
+function validateNarrativeCorpusStructure(
+  corpus: NarrativeCorpus,
+  formatErrors?: FormatNarrativeStructureErrors,
+): void {
+  const candidates: Array<{
+    definition: string;
+    candidate: unknown;
+    label: string;
+  }> = [
+    {
+      definition: "zero_state_source",
+      candidate: corpus.zeroState,
+      label: "Zero-state source",
+    },
+    {
+      definition: "assets_source",
+      candidate: corpus.assets,
+      label: "Asset registry",
+    },
+    {
+      definition: "books_source",
+      candidate: corpus.books,
+      label: "Book catalogue",
+    },
+    ...corpus.chapters.map((chapter) => ({
+      definition: "chapter_source",
+      candidate: chapter,
+      label: `Chapter ${String(chapter.chapter ?? "unknown")}`,
+    })),
+  ];
+  const diagnostics: string[] = [];
+  for (const { definition, candidate, label } of candidates) {
+    const errors = narrativeSchemaErrors(definition, candidate);
+    if (errors.length === 0) continue;
+    const formatted = formatErrors?.(definition, candidate, errors, label);
+    diagnostics.push(
+      ...(formatted && formatted.length > 0
+        ? formatted
+        : [`${label} fails JSON Schema validation: ${errorMessage(errors)}`]),
+    );
+  }
+  if (diagnostics.length > 0)
+    throw new NarrativeStructureValidationError(diagnostics);
+}
+
+function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
   const zeroStateEntities = assertZeroStateSemantics(
     corpus.zeroState,
     corpus.knownAstronomyObjectIds,
@@ -444,7 +523,6 @@ export function validateNarrativeCorpus(corpus: NarrativeCorpus): void {
   }
   const chapterIds = new Set<string>();
   for (const chapter of chapters) {
-    assertSchema("chapter_source", chapter, `Chapter ${chapterId(chapter)}`);
     const id = chapterId(chapter);
     if (chapterIds.has(id))
       throw new Error(`Duplicate chapter reference: ${id}.`);
@@ -596,6 +674,83 @@ export function validateNarrativeCorpus(corpus: NarrativeCorpus): void {
     for (const entityId of introducedThisChapter) availableIds.add(entityId);
   }
   assertTemporalWrites(chapters);
+}
+
+/** Validates the complete authored corpus, including cross-record semantic rules. */
+export function validateNarrativeCorpus(corpus: NarrativeCorpus): void {
+  validateNarrativeCorpusStructure(corpus);
+  validateNarrativeCorpusSemantics(corpus);
+}
+
+interface PreparedNarrativeIndexes {
+  chapters: readonly NarrativeRecord[];
+  chapterById: ReadonlyMap<string, NarrativeRecord>;
+  meaningfulDateOptions: Map<string, readonly MeaningfulNarrativeDate[]>;
+}
+
+const preparedNarrativeIndexes = new WeakMap<
+  PreparedNarrativeCorpus,
+  PreparedNarrativeIndexes
+>();
+const narrativePreparationCounts = new WeakMap<NarrativeCorpus, number>();
+
+function deepFreeze<T>(value: T): T {
+  if (!value || typeof value !== "object" || Object.isFrozen(value))
+    return value;
+  for (const child of Object.values(value)) deepFreeze(child);
+  return Object.freeze(value);
+}
+
+export interface PrepareNarrativeCorpusOptions {
+  /** Formats structural failures without replacing their mandatory evaluation. */
+  formatStructureErrors?: FormatNarrativeStructureErrors;
+}
+
+/**
+ * Validates and isolates authored input once, then returns the immutable corpus
+ * accepted by reader-safe projection APIs.
+ */
+export function prepareNarrativeCorpus(
+  rawCorpus: NarrativeCorpus,
+  options: PrepareNarrativeCorpusOptions = {},
+): PreparedNarrativeCorpus {
+  validateNarrativeCorpusStructure(rawCorpus, options.formatStructureErrors);
+  validateNarrativeCorpusSemantics(rawCorpus);
+  const prepared = deepFreeze(
+    structuredClone(rawCorpus),
+  ) as PreparedNarrativeCorpus;
+  const chapters = [...prepared.chapters].sort((left, right) =>
+    compareChapter(chapterId(left), chapterId(right)),
+  );
+  preparedNarrativeIndexes.set(prepared, {
+    chapters,
+    chapterById: new Map(
+      chapters.map((chapter) => [chapterId(chapter), chapter]),
+    ),
+    meaningfulDateOptions: new Map(),
+  });
+  narrativePreparationCounts.set(
+    rawCorpus,
+    (narrativePreparationCounts.get(rawCorpus) ?? 0) + 1,
+  );
+  return prepared;
+}
+
+/** Reports successful preparation count for one raw corpus for deterministic tests. */
+export function narrativeCorpusPreparationCount(
+  rawCorpus: NarrativeCorpus,
+): number {
+  return narrativePreparationCounts.get(rawCorpus) ?? 0;
+}
+
+function indexesFor(corpus: PreparedNarrativeCorpus): PreparedNarrativeIndexes {
+  const indexes = preparedNarrativeIndexes.get(corpus);
+  if (!indexes) {
+    throw new Error(
+      "Narrative corpus must cross prepareNarrativeCorpus before projection.",
+    );
+  }
+  return indexes;
 }
 
 function applyProperties(
@@ -949,16 +1104,14 @@ function generateNarrativeActivity(
 
 /** Builds the reader-safe world state for a selected chapter, or the pre-book zero state. */
 export function generateNarrativeWorld(
-  corpus: NarrativeCorpus,
+  corpus: PreparedNarrativeCorpus,
   selectedChapterId: string | null = null,
   requestedDisplayDate: string | null = null,
 ): NarrativeWorld {
-  validateNarrativeCorpus(corpus);
-  const chapters = [...corpus.chapters].sort((left, right) =>
-    compareChapter(chapterId(left), chapterId(right)),
-  );
+  const indexes = indexesFor(corpus);
+  const chapters = indexes.chapters;
   const selectedChapter = selectedChapterId
-    ? chapters.find((chapter) => chapterId(chapter) === selectedChapterId)
+    ? indexes.chapterById.get(selectedChapterId)
     : undefined;
   if (selectedChapterId && !selectedChapter) {
     throw new Error(`Requested chapter does not exist: ${selectedChapterId}.`);
@@ -1085,16 +1238,16 @@ export function generateNarrativeWorld(
  * calendar position or comparing year-only and indexed values themselves.
  */
 export function meaningfulNarrativeDateOptions(
-  corpus: NarrativeCorpus,
+  corpus: PreparedNarrativeCorpus,
   knowledgeChapterId: string,
-): MeaningfulNarrativeDate[] {
-  validateNarrativeCorpus(corpus);
-  const chapters = [...corpus.chapters]
-    .sort((left, right) => compareChapter(chapterId(left), chapterId(right)))
-    .filter(
-      (chapter) => compareChapter(chapterId(chapter), knowledgeChapterId) <= 0,
-    );
-  if (!chapters.some((chapter) => chapterId(chapter) === knowledgeChapterId)) {
+): readonly MeaningfulNarrativeDate[] {
+  const indexes = indexesFor(corpus);
+  const cached = indexes.meaningfulDateOptions.get(knowledgeChapterId);
+  if (cached) return cached;
+  const chapters = indexes.chapters.filter(
+    (chapter) => compareChapter(chapterId(chapter), knowledgeChapterId) <= 0,
+  );
+  if (!indexes.chapterById.has(knowledgeChapterId)) {
     throw new Error(`Requested chapter does not exist: ${knowledgeChapterId}.`);
   }
   const candidates = new Map<string, Set<string>>();
@@ -1127,24 +1280,28 @@ export function meaningfulNarrativeDateOptions(
     });
     return writes.length === 0 ? [] : [date];
   });
-  return [...candidates.entries()]
-    .filter(([candidate]) =>
-      stateDates.every(
-        (stateDate) => compareNarrativeDates(stateDate, candidate) !== null,
-      ),
-    )
-    .sort(([left], [right]) => {
-      const ordering = compareNarrativeDates(left, right);
-      return ordering ?? left.localeCompare(right);
-    })
-    .map(([date, sourceChapters]) => ({
-      date,
-      source_chapters: [...sourceChapters].sort(compareChapter),
-    }));
+  const options = deepFreeze(
+    [...candidates.entries()]
+      .filter(([candidate]) =>
+        stateDates.every(
+          (stateDate) => compareNarrativeDates(stateDate, candidate) !== null,
+        ),
+      )
+      .sort(([left], [right]) => {
+        const ordering = compareNarrativeDates(left, right);
+        return ordering ?? left.localeCompare(right);
+      })
+      .map(([date, sourceChapters]) => ({
+        date,
+        source_chapters: [...sourceChapters].sort(compareChapter),
+      })),
+  );
+  indexes.meaningfulDateOptions.set(knowledgeChapterId, options);
+  return options;
 }
 
 export function meaningfulNarrativeDates(
-  corpus: NarrativeCorpus,
+  corpus: PreparedNarrativeCorpus,
   knowledgeChapterId: string,
 ): string[] {
   return meaningfulNarrativeDateOptions(corpus, knowledgeChapterId).map(

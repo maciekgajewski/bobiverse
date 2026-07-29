@@ -17,18 +17,56 @@ import {
   compareNarrativeMoments,
   generateNarrativeWorld,
   narrativeSchemaErrors,
+  narrativeValidatorCompilationCounts,
+  prepareNarrativeCorpus,
   validateNarrativeCorpus,
 } from "../../src/narrative/model";
 import { createNarrativeFixtureCorpus } from "../fixtures/narrative";
 
 describe("narrative corpus validation and projection", () => {
+  it("isolates and freezes prepared input before projection", () => {
+    const raw = createNarrativeFixtureCorpus();
+    const prepared = prepareNarrativeCorpus(raw);
+    const before = generateNarrativeWorld(prepared, "1.1");
+
+    raw.chapters[0]!.title = "Mutated after preparation";
+    raw.chapters.push(structuredClone(raw.chapters[0]!));
+
+    expect(Object.isFrozen(prepared)).toBe(true);
+    expect(Object.isFrozen(prepared.chapters[0])).toBe(true);
+    expect(generateNarrativeWorld(prepared, "1.1")).toEqual(before);
+  });
+
+  it("never lets source-aware formatting bypass structural preparation", () => {
+    const raw = createNarrativeFixtureCorpus();
+    raw.assets.unexpected = true;
+
+    expect(() =>
+      prepareNarrativeCorpus(raw, {
+        formatStructureErrors: () => [],
+      }),
+    ).toThrow("Asset registry fails JSON Schema validation");
+  });
+
+  it("reuses every named schema validator for repeated assertions", () => {
+    const corpus = createNarrativeFixtureCorpus();
+    prepareNarrativeCorpus(corpus);
+    const before = narrativeValidatorCompilationCounts();
+    prepareNarrativeCorpus(structuredClone(corpus));
+    narrativeSchemaErrors("chapter_source", corpus.chapters[0]);
+    const after = narrativeValidatorCompilationCounts();
+
+    expect(after).toEqual(before);
+    expect([...after.values()].every((count) => count === 1)).toBe(true);
+  });
+
   it("accepts the zero state as a complete pre-book world with an empty catalogue", () => {
     const corpus = createNarrativeFixtureCorpus();
     corpus.books = { books: {} };
     corpus.chapters = [];
 
     expect(() => validateNarrativeCorpus(corpus)).not.toThrow();
-    const world = generateNarrativeWorld(corpus);
+    const world = generateNarrativeWorld(prepareNarrativeCorpus(corpus));
     expect(world.view).toEqual({ chapter: null, display_date: null });
     expect(world.entities).toHaveLength(15);
     expect(world.entities).toContainEqual(
@@ -63,7 +101,10 @@ describe("narrative corpus validation and projection", () => {
   });
 
   it("uses story time rather than reader order for the selected chapter world", () => {
-    const world = generateNarrativeWorld(createNarrativeFixtureCorpus(), "1.3");
+    const world = generateNarrativeWorld(
+      prepareNarrativeCorpus(createNarrativeFixtureCorpus()),
+      "1.3",
+    );
     expect(world.view).toEqual({ chapter: "1.3", display_date: "2200.1" });
     expect(
       world.entities.find((entity) => entity.id === "character:fixture-alex")
@@ -134,7 +175,9 @@ describe("narrative corpus validation and projection", () => {
     ];
 
     expect(() => validateNarrativeCorpus(corpus)).not.toThrow();
-    expect(generateNarrativeWorld(corpus).entities).toEqual(
+    expect(
+      generateNarrativeWorld(prepareNarrativeCorpus(corpus)).entities,
+    ).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
           id: "character:fixture-alex",
@@ -162,7 +205,9 @@ describe("narrative corpus validation and projection", () => {
         }),
       ]),
     );
-    expect(generateNarrativeWorld(corpus, "1.2").entities).toEqual(
+    expect(
+      generateNarrativeWorld(prepareNarrativeCorpus(corpus), "1.2").entities,
+    ).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
           id: "technology:fixture-drive",
@@ -212,7 +257,10 @@ describe("narrative corpus validation and projection", () => {
       },
     ];
 
-    const beforeLaterChapter = generateNarrativeWorld(corpus, "1.1");
+    const beforeLaterChapter = generateNarrativeWorld(
+      prepareNarrativeCorpus(corpus),
+      "1.1",
+    );
     expect(beforeLaterChapter.entities).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -226,7 +274,10 @@ describe("narrative corpus validation and projection", () => {
       ]),
     );
 
-    const afterLaterChapter = generateNarrativeWorld(corpus, "1.2");
+    const afterLaterChapter = generateNarrativeWorld(
+      prepareNarrativeCorpus(corpus),
+      "1.2",
+    );
     expect(
       afterLaterChapter.entities.find(
         (entity) => entity.id === "technology:fixture-drive",
@@ -243,7 +294,10 @@ describe("narrative corpus validation and projection", () => {
       )?.description,
     ).toBe("Later fictional vessel-type description.");
 
-    const readerVisibleEarlierStoryTime = generateNarrativeWorld(corpus, "1.3");
+    const readerVisibleEarlierStoryTime = generateNarrativeWorld(
+      prepareNarrativeCorpus(corpus),
+      "1.3",
+    );
     expect(
       readerVisibleEarlierStoryTime.entities.find(
         (entity) => entity.id === "technology:fixture-drive",
@@ -279,7 +333,10 @@ describe("narrative corpus validation and projection", () => {
     ];
 
     expect(
-      generateNarrativeWorld(corpus, "1.1").entities.map((entity) => entity.id),
+      generateNarrativeWorld(
+        prepareNarrativeCorpus(corpus),
+        "1.1",
+      ).entities.map((entity) => entity.id),
     ).not.toEqual(
       expect.arrayContaining([
         "technology:fixture-drive",
@@ -288,7 +345,10 @@ describe("narrative corpus validation and projection", () => {
       ]),
     );
     expect(
-      generateNarrativeWorld(corpus, "1.2").entities.map((entity) => entity.id),
+      generateNarrativeWorld(
+        prepareNarrativeCorpus(corpus),
+        "1.2",
+      ).entities.map((entity) => entity.id),
     ).toEqual(
       expect.arrayContaining([
         "technology:fixture-drive",
@@ -395,9 +455,10 @@ describe("narrative corpus validation and projection", () => {
     ];
 
     expect(
-      generateNarrativeWorld(corpus, "1.3").entities.find(
-        (entity) => entity.id === "species:human",
-      )?.description,
+      generateNarrativeWorld(
+        prepareNarrativeCorpus(corpus),
+        "1.3",
+      ).entities.find((entity) => entity.id === "species:human")?.description,
     ).toBe("A fixture update to seeded state.");
   });
 
@@ -406,7 +467,7 @@ describe("narrative corpus validation and projection", () => {
     corpus.chapters = [structuredClone(canonicalChapter1)];
 
     expect(() => validateNarrativeCorpus(corpus)).not.toThrow();
-    const world = generateNarrativeWorld(corpus, "1.1");
+    const world = generateNarrativeWorld(prepareNarrativeCorpus(corpus), "1.1");
     expect(
       world.entities.filter((entity) => entity.id === "species:human"),
     ).toHaveLength(1);
@@ -424,7 +485,10 @@ describe("narrative corpus validation and projection", () => {
       structuredClone(canonicalChapter2),
     ];
 
-    const chapter1World = generateNarrativeWorld(corpus, "1.1");
+    const chapter1World = generateNarrativeWorld(
+      prepareNarrativeCorpus(corpus),
+      "1.1",
+    );
     expect(
       chapter1World.entities.find(
         (entity) => entity.id === "character:robert-johansson",
@@ -438,7 +502,10 @@ describe("narrative corpus validation and projection", () => {
       ),
     ).not.toHaveProperty("death_date");
 
-    const chapter2World = generateNarrativeWorld(corpus, "1.2");
+    const chapter2World = generateNarrativeWorld(
+      prepareNarrativeCorpus(corpus),
+      "1.2",
+    );
     expect(
       chapter2World.entities.find(
         (entity) => entity.id === "character:robert-johansson",
@@ -483,7 +550,10 @@ describe("narrative corpus validation and projection", () => {
     ];
 
     expect(() => validateNarrativeCorpus(corpus)).not.toThrow();
-    const world = generateNarrativeWorld(corpus, "1.10");
+    const world = generateNarrativeWorld(
+      prepareNarrativeCorpus(corpus),
+      "1.10",
+    );
     const entityIds = world.entities.map((entity) => entity.id);
 
     expect(entityIds).toContain("event:bob-road-incident");
@@ -527,9 +597,10 @@ describe("narrative corpus validation and projection", () => {
 
     expect(() => validateNarrativeCorpus(corpus)).not.toThrow();
     expect(
-      generateNarrativeWorld(corpus, "1.3").entities.find(
-        (entity) => entity.id === "character:fixture-alex",
-      ),
+      generateNarrativeWorld(
+        prepareNarrativeCorpus(corpus),
+        "1.3",
+      ).entities.find((entity) => entity.id === "character:fixture-alex"),
     ).toMatchObject({ current_state: "middle state" });
   });
 
@@ -537,9 +608,11 @@ describe("narrative corpus validation and projection", () => {
     const corpus = createNarrativeFixtureCorpus();
 
     expect(
-      generateNarrativeWorld(corpus, "1.3", "2200.2").entities.find(
-        (entity) => entity.id === "character:fixture-alex",
-      ),
+      generateNarrativeWorld(
+        prepareNarrativeCorpus(corpus),
+        "1.3",
+        "2200.2",
+      ).entities.find((entity) => entity.id === "character:fixture-alex"),
     ).toMatchObject({ current_state: "later state" });
   });
 
@@ -609,8 +682,14 @@ describe("narrative corpus validation and projection", () => {
 
     const withoutMentions = structuredClone(corpus);
     delete withoutMentions.chapters[0]!.mentions;
-    const mentionedWorld = generateNarrativeWorld(corpus, "1.1");
-    const ordinaryWorld = generateNarrativeWorld(withoutMentions, "1.1");
+    const mentionedWorld = generateNarrativeWorld(
+      prepareNarrativeCorpus(corpus),
+      "1.1",
+    );
+    const ordinaryWorld = generateNarrativeWorld(
+      prepareNarrativeCorpus(withoutMentions),
+      "1.1",
+    );
 
     expect(mentionedWorld.entities).toEqual(ordinaryWorld.entities);
     expect(mentionedWorld.activity).toEqual(
@@ -687,7 +766,10 @@ describe("narrative corpus validation and projection", () => {
       },
     );
 
-    const activity = generateNarrativeWorld(corpus, "1.3").activity;
+    const activity = generateNarrativeWorld(
+      prepareNarrativeCorpus(corpus),
+      "1.3",
+    ).activity;
     expect(activity).toContainEqual({
       entity_id: "character:fixture-alex",
       source_chapter: "1.1",
@@ -713,9 +795,11 @@ describe("narrative corpus validation and projection", () => {
       },
     ]);
     expect(
-      generateNarrativeWorld(corpus, "1.3", "2200.1").entities.some(
-        (entity) => entity.id === "event:fixture-unplaced",
-      ),
+      generateNarrativeWorld(
+        prepareNarrativeCorpus(corpus),
+        "1.3",
+        "2200.1",
+      ).entities.some((entity) => entity.id === "event:fixture-unplaced"),
     ).toBe(false);
     const placed = activity.filter((record) => record.effective_date !== null);
     for (let index = 1; index < placed.length; index += 1) {
@@ -772,8 +856,14 @@ describe("narrative corpus validation and projection", () => {
       introductions.push(event);
     }
 
-    const first = generateNarrativeWorld(corpus, "1.3").activity;
-    const second = generateNarrativeWorld(corpus, "1.3").activity;
+    const first = generateNarrativeWorld(
+      prepareNarrativeCorpus(corpus),
+      "1.3",
+    ).activity;
+    const second = generateNarrativeWorld(
+      prepareNarrativeCorpus(corpus),
+      "1.3",
+    ).activity;
     expect(second).toEqual(first);
     const eventOrder = first
       .filter((record) => record.reasons.includes("event"))
@@ -815,7 +905,10 @@ describe("narrative corpus validation and projection", () => {
         >;
         introductions.push(event);
       }
-      const world = generateNarrativeWorld(corpus, "1.3");
+      const world = generateNarrativeWorld(
+        prepareNarrativeCorpus(corpus),
+        "1.3",
+      );
       world.view.display_date = "2300";
       world.activity = world.activity.filter(
         (record) =>
@@ -834,9 +927,12 @@ describe("narrative corpus validation and projection", () => {
   it("projects only one uniquely latest eligible character sighting", () => {
     const corpus = createNarrativeFixtureCorpus();
     expect(
-      generateNarrativeWorld(corpus, "1.3", "2200.1").entities.find(
-        (entity) => entity.id === "character:fixture-alex",
-      )?.last_known_location,
+      generateNarrativeWorld(
+        prepareNarrativeCorpus(corpus),
+        "1.3",
+        "2200.1",
+      ).entities.find((entity) => entity.id === "character:fixture-alex")
+        ?.last_known_location,
     ).toEqual({
       location_id: "location:earth",
       source_chapter: "1.3",
@@ -853,7 +949,7 @@ describe("narrative corpus validation and projection", () => {
       },
     ];
     expect(
-      generateNarrativeWorld(tied, "1.1").entities.find(
+      generateNarrativeWorld(prepareNarrativeCorpus(tied), "1.1").entities.find(
         (entity) => entity.id === "character:fixture-alex",
       )?.last_known_location,
     ).toBeUndefined();
@@ -868,9 +964,11 @@ describe("narrative corpus validation and projection", () => {
       },
     ];
     expect(
-      generateNarrativeWorld(yearOnly, "1.3").entities.find(
-        (entity) => entity.id === "character:fixture-alex",
-      )?.last_known_location,
+      generateNarrativeWorld(
+        prepareNarrativeCorpus(yearOnly),
+        "1.3",
+      ).entities.find((entity) => entity.id === "character:fixture-alex")
+        ?.last_known_location,
     ).toEqual({
       location_id: "location:earth",
       source_chapter: "1.3",
@@ -883,9 +981,11 @@ describe("narrative corpus validation and projection", () => {
       delete chapter.updates;
     }
     expect(
-      generateNarrativeWorld(equalIndexed, "1.3").entities.find(
-        (entity) => entity.id === "character:fixture-alex",
-      )?.last_known_location,
+      generateNarrativeWorld(
+        prepareNarrativeCorpus(equalIndexed),
+        "1.3",
+      ).entities.find((entity) => entity.id === "character:fixture-alex")
+        ?.last_known_location,
     ).toBeUndefined();
 
     const mixedPrecision = createNarrativeFixtureCorpus();
@@ -899,9 +999,11 @@ describe("narrative corpus validation and projection", () => {
     ];
     for (const chapter of mixedPrecision.chapters) delete chapter.updates;
     expect(
-      generateNarrativeWorld(mixedPrecision, "1.3").entities.find(
-        (entity) => entity.id === "character:fixture-alex",
-      )?.last_known_location,
+      generateNarrativeWorld(
+        prepareNarrativeCorpus(mixedPrecision),
+        "1.3",
+      ).entities.find((entity) => entity.id === "character:fixture-alex")
+        ?.last_known_location,
     ).toBeUndefined();
   });
 
@@ -921,7 +1023,10 @@ describe("narrative corpus validation and projection", () => {
       structuredClone(canonicalChapter11),
     ];
 
-    const world = generateNarrativeWorld(corpus, "1.11");
+    const world = generateNarrativeWorld(
+      prepareNarrativeCorpus(corpus),
+      "1.11",
+    );
     expect(
       world.entities.find((entity) => entity.id === "character:bob-replicant")
         ?.last_known_location,

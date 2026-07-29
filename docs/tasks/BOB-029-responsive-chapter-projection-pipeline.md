@@ -1,6 +1,6 @@
 # BOB-029: responsive chapter projection pipeline
 
-Status: Ready
+Status: Done
 Phase: 2 (narrative foundation and chapter timeline)
 Last updated: 2026-07-28
 
@@ -346,3 +346,43 @@ because they must never enter `NarrativeWorld`.
 
 `Ready` means this task is sufficiently specified. It does not authorize
 implementation; wait for the Captain to say `proceed` or `make it so`.
+
+## Completion evidence
+
+Implementation authorized by the Captain on 2026-07-28.
+
+- Added the mandatory canonical matrix snapshot before changing production files and
+  captured all required `/tmp/bobiverse-bob-029-before-*` files.
+- The post-change equivalence command was:
+  `env BOB_029_CAPTURE=/tmp/bobiverse-bob-029-after-matrix.json ./node_modules/.bin/vitest run tests/unit/narrative-equivalence.test.ts`.
+  The exact CLI generation and comparison commands were:
+
+  ```bash
+  npm run narrative:generate -- --output /tmp/bobiverse-bob-029-after-zero.json
+  npm run narrative:generate -- --chapter 1.1 --output /tmp/bobiverse-bob-029-after-1.1.json
+  npm run narrative:generate -- --chapter 1.10 --output /tmp/bobiverse-bob-029-after-1.10.json
+  npm run narrative:generate -- --chapter 1.11 --output /tmp/bobiverse-bob-029-after-1.11.json
+  cmp /tmp/bobiverse-bob-029-before-matrix.json /tmp/bobiverse-bob-029-after-matrix.json
+  cmp /tmp/bobiverse-bob-029-before-zero.json /tmp/bobiverse-bob-029-after-zero.json
+  cmp /tmp/bobiverse-bob-029-before-1.1.json /tmp/bobiverse-bob-029-after-1.1.json
+  cmp /tmp/bobiverse-bob-029-before-1.10.json /tmp/bobiverse-bob-029-after-1.10.json
+  cmp /tmp/bobiverse-bob-029-before-1.11.json /tmp/bobiverse-bob-029-after-1.11.json
+  ```
+
+  All five `cmp` commands exited 0.
+
+- `npm run performance` builds the current production bundle and runs the isolated
+  Chromium protocol. Reference run context: host `piotr`, AMD Ryzen 5 5600, Node
+  22.23.1, Chromium 149.0.7827.55, bundle
+  `index-DBqO2gQ7.js` / `index-n5MlpF3x.css`.
+- The unselected samples were
+  `[51.0, 49.2, 49.7, 48.1, 50.7, 49.1, 49.5, 48.6, 49.7, 49.2]` ms:
+  49.35 ms median and 51.0 ms maximum. The selected-object samples were
+  `[54.2, 51.2, 50.6, 48.3, 51.4, 46.6, 53.8, 47.8, 51.6, 48.3]` ms:
+  50.9 ms median and 54.2 ms maximum.
+- The corrected final `npm run validate` passed 53 Python tests and 131 Vitest tests,
+  including the production build. The focused post-review command passed all 57 tests
+  across the narrative unit, equivalence, diagnostics, CLI-output, progress, and App
+  component files. The final post-review `npm run test:e2e` passed all 42 Chromium,
+  Firefox, and WebKit tests.
+- Fresh independent review pass 3 reported `No findings.`

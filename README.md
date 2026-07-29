@@ -62,6 +62,9 @@ Then open `http://<development-host-ip>:4173`. Do not open the built files with 
 Run `npm run validate` for the normal local verification set. See
 [astronomy pipeline](docs/data/astronomy-pipeline.md) for catalogue refresh and
 [visual testing](docs/visual-testing.md) for the remote-browser acceptance procedure.
+Run `npm run performance` for the isolated production Chromium chapter-transition
+gate; it builds the current source and owns strict loopback preview port 4173 while
+measuring.
 
 ## Narrative authoring
 

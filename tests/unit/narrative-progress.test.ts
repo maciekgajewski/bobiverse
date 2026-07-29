@@ -3,6 +3,7 @@ import {
   generateNarrativeWorld,
   meaningfulNarrativeDateOptions,
   meaningfulNarrativeDates,
+  prepareNarrativeCorpus,
 } from "../../src/narrative/model";
 import {
   confirmReadThrough,
@@ -124,7 +125,10 @@ describe("reader progress", () => {
 
   it("keeps later-revealed earlier state unavailable until its knowledge chapter", () => {
     const corpus = createNarrativeFixtureCorpus();
-    expect(generateNarrativeWorld(corpus, "1.1", "2200.0").entities).toEqual(
+    expect(
+      generateNarrativeWorld(prepareNarrativeCorpus(corpus), "1.1", "2200.0")
+        .entities,
+    ).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
           id: "character:fixture-alex",
@@ -132,7 +136,10 @@ describe("reader progress", () => {
         }),
       ]),
     );
-    expect(generateNarrativeWorld(corpus, "1.3", "2200.1").entities).toEqual(
+    expect(
+      generateNarrativeWorld(prepareNarrativeCorpus(corpus), "1.3", "2200.1")
+        .entities,
+    ).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
           id: "character:fixture-alex",
@@ -147,10 +154,12 @@ describe("reader progress", () => {
     corpus.chapters[0]!.date = "2200";
     corpus.chapters[1]!.updates = undefined;
     corpus.chapters[2]!.updates = undefined;
-    expect(meaningfulNarrativeDates(corpus, "1.3")).not.toContain("2200.2");
-    expect(() => generateNarrativeWorld(corpus, "1.3", "2200.2")).toThrow(
-      "not meaningful and projection-safe",
-    );
+    expect(
+      meaningfulNarrativeDates(prepareNarrativeCorpus(corpus), "1.3"),
+    ).not.toContain("2200.2");
+    expect(() =>
+      generateNarrativeWorld(prepareNarrativeCorpus(corpus), "1.3", "2200.2"),
+    ).toThrow("not meaningful and projection-safe");
   });
 
   it("keeps an event's determinate date meaningful when its reveal chapter has a year-only date", () => {
@@ -168,12 +177,19 @@ describe("reader progress", () => {
     corpus.chapters[2]!.appearances = undefined;
     corpus.chapters[1]!.updates = undefined;
     corpus.chapters[2]!.updates = undefined;
-    expect(meaningfulNarrativeDates(corpus, "1.3")).toContain("2200.1");
-    expect(meaningfulNarrativeDateOptions(corpus, "1.3")).toContainEqual({
+    expect(
+      meaningfulNarrativeDates(prepareNarrativeCorpus(corpus), "1.3"),
+    ).toContain("2200.1");
+    expect(
+      meaningfulNarrativeDateOptions(prepareNarrativeCorpus(corpus), "1.3"),
+    ).toContainEqual({
       date: "2200.1",
       source_chapters: ["1.1", "1.3"],
     });
-    expect(generateNarrativeWorld(corpus, "1.3", "2200.1").entities).toEqual(
+    expect(
+      generateNarrativeWorld(prepareNarrativeCorpus(corpus), "1.3", "2200.1")
+        .entities,
+    ).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ id: "event:fixture-indexed-event" }),
       ]),

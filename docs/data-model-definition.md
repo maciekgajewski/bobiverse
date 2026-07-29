@@ -1145,6 +1145,26 @@ to the zero state:
    chronologically latest value for each entity property. A normal chapter view uses
    `viewChapter.date` as that date.
 
+Raw zero-state, asset, book, and chapter records must first cross
+`prepareNarrativeCorpus`. That boundary performs one complete structural and semantic
+validation pass, clones and deeply freezes the accepted corpus, and privately indexes
+canonical numeric chapter order, chapter lookup, and immutable meaningful-date
+inputs. Later mutation of raw authoring objects cannot affect prepared projections.
+The indexes are not generated narrative fields and must never be serialized into
+`NarrativeWorld`.
+
+The browser prepares its static corpus once at module initialization. One CLI
+invocation prepares once and reuses the result for validation and optional generation.
+The Draft 2020-12 Ajv registry and its named validators also live for that module
+lifetime; source-located CLI diagnostics are emitted during the structural portion of
+preparation rather than by a preliminary duplicate pass.
+
+A reader-progress transition has one application-owned projection result: normalized
+progress, meaningful dates, one generated world, its map join, and selection
+eligibility. All reader-facing surfaces commit that result together. State that does
+not change the knowledge chapter, display date, or mode does not generate another
+world.
+
 A future date-exploration UI may request any valid story date in place of
 `viewChapter.date`, including a date earlier or later than the selected chapter. It
 must reuse the same reader-visible chapter set chosen in stage 1; it must not load or

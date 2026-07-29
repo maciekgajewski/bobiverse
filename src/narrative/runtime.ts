@@ -3,7 +3,12 @@ import zeroState from "../../data/narrative/baseline/zero-state.json";
 import books from "../../data/narrative/books.json";
 import manifest from "../../generated/narrative/chapter-manifest.json";
 import { nearbySystems } from "../domain/data";
-import type { NarrativeCorpus, NarrativeRecord } from "./model";
+import {
+  narrativeCorpusPreparationCount,
+  prepareNarrativeCorpus,
+  type NarrativeCorpus,
+  type NarrativeRecord,
+} from "./model";
 import type { NarrativeChapterSummary } from "./progress";
 
 const modules = import.meta.glob("../../data/narrative/chapters/*/*.json", {
@@ -22,7 +27,7 @@ function chapterNumber(chapter: string): [number, number] {
   return [book!, number!];
 }
 
-export const narrativeCorpus: NarrativeCorpus = (() => {
+const rawNarrativeCorpus: NarrativeCorpus = (() => {
   const entries = record(manifest, "Generated chapter manifest").chapters;
   if (!Array.isArray(entries))
     throw new Error("Generated chapter manifest has no chapters.");
@@ -54,13 +59,28 @@ export const narrativeCorpus: NarrativeCorpus = (() => {
   };
 })();
 
+let preparationError: string | null = null;
+export const narrativeCorpus = (() => {
+  try {
+    return prepareNarrativeCorpus(rawNarrativeCorpus);
+  } catch (error) {
+    preparationError =
+      error instanceof Error ? error.message : "Unknown preparation failure.";
+    return null;
+  }
+})();
+export const narrativePreparationError = preparationError;
+export function narrativeRuntimePreparationCount(): number {
+  return narrativeCorpusPreparationCount(rawNarrativeCorpus);
+}
+
 export const narrativeChapters: NarrativeChapterSummary[] =
-  narrativeCorpus.chapters
+  rawNarrativeCorpus.chapters
     .map((chapter) => {
       const reference = String(chapter.chapter);
       const [book] = chapterNumber(reference);
       const catalogue = record(
-        narrativeCorpus.books.books,
+        rawNarrativeCorpus.books.books,
         "Book catalogue books",
       );
       const bookRecord = record(catalogue[String(book)], `Book ${book}`);

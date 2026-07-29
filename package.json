@@ -29,6 +29,7 @@
     "narrative:generate": "tsx scripts/narrative-cli.ts generate",
     "pretest": "npm run narrative:manifest",
     "test:e2e": "npm run narrative:manifest && xvfb-run -a playwright test",
+    "performance": "npm run build && playwright test --config playwright.performance.config.ts",
     "build": "npm run data:validate && npm run narrative:manifest && npm run narrative:validate && tsc -b && vite build",
     "preview": "vite preview --host 0.0.0.0 --port 4173 --strictPort",
     "validate": "npm run format:check && npm run lint && npm run typecheck && npm run data:test && npm run data:validate && npm run test && npm run build"

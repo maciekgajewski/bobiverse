@@ -16,6 +16,32 @@ WebGL context, so the Firefox project runs headed inside the disposable Xvfb dis
 created by `xvfb-run -a`; `npx playwright install --with-deps` supplies that system
 dependency.
 
+## Production chapter-transition performance
+
+Run the isolated BOB-029 production authority with:
+
+```bash
+npm run performance
+```
+
+The command builds the current source, serves that exact production bundle at strict
+`127.0.0.1:4173`, and runs only the pinned headless Chromium benchmark at 1440 by 1000
+with reduced motion. It needs no external service or network access. Do not run a
+concurrent repository build, test, benchmark, DevTools recording, or CPU throttling.
+
+The benchmark seeds reading progress through Chapter 1.11 with Chapter 1.10 selected,
+performs two excluded 1.10/1.11 warm-up cycles, then measures ten alternating
+transitions beginning with 1.11. It repeats from the prepared initial state with
+**Solar System** selected and verifies the selection is never cleared. Each sample
+begins at the capture-phase chapter-button click and ends after the target button,
+shared map badge, and two animation frames have completed. Each scenario must have a
+median at or below 100 ms and no sample above 150 ms.
+
+The gate prints all samples, median, maximum, bundle assets, browser, Node, host,
+platform, and CPU identity. These production measurements are authoritative.
+Development-server interaction timing is diagnostic only because React and Vite
+development checks add work that is absent from the deployed bundle.
+
 For manual acceptance, start `npm run dev` and open
 `http://<development-host>:5173` from a trusted-LAN workstation. Test current Chrome,
 Firefox, Safari, and Edge where available. Check rotate, zoom, pan, marker picking,

@@ -10,6 +10,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import App from "../../src/App";
 import * as narrativeMap from "../../src/narrative/map";
 import * as narrativeModel from "../../src/narrative/model";
+import { narrativeRuntimePreparationCount } from "../../src/narrative/runtime";
 
 describe("atlas shell", () => {
   afterEach(() => {
@@ -29,7 +30,9 @@ describe("atlas shell", () => {
         "Select a map marker or browser item to inspect its reader-safe details.",
       ),
     ).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Solar System" }));
+    await user.click(
+      screen.getByRole("button", { name: /^Solar System(?:Active)?$/ }),
+    );
     expect(
       screen.getByRole("heading", { name: "Solar System" }),
     ).toBeInTheDocument();
@@ -65,11 +68,12 @@ describe("atlas shell", () => {
         timelinePan: 0,
       }),
     );
-    vi.spyOn(narrativeModel, "meaningfulNarrativeDates").mockImplementationOnce(
-      () => {
-        throw new Error("Persisted projection failed.");
-      },
-    );
+    vi.spyOn(
+      narrativeModel,
+      "meaningfulNarrativeDateOptions",
+    ).mockImplementationOnce(() => {
+      throw new Error("Persisted projection failed.");
+    });
 
     render(<App />);
 
@@ -102,6 +106,59 @@ describe("atlas shell", () => {
     expect(
       screen.getByText("Transition projection failed."),
     ).toBeInTheDocument();
+  });
+
+  it("generates one world per chapter transition and none for unrelated UI state", async () => {
+    const generate = vi.spyOn(narrativeModel, "generateNarrativeWorld");
+    const user = userEvent.setup();
+    render(<App />);
+    const afterInitialLoad = generate.mock.calls.length;
+
+    await user.type(
+      screen.getByRole("searchbox", { name: "Search visible objects" }),
+      "earth",
+    );
+    await user.click(
+      screen.getByRole("button", { name: /Other Locations, 1 visible/ }),
+    );
+    expect(generate).toHaveBeenCalledTimes(afterInitialLoad);
+
+    await user.clear(
+      screen.getByRole("searchbox", { name: "Search visible objects" }),
+    );
+    await user.click(screen.getByRole("button", { name: "Solar System" }));
+    await user.selectOptions(screen.getByLabelText("Read through"), "1.1");
+    await user.click(
+      screen.getByRole("button", { name: "Confirm read through" }),
+    );
+
+    expect(generate).toHaveBeenCalledTimes(afterInitialLoad + 1);
+  });
+
+  it("generates at most one world for zero-state and date-mode transitions", async () => {
+    const generate = vi.spyOn(narrativeModel, "generateNarrativeWorld");
+    const user = userEvent.setup();
+    render(<App />);
+    let expectedCalls = generate.mock.calls.length;
+
+    await user.selectOptions(screen.getByLabelText("Read through"), "1.2");
+    await user.click(
+      screen.getByRole("button", { name: "Confirm read through" }),
+    );
+    expect(generate).toHaveBeenCalledTimes(++expectedCalls);
+
+    await user.click(
+      screen.getByRole("button", { name: /^Solar System(?:Active)?$/ }),
+    );
+    await user.click(screen.getByRole("button", { name: "Date mode" }));
+    expect(generate).toHaveBeenCalledTimes(++expectedCalls);
+
+    await user.click(screen.getByRole("button", { name: "Chapter mode" }));
+    expect(generate).toHaveBeenCalledTimes(++expectedCalls);
+
+    await user.selectOptions(screen.getByLabelText("Knowledge through"), "");
+    expect(generate).toHaveBeenCalledTimes(expectedCalls + 1);
+    expect(narrativeRuntimePreparationCount()).toBe(1);
   });
 
   it("keeps DOM navigation available when astronomy coverage is missing", () => {
