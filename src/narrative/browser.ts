@@ -15,7 +15,7 @@ export const browserGroupDefinitions = [
   { id: "species", label: "Species" },
   { id: "technologies", label: "Technologies" },
   { id: "organizations", label: "Organizations" },
-  { id: "vessel-types", label: "Vessel Types" },
+  { id: "vessels", label: "Vessels" },
 ] as const;
 
 export type BrowserGroupId = (typeof browserGroupDefinitions)[number]["id"];
@@ -84,8 +84,8 @@ function entityGroup(entity: NarrativeEntity): BrowserGroupId {
       return "technologies";
     case "organization":
       return "organizations";
-    case "vessel_type":
-      return "vessel-types";
+    case "vessel":
+      return "vessels";
     case "location":
       return entity.kind === "star_system" ? "star-systems" : "other-locations";
   }

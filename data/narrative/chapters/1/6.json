@@ -31,7 +31,7 @@
   "updates": [
     {
       "entity_id": "character:bob-replicant",
-      "current_state": "A nightly backed-up computer simulation made from a copy of Robert Johansson's mind, now one of two candidates for controlling a Von Neumann probe and highly motivated to cooperate and train for the chance to reach the stars."
+      "current_state": "Training as one of two remaining candidates to control a Von Neumann probe."
     },
     {
       "entity_id": "organization:free-american-independent-theocratic-hegemony",
@@ -39,11 +39,11 @@
     },
     {
       "entity_id": "technology:guppi-interface",
-      "description": "An interface that offloads tasks for replicants while retaining their human limits on multitasking. Its name expands to General Unit Primary Peripheral Interface. Its logs record Bob's monitoring interfaces and scripts."
+      "description": "An interface that offloads tasks for replicants while retaining their human limits on multitasking. Its name expands to General Unit Primary Peripheral Interface, and its logs retain monitoring-interface and script activity."
     },
     {
       "entity_id": "technology:roamers",
-      "description": "Remote observation and manipulation devices that Bob directs through GUPPI. They come in varied sizes, can coordinate across scales, and need minimal supervision once their tasks, dependencies, and interruption conditions are defined. Without Bob's active interference, they can work up to ten times faster."
+      "description": "Remote observation and manipulation devices directed through GUPPI. They come in varied sizes, can coordinate across scales, and need minimal supervision once their tasks, dependencies, and interruption conditions are defined. Without active intervention, they can work up to ten times faster."
     }
   ],
   "mentions": ["character:minister-travis"]

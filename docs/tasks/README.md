@@ -43,7 +43,9 @@ derived from `../implementation-plan.md` and must remain consistent with
 | [BOB-025](BOB-025-fixed-light-year-presentation.md)                     | Done   | Remove unit selection and use light-years for all displayed distances.     |
 | [BOB-026](BOB-026-ultracool-dwarf-identity-and-presentation.md)         | Done   | Give CNS5-only ultracool objects recognizable names and presentation.      |
 | [BOB-027](BOB-027-generalized-narrative-moment-ordering.md)             | Done   | Order equal year-only narrative facts by canonical chapter.                |
+| [BOB-028](BOB-028-pin-chapter-extraction-agent-configuration.md)        | Done   | Pin chapter extraction and reconciliation to explicit Terra/high agents.   |
 | [BOB-029](BOB-029-responsive-chapter-projection-pipeline.md)            | Done   | Prepare narrative data once and keep chapter transitions responsive.       |
+| [BOB-035](BOB-035-unified-vessels-and-authoring-quality.md)             | Done   | Unify vessel records and enforce durable, concise narrative authoring.      |
 
 ## Task requirements
 

@@ -34,9 +34,9 @@ const sparseEntities: NarrativeEntity[] = [
     name: "Sparse organization",
   },
   {
-    id: "vessel_type:sparse",
-    entity_type: "vessel_type",
-    name: "Sparse vessel type",
+    id: "vessel:sparse",
+    entity_type: "vessel",
+    name: "Sparse vessel",
   },
 ];
 
@@ -91,6 +91,30 @@ describe("object inspector", () => {
         ).toBeInTheDocument();
       }
     }
+  });
+
+  it("labels vessels and displays optional current state", () => {
+    const vessel: NarrativeEntity = {
+      id: "vessel:heaven-fixture",
+      entity_type: "vessel",
+      name: "Heaven fixture",
+      current_state: "Departing the fixture system.",
+    };
+    render(
+      <ObjectInspector
+        selection={{ kind: "narrative", id: vessel.id }}
+        narrativeItem={item(vessel)}
+        world={{ ...world, entities: [vessel] }}
+        systems={[]}
+        assets={{ assets: [] }}
+        onSelect={vi.fn()}
+      />,
+    );
+    expect(screen.getByText("Vessel")).toBeInTheDocument();
+    expect(screen.getByText("Current state")).toBeInTheDocument();
+    expect(
+      screen.getByText("Departing the fixture system."),
+    ).toBeInTheDocument();
   });
 
   it("links only eligible projected relationships and labels sightings as last seen", () => {

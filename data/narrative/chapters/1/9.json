@@ -8,7 +8,7 @@
     {
       "id": "character:minister-jacoby",
       "name": "Minister Jacoby",
-      "current_state": "A minister who condemns the replicant enterprise as spiritually dangerous and threatens Dr. Landers over his participation."
+      "current_state": "Threatening Dr. Landers over his participation in the replicant enterprise."
     }
   ],
   "appearances": [
@@ -31,7 +31,7 @@
   "updates": [
     {
       "entity_id": "technology:roamers",
-      "description": "Remote observation and manipulation devices that Bob directs through GUPPI. They come in varied sizes, can coordinate across scales, and need minimal supervision once their tasks, dependencies, and interruption conditions are defined. Without Bob's active interference, they can work up to ten times faster. They can travel along floors, walls, and ceilings, carry video cameras for remote observation, and pick up vibrations transmitted through a wall when pressed against it."
+      "description": "Remote observation and manipulation devices directed through GUPPI. They come in varied sizes, can coordinate across scales, and need minimal supervision once their tasks, dependencies, and interruption conditions are defined. Without active intervention, they can work up to ten times faster. They can travel along floors, walls, and ceilings, carry video cameras for remote observation, and pick up vibrations transmitted through a wall when pressed against it."
     },
     {
       "entity_id": "organization:ministry-of-truth",

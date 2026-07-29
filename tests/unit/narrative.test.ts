@@ -10,6 +10,7 @@ import canonicalChapter6 from "../../data/narrative/chapters/1/6.json";
 import canonicalChapter7 from "../../data/narrative/chapters/1/7.json";
 import canonicalChapter8 from "../../data/narrative/chapters/1/8.json";
 import canonicalChapter9 from "../../data/narrative/chapters/1/9.json";
+import canonicalZeroState from "../../data/narrative/baseline/zero-state.json";
 import { buildNarrativeBrowserGroups } from "../../src/narrative/browser";
 import { focusSystemIdForSelection } from "../../src/narrative/map";
 import {
@@ -22,6 +23,18 @@ import {
   validateNarrativeCorpus,
 } from "../../src/narrative/model";
 import { createNarrativeFixtureCorpus } from "../fixtures/narrative";
+
+function collectDescriptions(value: unknown): string[] {
+  if (Array.isArray(value)) return value.flatMap(collectDescriptions);
+  if (!value || typeof value !== "object") return [];
+  const record = value as Record<string, unknown>;
+  return [
+    ...(typeof record.description === "string" ? [record.description] : []),
+    ...Object.entries(record).flatMap(([key, child]) =>
+      key === "description" ? [] : collectDescriptions(child),
+    ),
+  ];
+}
 
 describe("narrative corpus validation and projection", () => {
   it("isolates and freezes prepared input before projection", () => {
@@ -58,6 +71,77 @@ describe("narrative corpus validation and projection", () => {
 
     expect(after).toEqual(before);
     expect([...after.values()].every((count) => count === 1)).toBe(true);
+  });
+
+  it("keeps canonical state brief and descriptions entity-centered without disclosure gaps", () => {
+    const chapters = [
+      canonicalChapter1,
+      canonicalChapter2,
+      canonicalChapter3,
+      canonicalChapter4,
+      canonicalChapter5,
+      canonicalChapter6,
+      canonicalChapter7,
+      canonicalChapter8,
+      canonicalChapter9,
+      canonicalChapter10,
+      canonicalChapter11,
+    ];
+
+    const authoredRecords = chapters.flatMap((chapter) => [
+      ...("introducing" in chapter ? chapter.introducing : []),
+      ...("updates" in chapter ? chapter.updates : []),
+    ]);
+    const currentStates = authoredRecords.flatMap((record) =>
+      "current_state" in record && typeof record.current_state === "string"
+        ? [record.current_state]
+        : [],
+    );
+    const technologyDescriptions = authoredRecords.flatMap((record) => {
+      const entityId =
+        ("id" in record && record.id) ||
+        ("entity_id" in record && record.entity_id);
+      return typeof entityId === "string" &&
+        entityId.startsWith("technology:") &&
+        "description" in record &&
+        typeof record.description === "string"
+        ? [record.description]
+        : [];
+    });
+    const allDescriptions = [
+      ...collectDescriptions(canonicalZeroState),
+      ...authoredRecords.flatMap((record) =>
+        "description" in record && typeof record.description === "string"
+          ? [record.description]
+          : [],
+      ),
+    ];
+    const disclosureGapPatterns = [
+      /\b(?:has|have|had|is|are|was|were|remains?|remained)\s+not\s+(?:yet\s+)?(?:been\s+)?(?:revealed|known|explained|specified|disclosed|provided|established|stated)\b/i,
+      /\b(?:remains?|remained)\s+(?:unknown|unrevealed|unexplained|unspecified)\b/i,
+      /\b(?:details?|specifications?|mechanism|principle|expansion|identity|scope|purpose|function|capabilities|limitations)\b[^.!?]{0,120}\b(?:unknown|unrevealed|unexplained|unavailable|unspecified)\b/i,
+      /\bneither (?:is|are|was|were) stated directly\b/i,
+      /\bhas not read (?:its|the) theory\b/i,
+    ];
+
+    expect(currentStates.length).toBeGreaterThan(0);
+    for (const currentState of currentStates) {
+      const sentences = currentState.match(/[.!?](?:\s|$)/g) ?? [];
+      expect(sentences.length, currentState).toBeLessThanOrEqual(2);
+      expect(currentState).not.toMatch(
+        /A nightly backed-up computer simulation made from/,
+      );
+    }
+    expect(technologyDescriptions.length).toBeGreaterThan(0);
+    for (const description of technologyDescriptions) {
+      expect(description).not.toMatch(/\bBob(?:'s)?\b/);
+    }
+    expect(allDescriptions.length).toBeGreaterThan(0);
+    for (const description of allDescriptions) {
+      for (const pattern of disclosureGapPatterns) {
+        expect(description, pattern.source).not.toMatch(pattern);
+      }
+    }
   });
 
   it("accepts the zero state as a complete pre-book world with an empty catalogue", () => {
@@ -152,9 +236,10 @@ describe("narrative corpus validation and projection", () => {
         current_state: "Active in the fixture.",
       },
       {
-        id: "vessel_type:fixture-probe",
+        id: "vessel:fixture-probe",
         name: "Fixture probe",
-        description: "A fictional test vessel classification.",
+        description: "A fictional test vessel and design.",
+        current_state: "Ready in the fixture.",
       },
     ];
     corpus.chapters[0]!.introducing = undefined;
@@ -169,8 +254,10 @@ describe("narrative corpus validation and projection", () => {
         current_state: "Later active state.",
       },
       {
-        entity_id: "vessel_type:fixture-probe",
-        description: "Later fictional vessel-type description.",
+        entity_id: "vessel:fixture-probe",
+        name: "Fixture probe successor",
+        description: "Later fictional vessel description.",
+        current_state: "Operating in the later fixture.",
       },
     ];
 
@@ -200,8 +287,8 @@ describe("narrative corpus validation and projection", () => {
           entity_type: "organization",
         }),
         expect.objectContaining({
-          id: "vessel_type:fixture-probe",
-          entity_type: "vessel_type",
+          id: "vessel:fixture-probe",
+          entity_type: "vessel",
         }),
       ]),
     );
@@ -218,8 +305,10 @@ describe("narrative corpus validation and projection", () => {
           current_state: "Later active state.",
         }),
         expect.objectContaining({
-          id: "vessel_type:fixture-probe",
-          description: "Later fictional vessel-type description.",
+          id: "vessel:fixture-probe",
+          name: "Fixture probe successor",
+          description: "Later fictional vessel description.",
+          current_state: "Operating in the later fixture.",
         }),
       ]),
     );
@@ -243,17 +332,20 @@ describe("narrative corpus validation and projection", () => {
         current_state: "Initially active.",
       },
       {
-        id: "vessel_type:fixture-probe",
+        id: "vessel:fixture-probe",
         name: "Fixture probe",
-        description: "Initial fictional vessel-type description.",
+        description: "Initial fictional vessel description.",
+        current_state: "Initially ready.",
       },
     );
     corpus.chapters[1]!.updates = [
       { entity_id: "technology:fixture-drive", description: null },
       { entity_id: "organization:fixture-fleet", current_state: null },
       {
-        entity_id: "vessel_type:fixture-probe",
-        description: "Later fictional vessel-type description.",
+        entity_id: "vessel:fixture-probe",
+        name: "Renamed fixture probe",
+        description: "Later fictional vessel description.",
+        current_state: null,
       },
     ];
 
@@ -270,6 +362,11 @@ describe("narrative corpus validation and projection", () => {
         expect.objectContaining({
           id: "organization:fixture-fleet",
           current_state: "Initially active.",
+        }),
+        expect.objectContaining({
+          id: "vessel:fixture-probe",
+          name: "Fixture probe",
+          current_state: "Initially ready.",
         }),
       ]),
     );
@@ -290,9 +387,13 @@ describe("narrative corpus validation and projection", () => {
     ).toBeNull();
     expect(
       afterLaterChapter.entities.find(
-        (entity) => entity.id === "vessel_type:fixture-probe",
-      )?.description,
-    ).toBe("Later fictional vessel-type description.");
+        (entity) => entity.id === "vessel:fixture-probe",
+      ),
+    ).toMatchObject({
+      name: "Renamed fixture probe",
+      description: "Later fictional vessel description.",
+      current_state: null,
+    });
 
     const readerVisibleEarlierStoryTime = generateNarrativeWorld(
       prepareNarrativeCorpus(corpus),
@@ -310,9 +411,13 @@ describe("narrative corpus validation and projection", () => {
     ).toBe("Initially active.");
     expect(
       readerVisibleEarlierStoryTime.entities.find(
-        (entity) => entity.id === "vessel_type:fixture-probe",
-      )?.description,
-    ).toBe("Initial fictional vessel-type description.");
+        (entity) => entity.id === "vessel:fixture-probe",
+      ),
+    ).toMatchObject({
+      name: "Fixture probe",
+      description: "Initial fictional vessel description.",
+      current_state: "Initially ready.",
+    });
   });
 
   it("keeps later direct entity introductions hidden by reader order", () => {
@@ -327,7 +432,7 @@ describe("narrative corpus validation and projection", () => {
         name: "Fixture fleet",
       },
       {
-        id: "vessel_type:fixture-probe",
+        id: "vessel:fixture-probe",
         name: "Fixture probe",
       },
     ];
@@ -341,7 +446,7 @@ describe("narrative corpus validation and projection", () => {
       expect.arrayContaining([
         "technology:fixture-drive",
         "organization:fixture-fleet",
-        "vessel_type:fixture-probe",
+        "vessel:fixture-probe",
       ]),
     );
     expect(
@@ -353,7 +458,7 @@ describe("narrative corpus validation and projection", () => {
       expect.arrayContaining([
         "technology:fixture-drive",
         "organization:fixture-fleet",
-        "vessel_type:fixture-probe",
+        "vessel:fixture-probe",
       ]),
     );
   });
@@ -365,7 +470,7 @@ describe("narrative corpus validation and projection", () => {
         "organization",
         { id: "organization:wrong-field", name: "Wrong field", members: [] },
       ],
-      ["vessel_type", { id: "vessel_type:wrong", name: "Wrong", owner: "x" }],
+      ["vessel", { id: "vessel:wrong", name: "Wrong", owner: "x" }],
       [
         "technology_update",
         { entity_id: "technology:wrong-update", current_state: "unsupported" },
@@ -374,7 +479,7 @@ describe("narrative corpus validation and projection", () => {
         "organization_update",
         { entity_id: "technology:wrong-prefix", name: "Wrong" },
       ],
-      ["vessel_type_update", { entity_id: "vessel:unknown", name: "Wrong" }],
+      ["vessel_update", { entity_id: "vessel_type:legacy", name: "Wrong" }],
       [
         "non_location_introduced_entity",
         { id: "unknown:entity", name: "Unknown" },
@@ -668,7 +773,7 @@ describe("narrative corpus validation and projection", () => {
       { id: "species:fixture-known", name: "Known fixture species" },
       { id: "technology:fixture-known", name: "Known fixture technology" },
       { id: "organization:fixture-known", name: "Known fixture organization" },
-      { id: "vessel_type:fixture-known", name: "Known fixture vessel type" },
+      { id: "vessel:fixture-known", name: "Known fixture vessel" },
     ];
     corpus.chapters[0]!.mentions = [
       "character:fixture-known",
@@ -677,7 +782,7 @@ describe("narrative corpus validation and projection", () => {
       "organization:fixture-known",
       "species:fixture-known",
       "technology:fixture-known",
-      "vessel_type:fixture-known",
+      "vessel:fixture-known",
     ];
 
     const withoutMentions = structuredClone(corpus);

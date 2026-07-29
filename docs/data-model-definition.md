@@ -2,7 +2,7 @@
 
 Status: Done
 Schema dialect: JSON Schema Draft 2020-12
-Last updated: 2026-07-26
+Last updated: 2026-07-28
 
 ## Purpose and scope
 
@@ -13,8 +13,9 @@ this document rather than redefining their syntax. The first definitions are `da
 
 This document does not add book-derived records or source text. It records only
 the data contract needed before those records are authored. ADR-0001, as refined by
-ADR-0003, ADR-0005, ADR-0006, ADR-0007, ADR-0009, and ADR-0013, is binding for the
-chapter-authored source and generated-projection boundary.
+ADR-0003, ADR-0005, ADR-0006, ADR-0007 as superseded by ADR-0014, ADR-0009,
+ADR-0013, and ADR-0015 are binding for the chapter-authored source and
+generated-projection boundary.
 
 ## Shared JSON Schema definitions
 
@@ -45,7 +46,7 @@ the identical listing below documents its shared definitions.
     "state": {
       "type": "string",
       "minLength": 1,
-      "description": "Reader-visible plain-text current state; no controlled vocabulary is imposed."
+      "description": "One or two concise sentences describing only the latest reader-visible condition; no controlled vocabulary is imposed."
     },
     "entity_id": {
       "type": "string",
@@ -60,7 +61,7 @@ the identical listing below documents its shared definitions.
         { "$ref": "#/$defs/organization_id" },
         { "$ref": "#/$defs/species_id" },
         { "$ref": "#/$defs/technology_id" },
-        { "$ref": "#/$defs/vessel_type_id" }
+        { "$ref": "#/$defs/vessel_id" }
       ],
       "description": "A supported direct narrative entity or location that may be an important chapter mention."
     },
@@ -84,10 +85,10 @@ the identical listing below documents its shared definitions.
       "pattern": "^organization:[a-z0-9][a-z0-9-]*$",
       "description": "Globally unique reference to an organization entity."
     },
-    "vessel_type_id": {
+    "vessel_id": {
       "type": "string",
-      "pattern": "^vessel_type:[a-z0-9][a-z0-9-]*$",
-      "description": "Globally unique reference to a vessel-type entity."
+      "pattern": "^vessel:[a-z0-9][a-z0-9-]*$",
+      "description": "Globally unique reference to a vessel entity."
     },
     "asset_id": {
       "type": "string",
@@ -316,27 +317,35 @@ the identical listing below documents its shared definitions.
       ],
       "additionalProperties": false
     },
-    "vessel_type": {
+    "vessel": {
       "type": "object",
       "required": ["id", "name"],
       "properties": {
-        "id": { "$ref": "#/$defs/vessel_type_id" },
+        "id": { "$ref": "#/$defs/vessel_id" },
         "name": { "type": "string", "minLength": 1 },
-        "description": { "$ref": "#/$defs/description" }
+        "description": { "$ref": "#/$defs/description" },
+        "current_state": { "$ref": "#/$defs/state" }
       },
       "additionalProperties": false
     },
-    "vessel_type_update": {
+    "vessel_update": {
       "type": "object",
       "required": ["entity_id"],
       "properties": {
-        "entity_id": { "$ref": "#/$defs/vessel_type_id" },
+        "entity_id": { "$ref": "#/$defs/vessel_id" },
         "name": { "type": "string", "minLength": 1 },
         "description": {
           "anyOf": [{ "$ref": "#/$defs/description" }, { "type": "null" }]
+        },
+        "current_state": {
+          "anyOf": [{ "$ref": "#/$defs/state" }, { "type": "null" }]
         }
       },
-      "anyOf": [{ "required": ["name"] }, { "required": ["description"] }],
+      "anyOf": [
+        { "required": ["name"] },
+        { "required": ["description"] },
+        { "required": ["current_state"] }
+      ],
       "additionalProperties": false
     },
     "event": {
@@ -768,7 +777,7 @@ the identical listing below documents its shared definitions.
         { "$ref": "#/$defs/species" },
         { "$ref": "#/$defs/technology" },
         { "$ref": "#/$defs/organization" },
-        { "$ref": "#/$defs/vessel_type" },
+        { "$ref": "#/$defs/vessel" },
         { "$ref": "#/$defs/event" }
       ]
     },
@@ -796,7 +805,7 @@ the identical listing below documents its shared definitions.
         { "$ref": "#/$defs/species_update" },
         { "$ref": "#/$defs/technology_update" },
         { "$ref": "#/$defs/organization_update" },
-        { "$ref": "#/$defs/vessel_type_update" },
+        { "$ref": "#/$defs/vessel_update" },
         { "$ref": "#/$defs/event_update" },
         { "$ref": "#/$defs/location_update" }
       ]
@@ -1077,7 +1086,7 @@ optimizations.
 
 `chapter_source.mentions`, when present, is a nonempty, duplicate-free array of stable
 IDs. Its targets may be locations and the direct character, event, species, technology,
-organization, and vessel-type entity forms; assets are not valid targets. An author uses
+organization, and vessel entity forms; assets are not valid targets. An author uses
 it only for an important source-supported reference not already captured by the same
 chapter's introduction, update, appearance, default location, event participant, or
 event location. The target must already be reader-visible before the chapter or be a
@@ -1207,7 +1216,7 @@ generated/narrative/chapter-manifest.json
 `baseline/zero-state.json` is the small, manually authored pre-book snapshot. Its
 closed root object has exactly two required fields: `locations`, the nested Solar-System
 root, and `entities`, an array of direct character, species, technology, organization,
-vessel-type, and event records. A
+vessel, and event records. A
 child's position in a location parent's array supplies stable local rendering order.
 The generator flattens that authoring form into parent links and derives runtime child
 lists; the source does not author a second `sublocations` field or a second flat
@@ -1334,7 +1343,7 @@ an ordinary update.
 
 `introducing` is one ordered heterogeneous array. Each object is selected by its
 type-prefixed ID and validates as a character, species, technology, organization,
-vessel type, event, or location. An entry
+vessel, event, or location. An entry
 may reference a seeded entity or an earlier item in the same array, never a later item;
 this makes references deterministic and forbids introduction cycles. A chapter may not
 introduce an ID already supplied by the zero state or an earlier chapter.
@@ -1421,7 +1430,7 @@ event does not repeat that value.
 ## Entity and location schemas
 
 Each entity type has a dedicated schema. The ratified contracts below cover characters,
-species, technologies, organizations, vessel types, events, assets, and locations;
+species, technologies, organizations, vessels, events, assets, and locations;
 later entity types must add their own contract before records of that type are authored.
 
 | Record                                      | Required initial contract                                                    | Derived rather than authored                                                            |
@@ -1432,15 +1441,23 @@ later entity types must add their own contract before records of that type are a
 | `species`                                   | `id`, `name`, and the optional fields in the ratified species contract       | members and other reverse links                                                         |
 | `technology`                                | `id`, `name`, and optional original plain-text `description`                 | no relationships, ownership, physical, or rendering facts                               |
 | `organization`                              | `id`, `name`, optional original plain-text `description` and `current_state` | no membership, ownership, location, or asset facts                                      |
-| `vessel_type`                               | `id`, `name`, and optional original plain-text `description`                 | no vessel instances, ownership, physical, or rendering facts                            |
+| `vessel`                                    | `id`, `name`, optional original plain-text `description` and `current_state` | no separate instance/design layer, ownership, physical, or rendering facts              |
 | `event`                                     | `id`, `name`, and the optional fields in the ratified event contract         | location event list; participant event histories                                        |
 | `asset`                                     | `id`, path, and source                                                       | no visible assignment; assignments are entity values                                    |
 
 Every present or future `description` and `state` field uses the shared schema types:
-an optional, nonempty plain string. `description` is an original reader-visible
-summary, never copied book text or Markdown. `state` is reader-visible free text with
-no global controlled vocabulary. Both may be changed or cleared under the ordinary
-per-entity update rules unless a record type explicitly says otherwise.
+an optional, nonempty plain string. `description` is an original reader-visible,
+entity-centered encyclopedia summary, never copied book text or Markdown. General
+capabilities use entity-centered language such as “It can” or “It is used to”; a
+named-character relationship appears only when it is defining or a source-supported
+assessment must be attributed. `state` is reader-visible free text with no global
+controlled vocabulary. Every `current_state` is one or two concise sentences about
+only the latest known condition, never identity prose, history, a chapter synopsis,
+or an accumulated adventure log. A description omits clauses and sentences that only
+announce unrevealed, unknown, unexplained, unavailable, unspecified, or otherwise
+missing knowledge; those gaps remain in extraction evidence and review artifacts.
+Both may be changed or cleared under the ordinary per-entity update rules unless a
+record type explicitly says otherwise.
 
 ### Zero-state nested Solar-System locations
 
@@ -1459,6 +1476,14 @@ All chapter locations use the same shared `location_kind` vocabulary as the zero
 `kuiper_belt`, `oort_cloud`, `locale`, `megastructure`, and `transit`. Each requires
 an `id`, `name`, and `kind`; optional `description` and `state` use the shared plain
 text types.
+
+`megastructure` is reserved for engineered structures exceptional in physical scale.
+An ordinary durable station or base uses `locale`. An incidental, unnamed, or
+short-lived place is omitted rather than promoted solely to supply a chapter or
+appearance location. Authors use the most specific supported reader-visible location;
+when a finer locale is unavailable or intentionally omitted, they climb the
+established hierarchy to its nearest supported reader-visible parent. They never
+invent a placeholder or containment relationship.
 
 `map_status` is omitted for a mapped location and set only to `"unmapped"` when no map
 placement is known. A mapped `star_system` is a root and requires an
@@ -1509,7 +1534,7 @@ are a canonical `character:` ID and a nonempty reader-visible `name`.
 | `name`           | nonempty string                           | Reader-visible display name.                                                            |
 | `gender`         | optional nonempty string                  | Reader-visible free text; no global gender vocabulary is imposed.                       |
 | `species_id`     | optional `species_id`                     | Reference to an introduced species entity.                                              |
-| `current_state`  | optional nonempty string                  | The character's known mutable state at the enclosing chapter's story date.              |
+| `current_state`  | optional nonempty string                  | One or two concise sentences describing only the character's latest known condition.    |
 | `picture_id`     | optional `asset_id`                       | Chapter-controlled assignment of a manually curated image asset.                        |
 | `aliases`        | optional array of unique nonempty strings | Additional reader-visible names that become searchable only when introduced or updated. |
 | `birth_date`     | optional `date`                           | Known birth date at the available story-time precision.                                 |
@@ -1569,14 +1594,16 @@ are original plain-text `description` and reader-visible `current_state`.
 either optional field may be `null` to clear it. Organizations do not imply membership,
 ownership, location, assets, or other relationships.
 
-### Vessel type
+### Vessel
 
-A vessel-type introduction uses the `vessel_type` schema. Its required fields are a
-canonical `vessel_type:` ID and a nonempty reader-visible `name`; its only optional
-field is original plain-text `description`. `vessel_type_update` permits `name` or
-`description`, never `id`; `description` may be `null` to clear it. A vessel type is a
-classification, not an individual vessel, and carries no ownership, asset, physical,
-or rendering facts.
+A vessel introduction uses the `vessel` schema. Its required fields are a canonical
+`vessel:` ID and a nonempty reader-visible `name`; its optional fields are original
+plain-text `description` and reader-visible `current_state`. One unified vessel
+record may represent a named spacecraft, a reusable design, or the ship family named
+after its first vessel; there is no separate instance/design identity layer.
+`vessel_update` permits `name`, `description`, or `current_state`, never `id`;
+either optional field may be `null` to clear it. A vessel carries no inferred
+ownership, asset, physical, or rendering facts.
 
 ### Event
 
@@ -1648,7 +1675,7 @@ layer. It rejects at least:
   reference; a character death date that conflicts with its referenced event date;
 - an invalid species ID, name, description, picture, or homeworld reference, including
   a homeworld that is transit or has not been seeded or introduced;
-- an invalid technology, organization, or vessel-type ID; a cross-type ID; an empty
+- an invalid technology, organization, or vessel ID; a cross-type ID; an empty
   name; an unsupported field; or an update that attempts to change immutable `id` or
   write a field not owned by that direct entity type;
 - an invalid event ID, name, description, picture, date, location, or participant

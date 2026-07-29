@@ -1,0 +1,64 @@
+{
+  "chapter": "1.12",
+  "title": "12",
+  "summary": "After a lethal attack on project staff, Bob is rushed through final preparations aboard Heaven-1. Dr. Landers grants him unrestricted access to inspect the vessel and bypass mission constraints, and Bob discovers that he can vary his subjective time rate. When missiles threaten the launch, Bob departs early, evades pursuit while the unnamed station is destroyed, and disables his radio after a warning that a remote detonation device may be present. He then resumes course for Epsilon Eridani amid a wider military conflict.",
+  "date": "2133",
+  "location_id": "location:earth",
+  "introducing": [
+    {
+      "id": "location:epsilon-eridani",
+      "name": "Epsilon Eridani",
+      "kind": "star_system",
+      "description": "A stellar system selected as Heaven-1's destination.",
+      "astronomy_object_id": "stellar-system-005582"
+    },
+    {
+      "id": "vessel:heaven-1",
+      "name": "Heaven-1",
+      "description": "A converted interplanetary freighter equipped as a Von Neumann probe. It has a SURGE drive ring, fusion reactor, ramscoop generator, fabrication equipment, communications and sensor systems, and ROAMer and nanite systems; it has no weapons and little spare room.",
+      "current_state": "Departing Earth for Epsilon Eridani after evading an attack. Its radio receiver is disabled because a remote detonation device may be present."
+    },
+    {
+      "id": "technology:replicant-matrix",
+      "name": "replicant matrix",
+      "description": "A spare hardware unit carried aboard Heaven-1."
+    },
+    {
+      "id": "technology:ramscoop-generator",
+      "name": "Ramscoop Generator",
+      "description": "Shipboard equipment that gathers hydrogen from the interstellar medium."
+    },
+    {
+      "id": "technology:mining-drones",
+      "name": "mining drones",
+      "description": "Small mining craft carried aboard Heaven-1. Each has a small SURGE drive."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "Escaping Earth aboard Heaven-1 on course for Epsilon Eridani. His radio receiver is disabled after a warning that a remote detonation device may be present."
+    },
+    {
+      "entity_id": "technology:surge-drive",
+      "description": "A recently developed drive technology enabled by a breakthrough in subspace theory and used to equip spacecraft for interstellar operations. Beyond prototypes, only a small number of SURGE-equipped vessels are in active service. On Heaven-1, it provides reactionless propulsion rather than using gathered hydrogen as reaction mass. Bob believes it may push against the fabric of space."
+    },
+    {
+      "entity_id": "technology:suddar",
+      "description": "A subspace technology enabled by the same theoretical breakthrough as the SURGE drive and associated with the new possibility of interstellar probes and colonization. It can be used to monitor distance and scan for threats."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead",
+      "location_id": "location:earth"
+    },
+    {
+      "character_id": "character:dr-landers",
+      "role": "other",
+      "location_id": "location:earth"
+    }
+  ],
+  "mentions": ["organization:free-american-independent-theocratic-hegemony"]
+}

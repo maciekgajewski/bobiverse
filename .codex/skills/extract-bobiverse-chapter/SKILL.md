@@ -68,10 +68,16 @@ remediation does. Do not read canonical narrative data yet.
 Create a new workspace with `mktemp -d`. Put draft claims, sealed evidence, candidate
 JSON, and the temporary narrative root only there. Record the initial `git status`.
 
-Always run Pass 1 in a fresh isolated Codex context. Never use the orchestrating
-conversation for blind extraction, even if it appears not to have read canonical
-state. The orchestrator may already contain zero state, preceding chapters, target
-state, generated projections, entity identities, or facts from an earlier run.
+Run Pass 1 and Pass 2 in separately spawned Codex agents. For both passes, explicitly
+set `model: gpt-5.6-terra`, `reasoning_effort: high`, and `fork_turns: none`. Never
+inherit the model, reasoning level, or conversation turns from the orchestrator. A
+pass is invalid if it runs with inherited configuration.
+
+Pass 1 must therefore run in a fresh isolated Codex context. Never use the
+orchestrating conversation for blind extraction, even if it appears not to have read
+canonical state. The orchestrator may already contain zero state, preceding chapters,
+target state, generated projections, entity identities, or facts from an earlier
+run.
 
 Stage only:
 
@@ -85,8 +91,10 @@ contract documents, ADR examples, tests, fixtures, or any other repository file
 merely because the orchestrator read it. The canonical narrative schema belongs to
 Pass 2: it contains canonical constants and is not a blind-extraction input.
 
-Use GPT-5.6 Sol with high reasoning for extraction and reconciliation. If that model
-or reasoning level is unavailable, ask the Captain before substituting another.
+Stage Pass 2 only with the sealed Pass 1 ledger and the canonical material permitted
+under `Pass 2: reconcile with prior state`. If GPT-5.6 Terra, high reasoning, or
+explicit non-forked spawning is unavailable for either pass, stop and ask the Captain
+before substituting another configuration.
 
 ## Pass 1: extract claims blind
 
@@ -138,7 +146,8 @@ reconciliation, as the canonical reader-visible `name`. Put a source-supported
 expanded form in the entity's original `description`; never replace the acronym with
 the expansion or invent an expansion. When the current chapter does not reveal an
 expansion, record that absence as an unresolved description fact so Pass 2 can produce
-an explicitly partial entry.
+an accurate reconciliation record without inventing an expansion or publishing the
+absence in the description.
 
 For every source mention that may become a durable described entity, gather the
 evidence needed to answer, when revealed:
@@ -177,6 +186,12 @@ immediately before the target chapter:
 - for the first chapter, use only zero state;
 - otherwise, generate the preceding chapter projection;
 - never use later chapters to resolve an earlier chapter.
+
+After verifying the chapter, source SHA-256, and sealed-ledger SHA-256, read
+`references/reconciliation-exceptions.md`. Apply only entries whose complete
+fingerprinted key matches. Keep the sealed ledger immutable and record each applied
+exception in the reconciliation report. Never stage or read that reference in blind
+Pass 1.
 
 Resolve `source_mentions` against known entities and aliases. Classify each claim:
 
@@ -238,16 +253,24 @@ entity state represents the durable knowledge.
 ### Location granularity
 
 Use settlement scale as the minimum ordinary granularity for authored narrative
-locations. A supported city, town, settlement, or distinct base or installation may
-be a location entity. Do not introduce or update a room, corridor, laboratory,
-office, floor, individual building, or comparable internal facility space as a
-location.
+locations. A supported city, town, settlement, or durable, independently useful base
+or station may be a location entity. Use `locale` for an ordinary station or base.
+Reserve `megastructure` for an engineered structure exceptional in physical scale;
+size is part of the classification, not a synonym for every space-based installation.
+
+Require durable narrative identity in addition to eligible scale. Do not introduce an
+incidental, unnamed, short-lived, or otherwise disposable place merely because the
+chapter or an appearance requires a location. Do not introduce or update a room,
+corridor, laboratory, office, floor, individual building, or comparable internal
+facility space as a location.
 
 Apply the same restriction to structured references: chapter `location_id`,
-appearance locations, and event locations must not point to an ineligible internal
-space. Use the nearest reader-visible supported location at settlement or base scale.
-If none is supported, follow the existing unknown-location behavior; never invent
-containment or promote a room merely to satisfy a required field.
+appearance locations, and event locations must not point to an ineligible or
+disposable place. Use the most specific eligible, reader-visible location supported by
+the source. If a fine-grained locale is unavailable or intentionally not modeled,
+climb its established hierarchy and use the nearest supported reader-visible parent.
+Never invent containment, promote an ineligible place, or create a placeholder merely
+to satisfy a required field.
 
 Classify a source-supported fine-grained place as `not-modeled` for location
 granularity and record that editorial reason. Preserve relevant facts in the original
@@ -269,21 +292,35 @@ Apply this general quality gate:
   supports one;
 - explain durable purpose, function, scope, characteristics, capabilities, and
   limitations that distinguish the entity;
+- center the description on the entity, not on a named character's recent actions;
+- state capabilities in general language such as `It can` or `It is used to`, rather
+  than `Bob uses it to`; retain a named relationship only when it is defining or a
+  source-supported assessment must be attributed;
+- require evidence that each capability belongs to the described entity; querying an
+  interface for documentation, observing a capability through it, or using it as an
+  access path does not make that interface the capability's owner;
 - use chapter-specific facts only after they improve the general explanation; a
   sentence that merely says who uses, mentions, owns, or discusses the entity is not
   a sufficient description by itself;
 - keep subjective assessments and uncertain forecasts explicitly attributed;
+- omit every disclosure-gap statement from descriptions, including semantic variants
+  such as `has not yet been revealed`, `remains unknown`, `has not been explained`,
+  or `full specifications are unavailable`; when a sentence mixes a positive fact
+  with a disclosure gap, retain only the supported positive fact when it remains
+  coherent and useful;
 - do not duplicate structured fields unless needed for a coherent standalone entry;
 - keep transient operational condition in the type's `state` or `current_state`
-  field when one exists;
+  field when one exists; author every `current_state` as one or two concise sentences
+  describing only the latest known condition, never identity, biography, chapter
+  synopsis, or accumulated adventure history;
 - never import later knowledge, model-memory facts, or unsupported expansions to make
   an entry sound complete.
 
-An explicitly partial entry is valid when a durable identity is supported but one or
-more defining facts have not yet been revealed. State the gap naturally in
-reader-facing prose, for example, `Its operating principle has not yet been revealed`
-or `The acronym's expansion has not yet been revealed`. Do not present inference as
-the missing definition.
+A short partial entry is valid when a durable identity is supported but one or more
+defining facts are absent. Omit the absent facts from the reader-facing description;
+keep them explicit in ledger uncertainty, reconciliation, open questions, and human
+review. Never import later knowledge, model-memory facts, or unsupported expansions
+to make the entry appear complete.
 
 Use the checklist for each type that owns a description:
 
@@ -294,8 +331,10 @@ Use the checklist for each type that owns a description:
   source-supported acronym expansion;
 - `organization`: what kind of organization it is, its purpose, constituency or
   scope, defining policies, and durable capabilities or relationships;
-- `vessel_type`: what class of vessel it describes, its intended role, defining
-  capabilities, and limitations; do not describe one individual vessel;
+- `vessel`: what named ship, reusable design, or ship family it represents, its
+  intended role, defining systems, capabilities, and limitations; one record may
+  cover the first named ship and the design family associated with it, without
+  creating separate instance and class entities;
 - `event`: what happened, its durable outcome, and why it matters; use structured
   date, location, and participant fields for those facts when available;
 - `location`: what kind of place it is, its narrative context, and distinguishing
@@ -358,6 +397,11 @@ Validate with:
 Repair representation errors only. Do not manufacture source facts to make validation
 pass. If a required value remains uncertain, stop and ask the Captain.
 
+Before validation, audit every candidate `description` for semantic disclosure-gap
+language. Missing knowledge belongs in reconciliation and human-review artifacts, not
+in the candidate description or a substitute invented fact. This check applies even
+when the same agent also prepares the chapter summary.
+
 The repository narrative validator is authoritative. A local JSON Schema check is
 useful but does not replace temporary-corpus validation because repository rules also
 enforce cross-record ownership and reader-order constraints.
@@ -371,6 +415,7 @@ effort. Do not silently alter the candidate to resemble the existing file.
 Present:
 
 - source fingerprint and chapter/title derivation;
+- requested model, reasoning, and fork configuration for Pass 1 and Pass 2;
 - the candidate JSON;
 - a claim-to-classification table;
 - every proposed canonical important mention, its resolved stable ID, redundancy

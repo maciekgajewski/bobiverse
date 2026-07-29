@@ -81,4 +81,26 @@ describe("narrative schema diagnostics", () => {
         '/entities/0/homeworld_location_id: unexpected property "homeworld_location_id"; did you mean: homeworld_id, description, picture_id',
     });
   });
+
+  it("suggests current_state for unified vessel records", () => {
+    const document = parseJsonDocument(`{
+  "id": "vessel:fixture",
+  "name": "Fixture vessel",
+  "curent_state": "Ready."
+}`);
+
+    const diagnostics = formatSchemaDiagnostics(
+      narrativeSchemaErrors("vessel", document.value),
+      document.value,
+      document.locations,
+    );
+
+    expect(diagnostics.map(({ message }) => message)).toEqual(
+      expect.arrayContaining([
+        expect.stringMatching(
+          /^\/curent_state: unexpected property "curent_state"; did you mean: current_state(?:,|$)/,
+        ),
+      ]),
+    );
+  });
 });

@@ -41,11 +41,28 @@ where the entity appeared. A useful entry explains what the entity is, its durab
 purpose or role, its defining characteristics at the selected reader boundary, and
 why it matters.
 
-Chapter-specific facts may enrich that explanation, but a sentence that only records
-who uses, owns, mentions, or discusses an entity is not a sufficient description.
-Subjective assessments and forecasts remain attributed. Transient operational
-condition belongs in `state` or `current_state` when the entity type provides that
-field.
+Center every description on the entity. State capabilities in general language such
+as `It can` or `It is used to`, not as a named character's recent action. A named
+relationship remains only when it is defining or when a source-supported assessment
+must be attributed. Chapter-specific facts may enrich the explanation, but a sentence
+that only records who uses, owns, mentions, or discusses an entity is not sufficient.
+Subjective assessments and forecasts remain attributed.
+
+Require evidence that every capability belongs to the described entity. Querying an
+interface for documentation, observing a capability through it, or using it as an
+access path does not assign that capability to the interface.
+
+Descriptions contain positive reader-visible facts, not disclosure-gap notices.
+Omit sentences or clauses whose purpose is to say that a definition, expansion,
+mechanism, capability, limitation, specification, or other detail is unrevealed,
+unknown, unexplained, unavailable, or unspecified. If a sentence mixes useful
+positive information with such a notice, retain only the supported positive
+information when it remains coherent.
+
+Transient operational condition belongs in `state` or `current_state` when the entity
+type provides that field. Every `current_state` is one or two concise sentences about
+only the latest known condition. It is not an identity definition, biography, chapter
+summary, or accumulated adventure log.
 
 The type-specific review checks are:
 
@@ -55,23 +72,32 @@ The type-specific review checks are:
   capabilities or limitations, and acronym expansion.
 - Organization: kind, purpose, constituency or scope, defining policies, and durable
   capabilities or relationships.
-- Vessel type: class, intended role, defining capabilities, and limitations; the
-  description must not silently become a record for one individual vessel.
+- Vessel: named ship, reusable design, or ship family, intended role, defining
+  systems, capabilities, and limitations. One unified `vessel:*` record may cover the
+  first named ship and the design family associated with it.
 - Event: what happened, its durable outcome, and why it matters; structured fields
   continue to own date, location, and participant references.
 - Location: kind, narrative context, and distinguishing reader-visible traits;
   `state` owns mutable condition and astronomy owns measured physical facts.
 
-These checks never authorize invented completeness. An explicitly partial entry is
-valid when a durable entity is supported but a defining fact has not yet been
-revealed. Say so naturally, such as `Its operating principle has not yet been
-revealed` or `The acronym's expansion has not yet been revealed`. Do not import later
-chapters, model-memory facts, or unsupported expansions.
+These checks never authorize invented completeness. A short partial entry is valid
+when only some defining facts are supported. Omit absent facts from the description
+and preserve them instead in sealed evidence, ledger uncertainty, reconciliation,
+open questions, and human review. Do not import later chapters, model-memory facts,
+or unsupported expansions.
 
 Pass 1 therefore captures separate evidence-backed claims for definitions, functions,
 purposes, operating principles, capabilities, limitations, and acronym expansions,
 plus explicit uncertainty for checklist items the source does not reveal. Pass 2
-applies the checklist after reconciliation with the preceding reader-visible state.
+applies the checklist after reconciliation with the preceding reader-visible state
+and keeps those gaps out of reader-facing descriptions. This applies to the same
+agents that prepare chapter summaries and candidates.
+
+When human evidence review finds that an immutable sealed claim overstates its source,
+record the adjudication in the skill's Pass-2-only fingerprinted reconciliation
+exception registry. Pass 2 applies an exception only when chapter, source hash,
+sealed-ledger hash, and claim ID all match. Blind Pass 1 never reads this registry,
+and the original sealed ledger is never rewritten.
 
 Description updates replace the complete field. Preserve useful prior reviewed
 knowledge and integrate the newly revealed information rather than emitting only the
@@ -126,15 +152,22 @@ entities.
 ## Location authoring granularity
 
 Settlement scale is the minimum ordinary granularity for narrative location
-entities. A source-supported city, town, settlement, or distinct base or installation
-may be authored as a location. Rooms, corridors, laboratories, offices, floors,
-individual buildings, and comparable internal facility spaces must not be introduced
-or updated as locations.
+entities. A source-supported city, town, settlement, or durable, independently useful
+base or station may be authored as a location. Use `locale` for ordinary stations and
+bases. Reserve `megastructure` for engineered structures exceptional in physical
+scale.
+
+Eligible scale is not sufficient by itself. Incidental, unnamed, short-lived, or
+otherwise disposable places remain unmodeled. Rooms, corridors, laboratories,
+offices, floors, individual buildings, and comparable internal facility spaces must
+not be introduced or updated as locations.
 
 The restriction also applies to chapter defaults, appearance locations, and event
-locations. Use the nearest reader-visible supported location at settlement or base
-scale; do not invent containment or promote an internal space merely because a
-structured location field is required.
+locations. Use the most specific eligible reader-visible location supported by the
+source. If a fine-grained locale is unavailable or omitted, climb the established
+hierarchy to its nearest supported reader-visible parent. Do not invent containment,
+promote an ineligible place, or create a disposable location merely because a
+structured field is required.
 
 Blind Pass 1 still captures fine-grained location and movement claims with sealed
 evidence. During reconciliation, Pass 2 records an explicit `not-modeled` granularity

@@ -169,7 +169,9 @@ Planned work:
   assets, and generated projections.
 - Extend the direct entity union only through accepted ADR-backed contracts; the
   current foundation includes character, species, technology, organization,
-  vessel-type, event, and location entities.
+  vessel, event, and location entities. A unified vessel may represent a named
+  spacecraft, its reusable design, or the family named after its first vessel; no
+  separate instance/design identity is authored.
 - Store the zero-state Solar-System tree and pre-book entities, plus each authored chapter, in validated source
   JSON; derive the ordered chapter manifest from chapter files and the minimal
   `books.json` catalogue.
@@ -192,7 +194,7 @@ Planned work:
   activity index for browser recency, map emphasis, and inspector context.
 - Add the Phase 2 searchable grouped object browser. Groups appear progressively for
   eligible characters, events, star systems, other locations, species, technologies,
-  organizations, and vessel types, and sort by mode-appropriate recent activity.
+  organizations, and vessels, and sort by mode-appropriate recent activity.
 - Add type-aware selected-object inspectors and coordinated selection across browser,
   map, and inspector.
 - Highlight the selected chapter's visible locations, characters, and events.
@@ -200,7 +202,15 @@ Planned work:
   or true geometry. Render searchable, astronomy-only context within one explicit,
   configurable radius around each mapped known system; the offline catalogue must
   guarantee the source-available neighbourhood.
-- Represent ambiguous locations as explicitly unmapped.
+- Represent ambiguous locations as explicitly unmapped. Reserve `megastructure` for
+  exceptionally large engineered structures, use `locale` for ordinary durable
+  stations and bases, omit incidental short-lived places, and fall back from an
+  unavailable fine-grained locale to its nearest established reader-visible parent.
+- Keep every `current_state` to one or two sentences about the latest condition and
+  every description centered on its entity, using general capability language rather
+  than retelling a named character's actions. Keep missing-knowledge claims in
+  extraction evidence and review artifacts; omit disclosure-gap notices from
+  reader-facing descriptions without inventing replacements.
 - Add regression fixtures for non-chronological chapters and later revelations about
   earlier events.
 

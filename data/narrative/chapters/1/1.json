@@ -17,7 +17,7 @@
       "name": "Bob's Road Incident",
       "location_id": "location:las-vegas",
       "date": "2016",
-      "description": "While Bob crosses a Las Vegas street, a car approaches, he experiences sudden pain, and medical and legal voices accompany his fading awareness. The sequence strongly suggests a collision and death, although neither is stated directly."
+      "description": "While Bob crosses a Las Vegas street, a car approaches, he experiences sudden pain, and medical and legal voices accompany his fading awareness. The sequence strongly suggests a fatal collision."
     },
     {
       "id": "character:robert-johansson",
@@ -29,7 +29,7 @@
     {
       "id": "organization:cryoeterna",
       "name": "CryoEterna Inc.",
-      "description": "A cryonics provider that contracts with Bob for post-death preservation."
+      "description": "A cryonics provider offering post-death preservation under contract."
     },
     {
       "id": "organization:intergator-software",
