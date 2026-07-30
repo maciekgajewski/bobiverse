@@ -114,8 +114,10 @@ schemas, contracts, tooling, or includes broader editorial remediation.
   tracker.
 - Create self-contained work items in `docs/tasks/` as phases are approached.
 - After creating a task document, use [$review-agent] to review the document. Address all findings, repeat the review until it comes clean.
-- Keep exactly one status in each task file and update `docs/tasks/README.md` when
-  status changes.
+- Keep exactly one status in each task file. Task files are the sole authority for
+  task IDs, titles, and statuses; do not maintain a duplicated task list.
+- Run `python3 scripts/tasks.py check` after creating a task, changing task metadata,
+  or integrating parallel task branches or worktrees.
 - Do not create tasks for routine promotion of approved chapter candidates; use the
   chapter-promotion log described above.
 - Record significant architecture changes in `docs/adrs/` using the process defined
