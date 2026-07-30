@@ -4,6 +4,10 @@ import { DoubleSide, ShaderMaterial, Vector3 } from "three";
 import {
   GALACTIC_GRID_FADE_END,
   GALACTIC_GRID_FADE_START,
+  GALACTIC_GRID_AXIS_STRENGTH,
+  GALACTIC_GRID_GRAZING_FADE_END,
+  GALACTIC_GRID_GRAZING_FADE_START,
+  GALACTIC_GRID_LINE_STRENGTH,
 } from "../domain/galactic-plane-grid";
 
 const GRID_SIZE = 128;
@@ -36,9 +40,17 @@ const FRAGMENT_SHADER = `
       GALACTIC_GRID_FADE_END - GALACTIC_GRID_FADE_START
     ).toFixed(1)}, 0.0, 1.0);
     float fade = 1.0 - fadeProgress * fadeProgress * (3.0 - 2.0 * fadeProgress);
-    float line = max(gridLine, axisLine);
+    float grazing = smoothstep(
+      ${GALACTIC_GRID_GRAZING_FADE_START.toFixed(2)},
+      ${GALACTIC_GRID_GRAZING_FADE_END.toFixed(2)},
+      abs(normalize(uCameraPosition - vWorldPosition).y)
+    );
+    float line = max(
+      gridLine * ${GALACTIC_GRID_LINE_STRENGTH.toFixed(2)},
+      axisLine * ${GALACTIC_GRID_AXIS_STRENGTH.toFixed(2)}
+    );
     vec3 color = mix(vec3(0.039, 0.078, 0.137), vec3(0.082, 0.157, 0.263), axisLine);
-    gl_FragColor = vec4(color, line * fade * 0.86);
+    gl_FragColor = vec4(color, line * fade * grazing);
     #include <tonemapping_fragment>
     #include <colorspace_fragment>
   }

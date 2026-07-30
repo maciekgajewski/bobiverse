@@ -7,6 +7,7 @@ import {
   DoubleSide,
   PerspectiveCamera,
   Vector3,
+  Vector4,
 } from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { GalacticPlaneGrid } from "./GalacticPlaneGrid";
@@ -27,13 +28,18 @@ import { closestMarkerSystemId } from "../domain/star-picking";
 import { resolveCaptionVisibility } from "../domain/caption-visibility";
 import {
   NARRATIVE_MARKER_COLOR,
+  ASTRONOMY_CONTEXT_EMPHASIS,
+  NARRATIVE_CORE_HALO_SCALE,
+  NARRATIVE_VISIBLE_FOOTPRINT_SCALE,
   STAR_SPRITE_FRAGMENT_SHADER,
   colorFamilyColor,
   componentOffset,
   componentPickRadius,
+  componentVisibleRadius,
   narrativeMarkerGeometry,
   narrativeRingSegments,
   selectionFrameSegments,
+  starOpticalVariation,
 } from "../domain/star-visual";
 
 interface MapSceneProps {
@@ -57,6 +63,7 @@ export interface MapScale {
 
 const DEFAULT_CAMERA_DIRECTION: [number, number, number] = [10.5, 8, 12];
 const MAP_CAMERA_FOV_DEGREES = 47;
+export const MAP_CAMERA_DAMPING_FACTOR = 0.09;
 
 const ignoreRaycast = () => undefined;
 
@@ -85,12 +92,16 @@ function CameraController({
   resetToken,
   selected,
   systems,
+  knownSystemIds,
+  activeSystemIds,
 }: {
   resetToken: number;
   selected: StellarSystem | undefined;
   systems: StellarSystem[];
+  knownSystemIds: ReadonlySet<string>;
+  activeSystemIds: ReadonlySet<string>;
 }) {
-  const { camera, size } = useThree();
+  const { camera, gl, size } = useThree();
   const controls = useRef<OrbitControlsImpl>(null);
   const motion = useRef<CameraMotion | null>(null);
   const reducedMotion = useReducedMotion();
@@ -121,6 +132,13 @@ function CameraController({
   );
   useEffect(() => {
     motion.current = null;
+    const control = controls.current;
+    if (control) {
+      const damping = control.enableDamping;
+      control.enableDamping = false;
+      control.update();
+      control.enableDamping = damping;
+    }
     const position = cameraPositionForFraming(
       systems.map((system) => system.render_position),
       {
@@ -133,9 +151,61 @@ function CameraController({
     );
     camera.position.set(position.x, position.y, position.z);
     camera.lookAt(0, 0, 0);
-    controls.current?.target.set(0, 0, 0);
-    controls.current?.update();
+    control?.target.set(0, 0, 0);
+    control?.update();
   }, [camera, resetToken, size.height, size.width, systems]);
+  useEffect(() => {
+    const bridge: Bob034MapPerformanceBridge = {
+      snapshot: () => {
+        const target = controls.current?.target;
+        if (!target) {
+          throw new Error("Map controls are not ready.");
+        }
+        return {
+          camera: camera.position.toArray(),
+          target: target.toArray(),
+        };
+      },
+      screenPoint: (systemId) => {
+        const system = systems.find((candidate) => candidate.id === systemId);
+        if (!system) throw new Error(`Unknown rendered system ${systemId}.`);
+        const projected = new Vector3(
+          system.render_position.x,
+          system.render_position.y,
+          system.render_position.z,
+        ).project(camera);
+        const bounds = gl.domElement.getBoundingClientRect();
+        return {
+          x: bounds.left + (projected.x * 0.5 + 0.5) * bounds.width,
+          y: bounds.top + (-projected.y * 0.5 + 0.5) * bounds.height,
+        };
+      },
+      fixture: {
+        systemIds: systems.map((system) => system.id),
+        componentIds: systems.flatMap((system) =>
+          system.components.map((component) => component.id),
+        ),
+        knownSystemIds: [...knownSystemIds],
+        activeSystemIds: [...activeSystemIds],
+      },
+      renderer: () => {
+        const context = gl.getContext();
+        const extension = context.getExtension("WEBGL_debug_renderer_info");
+        return extension
+          ? String(
+              context.getParameter(extension.UNMASKED_RENDERER_WEBGL) ??
+                context.getParameter(context.RENDERER),
+            )
+          : String(context.getParameter(context.RENDERER));
+      },
+    };
+    window.__bob034MapPerformance = bridge;
+    return () => {
+      if (window.__bob034MapPerformance === bridge) {
+        delete window.__bob034MapPerformance;
+      }
+    };
+  }, [activeSystemIds, camera, gl, knownSystemIds, systems]);
   useEffect(() => {
     if (!selected) return;
     const { x, y, z } = selected.render_position;
@@ -165,7 +235,7 @@ function CameraController({
       ref={controls}
       makeDefault
       enableDamping
-      dampingFactor={0.08}
+      dampingFactor={MAP_CAMERA_DAMPING_FACTOR}
       minDistance={2}
       maxDistance={45}
       onStart={cancelMotion}
@@ -179,6 +249,7 @@ function StarMarker({
   selectedSystem,
   known,
   active,
+  hovered,
   captionVisible,
   onHover,
 }: {
@@ -187,10 +258,10 @@ function StarMarker({
   selectedSystem: StellarSystem | undefined;
   known: boolean;
   active: boolean;
+  hovered: boolean;
   captionVisible: boolean;
   onHover: (id: string | null) => void;
 }) {
-  const [hovered, setHovered] = useState(false);
   const position = system.render_position;
   const selectedDistance = selectedSystem
     ? Math.hypot(
@@ -204,16 +275,18 @@ function StarMarker({
       position={[position.x, position.y, position.z]}
       onPointerOver={(event) => {
         event.stopPropagation();
-        setHovered(true);
         onHover(system.id);
       }}
       onPointerOut={() => {
-        setHovered(false);
         onHover(null);
       }}
     >
       {system.components.map((component, index) => {
-        const radius = component.visual.marker_radius;
+        const radius = componentVisibleRadius(component, known);
+        const optics = starOpticalVariation(
+          component.id,
+          component.visual.intensity,
+        );
         const offset = componentOffset(
           component,
           index,
@@ -250,6 +323,28 @@ function StarMarker({
                     ),
                   },
                   uIntensity: { value: component.visual.intensity },
+                  uEmphasis: {
+                    value: known ? 1 : ASTRONOMY_CONTEXT_EMPHASIS,
+                  },
+                  uCoreHaloScale: {
+                    value: known ? NARRATIVE_CORE_HALO_SCALE : 1,
+                  },
+                  uCoreHalo: {
+                    value: new Vector4(
+                      optics.coreRadius,
+                      optics.haloRadius,
+                      optics.haloFalloff,
+                      optics.rayTipSoftness,
+                    ),
+                  },
+                  uRays: {
+                    value: new Vector4(
+                      optics.primaryRayLength,
+                      optics.primaryRayStrength,
+                      optics.secondaryRayLength,
+                      optics.secondaryRayStrength,
+                    ),
+                  },
                 }}
                 vertexShader="varying vec2 vUv; varying float vCameraDistance; void main() { vUv = uv; vCameraDistance = length((modelViewMatrix * vec4(0.0, 0.0, 0.0, 1.0)).xyz); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }"
                 fragmentShader={STAR_SPRITE_FRAGMENT_SHADER}
@@ -258,9 +353,9 @@ function StarMarker({
           </Billboard>
         );
       })}
-      {known && <NarrativeRing active={active} />}
+      {active && <NarrativeRing />}
       {selected && <SelectionFrame name={system.name} />}
-      {captionVisible && (
+      {captionVisible && !hovered && (
         <Billboard position={[0, -0.32, 0]} follow raycast={ignoreRaycast}>
           <Html center style={{ pointerEvents: "none" }}>
             <div className="narrative-map-label">{system.name}</div>
@@ -309,31 +404,29 @@ function SegmentedRing({
   );
 }
 
-function NarrativeRing({ active }: { active: boolean }) {
-  const geometry = narrativeMarkerGeometry(active);
+function NarrativeRing() {
+  const geometry = narrativeMarkerGeometry(true);
   return (
     <>
       <SegmentedRing
         radius={geometry.ringRadii[0]!}
         color={NARRATIVE_MARKER_COLOR}
       />
-      {active && (
-        <Billboard follow raycast={ignoreRaycast}>
-          <SegmentedRing
-            radius={geometry.ringRadii[1]!}
-            color={NARRATIVE_MARKER_COLOR}
-          />
-          <Line
-            points={[
-              [0, geometry.tick![0], 0],
-              [0, geometry.tick![1], 0],
-            ]}
-            color={NARRATIVE_MARKER_COLOR}
-            lineWidth={1}
-            raycast={ignoreRaycast}
-          />
-        </Billboard>
-      )}
+      <Billboard follow raycast={ignoreRaycast}>
+        <SegmentedRing
+          radius={geometry.ringRadii[1]!}
+          color={NARRATIVE_MARKER_COLOR}
+        />
+        <Line
+          points={[
+            [0, geometry.tick![0], 0],
+            [0, geometry.tick![1], 0],
+          ]}
+          color={NARRATIVE_MARKER_COLOR}
+          lineWidth={1}
+          raycast={ignoreRaycast}
+        />
+      </Billboard>
     </>
   );
 }
@@ -514,6 +607,7 @@ function Scene({
             selectedSystem={selected}
             known={knownSystemIds.has(system.id)}
             active={activeSystemIds.has(system.id)}
+            hovered={hoveredId === system.id}
             captionVisible={captionIds.has(system.id)}
             onHover={setHoveredId}
           />
@@ -523,6 +617,8 @@ function Scene({
         resetToken={resetToken}
         selected={selected}
         systems={systems}
+        knownSystemIds={knownSystemIds}
+        activeSystemIds={activeSystemIds}
       />
       <CameraScaleReporter onScaleChange={onScaleChange} />
       <CaptionController
@@ -548,6 +644,15 @@ export function StarMap({ onDeselect, ...props }: MapSceneProps) {
       onPointerMissed={onDeselect}
       data-testid="star-map-canvas"
       data-galactic-starfield="permanent"
+      data-star-sprite="expressive-hybrid"
+      data-component-render-calls="2"
+      data-context-emphasis={ASTRONOMY_CONTEXT_EMPHASIS}
+      data-known-core-halo-scale={NARRATIVE_CORE_HALO_SCALE}
+      data-known-visible-footprint-scale={NARRATIVE_VISIBLE_FOOTPRINT_SCALE}
+      data-known-marker="caption-only"
+      data-active-marker="double-segmented-ring-and-tick"
+      data-hover-marker="tooltip"
+      data-grid="whisper"
     >
       <Scene {...props} />
     </Canvas>

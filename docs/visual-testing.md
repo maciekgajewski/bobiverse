@@ -199,15 +199,20 @@ DOM behavior is reused rather than recomputed in a separate mobile path.
 ## BOB-014 narrative-aware map integration
 
 In the pre-book view, verify that the map contains only the configured-radius
-neighbourhood around Sol, not the complete static catalogue. Confirm narrative-known
-systems retain one thin elliptical segmented ring, active systems at the selected
-chapter/date add static nested ellipses and an outward tick, and a selected system keeps its outer corner
-frame outside those marks. Rotate, pan, and zoom while creating caption collisions:
-selected, hovered, and active captions must remain visible, while lower-priority
-known captions may hide and reappear. Astronomy-only context markers must have no
-persistent caption or narrative ring. Confirm component colour families, decorative
-clusters, scale, picking, measurements, Galactic backdrop, reset, and reduced-motion
-focus behavior remain unchanged. Known-system captions are plain labels centered below
+neighbourhood around Sol, not the complete static catalogue. The historical BOB-014
+single-ring treatment is superseded by BOB-034: ordinary narrative-known systems are
+ringless and keep collision-managed captions, while active systems at the selected
+chapter/date retain static nested ellipses and an outward tick. A selected system
+keeps its outer corner frame and adjacent label. Rotate, pan, and zoom while creating
+caption collisions:
+selected and active captions must remain visible, while lower-priority known captions
+may hide and reappear. Hover a known and an astronomy-only system: the tooltip must
+be the hovered system's only name surface, the duplicate map caption must be absent,
+nearby captions must not jump underneath the tooltip, and the known caption must
+return when hover ends. Astronomy-only context markers must have no persistent
+caption or narrative ring. Confirm component colour families, decorative clusters,
+scale, picking, measurements, Galactic backdrop, reset, and reduced-motion focus
+behavior remain unchanged. Known-system captions are plain labels centered below
 their marker; only a hover tooltip receives a bordered surface.
 
 Search a known nearby astronomy-only system by a preferred name and an alternate
@@ -223,6 +228,44 @@ Select a mapped system, descendant location, event at a mapped location, and a
 character with one **Last seen** mapped location; each must focus the canonical system
 without changing viewing angle. Select an unmapped event/location and a locationless
 entity; their inspectors remain available but the camera must not move.
+
+## BOB-034 expressive starfield hierarchy
+
+At desktop, compact, and phone widths, compare bright, ordinary, multi-component,
+neutral-fallback, and ultracool components. Confirm one coherent family of sharp
+cores, compact colour-family halos, and deterministic restrained rays; repeat the
+same view and verify component optics do not change. Faint ultracool components remain
+smaller, dimmer, and rayless. No halo or ray extends outside the existing visible
+footprint, and the independent pick target remains practical.
+
+At the fixed Chapter 1.14-reproduced benchmark fixture, compare Sol and active Epsilon
+Eridani with representative astronomy-only context. Astronomy-only systems remain
+clearly visible at `0.25` post-clamp emphasis and preserve colour and relative
+variation. Narrative-known glyphs must read at `2×` complete visible size, with
+proportional `2×` ray reach and effective `2.5×` core/halo size. Confirm the larger
+decorative footprint does not alter picking, coordinates, or measurements.
+Ordinary narrative-known systems have no persistent ring, while the active double
+ring/tick, selected corner frame/label, hover tooltip, and caption priorities remain
+clear. Select from both canvas and DOM paths, deselect, focus, and reset.
+
+Orbit above and below the Galactic plane and approach a grazing view. Ordinary
+one-unit lines remain uniformly faint, axes stay subordinate, and the grid fades
+smoothly with planar distance and absolute grazing angle without a hard boundary,
+hemisphere asymmetry, or dense horizon. Confirm the unchanged Deep Star Maps backdrop
+remains aligned, seam-free, local-only, camera-following, and non-pickable.
+
+Run `npm run performance:map` with no concurrent build, test, browser benchmark, or
+throttled workload. It must assert the immutable fixture and the stored three-run
+baseline before enforcing the relative and long-frame budgets. Headless evidence does
+not replace smooth orbit/pan/zoom review on the Captain's real supported browser.
+Confirm the approved `0.09` damping still feels natural and repeated **Reset view**
+actions return to the identical framing pose without residual drift.
+
+For ADR-0018's Captain-authorized doubled known-star footprint, ADR-0019 sets the
+software-renderer median ceiling to `33.4 ms` and the camera settlement deadline to
+`4 s`. The baseline relative p95 ceiling, long-frame-count ceiling, and raw `100 ms`
+maximum remain unchanged. Real supported-browser smoothness acceptance remains
+mandatory.
 
 ## BOB-027 generalized narrative-moment ordering
 

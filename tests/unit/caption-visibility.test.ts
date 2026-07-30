@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { resolveCaptionVisibility } from "../../src/domain/caption-visibility";
 
 describe("caption collision visibility", () => {
-  it("suppresses ordinary known captions but preserves active, hovered, and selected captions", () => {
+  it("suppresses ordinary captions but reserves active, hovered-tooltip, and selected slots", () => {
     const visible = resolveCaptionVisibility([
       { id: "known", priority: 0, x: 100, y: 100, visible: true },
       { id: "suppressed", priority: 0, x: 110, y: 105, visible: true },

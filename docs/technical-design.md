@@ -266,13 +266,23 @@ boundaries.
 System positions use a single linear scene scale. Camera projection can affect visual
 perspective, but no logarithmic or piecewise distance compression is permitted.
 Marker glyphs may have a minimum screen-readable size and use a non-linear visual
-scale. Ordinary stellar components use presentation radius `0.09` and intensity
-`1.0`; accepted brown dwarfs use radius `0.05` and intensity `0.25`. These fixed
-values are not physical radius or luminosity and never affect positions or
-measurements. Visible glyph radius and pointer hit radius are independent; every
-component retains a minimum `0.09` hit target.
+scale. Ordinary stellar components use base presentation radius `0.09` and intensity
+`1.0`; accepted brown dwarfs use base radius `0.05` and intensity `0.25`. ADR-0018
+allows narrative-known components to render a `2×` visible plane from that base
+radius while astronomy-only components remain at `1×`. These values are not physical
+radius or luminosity and never affect positions or measurements. Visible glyph
+radius and pointer hit radius are independent; every component retains a minimum
+`0.09` hit target and narrative scaling does not enlarge it.
 
-Markers are camera-facing shader sprites with a luminous core and soft radial halo.
+Markers are camera-facing shader sprites from one expressive analytic family. Each
+uses a sharp luminous core, compact colour-family halo, and deterministic, restrained
+primary and optional secondary diffraction rays. Stable component identity introduces
+bounded variation in core/halo proportions, falloff, ray length, and tip softness;
+that variation is decorative presentation and not a physical stellar property.
+Astronomy-only nonzero fragments remain inside the component `marker_radius`
+footprint; ADR-0018 narrative-known fragments remain inside the corresponding `2×`
+visible plane. Neither path adds a texture lookup, extra visible mesh, or
+post-processing pass.
 An accepted 20-pc brown-dwarf classification first selects its dedicated
 `infrared-cool` or `infrared-warm` false-colour treatment. Other presentation follows
 accepted Gaia DR3 temperature or classification, then Gaia `bp_rp`, then an accepted
@@ -289,8 +299,15 @@ explicit and never removes a selected source or component.
 
 Star-sprite brightness smoothly attenuates from 100% at 6 map units to 35% at
 45 map units as a presentation aid. Per-component intensity multiplies final shader
-alpha exactly once and does not also scale RGB under additive blending. Neither
-attenuation affects marker position, labels, or measurement.
+alpha exactly once and does not also scale RGB under additive blending. Astronomy-only
+context applies one further `0.25` emphasis multiplier after base optical variation
+and base-alpha clamping, so analytic-core saturation cannot bypass the hierarchy;
+narrative-known systems use `1.0`. Narrative-known core and halo radii then use one
+`1.25` internal scale inside a `2×` visible plane, for effective `2.5×` core/halo
+size and proportional `2×` ray reach; astronomy-only visible planes, core/halo radii,
+and ray lengths use `1.0`. This does not change colour family or collapse relative
+component differences. Neither treatment affects marker position, labels, picking,
+canonical coordinates, or measurement.
 
 Selection frames do not participate in raycasting, but every star-marker glyph,
 including the selected one, does. Canvas picking explicitly resolves the closest
@@ -341,13 +358,16 @@ request.
 At runtime the map derives this rendered union directly from the validated static
 catalogue, the current reader-safe narrative projection, and the shared configuration;
 there is no separate narrative/astronomy join artifact. Every mapped eligible
-narrative system receives a segmented screen-readable ring. Generated
-`mapped_system_ancestry` activity makes a system active at the selected chapter or
-date, drawing a distinct static double ring and outward tick. These decorations are
-centred on the canonical node but are non-raycastable and do not alter component
-sprites, coordinates, measurements, focus targets, or camera framing. Selected,
-hovered, and active captions have collision priority; other known captions may hide
-and return as the camera changes. Astronomy-only systems have no persistent caption.
+narrative system receives a collision-managed caption but no persistent ring, arc,
+tick, reticle, or bracket. Generated `mapped_system_ancestry` activity makes a system
+active at the selected chapter or date, drawing the distinct static double segmented
+ring and outward tick. These decorations are centred on the canonical node but are
+non-raycastable and do not alter component sprites, coordinates, measurements, focus
+targets, or camera framing. Selected and active captions have collision priority;
+hover reserves its priority slot but uses the tooltip as the sole name surface, so
+the hovered system's map caption is suppressed until hover ends. Other known captions
+may hide and return as the camera changes. Astronomy-only systems have no persistent
+caption.
 
 The only DOM access path for astronomy-only systems is the temporary **Nearby
 astronomy** search group. It appears for a nonempty query, searches preferred names
@@ -400,6 +420,11 @@ Any manual orbit, pan, or zoom input immediately cancels a focus transition. A n
 selection immediately retargets an in-flight transition from its current interpolated
 position to the newly selected system.
 
+OrbitControls uses damping factor `0.09`. Reset drains any pending damping before
+restoring the exact framing camera and zero target, so repeated resets reproduce the
+same pose while leaving gesture mapping, distance limits, framing, and focus semantics
+unchanged.
+
 Clicking empty map space clears the current inspection selection. Selection uses a
 non-obscuring corner frame and an adjacent name label; it must not recolor or cover
 the component-marker sprites. Sol has the
@@ -408,9 +433,14 @@ frame only when explicitly selected. Hovering a marker reveals a screen-size-sta
 tooltip with its name and, when there is a selected system, the Euclidean canonical
 separation from that system.
 
-The Galactic plane is a faint orientation aid several times larger than the displayed
-star field so it reads as effectively infinite. Its labels sit well beyond the star
-field in smaller, lower-prominence type; the standalone `+Yg` marker is omitted.
+The Galactic plane is a uniformly faint one-unit orientation grid several times
+larger than the displayed star field so it reads as effectively infinite. Ordinary
+lines use `0.17` maximum strength and the two zero axes use a restrained `0.26`.
+Smooth planar-distance and absolute grazing-angle fades prevent a dense horizon while
+preserving identical visibility above and below the plane. The grid remains
+double-sided and non-pickable, has no major/minor hierarchy, and never changes
+canonical scale. Its labels sit well beyond the star field in smaller,
+lower-prominence type; the standalone `+Yg` marker is omitted.
 
 ## 10. Responsive and accessible behavior
 

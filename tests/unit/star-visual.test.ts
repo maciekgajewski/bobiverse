@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
+  ASTRONOMY_CONTEXT_EMPHASIS,
+  NARRATIVE_CORE_HALO_SCALE,
+  NARRATIVE_VISIBLE_FOOTPRINT_SCALE,
   COMPONENT_OFFSET_ELEVATION_MAX,
   COMPONENT_OFFSET_RADIUS_MAX,
   COMPONENT_OFFSET_RADIUS_MIN,
@@ -11,10 +14,12 @@ import {
   colorFamilyColor,
   componentOffset,
   componentPickRadius,
+  componentVisibleRadius,
   narrativeMarkerGeometry,
   narrativeRingSegments,
   selectionFrameSegments,
   starDistanceAttenuation,
+  starOpticalVariation,
 } from "../../src/domain/star-visual";
 import type { Component } from "../../src/domain/types";
 
@@ -96,13 +101,90 @@ describe("star visual encodings", () => {
       STAR_DISTANCE_FAR_BRIGHTNESS,
     );
     expect(STAR_SPRITE_FRAGMENT_SHADER).toContain(
-      "gl_FragColor = vec4(uColor * (halo + core * 0.75), alpha);",
+      "float baseAlpha = min(shape * attenuation * uIntensity, 1.0);",
+    );
+    expect(STAR_SPRITE_FRAGMENT_SHADER).toContain(
+      "float alpha = baseAlpha * uEmphasis;",
     );
     expect(STAR_SPRITE_FRAGMENT_SHADER).not.toContain(
-      "(halo + core * 0.75) * attenuation",
+      "luminousColor * attenuation",
     );
     expect(STAR_SPRITE_FRAGMENT_SHADER).toContain("uniform float uIntensity;");
     expect(STAR_SPRITE_FRAGMENT_SHADER.match(/\* uIntensity/g)).toHaveLength(1);
+    expect(STAR_SPRITE_FRAGMENT_SHADER.match(/\* uEmphasis/g)).toHaveLength(1);
+  });
+
+  it("derives deterministic bounded expressive optics from stable identity", () => {
+    const first = starOpticalVariation("gaia-dr3:1", 1);
+    expect(starOpticalVariation("gaia-dr3:1", 1)).toEqual(first);
+    expect(starOpticalVariation("gaia-dr3:2", 1)).not.toEqual(first);
+    expect(first.coreRadius).toBeGreaterThanOrEqual(0.15);
+    expect(first.coreRadius).toBeLessThanOrEqual(0.22);
+    expect(first.haloRadius).toBeGreaterThanOrEqual(0.52);
+    expect(first.haloRadius).toBeLessThanOrEqual(0.72);
+    expect(first.primaryRayLength).toBeLessThanOrEqual(0.82);
+    expect(first.secondaryRayLength).toBeLessThanOrEqual(0.58);
+    expect(STAR_SPRITE_FRAGMENT_SHADER).toContain(
+      "float footprint = 1.0 - smoothstep(0.94, 1.0, distanceFromCenter);",
+    );
+    expect(STAR_SPRITE_FRAGMENT_SHADER).toContain("float halo = pow(");
+    expect(STAR_SPRITE_FRAGMENT_SHADER).toContain("fwidth(primaryAxis) * 0.42");
+    expect(STAR_SPRITE_FRAGMENT_SHADER).toContain("max(uRays.x, 0.0001)");
+  });
+
+  it("keeps faint ultracool optics compact and rayless", () => {
+    const optics = starOpticalVariation("c20pc:brown-dwarf", 0.25);
+    expect(optics.primaryRayLength).toBe(0);
+    expect(optics.primaryRayStrength).toBe(0);
+    expect(optics.secondaryRayLength).toBe(0);
+    expect(optics.secondaryRayStrength).toBe(0);
+  });
+
+  it("uses one bounded context emphasis without changing colour families", () => {
+    expect(ASTRONOMY_CONTEXT_EMPHASIS).toBe(0.25);
+    expect(ASTRONOMY_CONTEXT_EMPHASIS).toBeGreaterThan(0);
+    expect(ASTRONOMY_CONTEXT_EMPHASIS).toBeLessThan(1);
+    expect(STAR_SPRITE_FRAGMENT_SHADER).toContain(
+      "float baseAlpha = min(shape * attenuation * uIntensity, 1.0);",
+    );
+    expect(STAR_SPRITE_FRAGMENT_SHADER).toContain(
+      "float alpha = baseAlpha * uEmphasis;",
+    );
+    expect(
+      STAR_SPRITE_FRAGMENT_SHADER.indexOf("float baseAlpha = min("),
+    ).toBeLessThan(
+      STAR_SPRITE_FRAGMENT_SHADER.indexOf(
+        "float alpha = baseAlpha * uEmphasis;",
+      ),
+    );
+  });
+
+  it("enlarges the complete known presentation with proportional rays", () => {
+    expect(NARRATIVE_CORE_HALO_SCALE).toBe(1.25);
+    expect(NARRATIVE_CORE_HALO_SCALE).toBeGreaterThan(1);
+    expect(NARRATIVE_VISIBLE_FOOTPRINT_SCALE).toBe(2);
+    expect(NARRATIVE_CORE_HALO_SCALE * NARRATIVE_VISIBLE_FOOTPRINT_SCALE).toBe(
+      2.5,
+    );
+    expect(STAR_SPRITE_FRAGMENT_SHADER).toContain(
+      "uniform float uCoreHaloScale;",
+    );
+    expect(STAR_SPRITE_FRAGMENT_SHADER).toContain(
+      "uCoreHalo.x * uCoreHaloScale",
+    );
+    expect(STAR_SPRITE_FRAGMENT_SHADER).toContain(
+      "uCoreHalo.y * uCoreHaloScale",
+    );
+    expect(STAR_SPRITE_FRAGMENT_SHADER).not.toContain(
+      "uRays.x * uCoreHaloScale",
+    );
+    expect(STAR_SPRITE_FRAGMENT_SHADER).not.toContain(
+      "uRays.z * uCoreHaloScale",
+    );
+    const ordinary = component("gaia-dr3:known");
+    expect(componentVisibleRadius(ordinary, false)).toBe(0.09);
+    expect(componentVisibleRadius(ordinary, true)).toBe(0.18);
+    expect(componentPickRadius(ordinary)).toBe(0.09);
   });
 
   it("keeps the brown-dwarf hit target at ordinary marker size", () => {
@@ -169,9 +251,9 @@ describe("star visual encodings", () => {
     ).toBeCloseTo(0.17);
   });
 
-  it("keeps known and active narrative marker geometry distinct", () => {
+  it("removes ordinary known geometry while preserving active geometry", () => {
     expect(narrativeMarkerGeometry(false)).toEqual({
-      ringRadii: [[0.26, 0.17]],
+      ringRadii: [],
       tick: null,
     });
     expect(narrativeMarkerGeometry(true)).toEqual({

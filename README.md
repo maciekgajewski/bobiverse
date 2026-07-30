@@ -146,11 +146,20 @@ relationship selects the eligible narrative entity without changing the knowledg
 chapter. A chapter illustration appears only when its optional registered asset is
 assigned; no placeholder is rendered.
 The map renders the deduplicated union of the configured-radius neighbourhoods around
-reader-safe mapped systems. Narrative-known systems receive a segmented ring; systems
-active at the selected chapter or date receive a double ring and outward tick. These
-screen-readable marks do not affect coordinates, picking, measurements, or catalogue
-component presentation. Captions preserve selected, hovered, and active systems when
-they collide; other known-system captions return as the view changes.
+reader-safe mapped systems. Catalogue components use one expressive analytic sprite
+family with sharp cores, compact colour-family halos, and bounded deterministic
+diffraction rays. Astronomy-only context keeps its accepted colours and relative
+variation at `0.25` post-clamp emphasis. Under ADR-0018, narrative-known systems use
+a `2×` visible plane, proportional `2×` ray reach, and an effective `2.5×` core/halo
+size, plus collision-managed captions without a persistent ring. Systems active at
+the selected chapter or date retain the double segmented ring and outward tick.
+These presentation differences do not affect coordinates, picking, measurements, or
+catalogue facts.
+Captions preserve selected and active systems when they collide; a hovered system
+uses its tooltip as the sole name surface while its reserved map-caption slot prevents
+nearby captions from jumping underneath it. Other known-system captions return as the
+view changes. The Galactic-plane grid remains one-unit and true-scale but uses a
+uniform whisper treatment with distance and grazing-angle fades.
 
 While a nonempty query is present, **Nearby astronomy** follows the narrative groups
 with matches from that rendered union only. It searches reviewed preferred names and

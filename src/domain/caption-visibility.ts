@@ -6,7 +6,7 @@ export interface CaptionCandidate {
   visible: boolean;
 }
 
-/** Keeps selected, hovered, and active captions above ordinary collision suppression. */
+/** Reserves selected, hovered-tooltip, and active slots above ordinary captions. */
 export function resolveCaptionVisibility(
   candidates: readonly CaptionCandidate[],
   labelWidth = 144,

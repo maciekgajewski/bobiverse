@@ -1,0 +1,167 @@
+{
+  "fixture": {
+    "chapter": "1.14",
+    "knownSystemIds": {
+      "count": 2,
+      "ids": ["sol", "stellar-system-005582"],
+      "sha256": "a6ade58e82a771675324c2e62a61ffc7e9e53a14e76d7017f39466a04110a18d"
+    },
+    "activeSystemIds": {
+      "count": 1,
+      "ids": ["stellar-system-005582"],
+      "sha256": "27fd4d5893c7c9f362b80ae7e7ecb9608251b0f0b6e4a7b2c9cba529c17b52ff"
+    },
+    "systemIds": {
+      "count": 119,
+      "sha256": "59edd1bf20f11470559a370948c28b8226afe9f9b902e18a6a3dd1ba6f312ac0"
+    },
+    "componentIds": {
+      "count": 144,
+      "sha256": "53a6aa4570f19c575cdbcbf7e0f71139fc98ad46c1abd99e83c516d597096fe1"
+    }
+  },
+  "runs": [
+    {
+      "median_ms": 16.75,
+      "p95_ms": 66.7,
+      "median_over_50_ms": 23,
+      "maximum_ms": 83.4,
+      "sweeps": [
+        {
+          "median_ms": 16.75,
+          "p95_ms": 83.3,
+          "over_50_ms": 24,
+          "maximum_ms": 83.4,
+          "interval_count": 356
+        },
+        {
+          "median_ms": 16.8,
+          "p95_ms": 66.7,
+          "over_50_ms": 23,
+          "maximum_ms": 83.4,
+          "interval_count": 356
+        },
+        {
+          "median_ms": 16.8,
+          "p95_ms": 66.7,
+          "over_50_ms": 23,
+          "maximum_ms": 83.4,
+          "interval_count": 356
+        },
+        {
+          "median_ms": 16.7,
+          "p95_ms": 66.7,
+          "over_50_ms": 23,
+          "maximum_ms": 83.4,
+          "interval_count": 356
+        },
+        {
+          "median_ms": 16.7,
+          "p95_ms": 66.7,
+          "over_50_ms": 23,
+          "maximum_ms": 83.4,
+          "interval_count": 356
+        }
+      ]
+    },
+    {
+      "median_ms": 16.8,
+      "p95_ms": 83.2,
+      "median_over_50_ms": 24,
+      "maximum_ms": 83.4,
+      "sweeps": [
+        {
+          "median_ms": 16.8,
+          "p95_ms": 83.2,
+          "over_50_ms": 24,
+          "maximum_ms": 83.4,
+          "interval_count": 356
+        },
+        {
+          "median_ms": 16.8,
+          "p95_ms": 83.2,
+          "over_50_ms": 24,
+          "maximum_ms": 83.4,
+          "interval_count": 356
+        },
+        {
+          "median_ms": 16.8,
+          "p95_ms": 83.2,
+          "over_50_ms": 23,
+          "maximum_ms": 83.4,
+          "interval_count": 356
+        },
+        {
+          "median_ms": 16.75,
+          "p95_ms": 83.3,
+          "over_50_ms": 24,
+          "maximum_ms": 83.4,
+          "interval_count": 356
+        },
+        {
+          "median_ms": 16.8,
+          "p95_ms": 83.2,
+          "over_50_ms": 23,
+          "maximum_ms": 83.4,
+          "interval_count": 356
+        }
+      ]
+    },
+    {
+      "median_ms": 16.8,
+      "p95_ms": 83.3,
+      "median_over_50_ms": 24,
+      "maximum_ms": 83.4,
+      "sweeps": [
+        {
+          "median_ms": 16.8,
+          "p95_ms": 83.3,
+          "over_50_ms": 24,
+          "maximum_ms": 83.4,
+          "interval_count": 356
+        },
+        {
+          "median_ms": 33.2,
+          "p95_ms": 66.7,
+          "over_50_ms": 24,
+          "maximum_ms": 83.4,
+          "interval_count": 356
+        },
+        {
+          "median_ms": 16.8,
+          "p95_ms": 83.2,
+          "over_50_ms": 24,
+          "maximum_ms": 83.4,
+          "interval_count": 356
+        },
+        {
+          "median_ms": 16.8,
+          "p95_ms": 83.3,
+          "over_50_ms": 24,
+          "maximum_ms": 83.4,
+          "interval_count": 356
+        },
+        {
+          "median_ms": 25,
+          "p95_ms": 83.3,
+          "over_50_ms": 24,
+          "maximum_ms": 83.4,
+          "interval_count": 356
+        }
+      ]
+    }
+  ],
+  "bundle": [
+    "/assets/NotoSans-Bold-DmB3L7t0.ttf",
+    "/assets/NotoSans-Regular-BbCb0Jab.ttf",
+    "/assets/galactic-starfield-peynEBDb.avif",
+    "/assets/index-D3Xr8uqv.css",
+    "/assets/index-wWmUyeCg.js"
+  ],
+  "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "browser": "chromium 149.0.7827.55",
+  "node": "v22.23.1",
+  "cpu": "AMD Ryzen 5 5600 6-Core Processor",
+  "host": "piotr",
+  "platform": "linux 7.0.0-28-generic x64"
+}

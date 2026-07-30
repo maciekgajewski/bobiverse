@@ -261,15 +261,22 @@ positions.
 ### 8.2 Narrative marker states
 
 Stellar component sprites retain their catalogue-derived approximate colour family
-and fixed marker radius under ADR-0011. Narrative state is drawn outside the
-component cluster:
+and base marker radius under ADR-0011 and ADR-0012. One expressive analytic sprite
+family varies core, compact halo, and restrained rays deterministically. Astronomy-only
+context uses `0.25` emphasis after base alpha is bounded, without losing its colour
+or relative variation. Applying emphasis after the bound prevents bright analytic
+cores from saturating astronomy context back to narrative-known brightness. Under
+ADR-0018, narrative-known components use a `2×` visible plane, proportional `2×` ray
+reach, and the retained `1.25` internal core/halo scale for an effective `2.5×`
+core/halo size. Picking stays at the base target.
+Narrative state remains separate from catalogue facts:
 
 | State                           | Persistent treatment                                             |
 | ------------------------------- | ---------------------------------------------------------------- |
-| Astronomy-only context          | Component sprite only; no caption                                |
-| Narrative-known                 | Thin single segmented ring and collision-managed caption         |
+| Astronomy-only context          | `0.25` post-clamp emphasis; no caption                           |
+| Narrative-known                 | `2×` footprint/rays, `2.5×` core/halo, caption                   |
 | Active in selected chapter/date | Brighter double segmented ring with one outward tick             |
-| Selected                        | Existing larger corner frame outside the narrative ring          |
+| Selected                        | Existing larger corner frame and adjacent selection label        |
 | Hovered                         | Temporary tooltip and emphasis without changing narrative status |
 
 The geometric differences make the states understandable without colour. Rings are
@@ -286,14 +293,16 @@ application data or a literal implementation specification.
 
 ### 8.3 Captions and collision
 
-The selected system, hovered system, and every system active in the selected
-chapter/date always receive captions. Other narrative-known system captions are
-shown when they do not collide and reappear as the camera moves or zooms.
-Astronomy-only systems remain uncaptained unless hovered or selected.
+The selected system and every system active in the selected chapter/date always
+receive captions. A hovered system uses its tooltip as the sole name surface: its
+plain map caption is suppressed until hover ends, while the hovered collision-priority
+slot remains reserved so nearby captions do not jump underneath the tooltip. Other
+narrative-known system captions are shown when they do not collide and reappear as
+the camera moves or zooms. Astronomy-only systems have no persistent caption; hover
+uses the same sole tooltip and selection uses the established selection label.
 
-Collision handling may suppress a caption but may not move a system marker, distort
-geometry, or suppress the narrative-known ring. Keyboard and browser selection remain
-available when a caption is absent.
+Collision handling may suppress a caption but may not move a system marker or distort
+geometry. Keyboard and browser selection remain available when a caption is absent.
 
 ### 8.4 Selection and focus
 

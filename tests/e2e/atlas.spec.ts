@@ -305,6 +305,42 @@ test("the permanent local backdrop preserves responsive map interaction", async 
       "data-galactic-starfield",
       "permanent",
     );
+    await expect(page.getByTestId("star-map-canvas")).toHaveAttribute(
+      "data-star-sprite",
+      "expressive-hybrid",
+    );
+    await expect(page.getByTestId("star-map-canvas")).toHaveAttribute(
+      "data-component-render-calls",
+      "2",
+    );
+    await expect(page.getByTestId("star-map-canvas")).toHaveAttribute(
+      "data-context-emphasis",
+      "0.25",
+    );
+    await expect(page.getByTestId("star-map-canvas")).toHaveAttribute(
+      "data-known-core-halo-scale",
+      "1.25",
+    );
+    await expect(page.getByTestId("star-map-canvas")).toHaveAttribute(
+      "data-known-visible-footprint-scale",
+      "2",
+    );
+    await expect(page.getByTestId("star-map-canvas")).toHaveAttribute(
+      "data-known-marker",
+      "caption-only",
+    );
+    await expect(page.getByTestId("star-map-canvas")).toHaveAttribute(
+      "data-active-marker",
+      "double-segmented-ring-and-tick",
+    );
+    await expect(page.getByTestId("star-map-canvas")).toHaveAttribute(
+      "data-hover-marker",
+      "tooltip",
+    );
+    await expect(page.getByTestId("star-map-canvas")).toHaveAttribute(
+      "data-grid",
+      "whisper",
+    );
     await expect(
       page.getByRole("link", { name: /Astronomy backdrop:/ }),
     ).toBeVisible();
@@ -322,6 +358,92 @@ test("the permanent local backdrop preserves responsive map interaction", async 
   await expect(
     page.getByRole("heading", { name: "Solar System" }),
   ).toBeVisible();
+});
+
+test("expressive map states preserve active, hover, and astronomy-only selection paths", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    window.localStorage.setItem(
+      "bobiverse.app-state.v1",
+      JSON.stringify({
+        furthestChapterRead: "1.14",
+        viewChapter: "1.14",
+        displayDate: "2144",
+        mode: "chapter",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+  });
+  for (const viewport of [
+    { width: 1440, height: 1000 },
+    { width: 900, height: 700 },
+    { width: 390, height: 844 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+    await page.waitForFunction(
+      () => window.__bob034MapPerformance !== undefined,
+    );
+    const compact = viewport.width < 1200;
+    if (compact) {
+      await page.getByRole("button", { name: "Browse objects" }).click();
+    }
+    await expect(
+      page.getByRole("button", { name: "Epsilon Eridani Active" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", {
+        name: "Solar System Last active · Chapter 1.13",
+      }),
+    ).toBeVisible();
+    if (compact) {
+      await page
+        .getByRole("dialog", { name: "Object browser" })
+        .getByRole("button", { name: "Close" })
+        .click();
+    }
+
+    const sol = await page.evaluate(() =>
+      window.__bob034MapPerformance!.screenPoint("sol"),
+    );
+    const solMapCaption = page
+      .locator(".narrative-map-label")
+      .filter({ hasText: /^Sol$/ });
+    await expect(solMapCaption).toBeVisible();
+    await page.mouse.move(sol.x, sol.y);
+    await expect(page.locator(".map-tooltip")).toContainText("Sol");
+    await expect(solMapCaption).toHaveCount(0);
+    await page.mouse.move(1, 1);
+    await expect(page.locator(".map-tooltip")).toHaveCount(0);
+    await expect(solMapCaption).toBeVisible();
+    await page.mouse.move(sol.x, sol.y);
+    await expect(page.locator(".map-tooltip")).toContainText("Sol");
+    await expect(solMapCaption).toHaveCount(0);
+    await page.mouse.click(sol.x, sol.y);
+    await expect(page.locator(".selection-label")).toHaveText("Sol");
+    if (compact) {
+      await expect(
+        page.getByRole("dialog", { name: "Selected object" }),
+      ).toBeVisible();
+      await page
+        .getByRole("dialog", { name: "Selected object" })
+        .getByRole("button", { name: "Close" })
+        .click();
+    }
+    const alphaCentauri = await page.evaluate(() =>
+      window.__bob034MapPerformance!.screenPoint("stellar-system-005413"),
+    );
+    await page.mouse.click(alphaCentauri.x, alphaCentauri.y);
+    await expect(page.locator(".selection-label")).toHaveText("Alpha Centauri");
+    const inspector = compact
+      ? page.getByRole("dialog", { name: "Selected object" })
+      : page.getByRole("complementary", { name: "Object inspector" });
+    await expect(
+      inspector.getByText("Not story-known at this view"),
+    ).toBeVisible();
+  }
 });
 
 test("reader progress is confirmed before chapter data is unlocked", async ({

@@ -209,10 +209,16 @@ Planned work:
   preserve accepted number-prefixed descriptive titles, otherwise add the local
   number once; do not repeat story years or chronology notes along the rail.
 - Highlight the selected chapter's visible locations, characters, and events.
-- Mark narrative-known and active stellar systems without altering spectral markers
-  or true geometry. Render searchable, astronomy-only context within one explicit,
-  configurable radius around each mapped known system; the offline catalogue must
-  guarantee the source-available neighbourhood.
+- Use the BOB-034 expressive analytic sprite family and ADR-0018 narrative footprint
+  to distinguish narrative-known and astronomy-only systems without altering
+  accepted colour families or true geometry. Known systems use a `2×` visible
+  footprint with proportional rays and effective `2.5×` core/halo size; astronomy
+  context uses `0.25` post-clamp emphasis. Keep ordinary known systems ringless while
+  active systems retain their double ring/tick, and use the uniformly faint whisper
+  grid.
+  Render searchable astronomy-only context within one explicit, configurable radius
+  around each mapped known system; the offline catalogue must guarantee the
+  source-available neighbourhood.
 - Represent ambiguous locations as explicitly unmapped. Reserve `megastructure` for
   exceptionally large engineered structures, use `locale` for ordinary durable
   stations and bases, omit incidental short-lived places, and fall back from an

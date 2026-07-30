@@ -572,11 +572,13 @@ Presentation values are deliberately approximate:
 5. otherwise use the explicit neutral family.
 
 The derivation and source record are retained with each component. Missing
-presentation data does not remove the component. Brown dwarfs use visible radius
-`0.05` and additive intensity `0.25`; ordinary markers retain `0.09` and `1.0`.
-Intensity multiplies final sprite alpha exactly once. Every component keeps at least
-a `0.09` pointer target independently of visible size. These fixed values are
-presentation, not physical radius or luminosity.
+presentation data does not remove the component. Brown dwarfs use base visible
+radius `0.05` and additive intensity `0.25`; ordinary markers retain base radius
+`0.09` and intensity `1.0`. ADR-0018 may scale the final narrative-known visible
+plane without changing these emitted base values. Intensity multiplies final sprite
+alpha exactly once. Every component keeps at least a `0.09` pointer target
+independently of visible size. These values are presentation, not physical radius or
+luminosity.
 
 Multiple components render as a deterministic decorative cluster around one system
 node. The offsets are not orbital or Cartesian component coordinates.
