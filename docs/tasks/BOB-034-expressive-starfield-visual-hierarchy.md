@@ -1,6 +1,6 @@
 # BOB-034: expressive starfield visual hierarchy
 
-Status: Blocked
+Status: Ready
 Phase: 2 (map visual refinement)
 Last updated: 2026-07-29
 
@@ -37,24 +37,14 @@ fades away before it competes with the Milky Way.
 - BOB-026 supplies the accepted smaller/dimmer false-infrared presentation for
   ultracool objects.
 
-BOB-034 is blocked because committed Chapter 1.12 introduces Epsilon Eridani
-(`stellar-system-005582`) as a mapped narrative anchor without the reviewed astronomy
-bootstrap, pinned per-anchor acquisition coverage, and regenerated validated catalogue
-required by the astronomy pipeline. The exact current command
-`./.venv/bin/python scripts/validate_data.py` fails in
-`validate_acquisition_queries` with `KeyError: 'stellar-system-005582'`; `npm run
-build` and the required production performance baseline therefore cannot pass.
+BOB-030 resolved the former Chapter 1.12 Epsilon Eridani astronomy blocker. It
+deterministically bootstraps `stellar-system-005582`, pins the required per-anchor
+source coverage, regenerates the validated catalogue, and makes the normal astronomy
+validation path pass. The validated Chapter 1.12 render fixture is recorded under
+**Map-render performance authority**.
 
-Resolve that astronomy acquisition/coverage defect through a separate owning
-prerequisite task. It must review/bootstrap Epsilon Eridani, acquire and pin the
-required source coverage, regenerate the catalogue, and pass the normal astronomy
-validation path. Those changes are outside BOB-034. After that prerequisite closes,
-amend BOB-034 with the exact validated Chapter 1.12 rendered-system and component
-fixture described under **Map-render performance authority**, rerun independent task
-review, and only then restore `Ready`.
-
-Neither `Blocked` nor a later `Ready` status authorizes implementation; the Captain
-must still explicitly say `proceed` or `make it so`.
+`Ready` status does not authorize implementation; the Captain must still explicitly
+say `proceed` or `make it so`.
 
 ## Binding references
 
@@ -230,13 +220,15 @@ stop and propose the required design/ADR change rather than expanding this task.
   the latest current committed narrative map context. Assert that the projected
   narrative-known astronomy anchors include Solar System (`sol`) and Epsilon Eridani
   (`stellar-system-005582`).
-- After the blocking prerequisite produces a valid catalogue, record in this task the
-  exact expected sorted rendered-system ID set and sorted rendered-component ID set,
-  or a committed deterministic hash plus exact count for each set. The benchmark must
-  assert those fixture identities before timing and print them with the two anchor IDs.
-  Baseline and final runs must use identical asserted fixture identities; merely
-  printing unasserted counts is insufficient. BOB-034 cannot return to `Ready` until
-  these exact fixture expectations are present.
+- Assert the following validated Chapter 1.12 fixture before timing and print it with
+  the two anchor IDs. Hashes are lowercase SHA-256 over the lexicographically sorted
+  IDs, encoded as UTF-8 with one ID and one terminating newline per entry:
+  - rendered systems: count `119`, SHA-256
+    `59edd1bf20f11470559a370948c28b8226afe9f9b902e18a6a3dd1ba6f312ac0`;
+  - rendered components: count `144`, SHA-256
+    `53a6aa4570f19c575cdbcbf7e0f71139fc98ad46c1abd99e83c516d597096fe1`.
+  Baseline and final runs must use these identical asserted fixture identities;
+  merely printing unasserted counts is insufficient.
 - If canonical content changes that maximum before BOB-034 implementation begins,
   update this task and fixture explicitly rather than silently choosing another
   projection.
@@ -410,11 +402,10 @@ authority specified above, update this validation list when the command exists, 
 run it for both the required baseline and final production evidence. Do not claim that
 command at task-definition time.
 
-At task-definition time, `./.venv/bin/python scripts/validate_data.py` fails with
-`KeyError: 'stellar-system-005582'` because the blocking Chapter 1.12 Epsilon Eridani
-astronomy coverage prerequisite is unresolved. Do not interpret that known
-pre-implementation failure as a BOB-034 visual regression or claim any downstream
-build/performance command as passing until the prerequisite is closed.
+After BOB-030, `./.venv/bin/python scripts/validate_data.py` passes with 119
+reconciled systems and five pinned astronomy sources. This readiness validation does
+not establish a BOB-034 visual or performance baseline; run and record the complete
+implementation validation below after implementation.
 
 For manual visual review, run `npm run dev` and use current real Chrome, Firefox, Edge,
 and mobile Chrome where available. At desktop, compact, and phone widths:
@@ -462,12 +453,11 @@ Record unavailable Safari review as the existing pre-publication gap.
 
 ## Blockers and unresolved decisions
 
-- Blocking prerequisite: valid reviewed astronomy bootstrap, pinned per-anchor source
+- None. BOB-030 supplied the reviewed astronomy bootstrap, pinned per-anchor source
   coverage, regenerated catalogue, and passing validation for Chapter 1.12 anchor
   `stellar-system-005582`.
-- Before restoring `Ready`, record the exact validated Chapter 1.12 rendered-system
-  and component fixture identities/counts required by the performance authority and
-  rerun independent task review.
+- The exact validated Chapter 1.12 rendered-system and component fixture
+  identities/counts required by the performance authority are recorded above.
 
 No visual decision remains unresolved. Any material deviation from the visual
 decisions above requires Captain review before implementation continues.

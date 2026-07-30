@@ -233,3 +233,28 @@ performance protocol.
 ### Reviewer conclusion
 
 `No findings.`
+
+## Review pass 8 - Ready restoration
+
+### Snapshot
+
+- Reviewer: new independent `task-reviewer`
+- Pass: `Ready restoration`
+- HEAD: `8955a75`
+- Working tree: BOB-034 task/index and this review-ledger update; no implementation
+  changes
+
+### Independent assessment
+
+The reviewer inspected the current repository state, BOB-030 prerequisite closure,
+BOB-034's transition from `Blocked` to `Ready`, task-index consistency, the
+Chapter 1.12 projected anchors, and the deterministic rendered-system and
+rendered-component count/hash fixtures.
+
+### New findings
+
+`None.`
+
+### Reviewer conclusion
+
+`No findings.`
