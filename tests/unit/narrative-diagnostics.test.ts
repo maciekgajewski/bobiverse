@@ -103,4 +103,69 @@ describe("narrative schema diagnostics", () => {
       ]),
     );
   });
+
+  it("suggests surveyed-body observation properties for locations", () => {
+    const document = parseJsonDocument(`{
+  "id": "location:fixture-planet",
+  "name": "Fixture planet",
+  "kind": "planet",
+  "parent_location_id": "location:sol",
+  "parent_relation": "orbits",
+  "surface_gravty_g": 1.2
+}`);
+
+    const diagnostics = formatSchemaDiagnostics(
+      narrativeSchemaErrors("location", document.value),
+      document.value,
+      document.locations,
+    );
+
+    expect(diagnostics.map(({ message }) => message)).toEqual(
+      expect.arrayContaining([
+        expect.stringMatching(
+          /^\/surface_gravty_g: unexpected property "surface_gravty_g"; did you mean: surface_gravity_g(?:,|$)/,
+        ),
+      ]),
+    );
+  });
+
+  it("reports misplaced surveyed-body properties with eligible kinds", () => {
+    for (const [definition, json, expectedPointer] of [
+      [
+        "location",
+        `{
+  "id": "location:fixture-locale",
+  "name": "Fixture locale",
+  "kind": "locale",
+  "color": "rust red",
+  "parent_location_id": "location:earth",
+  "parent_relation": "located_on"
+}`,
+        "/color",
+      ],
+      [
+        "location_update",
+        `{
+  "entity_id": "location:fixture",
+  "kind": "locale",
+  "visual_description": "A cratered surface."
+}`,
+        "/visual_description",
+      ],
+    ] as const) {
+      const document = parseJsonDocument(json);
+      const diagnostics = formatSchemaDiagnostics(
+        narrativeSchemaErrors(definition, document.value),
+        document.value,
+        document.locations,
+      );
+
+      expect(diagnostics).toEqual([
+        {
+          location: document.locations.get(expectedPointer),
+          message: `${expectedPointer}: survey property "${expectedPointer.slice(1)}" requires effective location kind planet, dwarf_planet, or moon; got locale`,
+        },
+      ]);
+    }
+  });
 });

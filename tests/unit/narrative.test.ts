@@ -685,6 +685,296 @@ describe("narrative corpus validation and projection", () => {
     });
   });
 
+  it("validates surveyed-body observations and nullable location updates", () => {
+    const surveyedPlanet = {
+      id: "location:fixture-survey-planet",
+      name: "Fixture survey planet",
+      kind: "planet",
+      description: "A fictional surveyed planet with qualitative gravity.",
+      body_class: "rocky",
+      color: "rust red",
+      visual_description: "A cratered surface beneath thin clouds.",
+      surface_gravity_g: 1.2,
+      parent_location_id: "location:sol",
+      parent_relation: "orbits",
+    };
+
+    expect(narrativeSchemaErrors("location", surveyedPlanet)).toEqual([]);
+    expect(
+      narrativeSchemaErrors("location", {
+        ...surveyedPlanet,
+        id: "location:fixture-survey-dwarf",
+        kind: "dwarf_planet",
+        body_class: "dwarf_planet",
+      }),
+    ).toEqual([]);
+    expect(
+      narrativeSchemaErrors("location", {
+        ...surveyedPlanet,
+        id: "location:fixture-survey-moon",
+        kind: "moon",
+        parent_location_id: "location:earth",
+        body_class: "icy",
+      }),
+    ).toEqual([]);
+    expect(
+      narrativeSchemaErrors("location_update", {
+        entity_id: surveyedPlanet.id,
+        body_class: null,
+        color: null,
+        visual_description: null,
+        surface_gravity_g: null,
+      }),
+    ).toEqual([]);
+
+    for (const candidate of [
+      { ...surveyedPlanet, body_class: "terrestrial" },
+      { ...surveyedPlanet, color: "" },
+      { ...surveyedPlanet, visual_description: "" },
+      { ...surveyedPlanet, surface_gravity_g: 0 },
+      { ...surveyedPlanet, surface_gravity_g: -0.1 },
+      { ...surveyedPlanet, surface_gravity_g: "1.2" },
+      { ...surveyedPlanet, surface_gravity_g: Number.POSITIVE_INFINITY },
+      {
+        id: "location:fixture-survey-locale",
+        name: "Fixture locale",
+        kind: "locale",
+        color: "red",
+        parent_location_id: "location:earth",
+        parent_relation: "located_on",
+      },
+    ]) {
+      expect(narrativeSchemaErrors("location", candidate)).not.toEqual([]);
+    }
+  });
+
+  it("projects surveyed-body observations only after reveal and supports replacement and clearing", () => {
+    const corpus = createNarrativeFixtureCorpus();
+    corpus.chapters[1]!.introducing = [
+      {
+        id: "location:fixture-survey-planet",
+        name: "Fixture survey planet",
+        kind: "planet",
+        description: "A fictional surveyed world.",
+        body_class: "rocky",
+        color: "rust red",
+        visual_description: "A cratered surface.",
+        surface_gravity_g: 1.2,
+        parent_location_id: "location:sol",
+        parent_relation: "orbits",
+      },
+    ];
+    corpus.chapters.push({
+      chapter: "1.4",
+      title: "Fixture survey update",
+      summary: "A fictional survey update clears optional observations.",
+      date: "2200.3",
+      location_id: "location:earth",
+      updates: [
+        {
+          entity_id: "location:fixture-survey-planet",
+          color: "dark red",
+          visual_description: null,
+          surface_gravity_g: null,
+        },
+      ],
+    });
+
+    expect(
+      generateNarrativeWorld(
+        prepareNarrativeCorpus(corpus),
+        "1.1",
+      ).entities.some(
+        (entity) => entity.id === "location:fixture-survey-planet",
+      ),
+    ).toBe(false);
+    expect(
+      generateNarrativeWorld(
+        prepareNarrativeCorpus(corpus),
+        "1.2",
+      ).entities.find(
+        (entity) => entity.id === "location:fixture-survey-planet",
+      ),
+    ).toMatchObject({
+      body_class: "rocky",
+      color: "rust red",
+      visual_description: "A cratered surface.",
+      surface_gravity_g: 1.2,
+    });
+    expect(
+      generateNarrativeWorld(
+        prepareNarrativeCorpus(corpus),
+        "1.4",
+      ).entities.find(
+        (entity) => entity.id === "location:fixture-survey-planet",
+      ),
+    ).toMatchObject({
+      body_class: "rocky",
+      color: "dark red",
+      visual_description: null,
+      surface_gravity_g: null,
+    });
+  });
+
+  it("uses effective location kind for survey fields and caps direct moon children at four", () => {
+    const eligibleUpdate = createNarrativeFixtureCorpus();
+    eligibleUpdate.chapters[1]!.updates = [
+      { entity_id: "location:mars", color: "rust red" },
+    ];
+    expect(() => validateNarrativeCorpus(eligibleUpdate)).not.toThrow();
+
+    const ineligibleUpdate = createNarrativeFixtureCorpus();
+    ineligibleUpdate.chapters[1]!.updates = [
+      {
+        entity_id: "location:mars",
+        kind: "locale",
+        color: "rust red",
+      },
+    ];
+    expect(() => validateNarrativeCorpus(ineligibleUpdate)).toThrow(
+      "projection at 2200.2 leaves survey properties color on effective location kind locale for location:mars",
+    );
+
+    const retainedAfterKindChange = createNarrativeFixtureCorpus();
+    retainedAfterKindChange.chapters[0]!.updates = [
+      { entity_id: "location:mars", color: "rust red" },
+    ];
+    retainedAfterKindChange.chapters[1]!.updates = [
+      { entity_id: "location:mars", kind: "locale" },
+    ];
+    expect(() => validateNarrativeCorpus(retainedAfterKindChange)).toThrow(
+      "projection at 2200.2 leaves survey properties color on effective location kind locale for location:mars",
+    );
+
+    const clearedDuringKindChange = structuredClone(retainedAfterKindChange);
+    clearedDuringKindChange.chapters[1]!.updates = [
+      {
+        entity_id: "location:mars",
+        kind: "locale",
+        color: null,
+      },
+    ];
+    expect(() =>
+      validateNarrativeCorpus(clearedDuringKindChange),
+    ).not.toThrow();
+    expect(
+      generateNarrativeWorld(
+        prepareNarrativeCorpus(clearedDuringKindChange),
+        "1.2",
+      ).entities.find((entity) => entity.id === "location:mars"),
+    ).toMatchObject({ kind: "locale", color: null });
+
+    const fourMoons = createNarrativeFixtureCorpus();
+    (fourMoons.chapters[0]!.introducing as Array<Record<string, unknown>>).push(
+      {
+        id: "location:fixture-moon-parent",
+        name: "Fixture moon parent",
+        kind: "planet",
+        description: "A fictional planet with exactly four moons.",
+        parent_location_id: "location:sol",
+        parent_relation: "orbits",
+      },
+      ...Array.from({ length: 4 }, (_, index) => ({
+        id: `location:fixture-moon-parent-moon-0${index + 1}`,
+        name: `Moon ${index + 1}`,
+        kind: "moon",
+        parent_location_id: "location:fixture-moon-parent",
+        parent_relation: "orbits",
+      })),
+    );
+    expect(() => validateNarrativeCorpus(fourMoons)).not.toThrow();
+
+    const fiveMoons = structuredClone(fourMoons);
+    (fiveMoons.chapters[0]!.introducing as Array<Record<string, unknown>>).push(
+      {
+        id: "location:fixture-moon-parent-moon-05",
+        name: "Moon 5",
+        kind: "moon",
+        parent_location_id: "location:fixture-moon-parent",
+        parent_relation: "orbits",
+      },
+    );
+    expect(() => validateNarrativeCorpus(fiveMoons)).toThrow(
+      "location location:fixture-moon-parent 5 direct moon children; maximum is 4",
+    );
+
+    const reparentedMoon = structuredClone(fourMoons);
+    reparentedMoon.chapters[1]!.updates = [
+      {
+        entity_id: "location:moon",
+        parent_location_id: "location:fixture-moon-parent",
+        parent_relation: "orbits",
+      },
+    ];
+    expect(() => validateNarrativeCorpus(reparentedMoon)).toThrow(
+      "location location:fixture-moon-parent 5 direct moon children; maximum is 4",
+    );
+
+    const moonSwapUpdates = [
+      {
+        entity_id: "location:moon",
+        parent_location_id: "location:jupiter",
+        parent_relation: "orbits",
+      },
+      {
+        entity_id: "location:io",
+        parent_location_id: "location:earth",
+        parent_relation: "orbits",
+      },
+    ];
+    for (const updates of [moonSwapUpdates, [...moonSwapUpdates].reverse()]) {
+      const moonSwap = createNarrativeFixtureCorpus();
+      moonSwap.chapters[0]!.updates = updates;
+      expect(() => validateNarrativeCorpus(moonSwap)).not.toThrow();
+    }
+
+    const completedFiveMoonState = createNarrativeFixtureCorpus();
+    completedFiveMoonState.chapters[0]!.updates = [moonSwapUpdates[0]!];
+    expect(() => validateNarrativeCorpus(completedFiveMoonState)).toThrow(
+      "location location:jupiter 5 direct moon children; maximum is 4",
+    );
+
+    const nonChronologicalKindChange = createNarrativeFixtureCorpus();
+    nonChronologicalKindChange.chapters[1]!.updates = [
+      {
+        entity_id: "location:mars",
+        kind: "locale",
+        color: null,
+      },
+    ];
+    nonChronologicalKindChange.chapters[2]!.updates = [
+      { entity_id: "location:mars", color: "rust red" },
+    ];
+    expect(() =>
+      validateNarrativeCorpus(nonChronologicalKindChange),
+    ).not.toThrow();
+    expect(
+      generateNarrativeWorld(
+        prepareNarrativeCorpus(nonChronologicalKindChange),
+        "1.3",
+      ).entities.find((entity) => entity.id === "location:mars"),
+    ).toMatchObject({ kind: "planet", color: "rust red" });
+
+    const nonChronologicalMoonOverflow = createNarrativeFixtureCorpus();
+    nonChronologicalMoonOverflow.chapters[1]!.updates = [
+      {
+        entity_id: "location:io",
+        parent_location_id: "location:earth",
+        parent_relation: "orbits",
+      },
+    ];
+    nonChronologicalMoonOverflow.chapters[2]!.updates = [
+      {
+        entity_id: "location:moon",
+        parent_location_id: "location:jupiter",
+        parent_relation: "orbits",
+      },
+    ];
+    expect(() => validateNarrativeCorpus(nonChronologicalMoonOverflow)).toThrow(
+      "projection at 2200.1 gives location location:jupiter 5 direct moon children; maximum is 4",
+    );
+  });
+
   it("keeps later direct entity introductions hidden by reader order", () => {
     const corpus = createNarrativeFixtureCorpus();
     corpus.chapters[1]!.introducing = [

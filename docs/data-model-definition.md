@@ -138,6 +138,26 @@ the identical listing below documents its shared definitions.
         "transit"
       ]
     },
+    "body_class": {
+      "enum": ["rocky", "icy", "dwarf_planet", "gas_giant", "ice_giant"],
+      "description": "Source-supported broad class of a surveyed planet, dwarf planet, or moon."
+    },
+    "survey_color": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Source-faithful free-form colour description for a surveyed planetary body; never an invented renderer value."
+    },
+    "visual_description": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Original reader-visible prose limited to the surveyed body's visible appearance."
+    },
+    "surface_gravity_g": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 1.7976931348623157e308,
+      "description": "Source-supported numeric surface gravity in canonical Earth gravities."
+    },
     "parent_relation": {
       "enum": ["member_of_system", "orbits", "located_on", "contained_in"]
     },
@@ -634,6 +654,10 @@ the identical listing below documents its shared definitions.
         "kind": { "$ref": "#/$defs/location_kind" },
         "description": { "$ref": "#/$defs/description" },
         "state": { "$ref": "#/$defs/state" },
+        "body_class": { "$ref": "#/$defs/body_class" },
+        "color": { "$ref": "#/$defs/survey_color" },
+        "visual_description": { "$ref": "#/$defs/visual_description" },
+        "surface_gravity_g": { "$ref": "#/$defs/surface_gravity_g" },
         "map_status": { "$ref": "#/$defs/unmapped_map_status" },
         "parent_location_id": { "$ref": "#/$defs/location_id" },
         "parent_relation": { "$ref": "#/$defs/parent_relation" },
@@ -715,6 +739,28 @@ the identical listing below documents its shared definitions.
               ]
             }
           }
+        },
+        {
+          "if": {
+            "required": ["kind"],
+            "properties": {
+              "kind": {
+                "not": {
+                  "enum": ["planet", "dwarf_planet", "moon"]
+                }
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                { "required": ["body_class"] },
+                { "required": ["color"] },
+                { "required": ["visual_description"] },
+                { "required": ["surface_gravity_g"] }
+              ]
+            }
+          }
         }
       ],
       "additionalProperties": false
@@ -731,6 +777,21 @@ the identical listing below documents its shared definitions.
         },
         "state": {
           "anyOf": [{ "$ref": "#/$defs/state" }, { "type": "null" }]
+        },
+        "body_class": {
+          "anyOf": [{ "$ref": "#/$defs/body_class" }, { "type": "null" }]
+        },
+        "color": {
+          "anyOf": [{ "$ref": "#/$defs/survey_color" }, { "type": "null" }]
+        },
+        "visual_description": {
+          "anyOf": [
+            { "$ref": "#/$defs/visual_description" },
+            { "type": "null" }
+          ]
+        },
+        "surface_gravity_g": {
+          "anyOf": [{ "$ref": "#/$defs/surface_gravity_g" }, { "type": "null" }]
         },
         "map_status": {
           "anyOf": [
@@ -762,6 +823,10 @@ the identical listing below documents its shared definitions.
         { "required": ["kind"] },
         { "required": ["description"] },
         { "required": ["state"] },
+        { "required": ["body_class"] },
+        { "required": ["color"] },
+        { "required": ["visual_description"] },
+        { "required": ["surface_gravity_g"] },
         { "required": ["map_status"] },
         { "required": ["parent_location_id"] },
         { "required": ["parent_relation"] },
@@ -1459,7 +1524,7 @@ later entity types must add their own contract before records of that type are a
 | ------------------------------------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | `character`                                 | `id`, `name`, and the optional fields in the ratified character contract     | last-known sighting; event history                                                      |
 | `star_system`                               | `id`, `kind: "star_system"`, name, and `astronomy_object_id` when mapped     | astronomical components and render facts; sublocations; last-known sightings and events |
-| `planet`, `moon`, `locale`, `megastructure` | `id`, `kind`, name, and parent where non-root                                | sublocations; last-known sightings and events                                           |
+| `planet`, `dwarf_planet`, `moon`, `locale`, `megastructure` | `id`, `kind`, name, and parent where non-root                | sublocations; last-known sightings and events                                           |
 | `species`                                   | `id`, `name`, and the optional fields in the ratified species contract       | members and other reverse links                                                         |
 | `technology`                                | `id`, `name`, and optional original plain-text `description`                 | no relationships, ownership, physical, or rendering facts                               |
 | `organization`                              | `id`, `name`, optional original plain-text `description` and `current_state` | no membership, ownership, location, or asset facts                                      |
@@ -1536,6 +1601,42 @@ checks all table pairs, parent-tree acyclicity, mapped-system ancestry, unmapped
 propagation, and the final projected location after a location update. A
 `location_update` permits every location property except `id`; after applying it, the
 result must still satisfy these rules.
+
+Beginning with Chapter `1.16`, every planet or dwarf planet described by a source
+system survey is authored as a location even when it would otherwise fail ordinary
+durable-location curation. Locations whose effective kind is `planet`,
+`dwarf_planet`, or `moon` may author four optional spoiler-projected observations:
+
+| Property             | Contract                                                             |
+| -------------------- | -------------------------------------------------------------------- |
+| `body_class`         | `rocky`, `icy`, `dwarf_planet`, `gas_giant`, or `ice_giant`         |
+| `color`              | nonempty source-faithful free-form colour text                       |
+| `visual_description` | nonempty visible-appearance text                                     |
+| `surface_gravity_g`  | positive finite numeric surface gravity expressed in Earth gravities |
+
+An update may replace or null-clear any of these fields, but eligibility is checked
+against the complete effective location state after the update. A kind change to an
+ineligible kind must null-clear every retained survey field in that same update;
+those null-clears are valid, while leaving any survey field behind is not. Direct
+Earth-gravity values retain source precision. A source value in metres per second squared is divided by
+`9.80665` and rounded to no more significant digits than the source; the sealed
+evidence retains the original value and unit and reconciliation records the
+conversion. Qualitative gravity and every other supported measurement remain in
+`description`.
+
+One surveyed parent may have at most four direct moon children. Exact count-only
+evidence creates `min(count, 4)` children, while “many moons” creates four. Selection
+prefers named or distinctly described moons, then source-supported largest moons,
+then source order. Anonymous children use `Moon 1` through `Moon 4` and stable
+parent-derived suffixes `-moon-01` through `-moon-04`; the lowest collision-free
+suffix is used after named or distinct children. Their numbering and authoring order
+are decorative inventory, not physical orbital order or distance. The parent
+description retains the complete count or qualifier. Later unlinked names bind in
+source-mention order to the lowest anonymous ordinals without changing those IDs.
+Survey eligibility and the four-child cap are evaluated on each complete
+reader-visible story-time projection, not by mutating one reader-order state.
+Same-chapter reparenting is therefore independent of update order, and a
+non-chronological chapter is checked at its effective story date.
 
 ### Asset
 
@@ -1662,8 +1763,10 @@ Only a mapped `star_system` references a reviewed astronomy-system ID. The gener
 joins that system context with descendant narrative locations; it must reject an
 incompatible mapped ancestry and must never invent a coordinate. An explicitly
 unmapped location remains valid but cannot receive a map placement. The zero-state and
-chapter sources must not copy physical components, positions, sizes, colours, or other
-astronomy render facts.
+chapter sources must not copy catalogue physical components, positions, sizes,
+colours, or other astronomy render facts. Source-supported book-derived survey
+observations remain chapter-controlled narrative state and do not become astronomy
+authority.
 
 ## Schema and semantic validation
 
@@ -1714,6 +1817,10 @@ layer. It rejects at least:
   location table; invalid transit endpoints; an unmapped descendant without explicit
   status; a forbidden or missing mapped-system astronomy reference; or incompatible
   mapped astronomy ancestry;
+- a survey observation on a location whose effective kind is not `planet`,
+  `dwarf_planet`, or `moon`; an invalid body class, empty colour or appearance,
+  non-positive or non-finite surface gravity; or more than four direct moon children
+  under one parent at a reader boundary;
 - an appearance without an effective explicit location; and
 - a generated activity record that does not match its controlled reason, source
   chapter, effective-date, or target contract; or a generated record or snapshot

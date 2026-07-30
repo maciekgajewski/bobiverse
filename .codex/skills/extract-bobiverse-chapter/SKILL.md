@@ -123,6 +123,9 @@ IDs such as `mention:protagonist-1`. Capture:
 - entity mentions and identity clues;
 - appearances and roles;
 - locations and movement;
+- for every source-described system survey, a complete body inventory plus separate
+  aggregate, class, colour, visible/surface, gravity, moon-occurrence, and other
+  descriptive claims for every surveyed planet, dwarf planet, and moon;
 - events and participants;
 - state, alias, relationship, and date claims;
 - definition, function, purpose, operating-principle, capability, limitation, and
@@ -134,6 +137,12 @@ Capture locations and movement at the granularity stated by the source even when
 place is only a room, corridor, laboratory, office, floor, building, or other
 internal space. Pass 1 preserves source evidence; it does not decide whether a place
 is eligible for a canonical location entity.
+
+For a system survey, do not apply an importance, habitability, or rendering threshold.
+Inventory every surveyed body and make each supported survey fact independently
+traceable to evidence. Record the source value and unit for numeric gravity rather
+than converting it in the sealed ledger. Explicitly account for exact moon counts,
+qualitative counts such as many, and each named or distinctly described moon.
 
 Capture every source-supported occurrence, participant, cause, outcome, and
 significance claim that may describe an event. Do not apply the canonical event
@@ -277,6 +286,36 @@ granularity and record that editorial reason. Preserve relevant facts in the ori
 chapter summary, an event description, or another suitable entity description so the
 restriction does not erase source knowledge. Pass 1 evidence and the immutable sealed
 ledger remain unchanged.
+
+### System surveys
+
+Beginning with Chapter `1.16`, a source-described system survey overrides ordinary
+durable-location curation for celestial bodies. Author every surveyed planet or dwarf
+planet as a location and account for every sealed survey claim. A location whose
+effective kind is `planet`, `dwarf_planet`, or `moon` may use:
+
+- `body_class`: `rocky`, `icy`, `dwarf_planet`, `gas_giant`, or `ice_giant`;
+- `color`: source-faithful colour wording;
+- `visual_description`: visible appearance only;
+- `surface_gravity_g`: a positive finite number in Earth gravities.
+
+Retain a source value already expressed in Earth gravities at source precision. For
+metres per second squared, use
+`surface_gravity_g = surface_gravity_m_s2 / 9.80665`, keep no more significant digits
+than the source, and record the conversion in reconciliation. Keep gravity in other
+units, qualitative gravity, and every other supported survey measurement in
+`description`. The absence of a dedicated field never permits omission.
+
+Author at most four moon children per surveyed body. Prefer named or distinctly
+described moons, then source-supported largest moons, then source order. Exact count
+evidence creates `min(count, 4)` children and many moons creates four. Count-only
+children are `Moon 1` through `Moon 4`; stable IDs append `-moon-01` through
+`-moon-04` to the parent location suffix, using the lowest collision-free suffix
+after named or distinct children. Retain the complete count or qualifier in the
+parent description. Treat numbering and child order as decorative inventory, not
+physical orbital order or distance. If later names have no unique identity link,
+bind them in source-mention order to the lowest anonymous ordinals and retain the
+stable IDs.
 
 ### Description authoring
 

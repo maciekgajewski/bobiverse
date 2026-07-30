@@ -696,6 +696,30 @@ locations are explicitly unmapped roots with origin and destination references.
 Unknown or ambiguous book locations remain valid only when explicitly unmapped; they
 may appear in timelines and lists but not at invented map coordinates.
 
+Beginning with Chapter `1.16`, a source-described system survey is a deliberate
+exception to ordinary durable-location curation: every surveyed planet and dwarf
+planet is authored as a spoiler-projected location. Surveyed planets, dwarf planets,
+and moons may carry `body_class`, `color`, `visual_description`, and positive finite
+numeric `surface_gravity_g`. The first three fields contain only broad class,
+source-faithful colour, and visible appearance respectively; `surface_gravity_g` is
+expressed in Earth gravities. Qualitative gravity and every other supported survey
+measurement remain in `description`. These book-derived observations are narrative
+state and are never promoted into catalogue astronomy authority.
+
+Each surveyed body has at most four direct moon children. Exact counts author
+`min(count, 4)` children and a source statement of many moons authors four. Selection
+prefers named or distinctly described moons, then source-supported largest moons,
+then source order. Count-only children use `Moon 1` through `Moon 4` and stable
+parent-derived `-moon-01` through `-moon-04` suffixes. Their order is decorative
+inventory only: it asserts neither physical orbital order nor distance. The parent
+description retains the complete supported count or qualifier. A later unlinked name
+binds deterministically to the lowest anonymous ordinal, retaining its stable ID.
+Survey-field eligibility is checked against complete effective location state:
+changing a body to an ineligible kind must atomically null-clear every retained survey
+field. Eligibility and moon cardinality are checked against each complete
+reader-visible story-time projection, so same-chapter record order and
+non-chronological reveal order have no unintended semantic effect.
+
 `megastructure` is reserved for engineered structures exceptional in physical scale;
 ordinary durable stations and bases use `locale`. Incidental, unnamed, or short-lived
 places are omitted rather than promoted merely to supply a chapter or appearance
@@ -705,7 +729,9 @@ hierarchy to the nearest supported reader-visible parent without inventing a
 placeholder or containment relation.
 
 Astronomy remains authoritative for stellar and interstellar physical positions,
-components, sizes, colours, and measured render facts. The zero-state source owns the
+components, sizes, colours, and measured render facts. Book-derived survey
+observations remain reader-order narrative facts even when they describe a physical
+property. The zero-state source owns the
 known Solar-System location topology and its pre-book character, species, technology,
 organization, vessel, and event
 registry; its locations use a deliberately non-metric local render order and must not

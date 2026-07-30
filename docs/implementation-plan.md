@@ -223,6 +223,16 @@ Planned work:
   exceptionally large engineered structures, use `locale` for ordinary durable
   stations and bases, omit incidental short-lived places, and fall back from an
   unavailable fine-grained locale to its nearest established reader-visible parent.
+- Beginning with Chapter `1.16`, preserve every source-described system-survey planet
+  and dwarf planet as a spoiler-projected location. Retain source-supported broad body
+  class, colour, visible appearance, and positive numeric surface gravity in Earth
+  gravities through optional location state; retain qualitative gravity and other
+  survey measurements in the description.
+- Author no more than four moon children per surveyed body. Prefer named or distinct
+  moons, then source-supported largest moons, then source order; use deterministic
+  `Moon 1` through `Moon 4` placeholders for count-only evidence and preserve the full
+  count or qualifier in the parent description. Treat child order as decorative and
+  never invent orbital distance or physical ordering.
 - Keep every `current_state` to one or two sentences about the latest condition and
   every description centered on its entity, using general capability language rather
   than retelling a named character's actions. Keep missing-knowledge claims in

@@ -10,6 +10,14 @@ interface SchemaErrorWithParent extends ErrorObject {
   parentSchema?: { properties?: Record<string, unknown> };
 }
 
+const surveyObservationProperties = [
+  "body_class",
+  "color",
+  "visual_description",
+  "surface_gravity_g",
+] as const;
+const surveyedBodyKinds = new Set(["planet", "dwarf_planet", "moon"]);
+
 function errorPointer(error: ErrorObject): string {
   const parameters = error.params as SchemaErrorParameters;
   if (
@@ -65,6 +73,10 @@ const entityProperties = {
     "kind",
     "description",
     "state",
+    "body_class",
+    "color",
+    "visual_description",
+    "surface_gravity_g",
     "map_status",
     "parent_location_id",
     "parent_relation",
@@ -197,20 +209,64 @@ export interface FormattedSchemaDiagnostic {
   message: string;
 }
 
+function misplacedSurveyPropertyDiagnostics(
+  candidate: unknown,
+  locations: ReadonlyMap<string, JsonSourceLocation>,
+): FormattedSchemaDiagnostic[] {
+  const diagnostics: FormattedSchemaDiagnostic[] = [];
+  const visit = (value: unknown, pointer: string) => {
+    if (Array.isArray(value)) {
+      value.forEach((child, index) => visit(child, `${pointer}/${index}`));
+      return;
+    }
+    if (!value || typeof value !== "object") return;
+    const record = value as Record<string, unknown>;
+    const kind = record.kind;
+    if (typeof kind === "string" && !surveyedBodyKinds.has(kind)) {
+      for (const property of surveyObservationProperties) {
+        if (!Object.hasOwn(record, property) || record[property] === null)
+          continue;
+        const propertyPointer = `${pointer}/${property}`;
+        diagnostics.push({
+          location: locationForPointer(locations, propertyPointer),
+          message: `${propertyPointer || "/"}: survey property "${property}" requires effective location kind planet, dwarf_planet, or moon; got ${kind}`,
+        });
+      }
+    }
+    for (const [property, child] of Object.entries(record)) {
+      visit(child, `${pointer}/${property}`);
+    }
+  };
+  visit(candidate, "");
+  return diagnostics;
+}
+
 export function formatSchemaDiagnostics(
   errors: readonly ErrorObject[],
   candidate: unknown,
   locations: ReadonlyMap<string, JsonSourceLocation>,
 ): FormattedSchemaDiagnostic[] {
   const seen = new Set<string>();
+  const placementDiagnostics = misplacedSurveyPropertyDiagnostics(
+    candidate,
+    locations,
+  );
+  for (const diagnostic of placementDiagnostics) seen.add(diagnostic.message);
   const actionableErrors = actionableSchemaErrors(errors, candidate);
   const reportedErrors =
-    actionableErrors.length > 0 ? actionableErrors : errors;
-  return reportedErrors.flatMap((error) => {
-    const pointer = errorPointer(error);
-    const message = `${pointer || "/"}: ${humanMessage(error, candidate)}`;
-    if (seen.has(message)) return [];
-    seen.add(message);
-    return [{ location: locationForPointer(locations, pointer), message }];
-  });
+    actionableErrors.length > 0
+      ? actionableErrors
+      : placementDiagnostics.length > 0
+        ? []
+        : errors;
+  return [
+    ...placementDiagnostics,
+    ...reportedErrors.flatMap((error) => {
+      const pointer = errorPointer(error);
+      const message = `${pointer || "/"}: ${humanMessage(error, candidate)}`;
+      if (seen.has(message)) return [];
+      seen.add(message);
+      return [{ location: locationForPointer(locations, pointer), message }];
+    }),
+  ];
 }
