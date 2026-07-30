@@ -106,6 +106,13 @@ const solarOrbitalIds = [
   "location:kuiper-belt",
   "location:oort-cloud",
 ] as const;
+const surveyedBodyKinds = new Set(["planet", "dwarf_planet", "moon"]);
+const surveyObservationProperties = [
+  "body_class",
+  "color",
+  "visual_description",
+  "surface_gravity_g",
+] as const;
 
 function createAjv(): Ajv2020 {
   // The documented schema intentionally uses `required` inside conditional `not`
@@ -724,6 +731,7 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
     for (const entityId of introducedThisChapter) availableIds.add(entityId);
   }
   assertTemporalWrites(chapters);
+  assertProjectedLocationConstraints(zeroStateEntities, chapters);
 }
 
 /** Validates the complete authored corpus, including cross-record semantic rules. */
@@ -904,6 +912,144 @@ function applyProperties(
     ) {
       entity[property] = structuredClone(write[property]);
       latestMoments.set(key, moment);
+    }
+  }
+}
+
+function locationProjectionDates(
+  readerVisible: readonly NarrativeRecord[],
+  defaultDate: string,
+): string[] {
+  const candidates = new Set<string>([defaultDate]);
+  const stateDates: string[] = [];
+  for (const chapter of readerVisible) {
+    const date = chapterDate(chapter);
+    candidates.add(date);
+    const writes = [
+      ...((chapter.introducing as unknown[] | undefined) ?? []),
+      ...((chapter.updates as unknown[] | undefined) ?? []),
+    ];
+    if (
+      writes.some((candidate) => {
+        const record = asRecord(candidate, "Narrative state write");
+        const id = record.id ?? record.entity_id;
+        return typeof id !== "string" || !id.startsWith("event:");
+      })
+    ) {
+      stateDates.push(date);
+    }
+    for (const candidate of writes) {
+      const record = asRecord(candidate, "Narrative dated write");
+      if (typeof record.date === "string") candidates.add(record.date);
+    }
+  }
+  return [...candidates].filter(
+    (candidate) =>
+      candidate === defaultDate ||
+      stateDates.every(
+        (stateDate) => compareNarrativeDates(stateDate, candidate) !== null,
+      ),
+  );
+}
+
+function assertProjectedLocationConstraints(
+  zeroStateEntities: readonly NarrativeEntity[],
+  chapters: readonly NarrativeRecord[],
+): void {
+  for (const [selectedIndex, selectedChapter] of chapters.entries()) {
+    const knowledgeChapter = chapterId(selectedChapter);
+    const readerVisible = chapters.slice(0, selectedIndex + 1);
+    for (const displayDate of locationProjectionDates(
+      readerVisible,
+      chapterDate(selectedChapter),
+    )) {
+      const locations = new Map(
+        zeroStateEntities
+          .filter((entity) => entity.entity_type === "location")
+          .map((entity) => [entity.id, structuredClone(entity)]),
+      );
+      const latestMoments = new Map<string, NarrativeMoment>();
+      for (const chapter of readerVisible) {
+        const date = chapterDate(chapter);
+        const sourceChapter = chapterId(chapter);
+        if (!isDateAtOrBefore(date, displayDate)) continue;
+        for (const candidate of (chapter.introducing as
+          unknown[] | undefined) ?? []) {
+          const introduced = asRecord(
+            candidate,
+            `Introduction in ${sourceChapter}`,
+          );
+          const id = asString(
+            introduced.id,
+            `Introduction ID in ${sourceChapter}`,
+          );
+          if (!id.startsWith("location:")) continue;
+          const location: NarrativeEntity = {
+            id,
+            entity_type: "location",
+          };
+          applyProperties(
+            location,
+            introduced,
+            { date, sourceChapter },
+            latestMoments,
+            ["id"],
+          );
+          locations.set(id, location);
+        }
+        for (const candidate of (chapter.updates as unknown[] | undefined) ??
+          []) {
+          const update = asRecord(candidate, `Update in ${sourceChapter}`);
+          const id = asString(
+            update.entity_id,
+            `Update target in ${sourceChapter}`,
+          );
+          const location = locations.get(id);
+          if (!location) continue;
+          applyProperties(
+            location,
+            update,
+            { date, sourceChapter },
+            latestMoments,
+            ["entity_id"],
+          );
+        }
+      }
+
+      const moonCounts = new Map<string, number>();
+      for (const location of locations.values()) {
+        const effectiveProperties = surveyObservationProperties.filter(
+          (property) =>
+            Object.hasOwn(location, property) && location[property] !== null,
+        );
+        if (
+          effectiveProperties.length > 0 &&
+          (typeof location.kind !== "string" ||
+            !surveyedBodyKinds.has(location.kind))
+        ) {
+          throw chapterSemanticError(
+            knowledgeChapter,
+            "/locations",
+            `projection at ${displayDate} leaves survey properties ${effectiveProperties.join(", ")} on effective location kind ${String(location.kind)} for ${location.id}.`,
+          );
+        }
+        if (
+          location.kind !== "moon" ||
+          typeof location.parent_location_id !== "string"
+        ) {
+          continue;
+        }
+        const parentId = location.parent_location_id;
+        const count = (moonCounts.get(parentId) ?? 0) + 1;
+        moonCounts.set(parentId, count);
+        if (count > 4) {
+          throw chapterSemanticError(
+            knowledgeChapter,
+            "/locations",
+            `projection at ${displayDate} gives location ${parentId} ${count} direct moon children; maximum is 4.`,
+          );
+        }
+      }
     }
   }
 }

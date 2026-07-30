@@ -93,6 +93,23 @@ unnamed, short-lived, and finer internal places are explicitly classified
 references fall back to the nearest established reader-visible parent when the finer
 locale is unavailable or omitted.
 
+For every source-described system survey, Blind Pass 1 must include a complete body
+inventory and separate evidence-backed claims for every supported:
+
+- surveyed planet, dwarf planet, and moon occurrence;
+- exact or qualitative moon count and aggregate system/body fact;
+- broad body class and colour;
+- visible, atmospheric, weather, surface, ring, and neighbourhood description;
+- numeric or qualitative gravity statement, retaining the numeric source value and
+  unit without conversion;
+- other measurement or descriptive fact.
+
+Do not apply importance, habitability, location-curation, or rendering thresholds in
+Pass 1. Missing checklist evidence must remain an explicit uncertainty. During Pass
+2, beginning with Chapter `1.16`, every surveyed planet and dwarf planet is a
+location, every claim is represented or explicitly reviewed, and moon children follow
+the repository's four-child cap and deterministic count-only rules.
+
 Capture every source-supported occurrence that may be an event, including separate
 claims for its participants, cause, immediate outcome, durable consequences, affected
 population, and source-stated significance. Blind Pass 1 must not discard an event

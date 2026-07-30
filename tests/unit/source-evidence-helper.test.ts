@@ -187,6 +187,24 @@ describe("blind Pass 1 boundary", () => {
       "every resolved source mention, its stable ID when resolved, structural-redundancy decision, classification, and sealed evidence ID",
     );
     expect(compactBlindMaterials).toContain(
+      "a complete body inventory plus separate aggregate, class, colour, visible/surface, gravity, moon-occurrence, and other descriptive claims",
+    );
+    expect(compactBlindMaterials).toContain(
+      "Record the source value and unit for numeric gravity rather than converting it in the sealed ledger.",
+    );
+    expect(compactBlindMaterials).toContain(
+      "Author every surveyed planet or dwarf planet as a location",
+    );
+    expect(compactBlindMaterials).toContain(
+      "`surface_gravity_g = surface_gravity_m_s2 / 9.80665`",
+    );
+    expect(compactBlindMaterials).toContain(
+      "Count-only children are `Moon 1` through `Moon 4`",
+    );
+    expect(compactBlindMaterials).toContain(
+      "Treat numbering and child order as decorative inventory, not physical orbital order or distance.",
+    );
+    expect(compactBlindMaterials).toContain(
       "character `species_id` and `death_event_id`, species `homeworld_id`",
     );
     expect(compactBlindMaterials).toContain(
@@ -202,6 +220,20 @@ describe("blind Pass 1 boundary", () => {
     for (const pilotFact of ["Robert", "Las Vegas", "Bob Version"]) {
       expect(blindMaterials).not.toContain(pilotFact);
     }
+  });
+
+  it("documents direct Earth-gravity retention and bounded SI conversion", async () => {
+    const extractionGuide = await readFile(
+      path.join(repositoryRoot, "docs/chapter-extraction.md"),
+      "utf8",
+    );
+
+    expect(extractionGuide).toContain(
+      "direct `1.20 g` becomes `surface_gravity_g: 1.20`",
+    );
+    expect(extractionGuide).toContain(
+      "`19.6 m/s² / 9.80665` becomes `surface_gravity_g: 2.00`",
+    );
   });
 });
 

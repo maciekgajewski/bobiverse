@@ -186,6 +186,47 @@ decision and keeps relevant facts in the chapter summary, an event description, 
 another suitable entity description. The rule therefore limits browser granularity
 without deleting source knowledge.
 
+### System surveys
+
+Beginning with Chapter `1.16`, a source-described system survey overrides the
+ordinary durable-location curation threshold for celestial bodies. Blind Pass 1 must
+inventory every surveyed planet, dwarf planet, and moon occurrence and create
+separate evidence-backed claims for every supported aggregate, class, colour,
+visible/surface, gravity, and other descriptive fact. It must retain the source value
+and unit for every numeric gravity claim. Pass 2 must account for every such claim and
+author every surveyed planet or dwarf planet as a location; no importance,
+habitability, or rendering threshold permits omission.
+
+Locations of kind `planet`, `dwarf_planet`, and `moon` may use these optional
+spoiler-projected fields:
+
+- `body_class`: `rocky`, `icy`, `dwarf_planet`, `gas_giant`, or `ice_giant`;
+- `color`: concise source-faithful colour wording;
+- `visual_description`: visible appearance only;
+- `surface_gravity_g`: a positive finite numeric surface gravity in Earth gravities.
+
+Retain a direct Earth-gravity value at the precision stated by the source. Convert a
+source value in metres per second squared with
+`surface_gravity_g = surface_gravity_m_s2 / 9.80665`, retaining no more significant
+digits than the source, and record the conversion in reconciliation. Gravity in
+other units, qualitative gravity, and every non-field survey fact remain in
+`description`; a missing dedicated field is never permission to discard evidence.
+For example, direct `1.20 g` becomes `surface_gravity_g: 1.20`, while
+`19.6 m/s² / 9.80665` becomes `surface_gravity_g: 2.00`; neither example invents
+precision.
+
+Author at most four direct moon children for one surveyed body. Prefer named or
+distinctly described moons, then moons the source explicitly supports as largest,
+then source order. An exact count creates `min(count, 4)` children; an unqualified
+statement of many moons creates four. Count-only children use `Moon 1` through
+`Moon 4`; their stable IDs use the parent suffix followed by `-moon-01` through
+`-moon-04`, assigning the lowest collision-free suffix after named or distinct
+children. Retain the complete count or qualifier in the parent description.
+Anonymous numbering and child order are decorative inventory, never physical
+distance or orbital order. If a later chapter supplies names without uniquely
+linking identities, bind names in source-mention order to the lowest anonymous
+ordinals and retain those stable IDs.
+
 ## Approve a candidate
 
 Review the exact candidate and ask Codex to apply it explicitly, for example:
