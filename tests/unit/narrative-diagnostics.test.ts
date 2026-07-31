@@ -82,6 +82,51 @@ describe("narrative schema diagnostics", () => {
     });
   });
 
+  it("reports invalid character parents and suggests a misspelled parent field", () => {
+    const invalidParent = parseJsonDocument(`{
+  "chapter": "1.1",
+  "title": "Fixture chapter",
+  "summary": "A fictional fixture.",
+  "date": "2200",
+  "location_id": "location:earth",
+  "introducing": [{
+    "id": "character:fixture-child",
+    "name": "Fixture Child",
+    "parent_id": "technology:not-a-character"
+  }]
+}`);
+    const invalidDiagnostics = formatSchemaDiagnostics(
+      narrativeSchemaErrors("chapter_source", invalidParent.value),
+      invalidParent.value,
+      invalidParent.locations,
+    );
+
+    expect(invalidDiagnostics).toContainEqual({
+      location: { line: 10, column: 18 },
+      message:
+        '/introducing/0/parent_id: must match pattern "^character:[a-z0-9][a-z0-9-]*$"',
+    });
+
+    const misspelledParent = parseJsonDocument(`{
+  "id": "character:fixture-child",
+  "name": "Fixture Child",
+  "parnt_id": "character:fixture-parent"
+}`);
+    const misspelledDiagnostics = formatSchemaDiagnostics(
+      narrativeSchemaErrors("character", misspelledParent.value),
+      misspelledParent.value,
+      misspelledParent.locations,
+    );
+
+    expect(misspelledDiagnostics.map(({ message }) => message)).toEqual(
+      expect.arrayContaining([
+        expect.stringMatching(
+          /^\/parnt_id: unexpected property "parnt_id"; did you mean: parent_id(?:,|$)/,
+        ),
+      ]),
+    );
+  });
+
   it("suggests current_state for unified vessel records", () => {
     const document = parseJsonDocument(`{
   "id": "vessel:fixture",

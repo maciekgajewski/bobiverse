@@ -269,6 +269,11 @@ Candidate slices, each requiring its own task:
 Each tool must consume the centralized visibility service. A tool is not complete if
 it implements an independent approximation of spoiler filtering.
 
+The narrative foundation supplies an optional spoiler-projected character
+`parent_id` for both replicant and biological lineage. Genealogy tools derive reverse
+child relationships from the selected reader-safe projection; they do not author a
+second relationship graph or add an independent visibility filter.
+
 ## 8. Phase 4: LLM-assisted editorial pipeline
 
 Goal: accelerate structured content creation without making model output authoritative.

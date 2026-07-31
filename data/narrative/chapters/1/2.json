@@ -16,6 +16,7 @@
     {
       "id": "character:bob-replicant",
       "name": "Bob",
+      "parent_id": "character:robert-johansson",
       "current_state": "Awake as one of five candidates competing to control a replicant probe."
     },
     {

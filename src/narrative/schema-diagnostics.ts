@@ -47,6 +47,7 @@ const entityProperties = {
     "name",
     "gender",
     "species_id",
+    "parent_id",
     "current_state",
     "picture_id",
     "aliases",

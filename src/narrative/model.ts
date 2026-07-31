@@ -343,6 +343,7 @@ function collectReferences(record: NarrativeRecord): string[] {
   for (const field of [
     "character_id",
     "species_id",
+    "parent_id",
     "picture_id",
     "death_event_id",
     "homeworld_id",
@@ -635,12 +636,21 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
       if (updatedIds.has(targetId))
         throw new Error(`Chapter ${id} has multiple updates for ${targetId}.`);
       updatedIds.add(targetId);
+      const { parent_id: parentId, ...updateWithoutParent } = update;
       assertReferencesResolve(
-        update,
+        updateWithoutParent,
         availableIds,
         assetIds,
         `Update ${targetId}`,
       );
+      if (
+        typeof parentId === "string" &&
+        !availableAfterIntroductions.has(parentId)
+      ) {
+        throw new Error(
+          `Update ${targetId} references unavailable entity ${parentId}.`,
+        );
+      }
       if (
         typeof update.astronomy_object_id === "string" &&
         !corpus.knownAstronomyObjectIds.includes(update.astronomy_object_id)

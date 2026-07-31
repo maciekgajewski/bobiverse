@@ -641,6 +641,17 @@ indexed or mixed-precision sightings remain tied or incomparable and produce no
 singular result. The generated value records the sighting location, source chapter,
 and effective date and never asserts current presence.
 
+A character may also carry one optional `parent_id` pointing to a direct parent
+character. The same field supports replicant lineage and biological genealogy; for a
+replicant it identifies the source character state or backup, not necessarily the
+operator who initiated creation. Zero-state parent references resolve across the
+whole atomic snapshot regardless of entity-array order. Chapter-authored parent
+references obey existing visibility and introduction ordering, and later character
+updates may set, replace, or clear the relationship under the ordinary reader/story
+projection rules. The canonical model stores only the forward reference. It does not
+enforce acyclicity, restrict character types, represent multiple parents or creators,
+or author reverse child lists.
+
 The normal development, test, and build paths first generate the ignored
 `generated/narrative/chapter-manifest.json` from authored chapter paths. The manifest
 contains only ordered chapter references and paths. The static runtime resolves bundled

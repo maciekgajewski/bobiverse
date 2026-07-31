@@ -128,6 +128,8 @@ IDs such as `mention:protagonist-1`. Capture:
   descriptive claims for every surveyed planet, dwarf planet, and moon;
 - events and participants;
 - state, alias, relationship, and date claims;
+- direct character-parent claims when the source identifies the state, backup, or
+  biological parent from which a child descends;
 - definition, function, purpose, operating-principle, capability, limitation, and
   acronym-expansion claims needed to describe durable entities;
 - an original summary draft;
@@ -414,8 +416,8 @@ supplemental-mention completeness. Promote it to `supplemental-mention` when it 
 source-supported reference to an already visible direct narrative entity or location
 and the target is absent from every other typed direct narrative reference in the
 chapter. Structural references include introduction/update targets, appearances,
-chapter locations, event participants and locations, character `species_id` and
-`death_event_id`, species `homeworld_id`, and location `parent_location_id`,
+chapter locations, event participants and locations, character `species_id`,
+`death_event_id`, and `parent_id`, species `homeworld_id`, and location `parent_location_id`,
 `origin_location_id`, and `destination_location_id`. Asset and astronomy IDs are not
 mention targets, and ID-shaped prose is not structural. Do not apply an importance or
 curation threshold. Do not infer presence, participation, ownership, membership,
@@ -423,6 +425,14 @@ location, use, or state from this classification. Each qualifying canonical
 `mentions` entry is mandatory, requires sealed evidence, and receives its own explicit
 row in the human-review table. A mentioned mapped location retains derived
 `mapped_system_ancestry` activity.
+
+For source-supported lineage, author the child's optional `parent_id`. The same field
+supports replicant and biological genealogy. A replicant parent is the character
+state or backup from which the child was copied, not merely the operator who ran the
+creation process. Require sealed evidence for the relationship; never infer it from
+similar names, behavior, species, backup possession, or machinery operation. An
+unresolved parent remains a reconciliation question. Later evidence may set, replace,
+or clear the field through an ordinary character update.
 
 ## Assemble and validate the candidate
 
