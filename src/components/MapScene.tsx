@@ -6,6 +6,7 @@ import {
   AdditiveBlending,
   Color,
   DoubleSide,
+  Mesh,
   PerspectiveCamera,
   Vector3,
   Vector4,
@@ -25,7 +26,6 @@ import {
   focusDurationMs,
   perspectiveWorldWidthAtTarget,
 } from "../domain/camera-motion";
-import { closestMarkerSystemId } from "../domain/star-picking";
 import { resolveCaptionVisibility } from "../domain/caption-visibility";
 import type { SystemViewModel } from "../domain/system-view";
 import type { NarrativeRecord } from "../narrative/model";
@@ -62,6 +62,7 @@ interface MapSceneProps {
   systemKeyboardFocusedId?: string | null;
   assets?: NarrativeRecord;
   onSystemSelect?: (id: string) => void;
+  onSystemKeyboardFocus?: (id: string | null) => void;
 }
 
 type SceneProps = Omit<MapSceneProps, "onDeselect">;
@@ -72,10 +73,12 @@ export interface MapScale {
 }
 
 const DEFAULT_CAMERA_DIRECTION: [number, number, number] = [10.5, 8, 12];
+const SYSTEM_CAMERA_POSITION = new Vector3(0, -5.4, 7.2);
 const MAP_CAMERA_FOV_DEGREES = 47;
 export const MAP_CAMERA_DAMPING_FACTOR = 0.09;
 
 const ignoreRaycast = () => undefined;
+const meshRaycast = Mesh.prototype.raycast;
 
 interface CameraMotion {
   startedAt: number;
@@ -244,7 +247,7 @@ function CameraController({
           selectedId: selectedRef.current?.id ?? null,
         };
       }
-      focus(new Vector3(0, 0, 0), new Vector3(0, 0, 8));
+      focus(new Vector3(0, 0, 0), SYSTEM_CAMERA_POSITION.clone());
     } else if (interstellarSnapshot.current) {
       const snapshot = interstellarSnapshot.current;
       const exitSelection = selectedRef.current;
@@ -316,6 +319,7 @@ function StarMarker({
   hovered,
   captionVisible,
   onHover,
+  onSelect,
   dimmed = false,
   pickable = true,
   modeOpacity = 1,
@@ -330,6 +334,7 @@ function StarMarker({
   hovered: boolean;
   captionVisible: boolean;
   onHover: (id: string | null) => void;
+  onSelect: (id: string) => void;
   dimmed?: boolean;
   pickable?: boolean;
   modeOpacity?: number;
@@ -347,6 +352,14 @@ function StarMarker({
   return (
     <group
       position={[position.x, position.y, position.z]}
+      onClick={
+        pickable
+          ? (event) => {
+              event.stopPropagation();
+              onSelect(system.id);
+            }
+          : undefined
+      }
       onPointerOver={
         pickable
           ? (event) => {
@@ -372,7 +385,7 @@ function StarMarker({
           <Billboard key={component.id} position={offset} follow>
             <mesh
               userData={{ systemId: system.id }}
-              raycast={pickable ? undefined : ignoreRaycast}
+              raycast={pickable ? meshRaycast : ignoreRaycast}
             >
               <planeGeometry
                 args={[
@@ -390,7 +403,7 @@ function StarMarker({
             </mesh>
             <mesh
               userData={{ systemId: system.id }}
-              raycast={pickable ? undefined : ignoreRaycast}
+              raycast={pickable ? meshRaycast : ignoreRaycast}
             >
               <planeGeometry args={[radius * 2, radius * 2]} />
               <shaderMaterial
@@ -686,6 +699,7 @@ function Scene({
   systemKeyboardFocusedId = null,
   assets = { assets: [] },
   onSystemSelect = () => undefined,
+  onSystemKeyboardFocus = () => undefined,
 }: SceneProps) {
   useEffect(onReady, [onReady]);
   const selected = systems.find((system) => system.id === selectedId);
@@ -721,9 +735,10 @@ function Scene({
       );
       return () => window.cancelAnimationFrame(show);
     }
-    const clear = window.setTimeout(() => setDisplayedSystem(null), 220);
-    return () => window.clearTimeout(clear);
+    const clear = window.requestAnimationFrame(() => setDisplayedSystem(null));
+    return () => window.cancelAnimationFrame(clear);
   }, [systemFocusId, systemView]);
+  const renderedSystem = systemView ? displayedSystem : null;
   return (
     <>
       <color attach="background" args={["#050812"]} />
@@ -732,14 +747,15 @@ function Scene({
       {interstellarOpacity > 0 && (
         <GalacticPlaneGrid opacity={interstellarOpacity} />
       )}
-      {displayedSystem && (
+      {renderedSystem && (
         <SystemViewLayer
-          model={displayedSystem.model}
-          focusedId={displayedSystem.focusId}
+          model={renderedSystem.model}
+          focusedId={renderedSystem.focusId}
           selectedId={narrativeSelectedId}
           keyboardFocusedId={systemKeyboardFocusedId}
           assets={assets}
           onSelect={onSystemSelect}
+          onKeyboardFocusChange={onSystemKeyboardFocus}
         />
       )}
       {interstellarOpacity > 0 && (
@@ -766,9 +782,9 @@ function Scene({
       )}
       <group
         position={(() => {
-          const entered = displayedSystem
+          const entered = renderedSystem
             ? systems.find(
-                (system) => system.id === displayedSystem.model.astronomyId,
+                (system) => system.id === renderedSystem.model.astronomyId,
               )
             : undefined;
           return entered
@@ -779,14 +795,10 @@ function Scene({
               ]
             : [0, 0, 0];
         })()}
-        onClick={(event) => {
-          const systemId = closestMarkerSystemId(event.intersections);
-          if (!displayedSystem && systemId) onSelect(systemId);
-        }}
       >
         {systems.map((system) => {
-          const entered = displayedSystem?.model.astronomyId === system.id;
-          const background = Boolean(displayedSystem && !entered);
+          const entered = renderedSystem?.model.astronomyId === system.id;
+          const background = Boolean(renderedSystem && !entered);
           const baseEmphasis = knownSystemIds.has(system.id)
             ? 1
             : ASTRONOMY_CONTEXT_EMPHASIS;
@@ -794,14 +806,15 @@ function Scene({
             <StarMarker
               key={system.id}
               system={system}
-              selected={!displayedSystem && selectedId === system.id}
+              selected={!systemView && selectedId === system.id}
               selectedSystem={selected}
               known={knownSystemIds.has(system.id)}
-              active={!displayedSystem && activeSystemIds.has(system.id)}
-              hovered={!displayedSystem && hoveredId === system.id}
+              active={!systemView && activeSystemIds.has(system.id)}
+              hovered={!systemView && hoveredId === system.id}
               captionVisible={captionIds.has(system.id)}
               onHover={setHoveredId}
-              pickable={!displayedSystem}
+              onSelect={onSelect}
+              pickable={!systemView}
               modeOpacity={entered ? interstellarOpacity : 1}
               captionOpacity={interstellarOpacity}
               emphasis={

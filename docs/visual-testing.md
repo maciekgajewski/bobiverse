@@ -392,16 +392,20 @@ pre-publication gap.
 Start `npm run dev` and use real supported desktop and phone browsers. Select **Solar
 System**, enter it, and confirm the selected stellar marker unfolds without a blank
 frame while the accepted Galactic backdrop stays fixed and other systems remain
-faint, unlabeled, and non-pickable. Drill from Solar System through Sol, Earth, and
-Moon; separately focus the Asteroid Belt, Kuiper Belt, and Oort Cloud. Confirm direct
-children are full-detail and selectable, grandchildren are smaller non-interactive
-previews, deeper descendants are absent, and breadcrumbs contain only the entered
-path.
+faint, unlabeled, and non-pickable. A one-star system must open directly at its star
+and planets; a multiple-star system must first show its component-star group. Drill
+from Sol through Earth to Moon; separately focus the Asteroid Belt, Kuiper Belt, and
+Oort Cloud. Confirm the camera stays slightly above the orbital plane, direct-child
+orbits read as closed ellipses rather than radial spokes, and no visible guided-focus
+panel duplicates the rendered objects. Direct children remain full-detail and
+selectable, grandchildren are smaller non-interactive previews, deeper descendants
+are absent, and breadcrumbs contain only the entered path.
 
 Before entry, record a visibly non-default interstellar camera pose and selection.
 Exercise **Return to map** and browser Back after several internal focus changes.
 Both exits must restore the exact pose, target, selection, captions, overlays,
-picking, and controls with one Back step. Change chapter/date while focused and
+picking, and controls with one Back step. Immediately click another map marker after
+each exit to confirm picking was restored. Change chapter/date while focused and
 confirm active treatments update without camera following; also verify ancestor
 fallback or atomic exit when projected eligibility disappears.
 

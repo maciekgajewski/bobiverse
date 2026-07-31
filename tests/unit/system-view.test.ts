@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   focusPath,
+  initialSystemFocusPath,
   orbitalRegionPoints,
   projectSystemView,
   retreatSystemFocusPath,
@@ -136,6 +137,31 @@ describe("guided system view", () => {
       detail: "preview",
       interactive: false,
     });
+    expect(
+      overview.find(({ id }) => id === "location:earth")?.orbitRadius,
+    ).toBe(1.28);
+  });
+
+  it("skips the redundant component-star overview only for one-star systems", () => {
+    const multiple = projectSystemView(
+      fixtureWorld(),
+      "location:system",
+      "chapter",
+    )!;
+    expect(initialSystemFocusPath(multiple)).toEqual(["location:system"]);
+
+    const world = fixtureWorld();
+    world.entities = world.entities.filter(
+      (entity) => entity.id !== "location:b",
+    );
+    world.entities.find(
+      (entity) => entity.id === "location:system",
+    )!.child_ids = ["location:a"];
+    const single = projectSystemView(world, "location:system", "chapter")!;
+    expect(initialSystemFocusPath(single)).toEqual([
+      "location:system",
+      "location:a",
+    ]);
   });
 
   it("does not offer entry for an empty single star", () => {
@@ -151,6 +177,13 @@ describe("guided system view", () => {
   it("deduplicates real active locations, excludes ancestry-only records, and retains global targets", () => {
     const world = fixtureWorld();
     world.entities.push(
+      location("location:alpha", "Alpha System", "star_system", {
+        astronomy_object_id: "alpha",
+      }),
+      location("location:alpha-world", "Alpha World", "planet", {
+        parent_location_id: "location:alpha",
+        parent_relation: "orbits",
+      }),
       location("location:other", "Other System", "star_system", {
         astronomy_object_id: "other",
       }),
@@ -173,6 +206,12 @@ describe("guided system view", () => {
         reasons: ["mapped_system_ancestry"],
       },
       {
+        entity_id: "location:alpha-world",
+        source_chapter: "1.1",
+        effective_date: "2133",
+        reasons: ["mention"],
+      },
+      {
         entity_id: "location:other-world",
         source_chapter: "1.1",
         effective_date: "2133",
@@ -182,13 +221,43 @@ describe("guided system view", () => {
     const model = projectSystemView(world, "location:system", "chapter")!;
     expect(model.activeCounts.get("location:moon")).toBe(1);
     expect(model.activeTargets.map(({ id }) => id)).toEqual([
+      "location:alpha-world",
       "location:moon",
       "location:other-world",
     ]);
-    expect(model.activeTargets[1]).toMatchObject({
+    expect(model.activeTargets[0]).toMatchObject({
+      visualNodeId: null,
+      mappedSystemId: "location:alpha",
+    });
+    expect(model.activeTargets[2]).toMatchObject({
       visualNodeId: null,
       mappedSystemId: "location:other",
     });
+  });
+
+  it("collapses multiple active non-rendered descendants onto their recognized ancestor", () => {
+    const world = fixtureWorld();
+    world.activity.push(
+      {
+        entity_id: "location:locale",
+        source_chapter: "1.1",
+        effective_date: "2133",
+        reasons: ["mention"],
+      },
+      {
+        entity_id: "location:station",
+        source_chapter: "1.1",
+        effective_date: "2133",
+        reasons: ["update"],
+      },
+    );
+    const model = projectSystemView(world, "location:system", "chapter")!;
+    expect(model.activeCounts.get("location:a")).toBe(2);
+    expect(
+      model.activeTargets
+        .filter(({ visualNodeId }) => visualNodeId === "location:a")
+        .map(({ id }) => id),
+    ).toEqual(["location:locale", "location:station"]);
   });
 
   it("retreats to the nearest surviving focus ancestor", () => {

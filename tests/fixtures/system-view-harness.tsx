@@ -70,7 +70,7 @@ export function Harness() {
       <output aria-label="Projected fixture nodes">
         {[...model.nodes.keys()].join(" ")}
       </output>
-      <Canvas camera={{ position: [0, 0, 8], fov: 47 }}>
+      <Canvas camera={{ position: [0, -5.4, 7.2], fov: 47 }}>
         <SystemViewScene
           model={model}
           focusedId={focusedId}

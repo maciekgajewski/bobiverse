@@ -48,8 +48,10 @@ order as having no inner-to-outer meaning.
 6. **Mobile is the same experience.** Compact views use the same projected hierarchy,
    selection, focus path, and rendering semantics with tighter framing and stronger
    collision reduction.
-7. **The DOM remains an equal access path.** Canvas picking is convenient, not the
-   only way to inspect or focus a location.
+7. **Rendered objects are the visible navigation.** Pointer users enter deeper views
+   by selecting the bodies themselves. Object labels, the existing browser and
+   inspector relationships preserve keyboard and screen-reader access without adding
+   a separate focus panel.
 
 ## 4. Scope and non-goals
 
@@ -146,7 +148,9 @@ Entry:
 5. dims other interstellar systems and makes them non-pickable and unlabeled;
 6. visually transforms the selected stellar marker into the local system star
    composition;
-7. unfolds schematic orbital bodies and regions into the predefined system overview.
+7. unfolds schematic orbital bodies and regions into the appropriate initial view:
+   the sole star and its planets for a one-star system, or the component-star group
+   for a multiple-star system.
 
 Local geometry uses its own schematic coordinate space or render layer. It must not
 change interstellar coordinates, measurement calculations, map scale, or the
@@ -173,14 +177,15 @@ The guided hierarchy is:
 
 ```text
 Interstellar map
-  -> system overview
-    -> star focus
+  -> one-star system: star focus
+  -> multiple-star system: component-star overview -> star focus
       -> planet, dwarf-planet, belt, or cloud focus
         -> moon focus where applicable
 ```
 
-There is no mandatory intermediate star-choice screen. A multiple-star overview
-shows all component stars; selecting one transitions directly to its subtree.
+There is no redundant intermediate star-choice screen for a one-star system. It opens
+directly on the star and its planets. A multiple-star overview shows all component
+stars; selecting one transitions directly to that star and its orbital subtree.
 
 ### 7.2 Selection and focus
 
@@ -189,10 +194,10 @@ Inside system view, one click or tap on a directly interactive child both:
 - makes that narrative location the shared application selection; and
 - transitions to its predefined guided composition.
 
-The same operation is available through the existing DOM browser and inspector
-relationships. Canvas objects retain practical invisible pick targets independent of
-their rendered size. Keyboard selection uses ordinary DOM controls rather than
-requiring spatial canvas navigation.
+The same operation is available through clickable rendered labels and the existing
+DOM browser and inspector relationships. Canvas objects retain practical transparent
+pick targets independent of their rendered size. No separate visible guided-focus or
+object-list window duplicates the objects on the canvas.
 
 Selecting a leaf still produces a focused inspection composition even when it has no
 orbital children. Selecting an already focused location keeps the view and exposes or
@@ -247,7 +252,8 @@ Every guided view follows one general rule:
 Applied examples:
 
 - **System overview:** component stars are interactive; their planets and orbital
-  regions are reduced previews; moons are hidden.
+  regions are reduced previews; moons are hidden. This level is the entry view only
+  when the system has multiple component stars.
 - **Star focus:** planets, dwarf planets, belts, and clouds are interactive; their
   moons are reduced previews.
 - **Planet focus:** moons are interactive.
@@ -402,18 +408,12 @@ existing shared Chapter-mode or Date-mode narrative-activity semantics. The syst
 view does not derive a separate notion of activity, treat character last-seen state as
 current presence, or choose one location from `mapped_system_ancestry`.
 
-When exactly one active location is outside the current focus, expose
-**Focus active location**. When several are available, expose **Active locations**
-as a labelled DOM list. Sort that list by visible system name, hierarchy path, and
-display name solely for stable presentation; never describe this ordering as event
-chronology. Selecting one entry:
-
-- within the entered system, traverses to its nearest recognized guided path while
-  retaining the actual selected location for inspection;
-- in another mapped system, exits local view, restores the interstellar map, and
-  focuses that mapped system through the existing map-selection contract;
-- for an unmapped or locationless target, changes inspection selection without
-  inventing a camera destination.
+Active locations do not create a separate navigation panel or focus shortcut.
+Recognized active bodies and their nearest rendered ancestors receive their active
+treatment in the current composition. A reader who wants another location returns to
+the interstellar map and uses the existing browser, inspector, or map-object
+selection. This preserves rendered-object selection as the only local drill-down
+operation and never infers a preferred destination from tied activity.
 
 Every active recognized location receives treatment. A non-rendered active location
 marks its nearest recognized ancestor; multiple targets resolving to one ancestor

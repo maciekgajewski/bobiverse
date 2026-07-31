@@ -20,10 +20,10 @@ import type { SelectionIdentity } from "./domain/selection";
 import type { StellarSystem } from "./domain/types";
 import {
   focusPath as buildSystemFocusPath,
+  initialSystemFocusPath,
   nearestSystemViewNode,
   projectSystemView,
   retreatSystemFocusPath,
-  type SystemActiveTarget,
   type SystemViewModel,
 } from "./domain/system-view";
 import { DISPLAY_DISTANCE_UNIT } from "./domain/units";
@@ -508,7 +508,7 @@ export default function App() {
     if (!selectedEntrySystemView) return;
     const next: SystemModeState = {
       systemId: selectedEntrySystemView.systemId,
-      focusPath: [selectedEntrySystemView.systemId],
+      focusPath: initialSystemFocusPath(selectedEntrySystemView),
       preEntrySelection: selection,
       preEntryInspectorHistory: inspectorHistory,
     };
@@ -565,47 +565,6 @@ export default function App() {
     );
     setSelectionStatus(
       `${String(projectedSystemView.nodes.get(id)!.entity.name)} ancestor view restored.`,
-    );
-  };
-  const selectActiveSystemTarget = (target: SystemActiveTarget) => {
-    if (!projectedSystemView) return;
-    const nextSelection: SelectionIdentity = {
-      kind: "narrative",
-      id: target.id,
-    };
-    setSelection(nextSelection);
-    setInspectorHistory(rootInspectorHistory(nextSelection));
-    if (target.visualNodeId) {
-      setSystemMode((current) =>
-        current
-          ? {
-              ...current,
-              focusPath: buildSystemFocusPath(
-                projectedSystemView,
-                target.visualNodeId!,
-              ),
-            }
-          : current,
-      );
-      setSelectionStatus(
-        `${target.displayName} selected as an active location.`,
-      );
-      return;
-    }
-    if (
-      target.mappedSystemId &&
-      target.mappedSystemId !== projectedSystemView.systemId
-    ) {
-      systemExitSelectionOverride.current = nextSelection;
-      setSelectionStatus(
-        `${target.displayName} selected; returning to its mapped system.`,
-      );
-      if (window.history.state?.bobSystemView) window.history.back();
-      else setSystemMode(null);
-      return;
-    }
-    setSelectionStatus(
-      `${target.displayName} selected for inspection; no local geometry is available.`,
     );
   };
   const selectInspectorRelationship = (nextSelection: SelectionIdentity) => {
@@ -986,6 +945,7 @@ export default function App() {
                   systemKeyboardFocusedId={systemKeyboardFocusId}
                   assets={narrativeCorpus.assets}
                   onSystemSelect={focusSystemNode}
+                  onSystemKeyboardFocus={setSystemKeyboardFocusId}
                 />
               )}
             </>
@@ -1011,75 +971,6 @@ export default function App() {
                 : "Pre-book projection"}
             </span>
           </div>
-          {projectedSystemView && systemMode && (
-            <section
-              className="system-view-dom"
-              aria-label="Visible system objects"
-            >
-              <h2>Guided focus</h2>
-              <ul>
-                {(
-                  projectedSystemView.nodes.get(systemMode.focusPath.at(-1)!)
-                    ?.childIds ?? []
-                ).map((id) => (
-                  <li key={id}>
-                    <button
-                      onClick={() => focusSystemNode(id)}
-                      onFocus={() => setSystemKeyboardFocusId(id)}
-                      onBlur={() => setSystemKeyboardFocusId(null)}
-                    >
-                      {String(projectedSystemView.nodes.get(id)?.entity.name)}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-              {(() => {
-                const focusedId = systemMode.focusPath.at(-1);
-                const activeTargets = projectedSystemView.activeTargets.filter(
-                  (target) => target.visualNodeId !== focusedId,
-                );
-                if (activeTargets.length === 1) {
-                  return (
-                    <button
-                      onClick={() =>
-                        selectActiveSystemTarget(activeTargets[0]!)
-                      }
-                      onFocus={() =>
-                        setSystemKeyboardFocusId(activeTargets[0]!.visualNodeId)
-                      }
-                      onBlur={() => setSystemKeyboardFocusId(null)}
-                    >
-                      Focus active location
-                    </button>
-                  );
-                }
-                if (activeTargets.length > 1) {
-                  return (
-                    <div className="active-location-list">
-                      <h2>Active locations</h2>
-                      <ul>
-                        {activeTargets.map((target) => (
-                          <li key={target.id}>
-                            <button
-                              onClick={() => selectActiveSystemTarget(target)}
-                              onFocus={() =>
-                                setSystemKeyboardFocusId(target.visualNodeId)
-                              }
-                              onBlur={() => setSystemKeyboardFocusId(null)}
-                            >
-                              {target.displayName}
-                              <small>{target.hierarchyPath}</small>
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  );
-                }
-                return null;
-              })()}
-            </section>
-          )}
         </section>
         <aside className="right-rail" aria-label="Object inspector">
           <ObjectInspector

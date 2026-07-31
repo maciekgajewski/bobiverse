@@ -20,6 +20,13 @@ import {
 
 const ignoreRaycast = () => undefined;
 
+function orbitalPathPoints(radius: number): [number, number, number][] {
+  return Array.from({ length: 97 }, (_, index) => {
+    const angle = (index / 96) * Math.PI * 2;
+    return [Math.cos(angle) * radius, Math.sin(angle) * radius, -0.025];
+  });
+}
+
 function SphericalBody({
   nodeId,
   model,
@@ -111,6 +118,7 @@ export function SystemViewScene({
   assets,
   reducedMotion,
   onSelect,
+  onKeyboardFocusChange = () => undefined,
 }: {
   model: SystemViewModel;
   focusedId: string;
@@ -119,6 +127,7 @@ export function SystemViewScene({
   assets: NarrativeRecord;
   reducedMotion: boolean;
   onSelect: (id: string) => void;
+  onKeyboardFocusChange?: (id: string | null) => void;
 }) {
   const { size } = useThree();
   const compact = size.width < 720 || size.height < 480;
@@ -206,7 +215,7 @@ export function SystemViewScene({
             }
           >
             {item.interactive && (
-              <mesh visible={false}>
+              <mesh>
                 {region && node.entity.kind !== "oort_cloud" ? (
                   <torusGeometry args={[item.radius * 1.58, 0.22, 8, 48]} />
                 ) : (
@@ -233,9 +242,7 @@ export function SystemViewScene({
                   node.entity.kind === "oort_cloud" && item.detail === "context"
                 }
               />
-            ) : node.entity.kind === "star_system" ? (
-              <LocalStar radius={item.radius * 0.75} />
-            ) : (
+            ) : node.entity.kind === "star_system" ? null : (
               <SphericalBody
                 nodeId={item.id}
                 model={model}
@@ -245,15 +252,13 @@ export function SystemViewScene({
                 reducedMotion={reducedMotion}
               />
             )}
-            {item.detail === "child" && (
+            {item.detail === "child" && item.orbitRadius && (
               <Line
-                points={[
-                  [-item.position[0], -item.position[1], -0.02],
-                  [0, 0, -0.02],
-                ]}
-                color="#44627f"
+                points={orbitalPathPoints(item.orbitRadius)}
+                position={[-item.position[0], -item.position[1], 0]}
+                color="#527a9b"
                 transparent
-                opacity={0.35}
+                opacity={0.42}
                 raycast={() => undefined}
               />
             )}
@@ -261,18 +266,34 @@ export function SystemViewScene({
               <Html
                 center
                 position={[0, item.radius + 0.24, 0]}
-                style={{ pointerEvents: "none" }}
+                style={{ pointerEvents: item.interactive ? "auto" : "none" }}
               >
-                <span
-                  className={`system-object-label ${selectedId === item.id ? "selected" : ""} ${keyboardFocusedId === item.id ? "keyboard-focused" : ""} ${activeCount > 0 ? "active" : ""}`}
-                >
-                  {String(node.entity.name)}
-                  {activeCount > 1
-                    ? ` · ${activeCount} active`
-                    : activeCount
-                      ? " · active"
-                      : ""}
-                </span>
+                {item.interactive ? (
+                  <button
+                    className={`system-object-label ${selectedId === item.id ? "selected" : ""} ${keyboardFocusedId === item.id ? "keyboard-focused" : ""} ${activeCount > 0 ? "active" : ""}`}
+                    onClick={() => onSelect(item.id)}
+                    onFocus={() => onKeyboardFocusChange(item.id)}
+                    onBlur={() => onKeyboardFocusChange(null)}
+                  >
+                    {String(node.entity.name)}
+                    {activeCount > 1
+                      ? ` · ${activeCount} active`
+                      : activeCount
+                        ? " · active"
+                        : ""}
+                  </button>
+                ) : (
+                  <span
+                    className={`system-object-label ${selectedId === item.id ? "selected" : ""} ${keyboardFocusedId === item.id ? "keyboard-focused" : ""} ${activeCount > 0 ? "active" : ""}`}
+                  >
+                    {String(node.entity.name)}
+                    {activeCount > 1
+                      ? ` · ${activeCount} active`
+                      : activeCount
+                        ? " · active"
+                        : ""}
+                  </span>
+                )}
               </Html>
             )}
             {selectedId === item.id && (

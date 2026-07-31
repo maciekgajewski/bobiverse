@@ -23,15 +23,21 @@ DOM surface, the reader sees **Enter system** when that system has meaningful
 reader-visible composition. Activating it appears to continue toward the selected
 star while retaining the Galactic backdrop and dimming other interstellar systems.
 
-The resulting local view uses predefined compositions:
+The resulting local view uses predefined compositions and direct object navigation:
 
-- a system overview presents component stars as interactive objects and their
-  immediate orbital children as reduced non-interactive previews;
+- a one-star system opens directly on its star and planets;
+- a multiple-star system opens on its component-star group, where each star with
+  planets is directly selectable;
 - selecting a star reveals its planets, dwarf planets, asteroid belts, Kuiper belts,
   and Oort cloud as interactive children, with moons as reduced previews;
 - selecting a planet reveals its moons;
 - selecting any leaf provides a close inspection composition with restrained parent
   context.
+
+The camera observes each orbital plane from slightly above so closed schematic orbit
+paths remain legible. There is no visible guided-focus window and no radial
+parent-child spokes; the rendered bodies and their labels are the visible drill-down
+controls.
 
 Breadcrumbs move back through the hierarchy, **Return to map** restores the exact
 interstellar view, and browser Back exits system mode without replaying every internal
@@ -192,9 +198,11 @@ unchanged.
 - Retain the immediate parent and nearby sibling context as dim non-interactive
   geometry. Compact layouts may remove distant sibling context before reducing the
   focused subtree or active path.
-- Add a labelled top-panel breadcrumb and a distinct **Return to map** action.
+- Add a labelled top-panel breadcrumb and a distinct **Return to map** action. A
+  single component star is included in the focus path immediately on entry; a
+  multiple-star system begins at its component-star overview.
   Breadcrumb items represent entered hierarchy, not inspector history.
-- Direct interactive labels use collision priority:
+- Direct interactive labels are clickable object controls and use collision priority:
   active, selected or keyboard-focused, hovered, then ordinary. Selection, active
   state, focus, and hover remain distinguishable without relying only on colour.
 - Treat active locations as a set. Mark every recognized active location and map each
@@ -205,15 +213,11 @@ unchanged.
   Chapter-mode or Date-mode narrative activity index. Do not create another activity
   projection, infer current character presence from last-seen data, or choose a
   location from `mapped_system_ancestry`.
-- When exactly one active target is outside the current focus, provide
-  **Focus active location**. When several are available, provide a labelled
-  **Active locations** DOM list sorted by visible system name, hierarchy path, and
-  display name solely for stable presentation. Do not infer chronology or priority
-  from tied/incomparable activity or array order.
-- Selecting an active-list entry follows its recognized local path, exits and invokes
-  existing interstellar focus for another mapped system, or changes only inspection
-  selection when no mapped/rendered destination exists. Timeline and reader-progress
-  changes otherwise never move local focus automatically.
+- Do not add active-location focus shortcuts or lists to local mode. Active locations
+  receive visual treatment in the current composition, but readers return to the map
+  and use the existing browser, inspector, or map objects to choose another
+  destination. Timeline and reader-progress changes never move local focus
+  automatically or infer priority from tied activity.
 - If projection changes remove the focused location, retreat to its nearest eligible
   ancestor. If the entered system is no longer eligible, exit to the map and announce
   why. An active location in another mapped system uses existing interstellar focus
@@ -288,11 +292,14 @@ unchanged.
   reduce distant sibling context, preview detail, and low-priority labels in that
   order while retaining the focused subtree and active path.
 - Preserve the accepted current compact map-first browser and inspector panels. The
-  breadcrumb, **Return to map**, **Enter system**, and **Focus active location**
-  controls remain reachable without simultaneously showing every desktop surface.
+  breadcrumb, **Return to map**, and **Enter system** controls remain reachable
+  without simultaneously showing every desktop surface.
 - Provide practical independent pointer targets and equivalent ordinary DOM controls.
   Phone targets meet the accepted 44-by-44 CSS-pixel contract without visually
   enlarging small bodies or making reduced previews interactive.
+- Do not render a visible guided-focus or object-list panel over the system view.
+  Rendered bodies and their labels are the visible drill-down controls; existing DOM
+  browser and inspector relationships preserve nonvisual hierarchy inspection.
 - All local navigation and selection functions are operable by keyboard through
   labelled DOM controls with visible focus. Do not require a gesture, precise 3D
   picking, or spatial keyboard cursor.
@@ -310,7 +317,7 @@ unchanged.
 - Shared application state and history integration for system mode.
 - A projected hierarchy/view-model boundary derived once from `NarrativeWorld`.
 - Guided system-view React Three Fiber components and pure layout/state helpers.
-- Explicit inspector entry and active-location actions.
+- Explicit inspector entry and plural active-location treatments.
 - Breadcrumb and return controls.
 - Background continuity and interstellar/local transition.
 - Spheres, local star treatment, orbit paths, belts, cloud, labels, previews, and
@@ -382,11 +389,8 @@ unchanged.
 11. Breadcrumbs contain only entered hierarchy levels, restore predefined ancestor
     views, and do not modify inspector history or push browser-history entries.
 12. Timeline and progress changes update plural active treatment without moving
-    focus. One target exposes **Focus active location**; several expose a complete
-    stable presentation-only **Active locations** list. Selection follows the chosen
-    recognized local path, exits and uses existing interstellar focus for another
-    mapped system, or retains DOM inspection without inventing an unmapped
-    destination.
+    focus or exposing separate active-location navigation. Readers return to the map
+    and use the existing browser, inspector, or map objects for another destination.
 13. Projection changes retreat from an ineligible focus to the nearest eligible
     ancestor or exit an ineligible system atomically, clear invalid selection/history
     entries, and announce the reason.
@@ -402,9 +406,10 @@ unchanged.
 16. Desktop, compact, phone, short-height, and 200% browser-zoom coverage preserves
     focus, active path, labels according to priority, touch targets, inspector access,
     attribution, and freedom from horizontal page scrolling.
-17. Every system-view action has a visible-focus keyboard/DOM path. WebGL-unavailable
-    state preserves hierarchy inspection and selection without claiming a visual
-    system view.
+17. Every system-view action has a visible-focus keyboard path through rendered
+    labels or breadcrumbs. Existing browser and inspector relationships preserve
+    hierarchy inspection when WebGL is unavailable without claiming a visual system
+    view.
 18. Reduced-motion mode removes spatial camera travel and axial rotation while
     preserving focus, breadcrumbs, history, activity, and status semantics.
 19. Existing interstellar coordinates, measurements, scale, catalogue contents,
@@ -428,17 +433,16 @@ unchanged.
   introduction/update/null-clearing, optional `orbital_order`, effective sibling
   uniqueness, introduction/reparenting projection, compatibility, source-aware
   diagnostics, spoiler projection, and older-view non-disclosure.
-- Component coverage for **Enter system**, breadcrumbs, **Return to map**,
-  singular **Focus active location**, plural **Active locations**, multiple active
-  descendants collapsing to one ancestor, shared canvas/DOM selection, non-rendered
-  descendant fallback, status announcements, timeline non-follow behavior, and
-  compact controls.
+- Unit and component coverage for **Enter system**, breadcrumbs, **Return to map**,
+  multiple active descendants collapsing to one ancestor, multiple-system and tied
+  active targets, shared rendered-label and inspector selection, status
+  announcements, and compact controls.
 - Cross-browser Playwright coverage for entry, one complete star/planet/moon
   drill-down, belts and Oort cloud, exact Back/exit restoration, multiple stars,
-  active-location change, reduced motion, browser zoom reflow, touch-sized compact
-  interaction, WebGL fallback, orbiting-megastructure and non-orbital-descendant
-  exclusion, simultaneous same-system activity, multiple active systems, tied or
-  incomparable activity, and absence of external surface requests.
+  reduced motion, browser zoom reflow, touch-sized compact interaction, WebGL
+  fallback, orbiting-megastructure and non-orbital-descendant exclusion, plural local
+  active treatment, timeline non-follow behavior, and absence of external surface
+  requests.
 - Existing map interaction and performance coverage to prove no regression to normal
   interstellar rendering, transition cancellation, reset, picking, captions,
   measurements, or BOB-034 budgets.
@@ -480,13 +484,19 @@ supported desktop and mobile browsers. At minimum:
 - verify the Galactic backdrop and distant stars remain continuous, correctly
   oriented, subordinate, non-pickable, and free from abrupt parallax or seams;
 - confirm decorative spacing reads clearly without suggesting measured geometry;
+- confirm the camera remains slightly above the orbital plane, every direct orbit is
+  a legible closed ellipse, and no radial parent-child spokes appear;
+- confirm one-star entry opens at star-and-planets, multiple-star entry opens at the
+  component-star group, and no visible guided-focus panel remains;
 - inspect every generic texture family for sphere seams, flatness, repetition,
   lighting readability, and categorical scale;
 - confirm slow axial rotation is subtle and disappears under reduced motion;
 - verify no local drag, wheel, pinch, or double-click gesture moves the guided camera
   or blocks browser magnification;
-- test breadcrumb, Return, browser Back, active-location action, timeline changes,
+- test breadcrumb, Return, browser Back, active treatments, timeline changes,
   eligibility fallback, keyboard focus, and compact inspector access;
+- immediately after Return or browser Back, click a different interstellar marker
+  and confirm normal map selection works;
 - check that label collisions, belts, the Oort shell, and preview density remain
   readable without obscuring the focused subtree.
 

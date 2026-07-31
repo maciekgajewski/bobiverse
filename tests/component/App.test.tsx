@@ -40,7 +40,7 @@ describe("atlas shell", () => {
     expect(screen.queryByText("Astronomy systems")).not.toBeInTheDocument();
   });
 
-  it("enters and exits the same guided hierarchy through DOM controls", async () => {
+  it("enters a single-star system at its planets and exits through the breadcrumb", async () => {
     const user = userEvent.setup();
     render(<App />);
     await user.click(
@@ -52,26 +52,21 @@ describe("atlas shell", () => {
       name: "System view breadcrumb",
     });
     expect(within(breadcrumb).getByText("Solar System")).toBeInTheDocument();
-    expect(
-      screen.getByRole("region", { name: "Visible system objects" }),
-    ).toBeInTheDocument();
-    await user.click(
-      within(
-        screen.getByRole("region", { name: "Visible system objects" }),
-      ).getByRole("button", { name: "Sol" }),
-    );
     expect(within(breadcrumb).getByText("Sol")).toBeInTheDocument();
     const inspector = screen.getByRole("complementary", {
       name: "Object inspector",
     });
+    await user.click(within(inspector).getByRole("button", { name: "Sol" }));
+    await user.click(within(inspector).getByRole("button", { name: "Earth" }));
+    expect(within(breadcrumb).getByText("Earth")).toBeInTheDocument();
     expect(
-      within(inspector).getByRole("heading", { level: 2, name: "Sol" }),
+      within(inspector).getByRole("heading", { level: 2, name: "Earth" }),
     ).toBeInTheDocument();
     await user.click(
       within(breadcrumb).getByRole("button", { name: "Solar System" }),
     );
     expect(
-      within(inspector).getByRole("heading", { level: 2, name: "Sol" }),
+      within(inspector).getByRole("heading", { level: 2, name: "Earth" }),
     ).toBeInTheDocument();
 
     await user.click(
@@ -90,103 +85,7 @@ describe("atlas shell", () => {
     ).toBeInTheDocument();
   });
 
-  it("offers one active target and exits to its mapped system", async () => {
-    window.localStorage.setItem(
-      "bobiverse.app-state.v1",
-      JSON.stringify({
-        furthestChapterRead: "1.14",
-        viewChapter: "1.14",
-        displayDate: "2144",
-        mode: "chapter",
-        timelineZoom: 1,
-        timelinePan: 0,
-      }),
-    );
-    const user = userEvent.setup();
-    render(<App />);
-    await user.click(screen.getByRole("button", { name: /^Solar System/ }));
-    await user.click(screen.getByRole("button", { name: "Enter system" }));
-
-    await user.click(
-      screen.getByRole("button", { name: "Focus active location" }),
-    );
-
-    await waitFor(() =>
-      expect(
-        screen.queryByRole("navigation", { name: "System view breadcrumb" }),
-      ).not.toBeInTheDocument(),
-    );
-    expect(
-      screen.getByRole("heading", { level: 2, name: "Epsilon Eridani" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/returned to the interstellar map/i),
-    ).toBeInTheDocument();
-  });
-
-  it("keeps an ordinary browser selection while exiting to another mapped system", async () => {
-    window.localStorage.setItem(
-      "bobiverse.app-state.v1",
-      JSON.stringify({
-        furthestChapterRead: "1.14",
-        viewChapter: "1.14",
-        displayDate: "2144",
-        mode: "chapter",
-        timelineZoom: 1,
-        timelinePan: 0,
-      }),
-    );
-    const user = userEvent.setup();
-    render(<App />);
-    await user.click(screen.getByRole("button", { name: /^Solar System/ }));
-    await user.click(screen.getByRole("button", { name: "Enter system" }));
-
-    await user.click(
-      screen.getAllByRole("button", { name: /^Epsilon EridaniActive$/ })[0]!,
-    );
-
-    await waitFor(() =>
-      expect(
-        screen.queryByRole("navigation", { name: "System view breadcrumb" }),
-      ).not.toBeInTheDocument(),
-    );
-    expect(
-      screen.getByRole("heading", { level: 2, name: "Epsilon Eridani" }),
-    ).toBeInTheDocument();
-  });
-
-  it("presents every simultaneous active location as a stable plural list", async () => {
-    window.localStorage.setItem(
-      "bobiverse.app-state.v1",
-      JSON.stringify({
-        furthestChapterRead: "1.18",
-        viewChapter: "1.18",
-        displayDate: "2145",
-        mode: "chapter",
-        timelineZoom: 1,
-        timelinePan: 0,
-      }),
-    );
-    const user = userEvent.setup();
-    render(<App />);
-    await user.click(
-      screen.getByRole("button", { name: /^Solar System(?:Active)?$/ }),
-    );
-    await user.click(screen.getByRole("button", { name: "Enter system" }));
-
-    const list = screen.getByRole("heading", {
-      name: "Active locations",
-    }).parentElement!;
-    const choices = within(list).getAllByRole("button");
-    expect(choices.map((choice) => choice.textContent)).toEqual([
-      "Beta HydriBeta Hydri",
-      "Delta EridaniDelta Eridani",
-      "Epsilon EridaniEpsilon Eridani",
-      "SolSolar System / Sol",
-    ]);
-  });
-
-  it("retains focus for a non-rendered selection and exits an ineligible projection", async () => {
+  it("exits an ineligible projection from its single-star focus", async () => {
     window.localStorage.setItem(
       "bobiverse.app-state.v1",
       JSON.stringify({
@@ -204,15 +103,6 @@ describe("atlas shell", () => {
       screen.getAllByRole("button", { name: /^Epsilon EridaniActive$/ })[0]!,
     );
     await user.click(screen.getByRole("button", { name: "Enter system" }));
-    const guided = screen.getByRole("region", {
-      name: "Visible system objects",
-    });
-    await user.click(
-      within(guided).getByRole("button", {
-        name: "Epsilon Eridani",
-      }),
-    );
-    await user.click(screen.getAllByRole("button", { name: /^BobActive/ })[0]!);
     const breadcrumb = screen.getByRole("navigation", {
       name: "System view breadcrumb",
     });
@@ -221,10 +111,6 @@ describe("atlas shell", () => {
         name: "Epsilon Eridani",
       }),
     ).toHaveLength(2);
-    expect(
-      screen.getByRole("heading", { level: 2, name: "Bob" }),
-    ).toBeInTheDocument();
-
     await user.selectOptions(
       screen.getByLabelText("Knowledge through"),
       "1.15",

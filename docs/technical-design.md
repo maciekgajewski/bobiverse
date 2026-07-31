@@ -510,14 +510,15 @@ lighting, categorical size, axial rotation, and all local geometry are presentat
 only and do not become astronomy authority.
 
 Timeline and progress changes recompute the shared projection but do not
-automatically move a reader's local focus. They update every active marker. One
-available target exposes **Focus active location**; several expose a stable
-presentation-only **Active locations** list without inferring chronology from tied
-activity. The set reuses eligible location entities in the shared Chapter-mode or
-Date-mode narrative-activity index; it does not derive character presence or another
-activity authority. Non-rendered activity marks the nearest recognized ancestor, with
-a count when several targets collapse to it. If the focused path becomes ineligible,
-the view retreats to the nearest eligible ancestor or exits and announces the change.
+automatically move a reader's local focus. They update every active marker without
+creating a separate active-location navigation panel or focus shortcut. The set
+reuses eligible location entities in the shared Chapter-mode or Date-mode
+narrative-activity index; it does not derive character presence or another activity
+authority. Non-rendered activity marks the nearest recognized ancestor, with a count
+when several targets collapse to it. Readers return to the map and use the existing
+browser, inspector, or map objects to choose another location. If the focused path
+becomes ineligible, the view retreats to the nearest eligible ancestor or exits and
+announces the change.
 
 Desktop and compact layouts share the same hierarchy and focus state. Small viewports
 reduce sibling context, previews, and lower-priority labels before sacrificing the
@@ -535,8 +536,14 @@ interstellar camera/target, disables `OrbitControls` in local mode, and mounts
 `SystemViewScene` only while entered. That scene renders full interactive children,
 non-raycast previews, textured sphere bodies, region geometry, independent pick
 targets, active/selected treatments, and slow reduced-motion-aware axial rotation.
-The ordinary DOM hierarchy beside the canvas is the keyboard and WebGL-unavailable
-navigation authority; it never pretends the visual composition rendered.
+One-star entry initializes focus at its sole component star, while multiple-star
+entry initializes at the component-star group. The local camera remains slightly
+above the orbital plane and direct children receive closed schematic orbit paths.
+Rendered bodies and their labels are the visible navigation; no separate visible
+guided-focus panel duplicates them. Existing browser and inspector relationships plus
+rendered object labels remain the keyboard navigation authority. When WebGL is
+unavailable, the existing browser and inspector preserve hierarchy inspection and
+never pretend the visual composition rendered.
 
 Generic texture choice uses stable location-ID hashing over the compatible sorted
 selection-version-1 pool. The registry validator enforces role isolation, local

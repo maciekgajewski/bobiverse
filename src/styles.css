@@ -484,10 +484,9 @@ h2 {
   align-items: center;
   gap: 0.25rem;
 }
-.system-view-navigation li button,
-.system-view-dom button {
-  min-width: 44px;
-  min-height: 44px;
+.system-view-navigation li button {
+  min-width: 45px;
+  min-height: 45px;
   border: 1px solid transparent;
   border-radius: var(--radius-control);
   color: #cceeff;
@@ -495,13 +494,11 @@ h2 {
   cursor: pointer;
   white-space: nowrap;
 }
-.system-view-navigation button:focus-visible,
-.system-view-dom button:focus-visible {
+.system-view-navigation button:focus-visible {
   outline: 3px solid #f6d47b;
   outline-offset: 2px;
 }
-.system-view-navigation li button:hover,
-.system-view-dom button:hover {
+.system-view-navigation li button:hover {
   border-color: var(--line-accent);
   background: #13233a;
 }
@@ -511,44 +508,26 @@ h2 {
   color: var(--text-muted);
   font-size: 0.62rem;
 }
-.system-view-dom {
-  position: absolute;
-  z-index: 4;
-  right: 0.7rem;
-  bottom: 0.7rem;
-  width: min(17rem, calc(100% - 1.4rem));
-  max-height: 34%;
-  overflow: auto;
-  padding: 0.55rem;
-  border: 1px solid var(--line-subtle);
-  border-radius: 0.45rem;
-  background: rgb(4 10 20 / 86%);
-}
-.system-view-dom h2 {
-  margin: 0 0 0.25rem;
-  color: var(--accent-cyan);
-  font-size: 0.68rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-.system-view-dom ul {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.15rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
 .system-object-label {
-  display: block;
-  min-width: max-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
   padding: 0.16rem 0.3rem;
   border: 1px solid rgb(75 101 130 / 70%);
   border-radius: 0.22rem;
   background: rgb(3 9 18 / 82%);
   color: #cbdced;
+  font-family: inherit;
   font-size: 0.68rem;
+  cursor: pointer;
+  white-space: nowrap;
   text-shadow: 0 2px 8px #000;
+}
+.system-object-label:focus-visible {
+  outline: 2px solid #f6d47b;
+  outline-offset: 2px;
 }
 .system-object-label.selected {
   border-style: double;
@@ -1294,9 +1273,6 @@ footer a:hover {
   }
   .system-view-navigation p {
     grid-column: 1;
-  }
-  .system-view-dom {
-    max-height: 27%;
   }
   .app-shell {
     gap: 0.5rem;

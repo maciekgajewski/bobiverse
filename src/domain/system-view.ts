@@ -37,6 +37,7 @@ export interface SystemLayoutItem {
   radius: number;
   detail: "focus" | "child" | "preview" | "context";
   interactive: boolean;
+  orbitRadius?: number;
 }
 
 export function visibleSystemLabelIds(
@@ -274,6 +275,16 @@ export function focusPath(
   return reversed.reverse();
 }
 
+export function initialSystemFocusPath(model: SystemViewModel): string[] {
+  const root = model.nodes.get(model.systemId)!;
+  const componentStars = root.childIds.filter(
+    (id) => model.nodes.get(id)?.entity.kind === "star",
+  );
+  return componentStars.length === 1
+    ? focusPath(model, componentStars[0]!)
+    : [model.systemId];
+}
+
 export function retreatSystemFocusPath(
   model: SystemViewModel,
   previousPath: readonly string[],
@@ -318,28 +329,32 @@ export function systemViewLayout(
   compact: boolean,
 ): SystemLayoutItem[] {
   const focus = model.nodes.get(focusedId) ?? model.nodes.get(model.systemId)!;
+  const rootOverview = focus.entity.kind === "star_system";
   const result: SystemLayoutItem[] = [
     {
       id: focus.entity.id,
       position: [0, 0, 0],
-      radius: bodyCategoryRadius(focus.entity),
+      radius: rootOverview ? 0 : bodyCategoryRadius(focus.entity),
       detail: "focus",
-      interactive: true,
+      interactive: !rootOverview,
     },
   ];
   const children = focus.childIds;
-  const spacing = compact ? 1.05 : 1.28;
+  const spacing = rootOverview ? (compact ? 1.2 : 1.55) : compact ? 1.05 : 1.28;
   children.forEach((id, index) => {
     const angle =
-      children.length === 1 ? 0 : (index / children.length) * Math.PI * 2;
-    const orbit = spacing + index * (compact ? 0.42 : 0.55);
+      children.length === 1 ? -0.28 : -0.42 + index * 2.399963229728653;
+    const orbit = rootOverview
+      ? spacing + index * (compact ? 0.34 : 0.48)
+      : spacing + index * (compact ? 0.42 : 0.55);
     const child = model.nodes.get(id)!;
     result.push({
       id,
-      position: [Math.cos(angle) * orbit, Math.sin(angle) * orbit * 0.48, 0],
+      position: [Math.cos(angle) * orbit, Math.sin(angle) * orbit, 0],
       radius: bodyCategoryRadius(child.entity),
       detail: "child",
       interactive: true,
+      orbitRadius: orbit,
     });
     if (!compact || index < 5) {
       child.childIds.forEach((previewId, previewIndex) => {
@@ -347,8 +362,8 @@ export function systemViewLayout(
         result.push({
           id: previewId,
           position: [
-            Math.cos(angle) * orbit + 0.3 + previewIndex * 0.13,
-            Math.sin(angle) * orbit * 0.48 + 0.2,
+            Math.cos(angle) * orbit + 0.28 + previewIndex * 0.13,
+            Math.sin(angle) * orbit + 0.18,
             0,
           ],
           radius: bodyCategoryRadius(preview.entity) * 0.48,
