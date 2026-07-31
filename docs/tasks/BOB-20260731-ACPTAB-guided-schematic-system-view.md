@@ -4,6 +4,21 @@ Status: Ready
 Phase: 3 (exploration tools)
 Last updated: 2026-07-31
 
+## Delivery decomposition
+
+This document remains the complete reference scope and final integrated behavior for
+the guided schematic system view. It is intentionally too large for one implementation
+change and will be delivered through smaller, independently reviewable tasks rather
+than implemented atomically.
+
+The first delivery task is
+`BOB-20260731-MCVXSZ-zoomed-stellar-system-mode.md`. It establishes entry, exit,
+camera continuity, browser history, breadcrumbs, dimmed map context, and selectable
+astronomy-component stars only. Later tasks will add narrative-star association,
+orbital bodies, guided hierarchy focus, surface assets, activity navigation, and the
+remaining behavior specified here. This decomposition does not authorize
+implementation of this reference task or any child task.
+
 ## Objective
 
 Add a guided, spoiler-safe local-system view that renders the projected hierarchical
