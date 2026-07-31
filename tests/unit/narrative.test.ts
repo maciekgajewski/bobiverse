@@ -579,6 +579,140 @@ describe("narrative corpus validation and projection", () => {
     );
   });
 
+  it("accepts order-independent and cyclic zero-state character parents", () => {
+    const corpus = createNarrativeFixtureCorpus();
+    corpus.zeroState.entities = [
+      {
+        id: "character:fixture-child",
+        name: "Fixture Child",
+        parent_id: "character:fixture-parent",
+      },
+      {
+        id: "character:fixture-parent",
+        name: "Fixture Parent",
+        parent_id: "character:fixture-child",
+      },
+    ];
+
+    expect(() => validateNarrativeCorpus(corpus)).not.toThrow();
+    const world = generateNarrativeWorld(prepareNarrativeCorpus(corpus));
+    expect(
+      world.entities.find((entity) => entity.id === "character:fixture-child"),
+    ).toMatchObject({ parent_id: "character:fixture-parent" });
+    expect(
+      world.entities.find((entity) => entity.id === "character:fixture-parent"),
+    ).toMatchObject({ parent_id: "character:fixture-child" });
+  });
+
+  it("validates character parent reference order without adding cycle rules", () => {
+    const valid = createNarrativeFixtureCorpus();
+    const introductions = valid.chapters[0]!.introducing as Array<
+      Record<string, unknown>
+    >;
+    introductions.splice(1, 0, {
+      id: "character:fixture-parent",
+      name: "Fixture Parent",
+    });
+    introductions[2]!.parent_id = "character:fixture-parent";
+
+    expect(() => validateNarrativeCorpus(valid)).not.toThrow();
+
+    const laterSameChapter = createNarrativeFixtureCorpus();
+    const laterIntroductions = laterSameChapter.chapters[0]!
+      .introducing as Array<Record<string, unknown>>;
+    laterIntroductions[1]!.parent_id = "character:fixture-parent";
+    laterIntroductions.push({
+      id: "character:fixture-parent",
+      name: "Fixture Parent",
+    });
+    expect(() => validateNarrativeCorpus(laterSameChapter)).toThrow(
+      "Introduction character:fixture-alex references unavailable entity character:fixture-parent.",
+    );
+
+    const sameChapterUpdate = createNarrativeFixtureCorpus();
+    sameChapterUpdate.chapters[1]!.introducing = [
+      {
+        id: "character:fixture-parent",
+        name: "Fixture Parent",
+      },
+    ];
+    (
+      sameChapterUpdate.chapters[1]!.updates as Array<Record<string, unknown>>
+    )[0]!.parent_id = "character:fixture-parent";
+    expect(() => validateNarrativeCorpus(sameChapterUpdate)).not.toThrow();
+
+    const unavailableUpdate = createNarrativeFixtureCorpus();
+    (
+      unavailableUpdate.chapters[1]!.updates as Array<Record<string, unknown>>
+    )[0]!.parent_id = "character:fixture-future-parent";
+    expect(() => validateNarrativeCorpus(unavailableUpdate)).toThrow(
+      "Update character:fixture-alex references unavailable entity character:fixture-future-parent.",
+    );
+
+    expect(
+      narrativeSchemaErrors("chapter_source", {
+        chapter: "1.1",
+        title: "Fixture invalid parent type",
+        summary: "A fictional schema-validation fixture.",
+        date: "2200",
+        location_id: "location:earth",
+        introducing: [
+          {
+            id: "character:fixture-child",
+            name: "Fixture Child",
+            parent_id: "technology:not-a-character",
+          },
+        ],
+      }),
+    ).not.toEqual([]);
+  });
+
+  it("projects character parent introduction, replacement, and clearing at reader-safe boundaries", () => {
+    const corpus = createNarrativeFixtureCorpus();
+    (corpus.zeroState.entities as Array<Record<string, unknown>>).push(
+      { id: "character:fixture-parent-a", name: "Fixture Parent A" },
+      { id: "character:fixture-parent-b", name: "Fixture Parent B" },
+    );
+    const introduced = (
+      corpus.chapters[0]!.introducing as Array<Record<string, unknown>>
+    ).find((entity) => entity.id === "character:fixture-alex")!;
+    introduced.parent_id = "character:fixture-parent-a";
+    corpus.chapters[1]!.updates = [
+      {
+        entity_id: "character:fixture-alex",
+        parent_id: "character:fixture-parent-b",
+      },
+    ];
+    corpus.chapters[2]!.updates = [
+      {
+        entity_id: "character:fixture-alex",
+        parent_id: null,
+      },
+    ];
+
+    const prepared = prepareNarrativeCorpus(corpus);
+    expect(
+      generateNarrativeWorld(prepared).entities.find(
+        (entity) => entity.id === "character:fixture-alex",
+      ),
+    ).toBeUndefined();
+    expect(
+      generateNarrativeWorld(prepared, "1.1").entities.find(
+        (entity) => entity.id === "character:fixture-alex",
+      )?.parent_id,
+    ).toBe("character:fixture-parent-a");
+    expect(
+      generateNarrativeWorld(prepared, "1.2").entities.find(
+        (entity) => entity.id === "character:fixture-alex",
+      )?.parent_id,
+    ).toBe("character:fixture-parent-b");
+    expect(
+      generateNarrativeWorld(prepared, "1.3").entities.find(
+        (entity) => entity.id === "character:fixture-alex",
+      ),
+    ).toHaveProperty("parent_id", null);
+  });
+
   it("projects direct entity introductions and later optional-field updates", () => {
     const corpus = createNarrativeFixtureCorpus();
     const introductions = corpus.chapters[0]!.introducing as Array<
@@ -1168,6 +1302,13 @@ describe("narrative corpus validation and projection", () => {
     );
     expect(
       chapter2World.entities.find(
+        (entity) => entity.id === "character:bob-replicant",
+      ),
+    ).toMatchObject({
+      parent_id: "character:robert-johansson",
+    });
+    expect(
+      chapter2World.entities.find(
         (entity) => entity.id === "character:robert-johansson",
       ),
     ).toMatchObject({
@@ -1456,6 +1597,18 @@ describe("narrative corpus validation and projection", () => {
       },
     },
     {
+      field: "character parent",
+      target: "character:fixture-parent",
+      apply: (chapter: Record<string, unknown>) => {
+        chapter.updates = [
+          {
+            entity_id: "character:fixture-alex",
+            parent_id: "character:fixture-parent",
+          },
+        ];
+      },
+    },
+    {
       field: "species homeworld",
       target: "location:mars",
       apply: (chapter: Record<string, unknown>) => {
@@ -1521,6 +1674,10 @@ describe("narrative corpus validation and projection", () => {
       (corpus.zeroState.entities as Array<Record<string, unknown>>).push({
         id: "event:fixture-known",
         name: "Known fixture event",
+      });
+      (corpus.zeroState.entities as Array<Record<string, unknown>>).push({
+        id: "character:fixture-parent",
+        name: "Fixture Parent",
       });
       const chapter: Record<string, unknown> = {
         chapter: "1.14",

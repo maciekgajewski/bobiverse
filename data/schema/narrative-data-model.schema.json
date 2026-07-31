@@ -164,6 +164,7 @@
         "name": { "type": "string", "minLength": 1 },
         "gender": { "type": "string", "minLength": 1 },
         "species_id": { "$ref": "#/$defs/species_id" },
+        "parent_id": { "$ref": "#/$defs/character_id" },
         "current_state": { "$ref": "#/$defs/state" },
         "picture_id": { "$ref": "#/$defs/asset_id" },
         "aliases": {
@@ -186,6 +187,9 @@
         "gender": { "type": ["string", "null"], "minLength": 1 },
         "species_id": {
           "anyOf": [{ "$ref": "#/$defs/species_id" }, { "type": "null" }]
+        },
+        "parent_id": {
+          "anyOf": [{ "$ref": "#/$defs/character_id" }, { "type": "null" }]
         },
         "current_state": {
           "anyOf": [{ "$ref": "#/$defs/state" }, { "type": "null" }]
@@ -212,6 +216,7 @@
         { "required": ["name"] },
         { "required": ["gender"] },
         { "required": ["species_id"] },
+        { "required": ["parent_id"] },
         { "required": ["current_state"] },
         { "required": ["picture_id"] },
         { "required": ["aliases"] },

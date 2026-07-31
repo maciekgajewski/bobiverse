@@ -76,6 +76,7 @@ Useful claim types include:
 - `location`;
 - `movement`;
 - `relationship`;
+- `character_parent`;
 - `state_change`;
 - `event`;
 - `event_participant`;
@@ -145,6 +146,14 @@ must not turn the absence into a reader-facing description sentence.
 A relationship such as who uses, owns, mentions, or discusses an entity is not by
 itself an `entity_definition`. Keep that relationship as its own claim so Pass 2
 cannot mistake narrative context for an encyclopedic explanation.
+
+Capture direct character lineage as `character_parent` only when the source supports
+the parent and child identities. For a replicant, the parent is the source character
+state or backup from which the child was copied, not merely the operator who ran the
+creation process. The same claim type may represent biological genealogy. Do not
+infer a parent from matching names, similar behavior, shared species, possession of a
+backup, or operation of cloning machinery. Record ambiguous lineage in
+`unresolved_questions`.
 
 Pass 2 states capabilities in entity-centered general language such as `It can` or
 `It is used to`; named-character usage is not the definition unless the relationship

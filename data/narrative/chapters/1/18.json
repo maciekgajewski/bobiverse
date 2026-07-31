@@ -1,0 +1,73 @@
+{
+  "chapter": "1.18",
+  "title": "18",
+  "summary": "In September 2145 at Epsilon Eridani, Bill watches Bob, Mario, and Milo begin separate explorations while a matrix and vessels are built for Bill's and Riker's new clones. Bob heads for Delta Eridani, Milo for Omicron2 Eridani, and Mario for Beta Hydri. Riker prepares to return toward Sol with his clone, while an AMI is assigned to pilot a specially shielded version-1 vessel for Riker's undisclosed plan.",
+  "date": "2145",
+  "location_id": "location:epsilon-eridani",
+  "introducing": [
+    {
+      "id": "location:delta-eridani",
+      "name": "Delta Eridani",
+      "kind": "star",
+      "map_status": "unmapped",
+      "description": "A named star that Bob is heading toward from Epsilon Eridani. Bill considers it a suitable candidate with a good chance of habitable planets."
+    },
+    {
+      "id": "location:beta-hydri",
+      "name": "Beta Hydri",
+      "kind": "star",
+      "map_status": "unmapped",
+      "description": "A named star that Mario is heading toward from Epsilon Eridani. Bill considers it suitable, though distant compared with nearer stars of comparable potential."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bill",
+      "current_state": "At Epsilon Eridani, overseeing the construction of a matrix and vessels for his and Riker's new clones."
+    },
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "Heading from Epsilon Eridani toward Delta Eridani."
+    },
+    {
+      "entity_id": "character:milo",
+      "current_state": "Heading from Epsilon Eridani toward Omicron2 Eridani."
+    },
+    {
+      "entity_id": "character:mario",
+      "current_state": "Heading from Epsilon Eridani toward Beta Hydri."
+    },
+    {
+      "entity_id": "character:riker",
+      "current_state": "Preparing to return toward Sol with a new clone whose matrix and vessel are under construction."
+    },
+    {
+      "entity_id": "technology:ami",
+      "description": "Artificial Machine Intelligence (AMI) is an artificial intelligence created directly as a machine mind rather than copied from a biological mind. It can pilot a vessel."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bill",
+      "role": "lead",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:bob-replicant",
+      "role": "other"
+    },
+    {
+      "character_id": "character:milo",
+      "role": "other"
+    },
+    {
+      "character_id": "character:mario",
+      "role": "other"
+    },
+    {
+      "character_id": "character:riker",
+      "role": "other"
+    }
+  ],
+  "mentions": ["location:sol", "technology:replicant-matrix"]
+}

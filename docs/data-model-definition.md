@@ -190,6 +190,7 @@ the identical listing below documents its shared definitions.
         "name": { "type": "string", "minLength": 1 },
         "gender": { "type": "string", "minLength": 1 },
         "species_id": { "$ref": "#/$defs/species_id" },
+        "parent_id": { "$ref": "#/$defs/character_id" },
         "current_state": { "$ref": "#/$defs/state" },
         "picture_id": { "$ref": "#/$defs/asset_id" },
         "aliases": {
@@ -212,6 +213,9 @@ the identical listing below documents its shared definitions.
         "gender": { "type": ["string", "null"], "minLength": 1 },
         "species_id": {
           "anyOf": [{ "$ref": "#/$defs/species_id" }, { "type": "null" }]
+        },
+        "parent_id": {
+          "anyOf": [{ "$ref": "#/$defs/character_id" }, { "type": "null" }]
         },
         "current_state": {
           "anyOf": [{ "$ref": "#/$defs/state" }, { "type": "null" }]
@@ -238,6 +242,7 @@ the identical listing below documents its shared definitions.
         { "required": ["name"] },
         { "required": ["gender"] },
         { "required": ["species_id"] },
+        { "required": ["parent_id"] },
         { "required": ["current_state"] },
         { "required": ["picture_id"] },
         { "required": ["aliases"] },
@@ -1157,10 +1162,11 @@ organization, and vessel entity forms; assets are not valid targets. Beginning w
 Chapter `1.14`, an author includes every source-supported reference to a previously
 visible target that is absent from all other typed direct narrative references in the
 chapter. Structural references include introduction and update targets, appearances,
-chapter locations, event participants and locations, character species and death
-events, species homeworlds, and location parent/origin/destination fields. Explicit
-typed fields, not ID-shaped prose, define this boundary. A target introduced in the
-same or a later chapter is invalid. A mention does not assert presence,
+chapter locations, event participants and locations, character species, death
+events, and direct parents, species homeworlds, and location
+parent/origin/destination fields. Explicit typed fields, not ID-shaped prose, define
+this boundary. A target introduced in the same or a later chapter is invalid. A
+mention does not assert presence,
 participation, ownership, membership, location, use, relationship, or state.
 Chapters `1.1` through `1.13` retain ADR-0008's accepted structural-redundancy
 boundary and are not retroactively audited.
@@ -1681,6 +1687,7 @@ are a canonical `character:` ID and a nonempty reader-visible `name`.
 | `name`           | nonempty string                           | Reader-visible display name.                                                            |
 | `gender`         | optional nonempty string                  | Reader-visible free text; no global gender vocabulary is imposed.                       |
 | `species_id`     | optional `species_id`                     | Reference to an introduced species entity.                                              |
+| `parent_id`      | optional `character_id`                   | One source-supported direct parent character.                                           |
 | `current_state`  | optional nonempty string                  | One or two concise sentences describing only the character's latest known condition.    |
 | `picture_id`     | optional `asset_id`                       | Chapter-controlled assignment of a manually curated image asset.                        |
 | `aliases`        | optional array of unique nonempty strings | Additional reader-visible names that become searchable only when introduced or updated. |
@@ -1695,6 +1702,18 @@ character introduction or update must not use a reference until its target entit
 been seeded or introduced. When both `death_date` and the referenced event's own
 `date` are present, their canonical values must be identical. No ordering comparison is
 imposed between `birth_date` and `death_date`.
+
+`parent_id` uses the same character model for replicant lineage and biological
+genealogy. It identifies one direct source parent: for a replicant, the character
+state or backup from which the child was copied, not necessarily the operator who
+initiated creation. The field is optional, may be set, replaced, or cleared through
+ordinary character updates, and is projected under the existing reader-order and
+story-time rules. Zero-state characters use whole-snapshot reference resolution, so
+their relative authoring-array order is irrelevant. Chapter introductions still
+resolve only against zero state, earlier chapters, or earlier introductions in the
+same chapter. The model intentionally imposes no cycle check, character-type
+restriction, multiple-parent form, creator field, or authored reverse child list.
+Consumers may derive reverse genealogy from the effective forward references.
 
 `current_state` does not establish a character location. A character location is only
 confirmed by an appearance with an effective location. From reader-visible appearances

@@ -205,7 +205,10 @@ describe("blind Pass 1 boundary", () => {
       "Treat numbering and child order as decorative inventory, not physical orbital order or distance.",
     );
     expect(compactBlindMaterials).toContain(
-      "character `species_id` and `death_event_id`, species `homeworld_id`",
+      "character `species_id`, `death_event_id`, and `parent_id`, species `homeworld_id`",
+    );
+    expect(compactBlindMaterials).toContain(
+      "the character state or backup from which the child was copied",
     );
     expect(compactBlindMaterials).toContain(
       "read `references/reconciliation-exceptions.md`",

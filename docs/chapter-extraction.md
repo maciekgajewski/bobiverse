@@ -32,12 +32,21 @@ Beginning with Chapter `1.14`, every source-supported reference to a previously
 reader-visible direct narrative entity or location must become a supplemental
 `mentions` entry when the target is absent from every other typed direct narrative
 reference in that chapter. Introductions, updates, appearances, chapter locations,
-event participants and locations, character species and death events, species
-homeworlds, and location parent/origin/destination fields are structural. ID-shaped
-prose is not. A supplemental mention advances otherwise-absent narrative activity; it
-does not assert presence, participation, ownership, membership, location, use,
-relationship, or state. A mentioned mapped location also derives the existing
-`mapped_system_ancestry` activity.
+event participants and locations, character species, death events, and direct
+parents, species homeworlds, and location parent/origin/destination fields are
+structural. ID-shaped prose is not. A supplemental mention advances otherwise-absent
+narrative activity; it does not assert presence, participation, ownership,
+membership, location, use, relationship, or state. A mentioned mapped location also
+derives the existing `mapped_system_ancestry` activity.
+
+When the source reveals direct character lineage, author the child's optional
+`parent_id` with sealed evidence. The same field represents replicant and biological
+genealogy. For a replicant it identifies the source character state or backup from
+which the child was copied, not merely the operator who initiated creation. Do not
+infer ancestry from similar names, behavior, species, possession of a backup, or
+operation of cloning machinery. Preserve unresolved lineage in reconciliation
+instead of guessing. Later chapters may set, replace, or clear the relationship
+through a normal character update.
 
 Entity names preserve the source's primary surface form. When the source primarily
 uses an acronym, that acronym remains the canonical visible and searchable `name`;
