@@ -3,6 +3,9 @@ These images are visual references, not literal specifications.
 The approved Phase 2 desktop interaction design is
 [`phase-2-desktop-ui.md`](phase-2-desktop-ui.md).
 
+The approved guided local-system interaction and rendering design is
+[`guided-system-view.md`](guided-system-view.md).
+
 Reference images:
 
 - `reference/desktop-concept.png`: original desktop atmosphere and composition

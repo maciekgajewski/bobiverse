@@ -231,8 +231,13 @@ Planned work:
 - Author no more than four moon children per surveyed body. Prefer named or distinct
   moons, then source-supported largest moons, then source order; use deterministic
   `Moon 1` through `Moon 4` placeholders for count-only evidence and preserve the full
-  count or qualifier in the parent description. Treat child order as decorative and
-  never invent orbital distance or physical ordering.
+  count or qualifier in the parent description. Under ADR-0020, every `orbits`
+  sibling sequence is the inner-to-outer schematic order. Choose a deterministic
+  invented order when evidence does not establish one, without inventing orbital
+  distance or promoting the order to catalogue astronomy. Nested zero-state arrays
+  supply their order; later flat locations may use optional non-metric
+  `orbital_order`, with `1024`-interval implicit keys and deterministic append
+  behavior when it is absent.
 - Keep every `current_state` to one or two sentences about the latest condition and
   every description centered on its entity, using general capability language rather
   than retelling a named character's actions. Keep missing-knowledge claims in
@@ -259,6 +264,15 @@ Goal: build reader tools on the same entities and spoiler boundary.
 
 Candidate slices, each requiring its own task:
 
+- Guided schematic stellar-system view using the projected location hierarchy.
+  Preserve the Galactic backdrop through explicit system entry and exact return,
+  use predefined breadcrumb-driven system/star/body compositions without free local
+  camera controls, show one interactive hierarchy level plus one reduced preview
+  level, and render ordered planets, moons, asteroid belts, Kuiper belts, and Oort
+  clouds with decorative geometry. Add deterministic generic spherical-body
+  textures, role-validated optional dedicated surface assets, responsive composition,
+  active-location guidance without automatic timeline motion, browser-Back exit, and
+  reduced-motion and DOM-accessible equivalents.
 - Character history using the Phase 2 searchable object browser.
 - Stellar-system and planet chronicle using the Phase 2 searchable object browser.
 - Character travel path and per-leg measurements.

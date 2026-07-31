@@ -396,7 +396,9 @@ Procyon, and Alpha Centauri with Alpha Centauri A, Alpha Centauri B, and Proxima
 Centauri. The roster validates stable IDs and membership; it is not an astrometry
 source.
 
-## 9. Phase 1 interaction design
+## 9. Map interaction design
+
+### 9.1 Interstellar interaction
 
 The map must provide:
 
@@ -441,6 +443,87 @@ preserving identical visibility above and below the plane. The grid remains
 double-sided and non-pickable, has no major/minor hierarchy, and never changes
 canonical scale. Its labels sit well beyond the star field in smaller,
 lower-prominence type; the standalone `+Yg` marker is omitted.
+
+### 9.2 Guided schematic system view
+
+Phase 3 adds a guided local view for a mapped, reader-visible stellar-system location
+whose projected hierarchy contains multiple recognized star children or at least one
+recognized renderable orbital child.
+Ordinary interstellar selection remains unchanged; an explicit **Enter system**
+inspector action begins a pseudo-continuous transition. The existing aligned Galactic
+backdrop remains visible, other interstellar systems become dim non-interactive
+context, and the selected system unfolds into a separate schematic coordinate space.
+Exit restores the exact interstellar camera and selection state that existed at
+entry.
+
+The projected location hierarchy is the sole system-composition authority. Component
+stars are direct `member_of_system` children. Each star owns only its existing
+`orbits` descendants; the renderer neither invents shared bodies nor maintains a
+parallel planet list. Every `orbits` sibling sequence is inner-to-outer. Nested
+zero-state array order supplies implicit safe-integer keys `1024`, `2048`, and so on.
+Later introductions and updates may carry a positive safe-integer non-metric
+`orbital_order`. Omission on introduction or reparenting appends after the effective
+maximum in `1024` increments. The maximum of an empty set is `0`, so its first
+omitted child receives `1024`; stable location ID orders simultaneous omissions at
+successive increments. Ordinary update omission retains the key. Explicit and
+implicit sibling keys must be unique. Projection derives `child_ids` by ascending
+key; the renderer assigns decorative radii in that order without sorting or implying
+measured distance, inclination, phase, period, or size.
+
+Local geometry recognizes the entered `star_system`, its direct
+`member_of_system` star children, and `orbits` descendants whose kind is `planet`,
+`dwarf_planet`, `moon`, `asteroid_belt`, `kuiper_belt`, or `oort_cloud`. Locales,
+megastructures, transit locations, and other relations remain DOM-inspectable but
+receive no local geometry, preview, breadcrumb level, or entry eligibility. Their
+visual focus and active treatment resolve to the nearest recognized ancestor without
+changing the actual inspection selection.
+
+Navigation uses predefined system, star, planet or region, and moon compositions.
+One selection activates a directly interactive child and moves to its guided view.
+Direct children are full-detail and interactive, grandchildren are reduced
+non-interactive composition previews, and deeper descendants are hidden. Immediate
+parent and sibling context remains dimly visible where screen space permits. A
+top-panel breadcrumb moves to ancestors; a separate **Return to map** control exits.
+Entering local view creates one browser-history state, while internal focus changes
+do not add history entries. Browser Back exits to the preserved interstellar view.
+
+Local view has no user camera pan, rotation, wheel zoom, pinch zoom, or double-click
+zoom. Browser magnification remains unmodified. Direct children retain DOM selection
+paths and practical independent pointer targets. Persistent collision-managed labels
+prioritize active, selected or focused, and hovered children before ordinary direct
+children. Active descendants remain discoverable through their reduced preview and
+ancestor path.
+
+Planets, dwarf planets, and moons use categorically sized textured WebGL spheres.
+Their fixed schematic orbital phase does not animate, while full-detail spheres may
+rotate slowly around a decorative axis unless reduced motion is requested. Asteroid
+and Kuiper belts use distinct particle annuli, and an Oort cloud uses a faint outer
+particle shell. These region particles are never individual locations or pick
+targets.
+
+Body surfaces come from validated local project-owned assets. A deterministic generic
+library provides multiple compatible variants per body class and kind. A projected
+body may optionally reference one registered body-surface texture to select a
+specific generic preset or dedicated custom surface; illustration assets and
+equirectangular body-surface assets have distinct validated roles. Surface selection,
+lighting, categorical size, axial rotation, and all local geometry are presentation
+only and do not become astronomy authority.
+
+Timeline and progress changes recompute the shared projection but do not
+automatically move a reader's local focus. They update every active marker. One
+available target exposes **Focus active location**; several expose a stable
+presentation-only **Active locations** list without inferring chronology from tied
+activity. The set reuses eligible location entities in the shared Chapter-mode or
+Date-mode narrative-activity index; it does not derive character presence or another
+activity authority. Non-rendered activity marks the nearest recognized ancestor, with
+a count when several targets collapse to it. If the focused path becomes ineligible,
+the view retreats to the nearest eligible ancestor or exits and announces the change.
+
+Desktop and compact layouts share the same hierarchy and focus state. Small viewports
+reduce sibling context, previews, and lower-priority labels before sacrificing the
+focused subtree. The view remains operable at 200% browser zoom, through DOM
+selection paths, and with WebGL unavailable for nonvisual inspection. The complete
+binding interaction and visual contract is `docs/design/guided-system-view.md`.
 
 ## 10. Responsive and accessible behavior
 
@@ -696,6 +779,17 @@ locations are explicitly unmapped roots with origin and destination references.
 Unknown or ambiguous book locations remain valid only when explicitly unmapped; they
 may appear in timelines and lists but not at invented map coordinates.
 
+Later flat locations with `parent_relation: "orbits"` may carry a positive
+safe-integer non-metric `orbital_order`. Zero-state children receive implicit keys in
+array order at `1024` intervals. Effective sibling keys must be unique. Introduction
+or reparenting omission appends after the maximum in `1024` increments; an empty set
+has maximum `0`, and stable location ID orders simultaneous omissions at successive
+increments. Ordinary update omission retains the effective key. An update may move a
+child with any unused positive safe integer and must explicitly renumber affected
+siblings if no integer gap remains. Leaving `orbits` clears the key. Projection
+derives `child_ids` by ascending effective key, and the key never represents distance
+or catalogue astronomy.
+
 Beginning with Chapter `1.16`, a source-described system survey is a deliberate
 exception to ordinary durable-location curation: every surveyed planet and dwarf
 planet is authored as a spoiler-projected location. Surveyed planets, dwarf planets,
@@ -710,10 +804,12 @@ Each surveyed body has at most four direct moon children. Exact counts author
 `min(count, 4)` children and a source statement of many moons authors four. Selection
 prefers named or distinctly described moons, then source-supported largest moons,
 then source order. Count-only children use `Moon 1` through `Moon 4` and stable
-parent-derived `-moon-01` through `-moon-04` suffixes. Their order is decorative
-inventory only: it asserts neither physical orbital order nor distance. The parent
-description retains the complete supported count or qualifier. A later unlinked name
-binds deterministically to the lowest anonymous ordinal, retaining its stable ID.
+parent-derived `-moon-01` through `-moon-04` suffixes. Under ADR-0020 their authored
+order is always the projected schematic inner-to-outer order; authoring may choose a
+deterministic invented order when the source does not establish one, without implying
+measured distance or catalogue astronomy. The parent description retains the
+complete supported count or qualifier. A later unlinked name binds deterministically
+to the lowest anonymous ordinal, retaining its stable ID.
 Survey-field eligibility is checked against complete effective location state:
 changing a body to an ineligible kind must atomically null-clear every retained survey
 field. Eligibility and moon cardinality are checked against each complete
@@ -748,10 +844,15 @@ references use the same registry, path, provenance, and validation rules. The
 zero-state source contains no asset files;
 any zero-state `description` or `state` value is original plain text, not measured
 astronomy data or rich text.
-The direct, unversioned asset registry maps each stable asset ID to one safe static path
-below `public/assets/` and a plain-text provenance note; its metadata is not chapter
-chronology, while `picture_id` assignments remain subject to the shared visibility
-policy.
+The direct, unversioned asset registry maps each stable asset ID to one safe static
+path below `public/assets/`, a plain-text provenance note, and a validated presentation
+role. Its metadata is not chapter chronology. `picture_id` assignments remain
+subject to the shared visibility policy and resolve only illustration assets.
+ADR-0020 adds body-surface assets and optional reader-projected
+`surface_texture_id` assignments for planets, dwarf planets, and moons. A surface
+assignment resolves only an equirectangular body-surface asset, may select a generic
+preset or a dedicated custom surface, and has no physical or astronomy-authority
+meaning.
 
 ## 13. LLM-assisted extraction
 

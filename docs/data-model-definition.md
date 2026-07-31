@@ -1331,6 +1331,10 @@ or other measured orbital facts. A planet or dwarf planet may have at most four 
 children. Non-orbital children, such as Las Vegas beneath Earth, retain their authored
 order but have no orbital-order meaning.
 
+Nested zero-state locations do not author a separate `orbital_order`; their child
+array is the ordering authority. Chapter-introduced or updated locations may use the
+flat non-metric ordering field defined below.
+
 The Solar-System completeness check is separate from JSON Schema structure validation.
 It requires Sol's child array to contain, in inner-to-outer order, exactly the eight
 planet IDs from Mercury through Neptune, plus the asteroid belt between Mars and
@@ -1594,6 +1598,24 @@ semantic parent table is:
 | `megastructure`                                                                | `locale`, `megastructure`                                              | `contained_in`             |
 | `locale`                                                                       | `locale`                                                               | `contained_in`             |
 
+Every effective location with `parent_relation: "orbits"` has an integer ordering key
+from `1` through `9007199254740991`. Nested zero-state child arrays assign implicit
+keys `1024`, `2048`, and so on. A flat introduction or update may carry the optional
+`orbital_order` field.
+Explicit and implicit effective sibling values share one numeric order and must be
+unique. Introduction or reparenting omission appends after the effective maximum in
+`1024` increments. The maximum of an empty effective sibling set is `0`, so the first
+omitted child receives `1024`; stable location ID orders several omissions at the
+same narrative moment at successive increments. Ordinary update omission retains the
+current key. An update may replace the value with any unused positive safe integer to
+insert or move a body; if no integer gap remains, the same authored change explicitly
+renumbers affected siblings. Moving away from `orbits` removes the effective key.
+Non-integer, non-positive, unsafe, overflowing, and duplicate values fail source-aware
+semantic validation. Projection derives each parent's ordered `child_ids` by
+ascending effective key.
+`orbital_order` is neither distance nor a measured astronomy fact and is not rendered
+as a number.
+
 `transit` is always an unmapped root. It requires `origin_location_id` and
 `destination_location_id`, each resolving to a distinct non-transit location; it has
 neither a containment parent nor an astronomy reference. The second validation layer
@@ -1629,11 +1651,13 @@ evidence creates `min(count, 4)` children, while “many moons” creates four. 
 prefers named or distinctly described moons, then source-supported largest moons,
 then source order. Anonymous children use `Moon 1` through `Moon 4` and stable
 parent-derived suffixes `-moon-01` through `-moon-04`; the lowest collision-free
-suffix is used after named or distinct children. Their numbering and authoring order
-are decorative inventory, not physical orbital order or distance. The parent
-description retains the complete count or qualifier. Later unlinked names bind in
-source-mention order to the lowest anonymous ordinals without changing those IDs.
-Survey eligibility and the four-child cap are evaluated on each complete
+suffix is used after named or distinct children. Under ADR-0020, their authored order
+is always the projected schematic inner-to-outer order. When no physical order is
+supported, authoring may choose a deterministic invented order; it remains
+non-metric presentation and does not assert measured distance or catalogue astronomy.
+The parent description retains the complete count or qualifier. Later unlinked names
+bind in source-mention order to the lowest anonymous ordinals without changing those
+IDs. Survey eligibility and the four-child cap are evaluated on each complete
 reader-visible story-time projection, not by mutating one reader-order state.
 Same-chapter reparenting is therefore independent of update order, and a
 non-chronological chapter is checked at its effective story date.
