@@ -95,11 +95,15 @@ the identical listing below documents its shared definitions.
       "pattern": "^asset:[a-z0-9][a-z0-9-]*$",
       "description": "Globally unique reference to a manually curated asset."
     },
+    "asset_role": {
+      "enum": ["illustration", "body_surface"]
+    },
     "asset": {
       "type": "object",
-      "required": ["id", "path", "source"],
+      "required": ["id", "path", "source", "role"],
       "properties": {
         "id": { "$ref": "#/$defs/asset_id" },
+        "role": { "$ref": "#/$defs/asset_role" },
         "path": {
           "type": "string",
           "pattern": "^assets/(?:[A-Za-z0-9][A-Za-z0-9._-]*/)*[A-Za-z0-9][A-Za-z0-9._-]*$",
@@ -1359,9 +1363,10 @@ The initial `entities` array contains exactly `species:human`, named `Human`, wi
 his death event; chapter 1.1 introduces those records while resolving Robert's
 `species_id` to the seeded Human entity.
 
-`assets.json` is the sole direct registry of reusable static picture files. It has an
-unversioned root object with an `assets` array, which may be empty until the project
-adds its first image:
+`assets.json` is the sole direct registry of reusable static image files. Every entry
+has a required `role`: `illustration` for inspector or chapter images, or
+`body_surface` for local-system sphere textures. It has an unversioned root object
+with an `assets` array:
 
 ```json
 {
@@ -1369,8 +1374,8 @@ adds its first image:
 }
 ```
 
-Each entry requires an immutable `asset:` ID, a unique `path`, and a nonempty plain-text
-`source` provenance or rights note. `path` is relative to `public`, begins with
+Each entry requires an immutable `asset:` ID, a unique `path`, a role, and a nonempty
+plain-text `source` provenance or rights note. `path` is relative to `public`, begins with
 `assets/`, and may use nested directories such as `assets/characters/bob.webp`. It is
 not a URL: absolute paths, `.` or `..` path segments, query strings, and fragments are
 invalid. The schema intentionally accepts any filename extension. A registered path
@@ -1382,6 +1387,7 @@ chronology. Its `path` and `source` may be corrected there, while the `id` remai
 stable. A chapter-controlled entity `picture_id` references an asset ID, so assigning
 or changing a visible image remains spoiler-safe narrative state. Multiple entities may
 reference one asset ID, but no two asset IDs may register the same static path.
+`picture_id` resolves only an `illustration`; a `body_surface` is rejected.
 The chapter source record itself may also contain optional `picture_id`. It uses the
 same registry and validation rules, does not make the chapter a narrative entity, and
 is shown only when that exact chapter is eligible for Chapter-mode inspection.
@@ -1530,17 +1536,17 @@ Each entity type has a dedicated schema. The ratified contracts below cover char
 species, technologies, organizations, vessels, events, assets, and locations;
 later entity types must add their own contract before records of that type are authored.
 
-| Record                                      | Required initial contract                                                    | Derived rather than authored                                                            |
-| ------------------------------------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `character`                                 | `id`, `name`, and the optional fields in the ratified character contract     | last-known sighting; event history                                                      |
-| `star_system`                               | `id`, `kind: "star_system"`, name, and `astronomy_object_id` when mapped     | astronomical components and render facts; sublocations; last-known sightings and events |
-| `planet`, `dwarf_planet`, `moon`, `locale`, `megastructure` | `id`, `kind`, name, and parent where non-root                | sublocations; last-known sightings and events                                           |
-| `species`                                   | `id`, `name`, and the optional fields in the ratified species contract       | members and other reverse links                                                         |
-| `technology`                                | `id`, `name`, and optional original plain-text `description`                 | no relationships, ownership, physical, or rendering facts                               |
-| `organization`                              | `id`, `name`, optional original plain-text `description` and `current_state` | no membership, ownership, location, or asset facts                                      |
-| `vessel`                                    | `id`, `name`, optional original plain-text `description` and `current_state` | no separate instance/design layer, ownership, physical, or rendering facts              |
-| `event`                                     | `id`, `name`, and the optional fields in the ratified event contract         | location event list; participant event histories                                        |
-| `asset`                                     | `id`, path, and source                                                       | no visible assignment; assignments are entity values                                    |
+| Record                                                      | Required initial contract                                                    | Derived rather than authored                                                            |
+| ----------------------------------------------------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `character`                                                 | `id`, `name`, and the optional fields in the ratified character contract     | last-known sighting; event history                                                      |
+| `star_system`                                               | `id`, `kind: "star_system"`, name, and `astronomy_object_id` when mapped     | astronomical components and render facts; sublocations; last-known sightings and events |
+| `planet`, `dwarf_planet`, `moon`, `locale`, `megastructure` | `id`, `kind`, name, and parent where non-root                                | sublocations; last-known sightings and events                                           |
+| `species`                                                   | `id`, `name`, and the optional fields in the ratified species contract       | members and other reverse links                                                         |
+| `technology`                                                | `id`, `name`, and optional original plain-text `description`                 | no relationships, ownership, physical, or rendering facts                               |
+| `organization`                                              | `id`, `name`, optional original plain-text `description` and `current_state` | no membership, ownership, location, or asset facts                                      |
+| `vessel`                                                    | `id`, `name`, optional original plain-text `description` and `current_state` | no separate instance/design layer, ownership, physical, or rendering facts              |
+| `event`                                                     | `id`, `name`, and the optional fields in the ratified event contract         | location event list; participant event histories                                        |
+| `asset`                                                     | `id`, path, and source                                                       | no visible assignment; assignments are entity values                                    |
 
 Every present or future `description` and `state` field uses the shared schema types:
 an optional, nonempty plain string. `description` is an original reader-visible,
@@ -1637,7 +1643,7 @@ durable-location curation. Locations whose effective kind is `planet`,
 
 | Property             | Contract                                                             |
 | -------------------- | -------------------------------------------------------------------- |
-| `body_class`         | `rocky`, `icy`, `dwarf_planet`, `gas_giant`, or `ice_giant`         |
+| `body_class`         | `rocky`, `icy`, `dwarf_planet`, `gas_giant`, or `ice_giant`          |
 | `color`              | nonempty source-faithful free-form colour text                       |
 | `visual_description` | nonempty visible-appearance text                                     |
 | `surface_gravity_g`  | positive finite numeric surface gravity expressed in Earth gravities |
@@ -1651,6 +1657,14 @@ Earth-gravity values retain source precision. A source value in metres per secon
 evidence retains the original value and unit and reconciliation records the
 conversion. Qualitative gravity and every other supported measurement remain in
 `description`.
+
+The same eligible body kinds may separately carry `surface_texture_id`. This is
+presentation state rather than a survey observation or astronomy claim. It follows
+the same reader-order projection and nullable update semantics, resolves only a
+compatible registered `body_surface`, and must be cleared when a kind change makes
+the body ineligible. `orbital_order` is available only to flat location
+introductions and updates whose effective relationship is `orbits`; nested zero-state
+children continue to derive implicit keys from array order.
 
 One surveyed parent may have at most four direct moon children. Exact count-only
 evidence creates `min(count, 4)` children, while “many moons” creates four. Selection
@@ -1671,10 +1685,21 @@ non-chronological chapter is checked at its effective story date.
 ### Asset
 
 An asset is a direct `assets.json` registry record using the shared `asset` schema. Its
-required `id` is a stable `asset:` identifier; `path` and `source` are required direct
-metadata, not chapter updates. The registry contains no rendering dimensions, alt text,
-or external URLs. Image assignment belongs solely to an entity's optional
-chapter-controlled `picture_id` field.
+required `id` is a stable `asset:` identifier; `path`, `source`, and `role` are direct
+metadata, not chapter updates. Illustration assignment belongs solely to optional
+chapter-controlled `picture_id` fields.
+
+A `body_surface` additionally requires `projection: "equirectangular"`,
+`color_space: "srgb"`, explicit mipmap and generic-pool flags, a positive
+`selection_version`, compatible body kinds, and optional compatible body classes.
+The current validated library uses project-owned 512-by-256 SVGs. A planet,
+dwarf planet, or moon may carry optional spoiler-projected `surface_texture_id`; an
+update may replace or null-clear it. The ID must resolve to a compatible
+`body_surface`. An ineligible kind change clears the value in the same update.
+Absent assignments use stable-location hashing over the sorted compatible generic
+pool at selection version 1. Later assets use a later selection version until an
+explicit appearance migration, so extending the registry cannot silently reshuffle
+existing bodies. See `data/body-surfaces.md`.
 
 ### Character
 

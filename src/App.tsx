@@ -18,6 +18,14 @@ import {
 } from "./domain/galactic-starfield";
 import type { SelectionIdentity } from "./domain/selection";
 import type { StellarSystem } from "./domain/types";
+import {
+  focusPath as buildSystemFocusPath,
+  nearestSystemViewNode,
+  projectSystemView,
+  retreatSystemFocusPath,
+  type SystemActiveTarget,
+  type SystemViewModel,
+} from "./domain/system-view";
 import { DISPLAY_DISTANCE_UNIT } from "./domain/units";
 import { buildNarrativeBrowserGroups } from "./narrative/browser";
 import {
@@ -70,6 +78,12 @@ interface ApplicationProjection {
 interface InspectorHistory {
   entries: readonly SelectionIdentity[];
   index: number;
+}
+interface SystemModeState {
+  systemId: string;
+  focusPath: readonly string[];
+  preEntrySelection: SelectionIdentity | null;
+  preEntryInspectorHistory: InspectorHistory;
 }
 const EMPTY_INSPECTOR_HISTORY: InspectorHistory = {
   entries: [],
@@ -212,10 +226,17 @@ export default function App() {
   const inspectorButton = useRef<HTMLButtonElement>(null);
   const timelineButton = useRef<HTMLButtonElement>(null);
   const mobilePanelElement = useRef<HTMLDivElement>(null);
+  const systemExitSelectionOverride = useRef<SelectionIdentity | undefined>(
+    undefined,
+  );
   const [webgl, setWebgl] = useState<"checking" | "ready" | "unsupported">(
     "checking",
   );
   const [resetToken, setResetToken] = useState(0);
+  const [systemMode, setSystemMode] = useState<SystemModeState | null>(null);
+  const [systemKeyboardFocusId, setSystemKeyboardFocusId] = useState<
+    string | null
+  >(null);
   const [applicationProjection, setApplicationProjection] = useState(() =>
     loadInitialProjection(systems),
   );
@@ -243,6 +264,13 @@ export default function App() {
     [meaningfulDateOptions],
   );
   const narrativeWorld = applicationProjection.world;
+  const projectedSystemView = useMemo<SystemViewModel | null>(
+    () =>
+      systemMode
+        ? projectSystemView(narrativeWorld, systemMode.systemId, progress.mode)
+        : null,
+    [narrativeWorld, progress.mode, systemMode],
+  );
   const selectedChapterDetail =
     selection?.kind === "chapter" &&
     applicationProjection.chapterDetail?.chapter === selection.id
@@ -279,6 +307,18 @@ export default function App() {
           .flatMap((group) => group.items)
           .find((item) => item.entity.id === selection.id) ?? null)
       : null;
+  const selectedEntrySystemView = useMemo(
+    () =>
+      selectedNarrativeItem?.entity.entity_type === "location" &&
+      selectedNarrativeItem.entity.kind === "star_system"
+        ? projectSystemView(
+            narrativeWorld,
+            selectedNarrativeItem.entity.id,
+            progress.mode,
+          )
+        : null,
+    [narrativeWorld, progress.mode, selectedNarrativeItem],
+  );
   const selectedMapId = focusSystemIdForSelection(
     selection,
     narrativeWorld,
@@ -303,6 +343,49 @@ export default function App() {
   useEffect(() => {
     persistReaderProgress(progress);
   }, [progress]);
+  useEffect(() => {
+    const leaveOnBack = () => {
+      if (!systemMode) return;
+      const override = systemExitSelectionOverride.current;
+      const exitSelection = override ?? systemMode.preEntrySelection;
+      setSelection(exitSelection);
+      setInspectorHistory(
+        override
+          ? rootInspectorHistory(override)
+          : systemMode.preEntryInspectorHistory,
+      );
+      systemExitSelectionOverride.current = undefined;
+      setSystemKeyboardFocusId(null);
+      setSelectionStatus("Returned to the interstellar map.");
+      setSystemMode(null);
+    };
+    window.addEventListener("popstate", leaveOnBack);
+    return () => window.removeEventListener("popstate", leaveOnBack);
+  }, [systemMode]);
+  useEffect(() => {
+    if (!systemMode) return;
+    if (!projectedSystemView) {
+      setSelection(systemMode.preEntrySelection);
+      setInspectorHistory(systemMode.preEntryInspectorHistory);
+      setSystemKeyboardFocusId(null);
+      setSystemMode(null);
+      setSelectionStatus(
+        "System view closed because its reader-visible composition is no longer eligible.",
+      );
+      if (window.history.state?.bobSystemView) window.history.back();
+      return;
+    }
+    const nextPath = retreatSystemFocusPath(
+      projectedSystemView,
+      systemMode.focusPath,
+    );
+    if (nextPath.join("\u0000") !== systemMode.focusPath.join("\u0000")) {
+      setSystemMode({ ...systemMode, focusPath: nextPath });
+      setSelectionStatus(
+        "System focus returned to the nearest reader-visible ancestor.",
+      );
+    }
+  }, [projectedSystemView, systemMode]);
 
   const invokerForPanel = useCallback(
     (
@@ -387,9 +470,143 @@ export default function App() {
     )
       setMobilePanel("inspector");
   };
+  const syncSystemFocusForSelection = (nextSelection: SelectionIdentity) => {
+    if (!projectedSystemView || nextSelection.kind !== "narrative") return;
+    const nearest = nearestSystemViewNode(
+      projectedSystemView,
+      narrativeWorld,
+      nextSelection.id,
+    );
+    if (nearest) {
+      setSystemMode((current) =>
+        current
+          ? {
+              ...current,
+              focusPath: buildSystemFocusPath(projectedSystemView, nearest),
+            }
+          : current,
+      );
+      return;
+    }
+    const destination = focusSystemIdForSelection(
+      nextSelection,
+      narrativeWorld,
+      contextSystemIds,
+    );
+    if (destination && destination !== projectedSystemView.astronomyId) {
+      systemExitSelectionOverride.current = nextSelection;
+      if (window.history.state?.bobSystemView) window.history.back();
+      else setSystemMode(null);
+    }
+  };
   const selectExternalObject = (nextSelection: SelectionIdentity) => {
     setInspectorHistory(rootInspectorHistory(nextSelection));
     showSelection(nextSelection);
+    syncSystemFocusForSelection(nextSelection);
+  };
+  const enterSelectedSystem = () => {
+    if (!selectedEntrySystemView) return;
+    const next: SystemModeState = {
+      systemId: selectedEntrySystemView.systemId,
+      focusPath: [selectedEntrySystemView.systemId],
+      preEntrySelection: selection,
+      preEntryInspectorHistory: inspectorHistory,
+    };
+    window.history.pushState(
+      { ...(window.history.state ?? {}), bobSystemView: true },
+      "",
+    );
+    setSystemMode(next);
+    setSystemKeyboardFocusId(null);
+    setMobilePanel(null);
+    setSelectionStatus(
+      `${String(selectedEntrySystemView.nodes.get(next.systemId)?.entity.name)} system view entered.`,
+    );
+  };
+  const returnToMap = () => {
+    if (!systemMode) return;
+    if (window.history.state?.bobSystemView) {
+      window.history.back();
+    } else {
+      setSelection(systemMode.preEntrySelection);
+      setInspectorHistory(systemMode.preEntryInspectorHistory);
+      setSystemKeyboardFocusId(null);
+      setSystemMode(null);
+      setSelectionStatus("Returned to the interstellar map.");
+    }
+  };
+  const focusSystemNode = (id: string) => {
+    if (!projectedSystemView || !projectedSystemView.nodes.has(id)) return;
+    const entity = projectedSystemView.nodes.get(id)!.entity;
+    const nextSelection: SelectionIdentity = { kind: "narrative", id };
+    setSelection(nextSelection);
+    setInspectorHistory(rootInspectorHistory(nextSelection));
+    setSystemMode((current) =>
+      current
+        ? {
+            ...current,
+            focusPath: buildSystemFocusPath(projectedSystemView, id),
+          }
+        : current,
+    );
+    setSelectionStatus(
+      `${String(entity.name)} selected in schematic system view.`,
+    );
+  };
+  const focusSystemAncestor = (id: string) => {
+    if (!projectedSystemView || !projectedSystemView.nodes.has(id)) return;
+    setSystemMode((current) =>
+      current
+        ? {
+            ...current,
+            focusPath: buildSystemFocusPath(projectedSystemView, id),
+          }
+        : current,
+    );
+    setSelectionStatus(
+      `${String(projectedSystemView.nodes.get(id)!.entity.name)} ancestor view restored.`,
+    );
+  };
+  const selectActiveSystemTarget = (target: SystemActiveTarget) => {
+    if (!projectedSystemView) return;
+    const nextSelection: SelectionIdentity = {
+      kind: "narrative",
+      id: target.id,
+    };
+    setSelection(nextSelection);
+    setInspectorHistory(rootInspectorHistory(nextSelection));
+    if (target.visualNodeId) {
+      setSystemMode((current) =>
+        current
+          ? {
+              ...current,
+              focusPath: buildSystemFocusPath(
+                projectedSystemView,
+                target.visualNodeId!,
+              ),
+            }
+          : current,
+      );
+      setSelectionStatus(
+        `${target.displayName} selected as an active location.`,
+      );
+      return;
+    }
+    if (
+      target.mappedSystemId &&
+      target.mappedSystemId !== projectedSystemView.systemId
+    ) {
+      systemExitSelectionOverride.current = nextSelection;
+      setSelectionStatus(
+        `${target.displayName} selected; returning to its mapped system.`,
+      );
+      if (window.history.state?.bobSystemView) window.history.back();
+      else setSystemMode(null);
+      return;
+    }
+    setSelectionStatus(
+      `${target.displayName} selected for inspection; no local geometry is available.`,
+    );
   };
   const selectInspectorRelationship = (nextSelection: SelectionIdentity) => {
     setInspectorHistory((current) => {
@@ -409,6 +626,7 @@ export default function App() {
       };
     });
     showSelection(nextSelection);
+    syncSystemFocusForSelection(nextSelection);
   };
   const navigateInspectorHistory = (offset: -1 | 1) => {
     const nextIndex = inspectorHistory.index + offset;
@@ -649,6 +867,7 @@ export default function App() {
           </button>
           <button
             className="button quiet"
+            disabled={Boolean(systemMode)}
             onClick={() => setResetToken((value) => value + 1)}
           >
             Reset view
@@ -680,8 +899,39 @@ export default function App() {
         <section
           id="map-stage"
           className="map-frame"
-          aria-label="Interactive three dimensional nearby stellar-system map"
+          aria-label={
+            systemMode
+              ? "Guided schematic stellar-system view"
+              : "Interactive three dimensional nearby stellar-system map"
+          }
         >
+          {projectedSystemView && systemMode && (
+            <nav
+              className="system-view-navigation"
+              aria-label="System view breadcrumb"
+            >
+              <button className="button return-map" onClick={returnToMap}>
+                Return to map
+              </button>
+              <ol>
+                {systemMode.focusPath.map((id) => {
+                  const node = projectedSystemView.nodes.get(id);
+                  return node ? (
+                    <li key={id}>
+                      <button
+                        onClick={() => focusSystemAncestor(id)}
+                        onFocus={() => setSystemKeyboardFocusId(id)}
+                        onBlur={() => setSystemKeyboardFocusId(null)}
+                      >
+                        {String(node.entity.name)}
+                      </button>
+                    </li>
+                  ) : null;
+                })}
+              </ol>
+              <p>Schematic view · orbital spacing is not to scale</p>
+            </nav>
+          )}
           {mapProjection.missingAstronomySystemIds.size > 0 ? (
             <div className="map-state error-state">
               <h2>Astronomy coverage unavailable</h2>
@@ -728,6 +978,14 @@ export default function App() {
                   }}
                   onReady={() => undefined}
                   onScaleChange={updateMapScale}
+                  systemView={projectedSystemView}
+                  systemFocusId={systemMode?.focusPath.at(-1) ?? null}
+                  narrativeSelectedId={
+                    selection?.kind === "narrative" ? selection.id : null
+                  }
+                  systemKeyboardFocusedId={systemKeyboardFocusId}
+                  assets={narrativeCorpus.assets}
+                  onSystemSelect={focusSystemNode}
                 />
               )}
             </>
@@ -735,7 +993,10 @@ export default function App() {
           <span className="map-narrative-badge" aria-live="polite">
             {viewStatus}
           </span>
-          <div className="map-overlay">
+          <div
+            className={`map-overlay ${systemMode ? "system-mode-hidden" : ""}`}
+            aria-hidden={Boolean(systemMode)}
+          >
             <span
               className="scale-line"
               style={{ width: `${mapScale.pixelWidth}px` }}
@@ -750,6 +1011,75 @@ export default function App() {
                 : "Pre-book projection"}
             </span>
           </div>
+          {projectedSystemView && systemMode && (
+            <section
+              className="system-view-dom"
+              aria-label="Visible system objects"
+            >
+              <h2>Guided focus</h2>
+              <ul>
+                {(
+                  projectedSystemView.nodes.get(systemMode.focusPath.at(-1)!)
+                    ?.childIds ?? []
+                ).map((id) => (
+                  <li key={id}>
+                    <button
+                      onClick={() => focusSystemNode(id)}
+                      onFocus={() => setSystemKeyboardFocusId(id)}
+                      onBlur={() => setSystemKeyboardFocusId(null)}
+                    >
+                      {String(projectedSystemView.nodes.get(id)?.entity.name)}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              {(() => {
+                const focusedId = systemMode.focusPath.at(-1);
+                const activeTargets = projectedSystemView.activeTargets.filter(
+                  (target) => target.visualNodeId !== focusedId,
+                );
+                if (activeTargets.length === 1) {
+                  return (
+                    <button
+                      onClick={() =>
+                        selectActiveSystemTarget(activeTargets[0]!)
+                      }
+                      onFocus={() =>
+                        setSystemKeyboardFocusId(activeTargets[0]!.visualNodeId)
+                      }
+                      onBlur={() => setSystemKeyboardFocusId(null)}
+                    >
+                      Focus active location
+                    </button>
+                  );
+                }
+                if (activeTargets.length > 1) {
+                  return (
+                    <div className="active-location-list">
+                      <h2>Active locations</h2>
+                      <ul>
+                        {activeTargets.map((target) => (
+                          <li key={target.id}>
+                            <button
+                              onClick={() => selectActiveSystemTarget(target)}
+                              onFocus={() =>
+                                setSystemKeyboardFocusId(target.visualNodeId)
+                              }
+                              onBlur={() => setSystemKeyboardFocusId(null)}
+                            >
+                              {target.displayName}
+                              <small>{target.hierarchyPath}</small>
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
+            </section>
+          )}
         </section>
         <aside className="right-rail" aria-label="Object inspector">
           <ObjectInspector
@@ -769,6 +1099,8 @@ export default function App() {
             onBack={() => navigateInspectorHistory(-1)}
             onForward={() => navigateInspectorHistory(1)}
             onSelect={selectInspectorRelationship}
+            canEnterSystem={Boolean(selectedEntrySystemView && !systemMode)}
+            onEnterSystem={enterSelectedSystem}
           />
         </aside>
       </section>
@@ -858,6 +1190,8 @@ export default function App() {
                 onBack={() => navigateInspectorHistory(-1)}
                 onForward={() => navigateInspectorHistory(1)}
                 onSelect={selectInspectorRelationship}
+                canEnterSystem={Boolean(selectedEntrySystemView && !systemMode)}
+                onEnterSystem={enterSelectedSystem}
               />
             ) : (
               <>

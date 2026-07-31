@@ -20,6 +20,7 @@ describe("atlas shell", () => {
   });
   beforeEach(() => {
     window.localStorage.clear();
+    window.history.replaceState(null, "", "/");
     vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(null);
   });
 
@@ -31,14 +32,214 @@ describe("atlas shell", () => {
         "Select a map marker or browser item to inspect its reader-safe details.",
       ),
     ).toBeInTheDocument();
-    await user.click(
-      screen.getByRole("button", { name: /^Solar System(?:Active)?$/ }),
-    );
+    await user.click(screen.getByRole("button", { name: /^Solar System/ }));
     expect(
       screen.getByRole("heading", { name: "Solar System" }),
     ).toBeInTheDocument();
     expect(screen.getByText(/WebGL unavailable/i)).toBeInTheDocument();
     expect(screen.queryByText("Astronomy systems")).not.toBeInTheDocument();
+  });
+
+  it("enters and exits the same guided hierarchy through DOM controls", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(
+      screen.getByRole("button", { name: /^Solar System(?:Active)?$/ }),
+    );
+    await user.click(screen.getByRole("button", { name: "Enter system" }));
+
+    const breadcrumb = screen.getByRole("navigation", {
+      name: "System view breadcrumb",
+    });
+    expect(within(breadcrumb).getByText("Solar System")).toBeInTheDocument();
+    expect(
+      screen.getByRole("region", { name: "Visible system objects" }),
+    ).toBeInTheDocument();
+    await user.click(
+      within(
+        screen.getByRole("region", { name: "Visible system objects" }),
+      ).getByRole("button", { name: "Sol" }),
+    );
+    expect(within(breadcrumb).getByText("Sol")).toBeInTheDocument();
+    const inspector = screen.getByRole("complementary", {
+      name: "Object inspector",
+    });
+    expect(
+      within(inspector).getByRole("heading", { level: 2, name: "Sol" }),
+    ).toBeInTheDocument();
+    await user.click(
+      within(breadcrumb).getByRole("button", { name: "Solar System" }),
+    );
+    expect(
+      within(inspector).getByRole("heading", { level: 2, name: "Sol" }),
+    ).toBeInTheDocument();
+
+    await user.click(
+      within(breadcrumb).getByRole("button", { name: "Return to map" }),
+    );
+    await waitFor(() =>
+      expect(
+        screen.queryByRole("navigation", { name: "System view breadcrumb" }),
+      ).not.toBeInTheDocument(),
+    );
+    expect(
+      screen.getByRole("heading", { level: 2, name: "Solar System" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Enter system" }),
+    ).toBeInTheDocument();
+  });
+
+  it("offers one active target and exits to its mapped system", async () => {
+    window.localStorage.setItem(
+      "bobiverse.app-state.v1",
+      JSON.stringify({
+        furthestChapterRead: "1.14",
+        viewChapter: "1.14",
+        displayDate: "2144",
+        mode: "chapter",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: /^Solar System/ }));
+    await user.click(screen.getByRole("button", { name: "Enter system" }));
+
+    await user.click(
+      screen.getByRole("button", { name: "Focus active location" }),
+    );
+
+    await waitFor(() =>
+      expect(
+        screen.queryByRole("navigation", { name: "System view breadcrumb" }),
+      ).not.toBeInTheDocument(),
+    );
+    expect(
+      screen.getByRole("heading", { level: 2, name: "Epsilon Eridani" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/returned to the interstellar map/i),
+    ).toBeInTheDocument();
+  });
+
+  it("keeps an ordinary browser selection while exiting to another mapped system", async () => {
+    window.localStorage.setItem(
+      "bobiverse.app-state.v1",
+      JSON.stringify({
+        furthestChapterRead: "1.14",
+        viewChapter: "1.14",
+        displayDate: "2144",
+        mode: "chapter",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: /^Solar System/ }));
+    await user.click(screen.getByRole("button", { name: "Enter system" }));
+
+    await user.click(
+      screen.getAllByRole("button", { name: /^Epsilon EridaniActive$/ })[0]!,
+    );
+
+    await waitFor(() =>
+      expect(
+        screen.queryByRole("navigation", { name: "System view breadcrumb" }),
+      ).not.toBeInTheDocument(),
+    );
+    expect(
+      screen.getByRole("heading", { level: 2, name: "Epsilon Eridani" }),
+    ).toBeInTheDocument();
+  });
+
+  it("presents every simultaneous active location as a stable plural list", async () => {
+    window.localStorage.setItem(
+      "bobiverse.app-state.v1",
+      JSON.stringify({
+        furthestChapterRead: "1.18",
+        viewChapter: "1.18",
+        displayDate: "2145",
+        mode: "chapter",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(
+      screen.getByRole("button", { name: /^Solar System(?:Active)?$/ }),
+    );
+    await user.click(screen.getByRole("button", { name: "Enter system" }));
+
+    const list = screen.getByRole("heading", {
+      name: "Active locations",
+    }).parentElement!;
+    const choices = within(list).getAllByRole("button");
+    expect(choices.map((choice) => choice.textContent)).toEqual([
+      "Beta HydriBeta Hydri",
+      "Delta EridaniDelta Eridani",
+      "Epsilon EridaniEpsilon Eridani",
+      "SolSolar System / Sol",
+    ]);
+  });
+
+  it("retains focus for a non-rendered selection and exits an ineligible projection", async () => {
+    window.localStorage.setItem(
+      "bobiverse.app-state.v1",
+      JSON.stringify({
+        furthestChapterRead: "1.16",
+        viewChapter: "1.16",
+        displayDate: "2144",
+        mode: "chapter",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(
+      screen.getAllByRole("button", { name: /^Epsilon EridaniActive$/ })[0]!,
+    );
+    await user.click(screen.getByRole("button", { name: "Enter system" }));
+    const guided = screen.getByRole("region", {
+      name: "Visible system objects",
+    });
+    await user.click(
+      within(guided).getByRole("button", {
+        name: "Epsilon Eridani",
+      }),
+    );
+    await user.click(screen.getAllByRole("button", { name: /^BobActive/ })[0]!);
+    const breadcrumb = screen.getByRole("navigation", {
+      name: "System view breadcrumb",
+    });
+    expect(
+      within(breadcrumb).getAllByRole("button", {
+        name: "Epsilon Eridani",
+      }),
+    ).toHaveLength(2);
+    expect(
+      screen.getByRole("heading", { level: 2, name: "Bob" }),
+    ).toBeInTheDocument();
+
+    await user.selectOptions(
+      screen.getByLabelText("Knowledge through"),
+      "1.15",
+    );
+    await waitFor(() =>
+      expect(
+        screen.queryByRole("navigation", { name: "System view breadcrumb" }),
+      ).not.toBeInTheDocument(),
+    );
+    expect(
+      screen.getByText(/composition is no longer eligible/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 2, name: "Epsilon Eridani" }),
+    ).toBeInTheDocument();
   });
 
   it("renders actionable content when the narrative projection is invalid", () => {

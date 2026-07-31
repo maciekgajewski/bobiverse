@@ -169,6 +169,31 @@ with the explicit **Not story-known at this view** status. Narrative selections 
 only when they provide one unambiguous mapped system; unmapped and locationless
 objects remain inspectable without moving the camera.
 
+### Guided system view
+
+Select a reader-visible mapped stellar system with meaningful projected composition,
+then use **Enter system** in its inspector. The same map canvas retains the Galactic
+backdrop and dimmed interstellar context while opening a deliberately schematic local
+hierarchy. Select the current node's children through the scene or the equivalent
+**Guided focus** DOM controls. Breadcrumbs move to entered ancestors; **Return to
+map** or browser Back exits without replaying internal focus steps and restores the
+captured interstellar view.
+
+The system overview exposes component stars, a star exposes its ordered bodies and
+regions, and a planet exposes its moons. One reduced preview level remains visible,
+but previews are not pick targets. Local pan, orbit, wheel/pinch, and double-click
+zoom are disabled; browser magnification remains available. Orbital spacing, body
+size, phase, and rotation are decorative and never appear as measurements. Active
+locations use the existing chapter/date activity projection and do not force camera
+motion after timeline changes.
+
+Planets, dwarf planets, and moons use validated project-owned body-surface textures.
+An optional reader-projected dedicated surface overrides stable generic selection.
+See [body-surface assets](docs/data/body-surfaces.md) for role, provenance, format,
+seam-review, and extension rules. At compact widths and 200% browser zoom, the same
+hierarchy and controls reflow inside the map-first shell. If WebGL is unavailable,
+the DOM hierarchy and inspector remain usable without showing a false 3D result.
+
 The ignored runtime manifest is generated, never hand-edited. Normal `npm run dev`,
 `npm run build`, and test paths create it. To generate it explicitly, run:
 

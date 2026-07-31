@@ -26,6 +26,7 @@ const VERTEX_SHADER = `
 
 const FRAGMENT_SHADER = `
   uniform vec3 uCameraPosition;
+  uniform float uModeOpacity;
   varying vec3 vWorldPosition;
   #include <common>
 
@@ -50,14 +51,14 @@ const FRAGMENT_SHADER = `
       axisLine * ${GALACTIC_GRID_AXIS_STRENGTH.toFixed(2)}
     );
     vec3 color = mix(vec3(0.039, 0.078, 0.137), vec3(0.082, 0.157, 0.263), axisLine);
-    gl_FragColor = vec4(color, line * fade * grazing);
+    gl_FragColor = vec4(color, line * fade * grazing * uModeOpacity);
     #include <tonemapping_fragment>
     #include <colorspace_fragment>
   }
 `;
 
 /** A non-pickable one-unit Galactic-plane grid that fades away from the camera. */
-export function GalacticPlaneGrid() {
+export function GalacticPlaneGrid({ opacity = 1 }: { opacity?: number }) {
   const material = useRef<ShaderMaterial>(null);
 
   useFrame(({ camera }) => {
@@ -72,7 +73,10 @@ export function GalacticPlaneGrid() {
         transparent
         depthWrite={false}
         side={GALACTIC_GRID_MATERIAL_SIDE}
-        uniforms={{ uCameraPosition: { value: new Vector3() } }}
+        uniforms={{
+          uCameraPosition: { value: new Vector3() },
+          uModeOpacity: { value: opacity },
+        }}
         vertexShader={VERTEX_SHADER}
         fragmentShader={FRAGMENT_SHADER}
       />

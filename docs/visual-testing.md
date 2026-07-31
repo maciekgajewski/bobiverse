@@ -8,9 +8,9 @@ npm run test:e2e
 ```
 
 Playwright writes reports to `playwright-report/` and retains screenshot, trace, and
-video artifacts for failed tests under `test-results/`. Tests within each browser
-project run serially to avoid exhausting headless software-WebGL resources; Chromium,
-Firefox, and WebKit projects still run as separate required targets. Chromium and
+video artifacts for failed tests under `test-results/`. Tests and browser projects
+run serially to avoid exhausting headless software-WebGL resources; Chromium,
+Firefox, and WebKit remain separate required targets. Chromium and
 WebKit use their headless modes. This host's Firefox headless mode does not expose a
 WebGL context, so the Firefox project runs headed inside the disposable Xvfb display
 created by `xvfb-run -a`; `npx playwright install --with-deps` supplies that system
@@ -386,6 +386,44 @@ fixed light-year presentation change. The unit selector is removed, and displaye
 interstellar distances, Galactic coordinate components, hover separations, and map
 scale remain in light-years. This does not alter the project-wide Safari
 pre-publication gap.
+
+## Guided schematic system view
+
+Start `npm run dev` and use real supported desktop and phone browsers. Select **Solar
+System**, enter it, and confirm the selected stellar marker unfolds without a blank
+frame while the accepted Galactic backdrop stays fixed and other systems remain
+faint, unlabeled, and non-pickable. Drill from Solar System through Sol, Earth, and
+Moon; separately focus the Asteroid Belt, Kuiper Belt, and Oort Cloud. Confirm direct
+children are full-detail and selectable, grandchildren are smaller non-interactive
+previews, deeper descendants are absent, and breadcrumbs contain only the entered
+path.
+
+Before entry, record a visibly non-default interstellar camera pose and selection.
+Exercise **Return to map** and browser Back after several internal focus changes.
+Both exits must restore the exact pose, target, selection, captions, overlays,
+picking, and controls with one Back step. Change chapter/date while focused and
+confirm active treatments update without camera following; also verify ancestor
+fallback or atomic exit when projected eligibility disappears.
+
+Repeat at wide desktop, compact desktop, a phone viewport, short height, and 200%
+browser zoom. Use canvas picking and every equivalent DOM control with keyboard only.
+Targets remain at least 44 CSS pixels on phone, the focused subtree and active path
+remain legible, attribution and inspector access remain reachable, and the page gains
+no horizontal scroll. Disable WebGL and confirm the hierarchy and inspector still
+work without a false composition. Enable reduced motion before loading and confirm
+entry/focus travel and axial rotation are absent while status, focus, and history
+semantics remain intact.
+
+Inspect both variants in every rocky, icy, dwarf-planet, gas-giant, and ice-giant
+surface family on spheres. Check left/right seams, polar pinching, flatness,
+repetition, lighting, mipmap shimmer, and class readability. Rotation must be subtle
+and full-detail only. Confirm asteroid and Kuiper annuli remain distinct and the Oort
+shell fades enough not to obscure inner focus. Local spacing and categorical sizes
+must read as an explicit schematic, never measured orbital geometry.
+
+Automated screenshots are diagnostic only. BOB-20260731-ACPTAB remains `In progress`
+until the Captain records desktop and mobile real-browser acceptance. Real Safari
+remains an explicit pre-publication gap when no Apple workstation is available.
 
 ## Default and reset camera
 

@@ -1,6 +1,6 @@
 # BOB-20260731-ACPTAB: guided schematic stellar-system view
 
-Status: Ready
+Status: In progress
 Phase: 3 (exploration tools)
 Last updated: 2026-07-31
 

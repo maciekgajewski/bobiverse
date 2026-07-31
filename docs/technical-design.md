@@ -525,6 +525,26 @@ focused subtree. The view remains operable at 200% browser zoom, through DOM
 selection paths, and with WebGL unavailable for nonvisual inspection. The complete
 binding interaction and visual contract is `docs/design/guided-system-view.md`.
 
+The implementation boundary is `src/domain/system-view.ts`: it consumes one
+`NarrativeWorld`, filters recognized nodes while preserving projected `child_ids`,
+maps current shared activity to recognized ancestors, resolves fallback focus paths,
+and emits deterministic responsive layout items. `App.tsx` owns transient entered
+system and breadcrumb state plus the single browser-history entry. `MapScene` keeps
+one Canvas and the permanent `GalacticStarfield`, captures and restores the
+interstellar camera/target, disables `OrbitControls` in local mode, and mounts
+`SystemViewScene` only while entered. That scene renders full interactive children,
+non-raycast previews, textured sphere bodies, region geometry, independent pick
+targets, active/selected treatments, and slow reduced-motion-aware axial rotation.
+The ordinary DOM hierarchy beside the canvas is the keyboard and WebGL-unavailable
+navigation authority; it never pretends the visual composition rendered.
+
+Generic texture choice uses stable location-ID hashing over the compatible sorted
+selection-version-1 pool. The registry validator enforces role isolation, local
+existence, 512-by-256 SVG dimensions, equirectangular/sRGB metadata, mipmap intent,
+compatibility, and provenance. Future pool extensions use a later selection version
+until an explicit appearance migration. Asset production and review rules are in
+`docs/data/body-surfaces.md`.
+
 ## 10. Responsive and accessible behavior
 
 Desktop provides the richest layout and may present the browser, map, details, and

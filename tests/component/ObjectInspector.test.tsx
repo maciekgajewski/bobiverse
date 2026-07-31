@@ -154,6 +154,7 @@ describe("object inspector", () => {
           assets: [
             {
               id: "asset:fixture-chapter",
+              role: "illustration",
               path: "assets/fixture-chapter.webp",
               source: "Test-only chapter illustration.",
             },
@@ -258,6 +259,7 @@ describe("object inspector", () => {
           assets: [
             {
               id: "asset:fixture-chapter",
+              role: "illustration",
               path: "assets/fixture-chapter.webp",
               source: "Test-only chapter illustration.",
             },

@@ -112,6 +112,8 @@ function NarrativeDetails({
   assets,
   headingId,
   onSelect,
+  canEnterSystem,
+  onEnterSystem,
 }: {
   item: NarrativeBrowserItem;
   world: NarrativeWorld;
@@ -119,6 +121,8 @@ function NarrativeDetails({
   assets: NarrativeRecord;
   headingId: string;
   onSelect: (selection: SelectionIdentity) => void;
+  canEnterSystem: boolean;
+  onEnterSystem: () => void;
 }) {
   const { entity } = item;
   const name = String(entity.name);
@@ -160,6 +164,11 @@ function NarrativeDetails({
       <h2 id={headingId}>{name}</h2>
       {aliases.length > 0 && <p className="aliases">{aliases.join(" · ")}</p>}
       <p className="object-status">{status.join(" · ")}</p>
+      {canEnterSystem && (
+        <button className="button enter-system" onClick={onEnterSystem}>
+          Enter system
+        </button>
+      )}
       {recency && <p className="recency-context">{recency}</p>}
       <Picture
         pictureId={stringValue(entity.picture_id)}
@@ -473,6 +482,8 @@ export function ObjectInspector({
   onBack = () => undefined,
   onForward = () => undefined,
   onSelect,
+  canEnterSystem = false,
+  onEnterSystem = () => undefined,
 }: {
   selection: SelectionIdentity | null;
   narrativeItem: NarrativeBrowserItem | null;
@@ -487,6 +498,8 @@ export function ObjectInspector({
   onBack?: () => void;
   onForward?: () => void;
   onSelect: (selection: SelectionIdentity) => void;
+  canEnterSystem?: boolean;
+  onEnterSystem?: () => void;
 }) {
   if (!selection)
     return (
@@ -526,6 +539,8 @@ export function ObjectInspector({
         assets={assets}
         headingId={headingId}
         onSelect={onSelect}
+        canEnterSystem={canEnterSystem}
+        onEnterSystem={onEnterSystem}
       />,
     );
   if (selection.kind === "astronomy") {

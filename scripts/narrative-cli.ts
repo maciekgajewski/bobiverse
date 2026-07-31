@@ -159,6 +159,31 @@ async function assertAssetFiles(assetsSource: LoadedJson): Promise<void> {
         `Registered asset does not exist as a regular file: ${asset.path}.`,
       );
     }
+    if (asset.role === "body_surface") {
+      const contents = await readFile(assetPath, "utf8");
+      const startEdge = contents.match(
+        /<rect\b[^>]*data-seam-edge="start"[^>]*\bx="0"[^>]*\bwidth="4"[^>]*\bheight="256"[^>]*\bfill="([^"]+)"/,
+      );
+      const endEdge = contents.match(
+        /<rect\b[^>]*data-seam-edge="end"[^>]*\bx="508"[^>]*\bwidth="4"[^>]*\bheight="256"[^>]*\bfill="([^"]+)"/,
+      );
+      if (
+        !asset.path.endsWith(".svg") ||
+        !/<svg\b[^>]*\bwidth="512"[^>]*\bheight="256"[^>]*\bviewBox="0 0 512 256"/.test(
+          contents,
+        ) ||
+        !/<svg\b[^>]*\bdata-seam-mode="matched-edge-strips"/.test(contents) ||
+        !startEdge ||
+        !endEdge ||
+        startEdge[1] !== endEdge[1]
+      ) {
+        throw errorAt(
+          assetsSource,
+          `/assets/${index}/path`,
+          `Body surface must be a 512 by 256 equirectangular SVG with matched horizontal edge strips: ${asset.path}.`,
+        );
+      }
+    }
   }
 }
 

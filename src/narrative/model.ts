@@ -12,6 +12,90 @@ export interface NarrativeCorpus {
   knownAstronomyObjectIds: readonly string[];
 }
 
+export interface NarrativeAsset extends NarrativeRecord {
+  id: string;
+  path: string;
+  source: string;
+  role: "illustration" | "body_surface";
+}
+
+export const GENERIC_SURFACE_SELECTION_VERSION = 1;
+
+export function narrativeAssets(registry: NarrativeRecord): NarrativeAsset[] {
+  return (Array.isArray(registry.assets) ? registry.assets : []).filter(
+    (candidate): candidate is NarrativeAsset =>
+      Boolean(
+        candidate && typeof candidate === "object" && !Array.isArray(candidate),
+      ),
+  );
+}
+
+function stableStringHash(value: string): number {
+  let hash = 2166136261;
+  for (let index = 0; index < value.length; index += 1) {
+    hash ^= value.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+}
+
+export function isBodySurfaceCompatible(
+  asset: NarrativeAsset,
+  body: NarrativeEntity,
+): boolean {
+  if (asset.role !== "body_surface") return false;
+  const kinds = Array.isArray(asset.compatible_kinds)
+    ? asset.compatible_kinds
+    : [];
+  if (!kinds.includes(body.kind)) return false;
+  const classes = Array.isArray(asset.compatible_body_classes)
+    ? asset.compatible_body_classes
+    : [];
+  return (
+    typeof body.body_class !== "string" || classes.includes(body.body_class)
+  );
+}
+
+/** Resolves an explicit surface or the stable version-one generic pool. */
+export function selectBodySurfaceAsset(
+  body: NarrativeEntity,
+  registry: NarrativeRecord,
+): NarrativeAsset | null {
+  const assets = narrativeAssets(registry);
+  if (typeof body.surface_texture_id === "string") {
+    return (
+      assets.find(
+        (asset) =>
+          asset.id === body.surface_texture_id &&
+          isBodySurfaceCompatible(asset, body),
+      ) ?? null
+    );
+  }
+  const compatible = assets
+    .filter(
+      (asset) =>
+        asset.generic === true &&
+        asset.selection_version === GENERIC_SURFACE_SELECTION_VERSION &&
+        isBodySurfaceCompatible(asset, body),
+    )
+    .sort((left, right) => left.id.localeCompare(right.id));
+  if (compatible.length === 0) return null;
+  return compatible[stableStringHash(body.id) % compatible.length]!;
+}
+
+export function bodySurfaceRequestPath(
+  body: NarrativeEntity,
+  registry: NarrativeRecord,
+): string {
+  const asset = selectBodySurfaceAsset(body, registry);
+  if (!asset) {
+    throw new Error(
+      `No compatible registered body-surface asset exists for ${body.id}.`,
+    );
+  }
+  return `/${asset.path}`;
+}
+
 declare const preparedNarrativeCorpusBrand: unique symbol;
 
 export interface PreparedNarrativeCorpus extends NarrativeCorpus {
@@ -254,6 +338,7 @@ function flattenZeroStateLocation(
   location: NarrativeRecord,
   parentLocationId: string | null,
   result: NarrativeEntity[],
+  implicitOrbitalOrder?: number,
 ): void {
   const id = asString(location.id, "Zero-state location ID");
   const flattened: NarrativeEntity = {
@@ -263,17 +348,22 @@ function flattenZeroStateLocation(
   };
   delete flattened.children;
   if (parentLocationId) flattened.parent_location_id = parentLocationId;
+  if (flattened.parent_relation === "orbits") {
+    flattened.orbital_order = implicitOrbitalOrder;
+  }
   result.push(flattened);
   const children = location.children;
   if (!children) return;
   if (!Array.isArray(children))
     throw new Error(`Zero-state children for ${id} must be an array.`);
+  let orbitalIndex = 0;
   for (const child of children) {
-    flattenZeroStateLocation(
-      asRecord(child, `Zero-state child of ${id}`),
-      id,
-      result,
-    );
+    const childRecord = asRecord(child, `Zero-state child of ${id}`);
+    const childOrder =
+      childRecord.parent_relation === "orbits"
+        ? (orbitalIndex += 1) * 1024
+        : undefined;
+    flattenZeroStateLocation(childRecord, id, result, childOrder);
   }
 }
 
@@ -345,6 +435,7 @@ function collectReferences(record: NarrativeRecord): string[] {
     "species_id",
     "parent_id",
     "picture_id",
+    "surface_texture_id",
     "death_event_id",
     "homeworld_id",
     "location_id",
@@ -379,6 +470,31 @@ function assertReferencesResolve(
       : availableIds.has(reference);
     if (!resolves) {
       throw new Error(`${label} references unavailable entity ${reference}.`);
+    }
+  }
+}
+
+function assertAssetReferenceRoles(
+  record: NarrativeRecord,
+  assetsById: ReadonlyMap<string, NarrativeRecord>,
+  label: string,
+): void {
+  const pictureId = record.picture_id;
+  if (typeof pictureId === "string") {
+    const asset = assetsById.get(pictureId);
+    if (asset && asset.role !== "illustration") {
+      throw new Error(
+        `${label} picture_id must reference an illustration asset: ${pictureId}.`,
+      );
+    }
+  }
+  const surfaceId = record.surface_texture_id;
+  if (typeof surfaceId === "string") {
+    const asset = assetsById.get(surfaceId);
+    if (asset && asset.role !== "body_surface") {
+      throw new Error(
+        `${label} surface_texture_id must reference a body_surface asset: ${surfaceId}.`,
+      );
     }
   }
 }
@@ -519,6 +635,7 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
   const assets = corpus.assets.assets;
   const assetIds = new Set<string>();
   const assetPaths = new Set<string>();
+  const assetsById = new Map<string, NarrativeRecord>();
   for (const candidate of Array.isArray(assets) ? assets : []) {
     const asset = asRecord(candidate, "Asset entry");
     const id = asString(asset.id, "Asset ID");
@@ -528,6 +645,7 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
     }
     assetIds.add(id);
     assetPaths.add(assetPath);
+    assetsById.set(id, asset);
   }
   const availableIds = new Set(zeroStateEntities.map((entity) => entity.id));
   for (const entity of zeroStateEntities) {
@@ -537,6 +655,20 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
       assetIds,
       `Zero-state entity ${entity.id}`,
     );
+    assertAssetReferenceRoles(
+      entity,
+      assetsById,
+      `Zero-state entity ${entity.id}`,
+    );
+    if (typeof entity.surface_texture_id === "string") {
+      const surface = assetsById.get(entity.surface_texture_id) as
+        NarrativeAsset | undefined;
+      if (!surface || !isBodySurfaceCompatible(surface, entity)) {
+        throw new Error(
+          `Zero-state entity ${entity.id} has incompatible body surface ${entity.surface_texture_id}.`,
+        );
+      }
+    }
   }
   const books = asRecord(corpus.books.books, "Book catalogue books");
   const chapters = [...corpus.chapters].sort((left, right) =>
@@ -581,6 +713,11 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
         assetIds,
         `Introduction ${entityId}`,
       );
+      assertAssetReferenceRoles(
+        introduced,
+        assetsById,
+        `Introduction ${entityId}`,
+      );
       if (
         typeof introduced.astronomy_object_id === "string" &&
         !corpus.knownAstronomyObjectIds.includes(introduced.astronomy_object_id)
@@ -619,6 +756,7 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
         `chapter picture references unavailable asset ${chapter.picture_id}.`,
       );
     }
+    assertAssetReferenceRoles(chapter, assetsById, `Chapter ${id}`);
     const updates = (chapter.updates as unknown[] | undefined) ?? [];
     const updatedIds = new Set<string>();
     for (const candidate of updates) {
@@ -643,6 +781,7 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
         assetIds,
         `Update ${targetId}`,
       );
+      assertAssetReferenceRoles(update, assetsById, `Update ${targetId}`);
       if (
         typeof parentId === "string" &&
         !availableAfterIntroductions.has(parentId)
@@ -741,7 +880,7 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
     for (const entityId of introducedThisChapter) availableIds.add(entityId);
   }
   assertTemporalWrites(chapters);
-  assertProjectedLocationConstraints(zeroStateEntities, chapters);
+  assertProjectedLocationConstraints(zeroStateEntities, chapters, assetsById);
 }
 
 /** Validates the complete authored corpus, including cross-record semantic rules. */
@@ -926,6 +1065,85 @@ function applyProperties(
   }
 }
 
+const ORBITAL_ORDER_STEP = 1024;
+
+function prepareOrbitalOrderWrite(
+  entity: NarrativeEntity,
+  write: NarrativeRecord,
+  moment: NarrativeMoment,
+  latestMoments: Map<string, NarrativeMoment>,
+  excludes: readonly string[],
+): void {
+  const isIntroduction = excludes.includes("id");
+  const writeWins = (property: string) => {
+    const prior = latestMoments.get(`${entity.id}\u0000${property}`);
+    return !prior || (compareNarrativeMoments(prior, moment) ?? -1) < 0;
+  };
+  const nextParent =
+    Object.hasOwn(write, "parent_location_id") &&
+    writeWins("parent_location_id")
+      ? write.parent_location_id
+      : entity.parent_location_id;
+  const nextRelation =
+    Object.hasOwn(write, "parent_relation") && writeWins("parent_relation")
+      ? write.parent_relation
+      : entity.parent_relation;
+  const reparented =
+    !isIntroduction &&
+    (nextParent !== entity.parent_location_id ||
+      nextRelation !== entity.parent_relation);
+  if (
+    nextRelation !== "orbits" ||
+    (reparented && !Object.hasOwn(write, "orbital_order"))
+  ) {
+    delete entity.orbital_order;
+  }
+}
+
+/** Allocates omitted orbital keys and rejects effective sibling collisions. */
+export function normalizeOrbitalOrders(
+  locations: ReadonlyMap<string, NarrativeEntity>,
+): void {
+  const byParent = new Map<string, NarrativeEntity[]>();
+  for (const location of locations.values()) {
+    if (
+      location.parent_relation !== "orbits" ||
+      typeof location.parent_location_id !== "string"
+    ) {
+      delete location.orbital_order;
+      continue;
+    }
+    const siblings = byParent.get(location.parent_location_id) ?? [];
+    siblings.push(location);
+    byParent.set(location.parent_location_id, siblings);
+  }
+  for (const [parentId, siblings] of byParent) {
+    const claimed = new Map<number, string>();
+    for (const sibling of siblings) {
+      if (typeof sibling.orbital_order !== "number") continue;
+      const previous = claimed.get(sibling.orbital_order);
+      if (previous) {
+        throw new Error(
+          `Orbital order ${sibling.orbital_order} is duplicated beneath ${parentId}: ${previous}, ${sibling.id}.`,
+        );
+      }
+      claimed.set(sibling.orbital_order, sibling.id);
+    }
+    let maximum = Math.max(0, ...claimed.keys());
+    for (const sibling of siblings
+      .filter((candidate) => typeof candidate.orbital_order !== "number")
+      .sort((left, right) => left.id.localeCompare(right.id))) {
+      if (maximum > Number.MAX_SAFE_INTEGER - ORBITAL_ORDER_STEP) {
+        throw new Error(
+          `Orbital order allocation beneath ${parentId} exceeds the safe-integer range; explicitly renumber siblings.`,
+        );
+      }
+      maximum += ORBITAL_ORDER_STEP;
+      sibling.orbital_order = maximum;
+    }
+  }
+}
+
 function locationProjectionDates(
   readerVisible: readonly NarrativeRecord[],
   defaultDate: string,
@@ -965,6 +1183,7 @@ function locationProjectionDates(
 function assertProjectedLocationConstraints(
   zeroStateEntities: readonly NarrativeEntity[],
   chapters: readonly NarrativeRecord[],
+  assetsById: ReadonlyMap<string, NarrativeRecord>,
 ): void {
   for (const [selectedIndex, selectedChapter] of chapters.entries()) {
     const knowledgeChapter = chapterId(selectedChapter);
@@ -998,6 +1217,13 @@ function assertProjectedLocationConstraints(
             id,
             entity_type: "location",
           };
+          prepareOrbitalOrderWrite(
+            location,
+            introduced,
+            { date, sourceChapter },
+            latestMoments,
+            ["id"],
+          );
           applyProperties(
             location,
             introduced,
@@ -1016,6 +1242,13 @@ function assertProjectedLocationConstraints(
           );
           const location = locations.get(id);
           if (!location) continue;
+          prepareOrbitalOrderWrite(
+            location,
+            update,
+            { date, sourceChapter },
+            latestMoments,
+            ["entity_id"],
+          );
           applyProperties(
             location,
             update,
@@ -1024,6 +1257,7 @@ function assertProjectedLocationConstraints(
             ["entity_id"],
           );
         }
+        normalizeOrbitalOrders(locations);
       }
 
       const moonCounts = new Map<string, number>();
@@ -1042,6 +1276,17 @@ function assertProjectedLocationConstraints(
             "/locations",
             `projection at ${displayDate} leaves survey properties ${effectiveProperties.join(", ")} on effective location kind ${String(location.kind)} for ${location.id}.`,
           );
+        }
+        if (typeof location.surface_texture_id === "string") {
+          const asset = assetsById.get(location.surface_texture_id) as
+            NarrativeAsset | undefined;
+          if (!asset || !isBodySurfaceCompatible(asset, location)) {
+            throw chapterSemanticError(
+              knowledgeChapter,
+              "/locations",
+              `projection at ${displayDate} gives ${location.id} an incompatible body surface ${location.surface_texture_id}.`,
+            );
+          }
         }
         if (
           location.kind !== "moon" ||
@@ -1064,18 +1309,45 @@ function assertProjectedLocationConstraints(
   }
 }
 
+export function orderLocationChildIds(
+  childIds: readonly string[],
+  locations: ReadonlyMap<string, NarrativeEntity>,
+): string[] {
+  const orderedOrbitals = childIds
+    .filter((id) => locations.get(id)?.parent_relation === "orbits")
+    .sort((leftId, rightId) => {
+      const left = locations.get(leftId)!;
+      const right = locations.get(rightId)!;
+      return (
+        Number(left.orbital_order) - Number(right.orbital_order) ||
+        left.id.localeCompare(right.id)
+      );
+    });
+  let orbitalIndex = 0;
+  return childIds.map((id) =>
+    locations.get(id)?.parent_relation === "orbits"
+      ? orderedOrbitals[orbitalIndex++]!
+      : id,
+  );
+}
+
 function deriveLocationChildren(entities: NarrativeEntity[]): void {
   const locations = new Map(
     entities
       .filter((entity) => entity.entity_type === "location")
       .map((entity) => [entity.id, entity]),
   );
+  normalizeOrbitalOrders(locations);
   for (const location of locations.values()) location.child_ids = [];
   for (const location of locations.values()) {
     const parentId = location.parent_location_id;
     if (typeof parentId !== "string") continue;
     const parent = locations.get(parentId);
     if (parent) (parent.child_ids as string[]).push(location.id);
+  }
+  for (const parent of locations.values()) {
+    const children = parent.child_ids as string[];
+    parent.child_ids = orderLocationChildIds(children, locations);
   }
 }
 
@@ -1466,6 +1738,15 @@ export function generateNarrativeWorld(
           : date;
       if (!isDateAtOrBefore(effectiveDate, displayDate)) continue;
       const entity: NarrativeEntity = { id, entity_type: type };
+      if (type === "location") {
+        prepareOrbitalOrderWrite(
+          entity,
+          introduced,
+          { date: effectiveDate, sourceChapter },
+          latestMoments,
+          ["id"],
+        );
+      }
       applyProperties(
         entity,
         introduced,
@@ -1500,6 +1781,15 @@ export function generateNarrativeWorld(
               : date
           : date;
       if (!isDateAtOrBefore(effectiveDate, displayDate)) continue;
+      if (target.entity_type === "location") {
+        prepareOrbitalOrderWrite(
+          target,
+          update,
+          { date: effectiveDate, sourceChapter },
+          latestMoments,
+          ["entity_id"],
+        );
+      }
       applyProperties(
         target,
         update,
@@ -1508,6 +1798,13 @@ export function generateNarrativeWorld(
         ["entity_id"],
       );
     }
+    normalizeOrbitalOrders(
+      new Map(
+        entities
+          .filter((entity) => entity.entity_type === "location")
+          .map((entity) => [entity.id, entity]),
+      ),
+    );
   }
   deriveLocationChildren(entities);
   deriveLastKnownLocations(entities, readerVisible, displayDate);

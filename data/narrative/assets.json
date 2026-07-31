@@ -1,3 +1,134 @@
 {
-  "assets": []
+  "assets": [
+    {
+      "id": "asset:surface-rocky-01",
+      "role": "body_surface",
+      "path": "assets/body-surfaces/rocky-01.svg",
+      "source": "Project-owned procedural SVG texture generated for the Bobiverse schematic system view.",
+      "projection": "equirectangular",
+      "color_space": "srgb",
+      "mipmaps": true,
+      "generic": true,
+      "selection_version": 1,
+      "compatible_body_classes": ["rocky"],
+      "compatible_kinds": ["planet", "dwarf_planet", "moon"]
+    },
+    {
+      "id": "asset:surface-rocky-02",
+      "role": "body_surface",
+      "path": "assets/body-surfaces/rocky-02.svg",
+      "source": "Project-owned procedural SVG texture generated for the Bobiverse schematic system view.",
+      "projection": "equirectangular",
+      "color_space": "srgb",
+      "mipmaps": true,
+      "generic": true,
+      "selection_version": 1,
+      "compatible_body_classes": ["rocky"],
+      "compatible_kinds": ["planet", "dwarf_planet", "moon"]
+    },
+    {
+      "id": "asset:surface-icy-01",
+      "role": "body_surface",
+      "path": "assets/body-surfaces/icy-01.svg",
+      "source": "Project-owned procedural SVG texture generated for the Bobiverse schematic system view.",
+      "projection": "equirectangular",
+      "color_space": "srgb",
+      "mipmaps": true,
+      "generic": true,
+      "selection_version": 1,
+      "compatible_body_classes": ["icy"],
+      "compatible_kinds": ["planet", "dwarf_planet", "moon"]
+    },
+    {
+      "id": "asset:surface-icy-02",
+      "role": "body_surface",
+      "path": "assets/body-surfaces/icy-02.svg",
+      "source": "Project-owned procedural SVG texture generated for the Bobiverse schematic system view.",
+      "projection": "equirectangular",
+      "color_space": "srgb",
+      "mipmaps": true,
+      "generic": true,
+      "selection_version": 1,
+      "compatible_body_classes": ["icy"],
+      "compatible_kinds": ["planet", "dwarf_planet", "moon"]
+    },
+    {
+      "id": "asset:surface-dwarf-01",
+      "role": "body_surface",
+      "path": "assets/body-surfaces/dwarf-01.svg",
+      "source": "Project-owned procedural SVG texture generated for the Bobiverse schematic system view.",
+      "projection": "equirectangular",
+      "color_space": "srgb",
+      "mipmaps": true,
+      "generic": true,
+      "selection_version": 1,
+      "compatible_body_classes": ["dwarf_planet"],
+      "compatible_kinds": ["planet", "dwarf_planet", "moon"]
+    },
+    {
+      "id": "asset:surface-dwarf-02",
+      "role": "body_surface",
+      "path": "assets/body-surfaces/dwarf-02.svg",
+      "source": "Project-owned procedural SVG texture generated for the Bobiverse schematic system view.",
+      "projection": "equirectangular",
+      "color_space": "srgb",
+      "mipmaps": true,
+      "generic": true,
+      "selection_version": 1,
+      "compatible_body_classes": ["dwarf_planet"],
+      "compatible_kinds": ["planet", "dwarf_planet", "moon"]
+    },
+    {
+      "id": "asset:surface-gas-01",
+      "role": "body_surface",
+      "path": "assets/body-surfaces/gas-01.svg",
+      "source": "Project-owned procedural SVG texture generated for the Bobiverse schematic system view.",
+      "projection": "equirectangular",
+      "color_space": "srgb",
+      "mipmaps": true,
+      "generic": true,
+      "selection_version": 1,
+      "compatible_body_classes": ["gas_giant"],
+      "compatible_kinds": ["planet", "dwarf_planet", "moon"]
+    },
+    {
+      "id": "asset:surface-gas-02",
+      "role": "body_surface",
+      "path": "assets/body-surfaces/gas-02.svg",
+      "source": "Project-owned procedural SVG texture generated for the Bobiverse schematic system view.",
+      "projection": "equirectangular",
+      "color_space": "srgb",
+      "mipmaps": true,
+      "generic": true,
+      "selection_version": 1,
+      "compatible_body_classes": ["gas_giant"],
+      "compatible_kinds": ["planet", "dwarf_planet", "moon"]
+    },
+    {
+      "id": "asset:surface-ice-giant-01",
+      "role": "body_surface",
+      "path": "assets/body-surfaces/ice-giant-01.svg",
+      "source": "Project-owned procedural SVG texture generated for the Bobiverse schematic system view.",
+      "projection": "equirectangular",
+      "color_space": "srgb",
+      "mipmaps": true,
+      "generic": true,
+      "selection_version": 1,
+      "compatible_body_classes": ["ice_giant"],
+      "compatible_kinds": ["planet", "dwarf_planet", "moon"]
+    },
+    {
+      "id": "asset:surface-ice-giant-02",
+      "role": "body_surface",
+      "path": "assets/body-surfaces/ice-giant-02.svg",
+      "source": "Project-owned procedural SVG texture generated for the Bobiverse schematic system view.",
+      "projection": "equirectangular",
+      "color_space": "srgb",
+      "mipmaps": true,
+      "generic": true,
+      "selection_version": 1,
+      "compatible_body_classes": ["ice_giant"],
+      "compatible_kinds": ["planet", "dwarf_planet", "moon"]
+    }
+  ]
 }

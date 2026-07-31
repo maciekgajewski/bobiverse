@@ -13,7 +13,9 @@ test("phone browser opens, selection opens inspector, and light-years remain fix
   await page.getByRole("button", { name: "Browse objects" }).click();
   await page.getByRole("button", { name: "Solar System" }).click();
   await expect(
-    page.getByRole("heading", { name: "Solar System" }),
+    page
+      .getByRole("dialog", { name: "Selected object" })
+      .getByRole("heading", { name: "Solar System" }),
   ).toBeVisible();
   await page
     .getByRole("dialog", { name: "Selected object" })
@@ -41,6 +43,288 @@ test("empty map clicks clear inspection selection", async ({ page }) => {
     ),
   ).toBeVisible();
   await expect(page.getByRole("button", { name: "Measure" })).toHaveCount(0);
+});
+
+test("guided system view drills down and browser Back restores the exact map", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  const remoteSurfaceRequests: string[] = [];
+  page.on("request", (request) => {
+    const url = new URL(request.url());
+    if (
+      request.resourceType() === "image" &&
+      url.origin !== "http://127.0.0.1:5173"
+    ) {
+      remoteSurfaceRequests.push(request.url());
+    }
+  });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Solar System" }).click();
+  await page.waitForFunction(() => window.__bob034MapPerformance !== undefined);
+  const before = await page.evaluate(() =>
+    window.__bob034MapPerformance!.snapshot(),
+  );
+  await page.getByRole("button", { name: "Enter system" }).click();
+  await expect(page.getByTestId("star-map-canvas")).toHaveAttribute(
+    "data-system-mode",
+    "schematic",
+  );
+  const guided = page.getByRole("region", { name: "Visible system objects" });
+  const solTarget = await guided
+    .getByRole("button", { name: "Sol" })
+    .evaluate((button) => button.getBoundingClientRect().toJSON());
+  expect(solTarget.width).toBeGreaterThanOrEqual(44);
+  expect(solTarget.height).toBeGreaterThanOrEqual(44);
+  await guided.getByRole("button", { name: "Sol" }).click();
+  await page.waitForFunction(() => {
+    try {
+      window.__bob034MapPerformance!.snapshot();
+      return true;
+    } catch {
+      return false;
+    }
+  });
+  const localBeforeGestures = await page.evaluate(() =>
+    window.__bob034MapPerformance!.snapshot(),
+  );
+  const localCanvas = page.getByTestId("star-map-canvas");
+  await localCanvas.dispatchEvent("pointerdown", {
+    clientX: 260,
+    clientY: 220,
+    buttons: 1,
+  });
+  await localCanvas.dispatchEvent("pointermove", {
+    clientX: 420,
+    clientY: 310,
+    buttons: 1,
+  });
+  await localCanvas.dispatchEvent("pointerup", {
+    clientX: 420,
+    clientY: 310,
+    buttons: 0,
+  });
+  await localCanvas.dispatchEvent("wheel", { deltaY: 500 });
+  await localCanvas.dispatchEvent("dblclick");
+  expect(
+    await page.evaluate(() => window.__bob034MapPerformance!.snapshot()),
+  ).toEqual(localBeforeGestures);
+  const breadcrumb = page.getByRole("navigation", {
+    name: "System view breadcrumb",
+  });
+  for (const region of ["Asteroid Belt", "Kuiper Belt", "Oort Cloud"]) {
+    await guided.getByRole("button", { name: region }).click();
+    await expect(
+      breadcrumb.getByRole("button", { name: region }),
+    ).toBeVisible();
+    await breadcrumb.getByRole("button", { name: "Sol", exact: true }).click();
+  }
+  await guided.getByRole("button", { name: "Earth" }).click();
+  await guided.getByRole("button", { name: "Moon" }).click();
+  await expect(
+    breadcrumb.getByRole("button", { name: "Solar System" }),
+  ).toBeVisible();
+  await expect(
+    breadcrumb.getByRole("button", { name: "Sol", exact: true }),
+  ).toBeVisible();
+  await expect(breadcrumb.getByRole("button", { name: "Earth" })).toBeVisible();
+  await expect(breadcrumb.getByRole("button", { name: "Moon" })).toBeVisible();
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  const returnBounds = await breadcrumb
+    .getByRole("button", { name: "Return to map" })
+    .evaluate((button) => button.getBoundingClientRect().toJSON());
+  expect(returnBounds.height).toBeGreaterThanOrEqual(44);
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+
+  await page.goBack();
+  await expect(page.getByTestId("star-map-canvas")).toHaveAttribute(
+    "data-system-mode",
+    "interstellar",
+  );
+  const after = await page.evaluate(() =>
+    window.__bob034MapPerformance!.snapshot(),
+  );
+  expect(after).toEqual(before);
+  await page.getByRole("button", { name: "Inspect selection" }).click();
+  await expect(
+    page
+      .getByRole("dialog", { name: "Selected object" })
+      .getByRole("heading", { name: "Solar System" }),
+  ).toBeVisible();
+  expect(remoteSurfaceRequests).toEqual([]);
+});
+
+test("normal-motion Return restores the captured map pose", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Solar System" }).click();
+  await page.waitForFunction(() => window.__bob034MapPerformance !== undefined);
+  await page.waitForTimeout(900);
+  const before = await page.evaluate(() =>
+    window.__bob034MapPerformance!.snapshot(),
+  );
+  await page.getByRole("button", { name: "Enter system" }).click();
+  await page.waitForTimeout(900);
+  await page
+    .getByRole("region", { name: "Visible system objects" })
+    .getByRole("button", { name: "Sol" })
+    .click();
+  await page
+    .getByRole("navigation", { name: "System view breadcrumb" })
+    .getByRole("button", { name: "Return to map" })
+    .click();
+  await expect(page.getByTestId("star-map-canvas")).toHaveAttribute(
+    "data-system-mode",
+    "interstellar",
+  );
+  await page.waitForTimeout(900);
+  expect(
+    await page.evaluate(() => window.__bob034MapPerformance!.snapshot()),
+  ).toEqual(before);
+});
+
+test("another-system active location exits and focuses its mapped system", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.addInitScript(() => {
+    window.localStorage.setItem(
+      "bobiverse.app-state.v1",
+      JSON.stringify({
+        furthestChapterRead: "1.14",
+        viewChapter: "1.14",
+        displayDate: "2144-08",
+        mode: "chapter",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+  });
+  await page.goto("/");
+  await page.getByRole("button", { name: /^Solar System/ }).click();
+  await page.getByRole("button", { name: "Enter system" }).click();
+  const activeList = page.getByRole("region", {
+    name: "Visible system objects",
+  });
+  await activeList
+    .getByRole("button", { name: "Focus active location" })
+    .click();
+  await expect(page.getByTestId("star-map-canvas")).toHaveAttribute(
+    "data-system-mode",
+    "interstellar",
+  );
+  await page.waitForTimeout(300);
+  const destination = await page.evaluate(() =>
+    window.__bob034MapPerformance!.snapshot(),
+  );
+  expect(destination.target).toEqual([-2.0704846, -2.3949034, 0.5874979]);
+});
+
+test("simultaneous activity lists every mapped system without choosing a winner", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    window.localStorage.setItem(
+      "bobiverse.app-state.v1",
+      JSON.stringify({
+        furthestChapterRead: "1.18",
+        viewChapter: "1.18",
+        displayDate: "2145",
+        mode: "chapter",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+  });
+  await page.goto("/");
+  await page.getByRole("button", { name: /^Solar System/ }).click();
+  await page.getByRole("button", { name: "Enter system" }).click();
+  const list = page
+    .getByRole("heading", { name: "Active locations" })
+    .locator("..");
+  await expect(list.getByRole("button")).toHaveText([
+    /Beta Hydri/,
+    /Delta Eridani/,
+    /Epsilon Eridani/,
+    /Solar System \/ Sol/,
+  ]);
+});
+
+test("system controls reflow in a 200%-zoom-equivalent CSS viewport", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 640, height: 450 });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Browse objects" }).click();
+  await page.getByRole("button", { name: "Solar System" }).click();
+  await page.getByRole("button", { name: "Enter system" }).click();
+  const breadcrumb = page.getByRole("navigation", {
+    name: "System view breadcrumb",
+  });
+  await expect(breadcrumb).toBeVisible();
+  const bounds = await breadcrumb.evaluate((element) =>
+    element.getBoundingClientRect().toJSON(),
+  );
+  expect(bounds.left).toBeGreaterThanOrEqual(0);
+  expect(bounds.right).toBeLessThanOrEqual(640.01);
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+});
+
+test("multiple-star fixture keeps each star's authored descendants separate", async ({
+  page,
+}) => {
+  await page.goto("/tests/fixtures/system-view.html");
+  await expect(page.getByLabel("Projected fixture nodes")).toHaveText(
+    "fixture a a-belt b b-belt",
+  );
+  await expect(page.getByText("Fixture A", { exact: true })).toBeVisible();
+  await expect(page.getByText("Fixture B", { exact: true })).toBeVisible();
+  await expect(page.getByText("A Belt", { exact: true })).toHaveCount(0);
+  await expect(page.getByText("B Belt", { exact: true })).toHaveCount(0);
+
+  await page.evaluate(() => window.__systemViewFixture!.focus("a"));
+  await expect(page.getByText("A Belt", { exact: true })).toBeVisible();
+  await expect(page.getByText("B Belt", { exact: true })).toHaveCount(0);
+
+  await page.evaluate(() => window.__systemViewFixture!.focus("b"));
+  await expect(page.getByText("B Belt", { exact: true })).toBeVisible();
+  await expect(page.getByText("A Belt", { exact: true })).toHaveCount(0);
+});
+
+test("WebGL-unavailable system mode retains the guided DOM hierarchy", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    HTMLCanvasElement.prototype.getContext = () => null;
+  });
+  await page.goto("/");
+  await expect(
+    page.getByRole("heading", { name: "WebGL unavailable" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Solar System" }).click();
+  await page.getByRole("button", { name: "Enter system" }).click();
+  await expect(
+    page.getByRole("region", { name: "Visible system objects" }),
+  ).toBeVisible();
+  await page
+    .getByRole("region", { name: "Visible system objects" })
+    .getByRole("button", { name: "Sol" })
+    .click();
+  await expect(
+    page
+      .getByRole("navigation", { name: "System view breadcrumb" })
+      .getByRole("button", { name: "Sol", exact: true }),
+  ).toBeVisible();
 });
 
 test("compact inspector stays inside the viewport", async ({ page }) => {

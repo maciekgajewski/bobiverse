@@ -1,6 +1,7 @@
 import { Billboard, Html, Line, OrbitControls, Text } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { ComponentProps } from "react";
 import {
   AdditiveBlending,
   Color,
@@ -26,6 +27,9 @@ import {
 } from "../domain/camera-motion";
 import { closestMarkerSystemId } from "../domain/star-picking";
 import { resolveCaptionVisibility } from "../domain/caption-visibility";
+import type { SystemViewModel } from "../domain/system-view";
+import type { NarrativeRecord } from "../narrative/model";
+import { SystemViewScene } from "./SystemViewScene";
 import {
   NARRATIVE_MARKER_COLOR,
   ASTRONOMY_CONTEXT_EMPHASIS,
@@ -52,6 +56,12 @@ interface MapSceneProps {
   onDeselect: () => void;
   onReady: () => void;
   onScaleChange: (scale: MapScale) => void;
+  systemView?: SystemViewModel | null;
+  systemFocusId?: string | null;
+  narrativeSelectedId?: string | null;
+  systemKeyboardFocusedId?: string | null;
+  assets?: NarrativeRecord;
+  onSystemSelect?: (id: string) => void;
 }
 
 type SceneProps = Omit<MapSceneProps, "onDeselect">;
@@ -77,7 +87,9 @@ interface CameraMotion {
 }
 
 function useReducedMotion(): boolean {
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(
+    () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  );
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
     const update = () => setReducedMotion(query.matches);
@@ -94,20 +106,32 @@ function CameraController({
   systems,
   knownSystemIds,
   activeSystemIds,
+  systemMode,
 }: {
   resetToken: number;
   selected: StellarSystem | undefined;
   systems: StellarSystem[];
   knownSystemIds: ReadonlySet<string>;
   activeSystemIds: ReadonlySet<string>;
+  systemMode: boolean;
 }) {
   const { camera, gl, size } = useThree();
   const controls = useRef<OrbitControlsImpl>(null);
   const motion = useRef<CameraMotion | null>(null);
+  const interstellarSnapshot = useRef<{
+    camera: Vector3;
+    target: Vector3;
+    selectedId: string | null;
+  } | null>(null);
+  const selectedRef = useRef(selected);
+  const skipNextSelectedFocus = useRef(false);
   const reducedMotion = useReducedMotion();
   const cancelMotion = () => {
     motion.current = null;
   };
+  useEffect(() => {
+    selectedRef.current = selected;
+  }, [selected]);
   const focus = useCallback(
     (target: Vector3, destination: Vector3) => {
       const control = controls.current;
@@ -131,6 +155,7 @@ function CameraController({
     [camera, reducedMotion],
   );
   useEffect(() => {
+    if (systemMode || interstellarSnapshot.current) return;
     motion.current = null;
     const control = controls.current;
     if (control) {
@@ -153,11 +178,13 @@ function CameraController({
     camera.lookAt(0, 0, 0);
     control?.target.set(0, 0, 0);
     control?.update();
-  }, [camera, resetToken, size.height, size.width, systems]);
+  }, [camera, resetToken, size.height, size.width, systems, systemMode]);
   useEffect(() => {
     const bridge: Bob034MapPerformanceBridge = {
       snapshot: () => {
-        const target = controls.current?.target;
+        const target =
+          controls.current?.target ??
+          (systemMode ? new Vector3(0, 0, 0) : undefined);
         if (!target) {
           throw new Error("Map controls are not ready.");
         }
@@ -205,9 +232,45 @@ function CameraController({
         delete window.__bob034MapPerformance;
       }
     };
-  }, [activeSystemIds, camera, gl, knownSystemIds, systems]);
+  }, [activeSystemIds, camera, gl, knownSystemIds, systemMode, systems]);
   useEffect(() => {
-    if (!selected) return;
+    const control = controls.current;
+    if (!control) return;
+    if (systemMode) {
+      if (!interstellarSnapshot.current) {
+        interstellarSnapshot.current = {
+          camera: camera.position.clone(),
+          target: control.target.clone(),
+          selectedId: selectedRef.current?.id ?? null,
+        };
+      }
+      focus(new Vector3(0, 0, 0), new Vector3(0, 0, 8));
+    } else if (interstellarSnapshot.current) {
+      const snapshot = interstellarSnapshot.current;
+      const exitSelection = selectedRef.current;
+      skipNextSelectedFocus.current = true;
+      if (exitSelection && exitSelection.id !== snapshot.selectedId) {
+        const target = new Vector3(
+          exitSelection.render_position.x,
+          exitSelection.render_position.y,
+          exitSelection.render_position.z,
+        );
+        focus(
+          target,
+          snapshot.camera.clone().add(target.clone().sub(snapshot.target)),
+        );
+      } else {
+        focus(snapshot.target, snapshot.camera);
+      }
+      interstellarSnapshot.current = null;
+    }
+  }, [camera, focus, systemMode]);
+  useEffect(() => {
+    if (!selected || systemMode) return;
+    if (skipNextSelectedFocus.current) {
+      skipNextSelectedFocus.current = false;
+      return;
+    }
     const { x, y, z } = selected.render_position;
     const target = new Vector3(x, y, z);
     const currentTarget = controls.current?.target ?? new Vector3();
@@ -215,7 +278,7 @@ function CameraController({
       target,
       camera.position.clone().add(target.clone().sub(currentTarget)),
     );
-  }, [camera, focus, selected]);
+  }, [camera, focus, selected, systemMode]);
   useFrame(() => {
     const current = motion.current;
     const control = controls.current;
@@ -239,6 +302,7 @@ function CameraController({
       minDistance={2}
       maxDistance={45}
       onStart={cancelMotion}
+      enabled={!systemMode}
     />
   );
 }
@@ -252,6 +316,11 @@ function StarMarker({
   hovered,
   captionVisible,
   onHover,
+  dimmed = false,
+  pickable = true,
+  modeOpacity = 1,
+  captionOpacity = modeOpacity,
+  emphasis,
 }: {
   system: StellarSystem;
   selected: boolean;
@@ -261,6 +330,11 @@ function StarMarker({
   hovered: boolean;
   captionVisible: boolean;
   onHover: (id: string | null) => void;
+  dimmed?: boolean;
+  pickable?: boolean;
+  modeOpacity?: number;
+  captionOpacity?: number;
+  emphasis?: number;
 }) {
   const position = system.render_position;
   const selectedDistance = selectedSystem
@@ -273,13 +347,15 @@ function StarMarker({
   return (
     <group
       position={[position.x, position.y, position.z]}
-      onPointerOver={(event) => {
-        event.stopPropagation();
-        onHover(system.id);
-      }}
-      onPointerOut={() => {
-        onHover(null);
-      }}
+      onPointerOver={
+        pickable
+          ? (event) => {
+              event.stopPropagation();
+              onHover(system.id);
+            }
+          : undefined
+      }
+      onPointerOut={pickable ? () => onHover(null) : undefined}
     >
       {system.components.map((component, index) => {
         const radius = componentVisibleRadius(component, known);
@@ -294,7 +370,10 @@ function StarMarker({
         );
         return (
           <Billboard key={component.id} position={offset} follow>
-            <mesh userData={{ systemId: system.id }}>
+            <mesh
+              userData={{ systemId: system.id }}
+              raycast={pickable ? undefined : ignoreRaycast}
+            >
               <planeGeometry
                 args={[
                   componentPickRadius(component) * 2,
@@ -309,7 +388,10 @@ function StarMarker({
                 side={DoubleSide}
               />
             </mesh>
-            <mesh userData={{ systemId: system.id }}>
+            <mesh
+              userData={{ systemId: system.id }}
+              raycast={pickable ? undefined : ignoreRaycast}
+            >
               <planeGeometry args={[radius * 2, radius * 2]} />
               <shaderMaterial
                 transparent
@@ -324,7 +406,13 @@ function StarMarker({
                   },
                   uIntensity: { value: component.visual.intensity },
                   uEmphasis: {
-                    value: known ? 1 : ASTRONOMY_CONTEXT_EMPHASIS,
+                    value:
+                      (emphasis ??
+                        (dimmed
+                          ? 0.06
+                          : known
+                            ? 1
+                            : ASTRONOMY_CONTEXT_EMPHASIS)) * modeOpacity,
                   },
                   uCoreHaloScale: {
                     value: known ? NARRATIVE_CORE_HALO_SCALE : 1,
@@ -357,7 +445,10 @@ function StarMarker({
       {selected && <SelectionFrame name={system.name} />}
       {captionVisible && !hovered && (
         <Billboard position={[0, -0.32, 0]} follow raycast={ignoreRaycast}>
-          <Html center style={{ pointerEvents: "none" }}>
+          <Html
+            center
+            style={{ pointerEvents: "none", opacity: captionOpacity }}
+          >
             <div className="narrative-map-label">{system.name}</div>
           </Html>
         </Billboard>
@@ -471,7 +562,10 @@ function CameraScaleReporter({
   const controls = useThree(
     (state) => state.controls as OrbitControlsImpl | null,
   );
-  const lastScale = useRef("");
+  const observedScale = useRef("");
+  const reportedScale = useRef("");
+  const scaleChangedAt = useRef(0);
+  const pendingScale = useRef<MapScale | null>(null);
   useFrame(() => {
     if (!(camera instanceof PerspectiveCamera)) return;
     const focus = controls?.target ?? { x: 0, y: 0, z: 0 };
@@ -489,9 +583,18 @@ function CameraScaleReporter({
       maximumFractionDigits: 4,
     })} ${DISPLAY_DISTANCE_UNIT}`;
     const next = `${label}:${pixelWidth}`;
-    if (next !== lastScale.current) {
-      lastScale.current = next;
-      onScaleChange({ label, pixelWidth });
+    if (next !== observedScale.current) {
+      observedScale.current = next;
+      scaleChangedAt.current = performance.now();
+      pendingScale.current = { label, pixelWidth };
+    } else if (
+      reportedScale.current !== next &&
+      performance.now() - scaleChangedAt.current >= 120 &&
+      pendingScale.current
+    ) {
+      reportedScale.current = next;
+      const settled = pendingScale.current;
+      queueMicrotask(() => onScaleChange(settled));
     }
   });
   return null;
@@ -514,7 +617,10 @@ function CaptionController({
 }) {
   const { camera, size } = useThree();
   const last = useRef(0);
-  const previous = useRef("");
+  const observed = useRef("");
+  const reported = useRef("");
+  const changedAt = useRef(0);
+  const pendingVisible = useRef<ReadonlySet<string>>(new Set());
   useFrame(() => {
     if (performance.now() - last.current < 120) return;
     last.current = performance.now();
@@ -549,9 +655,17 @@ function CaptionController({
       });
     const visible = resolveCaptionVisibility(candidates);
     const key = [...visible].sort().join("\u0000");
-    if (key !== previous.current) {
-      previous.current = key;
-      onChange(visible);
+    if (key !== observed.current) {
+      observed.current = key;
+      changedAt.current = performance.now();
+      pendingVisible.current = visible;
+    } else if (
+      reported.current !== key &&
+      performance.now() - changedAt.current >= 120
+    ) {
+      reported.current = key;
+      const settled = pendingVisible.current;
+      queueMicrotask(() => onChange(settled));
     }
   });
   return null;
@@ -566,52 +680,138 @@ function Scene({
   onSelect,
   onReady,
   onScaleChange,
+  systemView = null,
+  systemFocusId = null,
+  narrativeSelectedId = null,
+  systemKeyboardFocusedId = null,
+  assets = { assets: [] },
+  onSystemSelect = () => undefined,
 }: SceneProps) {
   useEffect(onReady, [onReady]);
   const selected = systems.find((system) => system.id === selectedId);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [captionIds, setCaptionIds] = useState<ReadonlySet<string>>(new Set());
+  const [displayedSystem, setDisplayedSystem] = useState<{
+    model: SystemViewModel;
+    focusId: string;
+  } | null>(null);
+  const [interstellarOpacity, setInterstellarOpacity] = useState(1);
+  const interstellarOpacityRef = useRef(1);
+  useEffect(() => {
+    interstellarOpacityRef.current = interstellarOpacity;
+  }, [interstellarOpacity]);
+  useEffect(() => {
+    const target = systemView ? 0 : 1;
+    const from = interstellarOpacityRef.current;
+    if (from === target) return;
+    const startedAt = performance.now();
+    let frame = 0;
+    const animate = (now: number) => {
+      const progress = Math.min(1, (now - startedAt) / 220);
+      setInterstellarOpacity(from + (target - from) * progress);
+      if (progress < 1) frame = requestAnimationFrame(animate);
+    };
+    frame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frame);
+  }, [systemView]);
+  useEffect(() => {
+    if (systemView && systemFocusId) {
+      const show = window.requestAnimationFrame(() =>
+        setDisplayedSystem({ model: systemView, focusId: systemFocusId }),
+      );
+      return () => window.cancelAnimationFrame(show);
+    }
+    const clear = window.setTimeout(() => setDisplayedSystem(null), 220);
+    return () => window.clearTimeout(clear);
+  }, [systemFocusId, systemView]);
   return (
     <>
       <color attach="background" args={["#050812"]} />
       <GalacticStarfield />
       <ambientLight intensity={0.7} />
-      <GalacticPlaneGrid />
-      <Text
-        position={[16, 0.04, 0]}
-        fontSize={0.13}
-        color="#536986"
-        anchorX="center"
-      >
-        Galactic center · +Xg
-      </Text>
-      <Text
-        position={[0, 8, 0]}
-        fontSize={0.13}
-        color="#536986"
-        anchorX="center"
-      >
-        Galactic north · +Zg
-      </Text>
+      {interstellarOpacity > 0 && (
+        <GalacticPlaneGrid opacity={interstellarOpacity} />
+      )}
+      {displayedSystem && (
+        <SystemViewLayer
+          model={displayedSystem.model}
+          focusedId={displayedSystem.focusId}
+          selectedId={narrativeSelectedId}
+          keyboardFocusedId={systemKeyboardFocusedId}
+          assets={assets}
+          onSelect={onSystemSelect}
+        />
+      )}
+      {interstellarOpacity > 0 && (
+        <>
+          <Text
+            position={[16, 0.04, 0]}
+            fontSize={0.13}
+            color="#536986"
+            fillOpacity={interstellarOpacity}
+            anchorX="center"
+          >
+            Galactic center · +Xg
+          </Text>
+          <Text
+            position={[0, 8, 0]}
+            fontSize={0.13}
+            color="#536986"
+            fillOpacity={interstellarOpacity}
+            anchorX="center"
+          >
+            Galactic north · +Zg
+          </Text>
+        </>
+      )}
       <group
+        position={(() => {
+          const entered = displayedSystem
+            ? systems.find(
+                (system) => system.id === displayedSystem.model.astronomyId,
+              )
+            : undefined;
+          return entered
+            ? [
+                -entered.render_position.x * (1 - interstellarOpacity),
+                -entered.render_position.y * (1 - interstellarOpacity),
+                -entered.render_position.z * (1 - interstellarOpacity),
+              ]
+            : [0, 0, 0];
+        })()}
         onClick={(event) => {
           const systemId = closestMarkerSystemId(event.intersections);
-          if (systemId) onSelect(systemId);
+          if (!displayedSystem && systemId) onSelect(systemId);
         }}
       >
-        {systems.map((system) => (
-          <StarMarker
-            key={system.id}
-            system={system}
-            selected={selectedId === system.id}
-            selectedSystem={selected}
-            known={knownSystemIds.has(system.id)}
-            active={activeSystemIds.has(system.id)}
-            hovered={hoveredId === system.id}
-            captionVisible={captionIds.has(system.id)}
-            onHover={setHoveredId}
-          />
-        ))}
+        {systems.map((system) => {
+          const entered = displayedSystem?.model.astronomyId === system.id;
+          const background = Boolean(displayedSystem && !entered);
+          const baseEmphasis = knownSystemIds.has(system.id)
+            ? 1
+            : ASTRONOMY_CONTEXT_EMPHASIS;
+          return (
+            <StarMarker
+              key={system.id}
+              system={system}
+              selected={!displayedSystem && selectedId === system.id}
+              selectedSystem={selected}
+              known={knownSystemIds.has(system.id)}
+              active={!displayedSystem && activeSystemIds.has(system.id)}
+              hovered={!displayedSystem && hoveredId === system.id}
+              captionVisible={captionIds.has(system.id)}
+              onHover={setHoveredId}
+              pickable={!displayedSystem}
+              modeOpacity={entered ? interstellarOpacity : 1}
+              captionOpacity={interstellarOpacity}
+              emphasis={
+                background
+                  ? 0.06 + (baseEmphasis - 0.06) * interstellarOpacity
+                  : undefined
+              }
+            />
+          );
+        })}
       </group>
       <CameraController
         resetToken={resetToken}
@@ -619,18 +819,28 @@ function Scene({
         systems={systems}
         knownSystemIds={knownSystemIds}
         activeSystemIds={activeSystemIds}
+        systemMode={Boolean(systemView)}
       />
-      <CameraScaleReporter onScaleChange={onScaleChange} />
-      <CaptionController
-        systems={systems}
-        knownSystemIds={knownSystemIds}
-        activeSystemIds={activeSystemIds}
-        selectedId={selectedId}
-        hoveredId={hoveredId}
-        onChange={setCaptionIds}
-      />
+      {!systemView && <CameraScaleReporter onScaleChange={onScaleChange} />}
+      {!systemView && (
+        <CaptionController
+          systems={systems}
+          knownSystemIds={knownSystemIds}
+          activeSystemIds={activeSystemIds}
+          selectedId={selectedId}
+          hoveredId={hoveredId}
+          onChange={setCaptionIds}
+        />
+      )}
     </>
   );
+}
+
+function SystemViewLayer(
+  props: Omit<ComponentProps<typeof SystemViewScene>, "reducedMotion">,
+) {
+  const reducedMotion = useReducedMotion();
+  return <SystemViewScene {...props} reducedMotion={reducedMotion} />;
 }
 
 export function StarMap({ onDeselect, ...props }: MapSceneProps) {
@@ -641,7 +851,7 @@ export function StarMap({ onDeselect, ...props }: MapSceneProps) {
         fov: MAP_CAMERA_FOV_DEGREES,
       }}
       dpr={[1, 1.8]}
-      onPointerMissed={onDeselect}
+      onPointerMissed={props.systemView ? undefined : onDeselect}
       data-testid="star-map-canvas"
       data-galactic-starfield="permanent"
       data-star-sprite="expressive-hybrid"
@@ -653,6 +863,7 @@ export function StarMap({ onDeselect, ...props }: MapSceneProps) {
       data-active-marker="double-segmented-ring-and-tick"
       data-hover-marker="tooltip"
       data-grid="whisper"
+      data-system-mode={props.systemView ? "schematic" : "interstellar"}
     >
       <Scene {...props} />
     </Canvas>

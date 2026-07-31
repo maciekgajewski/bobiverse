@@ -22,6 +22,7 @@ import {
   prepareNarrativeCorpus,
   projectNarrativeChapterDetail,
   validateNarrativeCorpus,
+  type NarrativeRecord,
 } from "../../src/narrative/model";
 import { createNarrativeFixtureCorpus } from "../fixtures/narrative";
 
@@ -35,6 +36,16 @@ function collectDescriptions(value: unknown): string[] {
       key === "description" ? [] : collectDescriptions(child),
     ),
   ];
+}
+
+function zeroStateEarth(zeroState: NarrativeRecord): NarrativeRecord {
+  const root = zeroState.locations as NarrativeRecord;
+  const star = (root.children as NarrativeRecord[]).find(
+    (entity) => entity.id === "location:sol",
+  )!;
+  return (star.children as NarrativeRecord[]).find(
+    (entity) => entity.id === "location:earth",
+  )!;
 }
 
 const canonicalMoons = [
@@ -171,6 +182,7 @@ describe("narrative corpus validation and projection", () => {
       assets: [
         {
           id: "asset:fixture-chapter",
+          role: "illustration",
           path: "assets/fixture-chapter.webp",
           source: "Test-only chapter illustration.",
         },
@@ -192,12 +204,78 @@ describe("narrative corpus validation and projection", () => {
     ).not.toEqual([]);
   });
 
+  it("isolates illustration and compatible body-surface roles", () => {
+    const corpus = createNarrativeFixtureCorpus();
+    const surface = {
+      id: "asset:fixture-rocky-surface",
+      role: "body_surface",
+      path: "assets/fixture-rocky-surface.svg",
+      source: "Test-only dedicated body surface.",
+      projection: "equirectangular",
+      color_space: "srgb",
+      mipmaps: true,
+      generic: false,
+      selection_version: 1,
+      compatible_body_classes: ["rocky"],
+      compatible_kinds: ["planet"],
+    };
+    corpus.assets = { assets: [surface] };
+    const earth = zeroStateEarth(corpus.zeroState);
+    earth.surface_texture_id = surface.id;
+    expect(() => validateNarrativeCorpus(corpus)).not.toThrow();
+
+    corpus.chapters[0]!.picture_id = surface.id;
+    expect(() => validateNarrativeCorpus(corpus)).toThrow(
+      "picture_id must reference an illustration",
+    );
+    delete corpus.chapters[0]!.picture_id;
+    surface.compatible_kinds = ["moon"];
+    expect(() => validateNarrativeCorpus(corpus)).toThrow(
+      "incompatible body surface",
+    );
+  });
+
+  it("requires an ineligible kind change to null-clear a retained surface", () => {
+    const corpus = createNarrativeFixtureCorpus();
+    const surface = {
+      id: "asset:fixture-planet-surface",
+      role: "body_surface",
+      path: "assets/fixture-planet-surface.svg",
+      source: "Test-only dedicated body surface.",
+      projection: "equirectangular",
+      color_space: "srgb",
+      mipmaps: true,
+      generic: false,
+      selection_version: 1,
+      compatible_body_classes: ["rocky"],
+      compatible_kinds: ["planet"],
+    };
+    corpus.assets = { assets: [surface] };
+    const earth = zeroStateEarth(corpus.zeroState);
+    earth.surface_texture_id = surface.id;
+    corpus.chapters[0]!.updates = [
+      { entity_id: "location:earth", kind: "locale" },
+    ];
+    expect(() => validateNarrativeCorpus(corpus)).toThrow(
+      "incompatible body surface",
+    );
+    corpus.chapters[0]!.updates = [
+      {
+        entity_id: "location:earth",
+        kind: "locale",
+        surface_texture_id: null,
+      },
+    ];
+    expect(() => validateNarrativeCorpus(corpus)).not.toThrow();
+  });
+
   it("derives immutable chapter detail from the prepared source and exact existing world", () => {
     const corpus = createNarrativeFixtureCorpus();
     corpus.assets = {
       assets: [
         {
           id: "asset:fixture-chapter",
+          role: "illustration",
           path: "assets/fixture-chapter.webp",
           source: "Test-only chapter illustration.",
         },
@@ -391,7 +469,12 @@ describe("narrative corpus validation and projection", () => {
     ]);
     const moons = world.entities.filter((entity) => entity.kind === "moon");
     expect(moons).toHaveLength(canonicalMoons.length);
-    for (const expected of canonicalMoons) {
+    for (const [moonIndex, expected] of canonicalMoons.entries()) {
+      const siblingIndex = canonicalMoons
+        .slice(0, moonIndex + 1)
+        .filter(
+          (moon) => moon.parent_location_id === expected.parent_location_id,
+        ).length;
       expect(
         world.entities.find((entity) => entity.id === expected.id),
       ).toEqual({
@@ -400,6 +483,7 @@ describe("narrative corpus validation and projection", () => {
         parent_relation: "orbits",
         entity_type: "location",
         child_ids: [],
+        orbital_order: siblingIndex * 1024,
       });
     }
     for (const [planetId, childIds] of [
@@ -467,6 +551,7 @@ describe("narrative corpus validation and projection", () => {
       assets: [
         {
           id: "asset:fixture-portrait",
+          role: "illustration",
           path: "assets/fixture-portrait.webp",
           source: "Test-only asset registry entry.",
         },
@@ -1415,6 +1500,37 @@ describe("narrative corpus validation and projection", () => {
         "2200.2",
       ).entities.find((entity) => entity.id === "character:fixture-alex"),
     ).toMatchObject({ current_state: "later state" });
+  });
+
+  it("does not let a losing story-earlier reparent erase the winning orbital key", () => {
+    const corpus = createNarrativeFixtureCorpus();
+    corpus.chapters[1]!.updates = [
+      ...((corpus.chapters[1]!.updates as NarrativeRecord[] | undefined) ?? []),
+      {
+        entity_id: "location:earth",
+        parent_location_id: "location:mars",
+        parent_relation: "orbits",
+        orbital_order: 77,
+      },
+    ];
+    corpus.chapters[2]!.updates = [
+      ...((corpus.chapters[2]!.updates as NarrativeRecord[] | undefined) ?? []),
+      {
+        entity_id: "location:earth",
+        parent_location_id: "location:venus",
+        parent_relation: "orbits",
+      },
+    ];
+
+    const earth = generateNarrativeWorld(
+      prepareNarrativeCorpus(corpus),
+      "1.3",
+      "2200.2",
+    ).entities.find((entity) => entity.id === "location:earth");
+    expect(earth).toMatchObject({
+      parent_location_id: "location:mars",
+      orbital_order: 77,
+    });
   });
 
   it("rejects equal indexed state-write moments", () => {
