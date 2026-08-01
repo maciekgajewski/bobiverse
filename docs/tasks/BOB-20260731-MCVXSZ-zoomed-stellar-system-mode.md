@@ -1,8 +1,8 @@
 # BOB-20260731-MCVXSZ: zoomed stellar-system mode
 
-Status: In progress
+Status: Done
 Phase: 3 (exploration tools)
-Last updated: 2026-07-31
+Last updated: 2026-08-01
 
 ## Objective
 
@@ -161,23 +161,6 @@ selected.
 - Keep both controls keyboard-operable with visible focus and practical touch targets
   in desktop, compact, phone, short-height, and 200%-browser-zoom layouts.
 
-### Test-only Alpha Centauri projection
-
-- Use the validated astronomy record `stellar-system-005413` (**Alpha Centauri**) and
-  its existing Alpha Centauri A, Alpha Centauri B, and Proxima Centauri components as
-  the deterministic multi-component visual-acceptance fixture.
-- Supply eligibility through a clearly synthetic test-only reader projection with a
-  mapped narrative `star_system` and multiple direct `member_of_system` star children.
-  The synthetic stars establish only entry eligibility; they do not claim individual
-  associations with the three astronomy components.
-- Provide an explicit, documented test/development-only way to run this projection in
-  Playwright and manual visual review. It must be opt-in, side-effect-free, and
-  unavailable from the ordinary production application and production build output.
-- Do not add Alpha Centauri to canonical narrative source data, reader progress,
-  generated canonical projections, or the ordinary narrative-known system set.
-- Regression coverage must prove the fixture cannot change normal production
-  projection or make canonical Alpha Centauri narrative-known at any reader position.
-
 ## In scope
 
 - Zoomed-mode application state and exact camera/target capture.
@@ -189,8 +172,6 @@ selected.
 - Astronomy-component selection identity, canvas picking, DOM access, and inspector.
 - **Star Map** breadcrumb and **Return to map** controls.
 - Focused unit, component, E2E, accessibility, and map-regression coverage.
-- A deterministic test-only Alpha Centauri projection and documented manual fixture
-  entry path that cannot affect canonical or production data.
 - Directly affected technical, interaction, visual-testing, and user documentation.
 
 ## Out of scope
@@ -205,9 +186,7 @@ selected.
 - Physical stellar separation, orbital geometry, simulation, animation, measurement,
   or changes to canonical astronomy coordinates.
 - Free camera controls in zoomed mode.
-- Entry into astronomy-only or reader-hidden systems.
-- Canonically marking Alpha Centauri as narrative-known or adding synthetic fixture
-  entities to committed narrative source or generated runtime data.
+- Entry into astronomy-only, reader-hidden, or synthetic narrative systems.
 - A modal, popup, route replacement, backend, runtime service, remote asset request,
   second renderer, or second sky authority.
 - Completing the broader BOB-016 mobile workspace redesign.
@@ -223,9 +202,9 @@ selected.
    smoothly dollies closer, and retains the aligned Galactic backdrop without a
    modal, blank frame, or route replacement.
 4. Every entered astronomy component reuses its exact ordinary-map glyph inputs and
-   `componentOffset(...)`; a multi-star fixture has the same apparent component
-   arrangement immediately before and after the transition, differing only in
-   magnification and zoomed-mode state treatment.
+   `componentOffset(...)`; multi-star systems therefore retain the same apparent
+   component arrangement through the transition, differing only in magnification and
+   zoomed-mode state treatment.
 5. Other interstellar systems remain stationary at their canonical positions as
    strongly dimmed, unlabeled, non-pickable background. Interstellar overlays and
    interaction affordances are absent while zoomed mode is active.
@@ -262,12 +241,7 @@ selected.
 17. Directly affected documentation describes the implemented incremental boundary,
     including that orbital bodies and narrative-star/component association remain for
     later tasks.
-18. An opt-in test/development-only projection makes the existing
-    `stellar-system-005413` Alpha Centauri record eligible without altering canonical
-    narrative data. It renders the record's three real catalogue components, supports
-    automated and manual visual review, and is absent from ordinary production
-    behavior and build output.
-19. A fresh independent implementation review returns `No findings.`, all documented
+18. A fresh independent implementation review returns `No findings.`, all documented
     validation passes, and the Captain accepts the real-browser desktop and mobile
     visual result before this task becomes `Done`.
 
@@ -277,8 +251,8 @@ selected.
 - `npm run test`
 - `npm run lint`
 - `npm run format:check`
-- `npm run build && ! rg -n 'development-alpha-centauri|system-fixture' dist`
-- `npx playwright test tests/e2e/atlas.spec.ts --project=chromium --grep "development Alpha Centauri fixture"`
+- `npm run build`
+- `npx playwright test tests/e2e/atlas.spec.ts --project=chromium --grep "Solar System enters and exits"`
 - `python3 scripts/tasks.py check`
 - Remote supported-browser review following `docs/visual-testing.md` remains required
   before this task can move to `Done`.
@@ -291,17 +265,15 @@ selected.
 - Component coverage for conditional **Enter system**, component DOM selection and
   inspection, unchanged breadcrumb during component selection, every exit surface,
   projection invalidation, status announcements, keyboard focus, and WebGL fallback.
-- Cross-browser Playwright coverage for Sol, the test-only eligible Alpha Centauri
-  projection,
-  one ineligible astronomy-only fixture, fixed camera gestures, component selection,
+- Cross-browser Playwright coverage for Sol, one ineligible astronomy-only system,
+  fixed camera gestures, component selection,
   browser Back, repeated entry and exit, exact restoration, reduced motion, compact
   interaction, phone layout, short height, and 200% browser zoom.
 - Existing map interaction and performance coverage proving ordinary system-level
   selection, narrative emphasis, focus, reset, captions, measurements, render-call
   count, and frame-time gates remain unchanged outside zoomed mode.
-- Isolation coverage proving the Alpha Centauri projection is explicitly opt-in,
-  cannot enter canonical narrative/generated data, is unavailable to the production
-  application, and leaves ordinary Alpha Centauri astronomy-only.
+- Coverage proving astronomy-only systems remain ineligible and cannot enter zoomed
+  mode through ordinary selection.
 
 ## Validation commands
 
@@ -324,9 +296,7 @@ all new type, unit, component, build, and static-data contracts.
 Start the trusted-LAN development server with `npm run dev` and review from real
 supported desktop and mobile browsers. At minimum:
 
-- enter and exit Sol and the documented test-only Alpha Centauri projection;
-- compare the multi-star apparent layout immediately before and after entry from
-  several ordinary-map camera angles;
+- enter and exit Sol from several ordinary-map camera angles;
 - verify that entry preserves the angle, the dolly reads as moving toward the system,
   and exit returns to the exact captured pose;
 - select every component through both canvas and DOM controls and confirm that the
@@ -338,9 +308,21 @@ supported desktop and mobile browsers. At minimum:
 - inspect dimmed background continuity and the breadcrumb at wide, compact, phone,
   short-height, and 200% browser zoom.
 
-The headless host and automated screenshots cannot approve the final WebGL
-transition. Record unavailable real browsers as explicit publication gaps. Keep the
-task `In progress` until the Captain personally accepts the final visual result.
+The Captain completed real-browser visual review on 2026-08-01 and accepted the
+camera transitions, restored map interaction, fixed zoomed-mode interaction,
+breadcrumb typography, and stable top-bar layout.
+
+## Completion evidence
+
+- The Captain reported `visual test passed` on 2026-08-01 after the final breadcrumb
+  and top-bar adjustment.
+- Automated system-mode interaction and camera coverage uses canonical Sol. No
+  development-only narrative projection or query-parameter fixture remains.
+- `npm run validate` passed: formatting, lint, typecheck, 73 Python tests, 179 Vitest
+  tests, data validation, and the production build.
+- `npm run test:e2e` passed all 60 tests across Chromium, Firefox, and WebKit.
+- `npm run performance:map` passed the BOB-034 fixture and frame budgets.
+- The final independent implementation review returned `No findings.`
 
 ## Documentation and generated artifacts
 
@@ -356,8 +338,6 @@ During implementation:
   `../visual-testing.md`;
 - update `../../README.md` with entry, component inspection, breadcrumb, browser Back,
   fixed interaction, and exit behavior;
-- document the exact test/development-only Alpha Centauri fixture entry path in
-  `../visual-testing.md`, including its production-isolation guarantee;
 - keep generated artifacts deterministic and validated through the normal repository
   path; do not commit exploratory screenshots or browser caches.
 
@@ -379,4 +359,5 @@ During implementation:
   focus, and narrative-star/component association explicitly deferred to later tasks
   under `BOB-20260731-ACPTAB`.
 
-No material decisions remain unresolved. Implementation is not authorized.
+No material decisions remain unresolved. Implementation was explicitly authorized
+and completed as the first delivery slice under `BOB-20260731-ACPTAB`.

@@ -11,6 +11,7 @@ import App from "../../src/App";
 import * as narrativeMap from "../../src/narrative/map";
 import * as narrativeModel from "../../src/narrative/model";
 import { narrativeRuntimePreparationCount } from "../../src/narrative/runtime";
+import * as systemView from "../../src/system-view";
 
 describe("atlas shell", () => {
   afterEach(() => {
@@ -42,12 +43,13 @@ describe("atlas shell", () => {
     expect(screen.queryByText("Astronomy systems")).not.toBeInTheDocument();
   });
 
-  it("offers the development-only Alpha Centauri system fixture through DOM controls", async () => {
-    window.history.replaceState({}, "", "/?system-fixture=alpha-centauri");
+  it("offers the canonical Solar System view through DOM controls", async () => {
     const user = userEvent.setup();
     render(<App />);
 
-    await user.click(screen.getByRole("button", { name: "Alpha Centauri" }));
+    await user.click(
+      screen.getByRole("button", { name: /^Solar System(?:Active)?$/ }),
+    );
     await user.click(screen.getByRole("button", { name: "Enter system" }));
     expect(
       screen.getByRole("button", { name: "Star Map" }),
@@ -60,11 +62,11 @@ describe("atlas shell", () => {
     });
     await user.click(
       within(inspector).getByRole("button", {
-        name: "Inspect component: Alpha Centauri A",
+        name: "Inspect component: Sol",
       }),
     );
     expect(
-      within(inspector).getByRole("heading", { name: "Alpha Centauri A" }),
+      within(inspector).getByRole("heading", { name: "Sol" }),
     ).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Star Map" }));
     await waitFor(() =>
@@ -82,13 +84,19 @@ describe("atlas shell", () => {
   });
 
   it("announces why a system view closes after its projection becomes ineligible", async () => {
-    window.history.replaceState({}, "", "/?system-fixture=alpha-centauri");
+    const originalEntryResolver =
+      systemView.systemViewEntryForNarrativeSelection;
+    const entryResolver = vi
+      .spyOn(systemView, "systemViewEntryForNarrativeSelection")
+      .mockImplementation(originalEntryResolver);
     const user = userEvent.setup();
     render(<App />);
-    await user.click(screen.getByRole("button", { name: "Alpha Centauri" }));
+    await user.click(
+      screen.getByRole("button", { name: /^Solar System(?:Active)?$/ }),
+    );
     await user.click(screen.getByRole("button", { name: "Enter system" }));
 
-    window.history.replaceState(window.history.state, "", "/");
+    entryResolver.mockReturnValue(null);
     await user.selectOptions(screen.getByLabelText("Read through"), "1.1");
     await user.click(
       screen.getByRole("button", { name: "Confirm read through" }),

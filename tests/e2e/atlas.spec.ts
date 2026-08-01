@@ -157,47 +157,67 @@ test("empty map clicks clear inspection selection", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Measure" })).toHaveCount(0);
 });
 
-test("development Alpha Centauri fixture enters and exits the fixed system mode", async ({
+test("Solar System enters and exits the fixed system mode", async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/?system-fixture=alpha-centauri");
-  await page
-    .getByRole("button", { name: "Alpha Centauri", exact: true })
-    .click();
+  await page.goto("/");
+  await page.getByRole("button", { name: "Solar System" }).click();
   const inspector = page.getByRole("complementary", {
     name: "Object inspector",
   });
+  const ordinaryTopbarHeight = await page
+    .locator(".topbar")
+    .evaluate((topbar) => topbar.getBoundingClientRect().height);
   await inspector.getByRole("button", { name: "Enter system" }).click();
   await expect(page.getByRole("button", { name: "Star Map" })).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Return to map" }),
   ).toBeVisible();
+  const zoomedTopbarHeight = await page
+    .locator(".topbar")
+    .evaluate((topbar) => topbar.getBoundingClientRect().height);
+  expect(zoomedTopbarHeight).toBe(ordinaryTopbarHeight);
+  const breadcrumbTypography = await page
+    .getByRole("navigation", { name: "Star map breadcrumb" })
+    .evaluate((breadcrumb) => {
+      const root = breadcrumb.querySelector("button");
+      const current = breadcrumb.querySelector('[aria-current="page"]');
+      if (!root || !current)
+        throw new Error("Zoomed breadcrumb is incomplete.");
+      const rootStyle = getComputedStyle(root);
+      const currentStyle = getComputedStyle(current);
+      return {
+        root: [rootStyle.color, rootStyle.fontSize, rootStyle.fontWeight],
+        current: [
+          currentStyle.color,
+          currentStyle.fontSize,
+          currentStyle.fontWeight,
+        ],
+      };
+    });
+  expect(breadcrumbTypography.current).toEqual(breadcrumbTypography.root);
   await inspector
-    .getByRole("button", { name: "Inspect component: Proxima Centauri" })
+    .getByRole("button", { name: "Inspect component: Sol" })
     .click();
-  await expect(
-    inspector.getByRole("heading", { name: "Proxima Centauri" }),
-  ).toBeVisible();
+  await expect(inspector.getByRole("heading", { name: "Sol" })).toBeVisible();
   await page.goBack();
   await expect(
     inspector.getByRole("button", { name: "Enter system" }),
   ).toBeVisible();
-  const sol = await page.evaluate(() =>
-    window.__bob034MapPerformance!.screenPoint("sol"),
+  const alphaCentauri = await page.evaluate(() =>
+    window.__bob034MapPerformance!.screenPoint("stellar-system-005413"),
   );
-  await page.mouse.click(sol.x, sol.y);
-  await expect(page.locator(".selection-label")).toHaveText("Sol");
+  await page.mouse.click(alphaCentauri.x, alphaCentauri.y);
+  await expect(page.locator(".selection-label")).toHaveText("Alpha Centauri");
 });
 
 test("immediate system entry completes ordinary focus before pose capture", async ({
   page,
 }) => {
-  await page.goto("/?system-fixture=alpha-centauri");
+  await page.goto("/");
   await page.waitForFunction(() => window.__bob034MapPerformance !== undefined);
-  await page
-    .getByRole("button", { name: "Alpha Centauri", exact: true })
-    .click();
+  await page.getByRole("button", { name: "Solar System" }).click();
   await settleMapCamera(page);
   const expectedFocusedPose = await page.evaluate(() =>
     window.__bob034MapPerformance!.snapshot(),
@@ -205,9 +225,7 @@ test("immediate system entry completes ordinary focus before pose capture", asyn
 
   await page.reload();
   await page.waitForFunction(() => window.__bob034MapPerformance !== undefined);
-  await page
-    .getByRole("button", { name: "Alpha Centauri", exact: true })
-    .click();
+  await page.getByRole("button", { name: "Solar System" }).click();
   await page.waitForFunction(
     () => window.__bob034MapPerformance!.snapshot().cameraTransitionActive,
   );
@@ -249,11 +267,9 @@ test("system-mode dollies preserve direction and restore the exact camera pose",
   page,
 }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
-  await page.goto("/?system-fixture=alpha-centauri");
+  await page.goto("/");
   await page.waitForFunction(() => window.__bob034MapPerformance !== undefined);
-  await page
-    .getByRole("button", { name: "Alpha Centauri", exact: true })
-    .click();
+  await page.getByRole("button", { name: "Solar System" }).click();
   await settleMapCamera(page);
   const originalPose = await page.evaluate(() =>
     window.__bob034MapPerformance!.snapshot(),
@@ -279,8 +295,8 @@ test("system-mode dollies preserve direction and restore the exact camera pose",
   expect(enteredState.capturedCamera).toEqual(originalPose.camera);
   expect(enteredState.capturedTarget).toEqual(originalPose.target);
 
-  const midExitSol = await page.evaluate(() =>
-    window.__bob034MapPerformance!.screenPoint("sol"),
+  const midExitAlphaCentauri = await page.evaluate(() =>
+    window.__bob034MapPerformance!.screenPoint("stellar-system-005413"),
   );
   const exitDirectionMonitor = monitorCameraDirection(page);
   await page.getByRole("button", { name: "Return to map" }).click();
@@ -299,7 +315,7 @@ test("system-mode dollies preserve direction and restore the exact camera pose",
     canvas.dispatchEvent(new PointerEvent("pointerdown", init));
     canvas.dispatchEvent(new PointerEvent("pointerup", init));
     canvas.dispatchEvent(new MouseEvent("click", init));
-  }, midExitSol);
+  }, midExitAlphaCentauri);
   await page.locator("#map-stage").evaluate((stage) => {
     stage.style.removeProperty("width");
   });
@@ -323,7 +339,7 @@ test("system-mode dollies preserve direction and restore the exact camera pose",
   expect(restoredState.framingRevision).toBe(originalPose.framingRevision);
   expect(restoredState.camera).toEqual(originalPose.camera);
   expect(restoredState.target).toEqual(originalPose.target);
-  await expect(page.locator(".selection-label")).toHaveText("Alpha Centauri");
+  await expect(page.locator(".selection-label")).toHaveText("Sol");
   await page.getByRole("button", { name: "Reset view" }).click();
   await page.waitForFunction(
     (revision) =>
@@ -769,6 +785,9 @@ test("expressive map states preserve active, hover, and astronomy-only selection
     await expect(
       inspector.getByText("Not story-known at this view"),
     ).toBeVisible();
+    await expect(
+      inspector.getByRole("button", { name: "Enter system" }),
+    ).toHaveCount(0);
   }
 });
 

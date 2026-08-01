@@ -26,9 +26,7 @@ import {
   projectNarrativeMap,
 } from "./narrative/map";
 import {
-  alphaCentauriFixtureRequested,
   systemViewEntryForNarrativeSelection,
-  withAlphaCentauriFixture,
   type SystemViewEntry,
 } from "./system-view";
 import {
@@ -149,10 +147,7 @@ function projectReaderProgress(
     progress.viewChapter,
     progress.mode === "date" ? progress.displayDate : null,
   );
-  const world =
-    import.meta.env.DEV && alphaCentauriFixtureRequested()
-      ? withAlphaCentauriFixture(generatedWorld)
-      : generatedWorld;
+  const world = generatedWorld;
   const chapterDetail =
     progress.mode === "chapter" && progress.viewChapter
       ? projectNarrativeChapterDetail(
@@ -804,17 +799,18 @@ export default function App() {
           >
             Reset view
           </button>
-          {systemMode && (
-            <button
-              className="button"
-              type="button"
-              onClick={() =>
-                restoreSystemMode("Returned to the interstellar map.")
-              }
-            >
-              Return to map
-            </button>
-          )}
+          <button
+            className={`button return-to-map${systemMode ? "" : " return-to-map-placeholder"}`}
+            type="button"
+            disabled={!systemMode}
+            aria-hidden={!systemMode}
+            tabIndex={systemMode ? 0 : -1}
+            onClick={() =>
+              restoreSystemMode("Returned to the interstellar map.")
+            }
+          >
+            Return to map
+          </button>
         </div>
       </header>
       <p className="selection-status" role="status" aria-live="polite">
