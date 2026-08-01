@@ -238,6 +238,11 @@ Planned work:
   supply their order; later flat locations may use optional non-metric
   `orbital_order`, with `1024`-interval implicit keys and deterministic append
   behavior when it is absent.
+- Apply ADR-0021 only to its fingerprinted Chapter `1.19` phrase `several outer
+  Jovians`: author three distinct anonymous gas giants as the guaranteed lower bound,
+  preserve `several` in the system description, and place their stable schematic
+  ordinals after OE-2. Do not treat this as a general qualitative-count conversion or
+  assert an exact total or unsupported properties.
 - Keep every `current_state` to one or two sentences about the latest condition and
   every description centered on its entity, using general capability language rather
   than retelling a named character's actions. Keep missing-knowledge claims in
@@ -245,6 +250,11 @@ Planned work:
   reader-facing descriptions without inventing replacements.
 - Add regression fixtures for non-chronological chapters and later revelations about
   earlier events.
+
+Implementation note: BOB-20260731-679GX9 supplies the accepted ADR-0020
+`orbital_order` schema, semantic validation, deterministic projection, diagnostics,
+and tests. The guided-system-view task consumes that foundation and owns only its
+remaining asset, renderer, navigation, interaction, and visual-acceptance work.
 
 Exit criteria:
 

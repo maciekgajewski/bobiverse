@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0.0",
-  "accepted_candidate_sha256": "15ca441036f463e2bb91de366b839e50d04dffe40b0a2d5c9077dd22d919606a",
-  "reviewer": "Codex BOB-026 source-mapping and BOB-030 deterministic coverage-refresh review under Captain authorization",
-  "reviewed_at": "2026-07-29",
+  "accepted_candidate_sha256": "767da359b4376a23a693394efc6ebd9829d7569174ec84b6c4140ff918c77673",
+  "reviewer": "Codex isolated regenerated-candidate Omicron2 staging review under Captain authorization",
+  "reviewed_at": "2026-07-31",
   "anchor_bootstraps": [],
   "identity_transitions": [],
   "cns5_astrometry_overrides": [],
@@ -406,7 +406,17 @@
     {
       "candidate_system_id": "stellar-system-002424",
       "name": "40 Eridani",
-      "alternates": []
+      "alternates": ["Omicron2 Eridani"]
+    },
+    {
+      "candidate_system_id": "stellar-system-003557",
+      "name": "GJ 19",
+      "alternates": ["Beta Hydri"]
+    },
+    {
+      "candidate_system_id": "stellar-system-003918",
+      "name": "GJ 150",
+      "alternates": ["Delta Eridani"]
     },
     {
       "candidate_system_id": "stellar-system-000416",

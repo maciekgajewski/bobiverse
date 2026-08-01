@@ -6,7 +6,7 @@ describe("reconciled astronomy runtime data", () => {
   it("contains every generated mapped-anchor neighbourhood and its coverage proof", () => {
     expect(nearbySystems).not.toBeNull();
     if (!nearbySystems) throw new Error("Fixture dataset failed validation");
-    expect(nearbySystems.systems).toHaveLength(119);
+    expect(nearbySystems.systems).toHaveLength(242);
     expect(nearbySystems.systems[0]?.id).toBe("sol");
     expect(nearbySystems.metadata.coverage).toEqual([
       {
@@ -15,6 +15,42 @@ describe("reconciled astronomy runtime data", () => {
         radius_ly: mapDisplayConfig.context_radius_ly,
         source_record_count: 118,
         system_count: 96,
+        gcns_boundary_pc: 100,
+      },
+      {
+        anchor_id: "stellar-system-002424",
+        anchor_position_pc: {
+          xg: -3.6881852,
+          yg: -1.3983339,
+          zg: -3.088763,
+        },
+        radius_ly: mapDisplayConfig.context_radius_ly,
+        source_record_count: 103,
+        system_count: 88,
+        gcns_boundary_pc: 100,
+      },
+      {
+        anchor_id: "stellar-system-003557",
+        anchor_position_pc: {
+          xg: 3.2764518,
+          yg: -4.7213135,
+          zg: -4.7854877,
+        },
+        radius_ly: mapDisplayConfig.context_radius_ly,
+        source_record_count: 95,
+        system_count: 86,
+        gcns_boundary_pc: 100,
+      },
+      {
+        anchor_id: "stellar-system-003918",
+        anchor_position_pc: {
+          xg: -6.0025816,
+          yg: -1.9599503,
+          zg: -6.537572,
+        },
+        radius_ly: mapDisplayConfig.context_radius_ly,
+        source_record_count: 88,
+        system_count: 82,
         gcns_boundary_pc: 100,
       },
       {

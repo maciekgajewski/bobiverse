@@ -101,22 +101,10 @@ unchanged.
 - Component stars are the system's existing `member_of_system` children. A body stays
   beneath its authored parent star. Do not invent shared, circumbinary, or
   system-level bodies absent from the hierarchy.
-- Add optional non-metric integer `orbital_order`, constrained inclusively to
-  `1`–`9007199254740991`, to flat chapter location introductions and updates whose
-  effective `parent_relation` is `orbits`.
-- Assign every zero-state nested orbital child an implicit effective key in child
-  array order: `1024`, `2048`, and so on.
-- Require explicit and implicit effective sibling keys to be unique. Introduction or
-  reparenting omission appends after the effective maximum in `1024` increments;
-  define the maximum of an empty set as `0`, so its first omitted child receives
-  `1024`. Stable location ID determines allocation order for simultaneous omissions,
-  which receive successive `1024` increments. Ordinary update omission retains the
-  effective key.
-- An update may use any unused positive safe integer to insert or move a child. If no
-  integer remains in the desired gap, the same authored change must renumber affected
-  siblings explicitly. Leaving `orbits` removes the effective key. Reject
-  non-integer, non-positive, unsafe, overflowing, or duplicate effective keys with
-  source-aware diagnostics.
+- Consume the optional non-metric `orbital_order`, implicit zero-state keys,
+  deterministic append/reparenting semantics, uniqueness validation, and ordered
+  projected `child_ids` implemented by BOB-20260731-679GX9. Do not duplicate those
+  source-model or projection responsibilities in renderer code.
 - Derive projected `child_ids` from effective orbital order before React consumes the
   hierarchy. The renderer must preserve that order and must not sort by name, kind,
   ID, source mention, generated texture, or layout convenience.
@@ -317,8 +305,9 @@ unchanged.
   reduced-motion presentation.
 - Typed asset roles, body-surface metadata, optional surface assignment, validation,
   projection, deterministic generic selection, and project-owned generic textures.
-- Optional `orbital_order`, deterministic append/reparenting semantics, ordered
-  `child_ids`, validation, and current-corpus compatibility.
+- Consume the existing validated `orbital_order` and ordered `child_ids` projection;
+  preserve that order through the guided layout without redefining source,
+  append/reparenting, or validation semantics.
 - Directly affected application, component, unit, data, E2E, and map-performance
   regression coverage.
 - Integrated technical, data-model, asset/provenance, visual-testing, README, and task
@@ -359,13 +348,9 @@ unchanged.
    grandchildren are visibly reduced non-interactive previews; deeper recognized
    descendants are absent. Canvas and DOM selection reach the same resulting
    selection and focus path.
-6. Zero-state arrays assign implicit `1024`-interval keys and optional flat
-   `orbital_order` claims share the same positive-safe-integer order. Tests prove a
-   later-introduced inner body and a reparented body occupy their authored positions,
-   the first omitted child of an empty parent receives `1024`, simultaneous omissions
-   receive successive keys in stable-ID order, ordinary updates retain keys, gap
-   exhaustion requires explicit renumbering, invalid or colliding keys fail, and the
-   renderer preserves derived `child_ids` exactly without sorting.
+6. The renderer consumes BOB-20260731-679GX9-derived `child_ids` exactly without
+   sorting, including later-introduced inner bodies and reparented bodies covered by
+   that foundation's tests.
 7. Multiple-star fixtures render every hierarchical star, place only that star's
    authored descendants beneath it, and create no shared or inferred bodies.
 8. Planets, dwarf planets, and moons render as categorically sized textured spheres.
@@ -425,9 +410,9 @@ unchanged.
   sizes, deterministic texture choice, region geometry inputs, exact renderable-kind
   filtering, label priority, focus-path fallback, and history-state decisions.
 - Narrative schema and semantic coverage for asset roles, `surface_texture_id`
-  introduction/update/null-clearing, optional `orbital_order`, effective sibling
-  uniqueness, introduction/reparenting projection, compatibility, source-aware
-  diagnostics, spoiler projection, and older-view non-disclosure.
+  introduction/update/null-clearing, compatibility, spoiler projection, and
+  older-view non-disclosure. BOB-20260731-679GX9 owns orbital-order source and
+  projection coverage.
 - Component coverage for **Enter system**, breadcrumbs, **Return to map**,
   singular **Focus active location**, plural **Active locations**, multiple active
   descendants collapsing to one ancestor, shared canvas/DOM selection, non-rendered

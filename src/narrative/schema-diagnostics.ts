@@ -78,6 +78,7 @@ const entityProperties = {
     "color",
     "visual_description",
     "surface_gravity_g",
+    "orbital_order",
     "map_status",
     "parent_location_id",
     "parent_relation",

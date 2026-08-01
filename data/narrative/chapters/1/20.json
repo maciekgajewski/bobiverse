@@ -1,0 +1,55 @@
+{
+  "chapter": "1.20",
+  "title": "20",
+  "summary": "In December 2145 at Epsilon Eridani, Bill watches Riker and Homer leave for Sol alongside a decoy vessel while he and his clone Garfield remain. Garfield joins Bill's project-list work, including improvements to VR and artificial muscle-fiber analogues for realistic robots or androids. Bill regards Garfield as a good partner and worries that Homer's cartoon avatar and incessant Doh's will strain Riker during the journey.",
+  "date": "2145",
+  "location_id": "location:epsilon-eridani",
+  "introducing": [
+    {
+      "id": "character:garfield",
+      "name": "Garfield",
+      "parent_id": "character:bill",
+      "current_state": "At Epsilon Eridani, helping Bill begin research-and-development work while declining to participate in building Bobs."
+    },
+    {
+      "id": "character:homer",
+      "name": "Homer",
+      "parent_id": "character:riker",
+      "current_state": "Leaving Epsilon Eridani for Sol with Riker; he uses a cartoon avatar and incessant Doh's."
+    },
+    {
+      "id": "technology:artificial-muscle-fiber-analogues",
+      "name": "artificial muscle-fiber analogues",
+      "description": "Artificial muscle-fiber analogues are under development for constructing realistic robots or androids."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "technology:vr",
+      "description": "A virtual-reality interface Bob builds aboard Heaven-1 to provide sensory input and an embodied experience while he travels as a bodiless mind. It initially needs hardware modifications and remains an ongoing software project. Planned improvements are intended to support more direct interaction between users."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bill",
+      "role": "lead",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:garfield",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:riker",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:homer",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    }
+  ],
+  "mentions": ["character:bob-replicant", "location:earth", "location:sol"]
+}

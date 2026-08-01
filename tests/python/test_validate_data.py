@@ -15,6 +15,7 @@ from astronomy_pipeline import (
     c20pc_distance_warning,
     gcns_anchor_query,
     position_from_cns5,
+    retained_component_identities,
     proposed_position_component,
     reviewed_landmark_source_identities,
     read_extract,
@@ -65,6 +66,127 @@ from validate_data import (
 
 
 class MultiCatalogueContractTest(unittest.TestCase):
+    def test_gcns_alias_inside_cns5_reference_group_does_not_split_component(self) -> None:
+        self.assertEqual(
+            retained_component_identities(
+                {"123", "456"},
+                {"gaia-dr3:999"},
+                {"123": "gaia-dr3:999"},
+            ),
+            {"gaia-dr3:999", "gaia-dr3:456"},
+        )
+
+    def test_eridani_and_beta_hydri_aliases_resolve_exact_existing_bootstraps(self) -> None:
+        candidates = read_json(CANDIDATES_PATH)
+        review = read_json(ROOT / "data" / "source" / "system-review.json")
+        expected = {
+            "stellar-system-002424": {
+                "name": "40 Eridani",
+                "alias": "Omicron2 Eridani",
+                "component_id": "stellar-component-002943",
+                "source_id": "3195919528989223040",
+            },
+            "stellar-system-003557": {
+                "name": "GJ 19",
+                "alias": "Beta Hydri",
+                "component_id": "stellar-component-004282",
+                "source_id": "4683897617110115200",
+            },
+            "stellar-system-003918": {
+                "name": "GJ 150",
+                "alias": "Delta Eridani",
+                "component_id": "stellar-component-004724",
+                "source_id": "5164120762333028736",
+            },
+        }
+        systems = {system["id"]: system for system in candidates["systems"]}
+        components = {
+            component["id"]: component for component in candidates["components"]
+        }
+        overrides = {
+            override["candidate_system_id"]: override
+            for override in review["overrides"]
+        }
+
+        self.assertEqual(review["anchor_bootstraps"], [])
+        for system_id, contract in expected.items():
+            system = systems[system_id]
+            self.assertEqual(overrides[system_id], {
+                "candidate_system_id": system_id,
+                "name": contract["name"],
+                "alternates": [contract["alias"]],
+            })
+            self.assertEqual(
+                system["adopted_component_candidate"], contract["component_id"]
+            )
+            component = components[contract["component_id"]]
+            self.assertEqual(component["gaia_source_id"], contract["source_id"])
+            self.assertEqual(
+                component["position_derivation"],
+                "gcns median Bayesian Cartesian geometry",
+            )
+
+        anchor_names = {
+            system_id: [contract["alias"]]
+            for system_id, contract in expected.items()
+        }
+        self.assertEqual(
+            resolve_anchor_bootstraps(anchor_names, review, candidates),
+            [
+                {
+                    "anchor_id": system_id,
+                    "system_id": system_id,
+                    "catalogue": "gcns",
+                    "source_id": contract["source_id"],
+                }
+                for system_id, contract in expected.items()
+            ],
+        )
+
+        gcns_manifest, _ = read_extract("gcns")
+        beta_queries = [
+            query
+            for query in gcns_manifest["queries"]
+            if query.get("anchor_id") == "stellar-system-003557"
+        ]
+        self.assertEqual([query["stage"] for query in beta_queries], ["coverage"])
+        runtime = read_json(GENERATED_PATH)
+        runtime_systems = {
+            system["id"]: system for system in runtime["systems"]
+        }
+        for system_id in (
+            "stellar-system-002424",
+            "stellar-system-003557",
+            "stellar-system-003918",
+        ):
+            contract = expected[system_id]
+            self.assertEqual(runtime_systems[system_id]["name"], contract["name"])
+            self.assertIn(contract["alias"], runtime_systems[system_id]["alternates"])
+        beta_coverage = next(
+            proof
+            for proof in runtime["metadata"]["coverage"]
+            if proof["anchor_id"] == "stellar-system-003557"
+        )
+        self.assertEqual(beta_coverage["radius_ly"], 20.0)
+        self.assertGreater(beta_coverage["source_record_count"], 0)
+        self.assertGreater(beta_coverage["system_count"], 0)
+
+        chapter_18 = read_json(
+            ROOT / "data" / "narrative" / "chapters" / "1" / "18.json"
+        )
+        chapter_locations = {
+            location["id"]: location for location in chapter_18["introducing"]
+        }
+        for location_id, name, system_id in (
+            ("location:beta-hydri", "Beta Hydri", "stellar-system-003557"),
+            ("location:delta-eridani", "Delta Eridani", "stellar-system-003918"),
+        ):
+            self.assertEqual(chapter_locations[location_id]["name"], name)
+            self.assertEqual(chapter_locations[location_id]["kind"], "star_system")
+            self.assertEqual(
+                chapter_locations[location_id]["astronomy_object_id"], system_id
+            )
+
     def test_mapped_anchor_names_replays_independent_location_updates(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
             narrative_root = Path(temporary_directory)

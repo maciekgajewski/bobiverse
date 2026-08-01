@@ -1,0 +1,55 @@
+{
+  "chapter": "1.21",
+  "title": "21",
+  "summary": "In January 2157, Riker and Homer covertly survey Sol and find high radiation at several locations and Earth looking badly damaged from afar. Brazilian probes strike their decoy near Jupiter and its signal cuts off, revealing a larger force and an impending asteroid operation against Earth. Riker concludes the attackers are probably directed by Medeiros clones, but their identities and control remain uncertain.",
+  "date": "2157",
+  "location_id": "location:sol",
+  "updates": [
+    {
+      "entity_id": "character:riker",
+      "current_state": "At Sol with Homer, covertly surveying the system and investigating an impending asteroid operation against Earth."
+    },
+    {
+      "entity_id": "character:homer",
+      "current_state": "At Sol with Riker, covertly surveying the system and helping investigate an impending asteroid operation against Earth."
+    },
+    {
+      "entity_id": "location:earth",
+      "state": "High radiation has been detected at several locations, and long-range imagery looks bad. Homer suspects nuclear detonations."
+    },
+    {
+      "entity_id": "vessel:heaven-1",
+      "description": "A converted interplanetary freighter equipped as a Von Neumann probe. It is a small, light, resilient design intended to build copies of itself. It has a SURGE drive ring, fusion reactor, ramscoop generator, fabrication equipment including three large 3D printers, communications and sensor systems, and ROAMer and nanite systems; its autonomous cargo carriers move miners and materials; it has no weapons and little spare room. The version-2 HEAVEN design adds a larger reactor and drive, a rail-gun, ship-buster storage and launch facilities, higher-capacity replicant systems, room for ROAMers and mining drones, and greater cargo capacity. The HEAVEN project's communications are designed to send information from its vessels to Earth, not to support conversations across interstellar light-time delays. Version-2 HEAVEN vessels have better reactor shielding, and Riker's and Homer's versions are further strengthened."
+    },
+    {
+      "entity_id": "technology:suddar",
+      "description": "A subspace technology enabled by the same theoretical breakthrough as the SURGE drive and associated with the new possibility of interstellar probes and colonization. It can be used to monitor distance, scan for threats, and detect dense objects within a light-hour radius. An emitter flaw can produce a much weaker ping with poor close-range sensitivity; Bill hypothesizes that weaker signals may instead reach farther because attenuation changes with signal strength. It can detect objects at range but cannot provide fine detail at the distance encountered near Jupiter."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:riker",
+      "role": "lead",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:homer",
+      "role": "other",
+      "location_id": "location:sol"
+    }
+  ],
+  "mentions": [
+    "character:bill",
+    "character:robert-johansson",
+    "character:ernesto-medeiros",
+    "location:jupiter",
+    "location:oort-cloud",
+    "organization:china",
+    "organization:free-american-independent-theocratic-hegemony",
+    "organization:united-states-of-eurasia",
+    "technology:ami",
+    "technology:guppi-interface",
+    "technology:surge-drive",
+    "vessel:serra-do-mar"
+  ]
+}

@@ -177,6 +177,9 @@ Inside 25 pc the inclusion set is the union of CNS5 and GCNS, so a bright or mul
 CNS5 object is not lost merely because Gaia has no suitable source. Between 25 and
 100 pc GCNS is the available census authority. A required context sphere that crosses
 the 100 pc GCNS boundary fails validation rather than being presented as complete.
+An acquired GCNS row whose Gaia identifier is already an exact source alias within a
+CNS5 reference-object group enriches that accepted component; it does not create a
+second singleton component.
 The binding acquisition contract is the one in
 `docs/data/astronomy-pipeline.md`: GAVO TAP tables `gcns.main` and
 `cns5update.main`, the explicitly projected Gaia DR3 tables, and the pinned precise
@@ -466,9 +469,15 @@ Later introductions and updates may carry a positive safe-integer non-metric
 maximum in `1024` increments. The maximum of an empty set is `0`, so its first
 omitted child receives `1024`; stable location ID orders simultaneous omissions at
 successive increments. Ordinary update omission retains the key. Explicit and
-implicit sibling keys must be unique. Projection derives `child_ids` by ascending
-key; the renderer assigns decorative radii in that order without sorting or implying
-measured distance, inclination, phase, period, or size.
+implicit sibling keys must be unique. A nullable update clears the key only while the
+same effective write leaves `orbits`; null is invalid while the effective relation
+remains `orbits`. Projection derives `child_ids` by ascending key; the renderer
+assigns decorative radii in that order without sorting or implying measured distance,
+inclination, phase, period, or size.
+
+The schema, semantic validation, effective-key projection, source diagnostics, and
+ordered `child_ids` are implemented as the shared narrative foundation. Phase 3's
+guided renderer consumes that projection and does not reimplement ordering.
 
 Local geometry recognizes the entered `star_system`, its direct
 `member_of_system` star children, and `orbits` descendants whose kind is `planet`,
@@ -821,6 +830,12 @@ deterministic invented order when the source does not establish one, without imp
 measured distance or catalogue astronomy. The parent description retains the
 complete supported count or qualifier. A later unlinked name binds deterministically
 to the lowest anonymous ordinal, retaining its stable ID.
+ADR-0021 defines one fingerprinted Chapter `1.19` exception for the phrase `several
+outer Jovians`: author three distinct anonymous gas-giant locations as the guaranteed
+lower bound, retain `several` in the system description, and claim neither an exact
+total nor unsupported properties. Their stable presentation ordinals follow OE-2 in
+the ADR-0020 schematic sequence. This is not a general qualitative-count conversion
+rule.
 Survey-field eligibility is checked against complete effective location state:
 changing a body to an ineligible kind must atomically null-clear every retained survey
 field. Eligibility and moon cardinality are checked against each complete

@@ -684,6 +684,25 @@ def resolved_cns5_identity(record: dict[str, Any], records_by_id: dict[str, dict
         current = target
 
 
+def retained_component_identities(
+    gcns_source_ids: set[str],
+    cns5_primary_identities: set[str],
+    cns5_identity_by_gaia_id: dict[str, str],
+) -> set[str]:
+    """Return one component identity per accepted CNS5/GCNS source graph.
+
+    A GCNS row whose Gaia ID is already an exact source alias inside a CNS5
+    reference-object group enriches that accepted component.  It must not also
+    manufacture a second singleton component when a newly acquired context envelope
+    first brings that GCNS row into the pinned source union.
+    """
+    return cns5_primary_identities | {
+        f"gaia-dr3:{source_id}"
+        for source_id in gcns_source_ids
+        if source_id and source_id not in cns5_identity_by_gaia_id
+    }
+
+
 def source_name(record: dict[str, Any]) -> tuple[str, list[str]]:
     gj, hip, gaia = (str(record.get(key, "")).strip() for key in ("gj_id", "hip_id", "gaia_dr3_id"))
     candidates = []
@@ -1059,6 +1078,7 @@ def build_candidates(
         for entry in (cns5_astrometry_overrides or [])
     }
     cns5_by_identity: dict[str, dict[str, str]] = {}
+    cns5_identity_by_gaia_id: dict[str, str] = {}
     source_groups: dict[str, set[str]] = defaultdict(set)
     for record in cns5:
         identity = resolved_cns5_identity(record, cns5_by_id)
@@ -1066,11 +1086,18 @@ def build_candidates(
         gaia_id = decimal_id(record.get("gaia_dr3_id"))
         if gaia_id:
             source_groups[identity].add(f"gaia-dr3:{gaia_id}")
+            prior_owner = cns5_identity_by_gaia_id.setdefault(gaia_id, identity)
+            if prior_owner != identity:
+                raise ValueError(
+                    f"Gaia DR3 source {gaia_id} belongs to two CNS5 component identities"
+                )
         # Prefer the canonical source row over a CNS5 row that explicitly points to
         # it.  This preserves the source edge without manufacturing a component.
         if identity not in cns5_by_identity or str(record.get("reference_object_cns5_id", "")).strip() in {"", "--"}:
             cns5_by_identity[identity] = record
-    identities = set(cns5_by_identity) | {f"gaia-dr3:{identifier}" for identifier in gcns_by_gaia if identifier}
+    identities = retained_component_identities(
+        set(gcns_by_gaia), set(cns5_by_identity), cns5_identity_by_gaia_id
+    )
     for identity in identities:
         source_groups[identity].add(identity)
     migrate_component_registry(registry, prior_candidates)

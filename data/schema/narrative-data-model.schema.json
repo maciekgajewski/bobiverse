@@ -132,6 +132,12 @@
       "maximum": 1.7976931348623157e308,
       "description": "Source-supported numeric surface gravity in canonical Earth gravities."
     },
+    "orbital_order": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991,
+      "description": "Non-metric schematic ordering key for a flat location whose effective parent relation is orbits."
+    },
     "parent_relation": {
       "enum": ["member_of_system", "orbits", "located_on", "contained_in"]
     },
@@ -637,6 +643,7 @@
         "color": { "$ref": "#/$defs/survey_color" },
         "visual_description": { "$ref": "#/$defs/visual_description" },
         "surface_gravity_g": { "$ref": "#/$defs/surface_gravity_g" },
+        "orbital_order": { "$ref": "#/$defs/orbital_order" },
         "map_status": { "$ref": "#/$defs/unmapped_map_status" },
         "parent_location_id": { "$ref": "#/$defs/location_id" },
         "parent_relation": { "$ref": "#/$defs/parent_relation" },
@@ -645,6 +652,13 @@
         "destination_location_id": { "$ref": "#/$defs/location_id" }
       },
       "allOf": [
+        {
+          "if": { "required": ["orbital_order"] },
+          "then": {
+            "required": ["parent_relation"],
+            "properties": { "parent_relation": { "const": "orbits" } }
+          }
+        },
         {
           "if": { "required": ["parent_location_id"] },
           "then": { "required": ["parent_relation"] }
@@ -772,6 +786,9 @@
         "surface_gravity_g": {
           "anyOf": [{ "$ref": "#/$defs/surface_gravity_g" }, { "type": "null" }]
         },
+        "orbital_order": {
+          "anyOf": [{ "$ref": "#/$defs/orbital_order" }, { "type": "null" }]
+        },
         "map_status": {
           "anyOf": [
             { "$ref": "#/$defs/unmapped_map_status" },
@@ -806,6 +823,7 @@
         { "required": ["color"] },
         { "required": ["visual_description"] },
         { "required": ["surface_gravity_g"] },
+        { "required": ["orbital_order"] },
         { "required": ["map_status"] },
         { "required": ["parent_location_id"] },
         { "required": ["parent_relation"] },

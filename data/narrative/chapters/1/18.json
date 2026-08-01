@@ -8,15 +8,15 @@
     {
       "id": "location:delta-eridani",
       "name": "Delta Eridani",
-      "kind": "star",
-      "map_status": "unmapped",
+      "kind": "star_system",
+      "astronomy_object_id": "stellar-system-003918",
       "description": "A named star that Bob is heading toward from Epsilon Eridani. Bill considers it a suitable candidate with a good chance of habitable planets."
     },
     {
       "id": "location:beta-hydri",
       "name": "Beta Hydri",
-      "kind": "star",
-      "map_status": "unmapped",
+      "kind": "star_system",
+      "astronomy_object_id": "stellar-system-003557",
       "description": "A named star that Mario is heading toward from Epsilon Eridani. Bill considers it suitable, though distant compared with nearer stars of comparable potential."
     }
   ],

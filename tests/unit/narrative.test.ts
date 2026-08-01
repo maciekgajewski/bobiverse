@@ -392,12 +392,17 @@ describe("narrative corpus validation and projection", () => {
     const moons = world.entities.filter((entity) => entity.kind === "moon");
     expect(moons).toHaveLength(canonicalMoons.length);
     for (const expected of canonicalMoons) {
+      const parent = world.entities.find(
+        (entity) => entity.id === expected.parent_location_id,
+      );
+      const siblingIndex = (parent?.child_ids as string[]).indexOf(expected.id);
       expect(
         world.entities.find((entity) => entity.id === expected.id),
       ).toEqual({
         ...expected,
         kind: "moon",
         parent_relation: "orbits",
+        orbital_order: (siblingIndex + 1) * 1024,
         entity_type: "location",
         child_ids: [],
       });
@@ -1106,6 +1111,267 @@ describe("narrative corpus validation and projection", () => {
     ];
     expect(() => validateNarrativeCorpus(nonChronologicalMoonOverflow)).toThrow(
       "projection at 2200.1 gives location location:jupiter 5 direct moon children; maximum is 4",
+    );
+  });
+
+  it("projects deterministic non-metric orbital ordering across introductions and updates", () => {
+    const corpus = createNarrativeFixtureCorpus();
+    corpus.knownAstronomyObjectIds = ["sol", "fixture-system"];
+    (corpus.chapters[0]!.introducing as Array<Record<string, unknown>>).push(
+      {
+        id: "location:fixture-system",
+        name: "Fixture System",
+        kind: "star_system",
+        astronomy_object_id: "fixture-system",
+      },
+      {
+        id: "location:fixture-star",
+        name: "Fixture Star",
+        kind: "star",
+        parent_location_id: "location:fixture-system",
+        parent_relation: "member_of_system",
+      },
+      {
+        id: "location:fixture-first-orbit",
+        name: "Fixture First Orbit",
+        kind: "planet",
+        parent_location_id: "location:fixture-star",
+        parent_relation: "orbits",
+      },
+      {
+        id: "location:fixture-orbit-z",
+        name: "Fixture Orbit Z",
+        kind: "planet",
+        parent_location_id: "location:sol",
+        parent_relation: "orbits",
+      },
+      {
+        id: "location:fixture-orbit-explicit",
+        name: "Fixture Explicit Orbit",
+        kind: "planet",
+        parent_location_id: "location:sol",
+        parent_relation: "orbits",
+        orbital_order: 512,
+      },
+      {
+        id: "location:fixture-orbit-a",
+        name: "Fixture Orbit A",
+        kind: "planet",
+        parent_location_id: "location:sol",
+        parent_relation: "orbits",
+      },
+    );
+    corpus.chapters[1]!.updates = [
+      {
+        entity_id: "location:fixture-orbit-a",
+        description: "An ordinary update retains its effective ordering key.",
+      },
+      {
+        entity_id: "location:fixture-orbit-z",
+        name: "Fixture Reparented Moon",
+        kind: "moon",
+        parent_location_id: "location:earth",
+        parent_relation: "orbits",
+      },
+    ];
+
+    const world = generateNarrativeWorld(prepareNarrativeCorpus(corpus), "1.2");
+    const byId = new Map(world.entities.map((entity) => [entity.id, entity]));
+    expect(byId.get("location:fixture-first-orbit")?.orbital_order).toBe(1024);
+    expect(byId.get("location:fixture-orbit-explicit")?.orbital_order).toBe(
+      512,
+    );
+    expect(byId.get("location:fixture-orbit-a")?.orbital_order).toBe(12288);
+    expect(byId.get("location:fixture-orbit-z")?.orbital_order).toBe(2048);
+    const introductionWorld = generateNarrativeWorld(
+      prepareNarrativeCorpus(corpus),
+      "1.1",
+    );
+    const introducedById = new Map(
+      introductionWorld.entities.map((entity) => [entity.id, entity]),
+    );
+    expect(introducedById.get("location:fixture-orbit-a")?.orbital_order).toBe(
+      12288,
+    );
+    expect(introducedById.get("location:fixture-orbit-z")?.orbital_order).toBe(
+      13312,
+    );
+    expect(byId.get("location:sol")?.child_ids).toEqual(
+      expect.arrayContaining([
+        "location:fixture-orbit-explicit",
+        "location:fixture-orbit-a",
+      ]),
+    );
+    expect(
+      (byId.get("location:sol")?.child_ids as string[]).indexOf(
+        "location:fixture-orbit-explicit",
+      ),
+    ).toBeLessThan(
+      (byId.get("location:sol")?.child_ids as string[]).indexOf(
+        "location:mercury",
+      ),
+    );
+    expect(byId.get("location:earth")?.child_ids).toEqual([
+      "location:moon",
+      "location:fixture-orbit-z",
+    ]);
+
+    const reset = structuredClone(corpus);
+    reset.chapters[1]!.updates = [
+      {
+        entity_id: "location:fixture-orbit-a",
+        orbital_order: null,
+      },
+    ];
+    expect(() => validateNarrativeCorpus(reset)).toThrow(
+      "orbital_order may be null only when the effective parent_relation no longer is orbits",
+    );
+
+    const clearedWhileLeavingOrbit = structuredClone(corpus);
+    clearedWhileLeavingOrbit.chapters[1]!.updates = [
+      {
+        entity_id: "location:fixture-orbit-z",
+        kind: "locale",
+        parent_location_id: "location:earth",
+        parent_relation: "located_on",
+        orbital_order: null,
+      },
+    ];
+    expect(
+      generateNarrativeWorld(
+        prepareNarrativeCorpus(clearedWhileLeavingOrbit),
+        "1.2",
+      ).entities.find((entity) => entity.id === "location:fixture-orbit-z"),
+    ).not.toHaveProperty("orbital_order");
+
+    const collision = structuredClone(corpus);
+    collision.chapters[1]!.updates = [
+      {
+        entity_id: "location:fixture-orbit-a",
+        orbital_order: 512,
+      },
+    ];
+    expect(() => validateNarrativeCorpus(collision)).toThrow(
+      "Chapter 1.2 /updates/0/orbital_order: projection at 2200.2 gives siblings location:fixture-orbit-explicit and location:fixture-orbit-a duplicate orbital_order 512",
+    );
+
+    const ineligible = structuredClone(corpus);
+    ineligible.chapters[1]!.updates = [
+      {
+        entity_id: "location:fixture-orbit-a",
+        parent_location_id: "location:earth",
+        parent_relation: "located_on",
+        orbital_order: 42,
+      },
+    ];
+    expect(() => validateNarrativeCorpus(ineligible)).toThrow(
+      "/updates/0/orbital_order: orbital_order is allowed only when the effective parent_relation is orbits",
+    );
+
+    const overflow = structuredClone(corpus);
+    const overflowIntroductions = overflow.chapters[0]!.introducing as Array<
+      Record<string, unknown>
+    >;
+    overflowIntroductions.find(
+      (entity) => entity.id === "location:fixture-first-orbit",
+    )!.orbital_order = Number.MAX_SAFE_INTEGER;
+    overflowIntroductions.push({
+      id: "location:fixture-overflow-orbit",
+      name: "Fixture Overflow Orbit",
+      kind: "planet",
+      parent_location_id: "location:fixture-star",
+      parent_relation: "orbits",
+    });
+    expect(() => validateNarrativeCorpus(overflow)).toThrow(
+      "overflows the safe-integer range",
+    );
+  });
+
+  it("locks the Chapter 1.19 Omicron2 lower-bound Jovian contract and order", () => {
+    const corpus = createNarrativeFixtureCorpus();
+    corpus.knownAstronomyObjectIds = ["sol", "stellar-system-002424"];
+    const jovianDescription =
+      "One of several outer Jovian planets observed in the Omicron2 Eridani system.";
+    corpus.chapters[0]!.introducing = [
+      ...(corpus.chapters[0]!.introducing as Array<Record<string, unknown>>),
+      {
+        id: "location:omicron2-eridani",
+        name: "Omicron2 Eridani",
+        kind: "star_system",
+        astronomy_object_id: "stellar-system-002424",
+        description:
+          "A triple-star system whose early observations identify several outer Jovian planets.",
+      },
+      {
+        id: "location:omicron-eridani-a",
+        name: "Omicron Eridani A",
+        kind: "star",
+        parent_location_id: "location:omicron2-eridani",
+        parent_relation: "member_of_system",
+      },
+      ...[
+        ["location:vulcan", "Vulcan", "planet", 1024],
+        ["location:romulus", "Romulus", "planet", 2048],
+        [
+          "location:omicron2-asteroid-belt",
+          "asteroid belt",
+          "asteroid_belt",
+          3072,
+        ],
+        ["location:oe-2", "OE-2", "planet", 4096],
+      ].map(([id, name, kind, orbital_order]) => ({
+        id,
+        name,
+        kind,
+        parent_location_id: "location:omicron-eridani-a",
+        parent_relation: "orbits",
+        orbital_order,
+      })),
+      ...[1, 2, 3].map((ordinal) => ({
+        id: `location:omicron2-outer-jovian-0${ordinal}`,
+        name: `Outer Jovian ${ordinal}`,
+        kind: "planet",
+        body_class: "gas_giant",
+        description: jovianDescription,
+        parent_location_id: "location:omicron-eridani-a",
+        parent_relation: "orbits",
+        orbital_order: 4096 + ordinal * 1024,
+      })),
+    ];
+
+    expect(() => validateNarrativeCorpus(corpus)).not.toThrow();
+    const world = generateNarrativeWorld(prepareNarrativeCorpus(corpus), "1.1");
+    const byId = new Map(world.entities.map((entity) => [entity.id, entity]));
+    expect(byId.get("location:omicron2-eridani")).toMatchObject({
+      kind: "star_system",
+      astronomy_object_id: "stellar-system-002424",
+    });
+    expect(byId.get("location:omicron-eridani-a")?.child_ids).toEqual([
+      "location:vulcan",
+      "location:romulus",
+      "location:omicron2-asteroid-belt",
+      "location:oe-2",
+      "location:omicron2-outer-jovian-01",
+      "location:omicron2-outer-jovian-02",
+      "location:omicron2-outer-jovian-03",
+    ]);
+    expect(
+      [1, 2, 3].map((ordinal) =>
+        byId.get(`location:omicron2-outer-jovian-0${ordinal}`),
+      ),
+    ).toEqual(
+      [1, 2, 3].map((ordinal) =>
+        expect.objectContaining({
+          id: `location:omicron2-outer-jovian-0${ordinal}`,
+          name: `Outer Jovian ${ordinal}`,
+          kind: "planet",
+          body_class: "gas_giant",
+          description: jovianDescription,
+          parent_location_id: "location:omicron-eridani-a",
+          parent_relation: "orbits",
+          orbital_order: 4096 + ordinal * 1024,
+        }),
+      ),
     );
   });
 

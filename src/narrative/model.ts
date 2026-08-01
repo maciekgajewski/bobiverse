@@ -113,6 +113,7 @@ const surveyObservationProperties = [
   "visual_description",
   "surface_gravity_g",
 ] as const;
+const orbitalOrderStep = 1024;
 
 function createAjv(): Ajv2020 {
   // The documented schema intentionally uses `required` inside conditional `not`
@@ -254,6 +255,7 @@ function flattenZeroStateLocation(
   location: NarrativeRecord,
   parentLocationId: string | null,
   result: NarrativeEntity[],
+  siblingIndex = 0,
 ): void {
   const id = asString(location.id, "Zero-state location ID");
   const flattened: NarrativeEntity = {
@@ -263,17 +265,151 @@ function flattenZeroStateLocation(
   };
   delete flattened.children;
   if (parentLocationId) flattened.parent_location_id = parentLocationId;
+  if (location.parent_relation === "orbits") {
+    flattened.orbital_order = (siblingIndex + 1) * orbitalOrderStep;
+  }
   result.push(flattened);
   const children = location.children;
   if (!children) return;
   if (!Array.isArray(children))
     throw new Error(`Zero-state children for ${id} must be an array.`);
-  for (const child of children) {
+  for (const [index, child] of children.entries()) {
     flattenZeroStateLocation(
       asRecord(child, `Zero-state child of ${id}`),
       id,
       result,
+      index,
     );
+  }
+}
+
+interface OrbitalLocationWrite {
+  id: string;
+  record: NarrativeRecord;
+  pointer: string;
+  orbitalOrderEffective?: boolean;
+}
+
+function normalizeOrbitalOrdersForMoment(
+  locations: Map<string, NarrativeEntity>,
+  before: ReadonlyMap<string, NarrativeEntity>,
+  writes: readonly OrbitalLocationWrite[],
+  chapter: string,
+  displayDate: string,
+): void {
+  const allocate = new Map<
+    string,
+    Array<{ entity: NarrativeEntity; pointer: string }>
+  >();
+  const pointerById = new Map(writes.map((write) => [write.id, write.pointer]));
+  for (const { id, record, pointer, orbitalOrderEffective } of writes) {
+    const current = locations.get(id);
+    if (!current) continue;
+    const previous = before.get(id);
+    const explicit =
+      Object.hasOwn(record, "orbital_order") && orbitalOrderEffective !== false;
+    const isOrbital =
+      current.parent_relation === "orbits" &&
+      typeof current.parent_location_id === "string";
+    if (!isOrbital) {
+      if (explicit && record.orbital_order !== null) {
+        throw chapterSemanticError(
+          chapter,
+          `${pointer}/orbital_order`,
+          `orbital_order is allowed only when the effective parent_relation is orbits at ${displayDate}.`,
+        );
+      }
+      delete current.orbital_order;
+      continue;
+    }
+    const retained =
+      previous?.parent_relation === "orbits" &&
+      previous.parent_location_id === current.parent_location_id &&
+      Number.isSafeInteger(previous.orbital_order) &&
+      (previous.orbital_order as number) > 0;
+    if (!explicit && retained) {
+      current.orbital_order = previous!.orbital_order;
+      continue;
+    }
+    if (explicit) {
+      if (record.orbital_order !== null) continue;
+      throw chapterSemanticError(
+        chapter,
+        `${pointer}/orbital_order`,
+        `orbital_order may be null only when the effective parent_relation no longer is orbits at ${displayDate}.`,
+      );
+    }
+    delete current.orbital_order;
+    const pending = allocate.get(current.parent_location_id as string) ?? [];
+    pending.push({ entity: current, pointer });
+    allocate.set(current.parent_location_id as string, pending);
+  }
+
+  for (const [parentId, pending] of allocate) {
+    const occupied = [...locations.values()]
+      .filter(
+        (location) =>
+          location.parent_location_id === parentId &&
+          location.parent_relation === "orbits" &&
+          Number.isSafeInteger(location.orbital_order) &&
+          (location.orbital_order as number) > 0,
+      )
+      .map((location) => location.orbital_order as number);
+    let next = occupied.length === 0 ? 0 : Math.max(...occupied);
+    for (const { entity, pointer } of pending.sort((left, right) =>
+      left.entity.id.localeCompare(right.entity.id),
+    )) {
+      next += orbitalOrderStep;
+      if (!Number.isSafeInteger(next)) {
+        throw chapterSemanticError(
+          chapter,
+          `${pointer}/orbital_order`,
+          `appending an orbital ordering key for ${entity.id} overflows the safe-integer range.`,
+        );
+      }
+      entity.orbital_order = next;
+    }
+  }
+
+  const owners = new Map<string, Map<number, string>>();
+  for (const location of locations.values()) {
+    if (
+      location.parent_relation !== "orbits" ||
+      typeof location.parent_location_id !== "string"
+    ) {
+      if (Object.hasOwn(location, "orbital_order"))
+        delete location.orbital_order;
+      continue;
+    }
+    if (
+      !Number.isSafeInteger(location.orbital_order) ||
+      (location.orbital_order as number) <= 0
+    ) {
+      throw chapterSemanticError(
+        chapter,
+        pointerById.has(location.id)
+          ? `${pointerById.get(location.id)}/orbital_order`
+          : "/locations",
+        `projection at ${displayDate} leaves orbital child ${location.id} without a positive safe-integer orbital_order.`,
+      );
+    }
+    const siblings =
+      owners.get(location.parent_location_id) ?? new Map<number, string>();
+    const order = location.orbital_order as number;
+    const owner = siblings.get(order);
+    if (owner) {
+      throw chapterSemanticError(
+        chapter,
+        pointerById.has(location.id)
+          ? `${pointerById.get(location.id)}/orbital_order`
+          : pointerById.has(owner)
+            ? `${pointerById.get(owner)}/orbital_order`
+            : "/locations",
+        `projection at ${displayDate} gives siblings ${owner} and ${location.id} duplicate orbital_order ${order}.`,
+      );
+    }
+    siblings.set(order, location.id);
+    owners.set(location.parent_location_id, siblings);
   }
 }
 
@@ -305,6 +441,17 @@ function assertZeroStateSemantics(
       throw new Error(`Duplicate zero-state entity ID: ${entity.id}.`);
     byId.set(entity.id, entity);
   }
+  normalizeOrbitalOrdersForMoment(
+    new Map(
+      flattened
+        .filter((entity) => entity.entity_type === "location")
+        .map((entity) => [entity.id, entity]),
+    ),
+    new Map(),
+    [],
+    "zero-state",
+    "zero state",
+  );
   const sol = byId.get("location:sol");
   if (!sol) throw new Error("Zero-state source must contain location:sol.");
   if (!knownAstronomyObjectIds.includes("sol")) {
@@ -983,8 +1130,16 @@ function assertProjectedLocationConstraints(
         const date = chapterDate(chapter);
         const sourceChapter = chapterId(chapter);
         if (!isDateAtOrBefore(date, displayDate)) continue;
-        for (const candidate of (chapter.introducing as
-          unknown[] | undefined) ?? []) {
+        const before = new Map(
+          [...locations].map(([id, location]) => [
+            id,
+            structuredClone(location),
+          ]),
+        );
+        const orbitalWrites: OrbitalLocationWrite[] = [];
+        for (const [index, candidate] of (
+          (chapter.introducing as unknown[] | undefined) ?? []
+        ).entries()) {
           const introduced = asRecord(
             candidate,
             `Introduction in ${sourceChapter}`,
@@ -1006,9 +1161,15 @@ function assertProjectedLocationConstraints(
             ["id"],
           );
           locations.set(id, location);
+          orbitalWrites.push({
+            id,
+            record: introduced,
+            pointer: `/introducing/${index}`,
+          });
         }
-        for (const candidate of (chapter.updates as unknown[] | undefined) ??
-          []) {
+        for (const [index, candidate] of (
+          (chapter.updates as unknown[] | undefined) ?? []
+        ).entries()) {
           const update = asRecord(candidate, `Update in ${sourceChapter}`);
           const id = asString(
             update.entity_id,
@@ -1023,7 +1184,27 @@ function assertProjectedLocationConstraints(
             latestMoments,
             ["entity_id"],
           );
+          orbitalWrites.push({
+            id,
+            record: update,
+            pointer: `/updates/${index}`,
+            orbitalOrderEffective: (() => {
+              if (!Object.hasOwn(update, "orbital_order")) return undefined;
+              const applied = latestMoments.get(`${id}\u0000orbital_order`);
+              return (
+                applied?.date === date &&
+                applied.sourceChapter === sourceChapter
+              );
+            })(),
+          });
         }
+        normalizeOrbitalOrdersForMoment(
+          locations,
+          before,
+          orbitalWrites,
+          sourceChapter,
+          displayDate,
+        );
       }
 
       const moonCounts = new Map<string, number>();
@@ -1076,6 +1257,26 @@ function deriveLocationChildren(entities: NarrativeEntity[]): void {
     if (typeof parentId !== "string") continue;
     const parent = locations.get(parentId);
     if (parent) (parent.child_ids as string[]).push(location.id);
+  }
+  for (const parent of locations.values()) {
+    const childIds = parent.child_ids as string[];
+    const orderedOrbitalIds = childIds
+      .map((id) => locations.get(id))
+      .filter(
+        (child): child is NarrativeEntity =>
+          child?.parent_relation === "orbits",
+      )
+      .sort(
+        (left, right) =>
+          (left.orbital_order as number) - (right.orbital_order as number),
+      )
+      .map((child) => child.id);
+    let orbitalIndex = 0;
+    parent.child_ids = childIds.map((id) =>
+      locations.get(id)?.parent_relation === "orbits"
+        ? orderedOrbitalIds[orbitalIndex++]!
+        : id,
+    );
   }
 }
 
@@ -1443,8 +1644,15 @@ export function generateNarrativeWorld(
   for (const chapter of readerVisible) {
     const date = chapterDate(chapter);
     const sourceChapter = chapterId(chapter);
-    for (const candidate of (chapter.introducing as unknown[] | undefined) ??
-      []) {
+    const locationsBefore = new Map(
+      [...byId.values()]
+        .filter((entity) => entity.entity_type === "location")
+        .map((entity) => [entity.id, structuredClone(entity)]),
+    );
+    const orbitalWrites: OrbitalLocationWrite[] = [];
+    for (const [index, candidate] of (
+      (chapter.introducing as unknown[] | undefined) ?? []
+    ).entries()) {
       const introduced = asRecord(
         candidate,
         `Introduction in ${chapterId(chapter)}`,
@@ -1475,8 +1683,17 @@ export function generateNarrativeWorld(
       );
       byId.set(id, entity);
       entities.push(entity);
+      if (type === "location") {
+        orbitalWrites.push({
+          id,
+          record: introduced,
+          pointer: `/introducing/${index}`,
+        });
+      }
     }
-    for (const candidate of (chapter.updates as unknown[] | undefined) ?? []) {
+    for (const [index, candidate] of (
+      (chapter.updates as unknown[] | undefined) ?? []
+    ).entries()) {
       const update = asRecord(candidate, `Update in ${chapterId(chapter)}`);
       const targetId = asString(
         update.entity_id,
@@ -1507,7 +1724,33 @@ export function generateNarrativeWorld(
         latestMoments,
         ["entity_id"],
       );
+      if (target.entity_type === "location") {
+        orbitalWrites.push({
+          id: targetId,
+          record: update,
+          pointer: `/updates/${index}`,
+          orbitalOrderEffective: (() => {
+            if (!Object.hasOwn(update, "orbital_order")) return undefined;
+            const applied = latestMoments.get(`${targetId}\u0000orbital_order`);
+            return (
+              applied?.date === effectiveDate &&
+              applied.sourceChapter === sourceChapter
+            );
+          })(),
+        });
+      }
     }
+    normalizeOrbitalOrdersForMoment(
+      new Map(
+        [...byId.values()]
+          .filter((entity) => entity.entity_type === "location")
+          .map((entity) => [entity.id, entity]),
+      ),
+      locationsBefore,
+      orbitalWrites,
+      sourceChapter,
+      displayDate ?? date,
+    );
   }
   deriveLocationChildren(entities);
   deriveLastKnownLocations(entities, readerVisible, displayDate);

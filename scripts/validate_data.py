@@ -32,6 +32,7 @@ from astronomy_pipeline import (
     reviewed_landmark_source_identities,
     read_extract,
     resolved_cns5_identity,
+    retained_component_identities,
     wds_component_spectral_types,
     wds_membership_candidates,
 )
@@ -524,9 +525,19 @@ def validate_source_union(
     candidates: dict[str, Any],
 ) -> None:
     cns5_by_id = {row["cns5_id"]: row for row in cns5_rows}
-    expected = {
+    cns5_identities = {
         resolved_cns5_identity(row, cns5_by_id) for row in cns5_rows
-    } | {f"gaia-dr3:{row['source_id']}" for row in gcns_rows}
+    }
+    cns5_identity_by_gaia_id = {
+        decimal_id(row.get("gaia_dr3_id")): resolved_cns5_identity(row, cns5_by_id)
+        for row in cns5_rows
+        if decimal_id(row.get("gaia_dr3_id"))
+    }
+    expected = retained_component_identities(
+        {row["source_id"] for row in gcns_rows},
+        cns5_identities,
+        cns5_identity_by_gaia_id,
+    )
     actual = {component["source_identity"] for component in candidates["components"]}
     if actual != expected:
         raise ValueError(

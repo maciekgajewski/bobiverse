@@ -236,6 +236,14 @@ distance or orbital order. If a later chapter supplies names without uniquely
 linking identities, bind names in source-mention order to the lowest anonymous
 ordinals and retain those stable IDs.
 
+ADR-0021 defines one fingerprinted Chapter `1.19` exception for the source-supported
+phrase `several outer Jovians`. Reconciliation authors three distinct anonymous
+gas-giant locations as the guaranteed lower bound, retains `several` in the system
+description, and claims neither an exact total nor unsupported measurements. This is
+not a general conversion rule for qualitative counts. The three stable presentation
+ordinals follow OE-2 in the ADR-0020 schematic sequence; later names without unique
+identity evidence bind in source order to the lowest still-anonymous ordinal.
+
 ## Approve a candidate
 
 Review the exact candidate and ask Codex to apply it explicitly, for example:

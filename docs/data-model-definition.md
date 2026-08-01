@@ -158,6 +158,12 @@ the identical listing below documents its shared definitions.
       "maximum": 1.7976931348623157e308,
       "description": "Source-supported numeric surface gravity in canonical Earth gravities."
     },
+    "orbital_order": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991,
+      "description": "Non-metric schematic ordering key for a flat location whose effective parent relation is orbits."
+    },
     "parent_relation": {
       "enum": ["member_of_system", "orbits", "located_on", "contained_in"]
     },
@@ -663,6 +669,7 @@ the identical listing below documents its shared definitions.
         "color": { "$ref": "#/$defs/survey_color" },
         "visual_description": { "$ref": "#/$defs/visual_description" },
         "surface_gravity_g": { "$ref": "#/$defs/surface_gravity_g" },
+        "orbital_order": { "$ref": "#/$defs/orbital_order" },
         "map_status": { "$ref": "#/$defs/unmapped_map_status" },
         "parent_location_id": { "$ref": "#/$defs/location_id" },
         "parent_relation": { "$ref": "#/$defs/parent_relation" },
@@ -671,6 +678,13 @@ the identical listing below documents its shared definitions.
         "destination_location_id": { "$ref": "#/$defs/location_id" }
       },
       "allOf": [
+        {
+          "if": { "required": ["orbital_order"] },
+          "then": {
+            "required": ["parent_relation"],
+            "properties": { "parent_relation": { "const": "orbits" } }
+          }
+        },
         {
           "if": { "required": ["parent_location_id"] },
           "then": { "required": ["parent_relation"] }
@@ -798,6 +812,9 @@ the identical listing below documents its shared definitions.
         "surface_gravity_g": {
           "anyOf": [{ "$ref": "#/$defs/surface_gravity_g" }, { "type": "null" }]
         },
+        "orbital_order": {
+          "anyOf": [{ "$ref": "#/$defs/orbital_order" }, { "type": "null" }]
+        },
         "map_status": {
           "anyOf": [
             { "$ref": "#/$defs/unmapped_map_status" },
@@ -832,6 +849,7 @@ the identical listing below documents its shared definitions.
         { "required": ["color"] },
         { "required": ["visual_description"] },
         { "required": ["surface_gravity_g"] },
+        { "required": ["orbital_order"] },
         { "required": ["map_status"] },
         { "required": ["parent_location_id"] },
         { "required": ["parent_relation"] },
@@ -1530,17 +1548,17 @@ Each entity type has a dedicated schema. The ratified contracts below cover char
 species, technologies, organizations, vessels, events, assets, and locations;
 later entity types must add their own contract before records of that type are authored.
 
-| Record                                      | Required initial contract                                                    | Derived rather than authored                                                            |
-| ------------------------------------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `character`                                 | `id`, `name`, and the optional fields in the ratified character contract     | last-known sighting; event history                                                      |
-| `star_system`                               | `id`, `kind: "star_system"`, name, and `astronomy_object_id` when mapped     | astronomical components and render facts; sublocations; last-known sightings and events |
-| `planet`, `dwarf_planet`, `moon`, `locale`, `megastructure` | `id`, `kind`, name, and parent where non-root                | sublocations; last-known sightings and events                                           |
-| `species`                                   | `id`, `name`, and the optional fields in the ratified species contract       | members and other reverse links                                                         |
-| `technology`                                | `id`, `name`, and optional original plain-text `description`                 | no relationships, ownership, physical, or rendering facts                               |
-| `organization`                              | `id`, `name`, optional original plain-text `description` and `current_state` | no membership, ownership, location, or asset facts                                      |
-| `vessel`                                    | `id`, `name`, optional original plain-text `description` and `current_state` | no separate instance/design layer, ownership, physical, or rendering facts              |
-| `event`                                     | `id`, `name`, and the optional fields in the ratified event contract         | location event list; participant event histories                                        |
-| `asset`                                     | `id`, path, and source                                                       | no visible assignment; assignments are entity values                                    |
+| Record                                                      | Required initial contract                                                    | Derived rather than authored                                                            |
+| ----------------------------------------------------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `character`                                                 | `id`, `name`, and the optional fields in the ratified character contract     | last-known sighting; event history                                                      |
+| `star_system`                                               | `id`, `kind: "star_system"`, name, and `astronomy_object_id` when mapped     | astronomical components and render facts; sublocations; last-known sightings and events |
+| `planet`, `dwarf_planet`, `moon`, `locale`, `megastructure` | `id`, `kind`, name, and parent where non-root                                | sublocations; last-known sightings and events                                           |
+| `species`                                                   | `id`, `name`, and the optional fields in the ratified species contract       | members and other reverse links                                                         |
+| `technology`                                                | `id`, `name`, and optional original plain-text `description`                 | no relationships, ownership, physical, or rendering facts                               |
+| `organization`                                              | `id`, `name`, optional original plain-text `description` and `current_state` | no membership, ownership, location, or asset facts                                      |
+| `vessel`                                                    | `id`, `name`, optional original plain-text `description` and `current_state` | no separate instance/design layer, ownership, physical, or rendering facts              |
+| `event`                                                     | `id`, `name`, and the optional fields in the ratified event contract         | location event list; participant event histories                                        |
+| `asset`                                                     | `id`, path, and source                                                       | no visible assignment; assignments are entity values                                    |
 
 Every present or future `description` and `state` field uses the shared schema types:
 an optional, nonempty plain string. `description` is an original reader-visible,
@@ -1616,6 +1634,9 @@ same narrative moment at successive increments. Ordinary update omission retains
 current key. An update may replace the value with any unused positive safe integer to
 insert or move a body; if no integer gap remains, the same authored change explicitly
 renumbers affected siblings. Moving away from `orbits` removes the effective key.
+An authored nullable update may clear `orbital_order` only in the same effective
+write that leaves `orbits`; null while the effective relation remains `orbits` is
+invalid.
 Non-integer, non-positive, unsafe, overflowing, and duplicate values fail source-aware
 semantic validation. Projection derives each parent's ordered `child_ids` by
 ascending effective key.
@@ -1637,7 +1658,7 @@ durable-location curation. Locations whose effective kind is `planet`,
 
 | Property             | Contract                                                             |
 | -------------------- | -------------------------------------------------------------------- |
-| `body_class`         | `rocky`, `icy`, `dwarf_planet`, `gas_giant`, or `ice_giant`         |
+| `body_class`         | `rocky`, `icy`, `dwarf_planet`, `gas_giant`, or `ice_giant`          |
 | `color`              | nonempty source-faithful free-form colour text                       |
 | `visual_description` | nonempty visible-appearance text                                     |
 | `surface_gravity_g`  | positive finite numeric surface gravity expressed in Earth gravities |
@@ -1667,6 +1688,13 @@ IDs. Survey eligibility and the four-child cap are evaluated on each complete
 reader-visible story-time projection, not by mutating one reader-order state.
 Same-chapter reparenting is therefore independent of update order, and a
 non-chronological chapter is checked at its effective story date.
+
+ADR-0021 defines one fingerprinted Chapter `1.19` exception for `several outer
+Jovians`. It authors exactly three distinct anonymous `planet` locations with
+`body_class: "gas_giant"` as the guaranteed lower bound, while the system description
+retains `several`. Their stable presentation ordinals follow OE-2 in the ADR-0020
+schematic sequence. They assert neither a complete count nor unsupported physical
+properties, and this exception does not generalize qualitative counts elsewhere.
 
 ### Asset
 

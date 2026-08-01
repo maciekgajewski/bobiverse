@@ -370,6 +370,14 @@ From 25 to 100 pc, GCNS is the available census authority. All Stage 1 GCNS anch
 seed rows remain in the normalized extract even when an anchor lies outside another
 anchor's neighbourhood.
 
+When a newly acquired GCNS row carries a Gaia ID already present as an exact source
+alias in one CNS5 `reference_object_cns5_id` group, it enriches that accepted
+component and does not create a second singleton identity. Both reconciliation and
+independent validation apply this rule. The promoted Chapter `1.19` expansion pins
+separate coverage records for Sol, Epsilon Eridani, Omicron2 Eridani, Delta Eridani,
+and Beta Hydri. Omicron2 resolves through the accepted `40 Eridani` alias and its
+source-backed adopted component.
+
 ### Stage 5: acquire Gaia DR3 enrichment
 
 Build the sorted unique set of non-null EDR3/DR3 `source_id` values from CNS5 and
@@ -664,6 +672,8 @@ does not contain invented coordinates or replace source provenance.
 - preservation of CNS5-only objects when Gaia enrichment is absent;
 - a singleton component and system for every otherwise ungrouped retained source
   record;
+- suppression of a duplicate singleton when a GCNS Gaia ID is already an exact
+  source alias inside one CNS5 reference-object component;
 - identity-registry reuse, monotonic allocation, tombstones, and rejection of
   unreviewed merges or splits;
 - exact candidate-snapshot checksum acceptance and rejection of stale or unresolved
