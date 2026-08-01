@@ -1,4 +1,118 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+async function settleMapCamera(page: Page): Promise<void> {
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve, reject) => {
+        const bridge = window.__bob034MapPerformance;
+        if (!bridge) {
+          reject(new Error("Map performance bridge is unavailable."));
+          return;
+        }
+        const distance = (left: readonly number[], right: readonly number[]) =>
+          Math.hypot(
+            left[0]! - right[0]!,
+            left[1]! - right[1]!,
+            left[2]! - right[2]!,
+          );
+        let previous = bridge.snapshot();
+        let stableFrames = 0;
+        const startedAt = performance.now();
+        const sample = () => {
+          const current = bridge.snapshot();
+          stableFrames =
+            distance(previous.camera, current.camera) < 1e-5 &&
+            distance(previous.target, current.target) < 1e-5
+              ? stableFrames + 1
+              : 0;
+          previous = current;
+          if (!current.cameraTransitionActive && stableFrames >= 8) {
+            resolve();
+            return;
+          }
+          if (performance.now() - startedAt > 4_000) {
+            reject(new Error("Map camera did not settle."));
+            return;
+          }
+          requestAnimationFrame(sample);
+        };
+        requestAnimationFrame(sample);
+      }),
+  );
+}
+
+function monitorCameraDirection(
+  page: Page,
+): Promise<{ maximumDirectionError: number; maximumStepFraction: number }> {
+  return page.evaluate(
+    () =>
+      new Promise<{
+        maximumDirectionError: number;
+        maximumStepFraction: number;
+      }>((resolve, reject) => {
+        const bridge = window.__bob034MapPerformance;
+        if (!bridge) {
+          reject(new Error("Map performance bridge is unavailable."));
+          return;
+        }
+        const direction = (snapshot: ReturnType<typeof bridge.snapshot>) => {
+          const x = snapshot.camera[0] - snapshot.target[0];
+          const y = snapshot.camera[1] - snapshot.target[1];
+          const z = snapshot.camera[2] - snapshot.target[2];
+          const length = Math.hypot(x, y, z);
+          return [x / length, y / length, z / length] as const;
+        };
+        const start = direction(bridge.snapshot());
+        let maximumError = 0;
+        let maximumCameraStep = 0;
+        let totalCameraTravel = 0;
+        let moved = false;
+        let stableFrames = 0;
+        let previous = bridge.snapshot();
+        const startedAt = performance.now();
+        const sample = () => {
+          const current = bridge.snapshot();
+          const currentDirection = direction(current);
+          maximumError = Math.max(
+            maximumError,
+            1 -
+              (start[0] * currentDirection[0] +
+                start[1] * currentDirection[1] +
+                start[2] * currentDirection[2]),
+          );
+          const cameraDelta = Math.hypot(
+            current.camera[0] - previous.camera[0],
+            current.camera[1] - previous.camera[1],
+            current.camera[2] - previous.camera[2],
+          );
+          const targetDelta = Math.hypot(
+            current.target[0] - previous.target[0],
+            current.target[1] - previous.target[1],
+            current.target[2] - previous.target[2],
+          );
+          maximumCameraStep = Math.max(maximumCameraStep, cameraDelta);
+          totalCameraTravel += cameraDelta;
+          moved ||= cameraDelta > 1e-5 || targetDelta > 1e-5;
+          stableFrames =
+            cameraDelta < 1e-5 && targetDelta < 1e-5 ? stableFrames + 1 : 0;
+          previous = current;
+          if (moved && stableFrames >= 8) {
+            resolve({
+              maximumDirectionError: maximumError,
+              maximumStepFraction: maximumCameraStep / totalCameraTravel,
+            });
+            return;
+          }
+          if (performance.now() - startedAt > 4_000) {
+            reject(new Error("Camera transition did not settle."));
+            return;
+          }
+          requestAnimationFrame(sample);
+        };
+        requestAnimationFrame(sample);
+      }),
+  );
+}
 
 test("phone browser opens, selection opens inspector, and light-years remain fixed", async ({
   page,
@@ -41,6 +155,218 @@ test("empty map clicks clear inspection selection", async ({ page }) => {
     ),
   ).toBeVisible();
   await expect(page.getByRole("button", { name: "Measure" })).toHaveCount(0);
+});
+
+test("development Alpha Centauri fixture enters and exits the fixed system mode", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/?system-fixture=alpha-centauri");
+  await page
+    .getByRole("button", { name: "Alpha Centauri", exact: true })
+    .click();
+  const inspector = page.getByRole("complementary", {
+    name: "Object inspector",
+  });
+  await inspector.getByRole("button", { name: "Enter system" }).click();
+  await expect(page.getByRole("button", { name: "Star Map" })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Return to map" }),
+  ).toBeVisible();
+  await inspector
+    .getByRole("button", { name: "Inspect component: Proxima Centauri" })
+    .click();
+  await expect(
+    inspector.getByRole("heading", { name: "Proxima Centauri" }),
+  ).toBeVisible();
+  await page.goBack();
+  await expect(
+    inspector.getByRole("button", { name: "Enter system" }),
+  ).toBeVisible();
+  const sol = await page.evaluate(() =>
+    window.__bob034MapPerformance!.screenPoint("sol"),
+  );
+  await page.mouse.click(sol.x, sol.y);
+  await expect(page.locator(".selection-label")).toHaveText("Sol");
+});
+
+test("immediate system entry completes ordinary focus before pose capture", async ({
+  page,
+}) => {
+  await page.goto("/?system-fixture=alpha-centauri");
+  await page.waitForFunction(() => window.__bob034MapPerformance !== undefined);
+  await page
+    .getByRole("button", { name: "Alpha Centauri", exact: true })
+    .click();
+  await settleMapCamera(page);
+  const expectedFocusedPose = await page.evaluate(() =>
+    window.__bob034MapPerformance!.snapshot(),
+  );
+
+  await page.reload();
+  await page.waitForFunction(() => window.__bob034MapPerformance !== undefined);
+  await page
+    .getByRole("button", { name: "Alpha Centauri", exact: true })
+    .click();
+  await page.waitForFunction(
+    () => window.__bob034MapPerformance!.snapshot().cameraTransitionActive,
+  );
+  await page
+    .getByRole("complementary", { name: "Object inspector" })
+    .getByRole("button", { name: "Enter system" })
+    .click();
+  await settleMapCamera(page);
+  await page.getByRole("button", { name: "Return to map" }).click();
+  await settleMapCamera(page);
+  const restoredPose = await page.evaluate(() =>
+    window.__bob034MapPerformance!.snapshot(),
+  );
+  expect(restoredPose.camera).toEqual(expectedFocusedPose.camera);
+  expect(restoredPose.target).toEqual(expectedFocusedPose.target);
+});
+
+test("ordinary map reframes after a canvas resize", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto("/");
+  await page.waitForFunction(() => window.__bob034MapPerformance !== undefined);
+  await settleMapCamera(page);
+  const beforeResize = await page.evaluate(() =>
+    window.__bob034MapPerformance!.snapshot(),
+  );
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.waitForFunction(
+    (revision) =>
+      window.__bob034MapPerformance!.snapshot().framingRevision > revision,
+    beforeResize.framingRevision,
+  );
+  const afterResize = await page.evaluate(() =>
+    window.__bob034MapPerformance!.snapshot(),
+  );
+  expect(afterResize.target).toEqual(beforeResize.target);
+});
+
+test("system-mode dollies preserve direction and restore the exact camera pose", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto("/?system-fixture=alpha-centauri");
+  await page.waitForFunction(() => window.__bob034MapPerformance !== undefined);
+  await page
+    .getByRole("button", { name: "Alpha Centauri", exact: true })
+    .click();
+  await settleMapCamera(page);
+  const originalPose = await page.evaluate(() =>
+    window.__bob034MapPerformance!.snapshot(),
+  );
+
+  const entryDirectionMonitor = monitorCameraDirection(page);
+  await page
+    .getByRole("complementary", { name: "Object inspector" })
+    .getByRole("button", { name: "Enter system" })
+    .click();
+  await page.waitForFunction(
+    () => window.__bob034MapPerformance!.snapshot().cameraTransitionActive,
+  );
+  await page.locator("#map-stage").evaluate((stage) => {
+    stage.style.width = "85%";
+  });
+  const entryMotion = await entryDirectionMonitor;
+  expect(entryMotion.maximumDirectionError).toBeLessThan(1e-7);
+  expect(entryMotion.maximumStepFraction).toBeLessThan(0.45);
+  const enteredState = await page.evaluate(() =>
+    window.__bob034MapPerformance!.snapshot(),
+  );
+  expect(enteredState.capturedCamera).toEqual(originalPose.camera);
+  expect(enteredState.capturedTarget).toEqual(originalPose.target);
+
+  const midExitSol = await page.evaluate(() =>
+    window.__bob034MapPerformance!.screenPoint("sol"),
+  );
+  const exitDirectionMonitor = monitorCameraDirection(page);
+  await page.getByRole("button", { name: "Return to map" }).click();
+  await page.waitForFunction(
+    () => window.__bob034MapPerformance!.snapshot().cameraTransitionActive,
+  );
+  await page.evaluate(({ x, y }) => {
+    if (!window.__bob034MapPerformance!.snapshot().cameraTransitionActive) {
+      throw new Error("Exit transition ended before the interaction probe.");
+    }
+    const canvas = document.querySelector<HTMLCanvasElement>(
+      '[data-testid="star-map-canvas"]',
+    );
+    if (!canvas) throw new Error("Star-map canvas is unavailable.");
+    const init = { bubbles: true, clientX: x, clientY: y };
+    canvas.dispatchEvent(new PointerEvent("pointerdown", init));
+    canvas.dispatchEvent(new PointerEvent("pointerup", init));
+    canvas.dispatchEvent(new MouseEvent("click", init));
+  }, midExitSol);
+  await page.locator("#map-stage").evaluate((stage) => {
+    stage.style.removeProperty("width");
+  });
+  const exitMotion = await exitDirectionMonitor;
+  expect(exitMotion.maximumDirectionError).toBeLessThan(1e-7);
+  expect(exitMotion.maximumStepFraction).toBeLessThan(0.45);
+
+  await expect(
+    page
+      .getByRole("complementary", { name: "Object inspector" })
+      .getByRole("button", { name: "Enter system" }),
+  ).toBeVisible();
+  const restoredState = await page.evaluate(() =>
+    window.__bob034MapPerformance!.snapshot(),
+  );
+  expect(restoredState).toMatchObject({
+    controlsEnabled: true,
+    cameraTransitionActive: false,
+    restorePending: false,
+  });
+  expect(restoredState.framingRevision).toBe(originalPose.framingRevision);
+  expect(restoredState.camera).toEqual(originalPose.camera);
+  expect(restoredState.target).toEqual(originalPose.target);
+  await expect(page.locator(".selection-label")).toHaveText("Alpha Centauri");
+  await page.getByRole("button", { name: "Reset view" }).click();
+  await page.waitForFunction(
+    (revision) =>
+      window.__bob034MapPerformance!.snapshot().framingRevision > revision,
+    restoredState.framingRevision,
+  );
+  const resetState = await page.evaluate(() =>
+    window.__bob034MapPerformance!.snapshot(),
+  );
+  await page.setViewportSize({ width: 1280, height: 740 });
+  await page.waitForFunction(
+    (revision) =>
+      window.__bob034MapPerformance!.snapshot().framingRevision > revision,
+    resetState.framingRevision,
+  );
+  const beforeRotation = await page.evaluate(() =>
+    window.__bob034MapPerformance!.snapshot(),
+  );
+  const canvas = page.getByTestId("star-map-canvas");
+  const bounds = await canvas.boundingBox();
+  expect(bounds).not.toBeNull();
+  await page.mouse.move(
+    bounds!.x + bounds!.width / 2,
+    bounds!.y + bounds!.height / 2,
+  );
+  await page.mouse.down();
+  await page.mouse.move(
+    bounds!.x + bounds!.width / 2 + 90,
+    bounds!.y + bounds!.height / 2 + 45,
+    { steps: 8 },
+  );
+  await page.mouse.up();
+  await page.waitForTimeout(500);
+  const afterRotation = await page.evaluate(() =>
+    window.__bob034MapPerformance!.snapshot(),
+  );
+  expect(
+    Math.hypot(
+      afterRotation.camera[0] - beforeRotation.camera[0],
+      afterRotation.camera[1] - beforeRotation.camera[1],
+      afterRotation.camera[2] - beforeRotation.camera[2],
+    ),
+  ).toBeGreaterThan(0.01);
 });
 
 test("compact inspector stays inside the viewport", async ({ page }) => {

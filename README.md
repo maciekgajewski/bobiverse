@@ -66,6 +66,15 @@ Run `npm run performance` for the isolated production Chromium chapter-transitio
 gate; it builds the current source and owns strict loopback preview port 4173 while
 measuring.
 
+### Development-only system-view fixture
+
+For Playwright and manual visual review of the multi-component entry state, start the
+normal development server and open
+`http://bobiverse.local:5173/?system-fixture=alpha-centauri` (or the equivalent host
+address). This adds an in-memory synthetic narrative hierarchy for Alpha Centauri
+only in a Vite development build; it does not alter reader progress, authored
+narrative data, generated runtime data, or the production build.
+
 ## Narrative authoring
 
 The pre-book zero-state is a valid narrative corpus even before any chapters exist.

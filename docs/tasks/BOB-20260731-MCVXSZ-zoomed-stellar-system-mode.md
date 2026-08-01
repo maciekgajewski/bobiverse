@@ -1,6 +1,6 @@
 # BOB-20260731-MCVXSZ: zoomed stellar-system mode
 
-Status: Ready
+Status: In progress
 Phase: 3 (exploration tools)
 Last updated: 2026-07-31
 
@@ -258,6 +258,7 @@ selected.
     scrolling or false claims that the zoomed scene is available.
 16. Existing interstellar coordinate, measurement, scale, focus, reset, shader,
     picking, caption, and BOB-034 render-call and performance contracts do not regress.
+
 17. Directly affected documentation describes the implemented incremental boundary,
     including that orbital bodies and narrative-star/component association remain for
     later tasks.
@@ -269,6 +270,18 @@ selected.
 19. A fresh independent implementation review returns `No findings.`, all documented
     validation passes, and the Captain accepts the real-browser desktop and mobile
     visual result before this task becomes `Done`.
+
+## Validation
+
+- `npm run typecheck`
+- `npm run test`
+- `npm run lint`
+- `npm run format:check`
+- `npm run build && ! rg -n 'development-alpha-centauri|system-fixture' dist`
+- `npx playwright test tests/e2e/atlas.spec.ts --project=chromium --grep "development Alpha Centauri fixture"`
+- `python3 scripts/tasks.py check`
+- Remote supported-browser review following `docs/visual-testing.md` remains required
+  before this task can move to `Done`.
 
 ## Required regression coverage
 

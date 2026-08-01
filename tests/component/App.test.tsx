@@ -17,6 +17,7 @@ describe("atlas shell", () => {
     cleanup();
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
+    window.history.replaceState({}, "", "/");
   });
   beforeEach(() => {
     window.localStorage.clear();
@@ -39,6 +40,68 @@ describe("atlas shell", () => {
     ).toBeInTheDocument();
     expect(screen.getByText(/WebGL unavailable/i)).toBeInTheDocument();
     expect(screen.queryByText("Astronomy systems")).not.toBeInTheDocument();
+  });
+
+  it("offers the development-only Alpha Centauri system fixture through DOM controls", async () => {
+    window.history.replaceState({}, "", "/?system-fixture=alpha-centauri");
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "Alpha Centauri" }));
+    await user.click(screen.getByRole("button", { name: "Enter system" }));
+    expect(
+      screen.getByRole("button", { name: "Star Map" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Return to map" }),
+    ).toBeInTheDocument();
+    const inspector = screen.getByRole("complementary", {
+      name: "Object inspector",
+    });
+    await user.click(
+      within(inspector).getByRole("button", {
+        name: "Inspect component: Alpha Centauri A",
+      }),
+    );
+    expect(
+      within(inspector).getByRole("heading", { name: "Alpha Centauri A" }),
+    ).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Star Map" }));
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: "Enter system" }),
+      ).toBeInTheDocument(),
+    );
+    await user.click(screen.getByRole("button", { name: "Enter system" }));
+    await user.click(screen.getByRole("button", { name: "Return to map" }));
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: "Enter system" }),
+      ).toBeInTheDocument(),
+    );
+  });
+
+  it("announces why a system view closes after its projection becomes ineligible", async () => {
+    window.history.replaceState({}, "", "/?system-fixture=alpha-centauri");
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: "Alpha Centauri" }));
+    await user.click(screen.getByRole("button", { name: "Enter system" }));
+
+    window.history.replaceState(window.history.state, "", "/");
+    await user.selectOptions(screen.getByLabelText("Read through"), "1.1");
+    await user.click(
+      screen.getByRole("button", { name: "Confirm read through" }),
+    );
+
+    await waitFor(() =>
+      expect(screen.getByRole("status")).toHaveTextContent(
+        "Returned to the interstellar map because this system is no longer available.",
+      ),
+    );
+    expect(
+      screen.queryByRole("button", { name: "Return to map" }),
+    ).not.toBeInTheDocument();
   });
 
   it("renders actionable content when the narrative projection is invalid", () => {

@@ -26,6 +26,12 @@ import {
   projectNarrativeMap,
 } from "./narrative/map";
 import {
+  alphaCentauriFixtureRequested,
+  systemViewEntryForNarrativeSelection,
+  withAlphaCentauriFixture,
+  type SystemViewEntry,
+} from "./system-view";
+import {
   generateNarrativeWorld,
   meaningfulNarrativeDateOptions,
   projectNarrativeChapterDetail,
@@ -75,6 +81,10 @@ const EMPTY_INSPECTOR_HISTORY: InspectorHistory = {
   entries: [],
   index: -1,
 };
+const SYSTEM_VIEW_HISTORY_KEY = "bobiverse.system-view";
+interface SystemMode {
+  entry: SystemViewEntry;
+}
 const FOCUSABLE_PANEL_ELEMENTS =
   'a[href], button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])';
 
@@ -98,7 +108,13 @@ function sameSelection(
   left: SelectionIdentity,
   right: SelectionIdentity,
 ): boolean {
-  return left.kind === right.kind && left.id === right.id;
+  return (
+    left.kind === right.kind &&
+    left.id === right.id &&
+    (left.kind !== "component" ||
+      right.kind !== "component" ||
+      left.systemId === right.systemId)
+  );
 }
 
 function rootInspectorHistory(selection: SelectionIdentity): InspectorHistory {
@@ -128,11 +144,15 @@ function projectReaderProgress(
       : progress.viewChapter
         ? meaningfulNarrativeDateOptions(narrativeCorpus, progress.viewChapter)
         : [];
-  const world = generateNarrativeWorld(
+  const generatedWorld = generateNarrativeWorld(
     narrativeCorpus,
     progress.viewChapter,
     progress.mode === "date" ? progress.displayDate : null,
   );
+  const world =
+    import.meta.env.DEV && alphaCentauriFixtureRequested()
+      ? withAlphaCentauriFixture(generatedWorld)
+      : generatedWorld;
   const chapterDetail =
     progress.mode === "chapter" && progress.viewChapter
       ? projectNarrativeChapterDetail(
@@ -200,6 +220,9 @@ function canRenderWebgl(): boolean {
 export default function App() {
   const systems = nearbySystems?.systems ?? EMPTY_SYSTEMS;
   const [selection, setSelection] = useState<SelectionIdentity | null>(null);
+  const [systemMode, setSystemMode] = useState<SystemMode | null>(null);
+  const systemModeRef = useRef<SystemMode | null>(null);
+  const pendingSystemExitReason = useRef<string | null>(null);
   const [inspectorHistory, setInspectorHistory] = useState<InspectorHistory>(
     EMPTY_INSPECTOR_HISTORY,
   );
@@ -279,11 +302,19 @@ export default function App() {
           .flatMap((group) => group.items)
           .find((item) => item.entity.id === selection.id) ?? null)
       : null;
-  const selectedMapId = focusSystemIdForSelection(
-    selection,
+  const selectedMapId = systemMode
+    ? systemMode.entry.astronomySystemId
+    : focusSystemIdForSelection(selection, narrativeWorld, contextSystemIds);
+  const selectedSystemEntry = systemViewEntryForNarrativeSelection(
     narrativeWorld,
-    contextSystemIds,
+    mapProjection.contextSystems,
+    selection?.kind === "narrative" ? selection.id : null,
   );
+  const enteredSystem = systemMode
+    ? (systems.find(
+        (system) => system.id === systemMode.entry.astronomySystemId,
+      ) ?? null)
+    : null;
   const updateMapScale = useCallback((nextScale: MapScale) => {
     setMapScale((current) =>
       current.label === nextScale.label &&
@@ -303,6 +334,66 @@ export default function App() {
   useEffect(() => {
     persistReaderProgress(progress);
   }, [progress]);
+  useEffect(() => {
+    systemModeRef.current = systemMode;
+  }, [systemMode]);
+  const restoreSystemMode = useCallback(
+    (reason: string, fromHistory = false) => {
+      const current = systemModeRef.current;
+      if (!current) return;
+      if (
+        !fromHistory &&
+        window.history.state?.[SYSTEM_VIEW_HISTORY_KEY] ===
+          current.entry.astronomySystemId
+      ) {
+        pendingSystemExitReason.current = reason;
+        window.history.back();
+        return;
+      }
+      pendingSystemExitReason.current = null;
+      setSystemMode(null);
+      setSelection({ kind: "narrative", id: current.entry.narrativeSystemId });
+      setInspectorHistory(
+        rootInspectorHistory({
+          kind: "narrative",
+          id: current.entry.narrativeSystemId,
+        }),
+      );
+      setSelectionStatus(reason);
+    },
+    [],
+  );
+  useEffect(() => {
+    const onPopState = () => {
+      if (!systemModeRef.current) return;
+      restoreSystemMode(
+        pendingSystemExitReason.current ?? "Returned to the interstellar map.",
+        true,
+      );
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, [restoreSystemMode]);
+  useEffect(() => {
+    const current = systemMode;
+    if (
+      current &&
+      !systemViewEntryForNarrativeSelection(
+        narrativeWorld,
+        mapProjection.contextSystems,
+        current.entry.narrativeSystemId,
+      )
+    ) {
+      restoreSystemMode(
+        "Returned to the interstellar map because this system is no longer available.",
+      );
+    }
+  }, [
+    mapProjection.contextSystems,
+    narrativeWorld,
+    restoreSystemMode,
+    systemMode,
+  ]);
 
   const invokerForPanel = useCallback(
     (
@@ -371,12 +462,52 @@ export default function App() {
     const name =
       nextSelection.kind === "astronomy"
         ? systems.find((system) => system.id === nextSelection.id)?.name
-        : nextSelection.kind === "narrative"
-          ? narrativeWorld.entities.find(
-              (entity) => entity.id === nextSelection.id,
-            )?.name
-          : `Chapter ${nextSelection.id}`;
+        : nextSelection.kind === "component"
+          ? systems
+              .find((system) => system.id === nextSelection.systemId)
+              ?.components.find(
+                (component) => component.id === nextSelection.id,
+              )?.designation
+          : nextSelection.kind === "narrative"
+            ? narrativeWorld.entities.find(
+                (entity) => entity.id === nextSelection.id,
+              )?.name
+            : `Chapter ${nextSelection.id}`;
     return String(name ?? "Object");
+  };
+  const enterSystemMode = (entry: SystemViewEntry) => {
+    if (systemMode) return;
+    window.history.pushState(
+      {
+        ...(window.history.state ?? {}),
+        [SYSTEM_VIEW_HISTORY_KEY]: entry.astronomySystemId,
+      },
+      "",
+    );
+    setSystemMode({ entry });
+    setSelection({ kind: "narrative", id: entry.narrativeSystemId });
+    setInspectorHistory(
+      rootInspectorHistory({ kind: "narrative", id: entry.narrativeSystemId }),
+    );
+    setSelectionStatus("Entered stellar-system view.");
+  };
+  const selectSystemComponent = (componentId: string) => {
+    const current = systemModeRef.current;
+    const system = current
+      ? systems.find(
+          (candidate) => candidate.id === current.entry.astronomySystemId,
+        )
+      : null;
+    if (!current || !system?.components.some((item) => item.id === componentId))
+      return;
+    setSelection({
+      kind: "component",
+      systemId: system.id,
+      id: componentId,
+    });
+    setSelectionStatus(
+      `${system.components.find((item) => item.id === componentId)?.designation ?? "Component"} selected.`,
+    );
   };
   const showSelection = (nextSelection: SelectionIdentity) => {
     setSelection(nextSelection);
@@ -436,11 +567,13 @@ export default function App() {
           ? projected.progress.mode === "chapter" &&
             projected.progress.viewChapter === candidate.id &&
             projected.chapterDetail?.chapter === candidate.id
-          : isSelectionEligibleForMap(
-              candidate,
-              projected.world,
-              nextContextIds,
-            );
+          : candidate.kind === "component"
+            ? false
+            : isSelectionEligibleForMap(
+                candidate,
+                projected.world,
+                nextContextIds,
+              );
       if (nextSelection) {
         if (!isEligible(nextSelection)) {
           const closedInDateMode =
@@ -615,7 +748,24 @@ export default function App() {
       <header className="topbar">
         <div>
           <p className="eyebrow">Bobiverse · astronomy atlas</p>
-          <h1>Near-star tactical map</h1>
+          <nav className="map-breadcrumb" aria-label="Star map breadcrumb">
+            {systemMode ? (
+              <button
+                type="button"
+                className="link-button"
+                onClick={() =>
+                  restoreSystemMode("Returned to the interstellar map.")
+                }
+              >
+                Star Map
+              </button>
+            ) : (
+              <h1>Star Map</h1>
+            )}
+            {enteredSystem && (
+              <span aria-current="page">/ {enteredSystem.name}</span>
+            )}
+          </nav>
         </div>
         <div className="topbar-actions">
           <p className="view-status" aria-live="polite">
@@ -650,9 +800,21 @@ export default function App() {
           <button
             className="button quiet"
             onClick={() => setResetToken((value) => value + 1)}
+            disabled={Boolean(systemMode)}
           >
             Reset view
           </button>
+          {systemMode && (
+            <button
+              className="button"
+              type="button"
+              onClick={() =>
+                restoreSystemMode("Returned to the interstellar map.")
+              }
+            >
+              Return to map
+            </button>
+          )}
         </div>
       </header>
       <p className="selection-status" role="status" aria-live="polite">
@@ -679,7 +841,7 @@ export default function App() {
         </aside>
         <section
           id="map-stage"
-          className="map-frame"
+          className={`map-frame${systemMode ? " system-mode" : ""}`}
           aria-label="Interactive three dimensional nearby stellar-system map"
         >
           {mapProjection.missingAstronomySystemIds.size > 0 ? (
@@ -712,6 +874,7 @@ export default function App() {
                   knownSystemIds={mapProjection.knownSystemIds}
                   activeSystemIds={mapProjection.activeSystemIds}
                   resetToken={resetToken}
+                  zoomedSystemId={systemMode?.entry.astronomySystemId ?? null}
                   onSelect={(id) => {
                     const narrativeId =
                       mapProjection.narrativeSystemIdsByAstronomyId.get(id);
@@ -722,12 +885,14 @@ export default function App() {
                     );
                   }}
                   onDeselect={() => {
+                    if (systemMode) return;
                     setSelection(null);
                     setInspectorHistory(EMPTY_INSPECTOR_HISTORY);
                     setSelectionStatus("Selection cleared.");
                   }}
                   onReady={() => undefined}
                   onScaleChange={updateMapScale}
+                  onComponentSelect={selectSystemComponent}
                 />
               )}
             </>
@@ -769,6 +934,10 @@ export default function App() {
             onBack={() => navigateInspectorHistory(-1)}
             onForward={() => navigateInspectorHistory(1)}
             onSelect={selectInspectorRelationship}
+            systemEntry={selectedSystemEntry}
+            enteredSystem={enteredSystem}
+            onEnterSystem={enterSystemMode}
+            onComponentSelect={selectSystemComponent}
           />
         </aside>
       </section>
@@ -858,6 +1027,10 @@ export default function App() {
                 onBack={() => navigateInspectorHistory(-1)}
                 onForward={() => navigateInspectorHistory(1)}
                 onSelect={selectInspectorRelationship}
+                systemEntry={selectedSystemEntry}
+                enteredSystem={enteredSystem}
+                onEnterSystem={enterSystemMode}
+                onComponentSelect={selectSystemComponent}
               />
             ) : (
               <>

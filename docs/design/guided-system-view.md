@@ -15,6 +15,16 @@ spacing constants, transition timing, label thresholds, texture art, and particl
 density are implementation tuning values subject to automated and Captain-led
 real-browser visual acceptance.
 
+### Implemented star-only precursor
+
+BOB-20260731-MCVXSZ implements only entry and exact return, the fixed camera,
+breadcrumbs, dimmed interstellar context, and existing catalogue-component star
+glyphs. Its component selection identity exposes validated catalogue facts but does
+not associate a narrative star with a catalogue component, create local schematic
+coordinates, or render orbital bodies. The component glyphs retain their accepted
+`componentOffset(...)` arrangement through the dolly; the wider hierarchy behavior
+in this document remains the authority for later slices.
+
 ## 2. Binding context
 
 This design extends:

@@ -3,6 +3,12 @@
 interface Bob034MapPerformanceSnapshot {
   camera: [number, number, number];
   target: [number, number, number];
+  controlsEnabled: boolean;
+  cameraTransitionActive: boolean;
+  restorePending: boolean;
+  framingRevision: number;
+  capturedCamera: [number, number, number] | null;
+  capturedTarget: [number, number, number] | null;
 }
 
 interface Bob034MapPerformanceBridge {

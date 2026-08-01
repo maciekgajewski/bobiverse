@@ -449,6 +449,14 @@ lower-prominence type; the standalone `+Yg` marker is omitted.
 Phase 3 adds a guided local view for a mapped, reader-visible stellar-system location
 whose projected hierarchy contains multiple recognized star children or at least one
 recognized renderable orbital child.
+
+BOB-20260731-MCVXSZ delivers the first, star-only precursor: it preserves the
+ordinary camera direction, reuses each catalogue component's existing glyph and
+`componentOffset(...)`, freezes local controls, and permits selection of a distinct
+astronomy-component inspection identity. That identity is presentation and catalogue
+inspection only; it neither associates a narrative star with a catalogue component
+nor attaches orbital bodies. The local schematic coordinate space, narrative-child
+guided focus, and all orbital rendering described below remain later Phase 3 work.
 Ordinary interstellar selection remains unchanged; an explicit **Enter system**
 inspector action begins a pseudo-continuous transition. The existing aligned Galactic
 backdrop remains visible, other interstellar systems become dim non-interactive
