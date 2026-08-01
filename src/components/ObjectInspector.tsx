@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import type { SelectionIdentity } from "../domain/selection";
-import type { StellarSystem } from "../domain/types";
+import type { Component, StellarSystem } from "../domain/types";
 import type { NarrativeBrowserItem } from "../narrative/browser";
 import type {
   NarrativeChapterDetail,
@@ -11,6 +11,7 @@ import type {
 } from "../narrative/model";
 import { SystemDetails } from "./SystemDetails";
 import { ObjectItemBullet } from "./ObjectBrowserIcons";
+import type { SystemViewEntry } from "../system-view";
 
 const typeLabels: Record<NarrativeEntity["entity_type"], string> = {
   character: "Character",
@@ -112,6 +113,8 @@ function NarrativeDetails({
   assets,
   headingId,
   onSelect,
+  systemEntry,
+  onEnterSystem,
 }: {
   item: NarrativeBrowserItem;
   world: NarrativeWorld;
@@ -119,6 +122,8 @@ function NarrativeDetails({
   assets: NarrativeRecord;
   headingId: string;
   onSelect: (selection: SelectionIdentity) => void;
+  systemEntry: SystemViewEntry | null;
+  onEnterSystem: (entry: SystemViewEntry) => void;
 }) {
   const { entity } = item;
   const name = String(entity.name);
@@ -158,6 +163,15 @@ function NarrativeDetails({
     >
       <p className="eyebrow">{typeLabels[entity.entity_type]}</p>
       <h2 id={headingId}>{name}</h2>
+      {systemEntry?.narrativeSystemId === entity.id && (
+        <button
+          className="button enter-system"
+          type="button"
+          onClick={() => onEnterSystem(systemEntry)}
+        >
+          Enter system
+        </button>
+      )}
       {aliases.length > 0 && <p className="aliases">{aliases.join(" · ")}</p>}
       <p className="object-status">{status.join(" · ")}</p>
       {recency && <p className="recency-context">{recency}</p>}
@@ -307,6 +321,86 @@ function NarrativeDetails({
           <SystemDetails system={astronomySystem} embedded storyKnown />
         </section>
       )}
+    </section>
+  );
+}
+
+function ComponentChooser({
+  system,
+  selectedComponentId,
+  onSelect,
+}: {
+  system: StellarSystem;
+  selectedComponentId: string | null;
+  onSelect: (componentId: string) => void;
+}) {
+  return (
+    <section className="inspector-section system-component-controls">
+      <h3>Component stars</h3>
+      <p>Choose a catalogue component without moving the system view.</p>
+      <div className="relationship-list">
+        {system.components.map((component) => (
+          <button
+            key={component.id}
+            type="button"
+            className="link-button"
+            aria-pressed={selectedComponentId === component.id}
+            aria-label={`Inspect component: ${component.designation}`}
+            onClick={() => onSelect(component.id)}
+          >
+            {component.designation}
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function ComponentDetails({
+  system,
+  component,
+  headingId,
+}: {
+  system: StellarSystem;
+  component: Component;
+  headingId: string;
+}) {
+  const identifiers = [
+    component.identifiers.gaia_dr3_source_id
+      ? `Gaia DR3 ${component.identifiers.gaia_dr3_source_id}`
+      : null,
+    component.identifiers.cns5_id,
+    component.identifiers.published_name,
+  ].filter((value): value is string => Boolean(value));
+  const spectralType =
+    component.c20pc_enrichment?.spectral_type_near_infrared ??
+    component.c20pc_enrichment?.spectral_type_optical ??
+    component.c20pc_enrichment?.spectral_type ??
+    component.gaia_enrichment?.spectral_type ??
+    null;
+  return (
+    <section className="details component-details" aria-labelledby={headingId}>
+      <p className="eyebrow">Astronomy catalogue component</p>
+      <h2 id={headingId}>{component.designation}</h2>
+      <p className="object-status">Component of {system.name}</p>
+      <dl>
+        <Detail label="Catalogue class">
+          {component.object_class?.replaceAll("_", " ") ?? "Unclassified"}
+        </Detail>
+        {spectralType && <Detail label="Spectral type">{spectralType}</Detail>}
+        <Detail label="Visual family">
+          {component.visual.color_family.replaceAll("-", " ")}
+        </Detail>
+      </dl>
+      {identifiers.length > 0 && (
+        <p className="component-list">
+          <span>Catalogue IDs</span>
+          {identifiers.join("; ")}
+        </p>
+      )}
+      <p className="provenance">
+        {component.provenance.catalogues.join(" · ")}
+      </p>
     </section>
   );
 }
@@ -473,6 +567,10 @@ export function ObjectInspector({
   onBack = () => undefined,
   onForward = () => undefined,
   onSelect,
+  systemEntry = null,
+  enteredSystem = null,
+  onEnterSystem = () => undefined,
+  onComponentSelect = () => undefined,
 }: {
   selection: SelectionIdentity | null;
   narrativeItem: NarrativeBrowserItem | null;
@@ -487,6 +585,10 @@ export function ObjectInspector({
   onBack?: () => void;
   onForward?: () => void;
   onSelect: (selection: SelectionIdentity) => void;
+  systemEntry?: SystemViewEntry | null;
+  enteredSystem?: StellarSystem | null;
+  onEnterSystem?: (entry: SystemViewEntry) => void;
+  onComponentSelect?: (componentId: string) => void;
 }) {
   if (!selection)
     return (
@@ -519,15 +621,50 @@ export function ObjectInspector({
     );
   if (selection.kind === "narrative" && narrativeItem)
     return withHistory(
-      <NarrativeDetails
-        item={narrativeItem}
-        world={world}
-        systems={systems}
-        assets={assets}
-        headingId={headingId}
-        onSelect={onSelect}
-      />,
+      <>
+        <NarrativeDetails
+          item={narrativeItem}
+          world={world}
+          systems={systems}
+          assets={assets}
+          headingId={headingId}
+          onSelect={onSelect}
+          systemEntry={systemEntry}
+          onEnterSystem={onEnterSystem}
+        />
+        {enteredSystem && (
+          <ComponentChooser
+            system={enteredSystem}
+            selectedComponentId={null}
+            onSelect={onComponentSelect}
+          />
+        )}
+      </>,
     );
+  if (selection.kind === "component") {
+    const system =
+      systems.find((candidate) => candidate.id === selection.systemId) ?? null;
+    const component = system?.components.find(
+      (candidate) => candidate.id === selection.id,
+    );
+    if (system && component)
+      return withHistory(
+        <>
+          <ComponentDetails
+            system={system}
+            component={component}
+            headingId={headingId}
+          />
+          {enteredSystem?.id === system.id && (
+            <ComponentChooser
+              system={system}
+              selectedComponentId={component.id}
+              onSelect={onComponentSelect}
+            />
+          )}
+        </>,
+      );
+  }
   if (selection.kind === "astronomy") {
     const system =
       systems.find((candidate) => candidate.id === selection.id) ?? null;
@@ -540,11 +677,20 @@ export function ObjectInspector({
             entity.astronomy_object_id === selection.id,
         );
     return withHistory(
-      <SystemDetails
-        system={system}
-        storyKnown={storyKnown}
-        headingId={headingId}
-      />,
+      <>
+        <SystemDetails
+          system={system}
+          storyKnown={storyKnown}
+          headingId={headingId}
+        />
+        {enteredSystem && enteredSystem.id === system?.id && (
+          <ComponentChooser
+            system={enteredSystem}
+            selectedComponentId={null}
+            onSelect={onComponentSelect}
+          />
+        )}
+      </>,
     );
   }
   return withHistory(

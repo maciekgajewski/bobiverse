@@ -274,7 +274,10 @@ Goal: build reader tools on the same entities and spoiler boundary.
 
 Candidate slices, each requiring its own task:
 
-- Guided schematic stellar-system view using the projected location hierarchy.
+- Guided schematic stellar-system view using the projected location hierarchy. Its
+  first delivered precursor is BOB-20260731-MCVXSZ: fixed-camera star-only entry and
+  exact return, with existing catalogue-component glyphs and component inspection but
+  no narrative-component association or orbital geometry.
   Preserve the Galactic backdrop through explicit system entry and exact return,
   use predefined breadcrumb-driven system/star/body compositions without free local
   camera controls, show one interactive hierarchy level plus one reduced preview

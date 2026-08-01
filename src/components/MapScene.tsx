@@ -5,6 +5,7 @@ import {
   AdditiveBlending,
   Color,
   DoubleSide,
+  Mesh,
   PerspectiveCamera,
   Vector3,
   Vector4,
@@ -48,13 +49,19 @@ interface MapSceneProps {
   knownSystemIds: ReadonlySet<string>;
   activeSystemIds: ReadonlySet<string>;
   resetToken: number;
+  zoomedSystemId: string | null;
   onSelect: (id: string) => void;
+  onComponentSelect: (id: string) => void;
   onDeselect: () => void;
   onReady: () => void;
   onScaleChange: (scale: MapScale) => void;
 }
 
-type SceneProps = Omit<MapSceneProps, "onDeselect">;
+type SceneProps = Omit<MapSceneProps, "onDeselect"> & {
+  interactionsLocked: boolean;
+  isInteractionLocked: () => boolean;
+  onCameraRestoringChange: (restoring: boolean) => void;
+};
 
 export interface MapScale {
   label: string;
@@ -74,6 +81,7 @@ interface CameraMotion {
   fromTarget: Vector3;
   toCamera: Vector3;
   toTarget: Vector3;
+  onComplete?: () => void;
 }
 
 function useReducedMotion(): boolean {
@@ -94,17 +102,34 @@ function CameraController({
   systems,
   knownSystemIds,
   activeSystemIds,
+  zoomedSystemId,
+  restoring,
+  onRestoringChange,
 }: {
   resetToken: number;
   selected: StellarSystem | undefined;
   systems: StellarSystem[];
   knownSystemIds: ReadonlySet<string>;
   activeSystemIds: ReadonlySet<string>;
+  zoomedSystemId: string | null;
+  restoring: boolean;
+  onRestoringChange: (restoring: boolean) => void;
 }) {
   const { camera, gl, size } = useThree();
   const controls = useRef<OrbitControlsImpl>(null);
   const motion = useRef<CameraMotion | null>(null);
   const reducedMotion = useReducedMotion();
+  const restorePose = useRef<{ camera: Vector3; target: Vector3 } | null>(null);
+  const restoredWindow = useRef({ width: 0, height: 0, at: 0 });
+  const pendingDeferredFraming = useRef(false);
+  const previousFramingInputs = useRef({
+    resetToken,
+    systems,
+    width: size.width,
+    height: size.height,
+  });
+  const framingRevision = useRef(0);
+  const zoomedSystemIdRef = useRef(zoomedSystemId);
   const cancelMotion = () => {
     motion.current = null;
   };
@@ -118,7 +143,10 @@ function CameraController({
         control.update();
         return;
       }
-      const travelDistance = control.target.distanceTo(target);
+      const travelDistance = Math.max(
+        camera.position.distanceTo(destination),
+        control.target.distanceTo(target),
+      );
       motion.current = {
         startedAt: performance.now(),
         durationMs: focusDurationMs(travelDistance),
@@ -131,6 +159,36 @@ function CameraController({
     [camera, reducedMotion],
   );
   useEffect(() => {
+    zoomedSystemIdRef.current = zoomedSystemId;
+  }, [zoomedSystemId]);
+  useEffect(() => {
+    const restored = restoredWindow.current;
+    const previous = previousFramingInputs.current;
+    const resetRequested = previous.resetToken !== resetToken;
+    const systemsChanged = previous.systems !== systems;
+    const sizeChanged =
+      previous.width !== size.width || previous.height !== size.height;
+    previousFramingInputs.current = {
+      resetToken,
+      systems,
+      width: size.width,
+      height: size.height,
+    };
+    if (
+      pendingDeferredFraming.current &&
+      sizeChanged &&
+      !resetRequested &&
+      !systemsChanged &&
+      window.innerWidth === restored.width &&
+      window.innerHeight === restored.height
+    ) {
+      pendingDeferredFraming.current = false;
+      return;
+    }
+    pendingDeferredFraming.current = false;
+    restoredWindow.current.at = 0;
+    if (zoomedSystemIdRef.current || restorePose.current) return;
+    framingRevision.current += 1;
     motion.current = null;
     const control = controls.current;
     if (control) {
@@ -164,6 +222,12 @@ function CameraController({
         return {
           camera: camera.position.toArray(),
           target: target.toArray(),
+          controlsEnabled: controls.current?.enabled ?? false,
+          cameraTransitionActive: motion.current !== null,
+          restorePending: restorePose.current !== null,
+          framingRevision: framingRevision.current,
+          capturedCamera: restorePose.current?.camera.toArray() ?? null,
+          capturedTarget: restorePose.current?.target.toArray() ?? null,
         };
       },
       screenPoint: (systemId) => {
@@ -207,6 +271,7 @@ function CameraController({
     };
   }, [activeSystemIds, camera, gl, knownSystemIds, systems]);
   useEffect(() => {
+    if (zoomedSystemId || restorePose.current) return;
     if (!selected) return;
     const { x, y, z } = selected.render_position;
     const target = new Vector3(x, y, z);
@@ -215,7 +280,91 @@ function CameraController({
       target,
       camera.position.clone().add(target.clone().sub(currentTarget)),
     );
-  }, [camera, focus, selected]);
+  }, [camera, focus, selected, zoomedSystemId]);
+  useEffect(() => {
+    const control = controls.current;
+    if (!control) return;
+    if (zoomedSystemId) {
+      const system = systems.find(
+        (candidate) => candidate.id === zoomedSystemId,
+      );
+      if (!system) return;
+      const target = new Vector3(
+        system.render_position.x,
+        system.render_position.y,
+        system.render_position.z,
+      );
+      // Finish any ordinary system focus before capturing the pre-entry pose.
+      // The system-mode transition must start from that completed focus even
+      // when Enter system is pressed immediately after selecting the system.
+      const ordinaryFocus = motion.current;
+      if (ordinaryFocus) {
+        camera.position.copy(ordinaryFocus.toCamera);
+        control.target.copy(ordinaryFocus.toTarget);
+        motion.current = null;
+      }
+      const damping = control.enableDamping;
+      control.enableDamping = false;
+      control.update();
+      control.enableDamping = damping;
+      if (!restorePose.current) {
+        restorePose.current = {
+          camera: camera.position.clone(),
+          target: control.target.clone(),
+        };
+      }
+      camera.position.add(target.clone().sub(control.target));
+      control.target.copy(target);
+      control.update();
+      const destination = target
+        .clone()
+        .add(camera.position.clone().sub(target).multiplyScalar(0.08));
+      control.enabled = false;
+      focus(target, destination);
+      return;
+    }
+    const saved = restorePose.current;
+    if (!saved) return;
+    control.enabled = false;
+    onRestoringChange(true);
+    const restore = () => {
+      camera.position.copy(saved.camera);
+      control.target.copy(saved.target);
+      control.enabled = true;
+      control.update();
+      restorePose.current = null;
+      // Exiting changes the surrounding topbar/inspector layout. Ignore the
+      // resulting delayed ResizeObserver framing pass so it cannot overwrite
+      // the exact pose that was just restored; later ordinary resizes reframe.
+      restoredWindow.current = {
+        width: window.innerWidth,
+        height: window.innerHeight,
+        at: performance.now(),
+      };
+      pendingDeferredFraming.current = true;
+      onRestoringChange(false);
+    };
+    if (reducedMotion) {
+      restore();
+      return;
+    }
+    motion.current = {
+      startedAt: performance.now(),
+      durationMs: focusDurationMs(camera.position.distanceTo(saved.camera)),
+      fromCamera: camera.position.clone(),
+      fromTarget: control.target.clone(),
+      toCamera: saved.camera,
+      toTarget: saved.target,
+      onComplete: restore,
+    };
+  }, [
+    camera,
+    focus,
+    onRestoringChange,
+    reducedMotion,
+    systems,
+    zoomedSystemId,
+  ]);
   useFrame(() => {
     const current = motion.current;
     const control = controls.current;
@@ -228,7 +377,10 @@ function CameraController({
     camera.position.lerpVectors(current.fromCamera, current.toCamera, eased);
     control.target.lerpVectors(current.fromTarget, current.toTarget, eased);
     control.update();
-    if (progress === 1) motion.current = null;
+    if (progress === 1) {
+      motion.current = null;
+      current.onComplete?.();
+    }
   });
   return (
     <OrbitControls
@@ -238,6 +390,7 @@ function CameraController({
       dampingFactor={MAP_CAMERA_DAMPING_FACTOR}
       minDistance={2}
       maxDistance={45}
+      enabled={!zoomedSystemId && !restoring}
       onStart={cancelMotion}
     />
   );
@@ -251,6 +404,9 @@ function StarMarker({
   active,
   hovered,
   captionVisible,
+  zoomed,
+  entered,
+  interactionLocked,
   onHover,
 }: {
   system: StellarSystem;
@@ -260,6 +416,9 @@ function StarMarker({
   active: boolean;
   hovered: boolean;
   captionVisible: boolean;
+  zoomed: boolean;
+  entered: boolean;
+  interactionLocked: boolean;
   onHover: (id: string | null) => void;
 }) {
   const position = system.render_position;
@@ -274,6 +433,7 @@ function StarMarker({
     <group
       position={[position.x, position.y, position.z]}
       onPointerOver={(event) => {
+        if (zoomed || interactionLocked) return;
         event.stopPropagation();
         onHover(system.id);
       }}
@@ -292,9 +452,13 @@ function StarMarker({
           index,
           system.components.length,
         );
+        const pickable = !interactionLocked && (!zoomed || entered);
         return (
           <Billboard key={component.id} position={offset} follow>
-            <mesh userData={{ systemId: system.id }}>
+            <mesh
+              userData={{ systemId: system.id, componentId: component.id }}
+              raycast={pickable ? Mesh.prototype.raycast : ignoreRaycast}
+            >
               <planeGeometry
                 args={[
                   componentPickRadius(component) * 2,
@@ -309,7 +473,10 @@ function StarMarker({
                 side={DoubleSide}
               />
             </mesh>
-            <mesh userData={{ systemId: system.id }}>
+            <mesh
+              userData={{ systemId: system.id, componentId: component.id }}
+              raycast={pickable ? Mesh.prototype.raycast : ignoreRaycast}
+            >
               <planeGeometry args={[radius * 2, radius * 2]} />
               <shaderMaterial
                 transparent
@@ -324,7 +491,12 @@ function StarMarker({
                   },
                   uIntensity: { value: component.visual.intensity },
                   uEmphasis: {
-                    value: known ? 1 : ASTRONOMY_CONTEXT_EMPHASIS,
+                    value:
+                      zoomed && !entered
+                        ? 0.08
+                        : known
+                          ? 1
+                          : ASTRONOMY_CONTEXT_EMPHASIS,
                   },
                   uCoreHaloScale: {
                     value: known ? NARRATIVE_CORE_HALO_SCALE : 1,
@@ -353,16 +525,16 @@ function StarMarker({
           </Billboard>
         );
       })}
-      {active && <NarrativeRing />}
-      {selected && <SelectionFrame name={system.name} />}
-      {captionVisible && !hovered && (
+      {!zoomed && active && <NarrativeRing />}
+      {!zoomed && selected && <SelectionFrame name={system.name} />}
+      {!zoomed && captionVisible && !hovered && (
         <Billboard position={[0, -0.32, 0]} follow raycast={ignoreRaycast}>
           <Html center style={{ pointerEvents: "none" }}>
             <div className="narrative-map-label">{system.name}</div>
           </Html>
         </Billboard>
       )}
-      {hovered && (
+      {!zoomed && hovered && (
         <Html position={[0, 0.28, 0]} center style={{ pointerEvents: "none" }}>
           <div className="map-tooltip">
             {system.name}
@@ -563,12 +735,18 @@ function Scene({
   knownSystemIds,
   activeSystemIds,
   resetToken,
+  zoomedSystemId,
   onSelect,
+  onComponentSelect,
   onReady,
   onScaleChange,
+  interactionsLocked,
+  isInteractionLocked,
+  onCameraRestoringChange,
 }: SceneProps) {
   useEffect(onReady, [onReady]);
   const selected = systems.find((system) => system.id === selectedId);
+  const zoomed = zoomedSystemId !== null;
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [captionIds, setCaptionIds] = useState<ReadonlySet<string>>(new Set());
   return (
@@ -576,25 +754,39 @@ function Scene({
       <color attach="background" args={["#050812"]} />
       <GalacticStarfield />
       <ambientLight intensity={0.7} />
-      <GalacticPlaneGrid />
-      <Text
-        position={[16, 0.04, 0]}
-        fontSize={0.13}
-        color="#536986"
-        anchorX="center"
-      >
-        Galactic center · +Xg
-      </Text>
-      <Text
-        position={[0, 8, 0]}
-        fontSize={0.13}
-        color="#536986"
-        anchorX="center"
-      >
-        Galactic north · +Zg
-      </Text>
+      {!zoomed && <GalacticPlaneGrid />}
+      {!zoomed && (
+        <Text
+          position={[16, 0.04, 0]}
+          fontSize={0.13}
+          color="#536986"
+          anchorX="center"
+        >
+          Galactic center · +Xg
+        </Text>
+      )}
+      {!zoomed && (
+        <Text
+          position={[0, 8, 0]}
+          fontSize={0.13}
+          color="#536986"
+          anchorX="center"
+        >
+          Galactic north · +Zg
+        </Text>
+      )}
       <group
         onClick={(event) => {
+          if (isInteractionLocked()) return;
+          if (zoomed) {
+            const componentId = event.intersections.find(
+              (intersection) =>
+                typeof intersection.object.userData.componentId === "string" &&
+                intersection.object.userData.systemId === zoomedSystemId,
+            )?.object.userData.componentId as string | undefined;
+            if (componentId) onComponentSelect(componentId);
+            return;
+          }
           const systemId = closestMarkerSystemId(event.intersections);
           if (systemId) onSelect(systemId);
         }}
@@ -609,6 +801,9 @@ function Scene({
             active={activeSystemIds.has(system.id)}
             hovered={hoveredId === system.id}
             captionVisible={captionIds.has(system.id)}
+            zoomed={zoomed}
+            entered={system.id === zoomedSystemId}
+            interactionLocked={interactionsLocked}
             onHover={setHoveredId}
           />
         ))}
@@ -619,21 +814,33 @@ function Scene({
         systems={systems}
         knownSystemIds={knownSystemIds}
         activeSystemIds={activeSystemIds}
+        zoomedSystemId={zoomedSystemId}
+        restoring={interactionsLocked}
+        onRestoringChange={onCameraRestoringChange}
       />
-      <CameraScaleReporter onScaleChange={onScaleChange} />
-      <CaptionController
-        systems={systems}
-        knownSystemIds={knownSystemIds}
-        activeSystemIds={activeSystemIds}
-        selectedId={selectedId}
-        hoveredId={hoveredId}
-        onChange={setCaptionIds}
-      />
+      {!zoomed && <CameraScaleReporter onScaleChange={onScaleChange} />}
+      {!zoomed && (
+        <CaptionController
+          systems={systems}
+          knownSystemIds={knownSystemIds}
+          activeSystemIds={activeSystemIds}
+          selectedId={selectedId}
+          hoveredId={hoveredId}
+          onChange={setCaptionIds}
+        />
+      )}
     </>
   );
 }
 
 export function StarMap({ onDeselect, ...props }: MapSceneProps) {
+  const [cameraRestoring, setCameraRestoring] = useState(false);
+  const cameraRestoringRef = useRef(false);
+  const onCameraRestoringChange = useCallback((restoring: boolean) => {
+    cameraRestoringRef.current = restoring;
+    setCameraRestoring(restoring);
+  }, []);
+  const isInteractionLocked = useCallback(() => cameraRestoringRef.current, []);
   return (
     <Canvas
       camera={{
@@ -641,7 +848,9 @@ export function StarMap({ onDeselect, ...props }: MapSceneProps) {
         fov: MAP_CAMERA_FOV_DEGREES,
       }}
       dpr={[1, 1.8]}
-      onPointerMissed={onDeselect}
+      onPointerMissed={() => {
+        if (!cameraRestoringRef.current) onDeselect();
+      }}
       data-testid="star-map-canvas"
       data-galactic-starfield="permanent"
       data-star-sprite="expressive-hybrid"
@@ -654,7 +863,12 @@ export function StarMap({ onDeselect, ...props }: MapSceneProps) {
       data-hover-marker="tooltip"
       data-grid="whisper"
     >
-      <Scene {...props} />
+      <Scene
+        {...props}
+        interactionsLocked={cameraRestoring}
+        isInteractionLocked={isInteractionLocked}
+        onCameraRestoringChange={onCameraRestoringChange}
+      />
     </Canvas>
   );
 }

@@ -66,6 +66,19 @@ Run `npm run performance` for the isolated production Chromium chapter-transitio
 gate; it builds the current source and owns strict loopback preview port 4173 while
 measuring.
 
+### Zoomed stellar-system mode
+
+Select an eligible narrative-known system such as **Solar System**, then use
+**Enter system** at the top of the object inspector. The map smoothly dollies toward
+the system without changing the viewing angle, dims and locks the surrounding map,
+and allows only the system's catalogue component stars to be inspected. The camera
+cannot pan, rotate, or zoom while this mode is active.
+
+Use **Return to map**, the root **Star Map** breadcrumb, or browser Back to leave the
+system. The map restores the exact pre-entry camera pose and target, keeps the entered
+system selected, and re-enables ordinary map picking and camera controls. Astronomy-
+only systems remain selectable for catalogue inspection but cannot enter this mode.
+
 ## Narrative authoring
 
 The pre-book zero-state is a valid narrative corpus even before any chapters exist.

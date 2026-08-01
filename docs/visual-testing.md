@@ -60,6 +60,29 @@ Verify reduced-motion behavior with the operating-system setting.
 The headless development environment cannot substitute for manual GPU/browser review.
 Record each unavailable browser explicitly as an acceptance gap before publication.
 
+## BOB-20260731-MCVXSZ zoomed stellar-system mode
+
+Select the canonical **Solar System**, enter the system, and verify that Sol retains
+its ordinary glyph treatment while becoming larger. Other systems must remain
+stationary, strongly dimmed, unlabeled, and non-pickable; the Galactic backdrop
+remains aligned while the grid, captions, scale, and interstellar selection treatment
+disappear.
+
+Verify that the camera preserves its viewing angle during entry, then remains fixed:
+drag, wheel, pinch, double-click, and map keyboard movement must have no effect while
+browser zoom remains available. Select every component through both its independent
+canvas target and the inspector's labelled **Component stars** controls. Each selected
+component must identify its parent system and catalogue facts without suggesting a
+narrative-star mapping or physical separation.
+
+At desktop, compact, phone, short-height, and 200% browser zoom, verify the
+**Star Map / Sol** breadcrumb, **Return to map**, visible focus, and
+reachable inspector. Browser Back, the root **Star Map** breadcrumb, and **Return to
+map** must each restore the exact pre-entry view once, retaining the entered system
+as the ordinary selected system. Repeat with reduced motion enabled and with WebGL
+unavailable; the DOM entry, component inspection, and exit controls must remain
+reachable even when the visual transition cannot render.
+
 ## BOB-005 Galactic starfield backdrop
 
 At desktop, compact, and phone widths, confirm that the permanent backdrop remains

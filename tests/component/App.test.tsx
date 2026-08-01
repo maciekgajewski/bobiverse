@@ -11,12 +11,14 @@ import App from "../../src/App";
 import * as narrativeMap from "../../src/narrative/map";
 import * as narrativeModel from "../../src/narrative/model";
 import { narrativeRuntimePreparationCount } from "../../src/narrative/runtime";
+import * as systemView from "../../src/system-view";
 
 describe("atlas shell", () => {
   afterEach(() => {
     cleanup();
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
+    window.history.replaceState({}, "", "/");
   });
   beforeEach(() => {
     window.localStorage.clear();
@@ -39,6 +41,75 @@ describe("atlas shell", () => {
     ).toBeInTheDocument();
     expect(screen.getByText(/WebGL unavailable/i)).toBeInTheDocument();
     expect(screen.queryByText("Astronomy systems")).not.toBeInTheDocument();
+  });
+
+  it("offers the canonical Solar System view through DOM controls", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(
+      screen.getByRole("button", { name: /^Solar System(?:Active)?$/ }),
+    );
+    await user.click(screen.getByRole("button", { name: "Enter system" }));
+    expect(
+      screen.getByRole("button", { name: "Star Map" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Return to map" }),
+    ).toBeInTheDocument();
+    const inspector = screen.getByRole("complementary", {
+      name: "Object inspector",
+    });
+    await user.click(
+      within(inspector).getByRole("button", {
+        name: "Inspect component: Sol",
+      }),
+    );
+    expect(
+      within(inspector).getByRole("heading", { name: "Sol" }),
+    ).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Star Map" }));
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: "Enter system" }),
+      ).toBeInTheDocument(),
+    );
+    await user.click(screen.getByRole("button", { name: "Enter system" }));
+    await user.click(screen.getByRole("button", { name: "Return to map" }));
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: "Enter system" }),
+      ).toBeInTheDocument(),
+    );
+  });
+
+  it("announces why a system view closes after its projection becomes ineligible", async () => {
+    const originalEntryResolver =
+      systemView.systemViewEntryForNarrativeSelection;
+    const entryResolver = vi
+      .spyOn(systemView, "systemViewEntryForNarrativeSelection")
+      .mockImplementation(originalEntryResolver);
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(
+      screen.getByRole("button", { name: /^Solar System(?:Active)?$/ }),
+    );
+    await user.click(screen.getByRole("button", { name: "Enter system" }));
+
+    entryResolver.mockReturnValue(null);
+    await user.selectOptions(screen.getByLabelText("Read through"), "1.1");
+    await user.click(
+      screen.getByRole("button", { name: "Confirm read through" }),
+    );
+
+    await waitFor(() =>
+      expect(screen.getByRole("status")).toHaveTextContent(
+        "Returned to the interstellar map because this system is no longer available.",
+      ),
+    );
+    expect(
+      screen.queryByRole("button", { name: "Return to map" }),
+    ).not.toBeInTheDocument();
   });
 
   it("renders actionable content when the narrative projection is invalid", () => {

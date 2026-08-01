@@ -394,6 +394,61 @@ h2 {
   width: 100% !important;
   height: 100% !important;
 }
+.map-breadcrumb {
+  display: flex;
+  align-items: baseline;
+  gap: 0.42rem;
+  min-height: 2rem;
+  color: var(--text-primary);
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  font-weight: 570;
+  letter-spacing: 0.015em;
+}
+.map-breadcrumb h1 {
+  margin: 0;
+}
+.map-breadcrumb .link-button {
+  color: inherit;
+  padding: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+}
+.map-breadcrumb [aria-current="page"] {
+  color: inherit;
+}
+.return-to-map-placeholder {
+  visibility: hidden;
+}
+.system-mode .map-overlay,
+.system-mode .map-narrative-badge {
+  opacity: 0;
+}
+.enter-system {
+  width: 100%;
+  margin: 0.7rem 0 0;
+}
+.system-component-controls {
+  margin: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid var(--line-subtle);
+  border-radius: var(--radius-control);
+  background: rgb(9 20 36 / 72%);
+}
+.system-component-controls p {
+  margin: 0.25rem 0 0.6rem;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+.system-component-controls .relationship-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.system-component-controls .link-button[aria-pressed="true"] {
+  color: var(--accent-cyan);
+  text-decoration-color: currentcolor;
+}
 .map-state {
   position: absolute;
   inset: 0;
