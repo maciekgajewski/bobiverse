@@ -276,7 +276,7 @@ Narrative state remains separate from catalogue facts:
 | Astronomy-only context          | `0.25` post-clamp emphasis; no caption                           |
 | Narrative-known                 | `2×` footprint/rays, `2.5×` core/halo, caption                   |
 | Active in selected chapter/date | Brighter double segmented ring with one outward tick             |
-| Selected                        | Existing larger corner frame and adjacent selection label        |
+| Selected                        | Existing larger corner frame and collision-managed map caption   |
 | Hovered                         | Temporary tooltip and emphasis without changing narrative status |
 
 The geometric differences make the states understandable without colour. Rings are
@@ -299,7 +299,8 @@ plain map caption is suppressed until hover ends, while the hovered collision-pr
 slot remains reserved so nearby captions do not jump underneath the tooltip. Other
 narrative-known system captions are shown when they do not collide and reappear as
 the camera moves or zooms. Astronomy-only systems have no persistent caption; hover
-uses the same sole tooltip and selection uses the established selection label.
+uses the same sole tooltip and selection retains the collision-managed caption below
+its marker.
 
 Collision handling may suppress a caption but may not move a system marker or distort
 geometry. Keyboard and browser selection remain available when a caption is absent.

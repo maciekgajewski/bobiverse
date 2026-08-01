@@ -209,7 +209,11 @@ test("Solar System enters and exits the fixed system mode", async ({
     window.__bob034MapPerformance!.screenPoint("stellar-system-005413"),
   );
   await page.mouse.click(alphaCentauri.x, alphaCentauri.y);
-  await expect(page.locator(".selection-label")).toHaveText("Alpha Centauri");
+  await expect(
+    page
+      .locator(".narrative-map-label")
+      .filter({ hasText: /^Alpha Centauri$/ }),
+  ).toHaveCount(1);
 });
 
 test("immediate system entry completes ordinary focus before pose capture", async ({
@@ -339,7 +343,9 @@ test("system-mode dollies preserve direction and restore the exact camera pose",
   expect(restoredState.framingRevision).toBe(originalPose.framingRevision);
   expect(restoredState.camera).toEqual(originalPose.camera);
   expect(restoredState.target).toEqual(originalPose.target);
-  await expect(page.locator(".selection-label")).toHaveText("Solar System");
+  await expect(
+    page.locator(".narrative-map-label").filter({ hasText: /^Solar System$/ }),
+  ).toHaveCount(1);
   await page.getByRole("button", { name: "Reset view" }).click();
   await page.waitForFunction(
     (revision) =>
@@ -778,7 +784,9 @@ test("expressive map states preserve active, hover, and astronomy-only selection
     await expect(page.locator(".map-tooltip")).toContainText("Solar System");
     await expect(solMapCaption).toHaveCount(0);
     await page.mouse.click(sol.x, sol.y);
-    await expect(page.locator(".selection-label")).toHaveText("Solar System");
+    await expect(page.locator(".selection-label")).toHaveCount(0);
+    await page.mouse.move(1, 1);
+    await expect(solMapCaption).toHaveCount(1);
     if (compact) {
       await expect(
         page.getByRole("dialog", { name: "Selected object" }),
@@ -796,8 +804,12 @@ test("expressive map states preserve active, hover, and astronomy-only selection
     });
     await search.fill("alpha centauri");
     await page.getByRole("button", { name: /^Alpha Centauri/ }).click();
-    const selectionLabel = page.locator(".selection-label");
-    await expect(selectionLabel).toHaveText("Alpha Centauri");
+    await expect(page.locator(".selection-label")).toHaveCount(0);
+    await expect(
+      page
+        .locator(".narrative-map-label")
+        .filter({ hasText: /^Alpha Centauri$/ }),
+    ).toHaveCount(1);
     const inspector = compact
       ? page.getByRole("dialog", { name: "Selected object" })
       : page.getByRole("complementary", { name: "Object inspector" });
@@ -1112,7 +1124,10 @@ test("chapter 1.11 Bob selection resolves through New Handeltown to Sol", async 
   ).toBeVisible();
   await back.click();
   await expect(inspector.getByRole("heading", { name: "Bob" })).toBeVisible();
-  await expect(page.locator(".selection-label")).toHaveText("Solar System");
+  await expect(page.locator(".selection-label")).toHaveCount(0);
+  await expect(
+    page.locator(".narrative-map-label").filter({ hasText: /^Solar System$/ }),
+  ).toHaveCount(1);
   await expect(page.locator(".selection-status")).toHaveText(
     "Bob restored from inspector history.",
   );

@@ -527,7 +527,7 @@ function StarMarker({
         );
       })}
       {!zoomed && active && <NarrativeRing />}
-      {!zoomed && selected && <SelectionFrame name={system.name} />}
+      {!zoomed && selected && <SelectionFrame />}
       {!zoomed && captionVisible && !hovered && (
         <Billboard position={[0, -0.32, 0]} follow raycast={ignoreRaycast}>
           <Html center style={{ pointerEvents: "none" }}>
@@ -604,7 +604,7 @@ function NarrativeRing() {
   );
 }
 
-function SelectionFrame({ name }: { name: string }) {
+function SelectionFrame() {
   const half = 0.34;
   const corner = 0.07;
   const segments = selectionFrameSegments(half, corner);
@@ -624,13 +624,6 @@ function SelectionFrame({ name }: { name: string }) {
           raycast={ignoreRaycast}
         />
       ))}
-      <Html
-        position={[half + 0.09, 0, 0]}
-        distanceFactor={12}
-        style={{ pointerEvents: "none" }}
-      >
-        <div className="selection-label">{name}</div>
-      </Html>
     </Billboard>
   );
 }

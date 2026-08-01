@@ -855,16 +855,11 @@ h2 {
   letter-spacing: 0.01em;
   text-shadow: 0 2px 8px #000;
 }
-.selection-label,
 .map-tooltip {
   min-width: max-content;
   color: #ebf7ff;
   font-size: 0.68rem;
   text-shadow: 0 2px 8px #000;
-}
-.selection-label {
-  color: #e5f8ff;
-  font-weight: 650;
 }
 .map-tooltip {
   padding: 0.26rem 0.42rem;

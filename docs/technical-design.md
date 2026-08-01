@@ -446,8 +446,9 @@ same pose while leaving gesture mapping, distance limits, framing, and focus sem
 unchanged.
 
 Clicking empty map space clears the current inspection selection. Selection uses a
-non-obscuring corner frame and an adjacent name label; it must not recolor or cover
-the component-marker sprites. Sol has the
+non-obscuring corner frame; the collision-managed caption below the selected marker
+is its sole persistent map-name surface. The frame must not recolor or cover the
+component-marker sprites. Sol has the
 only persistent, slightly offset marker label in Phase 1 and uses a normal selection
 frame only when explicitly selected. Hovering a marker reveals a screen-size-stable
 tooltip with its name and, when there is a selected system, the Euclidean canonical

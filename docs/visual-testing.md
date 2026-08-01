@@ -226,7 +226,8 @@ neighbourhood around Sol, not the complete static catalogue. The historical BOB-
 single-ring treatment is superseded by BOB-034: ordinary narrative-known systems are
 ringless and keep collision-managed captions, while active systems at the selected
 chapter/date retain static nested ellipses and an outward tick. A selected system
-keeps its outer corner frame and adjacent label. Rotate, pan, and zoom while creating
+keeps its outer corner frame and collision-managed caption below the marker. Rotate,
+pan, and zoom while creating
 caption collisions:
 selected and active captions must remain visible, while lower-priority known captions
 may hide and reappear. Hover a known and an astronomy-only system: the tooltip must
@@ -268,7 +269,7 @@ variation. Narrative-known glyphs must read at `2×` complete visible size, with
 proportional `2×` ray reach and effective `2.5×` core/halo size. Confirm the larger
 decorative footprint does not alter picking, coordinates, or measurements.
 Ordinary narrative-known systems have no persistent ring, while the active double
-ring/tick, selected corner frame/label, hover tooltip, and caption priorities remain
+ring/tick, selected corner frame, hover tooltip, and caption priorities remain
 clear. Select from both canvas and DOM paths, deselect, focus, and reset.
 
 Orbit above and below the Galactic plane and approach a grazing view. Ordinary
@@ -387,7 +388,8 @@ Compare all ten WISE/2MASS/UGPS ultracool systems with nearby ordinary stars. Th
 purple/brown false-infrared glyphs must be visibly smaller and dimmer, must not read
 as bright pale stars, and must not dominate map density. Rotate and zoom, then hover
 and select the smallest glyphs directly; the independent normal-sized hit target must
-keep selection practical, while the selected corner frame and label remain clear.
+keep selection practical, while the selected corner frame and below-star caption remain
+clear.
 Verify ordinary stellar markers retain their prior colors, apparent size,
 brightness, component clusters, narrative marks, and measurement behavior.
 
