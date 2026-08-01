@@ -103,6 +103,7 @@ def component_runtime(component: dict[str, Any], gcns: dict[str, dict[str, str]]
         if component.get("c20pc_match")
         else None
     )
+    classical = component.get("classical_name_match")
     color_family, visual_derivation = presentation(
         enrichment, bp_rp, wds_spectral_type, c20pc
     )
@@ -151,6 +152,14 @@ def component_runtime(component: dict[str, Any], gcns: dict[str, dict[str, str]]
         "wise_id": c20pc.get("wise_id") if c20pc else None,
         "twomass_id": c20pc.get("twomass_id") if c20pc else None,
         "published_name": c20pc.get("published_name") if c20pc else None,
+        "bayer_designation": (
+            classical.get("bayer_designation") if classical else None
+        ),
+        "flamsteed_designation": (
+            classical.get("flamsteed_designation") if classical else None
+        ),
+        "hd_id": classical.get("source_hd") if classical else None,
+        "hr_id": classical.get("source_hr") if classical else None,
     }
     return {
         "id": component["id"], "gaia_source_id": gaia_id, "cns5_id": component["cns5_id"],
@@ -200,14 +209,18 @@ def component_runtime(component: dict[str, Any], gcns: dict[str, dict[str, str]]
             },
         },
         "provenance": {
-            "position": component["position_derivation"], "catalogues": [name for name, record in (("GCNS", gcns_row), ("CNS5", cns_row), ("Gaia DR3", enrichment), ("Kirkpatrick et al. 2024 20-pc census", c20pc)) if record],
+            "position": component["position_derivation"], "catalogues": [name for name, record in (("GCNS", gcns_row), ("CNS5", cns_row), ("Gaia DR3", enrichment), ("Kirkpatrick et al. 2024 20-pc census", c20pc), ("VizieR IV/27A classical names", classical)) if record],
             "enrichment": (
-                "Gaia DR3 left join; reviewed Kirkpatrick et al. 2024 20-pc census"
-                if enrichment and c20pc
-                else "Gaia DR3 left join"
-                if enrichment
-                else "Reviewed Kirkpatrick et al. 2024 20-pc census"
-                if c20pc
+                "; ".join(
+                    value
+                    for value in (
+                        "Gaia DR3 left join" if enrichment else None,
+                        "reviewed Kirkpatrick et al. 2024 20-pc census" if c20pc else None,
+                        "exact HIP match to VizieR IV/27A" if classical else None,
+                    )
+                    if value
+                )
+                if any((enrichment, c20pc, classical))
                 else None
             ),
         },
@@ -377,7 +390,7 @@ def main() -> None:
     systems.sort(key=lambda system: (system["distance_from_sol_pc"], system["id"]))
     sol = {
         "id": "sol", "name": "Sol", "alternates": ["Sun"], "position_pc": {"xg": 0.0, "yg": 0.0, "zg": 0.0}, "render_position": {"x": 0.0, "y": 0.0, "z": 0.0}, "distance_from_sol_pc": 0.0, "distance_uncertainty_pc": 0.0,
-        "components": [{"id": "stellar-component-sol", "gaia_source_id": None, "cns5_id": None, "source_identities": [], "gaia_enrichment": None, "c20pc_enrichment": None, "object_class": "star", "designation": "Sol", "identifiers": {"gaia_dr3_source_id": None, "gcns_source_id": None, "cns5_id": None, "gj_id": None, "hip_id": None, "cns5_component_id": None, "cns6_system_id": None, "c20pc_source_key": None, "wise_id": None, "twomass_id": None, "published_name": None}, "icrs": {"ra_deg": None, "dec_deg": None, "epoch_year": None, "parallax_mas": None, "parallax_error_mas": None}, "astrometry_quality": {"parallax_over_error": None, "visibility_periods_used": None, "ruwe": None}, "photometry": {"g_magnitude": None, "bp_rp": None}, "visual": {"color_family": "yellow", "marker_radius": MARKER_RADIUS, "intensity": 1.0, "pick_radius": MINIMUM_PICK_RADIUS, "derivation": "generated Sol origin", "source_facts": {"effective_temperature_k": None, "spectral_type": None, "bp_rp": None, "wds_spectral_type": None, "c20pc_effective_temperature_k": None, "c20pc_spectral_type": None, "object_class": "star"}}, "provenance": {"position": "generated canonical origin", "catalogues": [], "enrichment": None}}],
+        "components": [{"id": "stellar-component-sol", "gaia_source_id": None, "cns5_id": None, "source_identities": [], "gaia_enrichment": None, "c20pc_enrichment": None, "object_class": "star", "designation": "Sol", "identifiers": {"gaia_dr3_source_id": None, "gcns_source_id": None, "cns5_id": None, "gj_id": None, "hip_id": None, "cns5_component_id": None, "cns6_system_id": None, "c20pc_source_key": None, "wise_id": None, "twomass_id": None, "published_name": None, "bayer_designation": None, "flamsteed_designation": None, "hd_id": None, "hr_id": None}, "icrs": {"ra_deg": None, "dec_deg": None, "epoch_year": None, "parallax_mas": None, "parallax_error_mas": None}, "astrometry_quality": {"parallax_over_error": None, "visibility_periods_used": None, "ruwe": None}, "photometry": {"g_magnitude": None, "bp_rp": None}, "visual": {"color_family": "yellow", "marker_radius": MARKER_RADIUS, "intensity": 1.0, "pick_radius": MINIMUM_PICK_RADIUS, "derivation": "generated Sol origin", "source_facts": {"effective_temperature_k": None, "spectral_type": None, "bp_rp": None, "wds_spectral_type": None, "c20pc_effective_temperature_k": None, "c20pc_spectral_type": None, "object_class": "star"}}, "provenance": {"position": "generated canonical origin", "catalogues": [], "enrichment": None}}],
         "provenance": {"catalogues": ["Generated canonical origin"], "source_object_ids": [], "adopted_component_id": "stellar-component-sol", "review_version": review["schema_version"], "wds_designations": []},
     }
     coverage = [{"anchor_id": anchor_id, "anchor_position_pc": anchor_position, "radius_ly": radius_ly, "system_count": sum(1 for system in systems if distance(system["position_pc"], anchor_position) <= radius_pc + 1e-12), "source_record_count": sum(len(system["components"]) for system in systems if distance(system["position_pc"], anchor_position) <= radius_pc + 1e-12), "gcns_boundary_pc": 100.0} for anchor_id, anchor_position in sorted(anchor_positions.items())]

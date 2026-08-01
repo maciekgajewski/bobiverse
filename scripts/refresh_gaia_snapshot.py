@@ -6,6 +6,7 @@ from astronomy_pipeline import (
     reconcile_committed_sources,
     refresh,
     refresh_c20pc_snapshot,
+    refresh_classical_names_snapshot,
 )
 
 
@@ -22,14 +23,27 @@ def main() -> None:
         action="store_true",
         help="refresh only the pinned Kirkpatrick et al. 20-pc census snapshot",
     )
+    parser.add_argument(
+        "--classical-names-only",
+        action="store_true",
+        help="refresh only the pinned IV/27A classical-name snapshot",
+    )
     args = parser.parse_args()
-    if args.reconcile and args.c20pc_only:
-        parser.error("--reconcile and --c20pc-only are mutually exclusive")
+    selected_modes = sum(
+        (args.reconcile, args.c20pc_only, args.classical_names_only)
+    )
+    if selected_modes > 1:
+        parser.error(
+            "--reconcile, --c20pc-only, and --classical-names-only are mutually exclusive"
+        )
     if args.reconcile:
         print(f"Reconciled committed source inputs; candidate checksum {reconcile_committed_sources()}")
     elif args.c20pc_only:
         refresh_c20pc_snapshot()
         print("Refreshed the pinned Kirkpatrick et al. 20-pc census snapshot")
+    elif args.classical_names_only:
+        refresh_classical_names_snapshot()
+        print("Refreshed the pinned IV/27A classical-name snapshot")
     else:
         refresh()
 

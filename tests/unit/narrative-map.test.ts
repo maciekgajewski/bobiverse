@@ -88,6 +88,45 @@ describe("narrative map projection", () => {
       "known",
       "near",
     ]);
+    expect(projection.contextSystems[0]).toMatchObject({
+      name: "Known system",
+      astronomy_name: "known",
+      narrative_name: "Known system",
+      alternates: ["known"],
+    });
+    expect(
+      projection.astronomySearchAliasesByNarrativeId.get("location:system"),
+    ).toContain("known");
+    expect(projection.contextSystems[1]).toMatchObject({
+      name: "near",
+      astronomy_name: "near",
+      narrative_name: null,
+    });
+  });
+
+  it("rejects conflicting reader-visible names for one astronomy system", () => {
+    const conflictingWorld: NarrativeWorld = {
+      ...world,
+      entities: [
+        ...world.entities,
+        {
+          id: "location:duplicate-system",
+          entity_type: "location",
+          name: "Different system name",
+          kind: "star_system",
+          astronomy_object_id: "known",
+        },
+      ],
+    };
+
+    expect(() =>
+      projectNarrativeMap(
+        conflictingWorld,
+        [system("known", 0)],
+        20,
+        "chapter",
+      ),
+    ).toThrow(/conflicting reader-visible narrative names/);
   });
 
   it("reports mapped narrative anchors missing from astronomy coverage", () => {

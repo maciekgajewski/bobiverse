@@ -43,6 +43,30 @@ describe("atlas shell", () => {
     expect(screen.queryByText("Astronomy systems")).not.toBeInTheDocument();
   });
 
+  it("uses reader-visible system names while retaining astronomy search aliases", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    const search = screen.getByRole("searchbox", {
+      name: "Search visible objects",
+    });
+    await user.type(search, "Sol");
+    await user.click(screen.getByRole("button", { name: "Solar System" }));
+
+    const inspector = screen.getByRole("complementary", {
+      name: "Object inspector",
+    });
+    expect(
+      within(inspector).getByRole("heading", { name: "Solar System" }),
+    ).toBeInTheDocument();
+    expect(
+      within(inspector).getByText("Astronomy preferred name"),
+    ).toBeInTheDocument();
+    expect(
+      within(inspector).getByText("Sol", { selector: "dd" }),
+    ).toBeInTheDocument();
+  });
+
   it("offers the canonical Solar System view through DOM controls", async () => {
     const user = userEvent.setup();
     render(<App />);
@@ -520,6 +544,7 @@ describe("atlas shell", () => {
       narrativeSystemIdsByAstronomyId: new Map(),
       activeSystemIds: new Set(),
       contextSystems: [],
+      astronomySearchAliasesByNarrativeId: new Map(),
     });
 
     render(<App />);
@@ -614,8 +639,13 @@ describe("atlas shell", () => {
     const search = screen.getByRole("searchbox", {
       name: "Search visible objects",
     });
-    await user.type(search, "alpha centauri");
+    await user.type(search, "proxima centauri");
     expect(screen.getByText("Nearby astronomy")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Alpha Centauri/ }),
+    ).toBeInTheDocument();
+    await user.clear(search);
+    await user.type(search, "HD 128620");
     await user.click(screen.getByRole("button", { name: /Alpha Centauri/ }));
     expect(
       screen.getByText("Not story-known at this view"),

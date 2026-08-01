@@ -146,6 +146,11 @@ for known T/Y brown dwarfs without changing ADR-0011 inclusion, geometry, or cov
 The Captain accepted ADR-0012 on 2026-07-28, so BOB-026 is Ready. Acceptance and
 Ready status do not authorize implementation.
 
+Accepted naming follow-up: ADR-0022 adds the pinned VizieR `IV/27A` cross-index as
+presentation-only Bayer/Flamsteed enrichment and lets reader-visible narrative
+system names override astronomy names at runtime. It does not change catalogue
+identity, inclusion, geometry, membership, or spoiler projection.
+
 ## 6. Phase 2: narrative foundation and chapter timeline
 
 Status: In progress

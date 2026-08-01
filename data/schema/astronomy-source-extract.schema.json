@@ -5,6 +5,7 @@
     { "$ref": "#/$defs/gcns_extract" },
     { "$ref": "#/$defs/cns5_extract" },
     { "$ref": "#/$defs/gaia_extract" },
+    { "$ref": "#/$defs/classical_names_extract" },
     { "$ref": "#/$defs/wds_extract" }
   ],
   "$defs": {
@@ -214,6 +215,33 @@
         }
       ]
     },
+    "classical_names_source": {
+      "allOf": [
+        { "$ref": "#/$defs/base_source" },
+        {
+          "properties": {
+            "catalogue": { "const": "classical_names" },
+            "endpoint": {
+              "const": "https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync"
+            },
+            "table": { "const": "IV/27A/catalog" },
+            "release": { "const": "IV/27A (Kostjuk 2002)" },
+            "columns": {
+              "const": [
+                "recno",
+                "HD",
+                "HR",
+                "HIP",
+                "Fl",
+                "Bayer",
+                "Cst",
+                "SimbadName"
+              ]
+            }
+          }
+        }
+      ]
+    },
     "wds_source": {
       "type": "object",
       "additionalProperties": false,
@@ -410,6 +438,30 @@
         "source_id": { "type": "string", "pattern": "^[0-9]+$" }
       }
     },
+    "classical_names_row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "recno",
+        "HD",
+        "HR",
+        "HIP",
+        "Fl",
+        "Bayer",
+        "Cst",
+        "SimbadName"
+      ],
+      "properties": {
+        "recno": { "type": "string", "pattern": "^[0-9]+$" },
+        "HD": { "type": "string", "pattern": "^$|^[0-9]+$" },
+        "HR": { "type": "string", "pattern": "^$|^[0-9]+$" },
+        "HIP": { "type": "string", "pattern": "^[0-9]+$" },
+        "Fl": { "type": "string", "pattern": "^$|^[0-9]+$" },
+        "Bayer": { "type": "string" },
+        "Cst": { "type": "string", "pattern": "^[A-Za-z]{3}$" },
+        "SimbadName": { "type": "string", "minLength": 1 }
+      }
+    },
     "wds_row": {
       "type": "object",
       "additionalProperties": false,
@@ -567,6 +619,19 @@
         "rows": {
           "type": "array",
           "items": { "$ref": "#/$defs/gaia_row" }
+        }
+      }
+    },
+    "classical_names_extract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "source", "rows"],
+      "properties": {
+        "schema_version": { "const": "2.0.0" },
+        "source": { "$ref": "#/$defs/classical_names_source" },
+        "rows": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/classical_names_row" }
         }
       }
     },

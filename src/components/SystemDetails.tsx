@@ -34,6 +34,14 @@ export function SystemDetails({
           component.identifiers.wise_id,
           component.identifiers.twomass_id,
           component.identifiers.published_name,
+          component.identifiers.bayer_designation,
+          component.identifiers.flamsteed_designation,
+          component.identifiers.hd_id
+            ? `HD ${component.identifiers.hd_id}`
+            : null,
+          component.identifiers.hr_id
+            ? `HR ${component.identifiers.hr_id}`
+            : null,
           component.c20pc_enrichment?.hd_id,
           component.c20pc_enrichment?.ross_id,
           component.c20pc_enrichment?.wd_id,
@@ -55,7 +63,7 @@ export function SystemDetails({
         {embedded ? "Catalogue facts" : "Astronomy catalogue record"}
       </p>
       {embedded ? (
-        <h4>{system.name}</h4>
+        <p className="embedded-details-name">{system.name}</p>
       ) : (
         <h2 id={headingId}>{system.name}</h2>
       )}
@@ -68,6 +76,12 @@ export function SystemDetails({
       )}
       <p className="aliases">{system.alternates.join(" · ")}</p>
       <dl>
+        {system.astronomy_name && system.astronomy_name !== system.name && (
+          <div>
+            <dt>Astronomy preferred name</dt>
+            <dd>{system.astronomy_name}</dd>
+          </div>
+        )}
         <div>
           <dt>Distance from Sol</dt>
           <dd>{formatDistance(system.distance_from_sol_pc)}</dd>

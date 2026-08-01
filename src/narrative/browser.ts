@@ -204,6 +204,7 @@ export function buildNarrativeBrowserGroups(
   world: NarrativeWorld,
   mode: BrowserMode,
   query = "",
+  externalAliasesByEntityId: ReadonlyMap<string, readonly string[]> = new Map(),
 ): NarrativeBrowserGroup[] {
   const normalizedQuery = normalizeBrowserSearch(query);
   const activityByEntity = new Map<string, NarrativeActivity[]>();
@@ -217,11 +218,14 @@ export function buildNarrativeBrowserGroups(
     return {
       entity,
       name: String(entity.name),
-      aliases: Array.isArray(entity.aliases)
-        ? entity.aliases.filter(
-            (alias): alias is string => typeof alias === "string",
-          )
-        : [],
+      aliases: [
+        ...(Array.isArray(entity.aliases)
+          ? entity.aliases.filter(
+              (alias): alias is string => typeof alias === "string",
+            )
+          : []),
+        ...(externalAliasesByEntityId.get(entity.id) ?? []),
+      ],
       active: isActive(activities, world, mode),
       lastActivity: latestActivity(activities, mode, world.view.display_date),
     };

@@ -44,6 +44,10 @@ const component = (id: string): Component => ({
     wise_id: null,
     twomass_id: null,
     published_name: null,
+    bayer_designation: null,
+    flamsteed_designation: null,
+    hd_id: null,
+    hr_id: null,
   },
   icrs: {
     ra_deg: null,

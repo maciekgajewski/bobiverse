@@ -39,13 +39,21 @@
         "sources": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["gcns", "cns5", "gaia_dr3", "wds", "c20pc"],
+          "required": [
+            "gcns",
+            "cns5",
+            "gaia_dr3",
+            "wds",
+            "c20pc",
+            "classical_names"
+          ],
           "properties": {
             "gcns": { "$ref": "#/$defs/source" },
             "cns5": { "$ref": "#/$defs/source" },
             "gaia_dr3": { "$ref": "#/$defs/source" },
             "wds": { "$ref": "#/$defs/wds_source" },
-            "c20pc": { "$ref": "#/$defs/c20pc_source" }
+            "c20pc": { "$ref": "#/$defs/c20pc_source" },
+            "classical_names": { "$ref": "#/$defs/source" }
           }
         }
       }
@@ -326,7 +334,11 @@
             "c20pc_source_key",
             "wise_id",
             "twomass_id",
-            "published_name"
+            "published_name",
+            "bayer_designation",
+            "flamsteed_designation",
+            "hd_id",
+            "hr_id"
           ],
           "properties": {
             "gaia_dr3_source_id": { "type": ["string", "null"] },
@@ -339,7 +351,11 @@
             "c20pc_source_key": { "type": ["string", "null"] },
             "wise_id": { "type": ["string", "null"] },
             "twomass_id": { "type": ["string", "null"] },
-            "published_name": { "type": ["string", "null"] }
+            "published_name": { "type": ["string", "null"] },
+            "bayer_designation": { "type": ["string", "null"] },
+            "flamsteed_designation": { "type": ["string", "null"] },
+            "hd_id": { "type": ["string", "null"] },
+            "hr_id": { "type": ["string", "null"] }
           }
         },
         "icrs": {

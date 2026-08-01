@@ -27,6 +27,7 @@ WDS_FORMAT_PATH = SOURCE_DIR / "wdsweb-format.txt"
 C20PC_PATH = SOURCE_DIR / "twenty-parsec-census.json"
 C20PC_README_PATH = SOURCE_DIR / "twenty-parsec-census-readme.txt"
 C20PC_SCHEMA_PATH = ROOT / "data" / "schema" / "twenty-parsec-census.schema.json"
+CLASSICAL_NAMES_PATH = SOURCE_DIR / "classical-star-names.json"
 
 LIGHT_YEARS_PER_PARSEC = 3.261563777
 GAIA_CATALOGUE = "Gaia DR3 gaiadr3.gaia_source"

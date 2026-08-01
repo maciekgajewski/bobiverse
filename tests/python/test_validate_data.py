@@ -25,6 +25,7 @@ from astronomy_pipeline import (
 )
 from common import (
     C20PC_PATH,
+    CLASSICAL_NAMES_PATH,
     C20PC_SCHEMA_PATH,
     CANDIDATES_PATH,
     CONFIG_PATH,
@@ -49,12 +50,18 @@ from c20pc_census import (
     reconstruct_note_continuations,
     resolve_coordinate_short_names,
 )
+from classical_names import (
+    bayer_designation,
+    exact_classical_matches,
+    flamsteed_designation,
+)
 from generate_nearby_systems import presentation
 from validate_data import (
     validate_anchor_bootstraps,
     validate_acquisition_queries,
     validate_candidate_geometry,
     validate_candidates,
+    validate_classical_name_bindings,
     validate_join_accounting,
     validate_registry,
     validate_runtime,
@@ -66,6 +73,67 @@ from validate_data import (
 
 
 class MultiCatalogueContractTest(unittest.TestCase):
+    def test_classical_designations_expand_source_codes(self) -> None:
+        row = {"Bayer": "omi02", "Fl": "40", "Cst": "Eri"}
+        self.assertEqual(bayer_designation(row), "Omicron2 Eridani")
+        self.assertEqual(flamsteed_designation(row), "40 Eridani")
+        self.assertEqual(
+            bayer_designation({"Bayer": "e", "Cst": "Eri"}),
+            "e Eridani",
+        )
+        self.assertEqual(
+            bayer_designation({"Bayer": "b02", "Cst": "Car"}),
+            "b2 Carinae",
+        )
+        self.assertEqual(
+            bayer_designation({"Bayer": "alf", "Cst": "Boo"}),
+            "Alpha Bootis",
+        )
+        self.assertIsNone(bayer_designation({"Bayer": "V373", "Cst": "Ori"}))
+
+    def test_classical_names_require_an_unambiguous_exact_hip_edge(self) -> None:
+        cns5 = [{"cns5_id": "1", "hip_id": "2021"}]
+        source = [
+            {
+                "recno": "43",
+                "HIP": "2021",
+                "HD": "2151",
+                "HR": "98",
+                "Bayer": "bet",
+                "Fl": "",
+                "Cst": "Hyi",
+            }
+        ]
+        match = exact_classical_matches(cns5, source)["1"]
+        self.assertEqual(match["match_method"], "exact_hip")
+        self.assertEqual(match["bayer_designation"], "Beta Hydri")
+        self.assertIsNone(match["flamsteed_designation"])
+        self.assertEqual(exact_classical_matches(cns5, source * 2), {})
+        self.assertEqual(exact_classical_matches(cns5 * 2, source), {})
+
+    def test_classical_validation_rejects_a_claimed_shared_hip_edge(self) -> None:
+        manifest, source = read_extract("classical_names")
+        _, cns5 = read_extract("cns5")
+        shared_rows = [row for row in cns5 if row.get("hip_id") == "3821"]
+        self.assertEqual(len(shared_rows), 2)
+        claimed_match = exact_classical_matches([shared_rows[0]], source)[
+            shared_rows[0]["cns5_id"]
+        ]
+        candidates = copy.deepcopy(read_json(CANDIDATES_PATH))
+        component = next(
+            candidate
+            for candidate in candidates["components"]
+            if candidate.get("cns5_id") == shared_rows[0]["cns5_id"]
+        )
+        component["classical_name_match"] = claimed_match
+        with self.assertRaisesRegex(ValueError, "exact HIP evidence"):
+            validate_classical_name_bindings(
+                manifest,
+                source,
+                cns5,
+                candidates,
+            )
+
     def test_gcns_alias_inside_cns5_reference_group_does_not_split_component(self) -> None:
         self.assertEqual(
             retained_component_identities(
@@ -76,27 +144,30 @@ class MultiCatalogueContractTest(unittest.TestCase):
             {"gaia-dr3:999", "gaia-dr3:456"},
         )
 
-    def test_eridani_and_beta_hydri_aliases_resolve_exact_existing_bootstraps(self) -> None:
+    def test_eridani_and_beta_hydri_use_exact_classical_names(self) -> None:
         candidates = read_json(CANDIDATES_PATH)
         review = read_json(ROOT / "data" / "source" / "system-review.json")
         expected = {
             "stellar-system-002424": {
-                "name": "40 Eridani",
-                "alias": "Omicron2 Eridani",
+                "name": "Omicron2 Eridani",
+                "alias": "40 Eridani",
                 "component_id": "stellar-component-002943",
                 "source_id": "3195919528989223040",
+                "hip_id": "19849",
             },
             "stellar-system-003557": {
-                "name": "GJ 19",
-                "alias": "Beta Hydri",
+                "name": "Beta Hydri",
+                "alias": "GJ 19",
                 "component_id": "stellar-component-004282",
                 "source_id": "4683897617110115200",
+                "hip_id": "2021",
             },
             "stellar-system-003918": {
-                "name": "GJ 150",
-                "alias": "Delta Eridani",
+                "name": "Delta Eridani",
+                "alias": "GJ 150",
                 "component_id": "stellar-component-004724",
                 "source_id": "5164120762333028736",
+                "hip_id": "17378",
             },
         }
         systems = {system["id"]: system for system in candidates["systems"]}
@@ -111,23 +182,28 @@ class MultiCatalogueContractTest(unittest.TestCase):
         self.assertEqual(review["anchor_bootstraps"], [])
         for system_id, contract in expected.items():
             system = systems[system_id]
-            self.assertEqual(overrides[system_id], {
-                "candidate_system_id": system_id,
-                "name": contract["name"],
-                "alternates": [contract["alias"]],
-            })
+            self.assertNotIn(system_id, overrides)
+            self.assertEqual(system["preferred_name_candidate"], contract["name"])
+            self.assertIn(contract["alias"], system["alternate_name_candidates"])
             self.assertEqual(
                 system["adopted_component_candidate"], contract["component_id"]
             )
             component = components[contract["component_id"]]
             self.assertEqual(component["gaia_source_id"], contract["source_id"])
             self.assertEqual(
+                component["classical_name_match"]["hip_id"], contract["hip_id"]
+            )
+            self.assertEqual(
+                component["classical_name_match"]["bayer_designation"],
+                contract["name"],
+            )
+            self.assertEqual(
                 component["position_derivation"],
                 "gcns median Bayesian Cartesian geometry",
             )
 
         anchor_names = {
-            system_id: [contract["alias"]]
+            system_id: [contract["name"]]
             for system_id, contract in expected.items()
         }
         self.assertEqual(
@@ -266,7 +342,12 @@ class MultiCatalogueContractTest(unittest.TestCase):
         }
 
     def test_cns5_reference_rows_do_not_duplicate_alpha_centauri(self) -> None:
-        alpha = next(system for system in self.candidates["systems"] if system["preferred_name_candidate"] == "GJ 559")
+        alpha = next(
+            system
+            for system in self.candidates["systems"]
+            if "GJ 559" in system["alternate_name_candidates"]
+        )
+        self.assertEqual(alpha["preferred_name_candidate"], "Alpha Centauri")
         self.assertEqual(len(alpha["component_ids"]), 3)
 
     def test_rejects_stale_candidate_acceptance(self) -> None:
@@ -842,6 +923,7 @@ class MultiCatalogueContractTest(unittest.TestCase):
                 ROOT / "data" / "source" / "wds-membership.json"
             )["source"],
             "c20pc": read_json(C20PC_PATH)["source"],
+            "classical_names": read_json(CLASSICAL_NAMES_PATH)["source"],
         }
         review = read_json(
             ROOT / "data" / "source" / "system-review.json"
@@ -856,7 +938,11 @@ class MultiCatalogueContractTest(unittest.TestCase):
         )
         config = read_json(CONFIG_PATH)
         geometry_drift = copy.deepcopy(read_json(GENERATED_PATH))
-        system = geometry_drift["systems"][1]
+        system = next(
+            candidate
+            for candidate in geometry_drift["systems"]
+            if candidate["id"] != "sol"
+        )
         system["position_pc"]["xg"] += 0.25
         system["render_position"]["x"] += 0.25
         with self.assertRaisesRegex(ValueError, "deterministic source"):
@@ -871,8 +957,13 @@ class MultiCatalogueContractTest(unittest.TestCase):
                 anchor_ids,
             )
         name_drift = copy.deepcopy(read_json(GENERATED_PATH))
-        name_drift["systems"][1]["name"] = "Hand-edited name"
-        name_drift["systems"][1]["alternates"] = ["Hand-edited alias"]
+        system = next(
+            candidate
+            for candidate in name_drift["systems"]
+            if candidate["id"] != "sol"
+        )
+        system["name"] = "Hand-edited name"
+        system["alternates"] = ["Hand-edited alias"]
         with self.assertRaisesRegex(ValueError, "deterministic source"):
             validate_runtime(
                 name_drift,
@@ -885,13 +976,16 @@ class MultiCatalogueContractTest(unittest.TestCase):
                 anchor_ids,
             )
         sol_drift = copy.deepcopy(read_json(GENERATED_PATH))
-        sol_drift["systems"][0]["name"] = "Not Sol"
-        sol_drift["systems"][0]["position_pc"]["xg"] = 1.0
-        sol_drift["systems"][0]["render_position"]["x"] = 1.0
-        sol_drift["systems"][0]["distance_from_sol_pc"] = 1.0
-        sol_drift["systems"][0]["components"][0][
-            "designation"
-        ] = "Not Sol"
+        sol = next(
+            candidate
+            for candidate in sol_drift["systems"]
+            if candidate["id"] == "sol"
+        )
+        sol["name"] = "Not Sol"
+        sol["position_pc"]["xg"] = 1.0
+        sol["render_position"]["x"] = 1.0
+        sol["distance_from_sol_pc"] = 1.0
+        sol["components"][0]["designation"] = "Not Sol"
         with self.assertRaisesRegex(ValueError, "canonical-origin"):
             validate_runtime(
                 sol_drift,

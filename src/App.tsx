@@ -99,6 +99,7 @@ function emptyMapProjection(): NarrativeMapProjection {
     narrativeSystemIdsByAstronomyId: new Map(),
     activeSystemIds: new Set(),
     contextSystems: [],
+    astronomySearchAliasesByNarrativeId: new Map(),
   };
 }
 
@@ -266,16 +267,36 @@ export default function App() {
     applicationProjection.chapterDetail?.chapter === selection.id
       ? applicationProjection.chapterDetail
       : null;
+  const mapProjection = applicationProjection.map;
   const allBrowserGroups = useMemo(
-    () => buildNarrativeBrowserGroups(narrativeWorld, progress.mode),
-    [narrativeWorld, progress.mode],
+    () =>
+      buildNarrativeBrowserGroups(
+        narrativeWorld,
+        progress.mode,
+        "",
+        mapProjection.astronomySearchAliasesByNarrativeId,
+      ),
+    [
+      mapProjection.astronomySearchAliasesByNarrativeId,
+      narrativeWorld,
+      progress.mode,
+    ],
   );
   const visibleBrowserGroups = useMemo(
     () =>
-      buildNarrativeBrowserGroups(narrativeWorld, progress.mode, browserQuery),
-    [browserQuery, narrativeWorld, progress.mode],
+      buildNarrativeBrowserGroups(
+        narrativeWorld,
+        progress.mode,
+        browserQuery,
+        mapProjection.astronomySearchAliasesByNarrativeId,
+      ),
+    [
+      browserQuery,
+      mapProjection.astronomySearchAliasesByNarrativeId,
+      narrativeWorld,
+      progress.mode,
+    ],
   );
-  const mapProjection = applicationProjection.map;
   const contextSystemIds = useMemo(
     () => new Set(mapProjection.contextSystems.map((system) => system.id)),
     [mapProjection.contextSystems],
@@ -306,7 +327,7 @@ export default function App() {
     selection?.kind === "narrative" ? selection.id : null,
   );
   const enteredSystem = systemMode
-    ? (systems.find(
+    ? (mapProjection.contextSystems.find(
         (system) => system.id === systemMode.entry.astronomySystemId,
       ) ?? null)
     : null;
@@ -1058,7 +1079,10 @@ export default function App() {
         </>
       )}
       <footer>
-        <span>GCNS · CNS5 · Gaia DR3 · WDS · Kirkpatrick 20-pc census</span>
+        <span>
+          GCNS · CNS5 · Gaia DR3 · WDS · Kirkpatrick 20-pc census · VizieR
+          IV/27A
+        </span>
         <span>
           {Object.values(nearbySystems.metadata.sources)
             .map((source) => source.acknowledgement)

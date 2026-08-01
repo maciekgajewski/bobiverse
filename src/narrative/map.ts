@@ -10,6 +10,7 @@ export interface NarrativeMapProjection {
   narrativeSystemIdsByAstronomyId: ReadonlyMap<string, string>;
   activeSystemIds: ReadonlySet<string>;
   contextSystems: StellarSystem[];
+  astronomySearchAliasesByNarrativeId: ReadonlyMap<string, readonly string[]>;
 }
 
 function stringValue(value: unknown): string | null {
@@ -45,6 +46,36 @@ function distancePc(left: StellarSystem, right: StellarSystem): number {
   );
 }
 
+export function astronomySearchValues(
+  system: StellarSystem,
+): readonly string[] {
+  return [
+    system.astronomy_name ?? system.name,
+    system.name,
+    ...system.alternates,
+    ...system.components.flatMap((component) => [
+      component.designation,
+      component.identifiers.bayer_designation,
+      component.identifiers.flamsteed_designation,
+      component.identifiers.gj_id ? `GJ ${component.identifiers.gj_id}` : null,
+      component.identifiers.hip_id
+        ? `HIP ${component.identifiers.hip_id}`
+        : null,
+      component.identifiers.hd_id ? `HD ${component.identifiers.hd_id}` : null,
+      component.identifiers.hr_id ? `HR ${component.identifiers.hr_id}` : null,
+      component.identifiers.gaia_dr3_source_id
+        ? `Gaia DR3 ${component.identifiers.gaia_dr3_source_id}`
+        : null,
+      component.identifiers.cns5_id
+        ? `CNS5 ${component.identifiers.cns5_id}`
+        : null,
+      component.identifiers.wise_id,
+      component.identifiers.twomass_id,
+      component.identifiers.published_name,
+    ]),
+  ].filter((value): value is string => Boolean(value));
+}
+
 /**
  * Produces the complete rendered astronomy union for the current reader-safe world.
  * This intentionally remains a runtime projection of the validated static catalogue;
@@ -61,6 +92,8 @@ export function projectNarrativeMap(
   const missingAstronomySystemIds = new Set<string>();
   const narrativeSystemIds = new Map<string, string>();
   const narrativeSystemIdsByAstronomyId = new Map<string, string>();
+  const narrativeNamesByAstronomyId = new Map<string, string>();
+  const narrativeOwnersByAstronomyId = new Map<string, string[]>();
 
   for (const entity of world.entities) {
     if (
@@ -76,7 +109,31 @@ export function projectNarrativeMap(
     }
     knownSystemIds.add(entity.astronomy_object_id);
     narrativeSystemIds.set(entity.id, entity.astronomy_object_id);
-    narrativeSystemIdsByAstronomyId.set(entity.astronomy_object_id, entity.id);
+    const visibleName = stringValue(entity.name);
+    if (!visibleName) {
+      throw new Error(
+        `Mapped narrative system ${entity.id} lacks a reader-visible name.`,
+      );
+    }
+    const priorName = narrativeNamesByAstronomyId.get(
+      entity.astronomy_object_id,
+    );
+    if (priorName && priorName !== visibleName) {
+      throw new Error(
+        `Astronomy system ${entity.astronomy_object_id} has conflicting reader-visible narrative names: ${priorName}, ${visibleName}.`,
+      );
+    }
+    narrativeNamesByAstronomyId.set(entity.astronomy_object_id, visibleName);
+    const owners =
+      narrativeOwnersByAstronomyId.get(entity.astronomy_object_id) ?? [];
+    owners.push(entity.id);
+    narrativeOwnersByAstronomyId.set(entity.astronomy_object_id, owners);
+  }
+  for (const [astronomyId, owners] of narrativeOwnersByAstronomyId) {
+    narrativeSystemIdsByAstronomyId.set(
+      astronomyId,
+      [...owners].sort((left, right) => left.localeCompare(right))[0]!,
+    );
   }
 
   const activeSystemIds = new Set<string>();
@@ -95,11 +152,36 @@ export function projectNarrativeMap(
     .map((id) => available.get(id))
     .filter((system): system is StellarSystem => Boolean(system));
   const radiusPc = contextRadiusLy * PARSECS_PER_LIGHT_YEAR;
-  const contextSystems = systems.filter(
-    (system) =>
-      knownSystemIds.has(system.id) ||
-      anchors.some((anchor) => distancePc(system, anchor) <= radiusPc),
-  );
+  const contextSystems = systems
+    .filter(
+      (system) =>
+        knownSystemIds.has(system.id) ||
+        anchors.some((anchor) => distancePc(system, anchor) <= radiusPc),
+    )
+    .map((system) => {
+      const narrativeName = narrativeNamesByAstronomyId.get(system.id) ?? null;
+      return {
+        ...system,
+        name: narrativeName ?? system.name,
+        alternates: narrativeName
+          ? [...new Set([system.name, ...system.alternates])].sort()
+          : system.alternates,
+        astronomy_name: system.name,
+        narrative_name: narrativeName,
+      };
+    });
+  const astronomySearchAliasesByNarrativeId = new Map<
+    string,
+    readonly string[]
+  >();
+  for (const system of contextSystems) {
+    const narrativeId = narrativeSystemIdsByAstronomyId.get(system.id);
+    if (!narrativeId) continue;
+    astronomySearchAliasesByNarrativeId.set(
+      narrativeId,
+      astronomySearchValues(system),
+    );
+  }
 
   return {
     knownSystemIds,
@@ -107,6 +189,7 @@ export function projectNarrativeMap(
     narrativeSystemIdsByAstronomyId,
     activeSystemIds,
     contextSystems,
+    astronomySearchAliasesByNarrativeId,
   };
 }
 

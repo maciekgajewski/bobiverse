@@ -123,6 +123,26 @@ Unqualified identifiers on multi-component source rows receive an explicit
 `COMPOSITE/N` token. Neither is interchangeable with a singleton or
 component-qualified token.
 
+### VizieR IV/27A: classical-name enrichment
+
+The HD-DM-GC-HR-HIP-Bayer-Flamsteed Cross Index supplies presentation names only.
+An automatic edge requires one exact HIP value on exactly one accepted CNS5 source
+row and exactly one `IV/27A` row for that HIP. A HIP repeated on either side
+contributes no accepted edge because CNS5 does not retain the HD value needed to
+disambiguate components. Independent validation rejects a candidate artifact that
+claims such an edge. Coordinates and name similarity never create a match.
+
+For an exact match, the importer expands the source Bayer abbreviation to a
+title-cased Greek name plus the Latin constellation genitive, preserving a numeric
+component suffix such as `Omicron2`. Single Latin Bayer letters retain their source
+case and optional ordinal, such as `e Eridani` or `b2 Carinae`; multi-letter variable
+star designations in the source column are not treated as Bayer names. The importer
+expands Flamsteed numbers with the same constellation genitive. Source codes and HD,
+HR, and HIP identifiers remain in
+provenance. Existing accepted project proper/common names remain first; otherwise
+Bayer precedes Flamsteed, which precedes existing GJ, HIP, Gaia, and CNS5 fallbacks.
+The displaced preferred name remains an alternate.
+
 ## Binding source contracts
 
 BOB-013 implementation must use the following contracts. Choosing a different
@@ -256,6 +276,22 @@ the pinned references table or the exact source-documented external-code baselin
 `Allen1899`, `Gaia DR2`, `Gaia DR3`, `Gaia DR3-NSS`, `Gaia EDR3`, `IAU`, and
 `SIMBAD`. Any other unresolved code fails refresh and independent validation.
 
+### VizieR IV/27A classical-name snapshot
+
+The name-only refresh uses the VizieR synchronous TAP endpoint and this exact ADQL:
+
+```sql
+SELECT recno, HD, HR, HIP, Fl, Bayer, Cst, SimbadName
+FROM "IV/27A/catalog"
+WHERE HIP IS NOT NULL
+ORDER BY recno
+```
+
+The normalized extract and manifest record release `IV/27A (Kostjuk 2002)`, endpoint,
+query, projected columns, retrieval timestamp, row count, normalized checksum, and
+the VizieR acknowledgement. `recno` is source sequence only. The committed snapshot,
+not a later live response, is the reproducible authority.
+
 ## Pinned acquisition artifacts
 
 Network acquisition is one explicit operator action:
@@ -264,7 +300,7 @@ Network acquisition is one explicit operator action:
 npm run data:refresh
 ```
 
-The implemented command orchestrates five independently inspectable acquisition
+The implemented command orchestrates six independently inspectable acquisition
 stages. Each user-facing acquisition script must implement `--help`.
 
 Each source produces:
@@ -290,6 +326,8 @@ data/source/wdsweb-format.txt
 data/source/wds-membership.json
 data/source/twenty-parsec-census.json
 data/source/twenty-parsec-census-readme.txt
+data/source/classical-star-names.csv
+data/source/classical-star-names.json
 data/source/identity-registry.json
 data/source/system-candidates.json
 data/source/system-review.json
@@ -406,6 +444,10 @@ order as the WDS component label; combined spectral types are split only when th
 cardinality matches that ordered list. Record unmatched candidates and ambiguous
 matches for review.
 
+Alongside the membership evidence, acquire the complete normalized `IV/27A` HIP
+projection described above. Its rows attach presentation facts only after the base
+CNS5 identity is accepted; they do not create source-graph nodes or membership edges.
+
 ### Stage 7: reconcile source identities
 
 Build a source graph whose nodes are source-specific records and whose edges have an
@@ -455,8 +497,9 @@ or identifier is encoded in an application ID.
 Every automatically retained component and system receives deterministic review
 candidates:
 
-- preferred-name precedence is an explicit reviewed name, `GJ <gj_id>`,
-  `HIP <hip_id>`, `Gaia DR3 <source_id>`, then `CNS5 <cns5_id>`;
+- preferred-name precedence is an explicit reviewed proper/common name, an exact
+  `IV/27A` Bayer designation, an exact `IV/27A` Flamsteed designation,
+  `GJ <gj_id>`, `HIP <hip_id>`, `Gaia DR3 <source_id>`, then `CNS5 <cns5_id>`;
 - remaining source designations become alternate names without changing application
   identity; and
 - a singleton's sole component and an unambiguous CNS5 source primary are proposed as
@@ -716,7 +759,7 @@ Validation must include negative fixtures for:
 
 Before committing a refresh, review:
 
-- all five source-manifest diffs;
+- all six source-manifest diffs;
 - the compressed full WDS snapshot and format diff, checksums, and row count;
 - added and removed systems and components;
 - unmatched and multiply matched identifiers;
@@ -725,6 +768,8 @@ Before committing a refresh, review:
 - lost or newly available Gaia enrichment;
 - new, removed, ambiguous, or changed census candidates, accepted names,
   classifications, temperatures, hierarchy evidence, and presentation tiers;
+- new, removed, ambiguous, or changed exact classical-name matches and any displaced
+  preferred-name aliases;
 - every landmark fixture;
 - coverage and runtime-size changes; and
 - all acknowledgement changes.
@@ -733,4 +778,5 @@ Ordinary `npm run build`, `npm run test`, and browser runtime never access GCNS,
 Gaia, CNS5, WDS, or VizieR. Refresh is never implicit. For a source-only census
 refresh, `npm run data:refresh -- --c20pc-only` pins the new source bytes; a separate
 `npm run data:refresh -- --reconcile` emits the review-sensitive candidate diff and
-never updates its own accepted checksum.
+never updates its own accepted checksum. For a source-only classical-name refresh,
+`npm run data:refresh -- --classical-names-only` pins only the `IV/27A` snapshot.

@@ -12,6 +12,7 @@ import {
   ObjectItemBullet,
 } from "./ObjectBrowserIcons";
 import { normalizeBrowserSearch } from "../narrative/browser";
+import { astronomySearchValues } from "../narrative/map";
 
 function recencyLabel(
   group: NarrativeBrowserGroup,
@@ -59,7 +60,7 @@ export function ObjectBrowser({
   const normalizedQuery = normalizeBrowserSearch(query);
   const astronomyMatches = searching
     ? astronomySystems.filter((system) =>
-        [system.name, ...system.alternates].some((value) =>
+        astronomySearchValues(system).some((value) =>
           normalizeBrowserSearch(value).includes(normalizedQuery),
         ),
       )

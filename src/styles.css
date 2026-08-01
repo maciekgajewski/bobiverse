@@ -1050,9 +1050,10 @@ h2 {
   padding: 0;
   border: 0;
 }
-.embedded-details h4 {
+.embedded-details-name {
   margin: 0;
   font-size: 0.9rem;
+  font-weight: 700;
 }
 .details dl {
   margin: 1rem 0 0.8rem;

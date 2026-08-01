@@ -27,6 +27,7 @@ from astropy.coordinates import ICRS, SkyCoord
 from common import (
     C20PC_PATH,
     C20PC_README_PATH,
+    CLASSICAL_NAMES_PATH,
     CANDIDATES_PATH,
     CNS5_PATH,
     CONFIG_PATH,
@@ -70,6 +71,15 @@ from c20pc_census import (
     normalize_census_tables,
     normalize_text,
     resolve_coordinate_short_names,
+)
+from classical_names import (
+    CLASSICAL_NAMES_ACKNOWLEDGEMENT,
+    CLASSICAL_NAMES_COLUMNS,
+    CLASSICAL_NAMES_QUERY,
+    CLASSICAL_NAMES_RELEASE,
+    CLASSICAL_NAMES_TABLE,
+    CLASSICAL_NAMES_TAP_URL,
+    exact_classical_matches,
 )
 
 GAVO_URL = "https://dc.g-vo.org/tap/sync"
@@ -117,6 +127,7 @@ ACKNOWLEDGEMENTS = {
         "and Analysis Consortium (DPAC, https://www.cosmos.esa.int/web/gaia/dpac/consortium)."
     ),
     "wds": "This research has made use of the Washington Double Star Catalog maintained at the U.S. Naval Observatory.",
+    "classical_names": CLASSICAL_NAMES_ACKNOWLEDGEMENT,
 }
 
 
@@ -245,6 +256,10 @@ def source_paths(key: str) -> tuple[Path, Path]:
         "gcns": (SOURCE_DIR / "gcns-neighbourhood.csv", GCNS_PATH),
         "cns5": (SOURCE_DIR / "cns5-nearby-components.csv", CNS5_PATH),
         "gaia_dr3": (SOURCE_DIR / "gaia-dr3-enrichment.csv", GAIA_ENRICHMENT_PATH),
+        "classical_names": (
+            SOURCE_DIR / "classical-star-names.csv",
+            CLASSICAL_NAMES_PATH,
+        ),
     }
     return names[key]
 
@@ -370,6 +385,28 @@ def refresh_c20pc_snapshot() -> None:
             "notes4": notes,
             "references": references,
         },
+    )
+
+
+def refresh_classical_names_snapshot() -> None:
+    rows = normalise_rows(
+        CLASSICAL_NAMES_COLUMNS,
+        tap_csv(CLASSICAL_NAMES_TAP_URL, CLASSICAL_NAMES_QUERY),
+        "recno",
+    )
+    write_extract(
+        "classical_names",
+        CLASSICAL_NAMES_COLUMNS,
+        rows,
+        manifest(
+            "classical_names",
+            endpoint=CLASSICAL_NAMES_TAP_URL,
+            table=CLASSICAL_NAMES_TABLE,
+            query=CLASSICAL_NAMES_QUERY,
+            rows=rows,
+            columns=CLASSICAL_NAMES_COLUMNS,
+            extra={"release": CLASSICAL_NAMES_RELEASE},
+        ),
     )
 
 
@@ -1070,9 +1107,13 @@ def build_candidates(
     cns5_astrometry_overrides: list[dict[str, Any]] | None = None,
     wds_rows: list[dict[str, Any]] | None = None,
     prior_candidates: dict[str, Any] | None = None,
+    classical_name_rows: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     gcns_by_gaia = {decimal_id(row["source_id"]): row for row in gcns}
     cns5_by_id = {record["cns5_id"]: record for record in cns5}
+    classical_by_cns5 = exact_classical_matches(
+        cns5, classical_name_rows or []
+    )
     cns5_decisions = {
         str(entry["cns5_id"]): str(entry["decision"])
         for entry in (cns5_astrometry_overrides or [])
@@ -1263,9 +1304,32 @@ def build_candidates(
             geometry_source = "CNS5 astrometry transformed by Astropy" if geometry else None
         if cns:
             preferred, alternates = source_name(cns)
+            classical_match = classical_by_cns5.get(cns["cns5_id"])
+            if classical_match is not None:
+                original_preferred = preferred
+                preferred = (
+                    classical_match["bayer_designation"]
+                    or classical_match["flamsteed_designation"]
+                )
+                alternates = sorted(
+                    {
+                        original_preferred,
+                        *alternates,
+                        *(
+                            value
+                            for value in (
+                                classical_match["bayer_designation"],
+                                classical_match["flamsteed_designation"],
+                            )
+                            if value
+                        ),
+                    }
+                    - {preferred}
+                )
             group_key = str(cns.get("cns6_system_id") or cns.get("gj_system_primary") or cns.get("reference_object_cns5_id") or identity).strip() or identity
         else:
             preferred, alternates, group_key = f"Gaia DR3 {gaia_id}", [], identity
+            classical_match = None
         mapping = mapping_by_cns5.get(cns["cns5_id"]) if cns else None
         census_enrichment = None
         census_distance_warning = None
@@ -1336,6 +1400,7 @@ def build_candidates(
                 "enrichment": census_enrichment,
                 "canonical_distance_warning": census_distance_warning,
             } if mapping is not None else None,
+            "classical_name_match": classical_match,
         }
         candidate_components.append(component)
         membership[group_key].append(component["id"])
@@ -1457,6 +1522,9 @@ def build_candidates(
         "systems": systems,
         "wds_candidate_sha256": value_sha256(wds_rows or []),
         "c20pc_source_sha256": value_sha256(census_rows),
+        "classical_names_source_sha256": value_sha256(
+            classical_name_rows or []
+        ),
     }
 
 
@@ -1593,6 +1661,7 @@ def refresh() -> None:
         gaia_rows.extend(returned)
     gaia = normalise_rows(GAIA_COLUMNS, gaia_rows, "source_id")
     write_extract("gaia_dr3", GAIA_COLUMNS, gaia, manifest("gaia_dr3", endpoint=GAIA_URL, table="gaiadr3.gaia_source + pinned left joins", query="\n\n".join(queries), rows=gaia, columns=GAIA_COLUMNS, extra={"release": "Gaia DR3", "queries": query_accounting, "input_source_id_sha256": sha256_bytes("\n".join(selected_ids).encode()), "unmatched_source_ids": sorted(set(selected_ids) - {row["source_id"] for row in gaia})}))
+    refresh_classical_names_snapshot()
     refresh_c20pc_snapshot()
     wds_manifest = _write_wds()
     prior_candidates = (
@@ -1622,6 +1691,7 @@ def reconcile_committed_sources() -> str:
     _, gcns = read_extract("gcns")
     _, cns5 = read_extract("cns5")
     _, gaia = read_extract("gaia_dr3")
+    _, classical_names = read_extract("classical_names")
     _, c20pc_rows, _, _ = read_c20pc()
     wds_document = read_json(SOURCE_DIR / "wds-membership.json")
     review = read_json(REVIEW_PATH) if REVIEW_PATH.exists() else {}
@@ -1658,6 +1728,7 @@ def reconcile_committed_sources() -> str:
         ),
         wds_rows=wds_candidates,
         prior_candidates=prior_candidates,
+        classical_name_rows=classical_names,
     )
     report_c20pc_candidate_diff(prior_candidates, candidates)
     write_json(IDENTITY_REGISTRY_PATH, registry)
@@ -1751,6 +1822,7 @@ def accepted_candidates() -> tuple[
     gcns_manifest, gcns = read_extract("gcns")
     cns5_manifest, cns5 = read_extract("cns5")
     gaia_manifest, gaia = read_extract("gaia_dr3")
+    classical_names_manifest, _ = read_extract("classical_names")
     c20pc_manifest, c20pc_rows, _, _ = read_c20pc()
     wds_manifest = read_json(SOURCE_DIR / "wds-membership.json")["source"]
     return (
@@ -1762,6 +1834,7 @@ def accepted_candidates() -> tuple[
             "gaia_dr3": gaia_manifest,
             "wds": wds_manifest,
             "c20pc": c20pc_manifest,
+            "classical_names": classical_names_manifest,
         },
         gcns,
         cns5,

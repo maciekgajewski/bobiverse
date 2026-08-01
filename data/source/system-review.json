@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0.0",
-  "accepted_candidate_sha256": "767da359b4376a23a693394efc6ebd9829d7569174ec84b6c4140ff918c77673",
-  "reviewer": "Codex isolated regenerated-candidate Omicron2 staging review under Captain authorization",
-  "reviewed_at": "2026-07-31",
+  "accepted_candidate_sha256": "0506e48247efb03a7550598b7ecbb920027b5807c20a49a5fe3dc4b9e5c1b3c1",
+  "reviewer": "Codex IV/27A exact-name enrichment review under Captain authorization",
+  "reviewed_at": "2026-08-01",
   "anchor_bootstraps": [],
   "identity_transitions": [],
   "cns5_astrometry_overrides": [],
@@ -402,21 +402,6 @@
       "candidate_system_id": "stellar-system-005471",
       "name": "Teegarden's Star",
       "alternates": []
-    },
-    {
-      "candidate_system_id": "stellar-system-002424",
-      "name": "40 Eridani",
-      "alternates": ["Omicron2 Eridani"]
-    },
-    {
-      "candidate_system_id": "stellar-system-003557",
-      "name": "GJ 19",
-      "alternates": ["Beta Hydri"]
-    },
-    {
-      "candidate_system_id": "stellar-system-003918",
-      "name": "GJ 150",
-      "alternates": ["Delta Eridani"]
     },
     {
       "candidate_system_id": "stellar-system-000416",

@@ -88,6 +88,10 @@ const component = z.object({
     wise_id: z.string().nullable(),
     twomass_id: z.string().nullable(),
     published_name: z.string().nullable(),
+    bayer_designation: z.string().nullable(),
+    flamsteed_designation: z.string().nullable(),
+    hd_id: z.string().nullable(),
+    hr_id: z.string().nullable(),
   }),
   icrs: z.object({
     ra_deg: finite.nullable(),
@@ -165,6 +169,11 @@ const dataSchema = z.object({
         table4_row_count: z.number().int().positive(),
         notes_row_count: z.number().int().positive(),
         reference_row_count: z.number().int().positive(),
+        acknowledgement: z.string().min(1),
+      }),
+      classical_names: z.object({
+        normalised_sha256: z.string().regex(/^[0-9a-f]{64}$/),
+        row_count: z.number().int().nonnegative(),
         acknowledgement: z.string().min(1),
       }),
     }),

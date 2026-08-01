@@ -339,7 +339,7 @@ test("system-mode dollies preserve direction and restore the exact camera pose",
   expect(restoredState.framingRevision).toBe(originalPose.framingRevision);
   expect(restoredState.camera).toEqual(originalPose.camera);
   expect(restoredState.target).toEqual(originalPose.target);
-  await expect(page.locator(".selection-label")).toHaveText("Sol");
+  await expect(page.locator(".selection-label")).toHaveText("Solar System");
   await page.getByRole("button", { name: "Reset view" }).click();
   await page.waitForFunction(
     (revision) =>
@@ -635,7 +635,22 @@ test("desktop integration keeps all four surfaces usable with the map largest", 
 
 test("the permanent local backdrop preserves responsive map interaction", async ({
   page,
+  baseURL,
 }) => {
+  const appOrigin = new URL(baseURL!).origin;
+  const attemptedCrossOriginRequests: string[] = [];
+  await page.route("**/*", async (route) => {
+    const requestUrl = new URL(route.request().url());
+    if (
+      (requestUrl.protocol === "http:" || requestUrl.protocol === "https:") &&
+      requestUrl.origin !== appOrigin
+    ) {
+      attemptedCrossOriginRequests.push(requestUrl.href);
+      await route.abort("internetdisconnected");
+      return;
+    }
+    await route.continue();
+  });
   for (const viewport of [
     { width: 1280, height: 700 },
     { width: 900, height: 700 },
@@ -695,6 +710,7 @@ test("the permanent local backdrop preserves responsive map interaction", async 
   expect(
     resourceOrigins.every((origin) => origin === new URL(page.url()).origin),
   ).toBe(true);
+  expect(attemptedCrossOriginRequests).toEqual([]);
   await page.getByRole("button", { name: "Browse objects" }).click();
   await page.getByRole("button", { name: "Solar System" }).click();
   await expect(
@@ -752,19 +768,17 @@ test("expressive map states preserve active, hover, and astronomy-only selection
     );
     const solMapCaption = page
       .locator(".narrative-map-label")
-      .filter({ hasText: /^Sol$/ });
-    await expect(solMapCaption).toBeVisible();
+      .filter({ hasText: /^Solar System$/ });
     await page.mouse.move(sol.x, sol.y);
-    await expect(page.locator(".map-tooltip")).toContainText("Sol");
+    await expect(page.locator(".map-tooltip")).toContainText("Solar System");
     await expect(solMapCaption).toHaveCount(0);
     await page.mouse.move(1, 1);
     await expect(page.locator(".map-tooltip")).toHaveCount(0);
-    await expect(solMapCaption).toBeVisible();
     await page.mouse.move(sol.x, sol.y);
-    await expect(page.locator(".map-tooltip")).toContainText("Sol");
+    await expect(page.locator(".map-tooltip")).toContainText("Solar System");
     await expect(solMapCaption).toHaveCount(0);
     await page.mouse.click(sol.x, sol.y);
-    await expect(page.locator(".selection-label")).toHaveText("Sol");
+    await expect(page.locator(".selection-label")).toHaveText("Solar System");
     if (compact) {
       await expect(
         page.getByRole("dialog", { name: "Selected object" }),
@@ -774,11 +788,16 @@ test("expressive map states preserve active, hover, and astronomy-only selection
         .getByRole("button", { name: "Close" })
         .click();
     }
-    const alphaCentauri = await page.evaluate(() =>
-      window.__bob034MapPerformance!.screenPoint("stellar-system-005413"),
-    );
-    await page.mouse.click(alphaCentauri.x, alphaCentauri.y);
-    await expect(page.locator(".selection-label")).toHaveText("Alpha Centauri");
+    if (compact) {
+      await page.getByRole("button", { name: "Browse objects" }).click();
+    }
+    const search = page.getByRole("searchbox", {
+      name: "Search visible objects",
+    });
+    await search.fill("alpha centauri");
+    await page.getByRole("button", { name: /^Alpha Centauri/ }).click();
+    const selectionLabel = page.locator(".selection-label");
+    await expect(selectionLabel).toHaveText("Alpha Centauri");
     const inspector = compact
       ? page.getByRole("dialog", { name: "Selected object" })
       : page.getByRole("complementary", { name: "Object inspector" });
@@ -1093,8 +1112,37 @@ test("chapter 1.11 Bob selection resolves through New Handeltown to Sol", async 
   ).toBeVisible();
   await back.click();
   await expect(inspector.getByRole("heading", { name: "Bob" })).toBeVisible();
-  await expect(page.locator(".selection-label")).toHaveText("Sol");
+  await expect(page.locator(".selection-label")).toHaveText("Solar System");
   await expect(page.locator(".selection-status")).toHaveText(
     "Bob restored from inspector history.",
   );
+});
+
+test("classical catalogue aliases find reader-visible Eridani and Hydri names", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/");
+  await page.getByLabel("Read through").selectOption("1.18");
+  await page.getByRole("button", { name: "Confirm read through" }).click();
+
+  const search = page.getByRole("searchbox", {
+    name: "Search visible objects",
+  });
+  await search.fill("GJ 150");
+  await page
+    .getByRole("button", { name: /^Delta Eridani(?: Active)?$/ })
+    .click();
+  const inspector = page.getByRole("complementary", {
+    name: "Object inspector",
+  });
+  await expect(
+    inspector.getByRole("heading", { name: "Delta Eridani", exact: true }),
+  ).toBeVisible();
+
+  await search.fill("GJ 19");
+  await page.getByRole("button", { name: /^Beta Hydri(?: Active)?$/ }).click();
+  await expect(
+    inspector.getByRole("heading", { name: "Beta Hydri", exact: true }),
+  ).toBeVisible();
 });

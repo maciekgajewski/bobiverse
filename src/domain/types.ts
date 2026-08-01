@@ -87,6 +87,10 @@ export interface Component {
     wise_id: string | null;
     twomass_id: string | null;
     published_name: string | null;
+    bayer_designation: string | null;
+    flamsteed_designation: string | null;
+    hd_id: string | null;
+    hr_id: string | null;
   };
   icrs: {
     ra_deg: number | null;
@@ -150,6 +154,9 @@ export interface StellarSystem {
       reason: string;
     }[];
   };
+  /** Runtime-only reader-safe presentation fields, absent from static JSON. */
+  astronomy_name?: string;
+  narrative_name?: string | null;
 }
 
 export interface CoverageProof {
@@ -198,6 +205,11 @@ export interface NearbySystemsData {
         table4_row_count: number;
         notes_row_count: number;
         reference_row_count: number;
+        acknowledgement: string;
+      };
+      classical_names: {
+        normalised_sha256: string;
+        row_count: number;
         acknowledgement: string;
       };
     };

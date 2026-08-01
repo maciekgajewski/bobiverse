@@ -27,6 +27,7 @@ import {
 } from "../domain/camera-motion";
 import { closestMarkerSystemId } from "../domain/star-picking";
 import { resolveCaptionVisibility } from "../domain/caption-visibility";
+import notoSansRegularUrl from "../assets/fonts/NotoSans-Regular.ttf?url";
 import {
   NARRATIVE_MARKER_COLOR,
   ASTRONOMY_CONTEXT_EMPHASIS,
@@ -758,6 +759,7 @@ function Scene({
       {!zoomed && (
         <Text
           position={[16, 0.04, 0]}
+          font={notoSansRegularUrl}
           fontSize={0.13}
           color="#536986"
           anchorX="center"
@@ -768,6 +770,7 @@ function Scene({
       {!zoomed && (
         <Text
           position={[0, 8, 0]}
+          font={notoSansRegularUrl}
           fontSize={0.13}
           color="#536986"
           anchorX="center"

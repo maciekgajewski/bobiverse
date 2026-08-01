@@ -14,6 +14,7 @@ from jsonschema import Draft202012Validator
 
 from astronomy_pipeline import (
     ACKNOWLEDGEMENTS,
+    CLASSICAL_NAMES_COLUMNS,
     CNS5_COLUMNS,
     GAIA_COLUMNS,
     GCNS_COLUMNS,
@@ -37,11 +38,18 @@ from astronomy_pipeline import (
     wds_membership_candidates,
 )
 from common import (
-    C20PC_PATH, C20PC_README_PATH, C20PC_SCHEMA_PATH, CANDIDATES_PATH, CNS5_PATH, CONFIG_PATH, CONFIG_SCHEMA_PATH, GAIA_ENRICHMENT_PATH,
+    C20PC_PATH, C20PC_README_PATH, C20PC_SCHEMA_PATH, CANDIDATES_PATH, CLASSICAL_NAMES_PATH, CNS5_PATH, CONFIG_PATH, CONFIG_SCHEMA_PATH, GAIA_ENRICHMENT_PATH,
     GCNS_PATH, GENERATED_PATH, IDENTITY_REGISTRY_PATH, LANDMARKS_PATH, REVIEW_PATH,
     ROOT, SOURCE_DIR, SOURCE_EXTRACT_SCHEMA_PATH, WDS_FORMAT_PATH, WDS_PATH,
     mapped_anchor_names, read_gzip, read_json, resolve_anchor_bootstraps, sha256,
     sha256_bytes, value_sha256,
+)
+from classical_names import (
+    CLASSICAL_NAMES_QUERY,
+    CLASSICAL_NAMES_RELEASE,
+    CLASSICAL_NAMES_TABLE,
+    CLASSICAL_NAMES_TAP_URL,
+    exact_classical_matches,
 )
 from c20pc_census import (
     C20PC_ACKNOWLEDGEMENT,
@@ -75,6 +83,7 @@ EXPECTED_SOURCE_CONTRACTS = {
         "https://gea.esac.esa.int/tap-server/tap/sync",
         "gaiadr3.gaia_source + pinned left joins",
     ),
+    "classical_names": (CLASSICAL_NAMES_TAP_URL, CLASSICAL_NAMES_TABLE),
 }
 
 
@@ -94,11 +103,12 @@ def csv_sha(columns: list[str], rows: list[dict[str, str]]) -> str:
 
 def validate_extract(key: str, columns: list[str], id_key: str) -> tuple[dict[str, Any], list[dict[str, str]]]:
     manifest, rows = read_extract(key)
-    path = {"gcns": GCNS_PATH, "cns5": CNS5_PATH, "gaia_dr3": GAIA_ENRICHMENT_PATH}[key]
+    path = {"gcns": GCNS_PATH, "cns5": CNS5_PATH, "gaia_dr3": GAIA_ENRICHMENT_PATH, "classical_names": CLASSICAL_NAMES_PATH}[key]
     csv_path = {
         "gcns": SOURCE_DIR / "gcns-neighbourhood.csv",
         "cns5": SOURCE_DIR / "cns5-nearby-components.csv",
         "gaia_dr3": SOURCE_DIR / "gaia-dr3-enrichment.csv",
+        "classical_names": SOURCE_DIR / "classical-star-names.csv",
     }[key]
     validate_schema(read_json(path), SOURCE_EXTRACT_SCHEMA_PATH, key)
     if manifest.get("catalogue") != key or manifest.get("columns") != columns:
@@ -129,6 +139,37 @@ def validate_extract(key: str, columns: list[str], id_key: str) -> tuple[dict[st
     if not keys or len(keys) != len(set(keys)):
         raise ValueError(f"{key} extract has missing or duplicate {id_key}")
     return manifest, rows
+
+
+def validate_classical_name_bindings(
+    manifest: dict[str, Any],
+    rows: list[dict[str, str]],
+    cns5_rows: list[dict[str, str]],
+    candidates: dict[str, Any],
+) -> None:
+    if (
+        manifest.get("release") != CLASSICAL_NAMES_RELEASE
+        or manifest.get("adql") != CLASSICAL_NAMES_QUERY
+        or candidates.get("classical_names_source_sha256")
+        != value_sha256(rows)
+    ):
+        raise ValueError("IV/27A candidate binding differs from the pinned source")
+    matches = exact_classical_matches(cns5_rows, rows)
+    for component in candidates["components"]:
+        expected = matches.get(component.get("cns5_id"))
+        if component.get("classical_name_match") != expected:
+            raise ValueError(
+                f"{component['id']} IV/27A match differs from exact HIP evidence"
+            )
+        if expected is not None and component.get("c20pc_match") is None:
+            preferred = (
+                expected["bayer_designation"]
+                or expected["flamsteed_designation"]
+            )
+            if component["preferred_name_candidate"] != preferred:
+                raise ValueError(
+                    f"{component['id']} does not follow Bayer/Flamsteed precedence"
+                )
 
 
 def validate_c20pc() -> tuple[dict[str, Any], list[dict[str, Any]]]:
@@ -1086,6 +1127,7 @@ def validate_runtime_presentation(
                 if candidate_component.get("c20pc_match")
                 else None
             )
+            classical = candidate_component.get("classical_name_match")
             family, derivation = expected_presentation(
                 enrichment, bp_rp, wds_spectral_type, c20pc
             )
@@ -1142,6 +1184,16 @@ def validate_runtime_presentation(
                 "published_name": (
                     c20pc.get("published_name") if c20pc else None
                 ),
+                "bayer_designation": (
+                    classical.get("bayer_designation") if classical else None
+                ),
+                "flamsteed_designation": (
+                    classical.get("flamsteed_designation")
+                    if classical
+                    else None
+                ),
+                "hd_id": classical.get("source_hd") if classical else None,
+                "hr_id": classical.get("source_hr") if classical else None,
             }
             if component["identifiers"] != expected_identifiers:
                 raise ValueError(
@@ -1251,16 +1303,25 @@ def validate_runtime_presentation(
                                 "Kirkpatrick et al. 2024 20-pc census",
                                 c20pc,
                             ),
+                            ("VizieR IV/27A classical names", classical),
                         )
                         if source_row
                     ],
                     "enrichment": (
-                        "Gaia DR3 left join; reviewed Kirkpatrick et al. 2024 20-pc census"
-                        if enrichment and c20pc
-                        else "Gaia DR3 left join"
-                        if enrichment
-                        else "Reviewed Kirkpatrick et al. 2024 20-pc census"
-                        if c20pc
+                        "; ".join(
+                            value
+                            for value in (
+                                "Gaia DR3 left join" if enrichment else None,
+                                "reviewed Kirkpatrick et al. 2024 20-pc census"
+                                if c20pc
+                                else None,
+                                "exact HIP match to VizieR IV/27A"
+                                if classical
+                                else None,
+                            )
+                            if value
+                        )
+                        if any((enrichment, c20pc, classical))
                         else None
                     ),
                 },
@@ -1440,6 +1501,10 @@ def validate_runtime(
                     "wise_id": None,
                     "twomass_id": None,
                     "published_name": None,
+                    "bayer_designation": None,
+                    "flamsteed_designation": None,
+                    "hd_id": None,
+                    "hr_id": None,
                 },
                 "icrs": {
                     "ra_deg": None,
@@ -1756,6 +1821,9 @@ def main() -> None:
     gcns_manifest, gcns_rows = validate_extract("gcns", GCNS_COLUMNS, "source_id")
     cns5_manifest, cns5_rows = validate_extract("cns5", CNS5_COLUMNS, "cns5_id")
     gaia_manifest, gaia_rows = validate_extract("gaia_dr3", GAIA_COLUMNS, "source_id")
+    classical_names_manifest, classical_name_rows = validate_extract(
+        "classical_names", CLASSICAL_NAMES_COLUMNS, "recno"
+    )
     c20pc_manifest, c20pc_rows = validate_c20pc()
     registry = read_json(IDENTITY_REGISTRY_PATH)
     candidates = read_json(CANDIDATES_PATH)
@@ -1799,6 +1867,12 @@ def main() -> None:
         gcns_rows,
         cns5_rows,
     )
+    validate_classical_name_bindings(
+        classical_names_manifest,
+        classical_name_rows,
+        cns5_rows,
+        candidates,
+    )
     validate_anchor_bootstraps(
         bootstraps, candidates, gcns_rows, cns5_rows, anchor_ids
     )
@@ -1816,6 +1890,7 @@ def main() -> None:
             "gaia_dr3": gaia_manifest,
             "wds": wds_manifest,
             "c20pc": c20pc_manifest,
+            "classical_names": classical_names_manifest,
         },
         candidates,
         review,
@@ -1824,7 +1899,7 @@ def main() -> None:
         bootstraps,
         anchor_ids,
     )
-    print(f"Validated {len(read_json(GENERATED_PATH)['systems'])} reconciled systems and five pinned astronomy sources")
+    print(f"Validated {len(read_json(GENERATED_PATH)['systems'])} reconciled systems and six pinned astronomy sources")
 
 
 if __name__ == "__main__":

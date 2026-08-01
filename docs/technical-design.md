@@ -158,8 +158,9 @@ GPU, driver, and software renderer.
 
 ### 8.1 Sources
 
-ADR-0011 and ADR-0012 assign complementary authority to GCNS, Gaia DR3, CNS5,
-WDS, and the Kirkpatrick et al. 2024 full-sky 20-pc census:
+ADR-0011, ADR-0012, and ADR-0022 assign complementary authority to GCNS, Gaia
+DR3, CNS5, WDS, the Kirkpatrick et al. 2024 full-sky 20-pc census, and the
+VizieR `IV/27A` classical-name cross-index:
 
 - CNS5 controls recognizable local inclusion inside 25 pc and supplies the initial
   local component-to-system grouping.
@@ -172,6 +173,9 @@ WDS, and the Kirkpatrick et al. 2024 full-sky 20-pc census:
 - The 20-pc census supplies identity, names, classification, temperature, and
   presentation enrichment for accepted matches inside its published Sun-centred
   boundary. It never controls inclusion, geometry, distance, or system membership.
+- `IV/27A` supplies Bayer and Flamsteed presentation names only through an exact,
+  unique HIP match to an accepted CNS5 component. It never controls identity,
+  inclusion, geometry, distance, membership, or coverage.
 
 Inside 25 pc the inclusion set is the union of CNS5 and GCNS, so a bright or multiple
 CNS5 object is not lost merely because Gaia has no suitable source. Between 25 and
@@ -183,8 +187,9 @@ second singleton component.
 The binding acquisition contract is the one in
 `docs/data/astronomy-pipeline.md`: GAVO TAP tables `gcns.main` and
 `cns5update.main`, the explicitly projected Gaia DR3 tables, and the pinned precise
-WDS catalogue plus its format file, and the exact VizieR `J/ApJS/271/55` Table 4,
-notes, references, and ReadMe projections. The complete WDS input is committed in
+WDS catalogue plus its format file, the exact VizieR `J/ApJS/271/55` Table 4,
+notes, references, and ReadMe projections, and the exact VizieR `IV/27A/catalog`
+projection. The complete WDS input is committed in
 deterministic compressed form so offline validation can repeat candidate selection;
 builds do not choose alternate services or tables.
 
@@ -195,6 +200,7 @@ References:
 - [CNS5 publication](https://doi.org/10.1051/0004-6361/202244250)
 - [Washington Double Star Catalog](https://www.astro.gsu.edu/wds/)
 - [Kirkpatrick et al. 2024 20-pc census](https://doi.org/10.3847/1538-4365/ad24e2)
+- [VizieR IV/27A HD-DM-GC-HR-HIP-Bayer-Flamsteed Cross Index](https://vizier.cds.unistra.fr/viz-bin/VizieR-3?-source=IV%2F27A%2Fcatalog)
 - [Astropy coordinates](https://docs.astropy.org/en/stable/coordinates/)
 
 Catalogue sources are not automatically stellar systems. Stable application system
@@ -212,10 +218,10 @@ normalized candidate snapshot by checksum and records explicit overrides for
 conflicts, landmarks, and ambiguous multiple systems; refresh cannot accept its own
 candidate checksum implicitly.
 
-The checked-in runtime implements ADR-0011 and ADR-0012 through pinned GCNS, CNS5,
-Gaia DR3, WDS, and 20-pc-census inputs, a reviewed stable-identity layer, and
-independently validated static generation. BOB-013 records the neighbourhood
-implementation; BOB-026 records the census enrichment.
+The checked-in runtime implements ADR-0011, ADR-0012, and ADR-0022 through pinned
+GCNS, CNS5, Gaia DR3, WDS, 20-pc-census, and `IV/27A` inputs, a reviewed
+stable-identity layer, and independently validated static generation. BOB-013
+records the neighbourhood implementation; BOB-026 records the census enrichment.
 
 ### 8.2 Provenance
 
@@ -371,6 +377,15 @@ hover reserves its priority slot but uses the tooltip as the sole name surface, 
 the hovered system's map caption is suppressed until hover ends. Other known captions
 may hide and return as the camera changes. Astronomy-only systems have no persistent
 caption.
+
+The same projection owns the effective system display name. Once a mapped root
+star-system location is reader-visible, its narrative name overrides the astronomy
+preferred name in every map, browser, inspector, measurement, breadcrumb, and
+guided-system surface. Before reveal, only the astronomy name is available. The
+underlying astronomy preferred name, alternates, and component identifiers remain
+searchable and inspectable. Different visible narrative names mapped to one astronomy
+system fail projection instead of being resolved by iteration order. Stable IDs,
+not display strings, continue to own selection, focus, grouping, and geometry.
 
 The only DOM access path for astronomy-only systems is the temporary **Nearby
 astronomy** search group. It appears for a nonempty query, searches preferred names
