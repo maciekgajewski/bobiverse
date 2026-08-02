@@ -219,6 +219,26 @@ clear, and an accessible status message must announce why. Repeat selection from
 compact browser/inspector panels and confirm the same projection, relationship, and
 DOM behavior is reused rather than recomputed in a separate mobile path.
 
+## BOB-20260802-9DD2D7 character travel history
+
+At desktop width and compact width, select a character with several explicit located
+appearances. Confirm **Overview** is open while conditional **Lineage** and **Travel
+history** start closed, and that each disclosure state survives reload and layout
+switching. Open Travel history and verify newest-first separate rows, including
+repeated locations; keyboard-activate a location and a chapter link, confirming the
+latter enters Chapter mode without changing the read-through ceiling. In interstellar
+mode, inspect a route containing old, recent, repeated, same-system, and unmapped
+stops: only valid interstellar legs render, the newest is brightest, and the unmapped
+stop makes a visible break. Confirm each beam has a restrained diffuse aura, glow,
+sharp core, and sparse pulses traveling from departure to arrival. With reduced motion
+enabled, confirm pulses stop and static chevrons preserve direction. Switch repeatedly
+between Bob and characters with shorter histories while profiling: selection must not
+show repeated `generateNarrativeWorld` calls or a long main-thread task proportional
+to stop count. Run `npm run performance:travel`; its warmed production Chromium
+selection samples must have a median at or below 100 ms and no sample above 150 ms.
+Check 200% desktop zoom, dense-starfield contrast, and WebGL-unavailable DOM history
+access.
+
 ## BOB-014 narrative-aware map integration
 
 In the pre-book view, verify that the map contains only the configured-radius

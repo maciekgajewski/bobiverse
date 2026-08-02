@@ -446,6 +446,9 @@ describe("atlas shell", () => {
       const inspector = screen.getByRole("complementary", {
         name: "Object inspector",
       });
+      await user.click(
+        within(inspector).getByRole("button", { name: "Lineage" }),
+      );
       expect(
         within(inspector)
           .getByRole("button", {
@@ -497,6 +500,9 @@ describe("atlas shell", () => {
     const inspector = screen.getByRole("complementary", {
       name: "Object inspector",
     });
+    await user.click(
+      within(inspector).getByRole("button", { name: "Lineage" }),
+    );
     await user.click(
       within(inspector).getByRole("button", { name: "Character: Bill" }),
     );

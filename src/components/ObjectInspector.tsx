@@ -3,6 +3,7 @@ import type { SelectionIdentity } from "../domain/selection";
 import type { Component, StellarSystem } from "../domain/types";
 import type { NarrativeBrowserItem } from "../narrative/browser";
 import type {
+  CharacterTravelStop,
   NarrativeChapterDetail,
   NarrativeChapterRelationship,
   NarrativeEntity,
@@ -10,6 +11,8 @@ import type {
   NarrativeWorld,
 } from "../narrative/model";
 import { characterAncestors } from "../narrative/model";
+import type { CharacterInspectorSectionState } from "../narrative/progress";
+import { defaultCharacterInspectorSectionState } from "../narrative/progress";
 import { SystemDetails } from "./SystemDetails";
 import { ObjectItemBullet } from "./ObjectBrowserIcons";
 import type { SystemViewEntry } from "../system-view";
@@ -44,6 +47,36 @@ function Detail({ label, children }: { label: string; children: ReactNode }) {
       <dt>{label}</dt>
       <dd>{children}</dd>
     </div>
+  );
+}
+
+function CharacterSection({
+  title,
+  expanded,
+  onToggle,
+  children,
+}: {
+  title: string;
+  expanded: boolean;
+  onToggle: () => void;
+  children: ReactNode;
+}) {
+  const id = `character-section-${title.toLowerCase().replaceAll(" ", "-")}`;
+  return (
+    <section className="inspector-section character-section">
+      <h3>
+        <button
+          type="button"
+          className="inspector-section-toggle"
+          aria-expanded={expanded}
+          aria-controls={id}
+          onClick={onToggle}
+        >
+          {title}
+        </button>
+      </h3>
+      {expanded && <div id={id}>{children}</div>}
+    </section>
   );
 }
 
@@ -115,6 +148,9 @@ function NarrativeDetails({
   headingId,
   onSelect,
   onChapterSelect,
+  travelStops,
+  sectionState,
+  onToggleSection,
   systemEntry,
   onEnterSystem,
 }: {
@@ -125,6 +161,9 @@ function NarrativeDetails({
   headingId: string;
   onSelect: (selection: SelectionIdentity) => void;
   onChapterSelect: (chapter: string) => void;
+  travelStops: readonly CharacterTravelStop[];
+  sectionState: CharacterInspectorSectionState;
+  onToggleSection: (section: keyof CharacterInspectorSectionState) => void;
   systemEntry: SystemViewEntry | null;
   onEnterSystem: (entry: SystemViewEntry) => void;
 }) {
@@ -187,9 +226,13 @@ function NarrativeDetails({
         assets={assets}
         alt={name}
       />
-      <dl>
-        {entity.entity_type === "character" && (
-          <>
+      {entity.entity_type === "character" ? (
+        <CharacterSection
+          title="Overview"
+          expanded={sectionState.overview}
+          onToggle={() => onToggleSection("overview")}
+        >
+          <dl>
             {relationship(entity.species_id) && (
               <Detail label="Species">{relationship(entity.species_id)}</Detail>
             )}
@@ -226,151 +269,208 @@ function NarrativeDetails({
                   </span>
                 </Detail>
               )}
-          </>
-        )}
-        {entity.entity_type === "event" && (
-          <>
-            <Detail label="Story date">
-              {stringValue(entity.date)
-                ? displayDate(String(entity.date))
-                : "Chronologically unplaced"}
-            </Detail>
-            {relationship(entity.location_id) && (
-              <Detail label="Location">
-                {relationship(entity.location_id)}
-              </Detail>
-            )}
-            {stringList(entity.participant_ids).length > 0 && (
-              <Detail label="Participants">
-                <span className="relationship-list">
-                  {stringList(entity.participant_ids).map((id) => (
-                    <EntityLink
-                      key={id}
-                      id={id}
-                      entities={entities}
-                      onSelect={onSelect}
-                    />
-                  ))}
-                </span>
-              </Detail>
-            )}
-          </>
-        )}
-        {entity.entity_type === "location" && (
-          <>
-            <Detail label="Map context">
-              {entity.map_status === "unmapped"
-                ? "Explicitly unmapped"
-                : mappedId
-                  ? "Mapped"
-                  : "No mapped stellar-system context"}
-            </Detail>
-            {stringValue(entity.kind) && (
-              <Detail label="Location kind">
-                {String(entity.kind).replaceAll("_", " ")}
-              </Detail>
-            )}
-            {relationship(entity.parent_location_id) && (
-              <Detail label="Parent">
-                {relationship(entity.parent_location_id)}
-              </Detail>
-            )}
-            {relationship(entity.origin_location_id) && (
-              <Detail label="Origin">
-                {relationship(entity.origin_location_id)}
-              </Detail>
-            )}
-            {relationship(entity.destination_location_id) && (
-              <Detail label="Destination">
-                {relationship(entity.destination_location_id)}
-              </Detail>
-            )}
-            {stringList(entity.child_ids).length > 0 && (
-              <Detail label="Contains">
-                <span className="relationship-list">
-                  {stringList(entity.child_ids).map((id) => (
-                    <EntityLink
-                      key={id}
-                      id={id}
-                      entities={entities}
-                      onSelect={onSelect}
-                    />
-                  ))}
-                </span>
-              </Detail>
-            )}
-          </>
-        )}
-        {entity.entity_type === "species" &&
-          relationship(entity.homeworld_id) && (
-            <Detail label="Homeworld">
-              {relationship(entity.homeworld_id)}
-            </Detail>
+          </dl>
+          {stringValue(entity.description) && (
+            <div className="character-overview-description">
+              <h4>Description</h4>
+              <p>{String(entity.description)}</p>
+            </div>
           )}
-        {(entity.entity_type === "organization" ||
-          entity.entity_type === "vessel" ||
-          entity.entity_type === "location") &&
-          stringValue(entity.current_state ?? entity.state) && (
-            <Detail label="Current state">
-              {String(entity.current_state ?? entity.state)}
-            </Detail>
+        </CharacterSection>
+      ) : (
+        <dl>
+          {entity.entity_type === "event" && (
+            <>
+              <Detail label="Story date">
+                {stringValue(entity.date)
+                  ? displayDate(String(entity.date))
+                  : "Chronologically unplaced"}
+              </Detail>
+              {relationship(entity.location_id) && (
+                <Detail label="Location">
+                  {relationship(entity.location_id)}
+                </Detail>
+              )}
+              {stringList(entity.participant_ids).length > 0 && (
+                <Detail label="Participants">
+                  <span className="relationship-list">
+                    {stringList(entity.participant_ids).map((id) => (
+                      <EntityLink
+                        key={id}
+                        id={id}
+                        entities={entities}
+                        onSelect={onSelect}
+                      />
+                    ))}
+                  </span>
+                </Detail>
+              )}
+            </>
           )}
-      </dl>
+          {entity.entity_type === "location" && (
+            <>
+              <Detail label="Map context">
+                {entity.map_status === "unmapped"
+                  ? "Explicitly unmapped"
+                  : mappedId
+                    ? "Mapped"
+                    : "No mapped stellar-system context"}
+              </Detail>
+              {stringValue(entity.kind) && (
+                <Detail label="Location kind">
+                  {String(entity.kind).replaceAll("_", " ")}
+                </Detail>
+              )}
+              {relationship(entity.parent_location_id) && (
+                <Detail label="Parent">
+                  {relationship(entity.parent_location_id)}
+                </Detail>
+              )}
+              {relationship(entity.origin_location_id) && (
+                <Detail label="Origin">
+                  {relationship(entity.origin_location_id)}
+                </Detail>
+              )}
+              {relationship(entity.destination_location_id) && (
+                <Detail label="Destination">
+                  {relationship(entity.destination_location_id)}
+                </Detail>
+              )}
+              {stringList(entity.child_ids).length > 0 && (
+                <Detail label="Contains">
+                  <span className="relationship-list">
+                    {stringList(entity.child_ids).map((id) => (
+                      <EntityLink
+                        key={id}
+                        id={id}
+                        entities={entities}
+                        onSelect={onSelect}
+                      />
+                    ))}
+                  </span>
+                </Detail>
+              )}
+            </>
+          )}
+          {entity.entity_type === "species" &&
+            relationship(entity.homeworld_id) && (
+              <Detail label="Homeworld">
+                {relationship(entity.homeworld_id)}
+              </Detail>
+            )}
+          {(entity.entity_type === "organization" ||
+            entity.entity_type === "vessel" ||
+            entity.entity_type === "location") &&
+            stringValue(entity.current_state ?? entity.state) && (
+              <Detail label="Current state">
+                {String(entity.current_state ?? entity.state)}
+              </Detail>
+            )}
+        </dl>
+      )}
       {ancestors.length > 0 && (
-        <section className="inspector-section ancestor-lineage">
-          <h3>Ancestors</h3>
-          <ul>
-            {ancestors.map((ancestor, index) => {
-              const birthChapter = stringValue(ancestor.birth_chapter);
-              const birthDate = stringValue(ancestor.birth_date);
-              return (
-                <li key={ancestor.id}>
-                  {index > 0 && (
-                    <span className="ancestor-arrow" aria-hidden="true">
-                      ↑
+        <CharacterSection
+          title="Lineage"
+          expanded={sectionState.lineage}
+          onToggle={() => onToggleSection("lineage")}
+        >
+          <div className="ancestor-lineage">
+            <ul>
+              {ancestors.map((ancestor, index) => {
+                const birthChapter = stringValue(ancestor.birth_chapter);
+                const birthDate = stringValue(ancestor.birth_date);
+                return (
+                  <li key={ancestor.id}>
+                    {index > 0 && (
+                      <span className="ancestor-arrow" aria-hidden="true">
+                        ↑
+                      </span>
+                    )}
+                    <ObjectItemBullet active={false} />
+                    <span className="ancestor-copy">
+                      <button
+                        type="button"
+                        className="link-button ancestor-name"
+                        aria-label={`Character: ${String(ancestor.name)}`}
+                        onClick={() =>
+                          onSelect({ kind: "narrative", id: ancestor.id })
+                        }
+                      >
+                        {String(ancestor.name)}
+                      </button>
+                      {(birthChapter || birthDate) && (
+                        <small>
+                          {birthChapter && (
+                            <button
+                              type="button"
+                              className="link-button ancestor-chapter"
+                              aria-label={`Birth or cloning chapter for ${String(ancestor.name)}: Chapter ${birthChapter}`}
+                              onClick={() => onChapterSelect(birthChapter)}
+                            >
+                              Chapter {birthChapter}
+                            </button>
+                          )}
+                          {birthChapter && birthDate && " · "}
+                          {birthDate && displayDate(birthDate)}
+                        </small>
+                      )}
                     </span>
-                  )}
-                  <ObjectItemBullet active={false} />
-                  <span className="ancestor-copy">
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </CharacterSection>
+      )}
+      {entity.entity_type === "character" && travelStops.length > 0 && (
+        <CharacterSection
+          title="Travel history"
+          expanded={sectionState.travelHistory}
+          onToggle={() => onToggleSection("travelHistory")}
+        >
+          <ul className="travel-history">
+            {[...travelStops].reverse().map((stop) => {
+              const location = entities.get(stop.location_id);
+              return (
+                <li key={`${stop.source_chapter}-${stop.appearance_index}`}>
+                  {location ? (
                     <button
                       type="button"
-                      className="link-button ancestor-name"
-                      aria-label={`Character: ${String(ancestor.name)}`}
+                      className="link-button"
                       onClick={() =>
-                        onSelect({ kind: "narrative", id: ancestor.id })
+                        onSelect({ kind: "narrative", id: location.id })
                       }
                     >
-                      {String(ancestor.name)}
+                      {String(location.name)}
                     </button>
-                    {(birthChapter || birthDate) && (
-                      <small>
-                        {birthChapter && (
-                          <button
-                            type="button"
-                            className="link-button ancestor-chapter"
-                            aria-label={`Birth or cloning chapter for ${String(ancestor.name)}: Chapter ${birthChapter}`}
-                            onClick={() => onChapterSelect(birthChapter)}
-                          >
-                            Chapter {birthChapter}
-                          </button>
-                        )}
-                        {birthChapter && birthDate && " · "}
-                        {birthDate && displayDate(birthDate)}
-                      </small>
-                    )}
+                  ) : (
+                    <span>{stop.location_id}</span>
+                  )}
+                  <span className="relationship-context">
+                    <button
+                      type="button"
+                      className="link-button"
+                      aria-label={`Travel appearance chapter: Chapter ${stop.source_chapter}`}
+                      onClick={() => onChapterSelect(stop.source_chapter)}
+                    >
+                      Chapter {stop.source_chapter}
+                    </button>
+                    {" · "}
+                    {displayDate(stop.effective_date)}
                   </span>
                 </li>
               );
             })}
           </ul>
-        </section>
+        </CharacterSection>
       )}
-      {stringValue(entity.description) && (
-        <section className="inspector-section">
-          <h3>Description</h3>
-          <p>{String(entity.description)}</p>
-        </section>
-      )}
+      {entity.entity_type !== "character" &&
+        stringValue(entity.description) && (
+          <section className="inspector-section">
+            <h3>Description</h3>
+            <p>{String(entity.description)}</p>
+          </section>
+        )}
       {astronomySystem && (
         <section className="joined-astronomy">
           <h3>Mapped astronomy</h3>
@@ -624,6 +724,9 @@ export function ObjectInspector({
   onForward = () => undefined,
   onSelect,
   onChapterSelect = () => undefined,
+  travelStops = [],
+  sectionState = defaultCharacterInspectorSectionState(),
+  onToggleSection = () => undefined,
   systemEntry = null,
   enteredSystem = null,
   onEnterSystem = () => undefined,
@@ -643,6 +746,9 @@ export function ObjectInspector({
   onForward?: () => void;
   onSelect: (selection: SelectionIdentity) => void;
   onChapterSelect?: (chapter: string) => void;
+  travelStops?: readonly CharacterTravelStop[];
+  sectionState?: CharacterInspectorSectionState;
+  onToggleSection?: (section: keyof CharacterInspectorSectionState) => void;
   systemEntry?: SystemViewEntry | null;
   enteredSystem?: StellarSystem | null;
   onEnterSystem?: (entry: SystemViewEntry) => void;
@@ -688,6 +794,9 @@ export function ObjectInspector({
           headingId={headingId}
           onSelect={onSelect}
           onChapterSelect={onChapterSelect}
+          travelStops={travelStops}
+          sectionState={sectionState}
+          onToggleSection={onToggleSection}
           systemEntry={systemEntry}
           onEnterSystem={onEnterSystem}
         />

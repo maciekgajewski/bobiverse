@@ -17,10 +17,14 @@ import {
   compareNarrativeDates,
   compareNarrativeMoments,
   characterAncestors,
+  characterTravelLegs,
+  characterTravelStops,
   generateNarrativeWorld,
   narrativeSchemaErrors,
   narrativeValidatorCompilationCounts,
+  narrativeWorldGenerationCount,
   prepareNarrativeCorpus,
+  projectCharacterTravelHistories,
   projectNarrativeChapterDetail,
   validateNarrativeCorpus,
 } from "../../src/narrative/model";
@@ -793,6 +797,124 @@ describe("narrative corpus validation and projection", () => {
         "character:child",
       ).map((entity) => entity.id),
     ).toEqual(["character:parent", "character:grandparent"]);
+  });
+
+  it("derives only definite interstellar travel legs, retaining route gaps and latest repeats", () => {
+    const stops = [
+      {
+        location_id: "a",
+        source_chapter: "1.1",
+        effective_date: "2200",
+        appearance_index: 0,
+        astronomy_system_id: "system:sol",
+      },
+      {
+        location_id: "b",
+        source_chapter: "1.2",
+        effective_date: "2200",
+        appearance_index: 0,
+        astronomy_system_id: "system:alpha",
+      },
+      {
+        location_id: "gap",
+        source_chapter: "1.3",
+        effective_date: "2200.1",
+        appearance_index: 0,
+        astronomy_system_id: null,
+      },
+      {
+        location_id: "c",
+        source_chapter: "1.4",
+        effective_date: "2201",
+        appearance_index: 0,
+        astronomy_system_id: "system:sol",
+      },
+      {
+        location_id: "d",
+        source_chapter: "1.5",
+        effective_date: "2202",
+        appearance_index: 0,
+        astronomy_system_id: "system:alpha",
+      },
+    ];
+    expect(characterTravelLegs(stops)).toEqual([
+      expect.objectContaining({
+        from_astronomy_system_id: "system:sol",
+        to_astronomy_system_id: "system:alpha",
+        arrival: expect.objectContaining({ source_chapter: "1.5" }),
+      }),
+    ]);
+  });
+
+  it("derives travel stops only from projected explicit appearances in chronological display order", () => {
+    const corpus = prepareNarrativeCorpus(createNarrativeFixtureCorpus());
+    const world = generateNarrativeWorld(corpus, "1.3");
+    expect(
+      characterTravelStops(corpus, world, "character:fixture-alex"),
+    ).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          source_chapter: "1.1",
+          location_id: "location:earth",
+        }),
+        expect.objectContaining({
+          source_chapter: "1.3",
+          location_id: "location:earth",
+        }),
+      ]),
+    );
+    expect(
+      characterTravelStops(corpus, world, "character:fixture-alex").map(
+        (stop) => stop.source_chapter,
+      ),
+    ).toEqual(["1.1", "1.3"]);
+  });
+
+  it("projects every character history without regenerating a world per stop", () => {
+    const corpus = prepareNarrativeCorpus(createNarrativeFixtureCorpus());
+    const world = generateNarrativeWorld(corpus, "1.3");
+    const generationCount = narrativeWorldGenerationCount(corpus);
+    const histories = projectCharacterTravelHistories(corpus, world);
+    expect(histories.get("character:fixture-alex")).toHaveLength(2);
+    expect(narrativeWorldGenerationCount(corpus)).toBe(generationCount);
+  });
+
+  it("breaks a historical route endpoint around an incomparable mapping update", () => {
+    const source = createNarrativeFixtureCorpus();
+    source.chapters[0]!.date = "2200";
+    const introductions = source.chapters[0]!.introducing as Array<
+      Record<string, unknown>
+    >;
+    delete introductions[1]!.current_state;
+    delete source.chapters[1]!.appearances;
+    delete source.chapters[1]!.updates;
+    delete source.chapters[2]!.appearances;
+    source.chapters[2]!.updates = [
+      {
+        entity_id: "location:earth",
+        map_status: "unmapped",
+      },
+    ];
+    source.chapters.push({
+      chapter: "1.4",
+      title: "Fixture later projection",
+      summary: "A later projection exposes the mixed-precision history.",
+      date: "2201",
+      location_id: "location:earth",
+    });
+    const corpus = prepareNarrativeCorpus(source);
+    const world = generateNarrativeWorld(corpus, "1.4");
+
+    expect(
+      projectCharacterTravelHistories(corpus, world).get(
+        "character:fixture-alex",
+      ),
+    ).toEqual([
+      expect.objectContaining({
+        source_chapter: "1.1",
+        astronomy_system_id: null,
+      }),
+    ]);
   });
 
   it("projects direct entity introductions and later optional-field updates", () => {

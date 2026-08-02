@@ -975,6 +975,50 @@ h2 {
   padding: 0;
   list-style: none;
 }
+
+.inspector-section-toggle {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+
+.inspector-section-toggle::after {
+  color: #8fcde1;
+  content: "⌄";
+  font-size: 0.9em;
+}
+
+.inspector-section-toggle[aria-expanded="false"]::after {
+  transform: rotate(-90deg);
+}
+
+.inspector-section-toggle:focus-visible {
+  outline: 2px solid #8fcde1;
+  outline-offset: 0.18rem;
+}
+
+.travel-history {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.travel-history li {
+  display: grid;
+  gap: 0.08rem;
+  padding: 0.35rem 0.5rem;
+  border-left: 2px solid rgb(66 217 245 / 52%);
+  background: rgb(21 36 59 / 44%);
+}
 .ancestor-lineage li {
   position: relative;
   display: grid;

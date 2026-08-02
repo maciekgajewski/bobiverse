@@ -7,13 +7,19 @@ import {
   DoubleSide,
   Mesh,
   PerspectiveCamera,
+  Quaternion,
   Vector3,
   Vector4,
 } from "three";
-import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
+import type {
+  Line2,
+  LineSegments2,
+  OrbitControls as OrbitControlsImpl,
+} from "three-stdlib";
 import { GalacticPlaneGrid } from "./GalacticPlaneGrid";
 import { GalacticStarfield } from "./GalacticStarfield";
 import type { StellarSystem } from "../domain/types";
+import type { CharacterTravelLeg } from "../narrative/model";
 import {
   DISPLAY_DISTANCE_UNIT,
   calculateMapScale,
@@ -26,6 +32,10 @@ import {
   perspectiveWorldWidthAtTarget,
 } from "../domain/camera-motion";
 import { closestMarkerSystemId } from "../domain/star-picking";
+import {
+  advanceTravelPulseOffset,
+  travelRouteOpacity,
+} from "../domain/travel-route-visual";
 import { resolveCaptionVisibility } from "../domain/caption-visibility";
 import notoSansRegularUrl from "../assets/fonts/NotoSans-Regular.ttf?url";
 import {
@@ -49,6 +59,8 @@ interface MapSceneProps {
   selectedId: string | null;
   knownSystemIds: ReadonlySet<string>;
   activeSystemIds: ReadonlySet<string>;
+  travelLegs?: readonly CharacterTravelLeg[];
+  travelSystems?: readonly StellarSystem[];
   resetToken: number;
   zoomedSystemId: string | null;
   onSelect: (id: string) => void;
@@ -75,6 +87,160 @@ export const MAP_CAMERA_DAMPING_FACTOR = 0.09;
 
 const ignoreRaycast = () => undefined;
 
+function TravelRoutes({
+  systems,
+  legs,
+}: {
+  systems: readonly StellarSystem[];
+  legs: readonly CharacterTravelLeg[];
+}) {
+  const reducedMotion = useReducedMotion();
+  const byId = new Map(systems.map((system) => [system.id, system]));
+  const newestIndex = legs.length - 1;
+  useEffect(() => {
+    const presentation = {
+      legCount: legs.length,
+      pulseLayers: reducedMotion ? 0 : legs.length,
+      chevrons: reducedMotion ? legs.length * 2 : 0,
+    };
+    window.__bobTravelRoutePresentation = presentation;
+    return () => {
+      if (window.__bobTravelRoutePresentation === presentation) {
+        delete window.__bobTravelRoutePresentation;
+      }
+    };
+  }, [legs.length, reducedMotion]);
+  return (
+    <group raycast={ignoreRaycast} renderOrder={-2}>
+      {legs.map((leg, index) => {
+        const from = byId.get(leg.from_astronomy_system_id);
+        const to = byId.get(leg.to_astronomy_system_id);
+        if (!from || !to) return null;
+        const age = newestIndex <= 0 ? 1 : index / newestIndex;
+        const key = `${leg.from_astronomy_system_id}-${leg.to_astronomy_system_id}-${leg.arrival.source_chapter}-${leg.arrival.appearance_index}`;
+        return (
+          <TravelRouteSegment
+            key={key}
+            from={from.render_position}
+            to={to.render_position}
+            age={age}
+            reducedMotion={reducedMotion}
+          />
+        );
+      })}
+    </group>
+  );
+}
+
+function TravelRouteSegment({
+  from,
+  to,
+  age,
+  reducedMotion,
+}: {
+  from: StellarSystem["render_position"];
+  to: StellarSystem["render_position"];
+  age: number;
+  reducedMotion: boolean;
+}) {
+  const pulse = useRef<Line2 | LineSegments2>(null);
+  const start = new Vector3(from.x, from.y, from.z);
+  const end = new Vector3(to.x, to.y, to.z);
+  const direction = end.clone().sub(start);
+  const length = direction.length();
+  const unitDirection = direction.clone().normalize();
+  const arrowOrientation = new Quaternion().setFromUnitVectors(
+    new Vector3(0, 1, 0),
+    unitDirection,
+  );
+  const points: [number, number, number][] = [start.toArray(), end.toArray()];
+  const opacity = travelRouteOpacity(age);
+  const dashSize = Math.max(0.045, Math.min(0.18, length * 0.025));
+  useFrame((_, delta) => {
+    if (!reducedMotion && pulse.current) {
+      pulse.current.material.dashOffset = advanceTravelPulseOffset(
+        pulse.current.material.dashOffset,
+        delta,
+        false,
+      );
+    }
+  });
+  return (
+    <group raycast={ignoreRaycast} renderOrder={-2}>
+      <Line
+        points={points}
+        color="#148db6"
+        transparent
+        opacity={opacity * 0.12}
+        lineWidth={8}
+        depthWrite={false}
+        raycast={ignoreRaycast}
+      />
+      <Line
+        points={points}
+        color="#22c9ed"
+        transparent
+        opacity={opacity * 0.42}
+        lineWidth={3.4}
+        depthWrite={false}
+        raycast={ignoreRaycast}
+      />
+      <Line
+        points={points}
+        color="#a5f5ff"
+        transparent
+        opacity={opacity}
+        lineWidth={0.9}
+        depthWrite={false}
+        raycast={ignoreRaycast}
+      />
+      {!reducedMotion && (
+        <Line
+          ref={pulse}
+          points={points}
+          color="#e5fdff"
+          transparent
+          opacity={Math.min(1, opacity + 0.12)}
+          lineWidth={2.1}
+          dashed
+          dashSize={dashSize}
+          gapSize={dashSize * 6.5}
+          depthWrite={false}
+          raycast={ignoreRaycast}
+        />
+      )}
+      {reducedMotion &&
+        [0.38, 0.68].map((fraction) => {
+          const position = start
+            .clone()
+            .add(direction.clone().multiplyScalar(fraction));
+          const arrowLength = Math.max(0.045, Math.min(0.12, length * 0.018));
+          return (
+            <mesh
+              key={fraction}
+              position={position}
+              quaternion={arrowOrientation}
+              raycast={ignoreRaycast}
+              renderOrder={-1}
+            >
+              <coneGeometry
+                args={[arrowLength * 0.42, arrowLength, 5, 1, false]}
+              />
+              <meshBasicMaterial
+                color="#b7f8ff"
+                transparent
+                opacity={opacity * 0.9}
+                blending={AdditiveBlending}
+                depthWrite={false}
+                toneMapped={false}
+              />
+            </mesh>
+          );
+        })}
+    </group>
+  );
+}
+
 interface CameraMotion {
   startedAt: number;
   durationMs: number;
@@ -86,7 +252,11 @@ interface CameraMotion {
 }
 
 function useReducedMotion(): boolean {
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(
+    () =>
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  );
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
     const update = () => setReducedMotion(query.matches);
@@ -728,6 +898,8 @@ function Scene({
   selectedId,
   knownSystemIds,
   activeSystemIds,
+  travelLegs = [],
+  travelSystems = systems,
   resetToken,
   zoomedSystemId,
   onSelect,
@@ -749,6 +921,9 @@ function Scene({
       <GalacticStarfield />
       <ambientLight intensity={0.7} />
       {!zoomed && <GalacticPlaneGrid />}
+      {!zoomed && travelLegs.length > 0 && (
+        <TravelRoutes systems={travelSystems} legs={travelLegs} />
+      )}
       {!zoomed && (
         <Text
           position={[16, 0.04, 0]}

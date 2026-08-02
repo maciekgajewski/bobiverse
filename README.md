@@ -149,6 +149,15 @@ an original type-specific SVG icon, and each object row uses a shared SVG bullet
 Relationship traversal uses the inspector's own Back and Forward controls; map,
 browser, and timeline selections begin a new inspection path without changing browser
 history.
+
+Character inspectors organize their existing details under **Overview**, with
+conditional **Lineage** and **Travel history** disclosures. Travel history lists every
+reader-visible explicit located appearance newest first. Its location and chapter
+controls use ordinary inspector and Chapter-mode navigation; dates are informational.
+In the interstellar map, definitely ordered moves between different historically
+mapped systems render as layered, non-interactive cyan-blue route beams. Sparse light
+pulses show departure-to-arrival direction; reduced-motion mode uses static chevrons.
+Unknown, ambiguous, or unmapped stops remain listed but break the route.
 Vessels use one identity for a named spacecraft, its reusable design, or the ship
 family named after its first vessel; optional operational state follows the same
 spoiler-safe chapter projection as other mutable state.

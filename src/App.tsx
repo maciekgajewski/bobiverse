@@ -31,6 +31,8 @@ import {
 } from "./system-view";
 import {
   generateNarrativeWorld,
+  characterTravelLegs,
+  projectCharacterTravelHistories,
   meaningfulNarrativeDateOptions,
   projectNarrativeChapterDetail,
   type MeaningfulNarrativeDate,
@@ -321,6 +323,27 @@ export default function App() {
   const selectedMapId = systemMode
     ? systemMode.entry.astronomySystemId
     : focusSystemIdForSelection(selection, narrativeWorld, contextSystemIds);
+  const characterTravelHistories = useMemo(
+    () =>
+      narrativeCorpus
+        ? projectCharacterTravelHistories(narrativeCorpus, narrativeWorld)
+        : new Map(),
+    [narrativeWorld],
+  );
+  const selectedCharacterTravel = useMemo(() => {
+    if (
+      systemMode ||
+      selection?.kind !== "narrative" ||
+      !narrativeWorld.entities.some(
+        (entity) =>
+          entity.id === selection.id && entity.entity_type === "character",
+      )
+    ) {
+      return { stops: [], legs: [] };
+    }
+    const stops = characterTravelHistories.get(selection.id) ?? [];
+    return { stops, legs: characterTravelLegs(stops) };
+  }, [characterTravelHistories, narrativeWorld, selection, systemMode]);
   const selectedSystemEntry = systemViewEntryForNarrativeSelection(
     narrativeWorld,
     mapProjection.contextSystems,
@@ -900,6 +923,8 @@ export default function App() {
                   selectedId={selectedMapId}
                   knownSystemIds={mapProjection.knownSystemIds}
                   activeSystemIds={mapProjection.activeSystemIds}
+                  travelLegs={selectedCharacterTravel.legs}
+                  travelSystems={systems}
                   resetToken={resetToken}
                   zoomedSystemId={systemMode?.entry.astronomySystemId ?? null}
                   onSelect={(id) => {
@@ -962,6 +987,21 @@ export default function App() {
             onForward={() => navigateInspectorHistory(1)}
             onSelect={selectInspectorRelationship}
             onChapterSelect={selectTimelineChapter}
+            travelStops={selectedCharacterTravel.stops}
+            sectionState={progress.characterInspectorSections}
+            onToggleSection={(section) =>
+              setApplicationProjection((current) => ({
+                ...current,
+                progress: {
+                  ...current.progress,
+                  characterInspectorSections: {
+                    ...current.progress.characterInspectorSections,
+                    [section]:
+                      !current.progress.characterInspectorSections[section],
+                  },
+                },
+              }))
+            }
             systemEntry={selectedSystemEntry}
             enteredSystem={enteredSystem}
             onEnterSystem={enterSystemMode}
@@ -1056,6 +1096,21 @@ export default function App() {
                 onForward={() => navigateInspectorHistory(1)}
                 onSelect={selectInspectorRelationship}
                 onChapterSelect={selectTimelineChapter}
+                travelStops={selectedCharacterTravel.stops}
+                sectionState={progress.characterInspectorSections}
+                onToggleSection={(section) =>
+                  setApplicationProjection((current) => ({
+                    ...current,
+                    progress: {
+                      ...current.progress,
+                      characterInspectorSections: {
+                        ...current.progress.characterInspectorSections,
+                        [section]:
+                          !current.progress.characterInspectorSections[section],
+                      },
+                    },
+                  }))
+                }
                 systemEntry={selectedSystemEntry}
                 enteredSystem={enteredSystem}
                 onEnterSystem={enterSystemMode}

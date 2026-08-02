@@ -785,6 +785,24 @@ chapter transition: it switches to Chapter mode, moves `viewChapter` within the
 existing spoiler ceiling, opens that chapter inspector, and never changes
 `furthestChapterRead`. Birth dates remain informational.
 
+For a selected character, the same prepared corpus derives a travel-history stop for
+every reader-visible explicit appearance with an explicit or chapter-default
+location. Stops remain separate and display newest first; introductions, activity,
+mentions, and `last_known_location` are never travel evidence. Historical map
+endpoints resolve the location ancestry effective at each stop's own narrative moment
+under the current reader-knowledge boundary. Unmapped or indeterminate ancestry stays
+in the DOM list and breaks route continuity. Only definitely strictly ordered adjacent
+stops in different stellar systems create true-coordinate interstellar legs; repeated
+unordered endpoint pairs collapse to their visually latest arrival. Route presentation
+uses a non-pickable layered cyan-blue aura, glow, and sharp core that fades with age.
+Sparse emissive pulses travel from departure to arrival; reduced-motion mode replaces
+movement with static direction chevrons. Every eligible character history and its
+historical endpoints are derived once per reader projection, so character selection
+uses an indexed lookup rather than rebuilding a world for every appearance. Routes
+disappear outside ordinary interstellar mode. Character inspectors use persisted shared **Overview**,
+conditional **Lineage**, and conditional **Travel history** disclosures; only
+Overview defaults open.
+
 The normal development, test, and build paths first generate the ignored
 `generated/narrative/chapter-manifest.json` from authored chapter paths. The manifest
 contains only ordered chapter references and paths. The static runtime resolves bundled

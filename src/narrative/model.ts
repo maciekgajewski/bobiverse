@@ -92,6 +92,21 @@ export interface NarrativeWorld {
   };
 }
 
+export interface CharacterTravelStop {
+  location_id: string;
+  source_chapter: string;
+  effective_date: string;
+  /** Stable source-array order for otherwise identical appearances. */
+  appearance_index: number;
+  astronomy_system_id: string | null;
+}
+
+export interface CharacterTravelLeg {
+  from_astronomy_system_id: string;
+  to_astronomy_system_id: string;
+  arrival: CharacterTravelStop;
+}
+
 export function characterAncestors(
   world: NarrativeWorld,
   characterId: string,
@@ -113,6 +128,287 @@ export function characterAncestors(
     current = parent;
   }
   return ancestors;
+}
+
+function travelPresentationOrdering(
+  left: Pick<
+    CharacterTravelStop,
+    "effective_date" | "source_chapter" | "appearance_index"
+  >,
+  right: Pick<
+    CharacterTravelStop,
+    "effective_date" | "source_chapter" | "appearance_index"
+  >,
+): number {
+  const narrativeOrdering = compareNarrativeMoments(
+    { date: left.effective_date, sourceChapter: left.source_chapter },
+    { date: right.effective_date, sourceChapter: right.source_chapter },
+  );
+  if (narrativeOrdering !== null && narrativeOrdering !== 0)
+    return narrativeOrdering;
+  return (
+    compareNarrativeChapters(left.source_chapter, right.source_chapter) ||
+    left.appearance_index - right.appearance_index
+  );
+}
+
+function mappedSystemIdFromHistoricalLocations(
+  entities: ReadonlyMap<string, NarrativeEntity>,
+  indeterminateLocationIds: ReadonlySet<string>,
+  locationId: string,
+): string | null {
+  const visited = new Set<string>();
+  let current = entities.get(locationId);
+  while (current && !visited.has(current.id)) {
+    visited.add(current.id);
+    if (indeterminateLocationIds.has(current.id)) return null;
+    if (current.map_status === "unmapped") return null;
+    if (
+      current.entity_type === "location" &&
+      current.kind === "star_system" &&
+      typeof current.astronomy_object_id === "string"
+    ) {
+      return current.astronomy_object_id;
+    }
+    const parentId = current.parent_location_id;
+    current = typeof parentId === "string" ? entities.get(parentId) : undefined;
+  }
+  return null;
+}
+
+interface HistoricalLocationProjection {
+  locations: ReadonlyMap<string, NarrativeEntity>;
+  indeterminateLocationIds: ReadonlySet<string>;
+}
+
+const ROUTE_ENDPOINT_PROPERTIES = new Set([
+  "parent_location_id",
+  "map_status",
+  "astronomy_object_id",
+]);
+
+function projectHistoricalLocations(
+  baseline: readonly NarrativeEntity[],
+  chapters: readonly NarrativeRecord[],
+  displayDate: string,
+): HistoricalLocationProjection {
+  const locations = new Map(
+    baseline
+      .filter((entity) => entity.entity_type === "location")
+      .map((entity) => [entity.id, structuredClone(entity)]),
+  );
+  const latestMoments = new Map<string, NarrativeMoment>();
+  const indeterminateLocationIds = new Set<string>();
+  for (const chapter of chapters) {
+    const date = chapterDate(chapter);
+    const sourceChapter = chapterId(chapter);
+    const dateOrdering = compareNarrativeDates(date, displayDate);
+    if (dateOrdering === null) {
+      for (const candidate of (chapter.introducing as unknown[] | undefined) ??
+        []) {
+        const introduced = asRecord(
+          candidate,
+          `Introduction in ${sourceChapter}`,
+        );
+        if (
+          typeof introduced.id === "string" &&
+          introduced.id.startsWith("location:")
+        ) {
+          indeterminateLocationIds.add(introduced.id);
+        }
+      }
+      for (const candidate of (chapter.updates as unknown[] | undefined) ??
+        []) {
+        const update = asRecord(candidate, `Update in ${sourceChapter}`);
+        if (
+          typeof update.entity_id === "string" &&
+          update.entity_id.startsWith("location:") &&
+          Object.keys(update).some((key) => ROUTE_ENDPOINT_PROPERTIES.has(key))
+        ) {
+          indeterminateLocationIds.add(update.entity_id);
+        }
+      }
+      continue;
+    }
+    if (dateOrdering > 0) continue;
+    for (const candidate of (chapter.introducing as unknown[] | undefined) ??
+      []) {
+      const introduced = asRecord(
+        candidate,
+        `Introduction in ${sourceChapter}`,
+      );
+      const id = asString(introduced.id, `Introduction ID in ${sourceChapter}`);
+      if (!id.startsWith("location:")) continue;
+      const location: NarrativeEntity = { id, entity_type: "location" };
+      applyProperties(
+        location,
+        introduced,
+        { date, sourceChapter },
+        latestMoments,
+        ["id"],
+      );
+      locations.set(id, location);
+    }
+    for (const candidate of (chapter.updates as unknown[] | undefined) ?? []) {
+      const update = asRecord(candidate, `Update in ${sourceChapter}`);
+      const id = asString(
+        update.entity_id,
+        `Update target in ${sourceChapter}`,
+      );
+      const location = locations.get(id);
+      if (!location) continue;
+      applyProperties(
+        location,
+        update,
+        { date, sourceChapter },
+        latestMoments,
+        ["entity_id"],
+      );
+    }
+  }
+  return { locations, indeterminateLocationIds };
+}
+
+export type CharacterTravelHistories = ReadonlyMap<
+  string,
+  readonly CharacterTravelStop[]
+>;
+
+/**
+ * Builds every eligible character history once for a reader projection. Historical
+ * location state is projected once per distinct appearance date, so changing the
+ * selected character is only a map lookup.
+ */
+export function projectCharacterTravelHistories(
+  corpus: PreparedNarrativeCorpus,
+  world: NarrativeWorld,
+): CharacterTravelHistories {
+  if (!world.view.chapter) return new Map();
+  const eligibleCharacterIds = new Set(
+    world.entities
+      .filter((entity) => entity.entity_type === "character")
+      .map((entity) => entity.id),
+  );
+  const indexes = indexesFor(corpus);
+  const chapters = indexes.chapters.filter(
+    (chapter) =>
+      compareNarrativeChapters(chapterId(chapter), world.view.chapter!) <= 0,
+  );
+  const stopsByCharacter = new Map<string, CharacterTravelStop[]>();
+  const appearanceDates = new Set<string>();
+  for (const chapter of chapters) {
+    const effectiveDate = chapterDate(chapter);
+    if (!isDateAtOrBefore(effectiveDate, world.view.display_date)) continue;
+    const sourceChapter = chapterId(chapter);
+    for (const [appearanceIndex, candidate] of (
+      (chapter.appearances as unknown[] | undefined) ?? []
+    ).entries()) {
+      const appearance = asRecord(candidate, `Appearance in ${sourceChapter}`);
+      const characterId = appearance.character_id;
+      if (
+        typeof characterId !== "string" ||
+        !eligibleCharacterIds.has(characterId)
+      ) {
+        continue;
+      }
+      const locationId = appearance.location_id ?? chapter.location_id;
+      if (typeof locationId !== "string") continue;
+      const stops = stopsByCharacter.get(characterId) ?? [];
+      stops.push({
+        location_id: locationId,
+        source_chapter: sourceChapter,
+        effective_date: effectiveDate,
+        appearance_index: appearanceIndex,
+        astronomy_system_id: null,
+      });
+      stopsByCharacter.set(characterId, stops);
+      appearanceDates.add(effectiveDate);
+    }
+  }
+  const historicalLocationsByDate = new Map(
+    [...appearanceDates].map((date) => [
+      date,
+      projectHistoricalLocations(indexes.zeroStateEntities, chapters, date),
+    ]),
+  );
+  for (const stops of stopsByCharacter.values()) {
+    for (const stop of stops) {
+      const projection = historicalLocationsByDate.get(stop.effective_date);
+      stop.astronomy_system_id = projection
+        ? mappedSystemIdFromHistoricalLocations(
+            projection.locations,
+            projection.indeterminateLocationIds,
+            stop.location_id,
+          )
+        : null;
+    }
+    stops.sort(travelPresentationOrdering);
+  }
+  return stopsByCharacter;
+}
+
+/**
+ * Derives reader-visible travel evidence from canonical appearances.  The list keeps
+ * every stop; only its optional map endpoint uses the historical location projection.
+ */
+export function characterTravelStops(
+  corpus: PreparedNarrativeCorpus,
+  world: NarrativeWorld,
+  characterId: string,
+): CharacterTravelStop[] {
+  return [
+    ...(projectCharacterTravelHistories(corpus, world).get(characterId) ?? []),
+  ];
+}
+
+/** Builds only definite adjacent interstellar legs and collapses repeated endpoint pairs. */
+export function characterTravelLegs(
+  stops: readonly CharacterTravelStop[],
+): CharacterTravelLeg[] {
+  const candidates: CharacterTravelLeg[] = [];
+  for (let index = 1; index < stops.length; index += 1) {
+    const departure = stops[index - 1]!;
+    const arrival = stops[index]!;
+    const ordering = compareNarrativeMoments(
+      {
+        date: departure.effective_date,
+        sourceChapter: departure.source_chapter,
+      },
+      { date: arrival.effective_date, sourceChapter: arrival.source_chapter },
+    );
+    if (
+      ordering === null ||
+      ordering >= 0 ||
+      !departure.astronomy_system_id ||
+      !arrival.astronomy_system_id ||
+      departure.astronomy_system_id === arrival.astronomy_system_id
+    ) {
+      continue;
+    }
+    candidates.push({
+      from_astronomy_system_id: departure.astronomy_system_id,
+      to_astronomy_system_id: arrival.astronomy_system_id,
+      arrival,
+    });
+  }
+  const latestByPair = new Map<string, CharacterTravelLeg>();
+  for (const candidate of candidates) {
+    const key = [
+      candidate.from_astronomy_system_id,
+      candidate.to_astronomy_system_id,
+    ]
+      .sort()
+      .join("\u0000");
+    const existing = latestByPair.get(key);
+    if (
+      !existing ||
+      travelPresentationOrdering(existing.arrival, candidate.arrival) < 0
+    )
+      latestByPair.set(key, candidate);
+  }
+  return [...latestByPair.values()].sort((left, right) =>
+    travelPresentationOrdering(left.arrival, right.arrival),
+  );
 }
 
 const schemaId = "https://bobiverse.local/schema/narrative-data-model.json";
@@ -945,6 +1241,7 @@ export function validateNarrativeCorpus(corpus: NarrativeCorpus): void {
 
 interface PreparedNarrativeIndexes {
   chapters: readonly NarrativeRecord[];
+  zeroStateEntities: readonly NarrativeEntity[];
   chapterById: ReadonlyMap<string, NarrativeRecord>;
   chapterDetailSourceById: ReadonlyMap<string, PreparedChapterDetailSource>;
   meaningfulDateOptions: Map<string, readonly MeaningfulNarrativeDate[]>;
@@ -971,6 +1268,10 @@ const preparedNarrativeIndexes = new WeakMap<
   PreparedNarrativeIndexes
 >();
 const narrativePreparationCounts = new WeakMap<NarrativeCorpus, number>();
+const narrativeWorldGenerationCounts = new WeakMap<
+  PreparedNarrativeCorpus,
+  number
+>();
 
 function deepFreeze<T>(value: T): T {
   if (!value || typeof value !== "object" || Object.isFrozen(value))
@@ -1064,6 +1365,12 @@ export function prepareNarrativeCorpus(
   const books = asRecord(prepared.books.books, "Book catalogue books");
   preparedNarrativeIndexes.set(prepared, {
     chapters,
+    zeroStateEntities: deepFreeze(
+      assertZeroStateSemantics(
+        prepared.zeroState,
+        prepared.knownAstronomyObjectIds,
+      ),
+    ),
     chapterById: new Map(
       chapters.map((chapter) => [chapterId(chapter), chapter]),
     ),
@@ -1087,6 +1394,13 @@ export function narrativeCorpusPreparationCount(
   rawCorpus: NarrativeCorpus,
 ): number {
   return narrativePreparationCounts.get(rawCorpus) ?? 0;
+}
+
+/** Exposes projection counts so regressions cannot hide per-stop world generation. */
+export function narrativeWorldGenerationCount(
+  corpus: PreparedNarrativeCorpus,
+): number {
+  return narrativeWorldGenerationCounts.get(corpus) ?? 0;
 }
 
 function indexesFor(corpus: PreparedNarrativeCorpus): PreparedNarrativeIndexes {
@@ -1650,6 +1964,10 @@ export function generateNarrativeWorld(
   selectedChapterId: string | null = null,
   requestedDisplayDate: string | null = null,
 ): NarrativeWorld {
+  narrativeWorldGenerationCounts.set(
+    corpus,
+    (narrativeWorldGenerationCounts.get(corpus) ?? 0) + 1,
+  );
   const indexes = indexesFor(corpus);
   const chapters = indexes.chapters;
   const selectedChapter = selectedChapterId

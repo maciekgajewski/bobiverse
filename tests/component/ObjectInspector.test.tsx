@@ -354,11 +354,14 @@ describe("object inspector", () => {
         assets={{ assets: [] }}
         onSelect={onSelect}
         onChapterSelect={onChapterSelect}
+        sectionState={{ overview: true, lineage: true, travelHistory: false }}
       />,
     );
 
+    const lineage = screen.getByRole("button", { name: "Lineage" });
+    expect(lineage).toHaveAttribute("aria-expanded", "true");
     expect(
-      screen.getByRole("heading", { name: "Ancestors" }),
+      screen.getByRole("heading", { name: "Lineage" }),
     ).toBeInTheDocument();
     const names = screen
       .getAllByRole("button", { name: /^Character:/ })
@@ -371,6 +374,8 @@ describe("object inspector", () => {
     const chapterLink = screen.getByRole("button", {
       name: "Birth or cloning chapter for Parent: Chapter 1.7",
     });
+    await user.tab();
+    await user.tab();
     await user.tab();
     expect(parentLink).toHaveFocus();
     await user.keyboard("{Enter}");
@@ -386,6 +391,62 @@ describe("object inspector", () => {
     expect(
       screen.getByRole("button", { name: "Character: Grandparent" }),
     ).toHaveFocus();
+  });
+
+  it("renders every travel stop newest first with separate location and chapter controls", async () => {
+    const user = userEvent.setup();
+    const onSelect = vi.fn();
+    const onChapterSelect = vi.fn();
+    const entities: NarrativeEntity[] = [
+      { id: "character:traveler", entity_type: "character", name: "Traveler" },
+      { id: "location:old", entity_type: "location", name: "Old place" },
+      { id: "location:new", entity_type: "location", name: "New place" },
+    ];
+    render(
+      <ObjectInspector
+        selection={{ kind: "narrative", id: "character:traveler" }}
+        narrativeItem={item(entities[0]!)}
+        world={{ ...world, entities }}
+        systems={[]}
+        assets={{ assets: [] }}
+        onSelect={onSelect}
+        onChapterSelect={onChapterSelect}
+        travelStops={[
+          {
+            location_id: "location:old",
+            source_chapter: "1.1",
+            effective_date: "2200",
+            appearance_index: 0,
+            astronomy_system_id: null,
+          },
+          {
+            location_id: "location:new",
+            source_chapter: "1.2",
+            effective_date: "2201",
+            appearance_index: 0,
+            astronomy_system_id: null,
+          },
+        ]}
+        sectionState={{ overview: true, lineage: false, travelHistory: true }}
+      />,
+    );
+
+    expect(
+      screen.getByRole("button", { name: "Travel history" }),
+    ).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("list")).toHaveTextContent("New place");
+    expect(screen.getByRole("list")).toHaveTextContent("Old place");
+    await user.click(screen.getByRole("button", { name: "New place" }));
+    expect(onSelect).toHaveBeenCalledWith({
+      kind: "narrative",
+      id: "location:new",
+    });
+    await user.click(
+      screen.getByRole("button", {
+        name: "Travel appearance chapter: Chapter 1.2",
+      }),
+    );
+    expect(onChapterSelect).toHaveBeenCalledWith("1.2");
   });
 
   it("renders astronomy distances and coordinates only in light-years", () => {

@@ -33,6 +33,11 @@ const empty: ReaderProgress = {
   timelineZoom: 1,
   timelinePan: 0,
   browserGroups: defaultBrowserGroupState(),
+  characterInspectorSections: {
+    overview: true,
+    lineage: false,
+    travelHistory: false,
+  },
 };
 
 describe("reader progress", () => {
@@ -86,6 +91,11 @@ describe("reader progress", () => {
         ...defaultBrowserGroupState(),
         characters: false,
       },
+      characterInspectorSections: {
+        overview: false,
+        lineage: true,
+        travelHistory: true,
+      },
     };
     persistReaderProgress(saved);
     expect(
@@ -93,6 +103,20 @@ describe("reader progress", () => {
     ).toEqual(saved);
     window.localStorage.setItem("bobiverse.app-state.v1", "{not json");
     expect(loadReaderProgress(chapters, [])).toEqual(empty);
+  });
+
+  it("normalizes malformed character-inspector disclosure preferences", () => {
+    expect(
+      normalizeReaderProgress(
+        {
+          furthestChapterRead: "1.1",
+          viewChapter: "1.1",
+          characterInspectorSections: { overview: false, lineage: "yes" },
+        },
+        chapters,
+        [],
+      ).characterInspectorSections,
+    ).toEqual({ overview: false, lineage: false, travelHistory: false });
   });
 
   it("keeps timeline panning within the normalized visible-content range", () => {

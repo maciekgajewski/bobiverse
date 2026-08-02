@@ -1,6 +1,6 @@
 # BOB-20260802-9DD2D7: character travel history
 
-Status: Ready
+Status: Done
 Phase: 3 (character histories and travel tools)
 Last updated: 2026-08-02
 
@@ -20,8 +20,10 @@ moves the reader view to that chapter through the existing guarded Chapter-mode
 transition. The date is informational.
 
 The character's mapped interstellar movements appear simultaneously on the true-scale
-star map as restrained luminous cyan-blue route segments inspired by the atmosphere
-of the approved desktop concept. The visually most recent rendered segment is
+star map as layered luminous cyan-blue route beams inspired by the navigational
+network atmosphere of the approved desktop concept. Subtle light pulses move from
+departure to arrival; reduced-motion presentation replaces movement with static
+direction chevrons. The visually most recent rendered segment is
 brightest and older segments progressively fade. A leg's arrival appearance supplies
 its visual age: definite story chronology wins, with chapter order used only as a
 stable presentation fallback. Only movement between different stellar systems creates
@@ -114,8 +116,11 @@ runtime astronomy lookup.
     repeated-segment presentation. It never establishes travel adjacency, creates a
     leg, changes route continuity, or becomes narrative chronology. The visually
     newest leg has the strongest cyan-blue glow and progressively older legs fade.
-    Lines are static, non-interactive, non-raycastable, and subordinate to star
-    markers, captions, selection, and active states.
+    Route beams layer a diffuse aura, restrained glow, sharp core, and sparse animated
+    light pulses moving from departure to arrival. Reduced-motion presentation removes
+    pulse animation and supplies static direction chevrons. Every layer remains
+    non-interactive, non-raycastable, and subordinate to star markers, captions,
+    selection, and active states.
 14. The desktop concept specifies atmosphere only. The implementation uses original
     project-owned styling and does not copy its illustrative geometry or assets.
 15. Only a currently selected eligible character displays a route. Clearing or
@@ -132,6 +137,11 @@ runtime astronomy lookup.
 18. Route geometry is not an interaction surface. Location selection and chapter
     navigation remain available through ordinary DOM controls in the list, including
     when WebGL is unavailable.
+19. Historical travel endpoints for every eligible character are derived once per
+    reader projection. Changing only the selected character performs an indexed
+    history lookup and leg derivation; it must not regenerate a narrative world per
+    appearance or block the main thread proportionally to the selected character's
+    stop count.
 
 ## In scope
 
@@ -151,8 +161,12 @@ runtime astronomy lookup.
   controls plus informational date text.
 - Extend the existing `bobiverse.app-state.v1` preference model with normalized
   character-inspector section expansion state and preserve unrelated stored fields.
-- Render static, non-pickable, true-coordinate route geometry for the selected
-  character in the ordinary interstellar map view.
+- Render non-pickable, true-coordinate layered route geometry for the selected
+  character in the ordinary interstellar map view, with directional light pulses and
+  reduced-motion static chevrons.
+- Prederive all character histories and historical endpoints once per reader
+  projection so selection changes are indexed lookups rather than per-stop world
+  reconstruction.
 - Define route colour, glow, width, opacity progression, depth behavior, and marker
   hierarchy using existing design tokens where possible.
 - Add domain, persistence, component, map-rendering, accessibility, responsive,
@@ -170,8 +184,9 @@ runtime astronomy lookup.
   historical stop, or retaining a continuous route across an unmapped, indeterminate,
   tied, or incomparable stop adjacency.
 - Intra-system paths among stars, planets, moons, stations, or other descendants.
-- Per-leg distance labels, measurements, duration, speed, vehicle, direction arrows,
-  animation, hover tooltips, selection, or a dedicated leg inspector.
+- Per-leg distance labels, measurements, duration, speed, vehicle, interactive route
+  controls, hover tooltips, selection, or a dedicated leg inspector. Direction
+  indication is limited to the accepted pulses and reduced-motion chevrons.
 - Parallel or offset geometry for repeated traversals.
 - A full-screen character chronicle, playback mode, route filtering, or comparison
   between characters.
@@ -222,9 +237,11 @@ runtime astronomy lookup.
     wins; canonical chapter order supplies a stable fallback for tied or incomparable
     arrivals. The resulting visually newest unique leg is brightest and older legs
     fade monotonically. This fallback affects only styling and repeated-segment
-    presentation, never geometry or narrative chronology. All lines remain restrained
-    cyan-blue, static, non-raycastable, and subordinate to system markers, captions,
-    active rings, selection frames, and hover feedback.
+    presentation, never geometry or narrative chronology. All route layers remain
+    restrained cyan-blue, non-raycastable, and subordinate to system markers,
+    captions, active rings, selection frames, and hover feedback. Sparse light pulses
+    move from departure to arrival; reduced-motion mode replaces them with static
+    direction chevrons without changing geometry.
 13. Route appearance is original but visibly aligned with the approved desktop
     concept's fine luminous blue connection treatment. It remains legible without
     overwhelming the map in the canonical dense real-data fixture.
@@ -248,7 +265,9 @@ runtime astronomy lookup.
     ancestry; repeated-leg deduplication with definite and incomparable traversals;
     arrival-based brightness with chapter fallback; proof that the fallback cannot
     create geometry; projection changes; persistence normalization;
-    wide/compact rendering; navigation; and route removal.
+    wide/compact rendering; navigation; route removal; animated pulse direction;
+    reduced-motion chevrons; and proof that character selection does not regenerate a
+    narrative world per stop.
 20. Automated browser coverage exercises the shared desktop and compact workflows in
     Chromium, Firefox, and WebKit. Manual review covers real-browser route hierarchy,
     long-list scrolling, 200% desktop zoom, compact panels, reduced motion, dense
@@ -272,9 +291,30 @@ git diff --check
 ```
 
 During implementation, add a focused Playwright invocation for the travel-history
-scenario and record it here using the exact final test title or grep expression.
+scenario and record it here using the exact final test title or grep expression:
+
+```bash
+npm run test:e2e -- --grep "character lineage and travel history are responsive and support navigation"
+npm run performance:travel
+```
 Manual visual acceptance by the Captain is required before this task may become
 `Done`.
+
+## Implementation evidence
+
+- `python3 scripts/tasks.py check`, formatting, lint, type checking, the production
+  data/narrative build, and `git diff --check` pass on 2026-08-02.
+- The unit and component suite passes with 25 files and 198 tests.
+- The focused direction/reduced-motion browser regression passes in Chromium,
+  Firefox, and WebKit.
+- The warmed production selection benchmark passes with a 73.6 ms median and
+  74.7 ms maximum against the 100 ms median and 150 ms maximum budgets on Chromium
+  149 running on the Ryzen 5 5600 development host.
+- The full browser run passes 66 of 69 cases. Its only failure is the existing
+  `Solar System enters and exits the fixed system mode` Alpha Centauri label
+  assertion in Chromium, Firefox, and WebKit; all character-travel scenarios pass.
+- Independent implementation closure review reports `No findings.` The Captain
+  completed and approved manual visual acceptance on 2026-08-02.
 
 ## Generated-artifact expectations
 

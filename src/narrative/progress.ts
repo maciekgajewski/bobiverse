@@ -32,6 +32,39 @@ export interface ReaderProgress {
   timelineZoom: number;
   timelinePan: number;
   browserGroups: BrowserGroupState;
+  characterInspectorSections: CharacterInspectorSectionState;
+}
+
+export interface CharacterInspectorSectionState {
+  overview: boolean;
+  lineage: boolean;
+  travelHistory: boolean;
+}
+
+export function defaultCharacterInspectorSectionState(): CharacterInspectorSectionState {
+  return { overview: true, lineage: false, travelHistory: false };
+}
+
+export function normalizeCharacterInspectorSectionState(
+  candidate: unknown,
+): CharacterInspectorSectionState {
+  const record =
+    candidate && typeof candidate === "object" && !Array.isArray(candidate)
+      ? (candidate as Record<string, unknown>)
+      : {};
+  const defaults = defaultCharacterInspectorSectionState();
+  return {
+    overview:
+      typeof record.overview === "boolean"
+        ? record.overview
+        : defaults.overview,
+    lineage:
+      typeof record.lineage === "boolean" ? record.lineage : defaults.lineage,
+    travelHistory:
+      typeof record.travelHistory === "boolean"
+        ? record.travelHistory
+        : defaults.travelHistory,
+  };
 }
 
 const storageKey = "bobiverse.app-state.v1";
@@ -43,6 +76,7 @@ const defaultProgress: ReaderProgress = {
   timelineZoom: 1,
   timelinePan: 0,
   browserGroups: defaultBrowserGroupState(),
+  characterInspectorSections: defaultCharacterInspectorSectionState(),
 };
 
 function knownChapter(
@@ -78,6 +112,9 @@ export function normalizeReaderProgress(
     return {
       ...defaultProgress,
       browserGroups: normalizeBrowserGroupState(record.browserGroups),
+      characterInspectorSections: normalizeCharacterInspectorSectionState(
+        record.characterInspectorSections,
+      ),
     };
   const requestedView = knownChapter(chapters, record.viewChapter);
   const view =
@@ -119,6 +156,9 @@ export function normalizeReaderProgress(
     timelineZoom: zoom,
     timelinePan: pan,
     browserGroups: normalizeBrowserGroupState(record.browserGroups),
+    characterInspectorSections: normalizeCharacterInspectorSectionState(
+      record.characterInspectorSections,
+    ),
   };
 }
 
@@ -189,6 +229,9 @@ export function returnToZeroState(current?: ReaderProgress): ReaderProgress {
     browserGroups: current
       ? { ...current.browserGroups }
       : defaultBrowserGroupState(),
+    characterInspectorSections: current
+      ? { ...current.characterInspectorSections }
+      : defaultCharacterInspectorSectionState(),
   };
 }
 

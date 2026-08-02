@@ -25,4 +25,9 @@ interface Bob034MapPerformanceBridge {
 
 interface Window {
   __bob034MapPerformance?: Bob034MapPerformanceBridge;
+  __bobTravelRoutePresentation?: {
+    legCount: number;
+    pulseLayers: number;
+    chevrons: number;
+  };
 }

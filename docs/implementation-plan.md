@@ -291,9 +291,10 @@ Candidate slices, each requiring its own task:
   textures, role-validated optional dedicated surface assets, responsive composition,
   active-location guidance without automatic timeline motion, browser-Back exit, and
   reduced-motion and DOM-accessible equivalents.
-- Character history using the Phase 2 searchable object browser.
+- Character history using the Phase 2 searchable object browser, including explicit
+  appearance-only travel stops and true-scale, route-breaking interstellar legs.
 - Stellar-system and planet chronicle using the Phase 2 searchable object browser.
-- Character travel path and per-leg measurements.
+- Per-leg measurements.
 - System chronicle.
 - Bob genealogical tree.
 - Show a compact direct-parent-first ancestor list in the shared character inspector.

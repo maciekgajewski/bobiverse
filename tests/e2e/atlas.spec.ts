@@ -404,7 +404,7 @@ test("compact inspector stays inside the viewport", async ({ page }) => {
   expect(bounds.bottom).toBeLessThanOrEqual(700.01);
 });
 
-test("character ancestry is ordered, responsive, and links to the birth chapter", async ({
+test("character lineage and travel history are responsive and support navigation", async ({
   page,
 }) => {
   await page.addInitScript(() => {
@@ -442,8 +442,11 @@ test("character ancestry is ordered, responsive, and links to the birth chapter"
       viewport.width < 1200
         ? page.getByRole("dialog", { name: "Selected object" })
         : page.getByRole("complementary", { name: "Object inspector" });
+    const lineage = inspector.getByRole("button", { name: "Lineage" });
+    await expect(lineage).toHaveAttribute("aria-expanded", "false");
+    await lineage.click();
     await expect(
-      inspector.getByRole("heading", { name: "Ancestors" }),
+      inspector.getByRole("heading", { name: "Lineage" }),
     ).toBeVisible();
     await expect(inspector.locator(".ancestor-name")).toHaveText([
       "Bill",
@@ -480,6 +483,15 @@ test("character ancestry is ordered, responsive, and links to the birth chapter"
     await expect(inspector.locator(".ancestor-copy").first()).toContainText(
       "Chapter 1.17 · 2145",
     );
+    const travelHistory = inspector.getByRole("button", {
+      name: "Travel history",
+    });
+    await expect(travelHistory).toHaveAttribute("aria-expanded", "false");
+    await travelHistory.click();
+    await expect(travelHistory).toHaveAttribute("aria-expanded", "true");
+    await expect(inspector.locator(".travel-history")).toContainText(
+      "Epsilon Eridani",
+    );
     const overflow = await inspector.evaluate(
       (element) => element.scrollWidth - element.clientWidth,
     );
@@ -491,6 +503,48 @@ test("character ancestry is ordered, responsive, and links to the birth chapter"
       .click();
     await expect(inspector.getByText("Book 1 · Chapter 17")).toBeVisible();
   }
+});
+
+test("character routes expose animated direction and reduced-motion chevrons", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    window.localStorage.setItem(
+      "bobiverse.app-state.v1",
+      JSON.stringify({
+        furthestChapterRead: "1.21",
+        viewChapter: "1.21",
+        displayDate: "2157",
+        mode: "chapter",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+  });
+  await page.goto("/");
+  await page.getByRole("button", { name: /^Bob Last active/ }).click();
+  await page.waitForFunction(
+    () => (window.__bobTravelRoutePresentation?.legCount ?? 0) > 0,
+  );
+  const animated = await page.evaluate(
+    () => window.__bobTravelRoutePresentation!,
+  );
+  expect(animated.legCount).toBeGreaterThan(0);
+  expect(animated.pulseLayers).toBe(animated.legCount);
+  expect(animated.chevrons).toBe(0);
+
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.waitForFunction(() => {
+    const route = window.__bobTravelRoutePresentation;
+    return Boolean(
+      route && route.pulseLayers === 0 && route.chevrons === route.legCount * 2,
+    );
+  });
+
+  await page.getByRole("button", { name: /^Earth Active$/ }).click();
+  await page.waitForFunction(
+    () => window.__bobTravelRoutePresentation === undefined,
+  );
 });
 
 test("compact chapter inspection shares relationships and focus behavior", async ({

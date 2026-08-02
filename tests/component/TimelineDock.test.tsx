@@ -37,6 +37,11 @@ const progress: ReaderProgress = {
   timelineZoom: 1,
   timelinePan: 0,
   browserGroups: defaultBrowserGroupState(),
+  characterInspectorSections: {
+    overview: true,
+    lineage: false,
+    travelHistory: false,
+  },
 };
 const noDateSources = new Map<string, readonly string[]>();
 
