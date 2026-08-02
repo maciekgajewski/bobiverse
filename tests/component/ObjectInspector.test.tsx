@@ -320,6 +320,74 @@ describe("object inspector", () => {
     expect(screen.queryByText(/current location/i)).not.toBeInTheDocument();
   });
 
+  it("renders direct-parent-first ancestor links with independent chapter and date metadata", async () => {
+    const user = userEvent.setup();
+    const onSelect = vi.fn();
+    const onChapterSelect = vi.fn();
+    const entities: NarrativeEntity[] = [
+      {
+        id: "character:child",
+        entity_type: "character",
+        name: "Child",
+        parent_id: "character:parent",
+      },
+      {
+        id: "character:parent",
+        entity_type: "character",
+        name: "Parent",
+        parent_id: "character:grandparent",
+        birth_chapter: "1.7",
+      },
+      {
+        id: "character:grandparent",
+        entity_type: "character",
+        name: "Grandparent",
+        birth_date: "2100.2",
+      },
+    ];
+    render(
+      <ObjectInspector
+        selection={{ kind: "narrative", id: "character:child" }}
+        narrativeItem={item(entities[0]!)}
+        world={{ ...world, entities }}
+        systems={[]}
+        assets={{ assets: [] }}
+        onSelect={onSelect}
+        onChapterSelect={onChapterSelect}
+      />,
+    );
+
+    expect(
+      screen.getByRole("heading", { name: "Ancestors" }),
+    ).toBeInTheDocument();
+    const names = screen
+      .getAllByRole("button", { name: /^Character:/ })
+      .map((button) => button.textContent);
+    expect(names).toEqual(["Parent", "Grandparent"]);
+    expect(screen.getByText("2100")).toBeInTheDocument();
+    const parentLink = screen.getByRole("button", {
+      name: "Character: Parent",
+    });
+    const chapterLink = screen.getByRole("button", {
+      name: "Birth or cloning chapter for Parent: Chapter 1.7",
+    });
+    await user.tab();
+    expect(parentLink).toHaveFocus();
+    await user.keyboard("{Enter}");
+    expect(onSelect).toHaveBeenCalledWith({
+      kind: "narrative",
+      id: "character:parent",
+    });
+    await user.tab();
+    expect(chapterLink).toHaveFocus();
+    await user.keyboard(" ");
+    expect(onChapterSelect).toHaveBeenCalledWith("1.7");
+    await user.tab();
+    expect(
+      screen.getByRole("button", { name: "Character: Grandparent" }),
+    ).toHaveFocus();
+  });
+
   it("renders astronomy distances and coordinates only in light-years", () => {
     expect(nearbySystems).not.toBeNull();
     if (!nearbySystems) throw new Error("Fixture dataset failed validation");

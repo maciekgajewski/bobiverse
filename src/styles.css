@@ -968,6 +968,60 @@ h2 {
   font-size: 0.78rem;
   line-height: 1.55;
 }
+.ancestor-lineage ul {
+  display: grid;
+  gap: 0.1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ancestor-lineage li {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 0.5rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  padding: 0.48rem 0.5rem;
+  color: #b8c9df;
+}
+.ancestor-lineage li + li {
+  margin-top: 0.65rem;
+}
+.ancestor-arrow {
+  position: absolute;
+  top: -0.68rem;
+  left: 50%;
+  color: var(--accent-cyan);
+  font-size: 0.66rem;
+  font-weight: 800;
+  line-height: 1;
+  text-shadow: 0 0 0.4rem rgb(118 207 226 / 45%);
+  transform: translateX(-50%);
+}
+.ancestor-lineage li:hover {
+  background: #15243b;
+}
+.ancestor-copy {
+  display: grid;
+  min-width: 0;
+  gap: 0.12rem;
+}
+.ancestor-copy .ancestor-name {
+  width: fit-content;
+  color: inherit;
+  font-size: 0.75rem;
+  text-align: left;
+}
+.ancestor-copy small {
+  color: #7890ad;
+  font-size: 0.58rem;
+}
+.ancestor-copy .ancestor-chapter {
+  color: #8fcde1;
+  font-size: inherit;
+}
 .inspector-picture {
   display: block;
   width: min(100%, 16rem);

@@ -205,6 +205,7 @@ the identical listing below documents its shared definitions.
           "uniqueItems": true
         },
         "birth_date": { "$ref": "#/$defs/date" },
+        "birth_chapter": { "$ref": "#/$defs/chapter" },
         "death_date": { "$ref": "#/$defs/date" },
         "death_event_id": { "$ref": "#/$defs/event_id" }
       },
@@ -237,6 +238,9 @@ the identical listing below documents its shared definitions.
         "birth_date": {
           "anyOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }]
         },
+        "birth_chapter": {
+          "anyOf": [{ "$ref": "#/$defs/chapter" }, { "type": "null" }]
+        },
         "death_date": {
           "anyOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }]
         },
@@ -253,6 +257,7 @@ the identical listing below documents its shared definitions.
         { "required": ["picture_id"] },
         { "required": ["aliases"] },
         { "required": ["birth_date"] },
+        { "required": ["birth_chapter"] },
         { "required": ["death_date"] },
         { "required": ["death_event_id"] }
       ],
@@ -1720,6 +1725,7 @@ are a canonical `character:` ID and a nonempty reader-visible `name`.
 | `picture_id`     | optional `asset_id`                       | Chapter-controlled assignment of a manually curated image asset.                        |
 | `aliases`        | optional array of unique nonempty strings | Additional reader-visible names that become searchable only when introduced or updated. |
 | `birth_date`     | optional `date`                           | Known birth date at the available story-time precision.                                 |
+| `birth_chapter`  | optional `chapter`                        | Chapter that explicitly depicts or establishes the character's birth or cloning.        |
 | `death_date`     | optional `date`                           | Known death date at the available story-time precision.                                 |
 | `death_event_id` | optional `event_id`                       | Reference to the event that records the death.                                          |
 
@@ -1730,6 +1736,15 @@ character introduction or update must not use a reference until its target entit
 been seeded or introduced. When both `death_date` and the referenced event's own
 `date` are present, their canonical values must be identical. No ordering comparison is
 imposed between `birth_date` and `death_date`.
+
+`birth_chapter` is allowed only on chapter-authored characters. It names the current
+or an earlier canonical chapter whose structured facts explicitly place the birth or
+cloning there; it is not an introduction- or reveal-provenance shortcut. For a
+replicant, an explicitly initial activation qualifies only when the same facts identify
+it as the newly created identity's first activation. Reactivation, restart, transfer,
+recovery, or bringing an existing identity online does not qualify. Zero-state
+characters cannot carry the field. Later updates may set, replace, or clear it, and
+the effective value follows ordinary reader/story-time projection.
 
 `parent_id` uses the same character model for replicant lineage and biological
 genealogy. It identifies one direct source parent: for a replicant, the character
@@ -1742,6 +1757,11 @@ resolve only against zero state, earlier chapters, or earlier introductions in t
 same chapter. The model intentionally imposes no cycle check, character-type
 restriction, multiple-parent form, creator field, or authored reverse child list.
 Consumers may derive reverse genealogy from the effective forward references.
+
+Inspector consumers may derive a selected character's direct-parent-first ancestor
+chain from the effective projected `parent_id` values. Traversal stops at a missing
+parent or repeated ID. `birth_chapter` and `birth_date` remain independent optional
+metadata; neither is inferred from the other.
 
 `current_state` does not establish a character location. A character location is only
 confirmed by an appearance with an effective location. From reader-visible appearances

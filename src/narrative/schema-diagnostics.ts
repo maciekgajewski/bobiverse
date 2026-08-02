@@ -52,6 +52,7 @@ const entityProperties = {
     "picture_id",
     "aliases",
     "birth_date",
+    "birth_chapter",
     "death_date",
     "death_event_id",
   ]),

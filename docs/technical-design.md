@@ -768,6 +768,23 @@ projection rules. The canonical model stores only the forward reference. It does
 enforce acyclicity, restrict character types, represent multiple parents or creators,
 or author reverse child lists.
 
+Chapter-authored characters may additionally carry optional `birth_chapter`. It
+references the current or an earlier canonical chapter only when the already-reviewed
+structured facts explicitly place the character's birth or cloning there. An initial
+replicant activation qualifies only when it is explicitly the newly created identity's
+first activation; later activation, restart, transfer, or recovery does not. The field
+is invalid in zero state, is independently optional from `birth_date`, and follows
+ordinary set, replace, clear, reader-order, and story-time projection semantics.
+
+For a selected character with a projected parent, the shared wide and compact
+inspector derives a linear direct-parent-first ancestor list from the current
+`NarrativeWorld`. It stops at missing or repeated IDs and never reads raw chapter
+source or applies a second visibility filter. Each name traverses the existing
+inspector selection history. An available birth-chapter link uses the centralized
+chapter transition: it switches to Chapter mode, moves `viewChapter` within the
+existing spoiler ceiling, opens that chapter inspector, and never changes
+`furthestChapterRead`. Birth dates remain informational.
+
 The normal development, test, and build paths first generate the ignored
 `generated/narrative/chapter-manifest.json` from authored chapter paths. The manifest
 contains only ordered chapter references and paths. The static runtime resolves bundled

@@ -655,8 +655,18 @@ export default function App() {
   };
   const selectTimelineChapter = (chapter: string) => {
     const next = selectKnowledgeChapter(progress, chapter, narrativeChapters);
-    if (next === progress) return;
-    updateProgress(next, { kind: "chapter", id: chapter });
+    const chapterSelection: SelectionIdentity = {
+      kind: "chapter",
+      id: chapter,
+    };
+    if (next === progress) {
+      if (progress.mode !== "chapter" || progress.viewChapter !== chapter)
+        return;
+      setSelection(chapterSelection);
+      setInspectorHistory(rootInspectorHistory(chapterSelection));
+    } else {
+      updateProgress(next, chapterSelection);
+    }
     setSelectionStatus(`Chapter ${chapter} selected.`);
     if (
       typeof window.matchMedia === "function" &&
@@ -951,6 +961,7 @@ export default function App() {
             onBack={() => navigateInspectorHistory(-1)}
             onForward={() => navigateInspectorHistory(1)}
             onSelect={selectInspectorRelationship}
+            onChapterSelect={selectTimelineChapter}
             systemEntry={selectedSystemEntry}
             enteredSystem={enteredSystem}
             onEnterSystem={enterSystemMode}
@@ -1044,6 +1055,7 @@ export default function App() {
                 onBack={() => navigateInspectorHistory(-1)}
                 onForward={() => navigateInspectorHistory(1)}
                 onSelect={selectInspectorRelationship}
+                onChapterSelect={selectTimelineChapter}
                 systemEntry={selectedSystemEntry}
                 enteredSystem={enteredSystem}
                 onEnterSystem={enterSystemMode}

@@ -10,6 +10,8 @@
       "name": "Riker",
       "aliases": ["Bob-2"],
       "parent_id": "character:bob-replicant",
+      "birth_chapter": "1.17",
+      "birth_date": "2145",
       "current_state": "Newly activated and considering a distant Sol fly-by to listen for radio traffic while planning another copy."
     },
     {
@@ -21,6 +23,8 @@
       "name": "Bill",
       "aliases": ["Bob-3"],
       "parent_id": "character:bob-replicant",
+      "birth_chapter": "1.17",
+      "birth_date": "2145",
       "current_state": "Newly activated and planning to remain at Epsilon Eridani to oversee production, monitor for Earth signals, and research subspace theory."
     },
     {
@@ -28,6 +32,8 @@
       "name": "Milo",
       "aliases": ["Bob-4"],
       "parent_id": "character:bob-replicant",
+      "birth_chapter": "1.17",
+      "birth_date": "2145",
       "current_state": "Newly activated; he declines to accompany Riker near Earth and is preparing to leave for a selected destination system."
     },
     {
@@ -35,6 +41,8 @@
       "name": "Mario",
       "aliases": ["Bob-5"],
       "parent_id": "character:bob-replicant",
+      "birth_chapter": "1.17",
+      "birth_date": "2145",
       "current_state": "Newly activated and nearly ready to leave for a selected destination system."
     },
     {

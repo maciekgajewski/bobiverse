@@ -92,6 +92,29 @@ export interface NarrativeWorld {
   };
 }
 
+export function characterAncestors(
+  world: NarrativeWorld,
+  characterId: string,
+): NarrativeEntity[] {
+  const characters = new Map(
+    world.entities
+      .filter((entity) => entity.entity_type === "character")
+      .map((entity) => [entity.id, entity]),
+  );
+  const ancestors: NarrativeEntity[] = [];
+  const visited = new Set<string>([characterId]);
+  let current = characters.get(characterId);
+  while (current && typeof current.parent_id === "string") {
+    if (visited.has(current.parent_id)) break;
+    const parent = characters.get(current.parent_id);
+    if (!parent) break;
+    visited.add(parent.id);
+    ancestors.push(parent);
+    current = parent;
+  }
+  return ancestors;
+}
+
 const schemaId = "https://bobiverse.local/schema/narrative-data-model.json";
 const solarOrbitalIds = [
   "location:mercury",
@@ -663,6 +686,13 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
     corpus.zeroState,
     corpus.knownAstronomyObjectIds,
   );
+  for (const entity of zeroStateEntities) {
+    if (Object.hasOwn(entity, "birth_chapter")) {
+      throw new Error(
+        `Zero-state character ${entity.id} cannot define birth_chapter.`,
+      );
+    }
+  }
   const assets = corpus.assets.assets;
   const assetIds = new Set<string>();
   const assetPaths = new Set<string>();
@@ -729,6 +759,14 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
         `Introduction ${entityId}`,
       );
       if (
+        typeof introduced.birth_chapter === "string" &&
+        !chapterIds.has(introduced.birth_chapter)
+      ) {
+        throw new Error(
+          `Introduction ${entityId} references unavailable birth chapter ${introduced.birth_chapter}.`,
+        );
+      }
+      if (
         typeof introduced.astronomy_object_id === "string" &&
         !corpus.knownAstronomyObjectIds.includes(introduced.astronomy_object_id)
       ) {
@@ -783,6 +821,14 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
       if (updatedIds.has(targetId))
         throw new Error(`Chapter ${id} has multiple updates for ${targetId}.`);
       updatedIds.add(targetId);
+      if (
+        typeof update.birth_chapter === "string" &&
+        !chapterIds.has(update.birth_chapter)
+      ) {
+        throw new Error(
+          `Update ${targetId} references unavailable birth chapter ${update.birth_chapter}.`,
+        );
+      }
       const { parent_id: parentId, ...updateWithoutParent } = update;
       assertReferencesResolve(
         updateWithoutParent,

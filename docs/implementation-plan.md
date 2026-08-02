@@ -296,6 +296,11 @@ Candidate slices, each requiring its own task:
 - Character travel path and per-leg measurements.
 - System chronicle.
 - Bob genealogical tree.
+- Show a compact direct-parent-first ancestor list in the shared character inspector.
+  Derive it from the selected reader-safe projection, display independently known
+  birth/cloning chapters and dates, and route chapter links through ordinary Chapter-
+  mode navigation without changing reader progress. This contextual list does not
+  replace the later branching Bob genealogical-tree tool.
 - Deep links that preserve chapter context without leaking hidden names in metadata.
 
 Each tool must consume the centralized visibility service. A tool is not complete if
@@ -305,6 +310,10 @@ The narrative foundation supplies an optional spoiler-projected character
 `parent_id` for both replicant and biological lineage. Genealogy tools derive reverse
 child relationships from the selected reader-safe projection; they do not author a
 second relationship graph or add an independent visibility filter.
+
+An optional projected `birth_chapter` records only an explicitly established actual
+birth or cloning chapter. It is not inferred from introduction, activity, or date
+matching and is invalid in zero state.
 
 ## 8. Phase 4: LLM-assisted editorial pipeline
 

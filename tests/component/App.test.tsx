@@ -420,6 +420,103 @@ describe("atlas shell", () => {
     ).toBeInTheDocument();
   });
 
+  it.each(["chapter", "date"] as const)(
+    "opens an ancestor birth chapter from %s mode without changing the spoiler ceiling",
+    async (mode) => {
+      window.localStorage.setItem(
+        "bobiverse.app-state.v1",
+        JSON.stringify({
+          furthestChapterRead: "1.20",
+          viewChapter: "1.20",
+          displayDate: "2145",
+          mode,
+          timelineZoom: 1,
+          timelinePan: 0,
+        }),
+      );
+      const user = userEvent.setup();
+      render(<App />);
+      const search = screen.getByRole("searchbox", {
+        name: "Search visible objects",
+      });
+      await user.type(search, "Garfield");
+      await user.click(
+        screen.getByRole("button", { name: /^Garfield(?:Active)?$/ }),
+      );
+      const inspector = screen.getByRole("complementary", {
+        name: "Object inspector",
+      });
+      expect(
+        within(inspector)
+          .getByRole("button", {
+            name: "Birth or cloning chapter for Bill: Chapter 1.17",
+          })
+          .closest(".ancestor-copy"),
+      ).toHaveTextContent("Chapter 1.17 · 2145");
+      await user.click(
+        within(inspector).getByRole("button", {
+          name: "Birth or cloning chapter for Bill: Chapter 1.17",
+        }),
+      );
+
+      expect(
+        within(inspector).getByText("Book 1 · Chapter 17"),
+      ).toBeInTheDocument();
+      const stored = JSON.parse(
+        window.localStorage.getItem("bobiverse.app-state.v1")!,
+      ) as Record<string, unknown>;
+      expect(stored).toMatchObject({
+        furthestChapterRead: "1.20",
+        viewChapter: "1.17",
+        mode: "chapter",
+      });
+    },
+  );
+
+  it("keeps ancestor-name traversal in inspector Back and Forward history", async () => {
+    window.localStorage.setItem(
+      "bobiverse.app-state.v1",
+      JSON.stringify({
+        furthestChapterRead: "1.20",
+        viewChapter: "1.20",
+        displayDate: "2145",
+        mode: "chapter",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+    const user = userEvent.setup();
+    render(<App />);
+    const search = screen.getByRole("searchbox", {
+      name: "Search visible objects",
+    });
+    await user.type(search, "Garfield");
+    await user.click(
+      screen.getByRole("button", { name: /^Garfield(?:Active)?$/ }),
+    );
+    const inspector = screen.getByRole("complementary", {
+      name: "Object inspector",
+    });
+    await user.click(
+      within(inspector).getByRole("button", { name: "Character: Bill" }),
+    );
+    expect(
+      within(inspector).getByRole("heading", { name: "Bill" }),
+    ).toBeInTheDocument();
+    const back = within(inspector).getByRole("button", { name: "Back" });
+    const forward = within(inspector).getByRole("button", { name: "Forward" });
+    expect(back).toBeEnabled();
+    await user.click(back);
+    expect(
+      within(inspector).getByRole("heading", { name: "Garfield" }),
+    ).toBeInTheDocument();
+    expect(forward).toBeEnabled();
+    await user.click(forward);
+    expect(
+      within(inspector).getByRole("heading", { name: "Bill" }),
+    ).toBeInTheDocument();
+  });
+
   it("cannot retain chapter detail after the spoiler ceiling is lowered past it", async () => {
     window.localStorage.setItem(
       "bobiverse.app-state.v1",

@@ -179,6 +179,7 @@
           "uniqueItems": true
         },
         "birth_date": { "$ref": "#/$defs/date" },
+        "birth_chapter": { "$ref": "#/$defs/chapter" },
         "death_date": { "$ref": "#/$defs/date" },
         "death_event_id": { "$ref": "#/$defs/event_id" }
       },
@@ -211,6 +212,9 @@
         "birth_date": {
           "anyOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }]
         },
+        "birth_chapter": {
+          "anyOf": [{ "$ref": "#/$defs/chapter" }, { "type": "null" }]
+        },
         "death_date": {
           "anyOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }]
         },
@@ -227,6 +231,7 @@
         { "required": ["picture_id"] },
         { "required": ["aliases"] },
         { "required": ["birth_date"] },
+        { "required": ["birth_chapter"] },
         { "required": ["death_date"] },
         { "required": ["death_event_id"] }
       ],

@@ -9,6 +9,7 @@ import type {
   NarrativeRecord,
   NarrativeWorld,
 } from "../narrative/model";
+import { characterAncestors } from "../narrative/model";
 import { SystemDetails } from "./SystemDetails";
 import { ObjectItemBullet } from "./ObjectBrowserIcons";
 import type { SystemViewEntry } from "../system-view";
@@ -113,6 +114,7 @@ function NarrativeDetails({
   assets,
   headingId,
   onSelect,
+  onChapterSelect,
   systemEntry,
   onEnterSystem,
 }: {
@@ -122,6 +124,7 @@ function NarrativeDetails({
   assets: NarrativeRecord;
   headingId: string;
   onSelect: (selection: SelectionIdentity) => void;
+  onChapterSelect: (chapter: string) => void;
   systemEntry: SystemViewEntry | null;
   onEnterSystem: (entry: SystemViewEntry) => void;
 }) {
@@ -155,6 +158,10 @@ function NarrativeDetails({
     typeof id === "string" ? (
       <EntityLink id={id} entities={entities} onSelect={onSelect} />
     ) : null;
+  const ancestors =
+    entity.entity_type === "character"
+      ? characterAncestors(world, entity.id)
+      : [];
   return (
     <section
       className="details narrative-details"
@@ -309,6 +316,55 @@ function NarrativeDetails({
             </Detail>
           )}
       </dl>
+      {ancestors.length > 0 && (
+        <section className="inspector-section ancestor-lineage">
+          <h3>Ancestors</h3>
+          <ul>
+            {ancestors.map((ancestor, index) => {
+              const birthChapter = stringValue(ancestor.birth_chapter);
+              const birthDate = stringValue(ancestor.birth_date);
+              return (
+                <li key={ancestor.id}>
+                  {index > 0 && (
+                    <span className="ancestor-arrow" aria-hidden="true">
+                      ↑
+                    </span>
+                  )}
+                  <ObjectItemBullet active={false} />
+                  <span className="ancestor-copy">
+                    <button
+                      type="button"
+                      className="link-button ancestor-name"
+                      aria-label={`Character: ${String(ancestor.name)}`}
+                      onClick={() =>
+                        onSelect({ kind: "narrative", id: ancestor.id })
+                      }
+                    >
+                      {String(ancestor.name)}
+                    </button>
+                    {(birthChapter || birthDate) && (
+                      <small>
+                        {birthChapter && (
+                          <button
+                            type="button"
+                            className="link-button ancestor-chapter"
+                            aria-label={`Birth or cloning chapter for ${String(ancestor.name)}: Chapter ${birthChapter}`}
+                            onClick={() => onChapterSelect(birthChapter)}
+                          >
+                            Chapter {birthChapter}
+                          </button>
+                        )}
+                        {birthChapter && birthDate && " · "}
+                        {birthDate && displayDate(birthDate)}
+                      </small>
+                    )}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
       {stringValue(entity.description) && (
         <section className="inspector-section">
           <h3>Description</h3>
@@ -567,6 +623,7 @@ export function ObjectInspector({
   onBack = () => undefined,
   onForward = () => undefined,
   onSelect,
+  onChapterSelect = () => undefined,
   systemEntry = null,
   enteredSystem = null,
   onEnterSystem = () => undefined,
@@ -585,6 +642,7 @@ export function ObjectInspector({
   onBack?: () => void;
   onForward?: () => void;
   onSelect: (selection: SelectionIdentity) => void;
+  onChapterSelect?: (chapter: string) => void;
   systemEntry?: SystemViewEntry | null;
   enteredSystem?: StellarSystem | null;
   onEnterSystem?: (entry: SystemViewEntry) => void;
@@ -629,6 +687,7 @@ export function ObjectInspector({
           assets={assets}
           headingId={headingId}
           onSelect={onSelect}
+          onChapterSelect={onChapterSelect}
           systemEntry={systemEntry}
           onEnterSystem={onEnterSystem}
         />

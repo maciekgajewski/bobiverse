@@ -404,6 +404,95 @@ test("compact inspector stays inside the viewport", async ({ page }) => {
   expect(bounds.bottom).toBeLessThanOrEqual(700.01);
 });
 
+test("character ancestry is ordered, responsive, and links to the birth chapter", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    window.localStorage.setItem(
+      "bobiverse.app-state.v1",
+      JSON.stringify({
+        furthestChapterRead: "1.20",
+        viewChapter: "1.20",
+        displayDate: "2145",
+        mode: "chapter",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+  });
+
+  for (const viewport of [
+    { width: 1440, height: 1000 },
+    { width: 900, height: 700 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+    if (viewport.width < 1200) {
+      await page.getByRole("button", { name: "Browse objects" }).click();
+    }
+    const browser =
+      viewport.width < 1200
+        ? page.getByRole("dialog", { name: "Object browser" })
+        : page.getByRole("complementary", { name: "Object browser" });
+    await browser
+      .getByRole("searchbox", { name: "Search visible objects" })
+      .fill("Garfield");
+    await browser.getByRole("button", { name: /Garfield/ }).click();
+    const inspector =
+      viewport.width < 1200
+        ? page.getByRole("dialog", { name: "Selected object" })
+        : page.getByRole("complementary", { name: "Object inspector" });
+    await expect(
+      inspector.getByRole("heading", { name: "Ancestors" }),
+    ).toBeVisible();
+    await expect(inspector.locator(".ancestor-name")).toHaveText([
+      "Bill",
+      "Bob",
+      "Robert Johansson",
+    ]);
+    await expect(inspector.locator(".ancestor-arrow")).toHaveText(["↑", "↑"]);
+    expect(
+      await inspector
+        .locator(".ancestor-arrow")
+        .evaluateAll((arrows) =>
+          arrows.every((arrow) => arrow.getAttribute("aria-hidden") === "true"),
+        ),
+    ).toBe(true);
+    expect(
+      await inspector.locator(".ancestor-arrow").evaluateAll((arrows) =>
+        arrows.every((arrow) => {
+          const row = arrow.closest("li");
+          if (!row) return false;
+          const arrowBounds = arrow.getBoundingClientRect();
+          const rowBounds = row.getBoundingClientRect();
+          const centerOffset = Math.abs(
+            arrowBounds.left +
+              arrowBounds.width / 2 -
+              (rowBounds.left + rowBounds.width / 2),
+          );
+          return (
+            centerOffset <= 1 &&
+            Number(getComputedStyle(arrow).fontWeight) >= 700
+          );
+        }),
+      ),
+    ).toBe(true);
+    await expect(inspector.locator(".ancestor-copy").first()).toContainText(
+      "Chapter 1.17 · 2145",
+    );
+    const overflow = await inspector.evaluate(
+      (element) => element.scrollWidth - element.clientWidth,
+    );
+    expect(overflow).toBeLessThanOrEqual(1);
+    await inspector
+      .getByRole("button", {
+        name: "Birth or cloning chapter for Bill: Chapter 1.17",
+      })
+      .click();
+    await expect(inspector.getByText("Book 1 · Chapter 17")).toBeVisible();
+  }
+});
+
 test("compact chapter inspection shares relationships and focus behavior", async ({
   page,
 }) => {

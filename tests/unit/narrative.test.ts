@@ -16,6 +16,7 @@ import { focusSystemIdForSelection } from "../../src/narrative/map";
 import {
   compareNarrativeDates,
   compareNarrativeMoments,
+  characterAncestors,
   generateNarrativeWorld,
   narrativeSchemaErrors,
   narrativeValidatorCompilationCounts,
@@ -23,6 +24,7 @@ import {
   projectNarrativeChapterDetail,
   validateNarrativeCorpus,
 } from "../../src/narrative/model";
+import type { NarrativeEntity } from "../../src/narrative/model";
 import { createNarrativeFixtureCorpus } from "../fixtures/narrative";
 
 function collectDescriptions(value: unknown): string[] {
@@ -716,6 +718,81 @@ describe("narrative corpus validation and projection", () => {
         (entity) => entity.id === "character:fixture-alex",
       ),
     ).toHaveProperty("parent_id", null);
+  });
+
+  it("validates and projects explicit character birth chapters", () => {
+    const corpus = createNarrativeFixtureCorpus();
+    const introduced = (
+      corpus.chapters[0]!.introducing as Array<Record<string, unknown>>
+    ).find((entity) => entity.id === "character:fixture-alex")!;
+    introduced.birth_chapter = "1.1";
+    corpus.chapters[1]!.updates = [
+      { entity_id: "character:fixture-alex", birth_chapter: null },
+    ];
+
+    expect(() => validateNarrativeCorpus(corpus)).not.toThrow();
+    const prepared = prepareNarrativeCorpus(corpus);
+    expect(
+      generateNarrativeWorld(prepared, "1.1").entities.find(
+        (entity) => entity.id === "character:fixture-alex",
+      )?.birth_chapter,
+    ).toBe("1.1");
+    expect(
+      generateNarrativeWorld(prepared, "1.2").entities.find(
+        (entity) => entity.id === "character:fixture-alex",
+      ),
+    ).toHaveProperty("birth_chapter", null);
+
+    const later = createNarrativeFixtureCorpus();
+    (later.chapters[0]!.introducing as Array<Record<string, unknown>>).find(
+      (entity) => entity.id === "character:fixture-alex",
+    )!.birth_chapter = "1.2";
+    expect(() => validateNarrativeCorpus(later)).toThrow(
+      "Introduction character:fixture-alex references unavailable birth chapter 1.2.",
+    );
+
+    const zeroState = createNarrativeFixtureCorpus();
+    (zeroState.zeroState.entities as Array<Record<string, unknown>>).push({
+      id: "character:fixture-zero",
+      name: "Fixture Zero",
+      birth_chapter: "1.1",
+    });
+    expect(() => validateNarrativeCorpus(zeroState)).toThrow(
+      "Zero-state character character:fixture-zero cannot define birth_chapter.",
+    );
+  });
+
+  it("derives projected ancestors direct-parent-first and stops on cycles", () => {
+    const entities: NarrativeEntity[] = [
+      {
+        id: "character:child",
+        entity_type: "character",
+        name: "Child",
+        parent_id: "character:parent",
+      },
+      {
+        id: "character:parent",
+        entity_type: "character",
+        name: "Parent",
+        parent_id: "character:grandparent",
+      },
+      {
+        id: "character:grandparent",
+        entity_type: "character",
+        name: "Grandparent",
+        parent_id: "character:child",
+      },
+    ];
+    expect(
+      characterAncestors(
+        {
+          entities,
+          activity: [],
+          view: { chapter: "1.1", display_date: null },
+        },
+        "character:child",
+      ).map((entity) => entity.id),
+    ).toEqual(["character:parent", "character:grandparent"]);
   });
 
   it("projects direct entity introductions and later optional-field updates", () => {
