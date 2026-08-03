@@ -367,16 +367,17 @@ request.
 At runtime the map derives this rendered union directly from the validated static
 catalogue, the current reader-safe narrative projection, and the shared configuration;
 there is no separate narrative/astronomy join artifact. Every mapped eligible
-narrative system receives a collision-managed caption but no persistent ring, arc,
-tick, reticle, or bracket. Generated `mapped_system_ancestry` activity makes a system
-active at the selected chapter or date, drawing the distinct static double segmented
-ring and outward tick. These decorations are centred on the canonical node but are
-non-raycastable and do not alter component sprites, coordinates, measurements, focus
-targets, or camera framing. Selected and active captions have collision priority;
-hover reserves its priority slot but uses the tooltip as the sole name surface, so
-the hovered system's map caption is suppressed until hover ends. Other known captions
-may hide and return as the camera changes. Astronomy-only systems have no persistent
-caption.
+narrative system receives a persistent, overlap-aware caption but no persistent ring,
+arc, tick, reticle, or bracket. Generated `mapped_system_ancestry` activity makes a
+system active at the selected chapter or date, drawing the distinct static double
+segmented ring and outward tick. These decorations are centred on the canonical node
+but are non-raycastable and do not alter component sprites, coordinates, measurements, focus
+targets, or camera framing. Screen-space overlap groups use camera depth to keep the
+nearest caption fully opaque and fade deeper captions through `0.65` to a `0.3`
+opacity floor; captions are never collision-suppressed. Selected and active captions
+remain fully opaque. Hover reserves its overlap and depth slot but uses the tooltip as
+the sole name surface, so the hovered system's map caption is suppressed until hover
+ends. Astronomy-only systems have no persistent caption.
 
 The same projection owns the effective system display name. Once a mapped root
 star-system location is reader-visible, its narrative name overrides the astronomy
@@ -456,9 +457,9 @@ same pose while leaving gesture mapping, distance limits, framing, and focus sem
 unchanged.
 
 Clicking empty map space clears the current inspection selection. Selection uses a
-non-obscuring corner frame; the collision-managed caption below the selected marker
-is its sole persistent map-name surface. The frame must not recolor or cover the
-component-marker sprites. Sol has the
+non-obscuring corner frame; the persistent overlap-aware caption below the selected
+marker is its sole persistent map-name surface. The frame must not recolor or cover
+the component-marker sprites. Sol has the
 only persistent, slightly offset marker label in Phase 1 and uses a normal selection
 frame only when explicitly selected. Hovering a marker reveals a screen-size-stable
 tooltip with its name and, when there is a selected system, the Euclidean canonical

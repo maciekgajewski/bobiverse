@@ -248,20 +248,22 @@ access.
 In the pre-book view, verify that the map contains only the configured-radius
 neighbourhood around Sol, not the complete static catalogue. The historical BOB-014
 single-ring treatment is superseded by BOB-034: ordinary narrative-known systems are
-ringless and keep collision-managed captions, while active systems at the selected
-chapter/date retain static nested ellipses and an outward tick. A selected system
-keeps its outer corner frame and collision-managed caption below the marker. Rotate,
-pan, and zoom while creating
-caption collisions:
-selected and active captions must remain visible, while lower-priority known captions
-may hide and reappear. Hover a known and an astronomy-only system: the tooltip must
-be the hovered system's only name surface, the duplicate map caption must be absent,
-nearby captions must not jump underneath the tooltip, and the known caption must
+ringless and keep persistent overlap-aware captions, while active systems at the
+selected chapter/date retain static nested ellipses and an outward tick. A selected
+system keeps its outer corner frame and fully opaque caption below the marker. Rotate, pan,
+and zoom while creating caption collisions: every in-frustum narrative-known caption
+must remain mounted; the nearest caption remains fully opaque, deeper captions step
+through `0.65` to no less than `0.3`, and no caption pops out. Selected and active
+captions remain fully opaque regardless of depth. Hover a known and an astronomy-only
+system: the tooltip must be the hovered system's only name surface, the duplicate map
+caption must be absent, nearby captions must not jump underneath the tooltip, and the known caption must
 return when hover ends. Astronomy-only context markers must have no persistent
 caption or narrative ring. Confirm component colour families, decorative clusters,
 scale, picking, measurements, Galactic backdrop, reset, and reduced-motion focus
-behavior remain unchanged. Known-system captions are plain labels centered below
-their marker; only a hover tooltip receives a bordered surface.
+behavior remain unchanged. Confirm ordinary-motion opacity changes are brief and
+calm, then request reduced motion and confirm the same nonzero opacity states apply
+effectively immediately. Known-system captions are plain labels centered below their
+marker; only a hover tooltip receives a bordered surface.
 
 Search a known nearby astronomy-only system by a preferred name and an alternate
 designation. **Nearby astronomy** must appear only for a nonempty query, contain only

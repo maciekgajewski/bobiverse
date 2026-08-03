@@ -853,6 +853,7 @@ h2 {
   font-weight: 600;
   letter-spacing: 0.01em;
   text-shadow: 0 2px 8px #000;
+  transition: opacity 180ms ease-out;
 }
 .map-tooltip {
   min-width: max-content;

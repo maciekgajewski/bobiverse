@@ -295,15 +295,20 @@ application data or a literal implementation specification.
 
 The selected system and every system active in the selected chapter/date always
 receive captions. A hovered system uses its tooltip as the sole name surface: its
-plain map caption is suppressed until hover ends, while the hovered collision-priority
-slot remains reserved so nearby captions do not jump underneath the tooltip. Other
-narrative-known system captions are shown when they do not collide and reappear as
-the camera moves or zooms. Astronomy-only systems have no persistent caption; hover
-uses the same sole tooltip and selection retains the collision-managed caption below
-its marker.
+plain map caption is suppressed until hover ends, while the hovered overlap slot
+remains reserved so nearby captions keep stable depth treatment. Every other
+caption-eligible narrative-known system remains rendered while it is in the camera
+frustum. Astronomy-only systems have no persistent caption; hover uses the same sole
+tooltip and selection retains the persistent caption below its marker.
 
-Collision handling may suppress a caption but may not move a system marker or distort
-geometry. Keyboard and browser selection remain available when a caption is absent.
+Pairwise caption overlaps use the established `144 × 26` CSS-pixel footprint, with
+transitive overlaps forming one group. Group members sort by projected camera depth,
+nearest first, and stable system ID breaks equal-depth ties. Their opacity progresses
+from `1` to `0.65` and then a `0.3` floor. Selected and active captions remain fully
+opaque regardless of rank. Opacity changes transition briefly under ordinary motion
+preferences and become effectively immediate under reduced motion. Collision
+handling may not move a caption or system marker, distort geometry, or remove an
+eligible caption.
 
 ### 8.4 Selection and focus
 

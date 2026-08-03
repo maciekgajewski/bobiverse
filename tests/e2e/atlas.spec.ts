@@ -912,6 +912,17 @@ test("expressive map states preserve active, hover, and astronomy-only selection
         .click();
     }
 
+    const persistentCaptions = page.locator(".narrative-map-label");
+    await expect.poll(() => persistentCaptions.count()).toBeGreaterThan(1);
+    const captionOpacities = await persistentCaptions.evaluateAll((captions) =>
+      captions.map((caption) =>
+        Number(caption.getAttribute("data-caption-opacity")),
+      ),
+    );
+    expect(
+      captionOpacities.every((opacity) => opacity >= 0.3 && opacity <= 1),
+    ).toBe(true);
+
     const sol = await page.evaluate(() =>
       window.__bob034MapPerformance!.screenPoint("sol"),
     );
@@ -962,6 +973,24 @@ test("expressive map states preserve active, hover, and astronomy-only selection
     await expect(
       inspector.getByRole("button", { name: "Enter system" }),
     ).toHaveCount(0);
+    if (compact) {
+      await inspector.getByRole("button", { name: "Close" }).click();
+    }
+    const astronomyCaption = page
+      .locator(".narrative-map-label")
+      .filter({ hasText: /^Alpha Centauri$/ });
+    await page
+      .getByTestId("star-map-canvas")
+      .click({ position: { x: 100, y: 40 } });
+    expect(await astronomyCaption.count()).toBe(0);
+    const alphaCentauri = await page.evaluate(() =>
+      window.__bob034MapPerformance!.screenPoint("stellar-system-005413"),
+    );
+    await page.mouse.move(alphaCentauri.x, alphaCentauri.y);
+    await expect(page.locator(".map-tooltip")).toContainText("Alpha Centauri");
+    await page.waitForTimeout(150);
+    await page.mouse.move(1, 1);
+    expect(await astronomyCaption.count()).toBe(0);
   }
 });
 

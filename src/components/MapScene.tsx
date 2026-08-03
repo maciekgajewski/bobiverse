@@ -1,6 +1,6 @@
 import { Billboard, Html, Line, OrbitControls, Text } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import {
   AdditiveBlending,
   Color,
@@ -36,7 +36,7 @@ import {
   advanceTravelPulseOffset,
   travelRouteOpacity,
 } from "../domain/travel-route-visual";
-import { resolveCaptionVisibility } from "../domain/caption-visibility";
+import { resolveCaptionOpacities } from "../domain/caption-visibility";
 import notoSansRegularUrl from "../assets/fonts/NotoSans-Regular.ttf?url";
 import {
   NARRATIVE_MARKER_COLOR,
@@ -567,14 +567,14 @@ function CameraController({
   );
 }
 
-function StarMarker({
+const StarMarker = memo(function StarMarker({
   system,
   selected,
   selectedSystem,
   known,
   active,
   hovered,
-  captionVisible,
+  captionOpacity,
   zoomed,
   entered,
   interactionLocked,
@@ -586,7 +586,7 @@ function StarMarker({
   known: boolean;
   active: boolean;
   hovered: boolean;
-  captionVisible: boolean;
+  captionOpacity: number | undefined;
   zoomed: boolean;
   entered: boolean;
   interactionLocked: boolean;
@@ -698,13 +698,22 @@ function StarMarker({
       })}
       {!zoomed && active && <NarrativeRing />}
       {!zoomed && selected && <SelectionFrame />}
-      {!zoomed && captionVisible && !hovered && (
-        <Billboard position={[0, -0.32, 0]} follow raycast={ignoreRaycast}>
-          <Html center style={{ pointerEvents: "none" }}>
-            <div className="narrative-map-label">{system.name}</div>
-          </Html>
-        </Billboard>
-      )}
+      {!zoomed &&
+        captionOpacity !== undefined &&
+        (known || selected) &&
+        !hovered && (
+          <Billboard position={[0, -0.32, 0]} follow raycast={ignoreRaycast}>
+            <Html center style={{ pointerEvents: "none" }}>
+              <div
+                className="narrative-map-label"
+                data-caption-opacity={captionOpacity}
+                style={{ opacity: captionOpacity }}
+              >
+                {system.name}
+              </div>
+            </Html>
+          </Billboard>
+        )}
       {!zoomed && hovered && (
         <Html position={[0, 0.28, 0]} center style={{ pointerEvents: "none" }}>
           <div className="map-tooltip">
@@ -719,7 +728,7 @@ function StarMarker({
       )}
     </group>
   );
-}
+});
 
 function SegmentedRing({
   radius,
@@ -846,7 +855,7 @@ function CaptionController({
   activeSystemIds: ReadonlySet<string>;
   selectedId: string | null;
   hoveredId: string | null;
-  onChange: (ids: ReadonlySet<string>) => void;
+  onChange: (opacities: ReadonlyMap<string, number>) => void;
 }) {
   const { camera, size } = useThree();
   const last = useRef(0);
@@ -880,14 +889,24 @@ function CaptionController({
           priority,
           x: (point.x * 0.5 + 0.5) * size.width,
           y: (-point.y * 0.5 + 0.5) * size.height,
-          visible: point.z >= -1 && point.z <= 1,
+          depth: point.z,
+          visible:
+            point.x >= -1 &&
+            point.x <= 1 &&
+            point.y >= -1 &&
+            point.y <= 1 &&
+            point.z >= -1 &&
+            point.z <= 1,
         };
       });
-    const visible = resolveCaptionVisibility(candidates);
-    const key = [...visible].sort().join("\u0000");
+    const opacities = resolveCaptionOpacities(candidates);
+    const key = [...opacities]
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([id, opacity]) => `${id}:${opacity}`)
+      .join("\u0000");
     if (key !== previous.current) {
       previous.current = key;
-      onChange(visible);
+      onChange(opacities);
     }
   });
   return null;
@@ -914,7 +933,9 @@ function Scene({
   const selected = systems.find((system) => system.id === selectedId);
   const zoomed = zoomedSystemId !== null;
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const [captionIds, setCaptionIds] = useState<ReadonlySet<string>>(new Set());
+  const [captionOpacities, setCaptionOpacities] = useState<
+    ReadonlyMap<string, number>
+  >(new Map());
   return (
     <>
       <color attach="background" args={["#050812"]} />
@@ -971,7 +992,7 @@ function Scene({
             known={knownSystemIds.has(system.id)}
             active={activeSystemIds.has(system.id)}
             hovered={hoveredId === system.id}
-            captionVisible={captionIds.has(system.id)}
+            captionOpacity={captionOpacities.get(system.id)}
             zoomed={zoomed}
             entered={system.id === zoomedSystemId}
             interactionLocked={interactionsLocked}
@@ -997,7 +1018,7 @@ function Scene({
           activeSystemIds={activeSystemIds}
           selectedId={selectedId}
           hoveredId={hoveredId}
-          onChange={setCaptionIds}
+          onChange={setCaptionOpacities}
         />
       )}
     </>
