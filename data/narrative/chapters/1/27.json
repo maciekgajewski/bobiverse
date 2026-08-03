@@ -1,0 +1,187 @@
+{
+  "chapter": "1.27",
+  "title": "27",
+  "date": "2165",
+  "location_id": "location:delta-eridani",
+  "introducing": [
+    {
+      "id": "location:delta-eridani-star",
+      "name": "Delta Eridani",
+      "kind": "star",
+      "parent_location_id": "location:delta-eridani",
+      "parent_relation": "member_of_system",
+      "description": "The orange star at the center of the Delta Eridani system. It is cooler than Sol but more than two and a half times as large."
+    },
+    {
+      "id": "location:delta-eridani-1",
+      "name": "Delta Eridani 1",
+      "kind": "planet",
+      "parent_location_id": "location:delta-eridani-star",
+      "parent_relation": "orbits",
+      "orbital_order": 1,
+      "body_class": "rocky",
+      "description": "The innermost of the five rocky planets in the Delta Eridani system. It is the only reported planet without a satellite."
+    },
+    {
+      "id": "location:delta-eridani-2",
+      "name": "Delta Eridani 2",
+      "kind": "planet",
+      "parent_location_id": "location:delta-eridani-star",
+      "parent_relation": "orbits",
+      "orbital_order": 2,
+      "body_class": "rocky",
+      "description": "The second of the five inner rocky planets in the Delta Eridani system."
+    },
+    {
+      "id": "location:delta-eridani-3",
+      "name": "Delta Eridani 3",
+      "kind": "planet",
+      "parent_location_id": "location:delta-eridani-star",
+      "parent_relation": "orbits",
+      "orbital_order": 3,
+      "body_class": "rocky",
+      "description": "The third of the five inner rocky planets in the Delta Eridani system."
+    },
+    {
+      "id": "location:delta-eridani-4",
+      "name": "Delta Eridani 4",
+      "kind": "planet",
+      "parent_location_id": "location:delta-eridani-star",
+      "parent_relation": "orbits",
+      "orbital_order": 4,
+      "body_class": "rocky",
+      "description": "The fourth inner rocky planet in the Delta Eridani system, also called DE-4. It is slightly larger than Earth, with lower surface gravity, a somewhat denser atmosphere, and conditions that support soaring flyers and tall tree analogues. Its observed temperate-to-subtropical landscape has meadows, rocky bluffs, and forest-like expanses of exceptionally large brownish trees with wide horizontal branches and thick leaf canopies. Documented wildlife includes six-legged exoskeletal insect analogues, small furry six-legged mammal analogues, larger four-limbed mammal analogues, feather-like bird analogues, and a three-segment mammalian snake equivalent. One four-legged winged variant, provisionally called a hippogriff by Bob, shows limited color-change camouflage.",
+      "state": "Bob has ruled it out as a colonization target after his concealed drones observed fire-using native inhabitants."
+    },
+    {
+      "id": "location:delta-eridani-4-moon-01",
+      "name": "Delta Eridani 4 Moon 1",
+      "kind": "moon",
+      "parent_location_id": "location:delta-eridani-4",
+      "parent_relation": "orbits",
+      "orbital_order": 1,
+      "description": "One of the two moons Bob surveys during a flyby of Delta Eridani 4."
+    },
+    {
+      "id": "location:delta-eridani-4-moon-02",
+      "name": "Delta Eridani 4 Moon 2",
+      "kind": "moon",
+      "parent_location_id": "location:delta-eridani-4",
+      "parent_relation": "orbits",
+      "orbital_order": 2,
+      "description": "One of the two moons Bob surveys during a flyby of Delta Eridani 4."
+    },
+    {
+      "id": "location:delta-eridani-5",
+      "name": "Delta Eridani 5",
+      "kind": "planet",
+      "parent_location_id": "location:delta-eridani-star",
+      "parent_relation": "orbits",
+      "orbital_order": 5,
+      "body_class": "rocky",
+      "description": "The fifth of the inner rocky planets in the Delta Eridani system."
+    },
+    {
+      "id": "location:delta-eridani-asteroid-belt",
+      "name": "asteroid belt",
+      "kind": "asteroid_belt",
+      "parent_location_id": "location:delta-eridani-star",
+      "parent_relation": "orbits",
+      "orbital_order": 6,
+      "description": "The asteroid belt dividing Delta Eridani's inner rocky worlds from its outer gas giants. A partial scan identifies six locations with significant ore suitable for mining."
+    },
+    {
+      "id": "location:delta-eridani-6",
+      "name": "Delta Eridani 6",
+      "kind": "planet",
+      "parent_location_id": "location:delta-eridani-star",
+      "parent_relation": "orbits",
+      "orbital_order": 7,
+      "body_class": "gas_giant",
+      "description": "The first of the five outer gas giants in the Delta Eridani system."
+    },
+    {
+      "id": "location:delta-eridani-7",
+      "name": "Delta Eridani 7",
+      "kind": "planet",
+      "parent_location_id": "location:delta-eridani-star",
+      "parent_relation": "orbits",
+      "orbital_order": 8,
+      "body_class": "gas_giant",
+      "description": "The second of the five outer gas giants in the Delta Eridani system."
+    },
+    {
+      "id": "location:delta-eridani-8",
+      "name": "Delta Eridani 8",
+      "kind": "planet",
+      "parent_location_id": "location:delta-eridani-star",
+      "parent_relation": "orbits",
+      "orbital_order": 9,
+      "body_class": "gas_giant",
+      "description": "The third of the five outer gas giants in the Delta Eridani system."
+    },
+    {
+      "id": "location:delta-eridani-9",
+      "name": "Delta Eridani 9",
+      "kind": "planet",
+      "parent_location_id": "location:delta-eridani-star",
+      "parent_relation": "orbits",
+      "orbital_order": 10,
+      "body_class": "gas_giant",
+      "description": "The fourth of the five outer gas giants in the Delta Eridani system."
+    },
+    {
+      "id": "location:delta-eridani-10",
+      "name": "Delta Eridani 10",
+      "kind": "planet",
+      "parent_location_id": "location:delta-eridani-star",
+      "parent_relation": "orbits",
+      "orbital_order": 11,
+      "body_class": "gas_giant",
+      "description": "The fifth of the outer gas giants in the Delta Eridani system."
+    },
+    {
+      "id": "species:delta-eridani-natives",
+      "name": "natives",
+      "homeworld_id": "location:delta-eridani-4",
+      "description": "A native population of Delta Eridani 4 that Bob judges to be fire-using and probably intelligent. The beings have bat- and pig-like faces, long spiderish limbs, light brownish-gray to orangey-tan fur, patterned heads, and mobile expressive ears. Bob observes six apparently friendly groups, each tending a fire and interacting with the others."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "At Delta Eridani, establishing mining, communications, and system surveillance before ruling the inhabited fourth planet out as a colonization target."
+    },
+    {
+      "entity_id": "location:delta-eridani",
+      "description": "A stellar system centered on an orange star cooler than Sol but more than two and a half times as large. Bob chose it for its lack of a binary companion, low ultraviolet emissions, long-lived stellar type, and wide potential habitable zone; Bill considered it a likely source of habitable planets. Its survey identifies five inner rocky planets and five outer gas giants separated by an asteroid belt. Two outer giants have rings rivaling Saturn's, and the largest is about six Jupiter masses."
+    },
+    {
+      "entity_id": "technology:planetary-exploration-drone",
+      "description": "A practical drone design for planetary exploration, with variants for surveillance and biological analysis. The football-sized surveillance variant has remote cameras, microphones, extendable gripping limbs, and small shielded reactors that can detect incoming craft before detection. The roughly meter-long biological-analysis variant has visual and auditory input optimized for close work and many extendable appendages for varied tasks; it also carries systems for examining local life and mechanical stomachs that process organics as a human stomach would, with sample-output analysis taking about a day. The drones can change color with limited pattern mimicry."
+    },
+    {
+      "entity_id": "technology:roamers",
+      "description": "Remote observation and manipulation devices directed through GUPPI. They come in varied sizes, can coordinate across scales, and need minimal supervision once their tasks, dependencies, and interruption conditions are defined. Without active intervention, they can work up to ten times faster. They can inspect ship circuitry with gnat-sized units, carry video cameras for remote observation, and pick up vibrations transmitted through a wall when pressed against it. Reusable scripts automate many routine activities, leaving assembly work largely self-directed. In manufacturing, they feed raw ore into manufacturing systems, gather parts, assemble ships, repair and maintain HEAVEN vessels, and refine battle scraps into rail-gun ammunition; smaller printer operations can make additional ROAMers and ship-buster components. They can perform planetary-surface exploration, though their close-in cameras, rudimentary hearing, lack of infrared and flight capability, and inability to camouflage themselves make them inefficient for it."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead",
+      "location_id": "location:delta-eridani"
+    }
+  ],
+  "mentions": [
+    "character:bill",
+    "character:mario",
+    "character:milo",
+    "character:riker",
+    "character:spike",
+    "location:epsilon-eridani",
+    "location:sol",
+    "technology:ami",
+    "technology:guppi-interface"
+  ],
+  "summary": "In April 2165 at Delta Eridani, Bob establishes mining, communications, and system surveillance before surveying the habitable fourth planet. His concealed drones find a rich forest ecosystem and then evidence of fire-using, communicative natives, leading him to rule the planet out for colonization and to prepare a report for Bill."
+}
