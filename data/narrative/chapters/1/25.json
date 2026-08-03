@@ -1,0 +1,44 @@
+{
+  "chapter": "1.25",
+  "title": "25",
+  "date": "2151",
+  "location_id": "location:epsilon-eridani",
+  "introducing": [
+    {
+      "id": "technology:subspace-communications",
+      "name": "subspace communications",
+      "description": "A communications technology that carries signals through subspace, demonstrated with synchronized telemetry across a light-minute-scale separation. It can support real-time shared VR, but it requires equipment at both ends and predicted dropout at roughly twenty-five light-years means stations must still route longer links."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bill",
+      "current_state": "At Epsilon Eridani, testing subspace communications with Garfield and sending the preliminary plans so other systems can build compatible equipment."
+    },
+    {
+      "entity_id": "character:garfield",
+      "current_state": "Returning to Epsilon Eridani after helping Bill test subspace communications at increasing separation."
+    },
+    {
+      "entity_id": "technology:vr",
+      "description": "A virtual-reality interface Bob builds aboard Heaven-1 to provide sensory input and an embodied experience while he travels as a bodiless mind. It initially needs hardware modifications and remains an ongoing software project. Planned improvements are intended to support more direct interaction between users. It has become realistic enough to produce physical sensations that feel real."
+    },
+    {
+      "entity_id": "technology:von-neumann-probe",
+      "description": "A self-replicating spacecraft designed to travel between star systems and construct new copies of itself along the way. Interstellar use became possible after a breakthrough in subspace theory, and such probes are central to a competitive international colonization effort. Their exponential replication could eventually explore the galaxy, but practical self-construction remains the central obstacle. Their overall process needs artificial intelligence to manage it and respond to encountered situations; replication and manufacturing are close to sufficient, and ion drives are considered buildable with funding."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bill",
+      "role": "lead",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:garfield",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    }
+  ],
+  "summary": "In September 2151 at Epsilon Eridani, Bill and Garfield test subspace communications while Garfield recedes from Bill. Their paired telemetry stays synchronized even as the radio signal lags, and Garfield can enter Bill's VR without delay. The projected range limit means routers remain necessary, but Bill sends the still-awkward plans so other systems can build compatible equipment without waiting years for a later update."
+}

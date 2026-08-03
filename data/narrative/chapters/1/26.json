@@ -1,0 +1,91 @@
+{
+  "chapter": "1.26",
+  "title": "26",
+  "date": "2157",
+  "location_id": "location:sol",
+  "introducing": [
+    {
+      "id": "character:george-butterworth",
+      "name": "Colonel George Butterworth",
+      "current_state": "Leading a surviving USE group from an underground military installation while coordinating with Riker and Homer."
+    },
+    {
+      "id": "vessel:use-colony-ship",
+      "name": "USE colony ship",
+      "description": "A planned USE colony ship designed by refugee scientists as an off-world refuge. Its plans require a space-based construction yard and a viable destination.",
+      "current_state": "The first construction effort was a casualty of the war; a new effort to build two colony ships is beginning and is expected to take most of a decade."
+    },
+    {
+      "id": "event:solar-system-war",
+      "name": "Solar-system war",
+      "location_id": "location:sol",
+      "description": "A system-wide war that grew from strategic conflict in space into nuclear attacks and attacks on civilian targets. The attempted destruction of Heaven-1 became its tipping point. Retaliation led to abandoned stations and colonies, recalled personnel, destroyed transports, and a Brazilian campaign against civilians that killed billions."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:riker",
+      "current_state": "At Sol with Homer, coordinating with a surviving USE group and beginning plans to use their manufacturing capacity to build two colony ships."
+    },
+    {
+      "entity_id": "character:homer",
+      "current_state": "At Sol with Riker, coordinating with a surviving USE group and beginning plans to use their manufacturing capacity to build two colony ships."
+    },
+    {
+      "entity_id": "vessel:heaven-2",
+      "current_state": "At Sol, carrying Riker and using its transmitter to contact a surviving USE group."
+    },
+    {
+      "entity_id": "organization:united-states-of-eurasia",
+      "description": "The United States of Eurasia controls Europe and most of western Russia. It began an interstellar probe project two years earlier, and Dr. Landers considers it the strongest long-term competitor, with a substantial lead in colonization readiness. It operates a space station on Titan to study primitive life found there. Its probe launched shortly after Bob-1 has not been heard from again.",
+      "current_state": "A surviving Army Corps and civilian group is maintaining an underground refuge and seeking colony ships to preserve humanity."
+    },
+    {
+      "entity_id": "organization:brazilian-empire",
+      "description": "A belligerent power believed by Dr. Landers's organization to be potentially arming its probes and to be the most likely sabotage threat. His organization expects it to launch multiple probes and, if it finds a suitable system, establish a military presence and reproduce there. Its remaining ships have pursued a scorched-earth campaign against civilians."
+    },
+    {
+      "entity_id": "organization:china",
+      "description": "A major power whose probe project is sacrificing other concerns for speed and is expected to use an AMI. Dr. Landers's organization considers its project the most likely to fail outright. Its probe launched shortly after Bob-1."
+    },
+    {
+      "entity_id": "technology:autofactory",
+      "description": "An automated factory used to gather and refine resources and to produce drones. It accepts designs made in virtual space and builds them with 3D printers, ROAMers, and nanites."
+    },
+    {
+      "entity_id": "technology:vr",
+      "description": "A virtual-reality interface Bob builds aboard Heaven-1 to provide sensory input and an embodied experience while he travels as a bodiless mind. It initially needs hardware modifications and remains an ongoing software project. Planned improvements are intended to support more direct interaction between users. It has become realistic enough to produce physical sensations that feel real and a full avatar that looks and behaves like a human."
+    },
+    {
+      "entity_id": "location:earth",
+      "state": "Cloud and dust obscure a heavily damaged surface; asteroid strikes and nuclear weapons have disrupted weather patterns, and dozens of impact sites are visible. A survivor group's estimate puts the global human population below twenty million, with substantial uncertainty, and expects recovery to take five to ten thousand years."
+    },
+    {
+      "entity_id": "location:epsilon-eridani",
+      "description": "A stellar system estimated to be about one billion years old and selected as Heaven-1's destination. It is not suitable for an unprotected human settlement, though people could live there under a dome."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:riker",
+      "role": "lead",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:homer",
+      "role": "other",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:george-butterworth",
+      "role": "other"
+    }
+  ],
+  "mentions": [
+    "character:bill",
+    "character:bob-replicant",
+    "organization:free-american-independent-theocratic-hegemony",
+    "vessel:heaven-1"
+  ],
+  "summary": "In April 2157 at Sol, Riker and Homer establish contact with Colonel Butterworth's surviving USE force after stopping the last Brazilian ships. Butterworth describes a devastated Earth and proposes using the Heaven vessels' manufacturing capacity to build two colony ships. Riker and Homer agree to begin while Riker searches for a viable destination among nearby stars."
+}
