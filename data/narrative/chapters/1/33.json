@@ -1,0 +1,67 @@
+{
+  "chapter": "1.33",
+  "title": "33",
+  "summary": "In March 2158 at Sol, Riker finds that about fifteen million humans remain on Earth as worsening cold threatens their refuges. He and Arthur improve contact with a hard-to-ignore holographic presentation, then convene a new United Nations of survivor groups to decide its own governance rather than accept Riker's control. Riker rejects FAITH's demand for preferential evacuation treatment. Gudmund Valter, leader of the Spitsbergen refuge, warns that its food outlook is worsening but reveals that its surviving seed and animal-genetics vaults could substantially improve future colonies.",
+  "date": "2158.1",
+  "location_id": "location:sol",
+  "introducing": [
+    {
+      "id": "organization:united-nations",
+      "name": "United Nations",
+      "description": "A new assembly of surviving human groups convened by Riker to organize cooperation on humanity's survival. Its delegates are to determine their own chairperson and meeting rules rather than accept Riker as their permanent authority.",
+      "current_state": "Its first sessions have begun, and its delegates are working out their governance arrangements."
+    },
+    {
+      "id": "character:gudmund-valter",
+      "name": "Gudmund Valter",
+      "current_state": "Leading the Spitsbergen refuge while seeking survival and emigration assurances for its people."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:riker",
+      "current_state": "At Sol, organizing surviving Earth enclaves into a United Nations while continuing to coordinate their survival and eventual evacuation."
+    },
+    {
+      "entity_id": "location:earth",
+      "state": "About fifteen million people remain in scattered surviving enclaves. Less sunlight, falling temperatures, expanding snow and ice, and rough long-term projections of global glaciation make keeping those communities alive increasingly urgent."
+    },
+    {
+      "entity_id": "organization:free-american-independent-theocratic-hegemony",
+      "current_state": "Its San Diego enclave seeks preferential evacuation treatment, but Riker rejects the demand."
+    },
+    {
+      "entity_id": "organization:united-states-of-eurasia",
+      "current_state": "Its enclave outside Augsburg is expected to depart Earth first because it supplied colony-ship plans, an arrangement opposed by many other survivor groups."
+    },
+    {
+      "entity_id": "technology:guppi-interface",
+      "description": "An interface that offloads tasks for replicants while retaining their human limits on multitasking. Its name expands to General Unit Primary Peripheral Interface, and its logs retain monitoring-interface and script activity. Its operating system is firmware; changing its replication priority would require a new core and ship. Version-2 GUPPI is being given enough memory capacity that a personality matrix is contemplated. It can take messages and arrange callbacks for Riker, acting as a secretary and receptionist."
+    },
+    {
+      "entity_id": "vessel:use-colony-ship",
+      "current_state": "The planned evacuation ships can move only a small fraction of Earth's survivors at a time, so most people must be kept alive on Earth while construction and destination planning continue."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:riker",
+      "role": "lead",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:arthur",
+      "role": "other",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:homer",
+      "role": "other"
+    },
+    {
+      "character_id": "character:gudmund-valter",
+      "role": "other"
+    }
+  ],
+  "mentions": ["character:george-butterworth"]
+}
