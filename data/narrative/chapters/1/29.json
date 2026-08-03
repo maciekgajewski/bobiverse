@@ -1,0 +1,55 @@
+{
+  "chapter": "1.29",
+  "title": "29",
+  "date": "2157",
+  "location_id": "location:sol",
+  "summary": "In September 2157 at Sol, Riker and Colonel Butterworth disagree over whether the colony-ship effort should first search for other surviving humans. Riker keeps resource recovery, additional Bobs, shipyard work, and colony-ship construction as the priority, while Homer surveys recoverable material and remote outposts. Twenty days later, abandoned outposts and salvaged battle wreckage support a distributed manufacturing plan that sends material to Earth-Moon L4 and L5 and begins the industrial build-up for colony ships.",
+  "updates": [
+    {
+      "entity_id": "character:riker",
+      "current_state": "At Sol with Homer, prioritizing the resource recovery, replication, shipyard, and manufacturing work needed before colony ships can be built."
+    },
+    {
+      "entity_id": "character:homer",
+      "current_state": "Surveying recoverable material and remote outposts to support the colony-ship effort with Riker."
+    },
+    {
+      "entity_id": "vessel:use-colony-ship",
+      "current_state": "Riker is prioritizing the resource recovery, shipyard, replication, and manufacturing work that must precede colony-ship construction; his earlier decade estimate now appears optimistic."
+    },
+    {
+      "entity_id": "technology:autofactory",
+      "description": "An automated factory used to gather and refine resources and to produce drones. It accepts designs made in virtual space and builds them with 3D printers, ROAMers, and nanites. Smaller units at material sites can make a few cargo drones at a time; larger units at Earth-Moon L4 and L5 are being set up to produce Bobs and drones and bootstrap industrial-scale equipment for colony ships."
+    },
+    {
+      "entity_id": "location:titan",
+      "state": "The USE space station is apparently abandoned, with no signs that it was attacked."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:riker",
+      "role": "lead",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:george-butterworth",
+      "role": "other"
+    },
+    {
+      "character_id": "character:homer",
+      "role": "other"
+    }
+  ],
+  "mentions": [
+    "character:bob-replicant",
+    "location:earth",
+    "location:mars",
+    "location:moon",
+    "organization:united-states-of-eurasia",
+    "technology:3d-printers",
+    "technology:mining-drones",
+    "technology:roamers",
+    "technology:ship-busters"
+  ]
+}
