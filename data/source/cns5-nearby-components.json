@@ -260892,10 +260892,15 @@
       {
         "adql": "SELECT cns5_id, gj_id, component_id, n_components, primary_flag, gj_system_primary, gaia_dr3_id, hip_id, ra, dec, epoch, coordinates_bibcode, parallax, parallax_error, parallax_bibcode, pmra, pmra_error, pmdec, pmdec_error, pm_bibcode, rv, rv_error, rv_bibcode, g_mag, g_mag_error, bp_mag, bp_mag_error, rp_mag, rp_mag_error, g_mag_resulting, g_mag_resulting_error, g_rp_resulting, g_rp_resulting_error, g_rp_resulting_flag, cns6_system_id, reference_object_cns5_id, multiplicity_bibcode, remarks\nFROM cns5update.main\nORDER BY cns5_id",
         "stage": "local-census"
+      },
+      {
+        "adql": "SELECT cns5_id, gj_id, component_id, n_components, primary_flag, gj_system_primary, gaia_dr3_id, hip_id, ra, dec, epoch, coordinates_bibcode, parallax, parallax_error, parallax_bibcode, pmra, pmra_error, pmdec, pmdec_error, pm_bibcode, rv, rv_error, rv_bibcode, g_mag, g_mag_error, bp_mag, bp_mag_error, rp_mag, rp_mag_error, g_mag_resulting, g_mag_resulting_error, g_rp_resulting, g_rp_resulting_error, g_rp_resulting_flag, cns6_system_id, reference_object_cns5_id, multiplicity_bibcode, remarks\nFROM cns5update.main\nWHERE cns5_id IN (3627)\nORDER BY cns5_id",
+        "anchor_ids": ["stellar-system-005413"],
+        "stage": "bootstrap"
       }
     ],
     "release": "CNS5 update snapshot",
-    "retrieved_at": "2026-07-31T18:22:50+00:00",
+    "retrieved_at": "2026-08-02T20:18:03+00:00",
     "row_count": 6521,
     "table": "cns5update.main",
     "upstream_updated_at": "2024-11-29T12:52:48Z"

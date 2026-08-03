@@ -474,6 +474,38 @@ coordinate, or model-confidence matching. If the accepted candidate identity,
 adopted component, source-backed geometry, or pinned coverage cannot support the new
 anchor, stop before any canonical write and report the required astronomy work.
 
+When exact identity resolution succeeds but astronomy preflight reports that
+acquisition queries differ from the exact plan, do not conclude that the validator
+contract must change and do not copy an unapproved candidate into the real canonical
+corpus. Follow the isolated staging-checkout workflow in
+`docs/chapter-extraction.md`:
+
+1. create a disposable checkout from the exact reviewed repository revision;
+2. verify and install the exact candidate or ordered candidate chain only there;
+3. run the normal networked astronomy refresh and deterministic generation there;
+4. reject unrelated substantive catalogue, identity, naming, membership,
+   adopted-source, adopted-component, coordinate-authority, or review drift;
+5. if `system-candidates.json` changes, spawn a fresh, read-only independent agent to
+   inspect the complete baseline, refresh, candidate snapshot, and formatted diff
+   under ADR-0023;
+6. allow that agent to accept only exact anchor acquisition, unchanged-source
+   metadata, requested-coverage rows, unaccepted derived review candidates, and
+   deterministic ADR-0011 source-precedence geometry; require it to reject stable-ID,
+   identity, name, alias, membership, adopted-component, authority, accepted-WDS,
+   ambiguity, unrelated substantive source, unsupported-coordinate, or judgmental
+   changes and escalate them to the Captain;
+7. after a clean acceptance, record the agent, UTC date, checksums, permitted change
+   classes, and absence of prohibited changes, then update only the accepted checksum
+   and transparent agent-review attribution; the reviewer never edits the metadata;
+8. validate the complete staged narrative and astronomy result; and
+9. present one exact combined chapter-and-astronomy diff for approval before applying
+   any part of it to the real worktree.
+
+An existing system or source row does not prove that its explicit bootstrap query,
+context-sphere acquisition, and provenance accounting are current. Never hand-edit
+downloaded manifests, checksums, normalized extracts, candidates, or generated
+runtime to bypass refresh.
+
 For a dry-run evaluation, read the existing target chapter only after the candidate
 validates. Compare omissions, unsupported claims, reconciliation choices, and review
 effort. Do not silently alter the candidate to resemble the existing file.
@@ -494,7 +526,8 @@ Present:
 - unresolved or low-confidence items;
 - narrative and astronomy preflight output, including any automatically resolved
   mapped-anchor bootstrap;
-- the exact canonical diff that approval would create.
+- the exact canonical diff that approval would create, or the exact combined
+  chapter-and-astronomy diff when isolated acquisition staging was required.
 
 An ordinary invocation may write canonical JSON only after the Captain explicitly
 approves that exact candidate. A task-scoped dry run must stop without writing even if

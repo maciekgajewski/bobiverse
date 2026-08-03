@@ -1,0 +1,46 @@
+{
+  "chapter": "1.23",
+  "title": "23",
+  "summary": "In 2153, Milo completes seven months of biological work at Omicron2 Eridani. He leaves automated surveying, refining, and defensive preparations in place, forwards his report to Bill and Sol, and departs for 82 Eridani using the SURGE drive.",
+  "date": "2153",
+  "location_id": "location:omicron2-eridani",
+  "introducing": [
+    {
+      "id": "location:82-eridani",
+      "name": "82 Eridani",
+      "kind": "star_system",
+      "description": "A stellar system Milo selects as his next destination from Omicron2 Eridani.",
+      "astronomy_object_id": "stellar-system-005566"
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:milo",
+      "current_state": "Departing Omicron2 Eridani for 82 Eridani after completing a biological survey and sending his report."
+    },
+    {
+      "entity_id": "technology:3d-printers",
+      "description": "Manufacturing equipment that gives Bob virtually unlimited flexibility for building things. The technology has become increasingly common but remains in its infancy; companies have demonstrated arranging individual atoms on a substrate. It can build more printers, robotic workers, miners, and Von Neumann machines. Some observers regard it as an early step toward practical self-assembling manufacturing systems."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:milo",
+      "role": "lead",
+      "location_id": "location:omicron2-eridani"
+    }
+  ],
+  "mentions": [
+    "character:bill",
+    "character:bob-replicant",
+    "character:ernesto-medeiros",
+    "location:romulus",
+    "location:sol",
+    "location:vulcan",
+    "technology:ami",
+    "technology:autofactory",
+    "technology:ship-busters",
+    "technology:surge-drive",
+    "technology:von-neumann-probe"
+  ]
+}

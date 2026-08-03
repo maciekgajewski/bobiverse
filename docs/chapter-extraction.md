@@ -270,7 +270,10 @@ task. Before applying the candidate:
    accepted astronomy system name or alias, ADR-0016 permits the source-backed
    bootstrap to resolve automatically without separate approval. Fuzzy, partial,
    punctuation-different, multiple, unsupported, or source-incomplete matches stop
-   for an authorized astronomy task.
+   for an authorized astronomy task. If identity resolves but validation reports
+   that acquisition queries differ from the exact plan, follow **Stage new astronomy
+   acquisition** below; an existing anchor row alone does not prove that its complete
+   context sphere and provenance plan are current.
 5. If either preflight fails, do not change canonical chapter files or the promotion
    log.
 6. Only after both checks pass, write the exact approved candidate canonically and
@@ -283,6 +286,49 @@ task. Before applying the candidate:
 
 Create a task instead when the work changes code, schemas, contracts, tooling, or
 includes broader editorial remediation beyond the approved chapter candidate.
+
+### Stage new astronomy acquisition
+
+The canonical refresh command deliberately discovers anchors from canonical
+narrative data. Never copy an unapproved candidate into the real worktree merely to
+make refresh see it. Instead:
+
+1. Create an isolated disposable checkout from the exact repository revision under
+   review and record its clean baseline.
+2. Verify the sealed-ledger and candidate hashes. Install the exact candidate, or
+   exact ordered candidate chain, at its intended canonical paths only inside that
+   isolated checkout.
+3. Run narrative validation there, followed by the normal networked astronomy
+   refresh and deterministic generation commands.
+4. Inspect the complete astronomy diff. Permit only required bootstrap and coverage
+   acquisition, query accounting, checksums, and deterministic consequences.
+   Unrelated substantive catalogue, identity, naming, membership, adopted-source,
+   adopted-component, coordinate-authority, or review drift is prohibited.
+5. If refresh changes `system-candidates.json`, stop before accepting or generating
+   from that snapshot. Spawn a fresh, read-only independent agent to inspect the
+   complete baseline, refresh, candidate snapshot, and formatted diff under ADR-0023.
+   The agent may accept only exact anchor acquisition, unchanged-source metadata,
+   new rows inside the requested coverage, unaccepted derived review candidates, and
+   deterministic ADR-0011 source-precedence geometry. It must reject stable-ID,
+   identity, name, alias, membership, adopted-component, authority, accepted-WDS,
+   ambiguity, unrelated substantive source, unsupported-coordinate, or judgmental
+   changes and escalate them to the Captain.
+6. A clean independent acceptance records the agent identity, UTC date, old and new
+   value checksums, permitted semantic changes, and absence of prohibited changes.
+   Only then may the orchestrator update the checksum and transparent agent-review
+   attribution in `system-review.json`; the reviewer never edits the metadata it
+   judged. If the checksum is unchanged, record that fact without a redundant review.
+7. After any required snapshot acceptance, generate runtime astronomy and run narrative
+   and astronomy validation against the complete staged candidate chain.
+8. Present the exact combined chapter-and-astronomy diff for approval. Apply no part
+   of it to the real worktree until the Captain approves that exact combined result.
+9. Apply the approved result atomically, revalidate the canonical corpus, and append
+   the promotion-log rows. Never copy the disposable checkout, source text, ledgers,
+   evidence excerpts, or unrelated refresh drift into the repository.
+
+This staging path changes neither astronomy authority nor spoiler projection. Static
+astronomy acquisition may precede a narrative reveal; runtime narrative mapping
+remains governed by approved chapter records.
 
 ### Standard promotion preflight
 

@@ -605,10 +605,21 @@ document.
 
 Generation fails when the current candidate checksum differs from the accepted
 checksum, any ambiguity remains unresolved, or an override references a missing
-candidate. A review helper may update the one accepted checksum after the operator
-inspects the candidate, source, identity-registry, and generated diffs; it must not
-silently accept as part of `data:refresh`. This makes ordinary singleton handling
-scalable without bypassing ADR-0011's review layer.
+candidate. Acceptance never occurs silently as part of `data:refresh`.
+
+Under ADR-0023, a fresh, read-only independent agent may accept a changed complete
+snapshot when its full baseline-to-refresh diff contains only exact anchor
+acquisition, non-semantic refresh metadata, rows inside requested coverage,
+unaccepted derived review candidates, and deterministic ADR-0011 source-precedence
+geometry. The agent must reject stable-ID, identity, preferred-name, alias,
+membership, adopted-component, source-authority, accepted-WDS, ambiguity, unrelated
+substantive source, unsupported-coordinate, or judgmental changes. A clean acceptance
+records the agent, UTC date, old and new value checksums, permitted semantic change
+classes, and absence of prohibited changes. The orchestrator may then update only the
+accepted checksum and transparent agent-review attribution; the reviewer does not
+edit the metadata it judges. Rejected or out-of-bound changes require Captain review.
+This keeps ordinary deterministic refreshes scalable without bypassing ADR-0011's
+review layer.
 
 ### Stage 10: derive approximate presentation
 
