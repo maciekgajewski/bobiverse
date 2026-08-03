@@ -173,9 +173,13 @@ current chapter or meaningful date. Groups are independently collapsible. Their
 expanded state is stored with the versioned application preferences.
 
 Each heading carries an original project-owned SVG line icon specific to its object
-type. Every object row carries the same small SVG ring-and-dot bullet. These graphics
-are decorative; the group name, counts, object name, and collapse state remain the
-semantic labels. CSS-drawn proxy shapes are not used for either role.
+type. Every object row except a Species row carries the same small SVG ring-and-dot
+bullet. A Species row uses the original project-owned icon and accent colour assigned
+to that projected species by the validated species-presentation registry; an
+unassigned visible species uses the registry's explicit generic style. The group
+name, counts, object name, and collapse state remain the semantic labels, and species
+identity never depends on colour alone. CSS-drawn proxy shapes are not used for any
+of these roles. ADR-0024 owns the presentation-data boundary.
 
 Search temporarily expands all groups containing matches but does not overwrite saved
 expanded state. Clearing search restores the reader's prior group arrangement.

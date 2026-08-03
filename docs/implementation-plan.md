@@ -204,6 +204,10 @@ Planned work:
 - Add the Phase 2 searchable grouped object browser. Groups appear progressively for
   eligible characters, events, star systems, other locations, species, technologies,
   organizations, and vessels, and sort by mode-appropriate recent activity.
+- Add validated project-owned species SVG styles and an explicit presentation
+  registry outside narrative entities. Keep one Species browser group, use assigned
+  species icons and colours only for its row bullets after reader-safe projection,
+  and retain the shared bullet for every other object group.
 - Add type-aware selected-object inspectors and coordinated selection across browser,
   map, and inspector.
 - Make unlocked Chapter-mode timeline entries inspectable in the shared wide and

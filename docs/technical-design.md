@@ -641,9 +641,15 @@ selection stack shared by the wide and compact inspector. Relationship links app
 after the current entry and discard any forward branch; Back and Forward restore only
 eligible entries without changing reader progress. Map, browser, and timeline
 selections start a new stack, while projection changes remove ineligible history
-entries. Browser session history and URLs are unchanged. Type-specific
-group SVGs and the shared row-bullet SVG are presentation-only and carry no selection
-or domain semantics. The legacy astronomy directory is removed; catalogue selection
+entries. Browser session history and URLs are unchanged. Type-specific group SVGs,
+the shared ordinary row-bullet SVG, and species-row icons are presentation-only and
+carry no selection or domain semantics. Species rows are the sole row-bullet
+exception: after the centralized reader-safe world projection, they join to the
+separately validated species-presentation registry for one original monochrome SVG
+and accent colour. The registry owns all accepted styles, explicit assignments from
+existing canonical species IDs, and one generic default; it does not add fields to
+narrative species records or predeclare future narrative IDs. The legacy astronomy
+directory is removed; catalogue selection
 is map-driven until BOB-014 supplies the final query-only contextual astronomy DOM
 path. Neither the browser nor inspector owns map markers, astronomy context coverage,
 narrative schema facts, or a second spoiler filter.
@@ -947,8 +953,19 @@ any zero-state `description` or `state` value is original plain text, not measur
 astronomy data or rich text.
 The direct, unversioned asset registry maps each stable asset ID to one safe static
 path below `public/assets/`, a plain-text provenance note, and a validated presentation
-role. Its metadata is not chapter chronology. `picture_id` assignments remain
-subject to the shared visibility policy and resolve only illustration assets.
+role. Every entry requires exactly one role from `illustration`, `body_surface`, and
+`species_icon`, and every consumer enforces compatibility. Its metadata is not
+chapter chronology. `picture_id` assignments remain subject to the shared visibility
+policy and resolve only `illustration` assets.
+Species-icon assets use the `species_icon` role and resolve only through the
+unversioned `data/presentation/species.json` registry governed by
+`data/schema/species-presentation.schema.json`. That registry
+maps stable presentation styles to registered monochrome SVGs and exact accent
+colours, defines one explicit generic default, and assigns styles only to canonical
+narrative species IDs. Runtime joins happen only after reader-safe projection, so an
+available asset never makes a hidden species visible. A later species introduction
+may add an assignment without making icon or colour chapter-patchable narrative
+state. `homeworld_id` remains the sole species homeworld fact.
 ADR-0020 adds body-surface assets and optional reader-projected
 `surface_texture_id` assignments for planets, dwarf planets, and moons. A surface
 assignment resolves only an equirectangular body-surface asset, may select a generic

@@ -22,6 +22,13 @@ Reference images:
 - `reference/starfield-whisper-grid.png`: selected exploratory direction for a
   uniformly faint Galactic-plane grid with restrained axes and strong distance and
   grazing-angle fades.
+- `reference/species-icon-family-concept-v2.png`: accepted subject, silhouette, and
+  palette direction for the six species icon styles. The Human icon uses a simplified
+  treatment of the man from the Pioneer 10 plaque.
+- `reference/system-status-icons-concept-v3.png`: accepted icon-only direction for
+  reusing species icons in the object browser and future map captions. Its system
+  assignments, browser contents, labels, and values are illustrative and
+  non-canonical.
 
 Use them for:
 
