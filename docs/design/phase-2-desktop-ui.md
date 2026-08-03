@@ -422,7 +422,14 @@ Chapter mode is the default timeline:
 
 The chapter selector and the timeline are two controls over the same knowledge value.
 Only the timeline entry additionally opens chapter inspection. Selection and keyboard
-focus remain synchronized.
+focus remain synchronized. Chapter entries use compact, consistent spacing, with the
+central line terminating at the center of the first and last dots rather than at the
+edges of their entry boxes.
+
+The horizontal timeline and every other application-owned scrollable surface inherit
+the visual system's shared decorative scrollbar treatment. Individual components do
+not define their own scrollbar appearance; native browser-owned controls retain their
+platform rendering.
 
 ### 10.3 Date mode
 

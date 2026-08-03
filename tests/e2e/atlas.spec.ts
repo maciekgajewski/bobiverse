@@ -965,6 +965,64 @@ test("expressive map states preserve active, hover, and astronomy-only selection
   }
 });
 
+test("timeline uses global decorative scrollbars and compact chapter spacing", async ({
+  page,
+  browserName,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/");
+
+  const chapterNavigation = page.locator(".chapter-navigation");
+  const scrollbarStyles = await chapterNavigation.evaluate((element) => ({
+    standardColor: getComputedStyle(element).scrollbarColor,
+    standardWidth: getComputedStyle(element).scrollbarWidth,
+    trackBackground: getComputedStyle(element, "::-webkit-scrollbar-track")
+      .backgroundColor,
+    thumbBackground: getComputedStyle(element, "::-webkit-scrollbar-thumb")
+      .backgroundImage,
+    thumbRadius: getComputedStyle(element, "::-webkit-scrollbar-thumb")
+      .borderRadius,
+  }));
+  if (browserName === "firefox") {
+    expect(scrollbarStyles.standardColor).not.toBe("auto");
+    expect(scrollbarStyles.standardWidth).toBe("thin");
+  } else {
+    expect(scrollbarStyles.standardColor).toBe("auto");
+    expect(scrollbarStyles.standardWidth).toBe("auto");
+    expect(scrollbarStyles.trackBackground).toBe("rgba(4, 10, 20, 0.55)");
+    expect(scrollbarStyles.thumbBackground).toContain("linear-gradient");
+    expect(scrollbarStyles.thumbRadius).toBe("999px");
+  }
+
+  const nativeSelectStyles = await page
+    .getByLabel("Read through")
+    .evaluate((element) => ({
+      standardColor: getComputedStyle(element).scrollbarColor,
+      standardWidth: getComputedStyle(element).scrollbarWidth,
+      thumbBackground: getComputedStyle(element, "::-webkit-scrollbar-thumb")
+        .backgroundImage,
+    }));
+  expect(nativeSelectStyles.standardColor).toBe("auto");
+  expect(nativeSelectStyles.standardWidth).toBe("auto");
+  expect(nativeSelectStyles.thumbBackground).toBe(
+    browserName === "firefox" ? "" : "none",
+  );
+
+  const entryWidth = await page
+    .locator(".chapter-track-entry")
+    .first()
+    .evaluate((entry) => entry.getBoundingClientRect().width);
+  expect(entryWidth).toBeCloseTo(88, 0);
+
+  const centerlineInsets = await page
+    .locator(".chapter-track")
+    .evaluate((track) => {
+      const style = getComputedStyle(track, "::before");
+      return { left: style.left, right: style.right };
+    });
+  expect(centerlineInsets).toEqual({ left: "44px", right: "44px" });
+});
+
 test("reader progress is confirmed before chapter data is unlocked", async ({
   page,
 }) => {

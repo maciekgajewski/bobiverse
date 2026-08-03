@@ -146,9 +146,13 @@ appears beside both **Read through** and the confirmation heading.
 In Chapter mode, use both the selector and chapter buttons with a keyboard. Confirm
 that locked entries expose only book/chapter identity and cannot change knowledge.
 Verify that the chapter timeline is one horizontal reading-order line of dots with
-concise local-number/conditional-title labels and no story year or chronology note. In Date
-mode, use the mouse wheel to zoom and drag to pan; confirm the focused axis also accepts
-`+`/`−` and arrow keys. Verify that the year axis has linear spacing (a 100-year
+concise local-number/conditional-title labels and no story year or chronology note.
+Confirm that the dots use dense, even spacing and that the central line terminates at
+the center of the first and last dots. Inspect the timeline's horizontal scrollbar,
+the side rails, compact panels, and any overflowing relationship list; every
+application-owned scrollbar must use the same decorative treatment. In Date mode, use
+the mouse wheel to zoom and drag to pan; confirm the focused axis also accepts `+`/`−`
+and arrow keys. Verify that the year axis has linear spacing (a 100-year
 interval is visibly ten times a 10-year interval at one zoom). Click a year marker
 with one story state and confirm that it selects that year directly. For a year with
 multiple states, confirm that the marker opens a compact choice list at the shared year

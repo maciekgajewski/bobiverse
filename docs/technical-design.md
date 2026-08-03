@@ -587,6 +587,11 @@ service or browser fallback is the localization strategy for those scripts.
 The application must expose selected system facts through ordinary DOM content so
 screen readers and automated tests are not forced to interpret the canvas.
 
+Every application-owned scrollable surface uses the shared decorative scrollbar
+treatment. The styling is a global visual-system rule so newly scrollable panels,
+lists, and timelines inherit it without component-specific selectors; browser-owned
+UI such as native select popups remains platform-rendered.
+
 Phase 2's approved desktop workspace is specified in
 `design/phase-2-desktop-ui.md`. At `>= 1200px`, it presents the progressive grouped
 object browser, true-scale map, selected-object inspector, and chapter/date timeline

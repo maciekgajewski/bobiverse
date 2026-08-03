@@ -34,6 +34,32 @@
 * {
   box-sizing: border-box;
 }
+@supports not selector(::-webkit-scrollbar) {
+  :where(*:not(select):not(option):not(optgroup)) {
+    scrollbar-color: var(--line-accent) transparent;
+    scrollbar-width: thin;
+  }
+  :where(select, option, optgroup) {
+    scrollbar-color: auto;
+    scrollbar-width: auto;
+  }
+}
+:where(*:not(select):not(option):not(optgroup))::-webkit-scrollbar {
+  width: 0.6rem;
+  height: 0.6rem;
+}
+:where(*:not(select):not(option):not(optgroup))::-webkit-scrollbar-track {
+  background: rgb(4 10 20 / 55%);
+  border-radius: 999px;
+}
+:where(*:not(select):not(option):not(optgroup))::-webkit-scrollbar-thumb {
+  background: linear-gradient(#3e6688, #203954);
+  border: 2px solid rgb(4 10 20 / 55%);
+  border-radius: 999px;
+}
+:where(*:not(select):not(option):not(optgroup))::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(#76cfe2, #3e6688);
+}
 body {
   min-width: 320px;
   min-height: 100vh;
@@ -177,8 +203,6 @@ h2 {
 .left-rail {
   padding: 1.3rem 0.85rem;
   overflow: auto;
-  scrollbar-color: var(--line-accent) transparent;
-  scrollbar-width: thin;
 }
 .right-rail {
   padding: 1.25rem;
@@ -349,31 +373,6 @@ h2 {
 .browser-group small.active {
   color: #8cebd4;
   font-weight: 700;
-}
-.right-rail,
-.mobile-panel {
-  scrollbar-color: var(--line-accent) transparent;
-  scrollbar-width: thin;
-}
-.right-rail::-webkit-scrollbar,
-.mobile-panel::-webkit-scrollbar {
-  width: 0.6rem;
-  height: 0.6rem;
-}
-.right-rail::-webkit-scrollbar-track,
-.mobile-panel::-webkit-scrollbar-track {
-  background: rgb(4 10 20 / 55%);
-  border-radius: 999px;
-}
-.right-rail::-webkit-scrollbar-thumb,
-.mobile-panel::-webkit-scrollbar-thumb {
-  background: linear-gradient(#3e6688, #203954);
-  border: 2px solid rgb(4 10 20 / 55%);
-  border-radius: 999px;
-}
-.right-rail::-webkit-scrollbar-thumb:hover,
-.mobile-panel::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(#76cfe2, #3e6688);
 }
 .map-frame {
   position: relative;
@@ -644,8 +643,8 @@ h2 {
   position: absolute;
   z-index: 0;
   top: 50%;
-  right: 4.25rem;
-  left: 4.25rem;
+  right: 2.75rem;
+  left: 2.75rem;
   height: 1px;
   background: var(--line-accent);
   content: "";
@@ -654,7 +653,7 @@ h2 {
 .chapter-track-zero {
   position: relative;
   z-index: 1;
-  min-width: 8.5rem;
+  min-width: 5.5rem;
   height: 100%;
 }
 .chapter-book-divider {
@@ -1112,8 +1111,6 @@ h2 {
   max-height: 12rem;
   overflow-y: auto;
   padding-right: 0.2rem;
-  scrollbar-color: var(--line-accent) transparent;
-  scrollbar-width: thin;
 }
 .chapter-relationship-list button {
   display: grid;
