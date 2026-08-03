@@ -1,0 +1,84 @@
+{
+  "chapter": "1.30",
+  "title": "30",
+  "date": "2165",
+  "location_id": "location:delta-eridani-4",
+  "summary": "In April 2165 at Delta Eridani 4, Bob expands his drone observation of the native Deltans and studies their society through a virtual-reality reconstruction. He focuses on a young Deltan he calls Archimedes, whose solitary experiments produce handled stone tools and twine. New Bobs Marvin, Luke, and Bender come online to help; Marvin searches for flint while the group agrees to call the Deltans' world Eden.",
+  "introducing": [
+    {
+      "id": "character:archimedes",
+      "name": "Archimedes",
+      "species_id": "species:delta-eridani-natives",
+      "current_state": "Under continuous drone observation as Bob studies his inventive and solitary toolmaking."
+    },
+    {
+      "id": "character:marvin",
+      "name": "Marvin",
+      "parent_id": "character:bob-replicant",
+      "current_state": "Newly activated at Delta Eridani and searching for exposed flint deposits."
+    },
+    {
+      "id": "character:luke",
+      "name": "Luke",
+      "parent_id": "character:bob-replicant",
+      "current_state": "Newly activated and helping with Bob's Deltan-observation project."
+    },
+    {
+      "id": "character:bender",
+      "name": "Bender",
+      "parent_id": "character:bob-replicant",
+      "current_state": "Newly activated and helping with Bob's Deltan-observation project."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "At Delta Eridani, overseeing expanding drone surveillance of the Deltans and assigning newly activated Bobs to support the work."
+    },
+    {
+      "entity_id": "species:delta-eridani-natives",
+      "name": "Deltans",
+      "description": "An intelligent native population of Delta Eridani 4, named Deltans by Bob. Bob judges them to be fire-using and probably intelligent. They have bat- and pig-like faces, long spiderish limbs, light brownish-gray to orangey-tan fur, patterned heads, and mobile expressive ears. Bob observes six apparently friendly groups, each tending a fire and interacting with the others. He observes two genders, tribal organization, loose pairings, and some individuals with multiple significant others; males patrol their territory while females and children form the tribe's center. The Deltans use clubs, handheld rocks, and pointed sticks as weapons."
+    },
+    {
+      "entity_id": "location:delta-eridani-4",
+      "name": "Eden",
+      "description": "The fourth inner rocky planet in the Delta Eridani system, also called Delta Eridani 4 and DE-4. It is slightly larger than Earth, with lower surface gravity, a somewhat denser atmosphere, and conditions that support soaring flyers and tall tree analogues. Its observed temperate-to-subtropical landscape has meadows, rocky bluffs, and forest-like expanses of exceptionally large brownish trees with wide horizontal branches and thick leaf canopies. Documented wildlife includes six-legged exoskeletal insect analogues, small furry six-legged mammal analogues, larger four-limbed mammal analogues, feather-like bird analogues, and a three-segment mammalian snake equivalent. One four-legged winged variant, provisionally called a hippogriff by Bob, shows limited color-change camouflage. Bob, Marvin, Luke, and Bender adopt Eden as the world name associated with the Deltans' birthplace."
+    },
+    {
+      "entity_id": "technology:planetary-exploration-drone",
+      "description": "A practical drone design for planetary exploration, with variants for surveillance and biological analysis. The football-sized surveillance variant has remote cameras, microphones, extendable gripping limbs, and small shielded reactors that can detect incoming craft before detection. It can relay live video, record speech, and provide footage for a virtual-reality reconstruction of observed inhabitants. The roughly meter-long biological-analysis variant has visual and auditory input optimized for close work and many extendable appendages for varied tasks; it also carries systems for examining local life and mechanical stomachs that process organics as a human stomach would, with sample-output analysis taking about a day. The drones can change color with limited pattern mimicry."
+    },
+    {
+      "entity_id": "technology:autofactory",
+      "description": "An automated factory used to gather and refine resources and to produce drones. It accepts designs made in virtual space and builds them with 3D printers, ROAMers, and nanites. Smaller units at material sites can make a few cargo drones at a time; larger units at Earth-Moon L4 and L5 are being set up to produce Bobs and drones and bootstrap industrial-scale equipment for colony ships. Its production priorities can be shifted from vessel assembly to computer cores. Standard templates include cradles that hold disembodied cores."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead",
+      "location_id": "location:delta-eridani-4"
+    },
+    {
+      "character_id": "character:archimedes",
+      "role": "other",
+      "location_id": "location:delta-eridani-4"
+    },
+    {
+      "character_id": "character:marvin",
+      "role": "other",
+      "location_id": "location:delta-eridani-4"
+    },
+    {
+      "character_id": "character:luke",
+      "role": "other",
+      "location_id": "location:delta-eridani-4"
+    },
+    {
+      "character_id": "character:bender",
+      "role": "other",
+      "location_id": "location:delta-eridani-4"
+    }
+  ]
+}
