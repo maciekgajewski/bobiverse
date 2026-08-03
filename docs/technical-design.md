@@ -414,6 +414,16 @@ Procyon, and Alpha Centauri with Alpha Centauri A, Alpha Centauri B, and Proxima
 Centauri. The roster validates stable IDs and membership; it is not an astrometry
 source.
 
+Under ADR-0023, a fresh independent agent may accept a changed complete astronomy
+candidate checksum when its entire diff consists only of exact anchor acquisition,
+non-semantic refresh metadata, requested-coverage rows, unaccepted derived review
+candidates, and deterministic ADR-0011 source-precedence geometry. It must reject and
+escalate any stable-ID, identity, name, alias, membership, adopted-component,
+authority, accepted-WDS, ambiguity, unrelated substantive source, invented-coordinate,
+or judgmental change. The reviewer remains read-only; acceptance metadata identifies
+the agent and Captain-delegated authority transparently. Exact chapter promotion
+still requires the Captain's approval.
+
 ## 9. Map interaction design
 
 ### 9.1 Interstellar interaction

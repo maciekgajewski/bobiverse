@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0.0",
-  "accepted_candidate_sha256": "0506e48247efb03a7550598b7ecbb920027b5807c20a49a5fe3dc4b9e5c1b3c1",
-  "reviewer": "Codex IV/27A exact-name enrichment review under Captain authorization",
-  "reviewed_at": "2026-08-01",
+  "accepted_candidate_sha256": "ef111b0df712de3445a402b3272f0fb849a7a82f616ae6b99c326c593c9ff073",
+  "reviewer": "Independent Codex astronomy snapshot review /root/astronomy_snapshot_review under Captain-delegated authority",
+  "reviewed_at": "2026-08-02",
   "anchor_bootstraps": [],
   "identity_transitions": [],
   "cns5_astrometry_overrides": [],

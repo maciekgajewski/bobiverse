@@ -56588,11 +56588,11 @@
       "is_cns5_primary": true,
       "membership_key": "518",
       "membership_reason": "CNS5 grouping",
-      "position_derivation": "CNS5 astrometry transformed by Astropy",
+      "position_derivation": "gcns median Bayesian Cartesian geometry",
       "position_pc": {
-        "xg": -6.547511840839,
-        "yg": -8.433463661434,
-        "zg": -3.989738986404
+        "xg": -6.550047,
+        "yg": -8.436728,
+        "zg": -3.9912837
       },
       "preferred_name_candidate": "GJ 10871",
       "source_identities": ["cns5:1519", "gaia-dr3:2911981886751531648"],
@@ -78481,11 +78481,11 @@
       "is_cns5_primary": true,
       "membership_key": "327",
       "membership_reason": "CNS5 grouping",
-      "position_derivation": "CNS5 astrometry transformed by Astropy",
+      "position_derivation": "gcns median Bayesian Cartesian geometry",
       "position_pc": {
-        "xg": -4.839380032485,
-        "yg": -6.522274726386,
-        "zg": 5.671084696415
+        "xg": -4.8418365,
+        "yg": -6.5255833,
+        "zg": 5.673962
       },
       "preferred_name_candidate": "GJ 1125",
       "source_identities": ["cns5:2355", "gaia-dr3:3840711729206827520"],
@@ -85420,11 +85420,11 @@
       "is_cns5_primary": true,
       "membership_key": "165",
       "membership_reason": "CNS5 grouping",
-      "position_derivation": "CNS5 astrometry transformed by Astropy",
+      "position_derivation": "gcns median Bayesian Cartesian geometry",
       "position_pc": {
-        "xg": 6.934665099888,
-        "yg": 3.215504607219,
-        "zg": 1.193011013997
+        "xg": 6.936857,
+        "yg": 3.2165203,
+        "zg": 1.1933885
       },
       "preferred_name_candidate": "GJ 701",
       "source_identities": ["cns5:4472", "gaia-dr3:4177731838628465408"],
@@ -90477,11 +90477,11 @@
       "is_cns5_primary": true,
       "membership_key": "161",
       "membership_reason": "CNS5 grouping",
-      "position_derivation": "CNS5 astrometry transformed by Astropy",
+      "position_derivation": "gcns median Bayesian Cartesian geometry",
       "position_pc": {
-        "xg": 6.581563260357,
-        "yg": 3.034337492418,
-        "zg": 2.634288133964
+        "xg": 6.583271,
+        "yg": 3.035124,
+        "zg": 2.6349719
       },
       "preferred_name_candidate": "GJ 673",
       "source_identities": ["cns5:4280", "gaia-dr3:4375233191015944192"],
@@ -92152,11 +92152,11 @@
       "is_cns5_primary": true,
       "membership_key": "168",
       "membership_reason": "CNS5 grouping",
-      "position_derivation": "CNS5 astrometry transformed by Astropy",
+      "position_derivation": "gcns median Bayesian Cartesian geometry",
       "position_pc": {
-        "xg": 6.712081994183,
-        "yg": 3.640243697346,
-        "zg": 1.631051890358
+        "xg": 6.716706,
+        "yg": 3.6427505,
+        "zg": 1.6321757
       },
       "preferred_name_candidate": "GJ 12601",
       "source_identities": ["cns5:4458", "gaia-dr3:4468009917744160000"],
@@ -100188,11 +100188,11 @@
       "is_cns5_primary": true,
       "membership_key": "384",
       "membership_reason": "CNS5 grouping",
-      "position_derivation": "CNS5 astrometry transformed by Astropy",
+      "position_derivation": "gcns median Bayesian Cartesian geometry",
       "position_pc": {
-        "xg": -3.229800826167,
-        "yg": -8.239610010656,
-        "zg": -5.503391191897
+        "xg": -3.2307224,
+        "yg": -8.24196,
+        "zg": -5.5049605
       },
       "preferred_name_candidate": "GJ 10784",
       "source_identities": ["cns5:1381", "gaia-dr3:4805600119646735616"],
@@ -100508,11 +100508,11 @@
       "is_cns5_primary": true,
       "membership_key": "563",
       "membership_reason": "CNS5 grouping",
-      "position_derivation": "CNS5 astrometry transformed by Astropy",
+      "position_derivation": "gcns median Bayesian Cartesian geometry",
       "position_pc": {
-        "xg": -5.009250235688,
-        "yg": -8.356312441044,
-        "zg": -6.474789031422
+        "xg": -5.012181,
+        "yg": -8.361199,
+        "zg": -6.478576
       },
       "preferred_name_candidate": "GJ 10750",
       "source_identities": ["cns5:1322", "gaia-dr3:4822636399484228224"],
@@ -101182,11 +101182,11 @@
       "is_cns5_primary": true,
       "membership_key": "991",
       "membership_reason": "CNS5 grouping",
-      "position_derivation": "CNS5 astrometry transformed by Astropy",
+      "position_derivation": "gcns median Bayesian Cartesian geometry",
       "position_pc": {
-        "xg": -4.531824975404,
-        "yg": -9.132447869398,
-        "zg": -9.988759804088
+        "xg": -4.531887,
+        "yg": -9.132571,
+        "zg": -9.988895
       },
       "preferred_name_candidate": "GJ 3286",
       "source_identities": ["cns5:1094", "gaia-dr3:4865016349710062208"],
@@ -102492,11 +102492,11 @@
       "is_cns5_primary": true,
       "membership_key": "731",
       "membership_reason": "CNS5 grouping",
-      "position_derivation": "CNS5 astrometry transformed by Astropy",
+      "position_derivation": "gcns median Bayesian Cartesian geometry",
       "position_pc": {
-        "xg": 4.600332245694,
-        "yg": -4.707393835643,
-        "zg": -10.981945703242
+        "xg": 4.6019664,
+        "yg": -4.709067,
+        "zg": -10.9858465
       },
       "preferred_name_candidate": "GJ 3009",
       "source_identities": ["cns5:36", "gaia-dr3:4919497979411495296"],
@@ -104348,11 +104348,11 @@
       "is_cns5_primary": true,
       "membership_key": "510",
       "membership_reason": "CNS5 grouping",
-      "position_derivation": "CNS5 astrometry transformed by Astropy",
+      "position_derivation": "gcns median Bayesian Cartesian geometry",
       "position_pc": {
-        "xg": 0.74831731973,
-        "yg": -1.978330288484,
-        "zg": -11.117103510398
+        "xg": 0.74893004,
+        "yg": -1.9799495,
+        "zg": -11.126201
       },
       "preferred_name_candidate": "GJ 10156",
       "source_identities": ["cns5:290", "gaia-dr3:4989399774745144448"],
@@ -119300,11 +119300,11 @@
       "is_cns5_primary": true,
       "membership_key": "326",
       "membership_reason": "CNS5 grouping",
-      "position_derivation": "CNS5 astrometry transformed by Astropy",
+      "position_derivation": "gcns median Bayesian Cartesian geometry",
       "position_pc": {
-        "xg": -4.370557453249,
-        "yg": -8.812678925205,
-        "zg": 1.064429358443
+        "xg": -4.371764,
+        "yg": -8.815109,
+        "zg": 1.0647229
       },
       "preferred_name_candidate": "GJ 11201",
       "source_identities": ["cns5:2051", "gaia-dr3:5699418131466175488"],
@@ -119471,11 +119471,11 @@
       "is_cns5_primary": true,
       "membership_key": "389",
       "membership_reason": "CNS5 grouping",
-      "position_derivation": "CNS5 astrometry transformed by Astropy",
+      "position_derivation": "gcns median Bayesian Cartesian geometry",
       "position_pc": {
-        "xg": -5.677307313498,
-        "yg": -8.772314210423,
-        "zg": 0.049611682938
+        "xg": -5.6789956,
+        "yg": -8.77492,
+        "zg": 0.049626295
       },
       "preferred_name_candidate": "GJ 3459",
       "source_identities": ["cns5:1893", "gaia-dr3:5715352842388433664"],
@@ -128456,11 +128456,11 @@
       "is_cns5_primary": true,
       "membership_key": "333",
       "membership_reason": "CNS5 grouping",
-      "position_derivation": "CNS5 astrometry transformed by Astropy",
+      "position_derivation": "gcns median Bayesian Cartesian geometry",
       "position_pc": {
-        "xg": 6.886776226034,
-        "yg": -6.457645136303,
-        "zg": 3.105458290197
+        "xg": 6.88824,
+        "yg": -6.459019,
+        "zg": 3.1061192
       },
       "preferred_name_candidate": "GJ 12020",
       "source_identities": ["cns5:3479", "gaia-dr3:6109610086872510592"],
@@ -128480,11 +128480,11 @@
       "is_cns5_primary": true,
       "membership_key": "256",
       "membership_reason": "CNS5 grouping",
-      "position_derivation": "CNS5 astrometry transformed by Astropy",
+      "position_derivation": "gcns median Bayesian Cartesian geometry",
       "position_pc": {
-        "xg": 6.478591855688,
-        "yg": -5.685339879722,
-        "zg": 2.942337474723
+        "xg": 6.4822497,
+        "yg": -5.6885514,
+        "zg": 2.9439995
       },
       "preferred_name_candidate": "GJ 12040",
       "source_identities": ["cns5:3503", "gaia-dr3:6109949904687424640"],
@@ -223799,5 +223799,5 @@
       "wds_membership_evidence": []
     }
   ],
-  "wds_candidate_sha256": "fbb068a3f87f7eead6cedcc171baf79b0334636eed499b53892aae7a4eb9afb2"
+  "wds_candidate_sha256": "947768921fc162c055918c94d4010b0ac0861eb27ab8a09bb516c989d062afaa"
 }

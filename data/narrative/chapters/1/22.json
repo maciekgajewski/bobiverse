@@ -1,0 +1,91 @@
+{
+  "chapter": "1.22",
+  "title": "22",
+  "summary": "In September 2150 at Epsilon Eridani, Bill and Garfield watch Calvin, Goku, and Linus leave. Calvin and Goku depart together despite their continuing conflict, while Linus travels separately; Bill can only speculate about the reason. The first version-3 vessels, Heaven-9 and Heaven-10, are specially equipped for a destination Bill expects may hold other probes. FAITH has avoided Alpha Centauri because another superpower may have chosen it, and the group agrees to offer Medeiros neither warning nor quarter.",
+  "date": "2150",
+  "location_id": "location:epsilon-eridani",
+  "introducing": [
+    {
+      "id": "character:calvin",
+      "name": "Calvin",
+      "parent_id": "character:bill",
+      "current_state": "Departing Epsilon Eridani with Goku despite their continuing mutual conflict."
+    },
+    {
+      "id": "character:goku",
+      "name": "Goku",
+      "parent_id": "character:bill",
+      "current_state": "Departing Epsilon Eridani with Calvin despite their continuing mutual conflict."
+    },
+    {
+      "id": "character:linus",
+      "name": "Linus",
+      "parent_id": "character:bill",
+      "current_state": "Departing Epsilon Eridani on his own. Bill reports that he had seemed okay and showed no unusual twitchiness beforehand."
+    },
+    {
+      "id": "vessel:heaven-9",
+      "name": "Heaven-9",
+      "description": "A version-3 HEAVEN vessel equipped for a destination that may contain other probes. Oversized SURGE drives and reactors give it a maximum acceleration of 10 g. A smaller shielded reactor lets it coast through a system with its main reactor off, making it difficult to detect except at close range. It carries expanded ship-buster and scout complements, rail guns, and twin SUDDAR-jamming emitters intended to overwhelm nearby detectors with white noise.",
+      "current_state": "Departing Epsilon Eridani as part of the first version-3 cohort."
+    },
+    {
+      "id": "vessel:heaven-10",
+      "name": "Heaven-10",
+      "description": "A version-3 HEAVEN vessel equipped for a destination that may contain other probes. Oversized SURGE drives and reactors give it a maximum acceleration of 10 g. A smaller shielded reactor lets it coast through a system with its main reactor off, making it difficult to detect except at close range. It carries expanded ship-buster and scout complements, rail guns, and twin SUDDAR-jamming emitters intended to overwhelm nearby detectors with white noise.",
+      "current_state": "Departing Epsilon Eridani as part of the first version-3 cohort."
+    },
+    {
+      "id": "location:alpha-centauri",
+      "name": "Alpha Centauri",
+      "kind": "star_system",
+      "description": "A nearby stellar system considered an obvious first destination for an interstellar probe.",
+      "astronomy_object_id": "stellar-system-005413"
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:riker",
+      "current_state": "Has departed Epsilon Eridani with Homer five years before September 2150."
+    },
+    {
+      "entity_id": "character:homer",
+      "current_state": "Has departed Epsilon Eridani with Riker five years before September 2150."
+    },
+    {
+      "entity_id": "technology:von-neumann-probe",
+      "description": "A self-replicating spacecraft designed to travel between star systems and construct new copies of itself along the way. Interstellar use became possible after a breakthrough in subspace theory, and such probes are central to a competitive international colonization effort. Their exponential replication could eventually explore the galaxy, but practical self-construction remains the central obstacle."
+    },
+    {
+      "entity_id": "technology:nanites",
+      "description": "Tiny, single-purpose devices used for work below ROAMer scale; their flexibility is limited. Nanites alone cannot supply the energy needed to process high-grade materials for self-construction."
+    },
+    {
+      "entity_id": "organization:free-american-independent-theocratic-hegemony",
+      "current_state": "In 2150, it avoids Alpha Centauri because another superpower may already have selected it."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bill",
+      "role": "lead",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:garfield",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    }
+  ],
+  "mentions": [
+    "character:bob-replicant",
+    "character:ernesto-medeiros",
+    "location:sol",
+    "organization:china",
+    "organization:united-states-of-eurasia",
+    "technology:exploration-scouts",
+    "technology:ship-busters",
+    "technology:suddar",
+    "technology:surge-drive"
+  ]
+}

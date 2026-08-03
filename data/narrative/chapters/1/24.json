@@ -1,0 +1,75 @@
+{
+  "chapter": "1.24",
+  "title": "24",
+  "date": "2157",
+  "location_id": "location:sol",
+  "introducing": [
+    {
+      "id": "vessel:heaven-6",
+      "name": "Heaven-6",
+      "description": "A version-2 HEAVEN vessel fitted with a rail gun that can launch items fore or aft at hundreds of g. Rail-gun launches leave it momentarily in free-fall while its SURGE drive supplies power.",
+      "current_state": "At Sol, recovering from significant structural damage after a missile explosion; its computer-core systems are intact, and repairs are expected to take three days."
+    },
+    {
+      "id": "event:four-asteroid-diversion",
+      "name": "Diversion of the four asteroids",
+      "date": "2157",
+      "location_id": "location:sol",
+      "description": "Riker and Homer redirect four asteroids away from Earth by replacing their drive controllers and hot-wiring the systems for sideways thrust. Riker assesses the impacts as extinction-level, and the replacement controllers place the asteroids in long-period, high-inclination orbits that will not cross Earth's orbit.",
+      "participant_ids": ["character:riker", "character:homer"]
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:riker",
+      "current_state": "At Sol with Homer after defeating Brazilian probes and diverting four asteroids away from Earth; building exploration scouts to search for survivors."
+    },
+    {
+      "entity_id": "character:homer",
+      "current_state": "At Sol with Riker after surviving the battle and helping divert four asteroids away from Earth."
+    },
+    {
+      "entity_id": "location:earth",
+      "state": "Cloud and dust obscure a heavily damaged surface; asteroid strikes and nuclear weapons have disrupted weather patterns, and dozens of impact sites are visible."
+    },
+    {
+      "entity_id": "technology:roamers",
+      "description": "Remote observation and manipulation devices directed through GUPPI. They come in varied sizes, can coordinate across scales, and need minimal supervision once their tasks, dependencies, and interruption conditions are defined. Without active intervention, they can work up to ten times faster. They can inspect ship circuitry with gnat-sized units, carry video cameras for remote observation, and pick up vibrations transmitted through a wall when pressed against it. Reusable scripts automate many routine activities, leaving assembly work largely self-directed. In manufacturing, they feed raw ore into manufacturing systems, gather parts, and assemble ships; smaller printer operations can make additional ROAMers and ship-buster components. They can repair and maintain HEAVEN vessels and refine battle scraps into rail-gun ammunition."
+    },
+    {
+      "entity_id": "technology:ship-busters",
+      "description": "Improvised attack units carrying small reactors, oversized SURGE drives, AMI pilots, and dense metal projectiles instead of explosive warheads. They can intercept missiles or strike vessels at very high acceleration. They can drift on stored power with their reactors off and destroy targets through kinetic-energy ramming, which requires enough speed to penetrate a hull. Their steel balls can also serve as rail-gun ammunition."
+    },
+    {
+      "entity_id": "technology:surge-drive",
+      "description": "A recently developed drive technology enabled by a breakthrough in subspace theory and used to equip spacecraft for interstellar operations. Beyond prototypes, only a small number of SURGE-equipped vessels are in active service. On Heaven-1, it provides reactionless propulsion rather than using gathered hydrogen as reaction mass. It can also accelerate a projectile through an axial launch tube, requiring the vessel to rotate to aim and to stop its drive before firing. Bob believes it may push against the fabric of space. A low-intensity, wide-field configuration can accelerate an asteroid as a unit without tidal forces or field drop-off tearing it apart."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:riker",
+      "role": "lead",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:homer",
+      "role": "other",
+      "location_id": "location:sol"
+    }
+  ],
+  "mentions": [
+    "character:bill",
+    "character:ernesto-medeiros",
+    "location:epsilon-eridani",
+    "organization:brazilian-empire",
+    "organization:china",
+    "organization:free-american-independent-theocratic-hegemony",
+    "technology:ami",
+    "technology:autofactory",
+    "technology:exploration-scouts",
+    "technology:guppi-interface",
+    "technology:suddar",
+    "vessel:heaven-2"
+  ],
+  "summary": "In April 2157 at Sol, Riker and Homer draw four Brazilian probes away from their asteroid operation and destroy them with ship-busters and rail-gun fire. They hide behind Earth to ambush the remaining two; Heaven-6 is damaged but Homer survives, and Riker destroys the last attackers. Their salvage reveals a wide-field SURGE-drive design, which they hot-wire to divert four extinction-scale asteroids away from Earth. They assess a war-devastated planet, prepare exploration scouts to search for survivors, and receive an unexpected hail."
+}
