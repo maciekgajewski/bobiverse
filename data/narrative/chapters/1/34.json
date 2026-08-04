@@ -1,0 +1,25 @@
+{
+  "chapter": "1.34",
+  "title": "34",
+  "summary": "In September 2158 in Sol, Homer judges Riker's response to tension with the enclaves and a Spit ultimatum as ineffective, while seeing himself as closer in temperament to Original Bob. Seeking a less confrontational response to Valter's demand for his people to join the first ships, Homer uses VR and studies the manufacturing schedule for a way to move ship three's departure earlier. Expecting Riker to reject the idea, Homer turns to Colonel Butterworth because Riker listens to him, then makes an unspecified call.",
+  "date": "2158.9",
+  "location_id": "location:sol",
+  "updates": [
+    {
+      "entity_id": "technology:vr",
+      "description": "A virtual-reality interface Bob builds aboard Heaven-1 to provide sensory input and an embodied experience while he travels as a bodiless mind. It initially needs hardware modifications and remains an ongoing software project. Planned improvements are intended to support more direct interaction between users. It has become realistic enough to produce physical sensations that feel real and a full avatar that looks and behaves like a human. It can render virtual objects such as a Nerf basketball and hoop, though one observed basketball trajectory is unrealistic."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:homer",
+      "role": "lead"
+    }
+  ],
+  "mentions": [
+    "character:bob-replicant",
+    "character:george-butterworth",
+    "character:gudmund-valter",
+    "character:riker"
+  ]
+}
