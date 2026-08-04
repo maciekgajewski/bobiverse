@@ -299,7 +299,11 @@ describe("timeline dock", () => {
     ).toBeInTheDocument();
     expect(screen.queryByText("2000.1")).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Chapter 1.1" }));
+    await user.click(
+      screen.getByRole("button", {
+        name: "Story state 1 of 2 · 2000 · revealed in Chapter 1.1",
+      }),
+    );
 
     expect(selectDate).toHaveBeenCalledWith("2000");
     expect(
@@ -340,7 +344,7 @@ describe("timeline dock", () => {
     ).getAllByRole("button");
     expect(new Set(choices.map((choice) => choice.textContent)).size).toBe(4);
     expect(choices[1]).toHaveTextContent(
-      "Story state 2 of 4 · revealed in Chapter 1.1",
+      "Story state 2 of 4 · 2110 · revealed in Chapter 1.1",
     );
     expect(screen.queryByText(/2110\.[0-9]/)).not.toBeInTheDocument();
 

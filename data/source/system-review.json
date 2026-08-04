@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0.0",
-  "accepted_candidate_sha256": "ef111b0df712de3445a402b3272f0fb849a7a82f616ae6b99c326c593c9ff073",
+  "accepted_candidate_sha256": "c4a53384393861da48a5033b4ff5117fc7cb1591491ffb127bede72a695781d5",
   "reviewer": "Independent Codex astronomy snapshot review /root/astronomy_snapshot_review under Captain-delegated authority",
-  "reviewed_at": "2026-08-02",
+  "reviewed_at": "2026-08-04",
   "anchor_bootstraps": [],
   "identity_transitions": [],
   "cns5_astrometry_overrides": [],

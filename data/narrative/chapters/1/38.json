@@ -1,0 +1,59 @@
+{
+  "chapter": "1.38",
+  "title": "38",
+  "summary": "In November 2158 at Sol, Riker receives confirmation that the Spits will receive the third colony ship but remains concerned that their refuge will not last until departure. At a United Nations meeting, Colonel Butterworth describes escalating threats from VEHEMENT. Minister Cranston then introduces Riker to Julia Hendricks, a descendant of Riker's sister Andrea, and Riker and Julia spend several hours talking.",
+  "date": "2158-11",
+  "location_id": "location:sol",
+  "introducing": [
+    {
+      "id": "organization:vehement",
+      "name": "VEHEMENT",
+      "description": "VEHEMENT is an anonymous movement that advocates human extinction. It threatens violence and guerrilla tactics to coerce people into ending reproduction, with reported incidents appearing opportunistic and geographically dispersed.",
+      "current_state": "Colonel Butterworth reports that its rhetoric has become more intense since Riker appeared."
+    },
+    {
+      "id": "character:julia-hendricks",
+      "name": "Julia Hendricks"
+    },
+    {
+      "id": "character:andrea-johansson",
+      "name": "Andrea Johansson"
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "organization:spitsbergen-refuge",
+      "current_state": "The group is to receive the third colony ship, but Riker expects Spitsbergen will not remain viable until its people can leave."
+    },
+    {
+      "entity_id": "character:riker",
+      "aliases": ["Bob-2", "William", "Will"]
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:riker",
+      "role": "lead",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:george-butterworth",
+      "role": "other"
+    },
+    {
+      "character_id": "character:cranston",
+      "role": "other"
+    },
+    {
+      "character_id": "character:julia-hendricks",
+      "role": "other"
+    }
+  ],
+  "mentions": [
+    "organization:united-nations",
+    "organization:svalbard-global-trust",
+    "organization:free-american-independent-theocratic-hegemony",
+    "technology:guppi-interface",
+    "character:bob-replicant"
+  ]
+}

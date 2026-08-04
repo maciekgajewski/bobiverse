@@ -1,6 +1,6 @@
 # BOB-20260804-JSSM85: calendar-precision narrative dates
 
-Status: Ready
+Status: In progress
 Phase: 2 (narrative foundation and chapter timeline)
 Last updated: 2026-08-04
 
@@ -159,6 +159,10 @@ validating the combined review package does not authorize canonical Chapter
   `precision_result` (`unchanged`, `upgraded`, or `downgraded`) fields so a same-
   precision value correction is representable. Record every chapter with its source
   SHA-256 and bounded sealed evidence. Never infer a missing calendar component.
+- Chapter 1.1 is the sole Captain-approved audit exception. Its exact source has no
+  heading or opening-scene calendar date, so retain canonical `2016`, record the
+  absence of source evidence explicitly, and do not infer a replacement from elapsed
+  time or later dates. The Captain approved this bounded exception on 2026-08-04.
 - Replace the reviewed 2158 month-number encodings with real month precision:
   Chapter 1.31 `2158-01`, Chapter 1.33 `2158-03`, Chapters 1.34 and 1.36 `2158-09`,
   and Chapter 1.32 `2158-10`.
@@ -273,9 +277,11 @@ evidence from this task document.
 8. A sealed temporary audit accounts for Chapters 1.1–1.39 exactly once and records
    each explicit external source path and fingerprint, bounded heading/opening
    evidence, previous date, proposed date, `value_result`, and `precision_result`.
-   Every proposal is supported by that boundary; same-precision corrections are
-   representable; and no non-top-level field changes through this audit. Missing,
-   invalid, or mismatched inputs fail closed and set the task to `Blocked`.
+   Every proposal except the documented Chapter 1.1 retention is supported by that
+   boundary; the audit records that sole Captain-approved exception without invented
+   evidence; same-precision corrections are representable; and no non-top-level field
+   changes through this audit. Missing, invalid, or mismatched inputs fail closed and
+   set the task to `Blocked`.
 9. The five reviewed 2158 month values migrate to `2158-01`, `2158-03`, `2158-09`,
    `2158-09`, and `2158-10` in Chapters 1.31, 1.33, 1.34, 1.36, and 1.32
    respectively. All other canonical migrations match the approved audit.

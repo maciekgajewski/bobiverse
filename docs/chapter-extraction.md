@@ -126,26 +126,24 @@ latest chapter fact.
 ## Narrative-moment ordering
 
 Every dated fact authored by a chapter carries an ordering moment made from its
-effective story date and canonical source chapter. Different years use numeric year
-order. Same-year indexed dates use their explicit numeric indices; equal indexed
-moments remain tied. Same-year year-only facts use canonical numeric chapter order.
-A year-only date and an indexed date in the same year remain incomparable.
+effective story date and canonical source chapter. Author dates as
+`YYYY[-MM[-DD]][.d+]`, preserving exactly the Gregorian precision stated by the
+heading or opening-scene boundary. Non-overlapping calendar ranges order normally.
+Identical calendar portions compare the effective suffix (omitted means zero), then
+canonical chapter; overlapping unequal-precision chapter facts use canonical chapter.
 
 Apply this rule consistently during reconciliation to state writes, appearances,
 dated events, and any generated activity those facts will produce. Do not add
-mechanical indices merely to reproduce canonical chapter order. If the source reveals
-that within-year chronology differs from chapter order, surface the conflict for
-review and use supported consistent indices rather than silently overriding it.
+mechanical suffixes merely to reproduce canonical chapter order. If the source reveals
+that chronology differs from chapter order, preserve its calendar precision and use a
+source-backed suffix only when needed for ordering at that same calendar portion.
 Requested display dates and chronologically unplaced events have no source-chapter
 moment and remain outside this fact-to-fact fallback.
 
-The reviewed 2158 sequence uses the source-revealed month numbers as its existing
-opaque ordering indices: Chapter `1.31` uses `2158.1` for January, Chapter `1.33`
-uses `2158.3` for March, Chapters `1.34` and `1.36` use `2158.9` for September, and
-Chapter `1.32` uses `2158.10` for October. This is the bounded editorial decision in
-BOB-20260803-RTJFZV, not a general month encoding. Consumers must not infer, label,
-or display a month from a date index. Equal explicit indices remain tied, including
-the two September chapters.
+The reviewed 2158 sequence uses real month precision: Chapter `1.31` is `2158-01`,
+Chapter `1.33` is `2158-03`, Chapters `1.34` and `1.36` are `2158-09`, and Chapter
+`1.32` is `2158-10`. A suffix is never a fractional year, month, or day and never
+appears in reader-facing text.
 
 ## Event significance
 

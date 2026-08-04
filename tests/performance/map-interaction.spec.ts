@@ -259,7 +259,7 @@ async function sweep(page: Page, record: boolean): Promise<number[]> {
 async function loadFixture(page: Page): Promise<void> {
   await page.addInitScript((chapter) => {
     window.localStorage.setItem(
-      "bobiverse.app-state.v1",
+      "bobiverse.app-state.v2",
       JSON.stringify({
         furthestChapterRead: chapter,
         viewChapter: chapter,

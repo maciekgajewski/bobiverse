@@ -35700,7 +35700,7 @@
     "endpoint": "https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync",
     "normalised_sha256": "64279ff81b83e607afa56b3655cad56baf1afea7c115461fb617f28c1d9f6faf",
     "release": "IV/27A (Kostjuk 2002)",
-    "retrieved_at": "2026-08-02T20:23:07+00:00",
+    "retrieved_at": "2026-08-04T14:21:03+00:00",
     "row_count": 3569,
     "table": "IV/27A/catalog"
   }

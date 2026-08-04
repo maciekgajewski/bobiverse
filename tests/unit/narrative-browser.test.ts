@@ -107,7 +107,7 @@ describe("narrative object browser projection", () => {
       "Ada",
       "Zoë",
     ]);
-    expect(dateCharacters.activeCount).toBe(1);
+    expect(dateCharacters.activeCount).toBe(2);
     expect(
       buildNarrativeBrowserGroups(world(), "date").find(
         ({ id }) => id === "events",
@@ -115,7 +115,49 @@ describe("narrative object browser projection", () => {
     ).toBeNull();
   });
 
-  it("does not invent a latest activity between incomparable same-year dates", () => {
+  it("marks date-mode activity active through shared containment and suffix eligibility", () => {
+    const candidate = world();
+    candidate.view.display_date = "2165";
+    candidate.activity = [
+      {
+        entity_id: "character:ada",
+        source_chapter: "1.1",
+        effective_date: "2165-08",
+        reasons: ["appearance"],
+      },
+      {
+        entity_id: "character:zoe",
+        source_chapter: "1.2",
+        effective_date: "2166",
+        reasons: ["appearance"],
+      },
+    ];
+    let characters = buildNarrativeBrowserGroups(candidate, "date")[0]!;
+    expect(
+      characters.items.find(({ entity }) => entity.id === "character:ada")
+        ?.active,
+    ).toBe(true);
+    expect(
+      characters.items.find(({ entity }) => entity.id === "character:zoe")
+        ?.active,
+    ).toBe(false);
+
+    candidate.view.display_date = "2165-08.1";
+    candidate.activity[0]!.effective_date = "2165-08";
+    characters = buildNarrativeBrowserGroups(candidate, "date")[0]!;
+    expect(
+      characters.items.find(({ entity }) => entity.id === "character:ada")
+        ?.active,
+    ).toBe(true);
+    candidate.activity[0]!.effective_date = "2165";
+    characters = buildNarrativeBrowserGroups(candidate, "date")[0]!;
+    expect(
+      characters.items.find(({ entity }) => entity.id === "character:ada")
+        ?.active,
+    ).toBe(false);
+  });
+
+  it("uses an ordering suffix before chapter fallback", () => {
     const candidate = world();
     candidate.view.display_date = "2300";
     candidate.activity.push(
@@ -136,7 +178,7 @@ describe("narrative object browser projection", () => {
       buildNarrativeBrowserGroups(candidate, "date")[0]?.items.find(
         ({ entity }) => entity.id === "character:zoe",
       )?.lastActivity,
-    ).toBeNull();
+    ).toMatchObject({ source_chapter: "1.2", effective_date: "2200.1" });
   });
 
   it("orders equal year-only activity and event facts by canonical chapter", () => {
@@ -175,7 +217,7 @@ describe("narrative object browser projection", () => {
     ).toMatchObject({ source_chapter: "1.2", effective_date: "2200" });
   });
 
-  it("keeps equal indexed activity ambiguous", () => {
+  it("orders equal-suffix activity by canonical chapter", () => {
     const candidate = world();
     candidate.view.display_date = "2300";
     candidate.activity = [
@@ -197,7 +239,7 @@ describe("narrative object browser projection", () => {
       buildNarrativeBrowserGroups(candidate, "date")[0]?.items.find(
         ({ entity }) => entity.id === "character:ada",
       )?.lastActivity,
-    ).toBeNull();
+    ).toMatchObject({ source_chapter: "1.2", effective_date: "2200.1" });
   });
 
   it("matches projected names and aliases without case or diacritics", () => {

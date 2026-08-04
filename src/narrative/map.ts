@@ -1,6 +1,10 @@
 import type { SelectionIdentity } from "../domain/selection";
 import type { StellarSystem } from "../domain/types";
-import type { NarrativeEntity, NarrativeWorld } from "./model";
+import {
+  isNarrativeDateEligible,
+  type NarrativeEntity,
+  type NarrativeWorld,
+} from "./model";
 
 const PARSECS_PER_LIGHT_YEAR = 1 / 3.26156;
 
@@ -142,7 +146,12 @@ export function projectNarrativeMap(
     const isCurrent =
       mode === "chapter"
         ? activity.source_chapter === world.view.chapter
-        : activity.effective_date === world.view.display_date;
+        : activity.effective_date !== null &&
+          world.view.display_date !== null &&
+          isNarrativeDateEligible(
+            activity.effective_date,
+            world.view.display_date,
+          );
     if (!isCurrent) continue;
     const astronomyId = narrativeSystemIds.get(activity.entity_id);
     if (astronomyId) activeSystemIds.add(astronomyId);

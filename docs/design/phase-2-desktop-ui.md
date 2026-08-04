@@ -461,16 +461,18 @@ events, and generated activity. It does not offer arbitrary year entry. A later
 chapter may add a newly revealed earlier date, but that date appears only when the
 knowledge chapter reaches the reveal.
 
-Horizontal position is a linear function of calendar-year difference. A 100-year gap
+Horizontal position is a linear function of Gregorian elapsed time. A 100-year gap
 occupies ten times the distance of a 10-year gap at the same zoom. The UI may zoom and
 pan the time axis uniformly, hide colliding text, and provide a full-range overview;
 it may not redistribute meaningful dates evenly.
 
-Multiple indexed values in one year occupy the same year coordinate. They are exposed
-as a stacked cluster or accessible choice list with descriptive source context. The
-internal within-year index is never displayed or converted into elapsed time. A
-year-only value remains unordered relative to indexed values in that year; the UI
-offers only dates for which the projection is determinate.
+Year values anchor at January 1, month values at the first of that month, and day
+values at that day's start, using elapsed whole days divided by the Gregorian year
+length. This is a non-semantic point-axis anchor and never narrows an imprecise fact.
+All suffix variants of one calendar portion share a coordinate and use a stacked
+cluster or accessible choice list. Suffixes are never displayed or converted into
+elapsed time. Labels use the shared English year, month-year, or day-month-year
+formatter.
 
 The persistent status line uses wording such as:
 

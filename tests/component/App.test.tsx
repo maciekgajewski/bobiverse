@@ -154,7 +154,7 @@ describe("atlas shell", () => {
 
   it("routes persisted-progress projection failures to the recovery state", () => {
     window.localStorage.setItem(
-      "bobiverse.app-state.v1",
+      "bobiverse.app-state.v2",
       JSON.stringify({
         furthestChapterRead: "1.2",
         viewChapter: "1.2",
@@ -233,7 +233,7 @@ describe("atlas shell", () => {
 
   it("selects an unlocked timeline chapter for inspection without a second projection", async () => {
     window.localStorage.setItem(
-      "bobiverse.app-state.v1",
+      "bobiverse.app-state.v2",
       JSON.stringify({
         furthestChapterRead: "1.2",
         viewChapter: "1.2",
@@ -276,7 +276,7 @@ describe("atlas shell", () => {
 
   it("keeps relationship traversal in panel history and resets it for external selections", async () => {
     window.localStorage.setItem(
-      "bobiverse.app-state.v1",
+      "bobiverse.app-state.v2",
       JSON.stringify({
         furthestChapterRead: "1.2",
         viewChapter: "1.2",
@@ -360,7 +360,7 @@ describe("atlas shell", () => {
 
   it("clears chapter inspection in Date mode while preserving eligible object selections", async () => {
     window.localStorage.setItem(
-      "bobiverse.app-state.v1",
+      "bobiverse.app-state.v2",
       JSON.stringify({
         furthestChapterRead: "1.2",
         viewChapter: "1.2",
@@ -424,11 +424,11 @@ describe("atlas shell", () => {
     "opens an ancestor birth chapter from %s mode without changing the spoiler ceiling",
     async (mode) => {
       window.localStorage.setItem(
-        "bobiverse.app-state.v1",
+        "bobiverse.app-state.v2",
         JSON.stringify({
           furthestChapterRead: "1.20",
           viewChapter: "1.20",
-          displayDate: "2145",
+          displayDate: "2145-12",
           mode,
           timelineZoom: 1,
           timelinePan: 0,
@@ -466,7 +466,7 @@ describe("atlas shell", () => {
         within(inspector).getByText("Book 1 · Chapter 17"),
       ).toBeInTheDocument();
       const stored = JSON.parse(
-        window.localStorage.getItem("bobiverse.app-state.v1")!,
+        window.localStorage.getItem("bobiverse.app-state.v2")!,
       ) as Record<string, unknown>;
       expect(stored).toMatchObject({
         furthestChapterRead: "1.20",
@@ -478,7 +478,7 @@ describe("atlas shell", () => {
 
   it("keeps ancestor-name traversal in inspector Back and Forward history", async () => {
     window.localStorage.setItem(
-      "bobiverse.app-state.v1",
+      "bobiverse.app-state.v2",
       JSON.stringify({
         furthestChapterRead: "1.20",
         viewChapter: "1.20",
@@ -525,7 +525,7 @@ describe("atlas shell", () => {
 
   it("cannot retain chapter detail after the spoiler ceiling is lowered past it", async () => {
     window.localStorage.setItem(
-      "bobiverse.app-state.v1",
+      "bobiverse.app-state.v2",
       JSON.stringify({
         furthestChapterRead: "1.2",
         viewChapter: "1.2",
@@ -576,7 +576,7 @@ describe("atlas shell", () => {
       dispatchEvent: vi.fn(),
     }));
     window.localStorage.setItem(
-      "bobiverse.app-state.v1",
+      "bobiverse.app-state.v2",
       JSON.stringify({
         furthestChapterRead: "1.1",
         viewChapter: "1.1",
@@ -730,7 +730,7 @@ describe("atlas shell", () => {
     await waitFor(() =>
       expect(
         JSON.parse(
-          window.localStorage.getItem("bobiverse.app-state.v1") ?? "{}",
+          window.localStorage.getItem("bobiverse.app-state.v2") ?? "{}",
         ).browserGroups["other-locations"],
       ).toBe(false),
     );

@@ -35,6 +35,7 @@ import {
   projectCharacterTravelHistories,
   meaningfulNarrativeDateOptions,
   projectNarrativeChapterDetail,
+  formatNarrativeDate,
   type MeaningfulNarrativeDate,
   type NarrativeChapterDetail,
   type NarrativeWorld,
@@ -312,7 +313,7 @@ export default function App() {
   );
   const viewStatus =
     progress.viewChapter && progress.displayDate
-      ? `Universe in ${progress.displayDate.split(".", 1)[0]} · Knowledge through Chapter ${progress.viewChapter}`
+      ? `Universe in ${formatNarrativeDate(progress.displayDate)} · Knowledge through Chapter ${progress.viewChapter}`
       : "Pre-book zero state";
   const selectedNarrativeItem =
     selection?.kind === "narrative"

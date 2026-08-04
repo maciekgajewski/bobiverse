@@ -393,13 +393,13 @@ ownership, and original-summary requirements. Do not invent an ID, chronology,
 coordinate, relationship, or missing field.
 
 For comparisons between dated chapter-authored facts, follow the canonical temporal
-contract: different years use year order; two indexed dates use their explicit
-indices; two equal year-only dates use canonical chapter order; and mixed
-indexed/year-only precision in one year remains incomparable. Apply the same
-fact-to-fact rule to state writes, appearances, dated events, and their generated
-activity. Requested display dates and chronologically unplaced events remain outside
-this chapter fallback. Do not add a date index merely to force validation or reproduce
-canonical chapter order.
+contract. Author `YYYY[-MM[-DD]][.d+]` with Gregorian validity and only source-stated
+precision. Non-overlapping ranges use calendar order; identical calendar portions use
+effective suffix then canonical chapter; overlapping unequal-precision chapter facts
+use canonical chapter. Apply the same fact-to-fact rule to state writes, appearances,
+dated events, and generated activity. Requested display dates use range containment
+without a chapter fallback. Do not add a suffix merely to force validation or
+reproduce canonical chapter order, and never display a suffix.
 
 An entity introduced in the target chapter must contain its reader-visible
 end-of-chapter state in that introduction. Do not also place it in `updates`; updates

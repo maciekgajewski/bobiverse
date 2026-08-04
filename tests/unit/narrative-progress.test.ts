@@ -101,8 +101,54 @@ describe("reader progress", () => {
     expect(
       loadReaderProgress(chapters, ["2200.0", "2200.1", "2200.2"]),
     ).toEqual(saved);
-    window.localStorage.setItem("bobiverse.app-state.v1", "{not json");
+    window.localStorage.setItem("bobiverse.app-state.v2", "{not json");
     expect(loadReaderProgress(chapters, [])).toEqual(empty);
+  });
+
+  it("restores a valid year-only v2 display date", () => {
+    window.localStorage.clear();
+    window.localStorage.setItem(
+      "bobiverse.app-state.v2",
+      JSON.stringify({
+        furthestChapterRead: "1.1",
+        viewChapter: "1.1",
+        displayDate: "2200",
+        mode: "date",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+    expect(
+      loadReaderProgress(
+        [{ chapter: "1.1", title: "One", date: "2200", bookTitle: "Fixture" }],
+        ["2200"],
+      ),
+    ).toMatchObject({
+      furthestChapterRead: "1.1",
+      viewChapter: "1.1",
+      displayDate: "2200",
+      mode: "date",
+    });
+  });
+
+  it("removes only legacy v1 state and never migrates its decimal date", () => {
+    window.localStorage.clear();
+    window.localStorage.setItem(
+      "bobiverse.app-state.v1",
+      JSON.stringify({
+        furthestChapterRead: "1.3",
+        viewChapter: "1.3",
+        displayDate: "2158.9",
+        mode: "date",
+      }),
+    );
+    window.localStorage.setItem("unrelated.preference", "preserve-me");
+
+    expect(loadReaderProgress(chapters, ["2200"])).toEqual(empty);
+    expect(window.localStorage.getItem("bobiverse.app-state.v1")).toBeNull();
+    expect(window.localStorage.getItem("unrelated.preference")).toBe(
+      "preserve-me",
+    );
   });
 
   it("normalizes malformed character-inspector disclosure preferences", () => {
@@ -173,17 +219,17 @@ describe("reader progress", () => {
     );
   });
 
-  it("excludes dates that would compare a year-only state with an indexed state", () => {
+  it("keeps every reader-visible suffix date meaningful", () => {
     const corpus = createNarrativeFixtureCorpus();
     corpus.chapters[0]!.date = "2200";
     corpus.chapters[1]!.updates = undefined;
     corpus.chapters[2]!.updates = undefined;
     expect(
       meaningfulNarrativeDates(prepareNarrativeCorpus(corpus), "1.3"),
-    ).not.toContain("2200.2");
+    ).toContain("2200.2");
     expect(() =>
       generateNarrativeWorld(prepareNarrativeCorpus(corpus), "1.3", "2200.2"),
-    ).toThrow("not meaningful and projection-safe");
+    ).not.toThrow();
   });
 
   it("keeps an event's determinate date meaningful when its reveal chapter has a year-only date", () => {
