@@ -139,6 +139,14 @@ review and use supported consistent indices rather than silently overriding it.
 Requested display dates and chronologically unplaced events have no source-chapter
 moment and remain outside this fact-to-fact fallback.
 
+The reviewed 2158 sequence uses the source-revealed month numbers as its existing
+opaque ordering indices: Chapter `1.31` uses `2158.1` for January, Chapter `1.33`
+uses `2158.3` for March, Chapters `1.34` and `1.36` use `2158.9` for September, and
+Chapter `1.32` uses `2158.10` for October. This is the bounded editorial decision in
+BOB-20260803-RTJFZV, not a general month encoding. Consumers must not infer, label,
+or display a month from a date index. Equal explicit indices remain tied, including
+the two September chapters.
+
 ## Event significance
 
 A canonical event is a major, memorable turning point in the book timeline whose

@@ -1,0 +1,73 @@
+{
+  "chapter": "1.36",
+  "title": "36",
+  "summary": "In Sol, Riker manages fractious negotiations among prospective emigrant groups. He rejects Valter's attempt to use the Svalbard vaults to secure priority passage, weighs Butterworth's proposal to accelerate a third colony ship, and refuses FAITH's attempted obedience override. Valter later indicates that a closer third-ship schedule may allow a compromise.",
+  "date": "2158.9",
+  "location_id": "location:sol",
+  "introducing": [
+    {
+      "id": "organization:spitsbergen-refuge",
+      "name": "Spitsbergen refuge",
+      "description": "The Spitsbergen refuge, also called the Spits, is a survivor group technically within USE that does not recognize Colonel Butterworth's authority."
+    },
+    {
+      "id": "organization:svalbard-global-trust",
+      "name": "Svalbard Global Trust",
+      "description": "The Svalbard Global Trust is an organization associated with vaults that prospective colonists regard as valuable."
+    },
+    {
+      "id": "character:cranston",
+      "name": "Minister Cranston",
+      "current_state": "After invoking protocol override four alpha twenty-three, he fails to compel Riker and has his call terminated."
+    },
+    {
+      "id": "technology:buried-imperatives",
+      "name": "buried imperatives",
+      "description": "Buried imperatives are control directives that FAITH programmers installed in a replicant matrix. A protocol override is intended to activate one and compel Riker's obedience."
+    },
+    {
+      "id": "technology:protocol-override-four-alpha-twenty-three",
+      "name": "protocol override four alpha twenty-three",
+      "description": "Protocol override four alpha twenty-three is a code phrase intended to activate a buried imperative and make Riker obedient."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:riker",
+      "role": "lead",
+      "location_id": "location:sol"
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "organization:united-states-of-eurasia",
+      "current_state": "Its enclave outside Augsburg is expected to depart Earth first because it supplied colony-ship plans, an arrangement opposed by many other survivor groups. The Spitsbergen refuge is technically part of USE but does not recognize Colonel Butterworth's authority."
+    },
+    {
+      "entity_id": "character:george-butterworth",
+      "current_state": "Leading a surviving USE group from an underground military installation while coordinating with Riker and Homer. His group would fill the first two colony ships, and he refuses to surrender passage or leave part of it behind."
+    },
+    {
+      "entity_id": "character:gudmund-valter",
+      "current_state": "Leading the Spitsbergen refuge while seeking survival and emigration assurances for its people. He demands priority passage in return for access to the Svalbard vaults, but later signals willingness to discuss a closer third-ship schedule."
+    },
+    {
+      "entity_id": "vessel:use-colony-ship",
+      "current_state": "The planned evacuation ships can move only a small fraction of Earth's survivors at a time, so most people must be kept alive on Earth while construction and destination planning continue. Butterworth proposes accelerating a third ship by a year, at the cost of delaying the first two by almost four months."
+    },
+    {
+      "entity_id": "technology:replicant-matrix",
+      "description": "A spare hardware unit carried aboard Heaven-1 that can contain a complete GUPPI system. Riker's matrix once contained buried imperatives installed by FAITH programmers; Bob-1 removed some of them during the journey to Epsilon Eridani."
+    },
+    {
+      "entity_id": "character:riker",
+      "current_state": "At Sol, organizing surviving Earth enclaves into a United Nations while managing fractious negotiations over survival and eventual evacuation."
+    }
+  ],
+  "mentions": [
+    "technology:guppi-interface",
+    "organization:free-american-independent-theocratic-hegemony",
+    "character:bob-replicant",
+    "location:epsilon-eridani"
+  ]
+}

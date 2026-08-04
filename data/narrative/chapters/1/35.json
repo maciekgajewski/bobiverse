@@ -1,0 +1,100 @@
+{
+  "chapter": "1.35",
+  "title": "35",
+  "summary": "After gorilloids kill Deltans at a tribal hearth, Bob and the other Bobs conclude that the dwindling Deltans cannot simply be left to extinction. They restore access to flint and prepare defensive drones, while Archimedes turns the material into better tools and weapons. Better armed Deltans repel a later attack, and Archimedes improves thrown spears by adding a flint point, gaining an agreement to supply spear points in return for shares of future kills.",
+  "date": "2165",
+  "location_id": "location:delta-eridani-4",
+  "introducing": [
+    {
+      "id": "species:gorilloids",
+      "name": "gorilloids",
+      "homeworld_id": "location:delta-eridani-4",
+      "description": "Gorilloids are larger, stronger Deltan-like predators that Bob compares to gorillas in their physical advantage over Deltans. They attack with teeth and claws rather than weapons, and Marvin assesses them as having no more than animal intelligence. Their raids threaten the Deltan population."
+    },
+    {
+      "id": "character:moses",
+      "name": "Moses",
+      "species_id": "species:delta-eridani-natives",
+      "current_state": "An elder Deltan whom Bob calls Moses, teaching Archimedes flintworking and agreeing to make spear points for the camp in return for a share of future kills."
+    },
+    {
+      "id": "character:arnold",
+      "name": "Arnold",
+      "species_id": "species:delta-eridani-natives",
+      "current_state": "A notably imposing Deltan whom Bob calls Arnold, supporting Archimedes during the dispute over flint."
+    },
+    {
+      "id": "technology:buster-drone",
+      "name": "buster drone",
+      "description": "A buster drone is an observation drone reinforced internally and fitted with twenty-pound steel caps at both ends. At the modest acceleration available to the drones, it is intended to deliver a cannonball-equivalent kinetic blow against a gorilloid."
+    },
+    {
+      "id": "technology:pointy-sticks",
+      "name": "pointy sticks",
+      "description": "Pointy sticks are Deltan wooden weapons, improved by Archimedes with straighter shafts and later flint points. They let defenders brace against charging gorilloids and can be thrown as spears when weighted at the point."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "At Delta Eridani, directing a response to gorilloid predation of the Deltans, including flint deliveries and buster-drone production."
+    },
+    {
+      "entity_id": "character:marvin",
+      "current_state": "At Delta Eridani, locating flint sources and arranging buster-drone production to support the Deltans."
+    },
+    {
+      "entity_id": "character:luke",
+      "current_state": "At Delta Eridani, surveying the Deltan population and supporting Bob's response to gorilloid predation."
+    },
+    {
+      "entity_id": "character:bender",
+      "current_state": "At Delta Eridani, surveying the Deltan population and supporting Bob's response to gorilloid predation."
+    },
+    {
+      "entity_id": "character:archimedes",
+      "current_state": "At Eden, applying flintworking to make tools and spears for the Deltans, gaining stature as other juveniles defer to him."
+    },
+    {
+      "entity_id": "species:delta-eridani-natives",
+      "description": "An intelligent native population of Delta Eridani 4, named Deltans by Bob. Bob judges them to be fire-using and probably intelligent. They have bat- and pig-like faces, long spiderish limbs, light brownish-gray to orangey-tan fur, patterned heads, and mobile expressive ears. Bob observes six apparently friendly groups, each tending a fire and interacting with the others. He observes two genders, tribal organization, loose pairings, and some individuals with multiple significant others; males patrol their territory while females and children form the tribe's center. The Deltans use clubs, handheld rocks, and pointed sticks as weapons. A small tribal population is under pressure from larger, stronger gorilloid predators, and Bob's group helps them regain flintworking and improve their defenses."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead"
+    },
+    {
+      "character_id": "character:marvin",
+      "role": "other"
+    },
+    {
+      "character_id": "character:luke",
+      "role": "other"
+    },
+    {
+      "character_id": "character:bender",
+      "role": "other"
+    },
+    {
+      "character_id": "character:archimedes",
+      "role": "other"
+    },
+    {
+      "character_id": "character:moses",
+      "role": "other"
+    },
+    {
+      "character_id": "character:arnold",
+      "role": "other"
+    }
+  ],
+  "mentions": [
+    "technology:guppi-interface",
+    "technology:planetary-exploration-drone",
+    "technology:surge-drive",
+    "technology:autofactory",
+    "vessel:heaven-1"
+  ]
+}
