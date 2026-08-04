@@ -305,7 +305,9 @@ caption-eligible narrative-known system remains rendered while it is in the came
 frustum. Astronomy-only systems have no persistent caption; hover uses the same sole
 tooltip and selection retains the persistent caption below its marker.
 
-Pairwise caption overlaps use the established `144 × 26` CSS-pixel footprint, with
+Name-only captions use the established `144 × 26` CSS-pixel footprint. Under
+ADR-0025, a caption with a status rail supplies a deterministic larger footprint for
+the complete name-and-rail unit. Pairwise overlaps use those footprints, with
 transitive overlaps forming one group. Group members sort by projected camera depth,
 nearest first, and stable system ID breaks equal-depth ties. Their opacity progresses
 from `1` to `0.65` and then a `0.3` floor. Selected and active captions remain fully
@@ -313,6 +315,15 @@ opaque regardless of rank. Opacity changes transition briefly under ordinary mot
 preferences and become effectively immediate under reduced motion. Collision
 handling may not move a caption or system marker, distort geometry, or remove an
 eligible caption.
+
+The planned status rail uses the same species icon and colour as the Species browser
+and pairs it with one shape-distinct role icon. Per species, inhabited homeworld
+outranks prominent installation, colony, and abandoned homeworld. At most three
+species-role pairs render, followed by exact `+N`; possible-colony-target and neutral
+prominent-installation icons remain outside that cap. On hover, the ordinary name
+moves to the tooltip but the rail stays visible. The caption and rail share depth
+fade, selected/active full opacity, and collision ownership. A detailed status list
+in the system context panel is not part of this design slice.
 
 ### 8.4 Selection and focus
 

@@ -1,4 +1,4 @@
-# BOB-20260803-G3N1GQ: species icon assets and browser bullets
+# BOB-20260803-G3N1GQ: species and system-status icon assets and browser bullets
 
 Status: Ready
 Phase: 2 (narrative visual refinement)
@@ -6,9 +6,9 @@ Last updated: 2026-08-03
 
 ## Objective
 
-Turn the accepted species-icon concept into validated reusable SVG assets and use the
-same assigned icon and colour as the item bullet for each row in the existing Species
-object-browser group.
+Turn the accepted icon concepts into validated reusable species and system-status SVG
+assets, and use each species' assigned icon and colour as the item bullet for its row
+in the existing Species object-browser group.
 
 ## User-visible outcome
 
@@ -17,6 +17,10 @@ species row uses its own compact, coloured, shape-distinct icon instead of the s
 ring-and-dot bullet used by every other object group. Humans use the simplified head
 of the man from the Pioneer 10 plaque. Species without an explicit assignment use the
 generic Other / Unknown icon and colour.
+
+The reusable status-icon set is also production-ready for the later map-marker task:
+colony domes, homeworld, abandoned/destroyed world, possible colony target, and
+prominent installation. This task does not place those icons on the map.
 
 ## Binding references
 
@@ -30,6 +34,8 @@ generic Other / Unknown icon and colour.
 - `../design/reference/species-icon-family-concept-v2.png`
 - `../design/reference/system-status-icons-concept-v3.png`
 - `../adrs/0024-species-presentation-registry.md`
+- `../adrs/0025-spoiler-projected-location-status-and-system-markers.md`, only for
+  status-asset authoring and the `system_marker_icon` role
 - NASA's official Pioneer plaque reference:
   <https://science.nasa.gov/resource/pioneer-plaque/>
 
@@ -51,6 +57,9 @@ and historical task or ADR completion records are not rewritten.
 
 - Create six original monochrome SVG assets below `public/assets/species-icons/`:
   Humans, Deltans, Pavs, The Others, Quinlans, and Other / Unknown.
+- Create five original monochrome SVG assets below `public/assets/system-markers/`:
+  colony domes, homeworld, abandoned/destroyed world, possible colony target, and
+  prominent installation.
 - Preserve the accepted shape identities:
   - Human: the distinctive swept hair and simplified facial construction of the man
     on the Pioneer 10 plaque;
@@ -62,12 +71,15 @@ and historical task or ADR completion records are not rewritten.
 - Make every SVG usable as a small monochrome mask so presentation colour remains
   separate from artwork. Keep silhouettes distinguishable without colour.
 - Make `role` required on every static asset registry entry with the exact shared
-  values `illustration`, `body_surface`, and `species_icon`. Atomically migrate every
-  existing asset entry and validation fixture. Register all six icons with
-  `species_icon` and provenance.
+  values `illustration`, `body_surface`, `species_icon`, and `system_marker_icon`.
+  Atomically migrate every existing asset entry and validation fixture. Register the
+  six species icons with `species_icon`, the five status icons with
+  `system_marker_icon`, and provenance for every asset.
 - Enforce asset compatibility in both directions: species presentation styles accept
   only `species_icon`, every chapter/entity `picture_id` accepts only `illustration`,
-  and any implemented `surface_texture_id` consumer accepts only `body_surface`.
+  any implemented `surface_texture_id` consumer accepts only `body_surface`, and the
+  later system-marker consumer can accept only `system_marker_icon`. Reject
+  system-marker assets from species presentation styles and every `picture_id`.
 - Add the Draft 2020-12 schema at
   `data/schema/species-presentation.schema.json` and the unversioned authored source
   at `data/presentation/species.json`.
@@ -95,6 +107,9 @@ and historical task or ADR completion records are not rewritten.
   distinction.
 - Update directly affected design, technical, validation, and visual-testing
   documentation.
+- Add a focused visual-specimen test that renders all eleven production icons against
+  the actual dark UI surface at the intended compact sizes. Preserve its screenshot
+  for Captain review without exposing the specimen as an application feature.
 
 ## Out of scope
 
@@ -104,7 +119,7 @@ and historical task or ADR completion records are not rewritten.
   pictures, chronology, activity, or spoiler projection.
 - Assigning presentation styles to species IDs that are not yet canonical.
 - Adding species icons, homeworlds, colonies, habitable targets, installations, badge
-  rails, or any other new semantics to the interstellar map.
+  rails, or any other new behavior or semantics to the interstellar map.
 - Modeling colony ownership, settlement state, habitability, facilities, or system
   installations.
 - Changing ordinary group-heading icons, non-Species row bullets, map star glyphs,
@@ -113,9 +128,10 @@ and historical task or ADR completion records are not rewritten.
 
 ## Acceptance criteria
 
-1. Six original, optimized SVG assets exist at stable registered paths and visually
-   match the accepted subjects at normal and compact browser sizes. The Human asset
-   is recognizably based on the Pioneer plaque man's head and records NASA provenance.
+1. Six original, optimized species SVGs and five original, optimized system-status
+   SVGs exist at stable registered paths and visually match the accepted subjects at
+   normal and compact browser sizes. The Human asset is recognizably based on the
+   Pioneer plaque man's head and records NASA provenance.
 2. Each asset is monochrome, has a consistent view box and visual weight, contains no
    embedded species colour, script, external reference, raster image, text, or
    animation, and remains recognizable by silhouette when rendered in one colour.
@@ -128,7 +144,8 @@ and historical task or ADR completion records are not rewritten.
    asset roles fail validation with source-aware diagnostics. Tests prove that a
    valid illustration works with `picture_id`, a species icon is rejected from every
    `picture_id`, a valid species icon works with a presentation style, and an
-   illustration is rejected from a presentation style.
+   illustration or system-marker icon is rejected from a presentation style. A
+   system-marker fixture accepts only `system_marker_icon` assets.
 5. The runtime resolves presentation only after reader-safe world projection. A
    visible explicitly assigned species receives its configured icon and colour; a
    visible unassigned species receives the configured generic presentation. Hidden
@@ -139,21 +156,27 @@ and historical task or ADR completion records are not rewritten.
    behavior remain unchanged.
 7. Automated coverage verifies assigned and generic presentations, projection
    gating, Species-only bullet substitution, unchanged non-Species bullets, asset and
-   registry validation failures, and accessible row naming.
-8. The README or directly affected usage documentation, canonical data-model
+   registry validation failures, status-icon role compatibility, and accessible row
+   naming.
+8. A focused browser specimen renders all six species icons and all five status icons
+   at intended compact sizes on the real UI background. Its preserved screenshot
+   proves consistent weight, mask behavior, and non-colour shape recognition before
+   the marker task consumes the assets.
+9. The README or directly affected usage documentation, canonical data-model
    definition, technical design, Phase 2 desktop design, and visual-testing guidance
    accurately describe the implemented registry, required asset roles, role
    compatibility, fallback, source layout, and browser behavior. The embedded asset
    schema and prose in `docs/data-model-definition.md` agree with the machine-readable
    schemas and no longer describe the asset registry as role-free or picture-only.
-9. Task metadata, data validation, formatting, lint, type checking, unit/component
+10. Task metadata, data validation, formatting, lint, type checking, unit/component
    tests, production build, and focused cross-browser object-browser tests pass. A
    fresh independent implementation review reports `No findings.` The Captain
    accepts the final icon fidelity and browser legibility in a remote real browser.
 
 ## Documentation and generated artifacts
 
-- Commit the six SVG files under `public/assets/species-icons/` and register them in
+- Commit the six SVG files under `public/assets/species-icons/` and five SVG files
+  under `public/assets/system-markers/`; register them in
   `data/narrative/assets.json` with their roles and provenance.
 - Commit `data/schema/species-presentation.schema.json` and
   `data/presentation/species.json`. The presentation registry is an authored static
@@ -177,6 +200,7 @@ npm run typecheck
 npm run test
 npm run build
 npm run test:e2e -- --grep "browser|species"
+npm run test:e2e -- --grep "icon asset specimen"
 git diff --check
 ```
 
@@ -185,8 +209,10 @@ browser at ordinary scale and 200% browser zoom. Confirm that Human and Deltan r
 use their assigned icons and exact colours, a test fixture or controlled scenario
 demonstrates the generic fallback, silhouettes remain recognizable without relying
 on colour, selection and keyboard focus remain clear, and every non-Species group
-retains the shared item bullet. Record browser results and unavailable-browser gaps
-before marking the task Done.
+retains the shared item bullet. Review the preserved icon-asset specimen at each
+intended compact size and confirm that all five status subjects are distinct,
+balanced, and faithful to the accepted concept before they appear on the map. Record
+browser results and unavailable-browser gaps before marking the task Done.
 
 ## Risks and resolved decisions
 
@@ -196,9 +222,9 @@ before marking the task Done.
   per-species groups are introduced.
 - The Captain selected a separate validated presentation registry rather than fields
   on narrative species objects.
-- The Captain selected this narrow task split. Map markers and the narrative modeling
-  needed for homeworld, colony, habitability, and installation states require a later
-  task.
+- The Captain selected this task to own the complete accepted icon vocabulary. Map
+  marker placement and the narrative modeling needed for homeworld, colony,
+  habitability, and installation states remain in a later dependent task.
 - Small icons can lose facial detail. The compact asset must preserve the accepted
   silhouette and defining features without adding a separate incompatible design.
 - Species colours may have insufficient contrast on some backgrounds. Validation and

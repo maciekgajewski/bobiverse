@@ -207,7 +207,15 @@ Planned work:
 - Add validated project-owned species SVG styles and an explicit presentation
   registry outside narrative entities. Keep one Species browser group, use assigned
   species icons and colours only for its row bullets after reader-safe projection,
-  and retain the shared bullet for every other object group.
+  and retain the shared bullet for every other object group. Produce the accepted
+  colony, homeworld, abandoned-world, possible-target, and prominent-installation
+  SVG vocabulary in the same asset task.
+- After those assets are available, add spoiler-projected `colony_of`,
+  `possible_colony_target`, and `prominent` location facts and deterministically
+  aggregate them with species homeworlds into compact known-system caption rails.
+  Cap species-role pairs at three with exact overflow while keeping standalone target
+  and neutral-installation indicators visible; defer the detailed system-context
+  status list.
 - Add type-aware selected-object inspectors and coordinated selection across browser,
   map, and inspector.
 - Make unlocked Chapter-mode timeline entries inspectable in the shared wide and

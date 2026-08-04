@@ -26,7 +26,8 @@ Reference images:
   palette direction for the six species icon styles. The Human icon uses a simplified
   treatment of the man from the Pioneer 10 plaque.
 - `reference/system-status-icons-concept-v3.png`: accepted icon-only direction for
-  reusing species icons in the object browser and future map captions. Its system
+  reusing species icons in the object browser and map captions, and for the five
+  production system-status SVG subjects owned by `BOB-20260803-G3N1GQ`. Its system
   assignments, browser contents, labels, and values are illustrative and
   non-canonical.
 

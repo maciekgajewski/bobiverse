@@ -379,6 +379,18 @@ remain fully opaque. Hover reserves its overlap and depth slot but uses the tool
 the sole name surface, so the hovered system's map caption is suppressed until hover
 ends. Astronomy-only systems have no persistent caption.
 
+ADR-0025 extends the reader-safe map projection with per-system status aggregates
+derived from projected location descendants and `species.homeworld_id`. Optional
+non-transit location fields record `colony_of`, `possible_colony_target`, and
+`prominent`; they remain narrative facts and never enter astronomy data. One species
+contributes only its highest-priority system role: inhabited homeworld, prominent
+installation, ordinary colony, then abandoned homeworld. Species-role pairs sort by
+that priority and canonical species ID, cap at three with exact `+N` overflow, and do
+not cap standalone target or neutral-installation indicators. The icon rail belongs
+to the existing DOM caption and opacity unit. Hover suppresses only the caption name,
+not the rail, and collision resolution uses the complete deterministic caption
+footprint. Detailed derived status rows in the system context panel are deferred.
+
 The same projection owns the effective system display name. Once a mapped root
 star-system location is reader-visible, its narrative name overrides the astronomy
 preferred name in every map, browser, inspector, measurement, breadcrumb, and
@@ -953,8 +965,9 @@ any zero-state `description` or `state` value is original plain text, not measur
 astronomy data or rich text.
 The direct, unversioned asset registry maps each stable asset ID to one safe static
 path below `public/assets/`, a plain-text provenance note, and a validated presentation
-role. Every entry requires exactly one role from `illustration`, `body_surface`, and
-`species_icon`, and every consumer enforces compatibility. Its metadata is not
+role. Every entry requires exactly one role from `illustration`, `body_surface`,
+`species_icon`, and `system_marker_icon`, and every consumer enforces compatibility.
+Its metadata is not
 chapter chronology. `picture_id` assignments remain subject to the shared visibility
 policy and resolve only `illustration` assets.
 Species-icon assets use the `species_icon` role and resolve only through the
@@ -966,6 +979,10 @@ narrative species IDs. Runtime joins happen only after reader-safe projection, s
 available asset never makes a hidden species visible. A later species introduction
 may add an assignment without making icon or colour chapter-patchable narrative
 state. `homeworld_id` remains the sole species homeworld fact.
+System-marker assets use the `system_marker_icon` role and contain the reusable
+colony, homeworld, abandoned-world, possible-target, and prominent-installation
+shapes. They carry no narrative state by themselves and are consumed only after the
+ADR-0025 reader-safe system-status aggregate is derived.
 ADR-0020 adds body-surface assets and optional reader-projected
 `surface_texture_id` assignments for planets, dwarf planets, and moons. A surface
 assignment resolves only an equirectangular body-surface asset, may select a generic
