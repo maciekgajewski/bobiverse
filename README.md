@@ -145,10 +145,19 @@ Selecting a narrative result opens a sparse, type-aware inspector. Relationships
 links only when their targets are eligible in the same projection; unmapped and
 chronologically unplaced states remain explicit. Character location context is
 labelled **Last seen** and never treated as current presence. Each group heading has
-an original type-specific SVG icon, and each object row uses a shared SVG bullet.
+an original type-specific SVG icon. Ordinary object rows use a shared SVG bullet;
+Species rows instead use the shape-distinct monochrome icon and exact accent colour
+resolved from `data/presentation/species.json` after reader-safe projection, with the
+explicit Other / Unknown style as fallback.
 Relationship traversal uses the inspector's own Back and Forward controls; map,
 browser, and timeline selections begin a new inspection path without changing browser
 history.
+
+The reusable static asset registry is `data/narrative/assets.json`. Every entry has a
+required role (`illustration`, `body_surface`, `species_icon`, or
+`system_marker_icon`), and validation rejects cross-role use. Species and system-marker
+assets are original monochrome SVG masks under `public/assets/species-icons/` and
+`public/assets/system-markers/`; presentation colour stays outside the artwork.
 
 Character inspectors organize their existing details under **Overview**, with
 conditional **Lineage** and **Travel history** disclosures. Travel history lists every

@@ -705,6 +705,18 @@ describe("atlas shell", () => {
     expect(
       container.querySelector("svg[data-item-bullet]"),
     ).toBeInTheDocument();
+    const humanRow = screen.getByRole("button", { name: "Human" });
+    expect(humanRow.querySelector("[data-species-item-bullet]")).toHaveStyle({
+      backgroundColor: "#4DD9FF",
+    });
+    expect(
+      humanRow.querySelector("[data-item-bullet]"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen
+        .getByRole("button", { name: "Solar System" })
+        .querySelector("[data-item-bullet]"),
+    ).toBeInTheDocument();
   });
 
   it("temporarily expands search matches without overwriting saved collapse state", async () => {

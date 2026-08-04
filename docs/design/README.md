@@ -31,6 +31,14 @@ Reference images:
   assignments, browser contents, labels, and values are illustrative and
   non-canonical.
 
+Implemented visual evidence:
+
+- `artifacts/icon-asset-specimen-chromium.png`: preserved Chromium rendering of all
+  eleven production monochrome masks at 16, 20, and 24 CSS-pixel heights on the actual
+  dark UI surface. The focused Playwright specimen regenerates this review artifact;
+  it is
+  test-only and is not exposed as an application feature.
+
 Use them for:
 
 - overall atmosphere

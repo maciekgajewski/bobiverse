@@ -179,7 +179,9 @@ to that projected species by the validated species-presentation registry; an
 unassigned visible species uses the registry's explicit generic style. The group
 name, counts, object name, and collapse state remain the semantic labels, and species
 identity never depends on colour alone. CSS-drawn proxy shapes are not used for any
-of these roles. ADR-0024 owns the presentation-data boundary.
+of these roles. The authored styles and fallback live in
+`data/presentation/species.json`; the artwork remains reusable monochrome masks below
+`public/assets/species-icons/`. ADR-0024 owns the presentation-data boundary.
 
 Search temporarily expands all groups containing matches but does not overwrite saved
 expanded state. Clearing search restores the reader's prior group arrangement.
@@ -306,12 +308,13 @@ frustum. Astronomy-only systems have no persistent caption; hover uses the same 
 tooltip and selection retains the persistent caption below its marker.
 
 Name-only captions use the established `144 × 26` CSS-pixel footprint. Under
-ADR-0025, a caption with a status rail supplies a deterministic larger footprint for
-the complete name-and-rail unit. Pairwise overlaps use those footprints, with
-transitive overlaps forming one group. Group members sort by projected camera depth,
-nearest first, and stable system ID breaks equal-depth ties. Their opacity progresses
-from `1` to `0.65` and then a `0.3` floor. Selected and active captions remain fully
-opaque regardless of rank. Opacity changes transition briefly under ordinary motion
+ADR-0025, as visually refined by ADR-0027, a caption with a status rail supplies a
+deterministic larger footprint for the complete name-and-rail unit. Pairwise overlaps
+use those footprints, with transitive overlaps forming one group. Group members sort
+by projected camera depth, nearest first, and stable system ID breaks equal-depth
+ties. Their opacity progresses from `1` to `0.65` and then a `0.3` floor. Selected and
+active captions remain fully opaque regardless of rank. Opacity changes transition
+briefly under ordinary motion
 preferences and become effectively immediate under reduced motion. Collision
 handling may not move a caption or system marker, distort geometry, or remove an
 eligible caption.

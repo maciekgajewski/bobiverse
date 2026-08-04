@@ -4,7 +4,28 @@ import type { NarrativeCorpus } from "../../src/narrative/model";
 /** Deliberately fictional source records used only to test the chapter pipeline. */
 export function createNarrativeFixtureCorpus(): NarrativeCorpus {
   return {
-    assets: { assets: [] },
+    assets: {
+      assets: [
+        {
+          id: "asset:species-fixture",
+          path: "assets/species-icons/fixture.svg",
+          role: "species_icon",
+          source: "Test-only fixture icon.",
+        },
+      ],
+    },
+    speciesPresentation: {
+      default_style_id: "species-style:fixture",
+      styles: [
+        {
+          id: "species-style:fixture",
+          label: "Fixture",
+          icon_asset_id: "asset:species-fixture",
+          colour: "#98A8B8",
+        },
+      ],
+      assignments: [],
+    },
     zeroState: structuredClone(zeroState),
     books: { books: { "1": { title: "Fixture volume" } } },
     chapters: [

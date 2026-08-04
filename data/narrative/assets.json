@@ -1,3 +1,70 @@
 {
-  "assets": []
+  "assets": [
+    {
+      "id": "asset:species-human",
+      "path": "assets/species-icons/human.svg",
+      "role": "species_icon",
+      "source": "Project-owned vector trace of the accepted species icon concept; its Human head derives from the man on NASA's Pioneer 10 plaque: https://science.nasa.gov/resource/pioneer-plaque/"
+    },
+    {
+      "id": "asset:species-deltan",
+      "path": "assets/species-icons/deltan.svg",
+      "role": "species_icon",
+      "source": "Project-owned vector trace of the accepted Deltan icon concept."
+    },
+    {
+      "id": "asset:species-pav",
+      "path": "assets/species-icons/pav.svg",
+      "role": "species_icon",
+      "source": "Project-owned vector trace of the accepted Pav icon concept."
+    },
+    {
+      "id": "asset:species-others",
+      "path": "assets/species-icons/others.svg",
+      "role": "species_icon",
+      "source": "Project-owned vector trace of the accepted Others icon concept."
+    },
+    {
+      "id": "asset:species-quinlan",
+      "path": "assets/species-icons/quinlan.svg",
+      "role": "species_icon",
+      "source": "Project-owned vector trace of the accepted Quinlan icon concept."
+    },
+    {
+      "id": "asset:species-unknown",
+      "path": "assets/species-icons/unknown.svg",
+      "role": "species_icon",
+      "source": "Project-owned vector trace of the accepted generic Other / Unknown icon concept."
+    },
+    {
+      "id": "asset:system-colony",
+      "path": "assets/system-markers/colony.svg",
+      "role": "system_marker_icon",
+      "source": "Captain-selected project-owned twin-domes vector concept."
+    },
+    {
+      "id": "asset:system-homeworld",
+      "path": "assets/system-markers/homeworld.svg",
+      "role": "system_marker_icon",
+      "source": "Project-owned clean vector reconstruction of the accepted homeworld marker concept."
+    },
+    {
+      "id": "asset:system-abandoned",
+      "path": "assets/system-markers/abandoned.svg",
+      "role": "system_marker_icon",
+      "source": "Captain-selected project-owned decommissioned-world vector concept."
+    },
+    {
+      "id": "asset:system-colony-target",
+      "path": "assets/system-markers/colony-target.svg",
+      "role": "system_marker_icon",
+      "source": "Captain-selected project-owned crosshair-world vector concept."
+    },
+    {
+      "id": "asset:system-installation",
+      "path": "assets/system-markers/installation.svg",
+      "role": "system_marker_icon",
+      "source": "Project-owned clean vector reconstruction of the accepted prominent-installation marker concept."
+    }
+  ]
 }

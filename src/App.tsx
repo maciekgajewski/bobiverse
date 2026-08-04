@@ -56,6 +56,7 @@ import {
   narrativeCorpus,
   narrativePreparationError,
 } from "./narrative/runtime";
+import { resolveSpeciesPresentations } from "./narrative/species-presentation";
 import "./styles.css";
 
 const EMPTY_SYSTEMS: StellarSystem[] = [];
@@ -270,6 +271,13 @@ export default function App() {
       ? applicationProjection.chapterDetail
       : null;
   const mapProjection = applicationProjection.map;
+  const speciesPresentations = useMemo(
+    () =>
+      narrativeCorpus
+        ? resolveSpeciesPresentations(narrativeCorpus, narrativeWorld)
+        : new Map(),
+    [narrativeWorld],
+  );
   const allBrowserGroups = useMemo(
     () =>
       buildNarrativeBrowserGroups(
@@ -277,11 +285,13 @@ export default function App() {
         progress.mode,
         "",
         mapProjection.astronomySearchAliasesByNarrativeId,
+        speciesPresentations,
       ),
     [
       mapProjection.astronomySearchAliasesByNarrativeId,
       narrativeWorld,
       progress.mode,
+      speciesPresentations,
     ],
   );
   const visibleBrowserGroups = useMemo(
@@ -291,12 +301,14 @@ export default function App() {
         progress.mode,
         browserQuery,
         mapProjection.astronomySearchAliasesByNarrativeId,
+        speciesPresentations,
       ),
     [
       browserQuery,
       mapProjection.astronomySearchAliasesByNarrativeId,
       narrativeWorld,
       progress.mode,
+      speciesPresentations,
     ],
   );
   const contextSystemIds = useMemo(

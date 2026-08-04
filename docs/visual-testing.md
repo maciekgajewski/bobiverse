@@ -60,6 +60,28 @@ Verify reduced-motion behavior with the operating-system setting.
 The headless development environment cannot substitute for manual GPU/browser review.
 Record each unavailable browser explicitly as an acceptance gap before publication.
 
+## BOB-20260803-G3N1GQ species and system icon assets
+
+Run `npm run test:e2e -- --grep "browser|species"` for the Species-only row-bullet
+contract and `npm run test:e2e -- --grep "icon asset specimen"` for the focused asset
+specimen. The specimen renders all six species masks and all five system-marker masks
+at 16, 20, and 24 CSS-pixel heights on the application's real dark surface. Each browser run
+keeps a test-result screenshot; Chromium also refreshes the reviewed artifact at
+`docs/design/artifacts/icon-asset-specimen-chromium.png`. The specimen is test-only,
+not an application route.
+
+Review the preserved Chromium specimen after the same asset test passes in Chromium,
+Firefox, and WebKit. Confirm Human uses cyan, Deltans use violet after Chapter 1.27,
+and an unassigned visible species such as gorilloids uses the gray Other / Unknown
+mask. Every non-Species object row must retain the ring-and-dot bullet. Review every
+specimen silhouette without relying on its colour, including the Pioneer-plaque-based
+Human head, Deltan ears/snout, Pav eye mask, Others teeth, Quinlan mouth, unknown
+alien, twin-domes colony, globe-and-spark homeworld, barred decommissioned world,
+crosshair colony target, and four-axis prominent installation. On 2026-08-04 the
+Captain accepted this preserved cross-browser artifact as the task-specific visual
+gate, superseding the former remote ordinary-scale and 200% matrix requirement. This
+does not waive the general WebGL publication review above.
+
 ## BOB-20260731-MCVXSZ zoomed stellar-system mode
 
 Select the canonical **Solar System**, enter the system, and verify that Sol retains

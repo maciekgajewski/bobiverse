@@ -357,6 +357,16 @@ h2 {
 .object-item-bullet.active {
   color: #8cebd4;
 }
+.species-item-bullet {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: -0.08rem;
+  flex: 0 0 auto;
+  background: currentcolor;
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+}
 .browser-group li > button:hover {
   color: #fff;
   background: #15243b;

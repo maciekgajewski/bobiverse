@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   ObjectGroupIcon,
   ObjectItemBullet,
+  SpeciesItemBullet,
 } from "../../src/components/ObjectBrowserIcons";
 import { browserGroupDefinitions } from "../../src/narrative/browser";
 
@@ -31,5 +32,20 @@ describe("object browser icons", () => {
     expect(
       container.querySelector("svg.object-item-bullet[data-item-bullet]"),
     ).toHaveClass("active");
+  });
+
+  it("renders a decorative coloured species mask without replacing its row name", () => {
+    const { container } = render(
+      <SpeciesItemBullet
+        iconPath="/assets/species-icons/human.svg"
+        colour="#4DD9FF"
+      />,
+    );
+    const icon = container.querySelector("[data-species-item-bullet]");
+    expect(icon).toHaveAttribute("aria-hidden", "true");
+    expect(icon).toHaveStyle({ backgroundColor: "#4DD9FF" });
+    expect(icon).toHaveStyle({
+      maskImage: 'url("/assets/species-icons/human.svg")',
+    });
   });
 });

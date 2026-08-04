@@ -71,13 +71,22 @@
     },
     "asset": {
       "type": "object",
-      "required": ["id", "path", "source"],
+      "required": ["id", "path", "role", "source"],
       "properties": {
         "id": { "$ref": "#/$defs/asset_id" },
         "path": {
           "type": "string",
           "pattern": "^assets/(?:[A-Za-z0-9][A-Za-z0-9._-]*/)*[A-Za-z0-9][A-Za-z0-9._-]*$",
           "description": "Safe static path below public/assets, relative to public."
+        },
+        "role": {
+          "enum": [
+            "illustration",
+            "body_surface",
+            "species_icon",
+            "system_marker_icon"
+          ],
+          "description": "Required compatibility role for every static asset consumer."
         },
         "source": {
           "type": "string",

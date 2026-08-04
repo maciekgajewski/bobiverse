@@ -1,8 +1,8 @@
 # BOB-20260803-X52E0D: spoiler-projected system status markers
 
-Status: Blocked
+Status: Ready
 Phase: 2 (narrative visual refinement)
-Last updated: 2026-08-03
+Last updated: 2026-08-04
 
 ## Objective
 
@@ -20,13 +20,12 @@ distinct shapes. Bright-green possible-colony-target and neutral prominent-
 installation indicators remain visible outside the species cap. Hover keeps the
 status rail visible while moving the system name into the existing tooltip.
 
-## Blocker
+## Resolved prerequisite
 
-`BOB-20260803-G3N1GQ` must be Done first because it owns the production species and
-system-status SVGs, asset roles, species-presentation registry, and runtime resolver
-consumed by this task. Restore this task to Ready only after that dependency and its
-contracts have been verified in the current checkout. Ready status will still not
-authorize implementation.
+`BOB-20260803-G3N1GQ` is Done. Its production species and system-status SVGs, asset
+roles, species-presentation registry, runtime resolver, validation, and browser
+specimen have been verified in the current checkout. This task is therefore Ready;
+Ready status still does not authorize implementation.
 
 ## Binding references
 
@@ -44,6 +43,7 @@ authorize implementation.
 - `../adrs/0017-narrative-extraction-mention-completeness.md`
 - `../adrs/0024-species-presentation-registry.md`
 - `../adrs/0025-spoiler-projected-location-status-and-system-markers.md`
+- `../adrs/0027-final-production-system-marker-visual-vocabulary.md`
 - `BOB-20260803-G3N1GQ`
 
 The accepted concept controls icon subjects and visual relationships only. Its
@@ -261,5 +261,5 @@ browser results and unavailable-browser gaps before marking the task Done.
   task.
 - The task deliberately authors only representative current facts. Editorial agents
   must apply the new fields as later source evidence warrants.
-- Blocked status records the unfinished icon-asset dependency. It does not authorize
-  either prerequisite implementation or this task's implementation.
+- Ready status records the completed and verified icon-asset dependency. It does not
+  authorize this task's implementation.

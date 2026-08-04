@@ -18,6 +18,22 @@ async function createZeroStateCorpus(): Promise<string> {
     path.join(repositoryRoot, "data/narrative/assets.json"),
     path.join(root, "assets.json"),
   );
+  await mkdir(path.join(root, "presentation"));
+  await writeFile(
+    path.join(root, "presentation/species.json"),
+    `${JSON.stringify({
+      default_style_id: "species-style:fixture",
+      styles: [
+        {
+          id: "species-style:fixture",
+          label: "Fixture",
+          icon_asset_id: "asset:species-human",
+          colour: "#98A8B8",
+        },
+      ],
+      assignments: [],
+    })}\n`,
+  );
   await writeFile(path.join(root, "books.json"), '{"books": {}}\n');
   return root;
 }
@@ -124,4 +140,71 @@ describe("narrative generator output", () => {
       await rm(root, { recursive: true, force: true });
     }
   });
+
+  it.each([
+    ["chapter", { picture_id: "asset:species-human" }, "/picture_id"],
+    [
+      "introduction",
+      {
+        introducing: [
+          {
+            id: "species:fixture-new",
+            name: "Fixture new species",
+            picture_id: "asset:species-human",
+          },
+        ],
+      },
+      "/introducing/0/picture_id",
+    ],
+    [
+      "update",
+      {
+        updates: [
+          {
+            entity_id: "species:human",
+            picture_id: "asset:species-human",
+          },
+        ],
+      },
+      "/updates/0/picture_id",
+    ],
+  ])(
+    "reports a wrong-role %s picture at its exact chapter source",
+    async (_label, fields, pointer) => {
+      const root = await createZeroStateCorpus();
+      try {
+        await mkdir(path.join(root, "chapters", "1"), { recursive: true });
+        await writeFile(
+          path.join(root, "books.json"),
+          '{"books":{"1":{"title":"Fixture volume"}}}\n',
+        );
+        await writeFile(
+          path.join(root, "chapters", "1", "1.json"),
+          `${JSON.stringify(
+            {
+              chapter: "1.1",
+              title: "Fixture chapter",
+              summary: "A fictional wrong-role diagnostic fixture.",
+              date: "2200",
+              location_id: "location:earth",
+              ...fields,
+            },
+            null,
+            2,
+          )}\n`,
+        );
+
+        const result = runCli("validate", root);
+
+        expect(result.status).toBe(1);
+        expect(result.stderr).toMatch(
+          new RegExp(
+            `chapters/1/1\\.json:\\d+:\\d+: error: Chapter 1\\.1 ${pointer.replaceAll("/", "\\/")}: .*requires asset role illustration`,
+          ),
+        );
+      } finally {
+        await rm(root, { recursive: true, force: true });
+      }
+    },
+  );
 });

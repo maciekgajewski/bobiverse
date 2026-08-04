@@ -1,11 +1,14 @@
 import Ajv2020 from "ajv/dist/2020.js";
 import type { ErrorObject, ValidateFunction } from "ajv";
 import narrativeSchema from "../../data/schema/narrative-data-model.schema.json";
+import speciesPresentationSchema from "../../data/schema/species-presentation.schema.json";
+import { resolveAssetForRole, type AssetRole } from "./assets";
 
 export type NarrativeRecord = Record<string, unknown>;
 
 export interface NarrativeCorpus {
   assets: NarrativeRecord;
+  speciesPresentation: NarrativeRecord;
   zeroState: NarrativeRecord;
   books: NarrativeRecord;
   chapters: NarrativeRecord[];
@@ -443,6 +446,7 @@ function createAjv(): Ajv2020 {
 
 const narrativeAjv = createAjv();
 narrativeAjv.addSchema(narrativeSchema);
+narrativeAjv.addSchema(speciesPresentationSchema);
 const narrativeValidators = new Map<string, ValidateFunction>();
 const validatorCompilationCounts = new Map<string, number>();
 
@@ -458,7 +462,10 @@ function errorMessage(errors: ErrorObject[] | null | undefined): string {
 function validatorFor(definition: string): ValidateFunction {
   const cached = narrativeValidators.get(definition);
   if (cached) return cached;
-  const validator = narrativeAjv.getSchema(`${schemaId}#/$defs/${definition}`);
+  const validator =
+    definition === "species_presentation_source"
+      ? narrativeAjv.getSchema(String(speciesPresentationSchema.$id))
+      : narrativeAjv.getSchema(`${schemaId}#/$defs/${definition}`);
   if (!validator)
     throw new Error(`Missing narrative schema definition: ${definition}.`);
   narrativeValidators.set(definition, validator);
@@ -952,6 +959,11 @@ function validateNarrativeCorpusStructure(
       label: "Asset registry",
     },
     {
+      definition: "species_presentation_source",
+      candidate: corpus.speciesPresentation,
+      label: "Species presentation registry",
+    },
+    {
       definition: "books_source",
       candidate: corpus.books,
       label: "Book catalogue",
@@ -991,6 +1003,7 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
   }
   const assets = corpus.assets.assets;
   const assetIds = new Set<string>();
+  const assetsById = new Map<string, NarrativeRecord>();
   const assetPaths = new Set<string>();
   for (const candidate of Array.isArray(assets) ? assets : []) {
     const asset = asRecord(candidate, "Asset entry");
@@ -1001,8 +1014,49 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
     }
     assetIds.add(id);
     assetPaths.add(assetPath);
+    assetsById.set(id, asset);
   }
+  const assertRole = (
+    assetId: string,
+    expectedRole: AssetRole,
+    label: string,
+  ): void => {
+    resolveAssetForRole(corpus.assets, assetId, expectedRole, label);
+  };
+  const pictureRoleMessage = (
+    record: NarrativeRecord,
+    label: string,
+  ): string | null => {
+    if (typeof record.picture_id !== "string") return null;
+    try {
+      assertRole(record.picture_id, "illustration", label);
+      return null;
+    } catch (error) {
+      return error instanceof Error
+        ? error.message
+        : "Invalid picture asset role.";
+    }
+  };
   const availableIds = new Set(zeroStateEntities.map((entity) => entity.id));
+  const allCanonicalSpeciesIds = new Set(
+    zeroStateEntities
+      .filter((entity) => entity.entity_type === "species")
+      .map((entity) => entity.id),
+  );
+  for (const [index, candidate] of (Array.isArray(corpus.zeroState.entities)
+    ? corpus.zeroState.entities
+    : []
+  ).entries()) {
+    const entity = asRecord(candidate, `Zero-state entity ${index}`);
+    const roleMessage = pictureRoleMessage(
+      entity,
+      `Zero-state entity ${String(entity.id)} picture_id`,
+    );
+    if (roleMessage)
+      throw new Error(
+        `Zero state /entities/${index}/picture_id: ${roleMessage}`,
+      );
+  }
   for (const entity of zeroStateEntities) {
     assertReferencesResolve(
       entity,
@@ -1040,7 +1094,7 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
       throw new Error(`Chapter ${id} belongs to an unknown book.`);
     const introductions = (chapter.introducing as unknown[] | undefined) ?? [];
     const introducedThisChapter = new Set<string>();
-    for (const candidate of introductions) {
+    for (const [introductionIndex, candidate] of introductions.entries()) {
       const introduced = asRecord(candidate, `Introduction in ${id}`);
       const entityId = asString(introduced.id, `Introduction ID in ${id}`);
       if (availableIds.has(entityId) || introducedThisChapter.has(entityId)) {
@@ -1048,6 +1102,16 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
           `Chapter ${id} introduces an existing entity: ${entityId}.`,
         );
       }
+      const roleMessage = pictureRoleMessage(
+        introduced,
+        `Introduction ${entityId} picture_id`,
+      );
+      if (roleMessage)
+        throw chapterSemanticError(
+          id,
+          `/introducing/${introductionIndex}/picture_id`,
+          roleMessage,
+        );
       assertReferencesResolve(
         introduced,
         new Set([...availableIds, ...introducedThisChapter]),
@@ -1071,6 +1135,7 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
         );
       }
       introducedThisChapter.add(entityId);
+      if (entityId.startsWith("species:")) allCanonicalSpeciesIds.add(entityId);
     }
     const availableAfterIntroductions = new Set([
       ...availableIds,
@@ -1090,19 +1155,15 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
         `Chapter ${id} default location must be a location entity.`,
       );
     }
-    if (
-      typeof chapter.picture_id === "string" &&
-      !assetIds.has(chapter.picture_id)
-    ) {
-      throw chapterSemanticError(
-        id,
-        "/picture_id",
-        `chapter picture references unavailable asset ${chapter.picture_id}.`,
-      );
-    }
+    const chapterPictureRoleMessage = pictureRoleMessage(
+      chapter,
+      "chapter picture",
+    );
+    if (chapterPictureRoleMessage)
+      throw chapterSemanticError(id, "/picture_id", chapterPictureRoleMessage);
     const updates = (chapter.updates as unknown[] | undefined) ?? [];
     const updatedIds = new Set<string>();
-    for (const candidate of updates) {
+    for (const [updateIndex, candidate] of updates.entries()) {
       const update = asRecord(candidate, `Update in ${id}`);
       const targetId = asString(update.entity_id, `Update target in ${id}`);
       if (introducedThisChapter.has(targetId)) {
@@ -1117,6 +1178,16 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
       if (updatedIds.has(targetId))
         throw new Error(`Chapter ${id} has multiple updates for ${targetId}.`);
       updatedIds.add(targetId);
+      const roleMessage = pictureRoleMessage(
+        update,
+        `Update ${targetId} picture_id`,
+      );
+      if (roleMessage)
+        throw chapterSemanticError(
+          id,
+          `/updates/${updateIndex}/picture_id`,
+          roleMessage,
+        );
       if (
         typeof update.birth_chapter === "string" &&
         !chapterIds.has(update.birth_chapter)
@@ -1231,6 +1302,75 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
   }
   assertTemporalWrites(chapters);
   assertProjectedLocationConstraints(zeroStateEntities, chapters);
+
+  const presentation = corpus.speciesPresentation;
+  const styles = Array.isArray(presentation.styles) ? presentation.styles : [];
+  const styleIds = new Set<string>();
+  for (const [index, candidate] of styles.entries()) {
+    const style = asRecord(candidate, `Species presentation style ${index}`);
+    const id = asString(style.id, `Species presentation style ${index} ID`);
+    if (styleIds.has(id))
+      throw new Error(`Species presentation has duplicate style ${id}.`);
+    styleIds.add(id);
+    const iconAssetId = asString(
+      style.icon_asset_id,
+      `Species presentation style ${id} icon`,
+    );
+    assertRole(iconAssetId, "species_icon", `Species presentation style ${id}`);
+    const iconAsset = assetsById.get(iconAssetId)!;
+    if (typeof iconAsset.path !== "string" || !iconAsset.path.endsWith(".svg"))
+      throw new Error(
+        `Species presentation style ${id} must reference an SVG asset.`,
+      );
+  }
+  const defaultStyleId = asString(
+    presentation.default_style_id,
+    "Species presentation default style",
+  );
+  if (!styleIds.has(defaultStyleId))
+    throw new Error(
+      `Species presentation default style does not exist: ${defaultStyleId}.`,
+    );
+  const assignedSpecies = new Set<string>();
+  for (const [index, candidate] of (Array.isArray(presentation.assignments)
+    ? presentation.assignments
+    : []
+  ).entries()) {
+    const assignment = asRecord(
+      candidate,
+      `Species presentation assignment ${index}`,
+    );
+    const speciesId = asString(
+      assignment.species_id,
+      `Species presentation assignment ${index} species`,
+    );
+    const styleId = asString(
+      assignment.style_id,
+      `Species presentation assignment ${index} style`,
+    );
+    if (assignedSpecies.has(speciesId))
+      throw new Error(
+        `Species presentation has duplicate assignment for ${speciesId}.`,
+      );
+    assignedSpecies.add(speciesId);
+    if (!allCanonicalSpeciesIds.has(speciesId))
+      throw new Error(
+        `Species presentation assignment references unknown species ${speciesId}.`,
+      );
+    if (!styleIds.has(styleId))
+      throw new Error(
+        `Species presentation assignment references unknown style ${styleId}.`,
+      );
+  }
+  for (const asset of assetsById.values()) {
+    if (
+      (asset.role === "species_icon" || asset.role === "system_marker_icon") &&
+      (typeof asset.path !== "string" || !asset.path.endsWith(".svg"))
+    )
+      throw new Error(
+        `Asset ${String(asset.id)} with role ${String(asset.role)} must be an SVG.`,
+      );
+  }
 }
 
 /** Validates the complete authored corpus, including cross-record semantic rules. */

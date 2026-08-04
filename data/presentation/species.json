@@ -1,0 +1,51 @@
+{
+  "default_style_id": "species-style:unknown",
+  "styles": [
+    {
+      "id": "species-style:human",
+      "label": "Human",
+      "icon_asset_id": "asset:species-human",
+      "colour": "#4DD9FF"
+    },
+    {
+      "id": "species-style:deltan",
+      "label": "Deltan",
+      "icon_asset_id": "asset:species-deltan",
+      "colour": "#B69CFF"
+    },
+    {
+      "id": "species-style:pav",
+      "label": "Pav",
+      "icon_asset_id": "asset:species-pav",
+      "colour": "#FFB347"
+    },
+    {
+      "id": "species-style:others",
+      "label": "The Others",
+      "icon_asset_id": "asset:species-others",
+      "colour": "#FF6274"
+    },
+    {
+      "id": "species-style:quinlan",
+      "label": "Quinlan",
+      "icon_asset_id": "asset:species-quinlan",
+      "colour": "#58E0C2"
+    },
+    {
+      "id": "species-style:unknown",
+      "label": "Other / Unknown",
+      "icon_asset_id": "asset:species-unknown",
+      "colour": "#98A8B8"
+    }
+  ],
+  "assignments": [
+    {
+      "species_id": "species:human",
+      "style_id": "species-style:human"
+    },
+    {
+      "species_id": "species:delta-eridani-natives",
+      "style_id": "species-style:deltan"
+    }
+  ]
+}

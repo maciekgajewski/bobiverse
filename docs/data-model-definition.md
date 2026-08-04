@@ -97,13 +97,22 @@ the identical listing below documents its shared definitions.
     },
     "asset": {
       "type": "object",
-      "required": ["id", "path", "source"],
+      "required": ["id", "path", "role", "source"],
       "properties": {
         "id": { "$ref": "#/$defs/asset_id" },
         "path": {
           "type": "string",
           "pattern": "^assets/(?:[A-Za-z0-9][A-Za-z0-9._-]*/)*[A-Za-z0-9][A-Za-z0-9._-]*$",
           "description": "Safe static path below public/assets, relative to public."
+        },
+        "role": {
+          "enum": [
+            "illustration",
+            "body_surface",
+            "species_icon",
+            "system_marker_icon"
+          ],
+          "description": "Required compatibility role for every static asset consumer."
         },
         "source": {
           "type": "string",
@@ -1225,11 +1234,12 @@ assert story chronology. Activity is a read-only presentation index. It never ch
 entity visibility, world state, relationships, coordinates, or the
 eligible-appearance calculation for a character's **Last seen** location.
 
-Image files are the sole manually curated non-generated content besides the zero-state
-source. They live in an asset registry with stable `asset:` IDs, safe static paths, and
-plain-text source notes. Assets do not establish an additional domain truth or entity
-state; their assignment to an entity is still a chapter-controlled narrative value such
-as `picture_id`.
+Static files are manually curated non-generated content. They live in an asset
+registry with stable `asset:` IDs, safe static paths, required consumer roles, and
+plain-text source notes. Assets do not establish additional domain truth or entity
+state. Narrative `picture_id` assignments remain chapter-controlled and accept only
+`illustration`; body surfaces, species presentation, and system markers use their own
+role-restricted consumers.
 
 ## Reader progress and projection
 
@@ -1315,6 +1325,7 @@ data/narrative/baseline/zero-state.json
 data/narrative/assets.json
 data/narrative/books.json
 data/narrative/chapters/<book>/<chapter>.json
+data/presentation/species.json
 generated/narrative/chapter-manifest.json
 ```
 
@@ -1704,10 +1715,31 @@ properties, and this exception does not generalize qualitative counts elsewhere.
 ### Asset
 
 An asset is a direct `assets.json` registry record using the shared `asset` schema. Its
-required `id` is a stable `asset:` identifier; `path` and `source` are required direct
-metadata, not chapter updates. The registry contains no rendering dimensions, alt text,
-or external URLs. Image assignment belongs solely to an entity's optional
-chapter-controlled `picture_id` field.
+required `id` is a stable `asset:` identifier; `path`, `role`, and `source` are required
+direct metadata, not chapter updates. The closed role vocabulary is `illustration`,
+`body_surface`, `species_icon`, and `system_marker_icon`. Every consumer checks the
+role in both directions: every chapter/entity `picture_id` accepts only
+`illustration`; implemented `surface_texture_id` consumers accept only
+`body_surface`; species styles accept only `species_icon`; and system-marker consumers
+accept only `system_marker_icon`. The registry contains no rendering dimensions or alt
+text. Provenance may include a source URL as plain text, but runtime asset paths remain
+safe local paths below `public/assets/`.
+
+### Species presentation
+
+`data/presentation/species.json` is a separately validated, unversioned authored
+registry governed by `data/schema/species-presentation.schema.json`. It contains
+unique stable styles with a label, registered `species_icon` asset ID, and exact
+uppercase six-digit hexadecimal colour; unique assignments from canonical narrative
+species IDs to styles; and one `default_style_id` that resolves to the explicit
+Other / Unknown style. All six production styles are present even when the corpus has
+no corresponding species entity, but assignments never predeclare species IDs.
+
+Runtime resolution begins with the centralized reader-safe `NarrativeWorld`, then
+joins only its visible species to explicit assignments or the configured default.
+Consequently an authored style or icon cannot make a hidden species appear. The icon
+is decorative in browser rows because the existing species name supplies accessible
+identity, and colour is reinforced by a shape-distinct silhouette.
 
 ### Character
 
@@ -1869,9 +1901,13 @@ layer. It rejects at least:
 - malformed zero-state source or `books.json`, a chapter path that disagrees with its
   `chapter` value, a chapter whose book is absent from `books.json`, or an
   incomplete/out-of-order generated chapter manifest;
-- a malformed asset registry, duplicate asset ID or path, an unsafe static asset path,
-  a missing or non-regular registered file under `public/assets/`, or a `picture_id`
-  that does not resolve to a registered asset;
+- a malformed asset registry, missing or invalid role, duplicate asset ID or path, an
+  unsafe static asset path, a missing or non-regular registered file under
+  `public/assets/`, unsafe or non-monochrome icon SVG content, a non-SVG icon-role
+  asset, or a consumer reference whose asset is missing or has the wrong role;
+- a malformed species-presentation source; invalid colour; duplicate style or
+  assignment; missing default; unknown species or style assignment; missing icon
+  asset; or an icon asset whose role is not `species_icon`;
 - a zero-state source whose fixed Solar-System root, Sol child, location kind,
   parent-relation pair, leaf representation, or astronomy reference is invalid;
 - a broken zero-state location tree; duplicate IDs across its nested locations,

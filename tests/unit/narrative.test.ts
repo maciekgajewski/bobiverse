@@ -175,9 +175,11 @@ describe("narrative corpus validation and projection", () => {
     structurallyValid.chapters[0]!.picture_id = "asset:fixture-chapter";
     structurallyValid.assets = {
       assets: [
+        ...(structurallyValid.assets.assets as unknown[]),
         {
           id: "asset:fixture-chapter",
           path: "assets/fixture-chapter.webp",
+          role: "illustration",
           source: "Test-only chapter illustration.",
         },
       ],
@@ -202,9 +204,11 @@ describe("narrative corpus validation and projection", () => {
     const corpus = createNarrativeFixtureCorpus();
     corpus.assets = {
       assets: [
+        ...(corpus.assets.assets as unknown[]),
         {
           id: "asset:fixture-chapter",
           path: "assets/fixture-chapter.webp",
+          role: "illustration",
           source: "Test-only chapter illustration.",
         },
       ],
@@ -476,9 +480,11 @@ describe("narrative corpus validation and projection", () => {
     const corpus = createNarrativeFixtureCorpus();
     corpus.assets = {
       assets: [
+        ...(corpus.assets.assets as unknown[]),
         {
           id: "asset:fixture-portrait",
           path: "assets/fixture-portrait.webp",
+          role: "illustration",
           source: "Test-only asset registry entry.",
         },
       ],

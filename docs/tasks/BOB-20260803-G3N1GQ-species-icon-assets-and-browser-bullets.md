@@ -1,8 +1,8 @@
 # BOB-20260803-G3N1GQ: species and system-status icon assets and browser bullets
 
-Status: Ready
+Status: Done
 Phase: 2 (narrative visual refinement)
-Last updated: 2026-08-03
+Last updated: 2026-08-04
 
 ## Objective
 
@@ -36,13 +36,17 @@ prominent installation. This task does not place those icons on the map.
 - `../adrs/0024-species-presentation-registry.md`
 - `../adrs/0025-spoiler-projected-location-status-and-system-markers.md`, only for
   status-asset authoring and the `system_marker_icon` role
+- `../adrs/0027-final-production-system-marker-visual-vocabulary.md`
 - NASA's official Pioneer plaque reference:
   <https://science.nasa.gov/resource/pioneer-plaque/>
 
 The reference images define the accepted icon subjects, silhouettes, relative line
 weight, and palette. Their illustrative system assignments, browser contents, text,
-dimensions, and generated pixels are non-canonical and must not be copied into
-runtime data.
+and dimensions remain non-canonical. On 2026-08-04, after rejecting visually divergent
+hand-authored approximations, the Captain explicitly superseded the former generated-
+pixel restriction for this artwork and authorized direct monochrome vector tracing of
+the accepted icon shapes. This exception does not make any illustrative assignment,
+label, dimension, or narrative content canonical.
 
 ## Contract change and document precedence
 
@@ -55,7 +59,8 @@ and historical task or ADR completion records are not rewritten.
 
 ## In scope
 
-- Create six original monochrome SVG assets below `public/assets/species-icons/`:
+- Create six project-owned, concept-faithful monochrome SVG assets below
+  `public/assets/species-icons/`:
   Humans, Deltans, Pavs, The Others, Quinlans, and Other / Unknown.
 - Create five original monochrome SVG assets below `public/assets/system-markers/`:
   colony domes, homeworld, abandoned/destroyed world, possible colony target, and
@@ -124,11 +129,13 @@ and historical task or ADR completion records are not rewritten.
   installations.
 - Changing ordinary group-heading icons, non-Species row bullets, map star glyphs,
   captions, selection, active markers, or canonical geometry.
-- Copying generated raster pixels or third-party game assets into production SVGs.
+- Embedding raster images or copying third-party game assets into production SVGs.
+  Direct vector tracing of these specifically accepted project-owned concept icons is
+  authorized by the Captain's 2026-08-04 decision above.
 
 ## Acceptance criteria
 
-1. Six original, optimized species SVGs and five original, optimized system-status
+1. Six project-owned, optimized species SVGs and five project-owned, optimized system-status
    SVGs exist at stable registered paths and visually match the accepted subjects at
    normal and compact browser sizes. The Human asset is recognizably based on the
    Pioneer plaque man's head and records NASA provenance.
@@ -171,7 +178,8 @@ and historical task or ADR completion records are not rewritten.
 10. Task metadata, data validation, formatting, lint, type checking, unit/component
    tests, production build, and focused cross-browser object-browser tests pass. A
    fresh independent implementation review reports `No findings.` The Captain
-   accepts the final icon fidelity and browser legibility in a remote real browser.
+   accepts the final icon fidelity and browser legibility in the preserved production
+   specimen after it passes in Chromium, Firefox, and WebKit.
 
 ## Documentation and generated artifacts
 
@@ -185,8 +193,9 @@ and historical task or ADR completion records are not rewritten.
   `docs/design/README.md`, `docs/implementation-plan.md`,
   `docs/data-model-definition.md`, `docs/visual-testing.md`, and user-facing
   instructions if their runtime or authoring description changes.
-- Preserve the accepted reference images. Do not promote generated mockup pixels into
-  runtime assets.
+- Preserve the accepted reference images. Runtime assets remain standalone vectors;
+  do not embed raster pixels. Direct tracing is limited to the specifically authorized
+  icon shapes and does not promote illustrative data from the mockups.
 
 ## Validation
 
@@ -204,15 +213,69 @@ npm run test:e2e -- --grep "icon asset specimen"
 git diff --check
 ```
 
-From a remote workstation, view the Species group in every available supported
-browser at ordinary scale and 200% browser zoom. Confirm that Human and Deltan rows
-use their assigned icons and exact colours, a test fixture or controlled scenario
-demonstrates the generic fallback, silhouettes remain recognizable without relying
-on colour, selection and keyboard focus remain clear, and every non-Species group
-retains the shared item bullet. Review the preserved icon-asset specimen at each
-intended compact size and confirm that all five status subjects are distinct,
-balanced, and faithful to the accepted concept before they appear on the map. Record
-browser results and unavailable-browser gaps before marking the task Done.
+Review the preserved icon-asset specimen at each intended compact size after its
+Chromium, Firefox, and WebKit runs. Confirm that Human and Deltan rows use their
+assigned icons and exact colours, the generic fallback is covered, silhouettes remain
+recognizable without relying on colour, and all five status subjects are distinct and
+balanced before they appear on the map. On 2026-08-04, after being told that a
+separate remote ordinary-scale and 200% browser matrix was the sole remaining gate,
+the Captain accepted this preserved cross-browser specimen as the final visual gate.
+That explicit decision supersedes this task's former manual-matrix requirement; it
+does not waive the project's general WebGL publication review.
+
+## Implementation record
+
+Implemented on 2026-08-04. The asset-role migration, six species icons, five
+system-marker icons, validated presentation registry, reader-safe runtime join,
+Species-only row bullets, focused regression coverage, and test-only specimen are in
+place. The preserved Chromium specimen is
+`docs/design/artifacts/icon-asset-specimen-chromium.png`.
+
+All documented automated validation commands pass. The focused browser/species suite
+passes in Chromium, Firefox, and WebKit (9 tests), and the icon-asset specimen passes
+in Chromium, Firefox, and WebKit (3 tests). The Captain visually accepted the final
+production specimen on 2026-08-04 and explicitly made that preserved cross-browser
+artifact the final task-specific visual gate. Automated Chromium, Firefox, and WebKit
+coverage at 16, 20, and 24 CSS pixels is the recorded browser evidence.
+
+The initial independent implementation review found two validation-diagnostic gaps.
+Both were corrected, focused regressions were added, and a fresh independent closure
+pass reported `No findings.`
+
+After visual review rejected the initial hand-authored approximations, the six species
+assets and the four status subjects visible in the accepted concept were replaced by
+faithful monochrome vector traces of the accepted reference artwork. The abandoned-
+world subject, which is not pictured in that sheet, retains an original matching
+planet, crack, and broken-orbit construction. Species browser bullets now render at
+the concept's intended 20 CSS pixels.
+
+A post-replacement review identified the conflict with the former generated-pixel
+restriction and insufficient Deltan head height at compact size. The Captain's direct-
+trace authorization is now explicit above, trace contours were simplified, and the
+Deltan uses the concept's compact rendering with geometry normalized inside the shared
+view box. The final fresh independent review reported `No findings.`
+
+The Captain rejected that simplified trace fidelity on 2026-08-04 and authorized a
+high-fidelity vector pass before considering a bitmap fallback. All six species assets
+were retraced from the large concept artwork rather than its embedded 20 px previews,
+with subpixel contour simplification and only minimal stroke expansion. This removes
+the special Deltan transform and preserves substantially more of the accepted facial
+construction and silhouette geometry. An independent review then identified excessive
+raster-boundary vertices; a second optimization reduced the six assets from about
+162 KB to 62 KB total while preserving the approved shapes at enlarged and compact
+sizes. The fresh closure review reported `No findings.` The Captain accepted the final
+species and status-icon vocabulary on 2026-08-04.
+
+After reviewing four clean vector alternatives, the Captain selected the
+decommissioned-world symbol for the abandoned or destroyed world asset. The prior
+cracked-planet construction was replaced by a barred globe at the shared compact
+sizes. After reviewing four clean colony alternatives, the Captain selected the twin-
+domes settlement, replacing the former traced colony marker with a clean geometric
+construction. ADR-0026 records the selected marker vocabulary and explicitly replaces
+ADR-0025's rejected cracked-planet visual clause without changing its status semantics.
+After a further four-variant review, the Captain selected the crosshair world for a
+possible colony target. ADR-0027 supersedes ADR-0026 with that final vocabulary; the
+former ringed-planet target was rejected because it read as an eye at compact size.
 
 ## Risks and resolved decisions
 

@@ -25,6 +25,7 @@ import {
   type JsonSourceLocation,
 } from "../src/narrative/json-source-map";
 import { formatSchemaDiagnostics } from "../src/narrative/schema-diagnostics";
+import { iconSvgViolation } from "../src/narrative/icon-svg";
 
 const repositoryRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -159,23 +160,44 @@ async function assertAssetFiles(assetsSource: LoadedJson): Promise<void> {
         `Registered asset does not exist as a regular file: ${asset.path}.`,
       );
     }
+    if (
+      (asset.role === "species_icon" || asset.role === "system_marker_icon") &&
+      asset.path.endsWith(".svg")
+    ) {
+      const source = await readFile(assetPath, "utf8");
+      const violation = iconSvgViolation(source);
+      if (violation) {
+        throw errorAt(
+          assetsSource,
+          `/assets/${index}/path`,
+          `Icon SVG ${violation}.`,
+        );
+      }
+    }
   }
 }
 
 async function loadCorpus(rootArgument: string): Promise<LoadedCorpus> {
   const root = path.resolve(repositoryRoot, rootArgument);
+  const presentationPath =
+    path.basename(root) === "narrative"
+      ? path.join(path.dirname(root), "presentation", "species.json")
+      : path.join(root, "presentation", "species.json");
   if (!nearbySystems) throw new Error("Nearby astronomy data is invalid.");
-  const [zeroState, assets, books, chapters] = await Promise.all([
-    readJson(path.join(root, "baseline", "zero-state.json")),
-    readJson(path.join(root, "assets.json")),
-    readJson(path.join(root, "books.json")),
-    readChapters(root),
-  ]);
+  const [zeroState, assets, speciesPresentation, books, chapters] =
+    await Promise.all([
+      readJson(path.join(root, "baseline", "zero-state.json")),
+      readJson(path.join(root, "assets.json")),
+      readJson(presentationPath),
+      readJson(path.join(root, "books.json")),
+      readChapters(root),
+    ]);
   await assertAssetFiles(assets);
   return {
     corpus: {
       zeroState: zeroState.value,
       assets: assets.value,
+      speciesPresentation: speciesPresentation.value,
       books: books.value,
       chapters: chapters.map((chapter) => chapter.value),
       knownAstronomyObjectIds: nearbySystems.systems.map((system) => system.id),
@@ -183,6 +205,10 @@ async function loadCorpus(rootArgument: string): Promise<LoadedCorpus> {
     sources: [
       { ...zeroState, definition: "zero_state_source" },
       { ...assets, definition: "assets_source" },
+      {
+        ...speciesPresentation,
+        definition: "species_presentation_source",
+      },
       { ...books, definition: "books_source" },
       ...chapters.map((chapter) => ({
         ...chapter,
@@ -268,13 +294,16 @@ function sourceForSemanticError(
     );
     if (source) return source;
   }
+  if (error.message.includes("Species presentation")) return loaded.sources[2]!;
   if (error.message.includes("Asset")) return loaded.sources[1]!;
-  if (error.message.includes("Book")) return loaded.sources[2]!;
+  if (error.message.includes("Book")) return loaded.sources[3]!;
   return loaded.sources[0]!;
 }
 
 function pointerForSemanticError(error: Error): string {
-  return /Chapter \d+\.\d+ (\/[^:]+):/.exec(error.message)?.[1] ?? "";
+  return (
+    /(?:Chapter \d+\.\d+|Zero state) (\/[^:]+):/.exec(error.message)?.[1] ?? ""
+  );
 }
 
 async function main(): Promise<void> {

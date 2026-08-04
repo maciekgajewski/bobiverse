@@ -1,4 +1,5 @@
 import assets from "../../data/narrative/assets.json";
+import speciesPresentation from "../../data/presentation/species.json";
 import zeroState from "../../data/narrative/baseline/zero-state.json";
 import books from "../../data/narrative/books.json";
 import manifest from "../../generated/narrative/chapter-manifest.json";
@@ -51,6 +52,10 @@ const rawNarrativeCorpus: NarrativeCorpus = (() => {
   });
   return {
     assets: record(assets, "Asset registry"),
+    speciesPresentation: record(
+      speciesPresentation,
+      "Species presentation registry",
+    ),
     zeroState: record(zeroState, "Zero state"),
     books: record(books, "Book catalogue"),
     chapters,

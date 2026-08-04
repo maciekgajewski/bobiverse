@@ -125,3 +125,24 @@ export function ObjectItemBullet({ active }: { active: boolean }) {
     </svg>
   );
 }
+
+export function SpeciesItemBullet({
+  iconPath,
+  colour,
+}: {
+  iconPath: string;
+  colour: string;
+}) {
+  return (
+    <span
+      aria-hidden="true"
+      className="species-item-bullet"
+      data-species-item-bullet=""
+      style={{
+        backgroundColor: colour,
+        maskImage: `url("${iconPath}")`,
+        WebkitMaskImage: `url("${iconPath}")`,
+      }}
+    />
+  );
+}

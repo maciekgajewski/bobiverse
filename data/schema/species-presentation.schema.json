@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bobiverse.local/schema/species-presentation.schema.json",
+  "title": "Species presentation registry",
+  "type": "object",
+  "required": ["default_style_id", "styles", "assignments"],
+  "properties": {
+    "default_style_id": { "$ref": "#/$defs/style_id" },
+    "styles": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/style" }
+    },
+    "assignments": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/assignment" }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "style_id": {
+      "type": "string",
+      "pattern": "^species-style:[a-z0-9][a-z0-9-]*$"
+    },
+    "asset_id": {
+      "type": "string",
+      "pattern": "^asset:[a-z0-9][a-z0-9-]*$"
+    },
+    "species_id": {
+      "type": "string",
+      "pattern": "^species:[a-z0-9][a-z0-9-]*$"
+    },
+    "style": {
+      "type": "object",
+      "required": ["id", "label", "icon_asset_id", "colour"],
+      "properties": {
+        "id": { "$ref": "#/$defs/style_id" },
+        "label": { "type": "string", "minLength": 1 },
+        "icon_asset_id": { "$ref": "#/$defs/asset_id" },
+        "colour": { "type": "string", "pattern": "^#[0-9A-F]{6}$" }
+      },
+      "additionalProperties": false
+    },
+    "assignment": {
+      "type": "object",
+      "required": ["species_id", "style_id"],
+      "properties": {
+        "species_id": { "$ref": "#/$defs/species_id" },
+        "style_id": { "$ref": "#/$defs/style_id" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

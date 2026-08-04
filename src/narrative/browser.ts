@@ -6,6 +6,7 @@ import {
   type NarrativeEntity,
   type NarrativeWorld,
 } from "./model";
+import type { ResolvedSpeciesPresentation } from "./species-presentation";
 
 export const browserGroupDefinitions = [
   { id: "characters", label: "Characters" },
@@ -28,6 +29,7 @@ export interface NarrativeBrowserItem {
   aliases: string[];
   active: boolean;
   lastActivity: NarrativeActivity | null;
+  speciesPresentation?: ResolvedSpeciesPresentation;
 }
 
 export interface NarrativeBrowserGroup {
@@ -205,6 +207,10 @@ export function buildNarrativeBrowserGroups(
   mode: BrowserMode,
   query = "",
   externalAliasesByEntityId: ReadonlyMap<string, readonly string[]> = new Map(),
+  speciesPresentations: ReadonlyMap<
+    string,
+    ResolvedSpeciesPresentation
+  > = new Map(),
 ): NarrativeBrowserGroup[] {
   const normalizedQuery = normalizeBrowserSearch(query);
   const activityByEntity = new Map<string, NarrativeActivity[]>();
@@ -228,6 +234,10 @@ export function buildNarrativeBrowserGroups(
       ],
       active: isActive(activities, world, mode),
       lastActivity: latestActivity(activities, mode, world.view.display_date),
+      speciesPresentation:
+        entity.entity_type === "species"
+          ? speciesPresentations.get(entity.id)
+          : undefined,
     };
   });
   return browserGroupDefinitions.flatMap(({ id, label }) => {

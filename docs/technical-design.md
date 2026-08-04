@@ -386,10 +386,12 @@ non-transit location fields record `colony_of`, `possible_colony_target`, and
 contributes only its highest-priority system role: inhabited homeworld, prominent
 installation, ordinary colony, then abandoned homeworld. Species-role pairs sort by
 that priority and canonical species ID, cap at three with exact `+N` overflow, and do
-not cap standalone target or neutral-installation indicators. The icon rail belongs
-to the existing DOM caption and opacity unit. Hover suppresses only the caption name,
-not the rail, and collision resolution uses the complete deterministic caption
-footprint. Detailed derived status rows in the system context panel are deferred.
+not cap standalone target or neutral-installation indicators. ADR-0027 refines only
+the reviewed production marker shapes; it does not change these semantics. The icon
+rail belongs to the existing DOM caption and opacity unit. Hover suppresses only the
+caption name, not the rail, and collision resolution uses the complete deterministic
+caption footprint. Detailed derived status rows in the system context panel are
+deferred.
 
 The same projection owns the effective system display name. Once a mapped root
 star-system location is reader-visible, its narrative name overrides the astronomy
@@ -982,7 +984,15 @@ state. `homeworld_id` remains the sole species homeworld fact.
 System-marker assets use the `system_marker_icon` role and contain the reusable
 colony, homeworld, abandoned-world, possible-target, and prominent-installation
 shapes. They carry no narrative state by themselves and are consumed only after the
-ADR-0025 reader-safe system-status aggregate is derived.
+ADR-0025 reader-safe system-status aggregate is derived. ADR-0027 makes the registered
+production SVG geometry authoritative for those consumers. Its final vocabulary is
+the twin-domes colony, globe-and-spark homeworld, barred decommissioned world,
+crosshair colony target, and four-axis installation; it supersedes ADR-0026's earlier
+shape set without changing ADR-0025's status semantics.
+The production masks use one shared `0 0 48 48` view box below
+`public/assets/species-icons/` and `public/assets/system-markers/`. Validation rejects
+scripts, external or raster references, text, animation, inline styles, embedded
+presentation colours, unsafe paths, missing files, and non-SVG icon-role assets.
 ADR-0020 adds body-surface assets and optional reader-projected
 `surface_texture_id` assignments for planets, dwarf planets, and moons. A surface
 assignment resolves only an equirectangular body-surface asset, may select a generic

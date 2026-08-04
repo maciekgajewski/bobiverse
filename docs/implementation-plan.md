@@ -210,6 +210,9 @@ Planned work:
   and retain the shared bullet for every other object group. Produce the accepted
   colony, homeworld, abandoned-world, possible-target, and prominent-installation
   SVG vocabulary in the same asset task.
+  The authored source lives at `data/presentation/species.json`; every reusable asset
+  has one required role, and automated visual review uses the test-only eleven-icon
+  specimen on the real UI surface.
 - After those assets are available, add spoiler-projected `colony_of`,
   `possible_colony_target`, and `prominent` location facts and deterministically
   aggregate them with species homeworlds into compact known-system caption rails.

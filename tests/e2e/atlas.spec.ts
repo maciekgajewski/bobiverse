@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import path from "node:path";
 
 async function settleMapCamera(page: Page): Promise<void> {
   await page.evaluate(
@@ -1247,6 +1248,100 @@ test("progressive browser search preserves collapse state and inspects unmapped 
   });
   await expect(inspector.getByText("Explicitly unmapped")).toBeVisible();
   await expect(inspector.getByText("Narrative-known")).toBeVisible();
+});
+
+test("browser species rows use assigned icons while ordinary rows retain shared bullets", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/");
+  await page.getByLabel("Read through").selectOption("1.35");
+  await page.getByRole("button", { name: "Confirm read through" }).click();
+
+  const human = page.getByRole("button", { name: "Human" });
+  const deltans = page.getByRole("button", { name: /Deltans/ });
+  const generic = page.getByRole("button", { name: /gorilloids/ });
+  await expect(human.locator("[data-species-item-bullet]")).toHaveCSS(
+    "background-color",
+    "rgb(77, 217, 255)",
+  );
+  await expect(deltans.locator("[data-species-item-bullet]")).toHaveCSS(
+    "background-color",
+    "rgb(182, 156, 255)",
+  );
+  await expect(generic.locator("[data-species-item-bullet]")).toHaveCSS(
+    "background-color",
+    "rgb(152, 168, 184)",
+  );
+  await expect(human.locator("[data-item-bullet]")).toHaveCount(0);
+  await expect(
+    page
+      .getByRole("button", { name: "Solar System" })
+      .locator("[data-item-bullet]"),
+  ).toHaveCount(1);
+});
+
+test("icon asset specimen renders every production mask on the real UI surface", async ({
+  page,
+}, testInfo) => {
+  await page.setViewportSize({ width: 1180, height: 760 });
+  await page.goto("/");
+  await page.evaluate(() => {
+    const icons = [
+      ["Human", "/assets/species-icons/human.svg", "#4DD9FF"],
+      ["Deltan", "/assets/species-icons/deltan.svg", "#B69CFF"],
+      ["Pav", "/assets/species-icons/pav.svg", "#FFB347"],
+      ["The Others", "/assets/species-icons/others.svg", "#FF6274"],
+      ["Quinlan", "/assets/species-icons/quinlan.svg", "#58E0C2"],
+      ["Other / Unknown", "/assets/species-icons/unknown.svg", "#98A8B8"],
+      ["Colony domes", "/assets/system-markers/colony.svg", "#DDEEFF"],
+      ["Homeworld", "/assets/system-markers/homeworld.svg", "#DDEEFF"],
+      ["Abandoned world", "/assets/system-markers/abandoned.svg", "#8191A4"],
+      ["Colony target", "/assets/system-markers/colony-target.svg", "#7FE56B"],
+      ["Installation", "/assets/system-markers/installation.svg", "#D4A7FF"],
+    ];
+    const specimen = document.createElement("main");
+    specimen.id = "icon-asset-specimen";
+    specimen.innerHTML = `<h1>Production icon asset specimen</h1><p>16, 20, and 24 CSS-pixel heights · monochrome mask rendering</p><div class="specimen-grid">${icons
+      .map(
+        ([label, icon, colour]) =>
+          `<article><strong>${label}</strong><div>${[16, 20, 24]
+            .map(
+              (size) =>
+                `<span aria-label="${label} at ${size} pixels" style="width:${size}px;height:${size}px;background:${colour};mask:url('${icon}') center/contain no-repeat;-webkit-mask:url('${icon}') center/contain no-repeat"></span>`,
+            )
+            .join("")}</div></article>`,
+      )
+      .join("")}</div>`;
+    const style = document.createElement("style");
+    style.textContent = `
+      body { min-height: 100vh; margin: 0; background: radial-gradient(circle at 50% 30%, #111d35, #070b15 68%); color: #dcecff; }
+      #icon-asset-specimen { box-sizing: border-box; width: 100%; min-height: 100vh; padding: 42px; font-family: "Noto Sans", sans-serif; }
+      #icon-asset-specimen h1 { margin: 0; color: #75e9ff; font-size: 24px; letter-spacing: .14em; text-transform: uppercase; }
+      #icon-asset-specimen > p { margin: 10px 0 30px; color: #7890ad; }
+      .specimen-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+      .specimen-grid article { min-height: 105px; padding: 18px; border: 1px solid #29445f; border-radius: 10px; background: rgb(7 14 25 / 82%); box-shadow: inset 0 0 24px rgb(50 197 255 / 5%); }
+      .specimen-grid strong { display: block; margin-bottom: 18px; font-size: 14px; }
+      .specimen-grid article div { display: flex; align-items: center; gap: 24px; }
+      .specimen-grid span { display: block; flex: 0 0 auto; }
+    `;
+    document.head.append(style);
+    document.body.replaceChildren(specimen);
+  });
+  const specimen = page.locator("#icon-asset-specimen");
+  await expect(specimen.locator("article")).toHaveCount(11);
+  await expect(specimen.locator("article span")).toHaveCount(33);
+  await specimen.screenshot({
+    path: testInfo.outputPath("icon-asset-specimen.png"),
+    animations: "disabled",
+  });
+  if (testInfo.project.name === "chromium") {
+    await specimen.screenshot({
+      path: path.resolve(
+        "docs/design/artifacts/icon-asset-specimen-chromium.png",
+      ),
+    });
+  }
 });
 
 test("nearby astronomy remains a query-only in-context inspector path", async ({

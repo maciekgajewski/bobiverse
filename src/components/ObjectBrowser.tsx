@@ -10,6 +10,7 @@ import {
   CollapseIcon,
   ObjectGroupIcon,
   ObjectItemBullet,
+  SpeciesItemBullet,
 } from "./ObjectBrowserIcons";
 import { normalizeBrowserSearch } from "../narrative/browser";
 import { astronomySearchValues } from "../narrative/map";
@@ -144,7 +145,12 @@ export function ObjectBrowser({
                             })
                           }
                         >
-                          <ObjectItemBullet active={item.active} />
+                          {group.id === "species" &&
+                          item.speciesPresentation ? (
+                            <SpeciesItemBullet {...item.speciesPresentation} />
+                          ) : (
+                            <ObjectItemBullet active={item.active} />
+                          )}
                           <span className="object-item-copy">
                             <span>{item.name}</span>
                             {recency && (
