@@ -336,6 +336,26 @@ function NarrativeDetails({
                   {relationship(entity.destination_location_id)}
                 </Detail>
               )}
+              {stringList(entity.colony_of).length > 0 && (
+                <Detail label="Established species">
+                  <span className="relationship-list">
+                    {stringList(entity.colony_of).map((id) => (
+                      <EntityLink
+                        key={id}
+                        id={id}
+                        entities={entities}
+                        onSelect={onSelect}
+                      />
+                    ))}
+                  </span>
+                </Detail>
+              )}
+              {entity.possible_colony_target === true && (
+                <Detail label="Possible colony target">Yes</Detail>
+              )}
+              {entity.prominent === true && (
+                <Detail label="Prominent installation">Yes</Detail>
+              )}
               {stringList(entity.child_ids).length > 0 && (
                 <Detail label="Contains">
                   <span className="relationship-list">

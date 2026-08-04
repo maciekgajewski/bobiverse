@@ -179,6 +179,16 @@ entities.
 
 ## Location authoring granularity
 
+### Status facts
+
+Use `colony_of` only for durable, reader-visible established presence: a settlement,
+colony, or operated prominent installation. Do not infer it from visits, vessels,
+character appearances, surveys, or transient activity. Use `possible_colony_target`
+for an explicitly plausible future settlement target, including worlds that need
+substantial technological assistance, sealed habitats, or terraforming. Mark
+`prominent` only when the location itself warrants a main-map installation marker;
+it is not a new location kind. Never apply these fields to transit locations.
+
 Settlement scale is the minimum ordinary granularity for narrative location
 entities. A source-supported city, town, settlement, or durable, independently useful
 base or station may be authored as a location. Use `locale` for ordinary stations and

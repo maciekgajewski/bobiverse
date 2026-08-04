@@ -103,6 +103,7 @@ function emptyMapProjection(): NarrativeMapProjection {
     activeSystemIds: new Set(),
     contextSystems: [],
     astronomySearchAliasesByNarrativeId: new Map(),
+    systemStatuses: new Map(),
   };
 }
 
@@ -934,6 +935,8 @@ export default function App() {
                   systems={mapProjection.contextSystems}
                   selectedId={selectedMapId}
                   knownSystemIds={mapProjection.knownSystemIds}
+                  systemStatuses={mapProjection.systemStatuses}
+                  speciesPresentations={speciesPresentations}
                   activeSystemIds={mapProjection.activeSystemIds}
                   travelLegs={selectedCharacterTravel.legs}
                   travelSystems={systems}

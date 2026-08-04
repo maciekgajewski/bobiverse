@@ -68,4 +68,13 @@ describe("caption collision opacity", () => {
       ["deep-ordinary", CAPTION_MIN_OPACITY],
     ]);
   });
+
+  it("uses each complete caption footprint rather than the legacy name-only box", () => {
+    const opacities = resolveCaptionOpacities([
+      { ...candidate("rail", 100, -0.2), width: 240, height: 46 },
+      { ...candidate("name", 280, 0.2), width: 144, height: 26 },
+    ]);
+    expect(opacities.get("rail")).toBe(1);
+    expect(opacities.get("name")).toBe(0.65);
+  });
 });

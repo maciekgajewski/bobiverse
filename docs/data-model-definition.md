@@ -1667,6 +1667,23 @@ propagation, and the final projected location after a location update. A
 `location_update` permits every location property except `id`; after applying it, the
 result must still satisfy these rules.
 
+### Spoiler-projected location status
+
+Every non-transit location may carry `colony_of`, a unique array of existing species
+IDs, plus `possible_colony_target` and `prominent` booleans. `colony_of` records a
+durable settlement or operated installation, never a visit, vessel, survey, or
+appearance. A target may require domes, sealed habitats, or terraforming. Updates
+replace `colony_of` in full; `[]` clears it. Boolean `false` clears the corresponding
+state, while omission preserves it. The effective state may not combine a nonempty
+`colony_of` with `possible_colony_target: true`.
+
+The reader-safe map derives status only from projected locations, their mapped-system
+ancestry, and `species.homeworld_id`. For each species it keeps the highest role:
+inhabited homeworld, prominent installation, colony, then abandoned homeworld.
+Pairs sort by role then canonical species ID, show three with an exact `+N` overflow,
+and keep target and neutral prominent-installation indicators outside that cap. This
+does not create a derived system-context status list.
+
 Beginning with Chapter `1.16`, every planet or dwarf planet described by a source
 system survey is authored as a location even when it would otherwise fail ordinary
 durable-location curation. Locations whose effective kind is `planet`,

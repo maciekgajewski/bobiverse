@@ -11,6 +11,26 @@ export interface NarrativeMapProjection {
   activeSystemIds: ReadonlySet<string>;
   contextSystems: StellarSystem[];
   astronomySearchAliasesByNarrativeId: ReadonlyMap<string, readonly string[]>;
+  systemStatuses: ReadonlyMap<string, NarrativeSystemStatus>;
+}
+
+export const narrativeSystemRolePriorities = [
+  "inhabited_homeworld",
+  "prominent_installation",
+  "colony",
+  "abandoned_homeworld",
+] as const;
+export type NarrativeSystemRole =
+  (typeof narrativeSystemRolePriorities)[number];
+export interface NarrativeSystemStatusPair {
+  speciesId: string;
+  role: NarrativeSystemRole;
+}
+export interface NarrativeSystemStatus {
+  pairs: readonly NarrativeSystemStatusPair[];
+  overflowCount: number;
+  possibleColonyTarget: boolean;
+  neutralProminentInstallation: boolean;
 }
 
 function stringValue(value: unknown): string | null {
@@ -43,6 +63,98 @@ function distancePc(left: StellarSystem, right: StellarSystem): number {
     left.position_pc.xg - right.position_pc.xg,
     left.position_pc.yg - right.position_pc.yg,
     left.position_pc.zg - right.position_pc.zg,
+  );
+}
+
+function stringList(value: unknown): string[] {
+  return Array.isArray(value)
+    ? value.filter((entry): entry is string => typeof entry === "string")
+    : [];
+}
+
+function projectSystemStatuses(
+  entities: ReadonlyMap<string, NarrativeEntity>,
+): ReadonlyMap<string, NarrativeSystemStatus> {
+  const rolesBySystem = new Map<string, Map<string, NarrativeSystemRole>>();
+  const targets = new Set<string>();
+  const neutralProminent = new Set<string>();
+  const setRole = (
+    systemId: string,
+    speciesId: string,
+    role: NarrativeSystemRole,
+  ) => {
+    const roles =
+      rolesBySystem.get(systemId) ?? new Map<string, NarrativeSystemRole>();
+    const current = roles.get(speciesId);
+    if (
+      !current ||
+      narrativeSystemRolePriorities.indexOf(role) <
+        narrativeSystemRolePriorities.indexOf(current)
+    )
+      roles.set(speciesId, role);
+    rolesBySystem.set(systemId, roles);
+  };
+  const systemFor = (locationId: string) =>
+    mappedSystemIdForLocation(entities, locationId);
+  for (const location of entities.values()) {
+    if (location.entity_type !== "location") continue;
+    const systemId = systemFor(location.id);
+    if (!systemId) continue;
+    const colonyOf = stringList(location.colony_of);
+    if (location.possible_colony_target === true) targets.add(systemId);
+    if (location.prominent === true && colonyOf.length === 0)
+      neutralProminent.add(systemId);
+    for (const speciesId of colonyOf) {
+      setRole(
+        systemId,
+        speciesId,
+        location.prominent === true ? "prominent_installation" : "colony",
+      );
+    }
+  }
+  for (const species of entities.values()) {
+    if (
+      species.entity_type !== "species" ||
+      typeof species.homeworld_id !== "string"
+    )
+      continue;
+    const homeworld = entities.get(species.homeworld_id);
+    if (!homeworld || homeworld.entity_type !== "location") continue;
+    const systemId = systemFor(homeworld.id);
+    if (!systemId) continue;
+    setRole(
+      systemId,
+      species.id,
+      stringList(homeworld.colony_of).includes(species.id)
+        ? "inhabited_homeworld"
+        : "abandoned_homeworld",
+    );
+  }
+  const systemIds = new Set([
+    ...rolesBySystem.keys(),
+    ...targets,
+    ...neutralProminent,
+  ]);
+  return new Map(
+    [...systemIds].sort().map((systemId) => {
+      const pairs = [...(rolesBySystem.get(systemId) ?? new Map()).entries()]
+        .map(([speciesId, role]) => ({ speciesId, role }))
+        .sort(
+          (left, right) =>
+            narrativeSystemRolePriorities.indexOf(left.role) -
+              narrativeSystemRolePriorities.indexOf(right.role) ||
+            left.speciesId.localeCompare(right.speciesId),
+        );
+      return [
+        systemId,
+        {
+          pairs: pairs.slice(0, 3),
+          overflowCount: Math.max(0, pairs.length - 3),
+          possibleColonyTarget: targets.has(systemId),
+          neutralProminentInstallation: neutralProminent.has(systemId),
+        },
+      ];
+    }),
   );
 }
 
@@ -182,6 +294,9 @@ export function projectNarrativeMap(
       astronomySearchValues(system),
     );
   }
+  const systemStatuses = projectSystemStatuses(
+    new Map(world.entities.map((entity) => [entity.id, entity])),
+  );
 
   return {
     knownSystemIds,
@@ -190,6 +305,7 @@ export function projectNarrativeMap(
     activeSystemIds,
     contextSystems,
     astronomySearchAliasesByNarrativeId,
+    systemStatuses,
   };
 }
 

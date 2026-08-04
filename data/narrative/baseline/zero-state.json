@@ -27,6 +27,7 @@
             "id": "location:earth",
             "name": "Earth",
             "kind": "planet",
+            "colony_of": ["species:human"],
             "parent_relation": "orbits",
             "children": [
               {

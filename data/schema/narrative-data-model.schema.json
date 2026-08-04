@@ -106,6 +106,11 @@
       "pattern": "^location:[a-z0-9][a-z0-9-]*$",
       "description": "Globally unique reference to a location entity."
     },
+    "species_id_list": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/species_id" },
+      "uniqueItems": true
+    },
     "location_kind": {
       "enum": [
         "star_system",
@@ -428,6 +433,9 @@
         "kind": { "$ref": "#/$defs/location_kind" },
         "description": { "$ref": "#/$defs/description" },
         "state": { "$ref": "#/$defs/state" },
+        "colony_of": { "$ref": "#/$defs/species_id_list" },
+        "possible_colony_target": { "type": "boolean" },
+        "prominent": { "type": "boolean" },
         "astronomy_object_id": { "$ref": "#/$defs/astronomy_object_id" },
         "parent_relation": { "$ref": "#/$defs/parent_relation" },
         "children": {
@@ -653,6 +661,9 @@
         "kind": { "$ref": "#/$defs/location_kind" },
         "description": { "$ref": "#/$defs/description" },
         "state": { "$ref": "#/$defs/state" },
+        "colony_of": { "$ref": "#/$defs/species_id_list" },
+        "possible_colony_target": { "type": "boolean" },
+        "prominent": { "type": "boolean" },
         "body_class": { "$ref": "#/$defs/body_class" },
         "color": { "$ref": "#/$defs/survey_color" },
         "visual_description": { "$ref": "#/$defs/visual_description" },
@@ -717,6 +728,9 @@
             ],
             "not": {
               "anyOf": [
+                { "required": ["colony_of"] },
+                { "required": ["possible_colony_target"] },
+                { "required": ["prominent"] },
                 { "required": ["parent_location_id"] },
                 { "required": ["parent_relation"] },
                 { "required": ["astronomy_object_id"] }
@@ -785,6 +799,9 @@
         "state": {
           "anyOf": [{ "$ref": "#/$defs/state" }, { "type": "null" }]
         },
+        "colony_of": { "$ref": "#/$defs/species_id_list" },
+        "possible_colony_target": { "type": "boolean" },
+        "prominent": { "type": "boolean" },
         "body_class": {
           "anyOf": [{ "$ref": "#/$defs/body_class" }, { "type": "null" }]
         },
@@ -833,6 +850,9 @@
         { "required": ["kind"] },
         { "required": ["description"] },
         { "required": ["state"] },
+        { "required": ["colony_of"] },
+        { "required": ["possible_colony_target"] },
+        { "required": ["prominent"] },
         { "required": ["body_class"] },
         { "required": ["color"] },
         { "required": ["visual_description"] },

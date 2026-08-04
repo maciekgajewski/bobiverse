@@ -5,6 +5,8 @@ export interface CaptionCandidate {
   y: number;
   depth: number;
   visible: boolean;
+  width?: number;
+  height?: number;
 }
 
 export const CAPTION_MIN_OPACITY = 0.3;
@@ -17,8 +19,10 @@ function overlaps(
   labelHeight: number,
 ): boolean {
   return (
-    Math.abs(left.x - right.x) < labelWidth &&
-    Math.abs(left.y - right.y) < labelHeight
+    Math.abs(left.x - right.x) <
+      (left.width ?? labelWidth) / 2 + (right.width ?? labelWidth) / 2 &&
+    Math.abs(left.y - right.y) <
+      (left.height ?? labelHeight) / 2 + (right.height ?? labelHeight) / 2
   );
 }
 

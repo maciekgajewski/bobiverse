@@ -153,6 +153,92 @@ describe("narrative map projection", () => {
     ]).toEqual(["known"]);
   });
 
+  it("aggregates reader-safe status roles by priority, canonical species ID, and exact overflow", () => {
+    const statusWorld: NarrativeWorld = {
+      ...world,
+      entities: [
+        ...world.entities,
+        {
+          id: "location:target",
+          entity_type: "location",
+          kind: "planet",
+          parent_location_id: "location:system",
+          possible_colony_target: true,
+        },
+        {
+          id: "location:installation",
+          entity_type: "location",
+          kind: "locale",
+          parent_location_id: "location:system",
+          prominent: true,
+        },
+        {
+          id: "location:home",
+          entity_type: "location",
+          kind: "planet",
+          parent_location_id: "location:system",
+          colony_of: ["species:alpha"],
+        },
+        {
+          id: "location:colony",
+          entity_type: "location",
+          kind: "planet",
+          parent_location_id: "location:system",
+          colony_of: ["species:beta", "species:gamma", "species:zeta"],
+        },
+        {
+          id: "location:prominent",
+          entity_type: "location",
+          kind: "locale",
+          parent_location_id: "location:system",
+          prominent: true,
+          colony_of: ["species:beta"],
+        },
+        {
+          id: "species:alpha",
+          entity_type: "species",
+          homeworld_id: "location:home",
+        },
+        {
+          id: "species:beta",
+          entity_type: "species",
+          homeworld_id: "location:planet",
+        },
+        {
+          id: "species:gamma",
+          entity_type: "species",
+          homeworld_id: "location:planet",
+        },
+        {
+          id: "species:zeta",
+          entity_type: "species",
+          homeworld_id: "location:planet",
+        },
+        {
+          id: "species:abandoned",
+          entity_type: "species",
+          homeworld_id: "location:planet",
+        },
+      ],
+    };
+    const status = projectNarrativeMap(
+      statusWorld,
+      [system("known", 0)],
+      20,
+      "chapter",
+    ).systemStatuses.get("known");
+    expect(status).toEqual({
+      pairs: [
+        { speciesId: "species:alpha", role: "inhabited_homeworld" },
+        { speciesId: "species:beta", role: "prominent_installation" },
+        { speciesId: "species:gamma", role: "colony" },
+      ],
+      overflowCount: 2,
+      possibleColonyTarget: true,
+      neutralProminentInstallation: true,
+    });
+  });
+
   it("derives focus only from an unambiguous supported mapped context", () => {
     const ids = new Set(["known", "near"]);
     expect(

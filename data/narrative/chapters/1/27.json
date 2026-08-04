@@ -46,6 +46,7 @@
       "id": "location:delta-eridani-4",
       "name": "Delta Eridani 4",
       "kind": "planet",
+      "colony_of": ["species:delta-eridani-natives"],
       "parent_location_id": "location:delta-eridani-star",
       "parent_relation": "orbits",
       "orbital_order": 4,

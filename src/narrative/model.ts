@@ -820,6 +820,7 @@ function collectReferences(record: NarrativeRecord): string[] {
     "picture_id",
     "death_event_id",
     "homeworld_id",
+    "colony_of",
     "location_id",
     "parent_location_id",
     "origin_location_id",
@@ -829,6 +830,10 @@ function collectReferences(record: NarrativeRecord): string[] {
   }
   if (Array.isArray(record.participant_ids)) {
     for (const id of record.participant_ids)
+      if (typeof id === "string") references.push(id);
+  }
+  if (Array.isArray(record.colony_of)) {
+    for (const id of record.colony_of)
       if (typeof id === "string") references.push(id);
   }
   return references;
@@ -853,6 +858,21 @@ function assertReferencesResolve(
     if (!resolves) {
       throw new Error(`${label} references unavailable entity ${reference}.`);
     }
+  }
+}
+
+function assertColonyReferencesResolve(
+  record: NarrativeRecord,
+  availableIds: ReadonlySet<string>,
+  label: string,
+): void {
+  for (const speciesId of Array.isArray(record.colony_of)
+    ? record.colony_of
+    : []) {
+    if (typeof speciesId !== "string" || !availableIds.has(speciesId))
+      throw new Error(
+        `${label} references unavailable entity ${String(speciesId)}.`,
+      );
   }
 }
 
@@ -1113,7 +1133,7 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
           roleMessage,
         );
       assertReferencesResolve(
-        introduced,
+        { ...introduced, colony_of: undefined },
         new Set([...availableIds, ...introducedThisChapter]),
         assetIds,
         `Introduction ${entityId}`,
@@ -1141,6 +1161,14 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
       ...availableIds,
       ...introducedThisChapter,
     ]);
+    for (const [introductionIndex, candidate] of introductions.entries()) {
+      const introduced = asRecord(candidate, `Introduction in ${id}`);
+      assertColonyReferencesResolve(
+        introduced,
+        availableAfterIntroductions,
+        `Chapter ${id} /introducing/${introductionIndex}/colony_of`,
+      );
+    }
     const defaultLocationId = asString(
       chapter.location_id,
       `Chapter ${id} default location`,
@@ -1709,6 +1737,30 @@ function assertProjectedLocationConstraints(
 
       const moonCounts = new Map<string, number>();
       for (const location of locations.values()) {
+        const colonyOf = Array.isArray(location.colony_of)
+          ? location.colony_of.filter(
+              (id): id is string => typeof id === "string",
+            )
+          : [];
+        if (
+          location.kind === "transit" &&
+          (Object.hasOwn(location, "colony_of") ||
+            Object.hasOwn(location, "possible_colony_target") ||
+            Object.hasOwn(location, "prominent"))
+        ) {
+          throw chapterSemanticError(
+            knowledgeChapter,
+            "/locations",
+            `projection at ${displayDate} leaves system-status fields on transit location ${location.id}.`,
+          );
+        }
+        if (colonyOf.length > 0 && location.possible_colony_target === true) {
+          throw chapterSemanticError(
+            knowledgeChapter,
+            "/locations",
+            `projection at ${displayDate} combines nonempty colony_of with possible_colony_target on ${location.id}.`,
+          );
+        }
         const effectiveProperties = surveyObservationProperties.filter(
           (property) =>
             Object.hasOwn(location, property) && location[property] !== null,

@@ -3,6 +3,15 @@ import type { NarrativeCorpus } from "../../src/narrative/model";
 
 /** Deliberately fictional source records used only to test the chapter pipeline. */
 export function createNarrativeFixtureCorpus(): NarrativeCorpus {
+  const fixtureZeroState = structuredClone(zeroState) as {
+    locations: {
+      children: Array<{ children: Array<Record<string, unknown>> }>;
+    };
+  };
+  const earth = fixtureZeroState.locations.children[0]!.children.find(
+    (location) => location.id === "location:earth",
+  );
+  if (earth) delete earth.colony_of;
   return {
     assets: {
       assets: [
@@ -26,7 +35,7 @@ export function createNarrativeFixtureCorpus(): NarrativeCorpus {
       ],
       assignments: [],
     },
-    zeroState: structuredClone(zeroState),
+    zeroState: fixtureZeroState,
     books: { books: { "1": { title: "Fixture volume" } } },
     chapters: [
       {

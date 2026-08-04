@@ -1,6 +1,13 @@
 import { Billboard, Html, Line, OrbitControls, Text } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 import {
   AdditiveBlending,
   Color,
@@ -20,6 +27,8 @@ import { GalacticPlaneGrid } from "./GalacticPlaneGrid";
 import { GalacticStarfield } from "./GalacticStarfield";
 import type { StellarSystem } from "../domain/types";
 import type { CharacterTravelLeg } from "../narrative/model";
+import type { NarrativeSystemStatus } from "../narrative/map";
+import type { ResolvedSpeciesPresentation } from "../narrative/species-presentation";
 import {
   DISPLAY_DISTANCE_UNIT,
   calculateMapScale,
@@ -58,6 +67,8 @@ interface MapSceneProps {
   systems: StellarSystem[];
   selectedId: string | null;
   knownSystemIds: ReadonlySet<string>;
+  systemStatuses: ReadonlyMap<string, NarrativeSystemStatus>;
+  speciesPresentations: ReadonlyMap<string, ResolvedSpeciesPresentation>;
   activeSystemIds: ReadonlySet<string>;
   travelLegs?: readonly CharacterTravelLeg[];
   travelSystems?: readonly StellarSystem[];
@@ -572,6 +583,8 @@ const StarMarker = memo(function StarMarker({
   selected,
   selectedSystem,
   known,
+  status,
+  speciesPresentations,
   active,
   hovered,
   captionOpacity,
@@ -584,6 +597,8 @@ const StarMarker = memo(function StarMarker({
   selected: boolean;
   selectedSystem: StellarSystem | undefined;
   known: boolean;
+  status: NarrativeSystemStatus | undefined;
+  speciesPresentations: ReadonlyMap<string, ResolvedSpeciesPresentation>;
   active: boolean;
   hovered: boolean;
   captionOpacity: number | undefined;
@@ -709,26 +724,133 @@ const StarMarker = memo(function StarMarker({
                 data-caption-opacity={captionOpacity}
                 style={{ opacity: captionOpacity }}
               >
-                {system.name}
+                <span className="narrative-map-label-name">{system.name}</span>
+                <StatusRail
+                  status={status}
+                  speciesPresentations={speciesPresentations}
+                />
               </div>
             </Html>
           </Billboard>
         )}
       {!zoomed && hovered && (
-        <Html position={[0, 0.28, 0]} center style={{ pointerEvents: "none" }}>
-          <div className="map-tooltip">
-            {system.name}
-            {selectedDistance !== null && (
-              <small>
-                {formatDistance(selectedDistance)} from {selectedSystem?.name}
-              </small>
-            )}
-          </div>
-        </Html>
+        <>
+          {status && (
+            <Billboard position={[0, -0.32, 0]} follow raycast={ignoreRaycast}>
+              <Html center style={{ pointerEvents: "none" }}>
+                <div
+                  className="narrative-map-label"
+                  style={{ opacity: captionOpacity ?? 1 }}
+                >
+                  <StatusRail
+                    status={status}
+                    speciesPresentations={speciesPresentations}
+                  />
+                </div>
+              </Html>
+            </Billboard>
+          )}
+          <Html
+            position={[0, 0.28, 0]}
+            center
+            style={{ pointerEvents: "none" }}
+          >
+            <div className="map-tooltip">
+              {system.name}
+              {selectedDistance !== null && (
+                <small>
+                  {formatDistance(selectedDistance)} from {selectedSystem?.name}
+                </small>
+              )}
+            </div>
+          </Html>
+        </>
       )}
     </group>
   );
 });
+
+const markerPaths = {
+  colony: "/assets/system-markers/colony.svg",
+  inhabited_homeworld: "/assets/system-markers/homeworld.svg",
+  abandoned_homeworld: "/assets/system-markers/abandoned.svg",
+  prominent_installation: "/assets/system-markers/installation.svg",
+  possible_target: "/assets/system-markers/colony-target.svg",
+} as const;
+
+export function StatusRail({
+  status,
+  speciesPresentations,
+}: {
+  status: NarrativeSystemStatus | undefined;
+  speciesPresentations: ReadonlyMap<string, ResolvedSpeciesPresentation>;
+}) {
+  if (!status) return null;
+  const label = (role: string) => role.replaceAll("_", " ");
+  const maskStyle = (path: string, colour?: string): CSSProperties => ({
+    backgroundColor: colour,
+    maskImage: `url("${path}")`,
+    WebkitMaskImage: `url("${path}")`,
+  });
+  return (
+    <span
+      className="system-status-rail"
+      role="group"
+      aria-label="System status"
+    >
+      {status.pairs.map((pair) => {
+        const species = speciesPresentations.get(pair.speciesId);
+        if (!species) return null;
+        return (
+          <span
+            className={`system-status-pair system-status-${pair.role}`}
+            key={`${pair.speciesId}-${pair.role}`}
+            role="img"
+            aria-label={`${pair.speciesId}: ${label(pair.role)}`}
+          >
+            <span
+              className="system-status-glyph system-status-species-glyph"
+              aria-hidden="true"
+              style={maskStyle(species.iconPath, species.colour)}
+            />
+            <span
+              className="system-status-glyph system-status-role-glyph"
+              aria-hidden="true"
+              style={maskStyle(markerPaths[pair.role])}
+            />
+          </span>
+        );
+      })}
+      {status.overflowCount > 0 && (
+        <span
+          className="system-status-overflow"
+          role="img"
+          aria-label={`${status.overflowCount} additional species statuses`}
+        >
+          +{status.overflowCount}
+        </span>
+      )}
+      {status.possibleColonyTarget && (
+        <span role="img" aria-label="Possible colony target">
+          <span
+            className="system-status-glyph system-status-standalone target"
+            aria-hidden="true"
+            style={maskStyle(markerPaths.possible_target)}
+          />
+        </span>
+      )}
+      {status.neutralProminentInstallation && (
+        <span role="img" aria-label="Prominent installation">
+          <span
+            className="system-status-glyph system-status-standalone installation"
+            aria-hidden="true"
+            style={maskStyle(markerPaths.prominent_installation)}
+          />
+        </span>
+      )}
+    </span>
+  );
+}
 
 function SegmentedRing({
   radius,
@@ -845,6 +967,7 @@ function CameraScaleReporter({
 function CaptionController({
   systems,
   knownSystemIds,
+  systemStatuses,
   activeSystemIds,
   selectedId,
   hoveredId,
@@ -852,6 +975,7 @@ function CaptionController({
 }: {
   systems: readonly StellarSystem[];
   knownSystemIds: ReadonlySet<string>;
+  systemStatuses: ReadonlyMap<string, NarrativeSystemStatus>;
   activeSystemIds: ReadonlySet<string>;
   selectedId: string | null;
   hoveredId: string | null;
@@ -890,6 +1014,18 @@ function CaptionController({
           x: (point.x * 0.5 + 0.5) * size.width,
           y: (-point.y * 0.5 + 0.5) * size.height,
           depth: point.z,
+          width: (() => {
+            const status = systemStatuses.get(system.id);
+            if (!status) return 144;
+            return (
+              144 +
+              status.pairs.length * 38 +
+              (status.overflowCount ? 20 : 0) +
+              (status.possibleColonyTarget ? 18 : 0) +
+              (status.neutralProminentInstallation ? 18 : 0)
+            );
+          })(),
+          height: systemStatuses.has(system.id) ? 56 : 26,
           visible:
             point.x >= -1 &&
             point.x <= 1 &&
@@ -916,6 +1052,8 @@ function Scene({
   systems,
   selectedId,
   knownSystemIds,
+  systemStatuses,
+  speciesPresentations,
   activeSystemIds,
   travelLegs = [],
   travelSystems = systems,
@@ -990,6 +1128,8 @@ function Scene({
             selected={selectedId === system.id}
             selectedSystem={selected}
             known={knownSystemIds.has(system.id)}
+            status={systemStatuses.get(system.id)}
+            speciesPresentations={speciesPresentations}
             active={activeSystemIds.has(system.id)}
             hovered={hoveredId === system.id}
             captionOpacity={captionOpacities.get(system.id)}
@@ -1015,6 +1155,7 @@ function Scene({
         <CaptionController
           systems={systems}
           knownSystemIds={knownSystemIds}
+          systemStatuses={systemStatuses}
           activeSystemIds={activeSystemIds}
           selectedId={selectedId}
           hoveredId={hoveredId}

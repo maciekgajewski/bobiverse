@@ -287,6 +287,12 @@ calm, then request reduced motion and confirm the same nonzero opacity states ap
 effectively immediately. Known-system captions are plain labels centered below their
 marker; only a hover tooltip receives a bordered surface.
 
+Where reader-visible status exists, verify the caption keeps its icon rail on hover
+while the tooltip remains the sole system-name surface. Confirm role shapes remain
+distinguishable without colour, the abandoned species icon is smaller and gray, and a
+three-pair rail uses exact `+N` overflow while target and neutral-installation icons
+remain visible. Dense collisions must use the complete rail footprint.
+
 Search a known nearby astronomy-only system by a preferred name and an alternate
 designation. **Nearby astronomy** must appear only for a nonempty query, contain only
 systems already rendered in the current context, and vanish when cleared without
