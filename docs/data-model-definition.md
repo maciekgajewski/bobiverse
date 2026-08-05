@@ -1830,6 +1830,12 @@ must not be treated as current presence or used to position the character on the
 A species introduction uses the `species` schema above. Its only required fields are a
 canonical `species:` ID and a nonempty reader-visible `name`.
 
+Editorially, a `species:` record is reserved for a source-supported sentient,
+civilization-creating population. The schema deliberately does not attempt to infer
+either quality. Do not create Species-list records for animals, predators, or other
+non-sentient life; keep any necessary reader-visible fact about them as concise
+context in an eligible narrative field instead.
+
 | Field          | Type                     | Meaning                                                                                                             |
 | -------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------- |
 | `id`           | `species_id`             | Immutable stable identifier.                                                                                        |

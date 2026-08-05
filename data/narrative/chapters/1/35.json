@@ -6,12 +6,6 @@
   "location_id": "location:delta-eridani-4",
   "introducing": [
     {
-      "id": "species:gorilloids",
-      "name": "gorilloids",
-      "homeworld_id": "location:delta-eridani-4",
-      "description": "Gorilloids are larger, stronger Deltan-like predators that Bob compares to gorillas in their physical advantage over Deltans. They attack with teeth and claws rather than weapons, and Marvin assesses them as having no more than animal intelligence. Their raids threaten the Deltan population."
-    },
-    {
       "id": "character:moses",
       "name": "Moses",
       "species_id": "species:delta-eridani-natives",
