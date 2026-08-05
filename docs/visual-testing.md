@@ -72,8 +72,8 @@ not an application route.
 
 Review the preserved Chromium specimen after the same asset test passes in Chromium,
 Firefox, and WebKit. Confirm Human uses cyan, Deltans use violet after Chapter 1.27,
-and an unassigned visible species such as gorilloids uses the gray Other / Unknown
-mask. Every non-Species object row must retain the ring-and-dot bullet. Review every
+and the production specimen includes the gray Other / Unknown mask. Every non-Species
+object row must retain the ring-and-dot bullet. Review every
 specimen silhouette without relying on its colour, including the Pioneer-plaque-based
 Human head, Deltan ears/snout, Pav eye mask, Others teeth, Quinlan mouth, unknown
 alien, twin-domes colony, globe-and-spark homeworld, barred decommissioned world,

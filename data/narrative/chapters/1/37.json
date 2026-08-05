@@ -53,10 +53,6 @@
       "current_state": "Still alive among the Deltans and possibly able to remember the location of their former flint source."
     },
     {
-      "entity_id": "species:gorilloids",
-      "description": "Gorilloids are larger, stronger Deltan-like predators that Bob compares to stereotypical eight-hundred-pound gorillas in their physical advantage over Deltans. They attack with teeth and claws rather than weapons, and Marvin assesses them as having no more than animal intelligence. Their raids threaten the Deltan population; six spear-bearing Deltans may be needed to hold one off."
-    },
-    {
       "entity_id": "technology:guppi-interface",
       "description": "An interface that offloads tasks for replicants while retaining their human limits on multitasking. Its name expands to General Unit Primary Peripheral Interface, and its logs retain monitoring-interface and script activity. Its operating system is firmware; changing its replication priority would require a new core and ship. Version-2 GUPPI is being given enough memory capacity that a personality matrix is contemplated. It can take messages and arrange callbacks for Riker, acting as a secretary and receptionist. It can estimate buster-drone deployment time and launch buster drones on Bob's order."
     },

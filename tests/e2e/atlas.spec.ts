@@ -1316,7 +1316,6 @@ test("browser species rows use assigned icons while ordinary rows retain shared 
 
   const human = page.getByRole("button", { name: "Human" });
   const deltans = page.getByRole("button", { name: /Deltans/ });
-  const generic = page.getByRole("button", { name: /gorilloids/ });
   await expect(human.locator("[data-species-item-bullet]")).toHaveCSS(
     "background-color",
     "rgb(77, 217, 255)",
@@ -1324,10 +1323,6 @@ test("browser species rows use assigned icons while ordinary rows retain shared 
   await expect(deltans.locator("[data-species-item-bullet]")).toHaveCSS(
     "background-color",
     "rgb(182, 156, 255)",
-  );
-  await expect(generic.locator("[data-species-item-bullet]")).toHaveCSS(
-    "background-color",
-    "rgb(152, 168, 184)",
   );
   await expect(human.locator("[data-item-bullet]")).toHaveCount(0);
   await expect(

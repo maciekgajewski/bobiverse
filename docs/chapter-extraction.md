@@ -100,8 +100,12 @@ summary, or accumulated adventure log.
 
 The type-specific review checks are:
 
-- Species: nature, distinguishing known traits, and reader-visible home or social
-  context.
+- Species: source-supported sentience and civilization-creating capacity, plus
+  nature, distinguishing known traits, and reader-visible home or social context.
+  The Species list models populations meeting both gates only. Animals, predators,
+  and other non-sentient life remain unmodeled as `species:` entities; retain them
+  only as concise context in an eligible entity, event, or chapter summary when
+  source-supported.
 - Technology: kind, function, revealed operating principle, distinguishing
   capabilities or limitations, and acronym expansion.
 - Organization: kind, purpose, constituency or scope, defining policies, and durable
