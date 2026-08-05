@@ -9,6 +9,7 @@ export interface ResolvedSpeciesPresentation {
   styleId: string;
   iconPath: string;
   colour: string;
+  displayName: string;
 }
 
 function records(value: unknown): NarrativeRecord[] {
@@ -55,6 +56,7 @@ export function resolveSpeciesPresentations(
             styleId,
             iconPath: `/${String(asset.path)}`,
             colour: String(style.colour),
+            displayName: String(species.name),
           },
         ];
       }),

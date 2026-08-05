@@ -646,6 +646,7 @@ describe("atlas shell", () => {
       missingAstronomySystemIds: new Set(["missing-anchor"]),
       narrativeSystemIdsByAstronomyId: new Map(),
       activeSystemIds: new Set(),
+      systemStatuses: new Map(),
       contextSystems: [],
       astronomySearchAliasesByNarrativeId: new Map(),
     });

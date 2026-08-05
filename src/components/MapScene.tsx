@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type ReactNode,
 } from "react";
 import {
   AdditiveBlending,
@@ -15,6 +16,7 @@ import {
   Mesh,
   PerspectiveCamera,
   Quaternion,
+  Vector2,
   Vector3,
   Vector4,
 } from "three";
@@ -591,7 +593,7 @@ const StarMarker = memo(function StarMarker({
   zoomed,
   entered,
   interactionLocked,
-  onHover,
+  onCaptionSelect,
 }: {
   system: StellarSystem;
   selected: boolean;
@@ -605,7 +607,7 @@ const StarMarker = memo(function StarMarker({
   zoomed: boolean;
   entered: boolean;
   interactionLocked: boolean;
-  onHover: (id: string | null) => void;
+  onCaptionSelect: (id: string) => void;
 }) {
   const position = system.render_position;
   const selectedDistance = selectedSystem
@@ -615,18 +617,11 @@ const StarMarker = memo(function StarMarker({
         system.position_pc.zg - selectedSystem.position_pc.zg,
       )
     : null;
+  const selectCaption = () => {
+    if (!interactionLocked) onCaptionSelect(system.id);
+  };
   return (
-    <group
-      position={[position.x, position.y, position.z]}
-      onPointerOver={(event) => {
-        if (zoomed || interactionLocked) return;
-        event.stopPropagation();
-        onHover(system.id);
-      }}
-      onPointerOut={() => {
-        onHover(null);
-      }}
-    >
+    <group position={[position.x, position.y, position.z]}>
       {system.components.map((component, index) => {
         const radius = componentVisibleRadius(component, known);
         const optics = starOpticalVariation(
@@ -714,58 +709,51 @@ const StarMarker = memo(function StarMarker({
       {!zoomed && active && <NarrativeRing />}
       {!zoomed && selected && <SelectionFrame />}
       {!zoomed &&
-        captionOpacity !== undefined &&
-        (known || selected) &&
-        !hovered && (
-          <Billboard position={[0, -0.32, 0]} follow raycast={ignoreRaycast}>
-            <Html center style={{ pointerEvents: "none" }}>
+        (hovered || selected || (captionOpacity !== undefined && known)) && (
+          <Billboard position={[0, -0.5, 0]} follow raycast={ignoreRaycast}>
+            <Html
+              style={{ pointerEvents: "auto" }}
+              zIndexRange={hovered ? [16_777_271, 16_777_271] : [16_777_270, 0]}
+            >
               <div
-                className="narrative-map-label"
-                data-caption-opacity={captionOpacity}
-                style={{ opacity: captionOpacity }}
+                className={`narrative-map-label ${hovered ? "hovered" : ""}`}
+                data-system-id={system.id}
+                data-caption-opacity={captionOpacity ?? 1}
+                style={{ opacity: captionOpacity ?? 1 }}
+                onClick={selectCaption}
               >
-                <span className="narrative-map-label-name">{system.name}</span>
+                <span
+                  className="narrative-map-label-name"
+                  aria-hidden={hovered}
+                >
+                  {system.name}
+                </span>
                 <StatusRail
                   status={status}
                   speciesPresentations={speciesPresentations}
+                  expanded={hovered}
+                  expandedContent={
+                    <div className="map-tooltip">
+                      <div className="map-tooltip-header">
+                        {system.name}
+                        {selectedDistance !== null && (
+                          <small>
+                            {formatDistance(selectedDistance)} from{" "}
+                            {selectedSystem?.name}
+                          </small>
+                        )}
+                      </div>
+                      <SystemStatusTooltip
+                        status={status}
+                        speciesPresentations={speciesPresentations}
+                      />
+                    </div>
+                  }
                 />
               </div>
             </Html>
           </Billboard>
         )}
-      {!zoomed && hovered && (
-        <>
-          {status && (
-            <Billboard position={[0, -0.32, 0]} follow raycast={ignoreRaycast}>
-              <Html center style={{ pointerEvents: "none" }}>
-                <div
-                  className="narrative-map-label"
-                  style={{ opacity: captionOpacity ?? 1 }}
-                >
-                  <StatusRail
-                    status={status}
-                    speciesPresentations={speciesPresentations}
-                  />
-                </div>
-              </Html>
-            </Billboard>
-          )}
-          <Html
-            position={[0, 0.28, 0]}
-            center
-            style={{ pointerEvents: "none" }}
-          >
-            <div className="map-tooltip">
-              {system.name}
-              {selectedDistance !== null && (
-                <small>
-                  {formatDistance(selectedDistance)} from {selectedSystem?.name}
-                </small>
-              )}
-            </div>
-          </Html>
-        </>
-      )}
     </group>
   );
 });
@@ -778,7 +766,48 @@ const markerPaths = {
   possible_target: "/assets/system-markers/colony-target.svg",
 } as const;
 
-export function StatusRail({
+const statusRoleLabels: Record<
+  NarrativeSystemStatus["pairs"][number]["role"],
+  string
+> = {
+  inhabited_homeworld: "homeworld",
+  prominent_installation: "prominent installation",
+  colony: "colony",
+  abandoned_homeworld: "abandoned homeworld",
+};
+
+function statusMaskStyle(path: string, colour?: string): CSSProperties {
+  return {
+    backgroundColor: colour,
+    maskImage: `url("${path}")`,
+    WebkitMaskImage: `url("${path}")`,
+  };
+}
+
+function StatusPairGlyphs({
+  pair,
+  species,
+}: {
+  pair: NarrativeSystemStatus["pairs"][number];
+  species: ResolvedSpeciesPresentation;
+}) {
+  return (
+    <>
+      <span
+        className="system-status-glyph system-status-species-glyph"
+        aria-hidden="true"
+        style={statusMaskStyle(species.iconPath, species.colour)}
+      />
+      <span
+        className="system-status-glyph system-status-role-glyph"
+        aria-hidden="true"
+        style={statusMaskStyle(markerPaths[pair.role])}
+      />
+    </>
+  );
+}
+
+export function SystemStatusTooltip({
   status,
   speciesPresentations,
 }: {
@@ -786,42 +815,94 @@ export function StatusRail({
   speciesPresentations: ReadonlyMap<string, ResolvedSpeciesPresentation>;
 }) {
   if (!status) return null;
-  const label = (role: string) => role.replaceAll("_", " ");
-  const maskStyle = (path: string, colour?: string): CSSProperties => ({
-    backgroundColor: colour,
-    maskImage: `url("${path}")`,
-    WebkitMaskImage: `url("${path}")`,
-  });
   return (
-    <span
-      className="system-status-rail"
-      role="group"
-      aria-label="System status"
-    >
+    <div className="map-tooltip-statuses" aria-label="System statuses">
       {status.pairs.map((pair) => {
         const species = speciesPresentations.get(pair.speciesId);
         if (!species) return null;
+        const description = `${species.displayName} ${statusRoleLabels[pair.role]}`;
         return (
-          <span
-            className={`system-status-pair system-status-${pair.role}`}
+          <div
+            className={`map-tooltip-status system-status-${pair.role}`}
             key={`${pair.speciesId}-${pair.role}`}
             role="img"
-            aria-label={`${pair.speciesId}: ${label(pair.role)}`}
+            aria-label={description}
           >
-            <span
-              className="system-status-glyph system-status-species-glyph"
-              aria-hidden="true"
-              style={maskStyle(species.iconPath, species.colour)}
-            />
-            <span
-              className="system-status-glyph system-status-role-glyph"
-              aria-hidden="true"
-              style={maskStyle(markerPaths[pair.role])}
-            />
-          </span>
+            <span className="map-tooltip-status-icons">
+              <StatusPairGlyphs pair={pair} species={species} />
+            </span>
+            <span>{description}</span>
+          </div>
         );
       })}
-      {status.overflowCount > 0 && (
+      {status.possibleColonyTarget && (
+        <div
+          className="map-tooltip-status"
+          role="img"
+          aria-label="Possible colony target"
+        >
+          <span
+            className="system-status-glyph system-status-standalone target"
+            aria-hidden="true"
+            style={statusMaskStyle(markerPaths.possible_target)}
+          />
+          <span>Possible colony target</span>
+        </div>
+      )}
+      {status.neutralProminentInstallation && (
+        <div
+          className="map-tooltip-status"
+          role="img"
+          aria-label="Prominent installation"
+        >
+          <span
+            className="system-status-glyph system-status-standalone installation"
+            aria-hidden="true"
+            style={statusMaskStyle(markerPaths.prominent_installation)}
+          />
+          <span>Prominent installation</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function StatusRail({
+  status,
+  speciesPresentations,
+  expanded = false,
+  expandedContent,
+}: {
+  status: NarrativeSystemStatus | undefined;
+  speciesPresentations: ReadonlyMap<string, ResolvedSpeciesPresentation>;
+  expanded?: boolean;
+  expandedContent?: ReactNode;
+}) {
+  if (!status && !expanded) return null;
+  const label = (role: string) => role.replaceAll("_", " ");
+  return (
+    <div
+      className={`system-status-rail ${expanded ? "expanded" : ""}`}
+      role="group"
+      aria-label="System status"
+    >
+      {expanded
+        ? expandedContent
+        : status?.pairs.map((pair) => {
+            const species = speciesPresentations.get(pair.speciesId);
+            if (!species) return null;
+            return (
+              <span
+                className={`system-status-pair system-status-${pair.role}`}
+                key={`${pair.speciesId}-${pair.role}`}
+                role="img"
+                aria-label={`${pair.speciesId}: ${label(pair.role)}`}
+              >
+                <StatusPairGlyphs pair={pair} species={species} />
+              </span>
+            );
+          })}
+      {!expanded && status && status.overflowCount > 0 && (
         <span
           className="system-status-overflow"
           role="img"
@@ -830,25 +911,25 @@ export function StatusRail({
           +{status.overflowCount}
         </span>
       )}
-      {status.possibleColonyTarget && (
+      {!expanded && status?.possibleColonyTarget && (
         <span role="img" aria-label="Possible colony target">
           <span
             className="system-status-glyph system-status-standalone target"
             aria-hidden="true"
-            style={maskStyle(markerPaths.possible_target)}
+            style={statusMaskStyle(markerPaths.possible_target)}
           />
         </span>
       )}
-      {status.neutralProminentInstallation && (
+      {!expanded && status?.neutralProminentInstallation && (
         <span role="img" aria-label="Prominent installation">
           <span
             className="system-status-glyph system-status-standalone installation"
             aria-hidden="true"
-            style={maskStyle(markerPaths.prominent_installation)}
+            style={statusMaskStyle(markerPaths.prominent_installation)}
           />
         </span>
       )}
-    </span>
+    </div>
   );
 }
 
@@ -1068,9 +1149,102 @@ function Scene({
   onCameraRestoringChange,
 }: SceneProps) {
   useEffect(onReady, [onReady]);
+  const { camera, gl, raycaster, scene } = useThree();
   const selected = systems.find((system) => system.id === selectedId);
   const zoomed = zoomedSystemId !== null;
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  useEffect(() => {
+    const updateHover = (event: PointerEvent) => {
+      if (zoomed || interactionsLocked) {
+        setHoveredId(null);
+        return;
+      }
+      const bounds = gl.domElement.getBoundingClientRect();
+      const insideCanvas =
+        event.clientX >= bounds.left &&
+        event.clientX <= bounds.right &&
+        event.clientY >= bounds.top &&
+        event.clientY <= bounds.bottom;
+      const target = event.target;
+      const caption =
+        target instanceof Element
+          ? target.closest<HTMLElement>(".narrative-map-label")
+          : null;
+      if (
+        target instanceof Element &&
+        target.closest(".system-status-rail.expanded") &&
+        caption?.dataset.systemId
+      ) {
+        setHoveredId(caption.dataset.systemId);
+        return;
+      }
+      if (insideCanvas) {
+        raycaster.setFromCamera(
+          new Vector2(
+            ((event.clientX - bounds.left) / bounds.width) * 2 - 1,
+            -((event.clientY - bounds.top) / bounds.height) * 2 + 1,
+          ),
+          camera,
+        );
+        const starId = closestMarkerSystemId(
+          raycaster.intersectObjects(scene.children, true),
+        );
+        if (starId) {
+          setHoveredId(starId);
+          return;
+        }
+      }
+      if (
+        target instanceof Element &&
+        target.closest(".narrative-map-label-name") &&
+        caption?.dataset.systemId
+      ) {
+        setHoveredId(caption.dataset.systemId);
+        return;
+      }
+      if (caption?.dataset.systemId) {
+        setHoveredId(caption.dataset.systemId);
+        return;
+      }
+      const retainedCaption = [
+        ...document.querySelectorAll<HTMLElement>(
+          ".narrative-map-label.hovered",
+        ),
+      ].find((candidate) => {
+        const rect = candidate.getBoundingClientRect();
+        return (
+          event.clientX >= rect.left &&
+          event.clientX <= rect.right &&
+          event.clientY >= rect.top &&
+          event.clientY <= rect.bottom
+        );
+      });
+      if (retainedCaption?.dataset.systemId) {
+        setHoveredId(retainedCaption.dataset.systemId);
+        return;
+      }
+      if (!insideCanvas) {
+        setHoveredId(null);
+        return;
+      }
+      setHoveredId(null);
+    };
+    const clearHover = () => setHoveredId(null);
+    const clearHoverOnWindowExit = (event: PointerEvent) => {
+      if (event.relatedTarget === null) clearHover();
+    };
+    window.addEventListener("pointermove", updateHover, {
+      capture: true,
+      passive: true,
+    });
+    window.addEventListener("pointerout", clearHoverOnWindowExit, true);
+    window.addEventListener("blur", clearHover);
+    return () => {
+      window.removeEventListener("pointermove", updateHover, { capture: true });
+      window.removeEventListener("pointerout", clearHoverOnWindowExit, true);
+      window.removeEventListener("blur", clearHover);
+    };
+  }, [camera, gl, interactionsLocked, raycaster, scene, zoomed]);
   const [captionOpacities, setCaptionOpacities] = useState<
     ReadonlyMap<string, number>
   >(new Map());
@@ -1136,7 +1310,7 @@ function Scene({
             zoomed={zoomed}
             entered={system.id === zoomedSystemId}
             interactionLocked={interactionsLocked}
-            onHover={setHoveredId}
+            onCaptionSelect={onSelect}
           />
         ))}
       </group>

@@ -1,6 +1,6 @@
 # BOB-20260803-X52E0D: spoiler-projected system status markers
 
-Status: Ready
+Status: Done
 Phase: 2 (narrative visual refinement)
 Last updated: 2026-08-04
 
@@ -242,6 +242,32 @@ multi-state system behavior, dense-caption fading, hover stability, selected and
 active opacity, non-colour differentiation, and generic fallback. Exercise a fixture
 with more than three species pairs and an abandoned/recolonized homeworld. Record
 browser results and unavailable-browser gaps before marking the task Done.
+
+## Validation status
+
+Implementation validation completed on 2026-08-04:
+
+- `python3 scripts/tasks.py check`: passed; 51 task files validated.
+- `./.venv/bin/python scripts/validate_data.py`: passed; 255 reconciled systems and
+  six pinned astronomy sources validated.
+- `npm run narrative:validate`: passed; zero state and 36 chapter source files
+  validated.
+- `npm run format:check`, `npm run lint`, and `npm run typecheck`: passed.
+- `npm run test`: passed; 29 files and 225 tests.
+- `npm run build`: passed; 809 modules transformed and the production bundle built.
+- `npm run test:e2e -- --grep "system status|caption|hover|species"`: passed; 6
+  tests across Chromium, Firefox, and WebKit in 51.9 seconds.
+- `npm run performance:map`: passed the BOB-034 fixture and frame budgets in 3.4
+  minutes. All three runs had a 16.7 ms median and 33.4 ms p95 frame interval; the
+  median count of intervals over 50 ms was zero.
+- `git diff --check`: passed with no output.
+- The final independent implementation review reported `No findings.`
+- Manual remote-browser result: on 2026-08-04 the Captain reported `manual checks
+  passed` for the task's prescribed visual and interaction checks and accepted the
+  result. This is an aggregate pass for every available supported browser; browser
+  names were not separately recorded and no unavailable-browser gap was reported.
+- The production build retained its existing advisory for a client chunk larger
+  than 500 kB; it is not a task failure.
 
 ## Risks and resolved decisions
 

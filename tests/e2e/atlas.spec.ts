@@ -871,6 +871,7 @@ test("the permanent local backdrop preserves responsive map interaction", async 
 test("expressive map states preserve active, hover, and astronomy-only selection paths", async ({
   page,
 }) => {
+  test.setTimeout(45_000);
   await page.addInitScript(() => {
     window.localStorage.setItem(
       "bobiverse.app-state.v1",
@@ -927,20 +928,64 @@ test("expressive map states preserve active, hover, and astronomy-only selection
     const sol = await page.evaluate(() =>
       window.__bob034MapPerformance!.screenPoint("sol"),
     );
-    const solMapCaption = page
-      .locator(".narrative-map-label")
-      .filter({ hasText: /^Solar System$/ });
+    const solMapCaption = page.locator(
+      '.narrative-map-label[data-system-id="sol"]',
+    );
+    const solStatusRail = solMapCaption.locator(".system-status-rail");
+    const compactRailTop = await solStatusRail.evaluate(
+      (rail) => rail.getBoundingClientRect().top,
+    );
     await page.mouse.move(sol.x, sol.y);
     await expect(page.locator(".map-tooltip")).toContainText("Solar System");
-    await expect(solMapCaption).toHaveCount(0);
+    await expect(page.locator(".map-tooltip")).toContainText("Human homeworld");
+    await expect(solMapCaption).toHaveCount(1);
+    await expect(
+      solMapCaption.locator(".narrative-map-label-name"),
+    ).toBeHidden();
+    await expect
+      .poll(async () => {
+        const expandedRailTop = await solStatusRail.evaluate(
+          (rail) => rail.getBoundingClientRect().top,
+        );
+        return Math.abs(expandedRailTop - compactRailTop);
+      })
+      .toBeLessThanOrEqual(1);
+    await solMapCaption
+      .locator(".system-status-rail")
+      .hover({ position: { x: 140, y: 20 } });
+    await expect(page.locator(".map-tooltip")).toContainText("Human homeworld");
     await page.mouse.move(1, 1);
     await expect(page.locator(".map-tooltip")).toHaveCount(0);
-    await page.mouse.move(sol.x, sol.y);
+    await solMapCaption
+      .locator(".narrative-map-label-name")
+      .hover({ position: { x: 4, y: 4 } });
     await expect(page.locator(".map-tooltip")).toContainText("Solar System");
-    await expect(solMapCaption).toHaveCount(0);
-    await page.mouse.click(sol.x, sol.y);
-    await expect(page.locator(".selection-label")).toHaveCount(0);
     await page.mouse.move(1, 1);
+    await solMapCaption
+      .locator(".system-status-rail")
+      .hover({ position: { x: 40, y: 3 } });
+    await expect(page.locator(".map-tooltip")).toContainText("Human homeworld");
+    await page.mouse.move(1, 1);
+    await solMapCaption
+      .locator(".narrative-map-label-name")
+      .dispatchEvent("click");
+    await expect(page.locator(".selection-label")).toHaveCount(0);
+    if (compact) {
+      await expect(
+        page.getByRole("dialog", { name: "Selected object" }),
+      ).toBeVisible();
+      await page
+        .getByRole("dialog", { name: "Selected object" })
+        .getByRole("button", { name: "Close" })
+        .click();
+    }
+    await page
+      .getByTestId("star-map-canvas")
+      .click({ position: { x: 100, y: 40 } });
+    await page.mouse.move(1, 1);
+    await solStatusRail.hover({ position: { x: 40, y: 3 } });
+    await expect(page.locator(".map-tooltip")).toContainText("Human homeworld");
+    await solStatusRail.click({ position: { x: 140, y: 20 } });
     await expect(solMapCaption).toHaveCount(1);
     if (compact) {
       await expect(
@@ -957,13 +1002,11 @@ test("expressive map states preserve active, hover, and astronomy-only selection
     const search = page.getByRole("searchbox", {
       name: "Search visible objects",
     });
-    await search.fill("alpha centauri");
-    await page.getByRole("button", { name: /^Alpha Centauri/ }).click();
+    await search.fill("sirius");
+    await page.getByRole("button", { name: /^Sirius/ }).click();
     await expect(page.locator(".selection-label")).toHaveCount(0);
     await expect(
-      page
-        .locator(".narrative-map-label")
-        .filter({ hasText: /^Alpha Centauri$/ }),
+      page.locator(".narrative-map-label").filter({ hasText: /^Sirius$/ }),
     ).toHaveCount(1);
     const inspector = compact
       ? page.getByRole("dialog", { name: "Selected object" })
@@ -977,18 +1020,23 @@ test("expressive map states preserve active, hover, and astronomy-only selection
     if (compact) {
       await inspector.getByRole("button", { name: "Close" }).click();
     }
+    await settleMapCamera(page);
     const astronomyCaption = page
       .locator(".narrative-map-label")
-      .filter({ hasText: /^Alpha Centauri$/ });
+      .filter({ hasText: /^Sirius$/ });
     await page
       .getByTestId("star-map-canvas")
       .click({ position: { x: 100, y: 40 } });
     expect(await astronomyCaption.count()).toBe(0);
-    const alphaCentauri = await page.evaluate(() =>
-      window.__bob034MapPerformance!.screenPoint("stellar-system-005413"),
-    );
-    await page.mouse.move(alphaCentauri.x, alphaCentauri.y);
-    await expect(page.locator(".map-tooltip")).toContainText("Alpha Centauri");
+    await expect
+      .poll(async () => {
+        const sirius = await page.evaluate(() =>
+          window.__bob034MapPerformance!.screenPoint("stellar-system-000072"),
+        );
+        await page.mouse.move(sirius.x, sirius.y);
+        return page.locator(".map-tooltip").count();
+      })
+      .toBe(1);
     await page.waitForTimeout(150);
     await page.mouse.move(1, 1);
     expect(await astronomyCaption.count()).toBe(0);

@@ -63,6 +63,7 @@ describe("species presentation registry", () => {
       styleId: "species-style:fixture",
       iconPath: "/assets/species-icons/fixture.svg",
       colour: "#98A8B8",
+      displayName: "Fixture human",
     });
     expect(first.has("species:fixture-later")).toBe(false);
 
