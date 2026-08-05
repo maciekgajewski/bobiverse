@@ -131,6 +131,7 @@ describe("object inspector", () => {
           bookTitle: "Fixture volume",
           localNumber: "7",
           title: "An unprefixed fixture title",
+          date: "2200-03-04",
           summary: "A compact original fixture synopsis.",
           pictureId: "asset:fixture-chapter",
           location: { id: "location:fixture", name: "Fixture location" },
@@ -164,11 +165,14 @@ describe("object inspector", () => {
       />,
     );
 
-    expect(screen.getByText("Book 1 · Chapter 7")).toBeInTheDocument();
+    expect(screen.getByText("Book 1 · Fixture volume")).toBeInTheDocument();
     expect(
       screen.getByRole("heading", { name: "An unprefixed fixture title" }),
     ).toBeInTheDocument();
+    expect(screen.getByText("Chapter")).toBeInTheDocument();
     expect(screen.getByText("Synopsis")).toBeInTheDocument();
+    expect(screen.getByText("4 March 2200")).toBeInTheDocument();
+    expect(screen.queryByText("Date")).not.toBeInTheDocument();
     expect(screen.getByText("Lead characters")).toBeInTheDocument();
     expect(screen.getByText("Events")).toBeInTheDocument();
     expect(screen.getByText("Vessels")).toBeInTheDocument();
@@ -210,6 +214,7 @@ describe("object inspector", () => {
           bookTitle: "Fixture volume",
           localNumber: "1",
           title: "1",
+          date: "2200",
           summary: "A compact original fixture synopsis.",
           pictureId: null,
           location: { id: "location:fixture", name: "Fixture location" },
@@ -244,6 +249,7 @@ describe("object inspector", () => {
           bookTitle: "Fixture volume",
           localNumber: "1",
           title: "1",
+          date: "2200",
           summary: "A compact original fixture synopsis.",
           pictureId: "asset:fixture-chapter",
           location: { id: "location:fixture", name: "Fixture location" },

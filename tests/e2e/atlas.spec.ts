@@ -503,7 +503,9 @@ test("character lineage and travel history are responsive and support navigation
         name: "Birth or cloning chapter for Bill: Chapter 1.17",
       })
       .click();
-    await expect(inspector.getByText("Book 1 · Chapter 17")).toBeVisible();
+    await expect(
+      inspector.getByText("Book 1 · We Are Legion (We are Bob)"),
+    ).toBeVisible();
   }
 });
 

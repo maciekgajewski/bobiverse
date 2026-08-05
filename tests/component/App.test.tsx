@@ -259,7 +259,7 @@ describe("atlas shell", () => {
       name: "Object inspector",
     });
     expect(
-      within(inspector).getByText("Book 1 · Chapter 1"),
+      within(inspector).getByText("Book 1 · We Are Legion (We are Bob)"),
     ).toBeInTheDocument();
     expect(
       within(inspector).getByRole("heading", {
@@ -381,7 +381,7 @@ describe("atlas shell", () => {
     expect(
       within(
         screen.getByRole("complementary", { name: "Object inspector" }),
-      ).getByText("Book 1 · Chapter 2"),
+      ).getByText("Book 1 · We Are Legion (We are Bob)"),
     ).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Date mode" }));
     expect(
@@ -463,7 +463,7 @@ describe("atlas shell", () => {
       );
 
       expect(
-        within(inspector).getByText("Book 1 · Chapter 17"),
+        within(inspector).getByText("Book 1 · We Are Legion (We are Bob)"),
       ).toBeInTheDocument();
       const stored = JSON.parse(
         window.localStorage.getItem("bobiverse.app-state.v2")!,
@@ -560,7 +560,7 @@ describe("atlas shell", () => {
     expect(
       within(
         screen.getByRole("complementary", { name: "Object inspector" }),
-      ).queryByText("Book 1 · Chapter 2"),
+      ).queryByText("Book 1 · We Are Legion (We are Bob)"),
     ).not.toBeInTheDocument();
   });
 

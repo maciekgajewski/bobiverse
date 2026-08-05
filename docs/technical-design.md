@@ -864,9 +864,11 @@ Application-level projection coordination owns each reader-progress transition. 
 normalizes progress, obtains prepared meaningful-date options, generates exactly one
 world, resolves the selected Chapter-mode detail against that exact world, derives the
 map projection and selection eligibility, and commits the coherent result atomically.
-Chapter detail contains book/chapter identity, optional asset ID, the authored
-summary, and resolved eligible relationship IDs; it is neither a second world nor a
-committed snapshot. Timeline, browser, map, and inspector consume that shared result.
+Chapter detail contains book/chapter identity, authored chapter date, optional asset
+ID, the authored summary, and resolved eligible relationship IDs; it is neither a
+second world nor a committed snapshot. The inspector presents book title, chapter
+title, formatted date, and linked default location before the synopsis. Timeline,
+browser, map, and inspector consume that shared result.
 Search, group expansion, compact-panel state, timeline viewport, and map-scale changes
 do not regenerate the narrative world.
 

@@ -2,7 +2,7 @@
 
 Status: Done
 Phase: 2 (narrative foundation and chapter timeline)
-Last updated: 2026-07-29
+Last updated: 2026-08-05
 
 ## Objective
 
@@ -83,12 +83,13 @@ ADR rather than expanding the task silently.
   interpret canonical chapter JSON, and chapter selection does not trigger a second
   corpus preparation or `NarrativeWorld` generation.
 - The inspector presents:
-  - book number and local chapter number;
+  - book title, including the book number;
   - chapter title;
+  - the formatted authored chapter date;
+  - the required default chapter `location_id`, linked to the eligible projected
+    location;
   - optional chapter illustration;
   - the original chapter `summary`, labelled **Synopsis**;
-  - the required default chapter `location_id`, labelled **Location** and linked to
-    the eligible projected location;
   - when appearances exist, all appearances whose role is `lead`, deduplicated by
     character ID, labelled **Lead character** or **Lead characters**, and linked;
   - event entities introduced by this chapter and eligible in its exact Chapter-mode

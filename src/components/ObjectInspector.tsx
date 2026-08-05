@@ -618,6 +618,33 @@ function ChapterRelationshipList({
   );
 }
 
+function ChapterContext({
+  detail,
+  onSelect,
+}: {
+  detail: NarrativeChapterDetail;
+  onSelect: (selection: SelectionIdentity) => void;
+}) {
+  return (
+    <div className="chapter-context" aria-label="Chapter context">
+      <time
+        aria-label={`Date: ${formatNarrativeDate(detail.date)}`}
+        dateTime={detail.date}
+      >
+        {formatNarrativeDate(detail.date)}
+      </time>
+      <button
+        type="button"
+        aria-label={`Location: ${detail.location.name}`}
+        onClick={() => onSelect({ kind: "narrative", id: detail.location.id })}
+      >
+        <ObjectItemBullet active={false} />
+        <span>{detail.location.name}</span>
+      </button>
+    </div>
+  );
+}
+
 function ChapterDetails({
   detail,
   assets,
@@ -641,22 +668,18 @@ function ChapterDetails({
       aria-live="polite"
       aria-labelledby={headingId}
     >
-      <p className="eyebrow">
-        Book {detail.bookNumber} · Chapter {detail.localNumber}
+      <p className="chapter-book-title">
+        Book {detail.bookNumber} · {detail.bookTitle}
       </p>
+      <p className="eyebrow chapter-title-label">Chapter</p>
       <h2 id={headingId}>{detail.title}</h2>
-      <p className="chapter-book-title">{detail.bookTitle}</p>
+      <ChapterContext detail={detail} onSelect={onSelect} />
       <Picture pictureId={detail.pictureId} assets={assets} alt={pictureAlt} />
       <section className="inspector-section chapter-synopsis">
         <h3>Synopsis</h3>
         <p>{detail.summary}</p>
       </section>
       <div className="chapter-relationship-frame">
-        <ChapterRelationshipList
-          label="Location"
-          relationships={[detail.location]}
-          onSelect={onSelect}
-        />
         <ChapterRelationshipList
           label={
             detail.leadCharacters.length === 1

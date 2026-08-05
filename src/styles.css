@@ -1201,9 +1201,40 @@ h2 {
   border-radius: 0.45rem;
 }
 .chapter-book-title {
-  margin: -0.2rem 0 0;
+  margin: 0;
   color: var(--text-muted);
   font-size: 0.72rem;
+}
+.chapter-title-label {
+  margin: 0.45rem 0 -0.2rem;
+}
+.chapter-context {
+  display: grid;
+  gap: 0.32rem;
+  margin: 0.45rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+.chapter-context button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  width: fit-content;
+  max-width: 100%;
+  padding: 0.2rem 0.35rem;
+  border: 1px solid var(--line-accent);
+  border-radius: 0.25rem;
+  color: #d8efff;
+  background: #10233b;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.chapter-context button:hover {
+  background: #183554;
+}
+.chapter-context button .object-item-bullet {
+  flex: 0 0 auto;
 }
 .chapter-inspector-details {
   width: 100%;

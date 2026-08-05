@@ -253,6 +253,7 @@ describe("narrative corpus validation and projection", () => {
       bookTitle: "Fixture volume",
       localNumber: "1",
       title: "Fixture introduction",
+      date: "2200.0",
       pictureId: "asset:fixture-chapter",
       location: { id: "location:earth", name: "Earth" },
       leadCharacters: [

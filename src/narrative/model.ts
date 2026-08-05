@@ -76,6 +76,7 @@ export interface NarrativeChapterDetail {
   bookTitle: string;
   localNumber: string;
   title: string;
+  date: string;
   summary: string;
   pictureId: string | null;
   location: NarrativeChapterRelationship;
@@ -1581,6 +1582,7 @@ interface PreparedChapterDetailSource {
   bookTitle: string;
   localNumber: string;
   title: string;
+  date: string;
   summary: string;
   pictureId: string | null;
   locationId: string;
@@ -1645,6 +1647,7 @@ function prepareChapterDetailSource(
     bookTitle: asString(book.title, `Book ${bookNumber} title`),
     localNumber: localNumber!,
     title: asString(chapter.title, `Chapter ${reference} title`),
+    date: chapterDate(chapter),
     summary: asString(chapter.summary, `Chapter ${reference} summary`),
     pictureId:
       typeof chapter.picture_id === "string" ? chapter.picture_id : null,
@@ -2537,6 +2540,7 @@ export function projectNarrativeChapterDetail(
     bookTitle: source.bookTitle,
     localNumber: source.localNumber,
     title: source.title,
+    date: source.date,
     summary: source.summary,
     pictureId: source.pictureId,
     location: resolveRequired(source.locationId, "default location"),
