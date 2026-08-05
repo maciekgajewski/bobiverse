@@ -1447,9 +1447,13 @@ deterministic in-memory/build output and are not committed snapshots.
 
 Every chapter source record validates against the shared Draft 2020-12 schema contract.
 It requires the canonical `chapter` reference, nonempty reader-visible `title`,
-original plain-text `summary`, story `date`, and a default `location_id`. The default
-location may resolve to the zero state, an earlier chapter, or a location introduced in
-the same chapter. It must never be an invented coordinate or an implicit unknown.
+original plain-text `summary`, story `date`, and a default `location_id`. A summary is
+a synopsis, not a dateline: it begins with narrative action, subject, or change rather
+than repeating the structured date or mechanically leading with the default location.
+Location wording remains appropriate when it is naturally needed to explain the
+journey, arrival, survey, or other chapter action. The default location may resolve to
+the zero state, an earlier chapter, or a location introduced in the same chapter. It
+must never be an invented coordinate or an implicit unknown.
 Optional `picture_id` references one registered curated asset. Unknown IDs and
 non-asset IDs fail at the chapter source field; existing chapters need no assignment.
 

@@ -934,6 +934,44 @@ function chapterSemanticError(
   return new Error(`Chapter ${chapter} ${pointer}: ${message}`);
 }
 
+const summarySentenceAbbreviations = new Set([
+  "dr",
+  "jr",
+  "mr",
+  "mrs",
+  "ms",
+  "prof",
+  "sr",
+  "st",
+  "vs",
+]);
+
+function openingSummarySentence(summary: string): string {
+  for (let index = 0; index < summary.length; index += 1) {
+    const character = summary[index];
+    if (character !== "." && character !== "!" && character !== "?") continue;
+    if (character === ".") {
+      const precedingWord = summary
+        .slice(0, index)
+        .match(/([A-Za-z]+)$/)?.[1]
+        ?.toLowerCase();
+      const decimalPoint =
+        /\d/.test(summary[index - 1] ?? "") &&
+        /\d/.test(summary[index + 1] ?? "");
+      if (
+        decimalPoint ||
+        (precedingWord !== undefined &&
+          (precedingWord.length === 1 ||
+            summarySentenceAbbreviations.has(precedingWord)))
+      ) {
+        continue;
+      }
+    }
+    return summary.slice(0, index + 1);
+  }
+  return summary;
+}
+
 function sourceProperties(
   record: NarrativeRecord,
   excludes: readonly string[],
@@ -1137,6 +1175,29 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
     const [book] = id.split(".");
     if (!(book in books))
       throw new Error(`Chapter ${id} belongs to an unknown book.`);
+    const summary = asString(chapter.summary, `Chapter ${id} summary`);
+    const date = parseNarrativeDate(
+      asString(chapter.date, `Chapter ${id} date`),
+    );
+    const openingSentence = openingSummarySentence(summary);
+    const repeatedYear = new RegExp(`\\b${date.year}\\b`).test(openingSentence);
+    const monthName =
+      date.month === null
+        ? null
+        : new Intl.DateTimeFormat("en", {
+            month: "long",
+            timeZone: "UTC",
+          }).format(new Date(Date.UTC(date.year, date.month - 1, 1)));
+    const repeatedMonth =
+      monthName !== null &&
+      new RegExp(`\\b${monthName}\\b`).test(openingSentence);
+    if (repeatedYear || repeatedMonth) {
+      throw chapterSemanticError(
+        id,
+        "/summary",
+        "opening sentence must not repeat the structured chapter date.",
+      );
+    }
     const introductions = (chapter.introducing as unknown[] | undefined) ?? [];
     const introducedThisChapter = new Set<string>();
     for (const candidate of introductions) {

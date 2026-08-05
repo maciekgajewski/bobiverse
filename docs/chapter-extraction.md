@@ -53,6 +53,20 @@ uses an acronym, that acronym remains the canonical visible and searchable `name
 a source-supported expanded form belongs in the original `description`. Codex must
 not replace the acronym with its expansion or invent an expansion.
 
+## Summary authoring standard
+
+Every chapter `summary` is an original, spoiler-safe synopsis rather than a dateline.
+The chapter date is a separate structured field and is displayed separately, so a
+summary must not begin by repeating its year, month, day, or an equivalent temporal
+lead. It must not mechanically substitute the chapter's default location for that
+lead. Begin with the chapter action, subject, or change instead.
+
+Retain a location only when it is a natural part of the synopsis—for example, when
+the chapter concerns a journey, arrival, survey target, or another location fact
+needed to understand what happens. A location is not retained merely because it is
+the chapter default or because removing the date leaves an introductory prepositional
+phrase available.
+
 ## Description authoring standard
 
 Every authored `description` is a concise, original, spoiler-safe

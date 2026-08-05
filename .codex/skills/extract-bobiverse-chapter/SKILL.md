@@ -434,6 +434,16 @@ similar names, behavior, species, backup possession, or machinery operation. An
 unresolved parent remains a reconciliation question. Later evidence may set, replace,
 or clear the field through an ordinary character update.
 
+### Summary authoring
+
+Write `summary` as an original, spoiler-safe synopsis of what happens in the chapter,
+not as a dateline. The structured chapter `date` is displayed separately, so never
+begin the summary by restating its year, month, day, or an equivalent temporal lead.
+Do not mechanically begin with the chapter's default location either. Begin with the
+chapter action, subject, or change. Retain a location only when it is a natural part
+of the synopsis, such as a journey, arrival, survey target, or other fact needed to
+understand what happens; never keep it merely to replace the removed date lead.
+
 ## Assemble and validate the candidate
 
 Create candidate JSON under `/tmp`, never directly under `data/narrative/`.

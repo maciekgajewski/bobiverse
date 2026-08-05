@@ -1959,6 +1959,49 @@ describe("narrative corpus validation and projection", () => {
     expect(() => validateNarrativeCorpus(leapDay)).not.toThrow();
   });
 
+  it("rejects structured chapter dates repeated in a summary opening sentence", () => {
+    const repeatedYear = createNarrativeFixtureCorpus();
+    repeatedYear.chapters[0]!.date = "2200-08-17";
+    repeatedYear.chapters[0]!.summary =
+      "In 2200, the fictional fixture begins its work.";
+    expect(() => validateNarrativeCorpus(repeatedYear)).toThrow(
+      "Chapter 1.1 /summary: opening sentence must not repeat the structured chapter date.",
+    );
+
+    const repeatedMonth = createNarrativeFixtureCorpus();
+    repeatedMonth.chapters[0]!.date = "2200-08";
+    repeatedMonth.chapters[0]!.summary =
+      "That August, the fictional fixture begins its work.";
+    expect(() => validateNarrativeCorpus(repeatedMonth)).toThrow(
+      "Chapter 1.1 /summary: opening sentence must not repeat the structured chapter date.",
+    );
+
+    const repeatedAfterAbbreviation = createNarrativeFixtureCorpus();
+    repeatedAfterAbbreviation.chapters[0]!.date = "2200-08";
+    repeatedAfterAbbreviation.chapters[0]!.summary =
+      "Dr. Landers begins the work in August 2200.";
+    expect(() => validateNarrativeCorpus(repeatedAfterAbbreviation)).toThrow(
+      "Chapter 1.1 /summary: opening sentence must not repeat the structured chapter date.",
+    );
+
+    for (const [date, summary] of [
+      ["2200-03", "The explorers march toward their objective."],
+      ["2200-05", "Bob may begin the work."],
+      ["2200-08", "The august group begins the work."],
+    ] as const) {
+      const unrelatedMonthWord = createNarrativeFixtureCorpus();
+      unrelatedMonthWord.chapters[0]!.date = date;
+      unrelatedMonthWord.chapters[0]!.summary = summary;
+      expect(() => validateNarrativeCorpus(unrelatedMonthWord)).not.toThrow();
+    }
+
+    const laterContext = createNarrativeFixtureCorpus();
+    laterContext.chapters[0]!.date = "2200-08";
+    laterContext.chapters[0]!.summary =
+      "The fictional fixture begins its work. Its August schedule remains relevant.";
+    expect(() => validateNarrativeCorpus(laterContext)).not.toThrow();
+  });
+
   it("orders unbounded suffix integers without precision loss", () => {
     expect(
       compareNarrativeDates(

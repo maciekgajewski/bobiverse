@@ -1,15 +1,17 @@
 # BOB-20260804-JSSM85: calendar-precision narrative dates
 
-Status: In progress
+Status: Done
 Phase: 2 (narrative foundation and chapter timeline)
-Last updated: 2026-08-04
+Last updated: 2026-08-05
 
 ## Objective
 
 Replace the opaque year-plus-index narrative date contract with explicit Gregorian
 calendar precision plus an optional ordering suffix, migrate the complete canonical
 corpus atomically, and reprepare Chapters 1.37–1.39 against a source-backed audit of
-every Chapter 1.1–1.39 top-level date.
+every Chapter 1.1–1.39 top-level date. Remove redundant opening date and formulaic
+default-location leads from the canonical chapter summaries so the separately
+displayed structured date is not repeated in synopsis prose.
 
 ## User-visible outcome
 
@@ -20,7 +22,9 @@ chapter order resolves overlapping or otherwise equal chapter-authored moments.
 
 Editors use one documented syntax and one comparison rule across canonical data,
 assisted extraction, validation, projection, and presentation. The source-backed date
-audit and Chapters 1.37–1.39 remain reviewable before any canonical write.
+audit and Chapters 1.37–1.39 remain reviewable before any canonical write. Chapter
+summaries begin with narrative action, subject, or change rather than a date/location
+dateline.
 
 ## Readiness and authority
 
@@ -38,6 +42,12 @@ ADRs.
 Exact candidate approval and application authority remain separate. Preparing and
 validating the combined review package does not authorize canonical Chapter
 1.1–1.39 edits, Chapter 1.37–1.39 promotion, or promotion-log updates.
+
+After the combined canonical application, the Captain expanded this task on
+2026-08-04 to remove redundant opening dates and formulaic location leads from all
+Chapter 1.1–1.39 summaries, selected this task rather than a follow-up remediation
+task, and explicitly authorized implementation. This bounded remediation changes no
+summary fact beyond removing those leads.
 
 ## Binding references
 
@@ -210,6 +220,12 @@ evidence from this task document.
 - Migrate all canonical narrative date values to the new syntax, including every
   supported top-level precision correction from the Chapter 1.1–1.39 source audit
   and any non-top-level opaque ordering values that must remain suffixes.
+- Remove opening date restatements and formulaic default-location leads from all
+  canonical Chapter 1.1–1.39 summaries. Preserve every remaining summary fact and
+  retain location wording only when it is a natural part of the synopsis.
+- Add the summary-authoring rule to the extraction guide and repository-local skill,
+  and reject a summary whose opening sentence repeats its structured chapter year or
+  month.
 - Produce a temporary, sealed, source-backed Chapter 1.1–1.39 top-level date audit
   table outside version control.
 - Reprepare, reconcile, and validate Chapters 1.37–1.39 as one ordered candidate
@@ -231,7 +247,9 @@ evidence from this task document.
 ## Out of scope
 
 - Auditing or changing event, birth, death, appearance, update, or other non-top-level
-  source dates merely because their containing chapter source is open.
+  source dates merely because their containing chapter source is open. The explicitly
+  authorized removal of redundant date prose from chapter summaries is the sole
+  exception and does not change any structured non-top-level date.
 - Inferring a month or day from elapsed time, neighboring chapters, model memory,
   astronomy, chapter order, or any source passage outside the explicit chapter
   heading/opening-scene boundary.
@@ -307,15 +325,20 @@ evidence from this task document.
     repository-local extraction skill, desktop UI design, visual-testing guide, and
     affected operator guidance agree with the accepted ADR and expose the complete
     editor rule without rewriting historical ADRs or completed-task evidence.
-15. One exact combined diff and review package shows the accepted ADR, source audit,
+15. Every Chapter 1.1–1.39 summary begins with narrative action, subject, or change
+    rather than restating the structured chapter date or mechanically substituting
+    the default location. All other summary facts remain unchanged, naturally needed
+    location context is retained, the editorial rule is documented, and semantic
+    validation rejects opening sentences that repeat the structured year or month.
+16. One exact combined diff and review package shows the accepted ADR, source audit,
     migration, candidates, evidence hashes, validation output, astronomy review,
     unresolved items, and all canonical effects before application.
-16. Canonical chapter files, astronomy snapshots, and the promotion log remain
+17. Canonical chapter files, astronomy snapshots, and the promotion log remain
     unchanged until the Captain explicitly approves and asks to apply that exact
     combined diff. After authorized application, all standard validation passes and
     append-only promotion records capture the affected chapter hashes and material
-    date decisions.
-17. All documented automated validation commands pass, required remote visual
+    date and summary decisions.
+18. All documented automated validation commands pass, required remote visual
     acceptance passes, and a fresh independent implementation review reports
     `No findings.`
 
@@ -371,6 +394,27 @@ Manual acceptance from a remote workstation in a real supported browser:
 3. Confirm `2165`, `August 2165`, and `17 August 2165` formatting, truthful within-
    year start-of-range placement, same-coordinate suffix clustering, hidden suffixes,
    accessible labels, spoiler-ceiling behavior, and deterministic navigation.
+4. Inspect representative chapter synopses and confirm they begin with narrative
+   content rather than a repeated date or formulaic default-location label.
+
+The Captain completed and accepted the required remote real-browser review on
+2026-08-05, including the representative date presentations, Chapter/Date modes,
+wide and compact layouts, and the revised synopsis openings.
+
+## Completion evidence
+
+- The canonical calendar-precision migration, Chapters 1.37–1.39 promotion,
+  astronomy updates, synopsis remediation, and append-only promotion records are
+  applied.
+- The narrative corpus validates through Chapter 1.39, and astronomy validation
+  reports 271 reconciled systems across six pinned sources.
+- Formatting, lint, typecheck, all 211 Vitest tests, the production build, task
+  metadata validation, and diff hygiene pass.
+- All 72 Playwright tests pass across Chromium, Firefox, and WebKit in the required
+  headless isolated-Xvfb configuration.
+- The final independent implementation review returned `No findings.`
+- The Captain explicitly accepted the remaining manual visual gate and authorized
+  task completion and commit on 2026-08-05.
 
 ## Documentation and generated artifacts
 
