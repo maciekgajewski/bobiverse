@@ -1,0 +1,75 @@
+{
+  "chapter": "1.39",
+  "title": "39",
+  "summary": "Bob watches Luke and Bender depart for different systems, then considers why replicants diverge from one another. After a gorilloid attack kills many Deltans, Bob and Marvin improve their ability to communicate with the Deltans and prepare modified exploration drones for a possible direct intervention.",
+  "date": "2165-10",
+  "location_id": "location:delta-eridani",
+  "introducing": [
+    {
+      "id": "location:kappa-ceti",
+      "name": "Kappa Ceti",
+      "kind": "star_system",
+      "astronomy_object_id": "stellar-system-002480",
+      "description": "Kappa Ceti is a named destination star described as a G5eV star slightly smaller than Sol. Luke leaves Delta Eridani intending to travel there."
+    },
+    {
+      "id": "location:gamma-leporis-a",
+      "name": "Gamma Leporis A",
+      "kind": "star_system",
+      "map_status": "unmapped",
+      "description": "Gamma Leporis A is a named destination star described as an F6V star bigger and brighter than Sol. Bender chooses it as his destination, more than sixteen light-years away."
+    },
+    {
+      "id": "event:gorilloid-attack-on-deltan-colony",
+      "name": "Gorilloid attack on the Deltan colony",
+      "description": "A gorilloid attack kills more than forty Deltans and permanently maims several others. The losses leave the Deltan community mourning and lead Bob to consider more direct intervention."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead",
+      "location_id": "location:delta-eridani"
+    },
+    {
+      "character_id": "character:marvin",
+      "role": "other"
+    },
+    {
+      "character_id": "character:archimedes",
+      "role": "other"
+    },
+    {
+      "character_id": "character:arnold",
+      "role": "other"
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "At Delta Eridani, continuing to guide the Deltans while preparing modified exploration drones for possible direct intervention."
+    },
+    {
+      "entity_id": "character:luke",
+      "current_state": "Leaving Delta Eridani for Kappa Ceti."
+    },
+    {
+      "entity_id": "character:bender",
+      "current_state": "Leaving Delta Eridani for Gamma Leporis A."
+    },
+    {
+      "entity_id": "technology:planetary-exploration-drone",
+      "description": "A practical drone design for planetary exploration, with variants for surveillance and biological analysis. The football-sized surveillance variant has remote cameras, microphones, extendable gripping limbs, and small shielded reactors that can detect incoming craft before detection. It can relay live video, record speech, and provide footage for a virtual-reality reconstruction of observed inhabitants. The roughly meter-long biological-analysis variant has visual and auditory input optimized for close work and many extendable appendages for varied tasks; it also carries systems for examining local life and mechanical stomachs that process organics as a human stomach would, with sample-output analysis taking about a day. The drones can change color with limited pattern mimicry. Bob modifies one design with a speaker system for possible communication with the Deltans."
+    }
+  ],
+  "mentions": [
+    "character:bill",
+    "technology:ami",
+    "technology:autofactory",
+    "technology:buster-drone",
+    "technology:vr",
+    "species:delta-eridani-natives",
+    "species:gorilloids",
+    "location:sol"
+  ]
+}

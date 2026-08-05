@@ -76,7 +76,7 @@ test("warmed character travel selection stays within budget", async ({
   test.setTimeout(60_000);
   await page.addInitScript(() => {
     window.localStorage.setItem(
-      "bobiverse.app-state.v1",
+      "bobiverse.app-state.v2",
       JSON.stringify({
         furthestChapterRead: "1.21",
         viewChapter: "1.21",

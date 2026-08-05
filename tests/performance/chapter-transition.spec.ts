@@ -118,7 +118,7 @@ async function transition(
 async function loadPreparedState(page: Page): Promise<void> {
   await page.addInitScript(() => {
     window.localStorage.setItem(
-      "bobiverse.app-state.v1",
+      "bobiverse.app-state.v2",
       JSON.stringify({
         furthestChapterRead: "1.11",
         viewChapter: "1.10",

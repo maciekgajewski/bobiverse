@@ -16,6 +16,9 @@ import { focusSystemIdForSelection } from "../../src/narrative/map";
 import {
   compareNarrativeDates,
   compareNarrativeMoments,
+  formatNarrativeDate,
+  isNarrativeDateEligible,
+  narrativeDateAxisCoordinate,
   characterAncestors,
   characterTravelLegs,
   characterTravelStops,
@@ -885,7 +888,7 @@ describe("narrative corpus validation and projection", () => {
     expect(narrativeWorldGenerationCount(corpus)).toBe(generationCount);
   });
 
-  it("breaks a historical route endpoint around an incomparable mapping update", () => {
+  it("keeps a later ordering suffix out of an earlier historical endpoint", () => {
     const source = createNarrativeFixtureCorpus();
     source.chapters[0]!.date = "2200";
     const introductions = source.chapters[0]!.introducing as Array<
@@ -918,7 +921,7 @@ describe("narrative corpus validation and projection", () => {
     ).toEqual([
       expect.objectContaining({
         source_chapter: "1.1",
-        astronomy_system_id: null,
+        astronomy_system_id: "sol",
       }),
     ]);
   });
@@ -1888,30 +1891,133 @@ describe("narrative corpus validation and projection", () => {
     ).toMatchObject({ current_state: "later state" });
   });
 
-  it("rejects equal indexed state-write moments", () => {
+  it("orders equal-suffix state writes by canonical chapter", () => {
     const corpus = createNarrativeFixtureCorpus();
     corpus.chapters[2]!.date = "2200.2";
 
-    expect(() => validateNarrativeCorpus(corpus)).toThrow(
-      "equal or incomparable moments",
-    );
+    expect(() => validateNarrativeCorpus(corpus)).not.toThrow();
   });
 
-  it("rejects mixed year-only and indexed state-write moments", () => {
+  it("orders omitted and explicit zero suffixes by canonical chapter", () => {
     const corpus = createNarrativeFixtureCorpus();
     corpus.chapters[2]!.date = "2200";
 
-    expect(() => validateNarrativeCorpus(corpus)).toThrow(
-      "equal or incomparable moments",
-    );
+    expect(() => validateNarrativeCorpus(corpus)).not.toThrow();
   });
 
-  it("keeps year-only and indexed dates explicitly unordered within one year", () => {
-    expect(compareNarrativeDates("2200", "2200.0")).toBeNull();
+  it("normalizes an omitted ordering suffix to zero", () => {
+    expect(compareNarrativeDates("2200", "2200.0")).toBe(0);
     expect(compareNarrativeDates("2200.1", "2200.2")).toBeLessThan(0);
   });
 
-  it("orders equal year-only narrative moments by canonical chapter only", () => {
+  it("parses Gregorian precision, hides suffixes, and uses calendar containment for display dates", () => {
+    expect(compareNarrativeDates("2165-08", "2165-10")).toBeLessThan(0);
+    expect(compareNarrativeDates("2165-08", "2165-08.1")).toBeLessThan(0);
+    expect(compareNarrativeDates("2165", "2165-08")).toBeNull();
+    expect(isNarrativeDateEligible("2165-08-17", "2165")).toBe(true);
+    expect(isNarrativeDateEligible("2165-08-17", "2165-08")).toBe(true);
+    expect(isNarrativeDateEligible("2165", "2165-08")).toBe(false);
+    expect(isNarrativeDateEligible("2165-08", "2165-08-17")).toBe(false);
+    expect(isNarrativeDateEligible("2165-08", "2165-08.1")).toBe(true);
+    expect(isNarrativeDateEligible("2165-08.0", "2165-08")).toBe(true);
+    expect(isNarrativeDateEligible("2165-08.1", "2165-08")).toBe(false);
+    expect(formatNarrativeDate("2165-08-17.2")).toBe("17 August 2165");
+    expect(narrativeDateAxisCoordinate("2165")).toBe(2165);
+    expect(narrativeDateAxisCoordinate("2165-08")).toBeCloseTo(
+      2165 + 212 / 365,
+    );
+    expect(narrativeDateAxisCoordinate("2165-03-01")).toBeCloseTo(
+      2165 + 59 / 365,
+    );
+    expect(narrativeDateAxisCoordinate("2164-02-29")).toBeCloseTo(
+      2164 + 59 / 366,
+    );
+    expect(narrativeDateAxisCoordinate("2165-08.999999999999999999")).toBe(
+      narrativeDateAxisCoordinate("2165-08"),
+    );
+    expect(narrativeDateAxisCoordinate("2166")).toBe(2166);
+  });
+
+  it("validates Gregorian components and canonical date spelling", () => {
+    for (const invalid of [
+      "0",
+      "216",
+      "02165",
+      "2165-1",
+      "2165-00",
+      "2165-13",
+      "2165-02-29",
+      "2164-02-30",
+      "2165-08-1",
+      "2165-08.01",
+      "2165.",
+    ]) {
+      const corpus = createNarrativeFixtureCorpus();
+      corpus.chapters[0]!.date = invalid;
+      expect(() => validateNarrativeCorpus(corpus), invalid).toThrow();
+    }
+    const numeric = createNarrativeFixtureCorpus();
+    numeric.chapters[0]!.date = 2165;
+    expect(() => validateNarrativeCorpus(numeric)).toThrow();
+
+    const leapDay = createNarrativeFixtureCorpus();
+    leapDay.chapters[0]!.date = "2164-02-29.0";
+    expect(() => validateNarrativeCorpus(leapDay)).not.toThrow();
+  });
+
+  it("rejects structured chapter dates repeated in a summary opening sentence", () => {
+    const repeatedYear = createNarrativeFixtureCorpus();
+    repeatedYear.chapters[0]!.date = "2200-08-17";
+    repeatedYear.chapters[0]!.summary =
+      "In 2200, the fictional fixture begins its work.";
+    expect(() => validateNarrativeCorpus(repeatedYear)).toThrow(
+      "Chapter 1.1 /summary: opening sentence must not repeat the structured chapter date.",
+    );
+
+    const repeatedMonth = createNarrativeFixtureCorpus();
+    repeatedMonth.chapters[0]!.date = "2200-08";
+    repeatedMonth.chapters[0]!.summary =
+      "That August, the fictional fixture begins its work.";
+    expect(() => validateNarrativeCorpus(repeatedMonth)).toThrow(
+      "Chapter 1.1 /summary: opening sentence must not repeat the structured chapter date.",
+    );
+
+    const repeatedAfterAbbreviation = createNarrativeFixtureCorpus();
+    repeatedAfterAbbreviation.chapters[0]!.date = "2200-08";
+    repeatedAfterAbbreviation.chapters[0]!.summary =
+      "Dr. Landers begins the work in August 2200.";
+    expect(() => validateNarrativeCorpus(repeatedAfterAbbreviation)).toThrow(
+      "Chapter 1.1 /summary: opening sentence must not repeat the structured chapter date.",
+    );
+
+    for (const [date, summary] of [
+      ["2200-03", "The explorers march toward their objective."],
+      ["2200-05", "Bob may begin the work."],
+      ["2200-08", "The august group begins the work."],
+    ] as const) {
+      const unrelatedMonthWord = createNarrativeFixtureCorpus();
+      unrelatedMonthWord.chapters[0]!.date = date;
+      unrelatedMonthWord.chapters[0]!.summary = summary;
+      expect(() => validateNarrativeCorpus(unrelatedMonthWord)).not.toThrow();
+    }
+
+    const laterContext = createNarrativeFixtureCorpus();
+    laterContext.chapters[0]!.date = "2200-08";
+    laterContext.chapters[0]!.summary =
+      "The fictional fixture begins its work. Its August schedule remains relevant.";
+    expect(() => validateNarrativeCorpus(laterContext)).not.toThrow();
+  });
+
+  it("orders unbounded suffix integers without precision loss", () => {
+    expect(
+      compareNarrativeDates(
+        "2165-08.9007199254740992",
+        "2165-08.9007199254740993",
+      ),
+    ).toBeLessThan(0);
+  });
+
+  it("uses suffix then canonical chapter for identical calendar portions", () => {
     expect(
       compareNarrativeMoments(
         { date: "2200", sourceChapter: "1.2" },
@@ -1923,13 +2029,13 @@ describe("narrative corpus validation and projection", () => {
         { date: "2200.1", sourceChapter: "1.11" },
         { date: "2200.1", sourceChapter: "1.2" },
       ),
-    ).toBe(0);
+    ).toBeGreaterThan(0);
     expect(
       compareNarrativeMoments(
         { date: "2200", sourceChapter: "1.2" },
         { date: "2200.1", sourceChapter: "1.11" },
       ),
-    ).toBeNull();
+    ).toBeLessThan(0);
   });
 
   it("accepts supplemental mentions for every direct entity type without changing world state", () => {
@@ -2356,8 +2462,12 @@ describe("narrative corpus validation and projection", () => {
       )?.lastActivity;
     };
 
-    expect(lastEventParticipantActivity("2200.1", "2200.1")).toBeNull();
-    expect(lastEventParticipantActivity("2200", "2200.1")).toBeNull();
+    expect(lastEventParticipantActivity("2200.1", "2200.1")).toMatchObject({
+      source_chapter: "1.2",
+    });
+    expect(lastEventParticipantActivity("2200", "2200.1")).toMatchObject({
+      source_chapter: "1.2",
+    });
   });
 
   it("projects only one uniquely latest eligible character sighting", () => {
@@ -2422,7 +2532,7 @@ describe("narrative corpus validation and projection", () => {
         "1.3",
       ).entities.find((entity) => entity.id === "character:fixture-alex")
         ?.last_known_location,
-    ).toBeUndefined();
+    ).toMatchObject({ source_chapter: "1.3" });
 
     const mixedPrecision = createNarrativeFixtureCorpus();
     mixedPrecision.chapters[1]!.date = "2200";
@@ -2440,7 +2550,7 @@ describe("narrative corpus validation and projection", () => {
         "1.3",
       ).entities.find((entity) => entity.id === "character:fixture-alex")
         ?.last_known_location,
-    ).toBeUndefined();
+    ).toMatchObject({ source_chapter: "1.2" });
   });
 
   it("projects canonical Bob at New Handeltown and resolves Sol through chapter 1.11", () => {
@@ -2469,7 +2579,7 @@ describe("narrative corpus validation and projection", () => {
     ).toEqual({
       location_id: "location:new-handeltown",
       source_chapter: "1.11",
-      effective_date: "2133",
+      effective_date: "2133-08-15",
     });
     expect(
       focusSystemIdForSelection(

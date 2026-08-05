@@ -184,12 +184,6 @@ interface HistoricalLocationProjection {
   indeterminateLocationIds: ReadonlySet<string>;
 }
 
-const ROUTE_ENDPOINT_PROPERTIES = new Set([
-  "parent_location_id",
-  "map_status",
-  "astronomy_object_id",
-]);
-
 function projectHistoricalLocations(
   baseline: readonly NarrativeEntity[],
   chapters: readonly NarrativeRecord[],
@@ -205,35 +199,7 @@ function projectHistoricalLocations(
   for (const chapter of chapters) {
     const date = chapterDate(chapter);
     const sourceChapter = chapterId(chapter);
-    const dateOrdering = compareNarrativeDates(date, displayDate);
-    if (dateOrdering === null) {
-      for (const candidate of (chapter.introducing as unknown[] | undefined) ??
-        []) {
-        const introduced = asRecord(
-          candidate,
-          `Introduction in ${sourceChapter}`,
-        );
-        if (
-          typeof introduced.id === "string" &&
-          introduced.id.startsWith("location:")
-        ) {
-          indeterminateLocationIds.add(introduced.id);
-        }
-      }
-      for (const candidate of (chapter.updates as unknown[] | undefined) ??
-        []) {
-        const update = asRecord(candidate, `Update in ${sourceChapter}`);
-        if (
-          typeof update.entity_id === "string" &&
-          update.entity_id.startsWith("location:") &&
-          Object.keys(update).some((key) => ROUTE_ENDPOINT_PROPERTIES.has(key))
-        ) {
-          indeterminateLocationIds.add(update.entity_id);
-        }
-      }
-      continue;
-    }
-    if (dateOrdering > 0) continue;
+    if (!isNarrativeDateEligible(date, displayDate)) continue;
     for (const candidate of (chapter.introducing as unknown[] | undefined) ??
       []) {
       const introduced = asRecord(
@@ -545,18 +511,124 @@ function compareChapter(left: string, right: string): number {
   return compareNarrativeChapters(left, right);
 }
 
-/** Returns null when the date values cannot be ordered without inventing chronology. */
+export interface ParsedNarrativeDate {
+  year: number;
+  month: number | null;
+  day: number | null;
+  suffix: bigint;
+  precision: "year" | "month" | "day";
+}
+
+const narrativeDatePattern =
+  /^(?<year>[1-9][0-9]{3})(?:-(?<month>0[1-9]|1[0-2])(?:-(?<day>0[1-9]|[12][0-9]|3[01]))?)?(?:\.(?<suffix>0|[1-9][0-9]*))?$/;
+
+function isGregorianLeapYear(year: number): boolean {
+  return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+}
+
+function daysInNarrativeMonth(year: number, month: number): number {
+  return [
+    31,
+    isGregorianLeapYear(year) ? 29 : 28,
+    31,
+    30,
+    31,
+    30,
+    31,
+    31,
+    30,
+    31,
+    30,
+    31,
+  ][month - 1]!;
+}
+
+export function parseNarrativeDate(value: string): ParsedNarrativeDate {
+  const match = narrativeDatePattern.exec(value);
+  if (!match?.groups) throw new Error(`Invalid narrative date: ${value}.`);
+  const year = Number(match.groups.year);
+  const month = match.groups.month ? Number(match.groups.month) : null;
+  const day = match.groups.day ? Number(match.groups.day) : null;
+  if (day !== null && month !== null && day > daysInNarrativeMonth(year, month))
+    throw new Error(`Invalid Gregorian narrative date: ${value}.`);
+  return {
+    year,
+    month,
+    day,
+    suffix: BigInt(match.groups.suffix ?? "0"),
+    precision: day !== null ? "day" : month !== null ? "month" : "year",
+  };
+}
+
+export function formatNarrativeDate(value: string): string {
+  const date = parseNarrativeDate(value);
+  if (date.precision === "year") return String(date.year);
+  const month = new Intl.DateTimeFormat("en", {
+    month: "long",
+    timeZone: "UTC",
+  }).format(new Date(Date.UTC(date.year, date.month! - 1, 1)));
+  return date.precision === "month"
+    ? `${month} ${date.year}`
+    : `${date.day} ${month} ${date.year}`;
+}
+
+export function narrativeDateAxisCoordinate(value: string): number {
+  const date = parseNarrativeDate(value);
+  const start = Date.UTC(date.year, 0, 1);
+  const point = Date.UTC(date.year, (date.month ?? 1) - 1, date.day ?? 1);
+  const yearDays = isGregorianLeapYear(date.year) ? 366 : 365;
+  return date.year + (point - start) / 86400000 / yearDays;
+}
+
+function rangeFor(date: ParsedNarrativeDate): [number, number] {
+  const start =
+    Date.UTC(date.year, (date.month ?? 1) - 1, date.day ?? 1) / 86400000;
+  if (date.precision === "day") return [start, start];
+  if (date.precision === "month")
+    return [
+      start,
+      Date.UTC(
+        date.year,
+        date.month! - 1,
+        daysInNarrativeMonth(date.year, date.month!),
+      ) / 86400000,
+    ];
+  return [start, Date.UTC(date.year, 11, 31) / 86400000];
+}
+
+/** Returns null for overlapping unequal-precision calendar ranges. */
 export function compareNarrativeDates(
   left: string,
   right: string,
 ): number | null {
-  const [leftYearText, leftIndexText] = left.split(".");
-  const [rightYearText, rightIndexText] = right.split(".");
-  const yearDifference = Number(leftYearText) - Number(rightYearText);
-  if (yearDifference !== 0) return yearDifference;
-  if (leftIndexText === undefined && rightIndexText === undefined) return 0;
-  if (leftIndexText === undefined || rightIndexText === undefined) return null;
-  return Number(leftIndexText) - Number(rightIndexText);
+  const leftDate = parseNarrativeDate(left);
+  const rightDate = parseNarrativeDate(right);
+  const [leftStart, leftEnd] = rangeFor(leftDate);
+  const [rightStart, rightEnd] = rangeFor(rightDate);
+  if (leftEnd < rightStart) return -1;
+  if (rightEnd < leftStart) return 1;
+  if (leftDate.precision !== rightDate.precision || leftStart !== rightStart)
+    return null;
+  return leftDate.suffix < rightDate.suffix
+    ? -1
+    : leftDate.suffix > rightDate.suffix
+      ? 1
+      : 0;
+}
+
+export function isNarrativeDateEligible(
+  fact: string,
+  display: string,
+): boolean {
+  const factDate = parseNarrativeDate(fact);
+  const displayDate = parseNarrativeDate(display);
+  const [factStart, factEnd] = rangeFor(factDate);
+  const [displayStart, displayEnd] = rangeFor(displayDate);
+  if (factEnd < displayStart) return true;
+  if (factStart > displayEnd) return false;
+  if (factStart === displayStart && factEnd === displayEnd)
+    return factDate.suffix <= displayDate.suffix;
+  return displayStart <= factStart && displayEnd >= factEnd;
 }
 
 export interface NarrativeMoment {
@@ -569,12 +641,9 @@ export function compareNarrativeMoments(
   right: NarrativeMoment,
 ): number | null {
   const dateOrdering = compareNarrativeDates(left.date, right.date);
-  if (dateOrdering === null || dateOrdering !== 0) return dateOrdering;
-  const bothYearOnly = !left.date.includes(".") && !right.date.includes(".");
-  if (bothYearOnly) {
-    return compareChapter(left.sourceChapter, right.sourceChapter);
-  }
-  return 0;
+  return dateOrdering !== null && dateOrdering !== 0
+    ? dateOrdering
+    : compareChapter(left.sourceChapter, right.sourceChapter);
 }
 
 function flattenZeroStateLocation(
@@ -892,6 +961,44 @@ function chapterSemanticError(
   return new Error(`Chapter ${chapter} ${pointer}: ${message}`);
 }
 
+const summarySentenceAbbreviations = new Set([
+  "dr",
+  "jr",
+  "mr",
+  "mrs",
+  "ms",
+  "prof",
+  "sr",
+  "st",
+  "vs",
+]);
+
+function openingSummarySentence(summary: string): string {
+  for (let index = 0; index < summary.length; index += 1) {
+    const character = summary[index];
+    if (character !== "." && character !== "!" && character !== "?") continue;
+    if (character === ".") {
+      const precedingWord = summary
+        .slice(0, index)
+        .match(/([A-Za-z]+)$/)?.[1]
+        ?.toLowerCase();
+      const decimalPoint =
+        /\d/.test(summary[index - 1] ?? "") &&
+        /\d/.test(summary[index + 1] ?? "");
+      if (
+        decimalPoint ||
+        (precedingWord !== undefined &&
+          (precedingWord.length === 1 ||
+            summarySentenceAbbreviations.has(precedingWord)))
+      ) {
+        continue;
+      }
+    }
+    return summary.slice(0, index + 1);
+  }
+  return summary;
+}
+
 function sourceProperties(
   record: NarrativeRecord,
   excludes: readonly string[],
@@ -1010,6 +1117,36 @@ function validateNarrativeCorpusStructure(
 }
 
 function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
+  const assertGregorianDates = (value: unknown, pointer: string): void => {
+    if (Array.isArray(value)) {
+      value.forEach((entry, index) =>
+        assertGregorianDates(entry, `${pointer}/${index}`),
+      );
+      return;
+    }
+    if (!value || typeof value !== "object") return;
+    for (const [key, entry] of Object.entries(value as NarrativeRecord)) {
+      const entryPointer = `${pointer}/${key}`;
+      if (
+        (key === "date" || key === "birth_date" || key === "death_date") &&
+        typeof entry === "string"
+      ) {
+        try {
+          parseNarrativeDate(entry);
+        } catch (error) {
+          throw new Error(
+            `${entryPointer}: ${error instanceof Error ? error.message : "invalid Gregorian date"}`,
+            { cause: error },
+          );
+        }
+      }
+      assertGregorianDates(entry, entryPointer);
+    }
+  };
+  assertGregorianDates(corpus.zeroState, "zero-state");
+  corpus.chapters.forEach((chapter) =>
+    assertGregorianDates(chapter, `Chapter ${chapterId(chapter)}`),
+  );
   const zeroStateEntities = assertZeroStateSemantics(
     corpus.zeroState,
     corpus.knownAstronomyObjectIds,
@@ -1112,6 +1249,29 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
     const [book] = id.split(".");
     if (!(book in books))
       throw new Error(`Chapter ${id} belongs to an unknown book.`);
+    const summary = asString(chapter.summary, `Chapter ${id} summary`);
+    const date = parseNarrativeDate(
+      asString(chapter.date, `Chapter ${id} date`),
+    );
+    const openingSentence = openingSummarySentence(summary);
+    const repeatedYear = new RegExp(`\\b${date.year}\\b`).test(openingSentence);
+    const monthName =
+      date.month === null
+        ? null
+        : new Intl.DateTimeFormat("en", {
+            month: "long",
+            timeZone: "UTC",
+          }).format(new Date(Date.UTC(date.year, date.month - 1, 1)));
+    const repeatedMonth =
+      monthName !== null &&
+      new RegExp(`\\b${monthName}\\b`).test(openingSentence);
+    if (repeatedYear || repeatedMonth) {
+      throw chapterSemanticError(
+        id,
+        "/summary",
+        "opening sentence must not repeat the structured chapter date.",
+      );
+    }
     const introductions = (chapter.introducing as unknown[] | undefined) ?? [];
     const introducedThisChapter = new Set<string>();
     for (const [introductionIndex, candidate] of introductions.entries()) {
@@ -1606,7 +1766,6 @@ function locationProjectionDates(
   defaultDate: string,
 ): string[] {
   const candidates = new Set<string>([defaultDate]);
-  const stateDates: string[] = [];
   for (const chapter of readerVisible) {
     const date = chapterDate(chapter);
     candidates.add(date);
@@ -1614,27 +1773,12 @@ function locationProjectionDates(
       ...((chapter.introducing as unknown[] | undefined) ?? []),
       ...((chapter.updates as unknown[] | undefined) ?? []),
     ];
-    if (
-      writes.some((candidate) => {
-        const record = asRecord(candidate, "Narrative state write");
-        const id = record.id ?? record.entity_id;
-        return typeof id !== "string" || !id.startsWith("event:");
-      })
-    ) {
-      stateDates.push(date);
-    }
     for (const candidate of writes) {
       const record = asRecord(candidate, "Narrative dated write");
       if (typeof record.date === "string") candidates.add(record.date);
     }
   }
-  return [...candidates].filter(
-    (candidate) =>
-      candidate === defaultDate ||
-      stateDates.every(
-        (stateDate) => compareNarrativeDates(stateDate, candidate) !== null,
-      ),
-  );
+  return [...candidates];
 }
 
 function assertProjectedLocationConstraints(
@@ -1907,8 +2051,7 @@ function applySourceRecord(
 
 function isDateAtOrBefore(date: string, displayDate: string | null): boolean {
   if (!displayDate) return true;
-  const ordering = compareNarrativeDates(date, displayDate);
-  return ordering !== null && ordering <= 0;
+  return isNarrativeDateEligible(date, displayDate);
 }
 
 function activityStableTieOrder(
@@ -2408,11 +2551,7 @@ export function projectNarrativeChapterDetail(
   });
 }
 
-/**
- * Returns only reader-visible dates for which the story-state projection has a
- * determinate answer. Date-mode callers must use this rather than inventing a
- * calendar position or comparing year-only and indexed values themselves.
- */
+/** Returns the complete reader-visible set of authored story dates. */
 export function meaningfulNarrativeDateOptions(
   corpus: PreparedNarrativeCorpus,
   knowledgeChapterId: string,
@@ -2444,28 +2583,15 @@ export function meaningfulNarrativeDateOptions(
       addCandidate(activity.effective_date, activity.source_chapter);
     }
   }
-  const stateDates = chapters.flatMap((chapter) => {
-    const date = chapterDate(chapter);
-    const writes = [
-      ...((chapter.introducing as unknown[] | undefined) ?? []),
-      ...((chapter.updates as unknown[] | undefined) ?? []),
-    ].filter((candidate) => {
-      const record = asRecord(candidate, "Narrative state write");
-      const id = record.id ?? record.entity_id;
-      return typeof id !== "string" || !id.startsWith("event:");
-    });
-    return writes.length === 0 ? [] : [date];
-  });
   const options = deepFreeze(
     [...candidates.entries()]
-      .filter(([candidate]) =>
-        stateDates.every(
-          (stateDate) => compareNarrativeDates(stateDate, candidate) !== null,
-        ),
-      )
       .sort(([left], [right]) => {
+        const coordinateOrdering =
+          narrativeDateAxisCoordinate(left) -
+          narrativeDateAxisCoordinate(right);
+        if (coordinateOrdering !== 0) return coordinateOrdering;
         const ordering = compareNarrativeDates(left, right);
-        return ordering ?? left.localeCompare(right);
+        return ordering ?? left.localeCompare(right, "en", { numeric: true });
       })
       .map(([date, sourceChapters]) => ({
         date,

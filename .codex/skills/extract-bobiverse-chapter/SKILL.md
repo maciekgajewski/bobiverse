@@ -393,13 +393,13 @@ ownership, and original-summary requirements. Do not invent an ID, chronology,
 coordinate, relationship, or missing field.
 
 For comparisons between dated chapter-authored facts, follow the canonical temporal
-contract: different years use year order; two indexed dates use their explicit
-indices; two equal year-only dates use canonical chapter order; and mixed
-indexed/year-only precision in one year remains incomparable. Apply the same
-fact-to-fact rule to state writes, appearances, dated events, and their generated
-activity. Requested display dates and chronologically unplaced events remain outside
-this chapter fallback. Do not add a date index merely to force validation or reproduce
-canonical chapter order.
+contract. Author `YYYY[-MM[-DD]][.d+]` with Gregorian validity and only source-stated
+precision. Non-overlapping ranges use calendar order; identical calendar portions use
+effective suffix then canonical chapter; overlapping unequal-precision chapter facts
+use canonical chapter. Apply the same fact-to-fact rule to state writes, appearances,
+dated events, and generated activity. Requested display dates use range containment
+without a chapter fallback. Do not add a suffix merely to force validation or
+reproduce canonical chapter order, and never display a suffix.
 
 An entity introduced in the target chapter must contain its reader-visible
 end-of-chapter state in that introduction. Do not also place it in `updates`; updates
@@ -433,6 +433,16 @@ creation process. Require sealed evidence for the relationship; never infer it f
 similar names, behavior, species, backup possession, or machinery operation. An
 unresolved parent remains a reconciliation question. Later evidence may set, replace,
 or clear the field through an ordinary character update.
+
+### Summary authoring
+
+Write `summary` as an original, spoiler-safe synopsis of what happens in the chapter,
+not as a dateline. The structured chapter `date` is displayed separately, so never
+begin the summary by restating its year, month, day, or an equivalent temporal lead.
+Do not mechanically begin with the chapter's default location either. Begin with the
+chapter action, subject, or change. Retain a location only when it is a natural part
+of the synopsis, such as a journey, arrival, survey target, or other fact needed to
+understand what happens; never keep it merely to replace the removed date lead.
 
 ## Assemble and validate the candidate
 

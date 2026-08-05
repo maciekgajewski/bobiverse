@@ -4,8 +4,8 @@
   "$defs": {
     "date": {
       "type": "string",
-      "pattern": "^[1-9][0-9]*(?:\\.(?:0|[1-9][0-9]*))?$",
-      "description": "Calendar year, optionally followed by a non-negative within-year ordering index."
+      "pattern": "^[1-9][0-9]{3}(?:-(?:0[1-9]|1[0-2])(?:-(?:0[1-9]|[12][0-9]|3[01]))?)?(?:\\.(?:0|[1-9][0-9]*))?$",
+      "description": "Four-digit positive Gregorian year, optionally with month/day precision and a non-negative ordering suffix. Gregorian day validity is enforced semantically."
     },
     "chapter": {
       "type": "string",

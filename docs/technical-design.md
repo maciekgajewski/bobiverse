@@ -107,8 +107,8 @@ The application compiles to HTML, JavaScript, CSS, assets, and JSON. It requires
 backend. Local and eventual public deployment serve the same build output.
 
 Reader progress and preferences are stored in the namespaced, versioned localStorage
-record `bobiverse.app-state.v1`. A future incompatible shape uses a new versioned key
-and an explicit migration or safe reset. Cookies are not used because there is no
+record `bobiverse.app-state.v2`. Initialization removes only the exact legacy v1 key
+and starts from ordinary v2 defaults without migrating any v1 field. Cookies are not used because there is no
 server consumer and cookies would be sent unnecessarily with HTTP requests.
 
 The current compatible extension stores optional `furthestChapterRead`, `viewChapter`,
@@ -638,7 +638,7 @@ design without replacing their state or projection authority.
 activity array. It groups only projected entities, searches only projected names and
 aliases, and applies mode-specific activity ordering without reading authored chapter
 JSON. Group expansion preferences are a compatible field in the existing
-`bobiverse.app-state.v1` record. Search expansion is transient and never rewrites
+`bobiverse.app-state.v2` record. Search expansion is transient and never rewrites
 those preferences.
 
 Selection is one tagged identity: a narrative entity ID, an astronomy catalogue
@@ -733,18 +733,16 @@ facts the reader may know; story time then decides which of those facts form the
 represented world state at `viewChapter.date`. A future story-state change must not alter an
 earlier in-universe view merely because its chapter was read first. Conversely, a fact
 first revealed later must not alter an earlier reader-knowledge view, even if it was
-already true in-universe. ADR-0002, as refined by ADR-0005, ADR-0009, and ADR-0013,
+already true in-universe. ADR-0002, as refined by ADR-0005, ADR-0009, ADR-0013, and ADR-0026,
 defines this two-stage projection and its temporal validation rules.
 
-Dated chapter-authored facts compare an effective story date together with their
-source chapter. Different years use year order. Two indexed dates in one year use
-their explicit indices, and equal explicit indices remain tied. Two equal year-only
-dates use canonical numeric chapter order. A year-only date and an indexed date in the
-same year remain incomparable. This fact-to-fact rule applies to state writes,
-appearances, dated events, and generated narrative activity. Generic date comparison
-remains date-only for temporal eligibility against a requested display date,
-meaningful-date coordinates, and any value without a source chapter. Chronologically
-unplaced event activity has no narrative moment and remains Chapter-mode context only.
+Dated chapter-authored facts compare a Gregorian calendar range, optional hidden
+ordering suffix, and source chapter. Non-overlapping ranges use calendar order;
+identical calendar portions use suffix then canonical chapter; overlapping
+unequal-precision chapter facts use canonical chapter. This fact-to-fact rule applies
+to state writes, appearances, dated events, generated activity, sightings, and travel
+history. Display-date eligibility remains chapter-free and uses range containment.
+Chronologically unplaced event activity remains Chapter-mode context only.
 
 The first confirmed **Read through** choice initializes `viewChapter` to that same
 chapter and uses its story date, so onboarding moves from zero state to one complete
@@ -757,9 +755,10 @@ rather than `viewChapter.date`. It retains the first stage's reader-visible chap
 set: no later chapter becomes available merely because its story date precedes the
 requested date. The result is explicitly the state inferred from selected reader
 knowledge at that date, not a claim about unrevealed in-universe facts. The UI exposes
-only determinate dates derived from the permitted knowledge set; it does not provide
-arbitrary date entry or expose within-year ordering indices. Its year axis preserves
-linear elapsed-year scale.
+only dates derived from the permitted knowledge set; it does not provide arbitrary
+date entry or expose ordering suffixes. Its axis places each value at the start of its
+represented range using the Gregorian elapsed-day fraction of that year. This anchor
+does not narrow imprecise facts.
 
 All later views—map, search, characters, systems, paths, chronicles, and genealogy—use
 one shared visibility policy. A UI component may not implement an independent spoiler
@@ -772,8 +771,8 @@ chapter, nullable comparable effective date, and one or more controlled reasons.
 Reasons coalesce only for the same target, chapter, and effective date; unplaced event
 activity remains available in Chapter mode but is never date-positioned. Activity
 supports Chapter-mode reader-order recency and Date-mode narrative-moment recency.
-Equal year-only activity facts use canonical chapter order; equal indexed or
-mixed-precision moments do not gain a semantic fallback. The generated array uses a
+Equal-suffix and overlapping unequal-precision activity facts use canonical chapter
+order. The generated array uses a
 deterministic topological order that preserves every definite moment relation;
 stable placement among undated, tied, or incomparable records carries no story
 chronology. Activity is not a source of entity state, relationships, continuous
@@ -788,9 +787,8 @@ derives `mapped_system_ancestry`.
 
 The same projection emits a character's `last_known_location` only when
 reader-visible appearances at or before the displayed date have one uniquely latest
-narrative moment. Equal year-only sightings use canonical chapter order. Equal
-indexed or mixed-precision sightings remain tied or incomparable and produce no
-singular result. The generated value records the sighting location, source chapter,
+narrative moment under ADR-0026's calendar, suffix, and chapter fallback. The
+generated value records the sighting location, source chapter,
 and effective date and never asserts current presence.
 
 A character may also carry one optional `parent_id` pointing to a direct parent

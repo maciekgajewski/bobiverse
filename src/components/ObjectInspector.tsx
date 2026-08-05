@@ -10,7 +10,7 @@ import type {
   NarrativeRecord,
   NarrativeWorld,
 } from "../narrative/model";
-import { characterAncestors } from "../narrative/model";
+import { characterAncestors, formatNarrativeDate } from "../narrative/model";
 import type { CharacterInspectorSectionState } from "../narrative/progress";
 import { defaultCharacterInspectorSectionState } from "../narrative/progress";
 import { SystemDetails } from "./SystemDetails";
@@ -38,7 +38,7 @@ function stringList(value: unknown): string[] {
 }
 
 function displayDate(value: string): string {
-  return value.split(".", 1)[0]!;
+  return formatNarrativeDate(value);
 }
 
 function Detail({ label, children }: { label: string; children: ReactNode }) {

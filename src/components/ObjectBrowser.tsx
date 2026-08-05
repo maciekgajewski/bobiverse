@@ -14,6 +14,7 @@ import {
 } from "./ObjectBrowserIcons";
 import { normalizeBrowserSearch } from "../narrative/browser";
 import { astronomySearchValues } from "../narrative/map";
+import { formatNarrativeDate } from "../narrative/model";
 
 function recencyLabel(
   group: NarrativeBrowserGroup,
@@ -26,7 +27,7 @@ function recencyLabel(
   return mode === "chapter"
     ? `Last active · Chapter ${item.lastActivity.source_chapter}`
     : item.lastActivity.effective_date
-      ? `Last active · ${item.lastActivity.effective_date.split(".", 1)[0]}`
+      ? `Last active · ${formatNarrativeDate(item.lastActivity.effective_date)}`
       : null;
 }
 

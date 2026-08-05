@@ -4,14 +4,14 @@ import type {
   ReaderProgress,
 } from "../narrative/progress";
 import { chapterTimelineLabel } from "../narrative/progress";
-import { compareNarrativeChapters } from "../narrative/model";
-
-function year(date: string): string {
-  return date.split(".", 1)[0]!;
-}
+import {
+  compareNarrativeChapters,
+  formatNarrativeDate,
+  narrativeDateAxisCoordinate,
+} from "../narrative/model";
 
 function numericYear(date: string): number {
-  return Number(year(date));
+  return narrativeDateAxisCoordinate(date);
 }
 
 function linearYearOffset(date: string, firstDate: string): number {
@@ -51,7 +51,6 @@ function DateAxis({
   idPrefix,
   meaningfulDates,
   meaningfulDateSources,
-  unlocked,
   progress,
   onDate,
   onZoom,
@@ -64,7 +63,7 @@ function DateAxis({
   | "onDate"
   | "onZoom"
   | "onPan"
-> & { idPrefix: string; unlocked: NarrativeChapterSummary[] }) {
+> & { idPrefix: string }) {
   const drag = useRef<{ pointerId: number; clientX: number } | null>(null);
   const viewport = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
@@ -84,15 +83,16 @@ function DateAxis({
   );
   const span = Math.max(1, ...positions);
   const baseScale = Math.min(64, 520 / span);
-  const byYear = new Map<string, string[]>();
+  const byPosition = new Map<number, string[]>();
   for (const date of meaningfulDates) {
-    const entries = byYear.get(year(date)) ?? [];
+    const coordinate = narrativeDateAxisCoordinate(date);
+    const entries = byPosition.get(coordinate) ?? [];
     entries.push(date);
-    byYear.set(year(date), entries);
+    byPosition.set(coordinate, entries);
   }
   const width = Math.max(
     160,
-    ...[...byYear.values()].map((dates) => {
+    ...[...byPosition.values()].map((dates) => {
       const position =
         linearYearOffset(dates[0]!, firstDate) *
         baseScale *
@@ -162,21 +162,23 @@ function DateAxis({
             transform: `translateX(${progress.timelinePan * -panDistance}px)`,
           }}
         >
-          {[...byYear.entries()].map(([calendarYear, dates]) => {
+          {[...byPosition.entries()].map(([coordinate, dates]) => {
             const position =
               linearYearOffset(dates[0]!, firstDate) *
               baseScale *
               progress.timelineZoom;
             const multipleStates = dates.length > 1;
-            const expanded = expandedYear === calendarYear;
+            const positionLabel = formatNarrativeDate(dates[0]!);
+            const clusterKey = String(coordinate);
+            const expanded = expandedYear === clusterKey;
             const selected = dates.some(
               (date) => date === progress.displayDate,
             );
-            const choiceListId = `${idPrefix}-story-year-${calendarYear}-choices`;
+            const choiceListId = `${idPrefix}-story-date-${clusterKey.replace(".", "-")}-choices`;
             return (
               <div
                 className="year-cluster"
-                key={calendarYear}
+                key={clusterKey}
                 style={{ left: `${position}px` }}
                 data-year-position={position}
               >
@@ -184,8 +186,8 @@ function DateAxis({
                   className={`year-marker ${selected ? "selected" : ""}`}
                   aria-label={
                     multipleStates
-                      ? `${calendarYear}, ${dates.length} story states`
-                      : calendarYear
+                      ? `${positionLabel}, ${dates.length} story states`
+                      : positionLabel
                   }
                   aria-pressed={selected}
                   aria-expanded={multipleStates ? expanded : undefined}
@@ -193,13 +195,13 @@ function DateAxis({
                   onPointerDown={(event) => event.stopPropagation()}
                   onClick={() => {
                     if (multipleStates) {
-                      setExpandedYear(expanded ? null : calendarYear);
+                      setExpandedYear(expanded ? null : clusterKey);
                     } else {
                       onDate(dates[0]!);
                     }
                   }}
                 >
-                  <span className="year-value">{calendarYear}</span>
+                  <span className="year-value">{positionLabel}</span>
                   {multipleStates && (
                     <span className="year-state-count">
                       {dates.length} states
@@ -210,12 +212,9 @@ function DateAxis({
                   <ul
                     id={choiceListId}
                     className="year-state-choices"
-                    aria-label={`${calendarYear} story states`}
+                    aria-label={`${positionLabel} story states`}
                   >
                     {dates.map((date, index) => {
-                      const source = unlocked.find(
-                        (chapter) => chapter.date === date,
-                      );
                       const sourceChapters =
                         meaningfulDateSources.get(date) ?? [];
                       const sourceContext =
@@ -224,7 +223,7 @@ function DateAxis({
                           : sourceChapters.length > 1
                             ? `revealed in Chapters ${sourceChapters.join(", ")}`
                             : "reader-visible source";
-                      const fallback = `Story state ${index + 1} of ${dates.length} · ${sourceContext}`;
+                      const choiceLabel = `Story state ${index + 1} of ${dates.length} · ${formatNarrativeDate(date)} · ${sourceContext}`;
                       return (
                         <li key={date}>
                           <button
@@ -238,7 +237,7 @@ function DateAxis({
                               setExpandedYear(null);
                             }}
                           >
-                            {source ? `Chapter ${source.chapter}` : fallback}
+                            {choiceLabel}
                           </button>
                         </li>
                       );
@@ -454,7 +453,6 @@ export function TimelineDock({
           idPrefix={idPrefix}
           meaningfulDates={meaningfulDates}
           meaningfulDateSources={meaningfulDateSources}
-          unlocked={unlocked}
           progress={progress}
           onDate={onDate}
           onZoom={onZoom}

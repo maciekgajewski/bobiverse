@@ -147,7 +147,7 @@ existing Safari real-browser publication gap remains unchanged.
 ## BOB-011 reader progress and temporal navigation
 
 At a desktop width of at least 1200 CSS pixels, begin with a cleared
-`bobiverse.app-state.v1` localStorage record. Confirm that the map badge says
+`bobiverse.app-state.v2` localStorage record. Confirm that the map badge says
 **Pre-book zero state** and no chapter title, story year, chronology indicator, or
 other chapter metadata is visible. Choose **Read through**, verify that a confirmation
 appears immediately when the selector changes, then confirm Chapter 1. Check that
@@ -197,7 +197,7 @@ rail uses one uninterrupted central line with concise labels above.
 ## BOB-012 progressive object browser and inspectors
 
 At a desktop width of at least 1200 CSS pixels, clear
-`bobiverse.app-state.v1`. In the pre-book view, confirm that only nonempty groups are
+`bobiverse.app-state.v2`. In the pre-book view, confirm that only nonempty groups are
 shown in the fixed design order and that no legacy **Astronomy systems** catalogue
 directory is present. Confirm each visible group heading has the distinct original
 line icon for its type and every object row has the shared ring-and-dot SVG bullet;
@@ -354,8 +354,8 @@ shows **Last seen** at New Handeltown, Chapter 1.11, 2133. On the map, Sol must 
 the selected label and outer corner frame, and the camera must focus Sol without
 changing canonical coordinates or the established viewing angle.
 
-Switch between Chapter and Date modes and confirm equal year-only activity uses the
-later canonical chapter for recency while chronologically unplaced activity remains
+Switch between Chapter and Date modes and confirm overlapping calendar-precision
+activity uses the later canonical chapter for recency while chronologically unplaced activity remains
 Chapter-mode only. Confirm the Bob-to-Sol result is derived from the shared projection;
 disabling WebGL must leave Bob and the New Handeltown relationship inspectable even
 though precise camera focus and the WebGL frame are unavailable.

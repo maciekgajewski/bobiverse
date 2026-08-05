@@ -14,7 +14,7 @@ this document rather than redefining their syntax. The first definitions are `da
 This document does not add book-derived records or source text. It records only
 the data contract needed before those records are authored. ADR-0001, as refined by
 ADR-0003, ADR-0005, ADR-0006, ADR-0007 as superseded by ADR-0014, ADR-0009,
-ADR-0013, and ADR-0015 are binding for the chapter-authored source and
+ADR-0013, ADR-0015, and ADR-0026 are binding for the chapter-authored source and
 generated-projection boundary.
 
 ## Shared JSON Schema definitions
@@ -30,8 +30,8 @@ the identical listing below documents its shared definitions.
   "$defs": {
     "date": {
       "type": "string",
-      "pattern": "^[1-9][0-9]*(?:\\.(?:0|[1-9][0-9]*))?$",
-      "description": "Calendar year, optionally followed by a non-negative within-year ordering index."
+      "pattern": "^[1-9][0-9]{3}(?:-(?:0[1-9]|1[0-2])(?:-(?:0[1-9]|[12][0-9]|3[01]))?)?(?:\\.(?:0|[1-9][0-9]*))?$",
+      "description": "Four-digit positive Gregorian year, optionally with month/day precision and a non-negative ordering suffix. Gregorian day validity is enforced semantically."
     },
     "chapter": {
       "type": "string",
@@ -1074,35 +1074,34 @@ must not duplicate, loosen, or replace the shared scalar semantics.
 
 ### Meaning
 
-`date` represents a calendar year in the story universe. It is deliberately not
-an ISO 8601 timestamp and does not encode a month, day, clock time, timezone, or
-duration. Its optional index provides only a stable way to order multiple events
-known to occur within the same calendar year. The index is metadata and must
-never be shown in the user interface.
+`date` represents a Gregorian calendar range in the story universe: a year, a
+month, or one day. It does not encode a clock time, timezone, duration, or an
+assertion that imprecise facts occurred at the start of their range. Its optional
+ordering suffix is metadata and never appears in the user interface.
 
 ### Canonical encoding
 
-The JSON value is always a string in one of two forms:
+The JSON value is always a string in one of these forms:
 
 | Form               | Meaning                                            | Valid examples          |
 | ------------------ | -------------------------------------------------- | ----------------------- |
-| `"<year>"`         | A year is known; no within-year order is asserted. | `"2026"`, `"10000"`     |
-| `"<year>.<index>"` | A year and within-year ordering index are known.   | `"2026.0"`, `"2026.77"` |
+| `"YYYY"` | A year is known. | `"2165"` |
+| `"YYYY-MM"` | A Gregorian month is known. | `"2165-08"` |
+| `"YYYY-MM-DD"` | A Gregorian day is known. | `"2165-08-17"` |
+| suffix `.d+` | Optional ordering suffix at any precision. | `"2165-08.1"` |
 
-`year` is a positive base-10 integer with no leading zero. `index` is a
-non-negative base-10 integer with no leading zero except for the single value
-`0`. Therefore `"02026"`, `"0"`, `"2026.007"`, `"2026."`, and `2026.77`
-(a JSON number) are invalid.
+`YYYY` is exactly four positive decimal digits. Month and day are zero-padded
+Gregorian components, including leap-year validity. A suffix is a non-negative
+base-10 integer with no leading zero except `0`; omitted and `.0` have the same
+ordering value. JSON numbers and malformed or impossible calendar values are invalid.
 
 ### Ordering rules
 
-1. Compare years numerically; an earlier year precedes a later year.
-2. If two values have the same year and both have an index, compare their indices
-   numerically. For example, `"2026.9"` precedes `"2026.10"`.
-3. A year-only value is less precise than an indexed value in that year. It is
-   intentionally unordered relative to every indexed value with the same year;
-   consumers must not normalize it to `"<year>.0"` or to a synthetic end-of-year
-   index.
+Non-overlapping calendar ranges order chronologically. Identical calendar portions
+compare effective suffixes. Overlapping unequal-precision chapter-authored facts use
+canonical chapter order; display-date eligibility instead uses calendar containment
+and never invents a chapter. Reader formatting is `2165`, `August 2165`, or
+`17 August 2165`; suffixes remain hidden.
 
 The resulting comparison is a partial order, not a total chronology. A consumer
 that needs a deterministic display order must use an explicit record-specific
@@ -1222,10 +1221,10 @@ activates its mapped narrative star-system ancestor, if one exists, without copy
 astronomy identity or physical facts into the narrative record.
 
 Chapter-mode consumers use source chapter reader order. Date-mode consumers first
-retain only records with a comparable effective date at or before the requested
-display date, then compare two dated activity facts by their narrative moments.
-Different years and explicit indices retain story order; equal year-only dates use
-canonical chapter order; equal indexed and mixed-precision moments remain unresolved.
+apply the shared calendar-range eligibility rule, then compare two dated activity
+facts by their narrative moments. Non-overlapping ranges use Gregorian order;
+identical calendar portions use suffix then canonical chapter; overlapping
+unequal-precision chapter facts use canonical chapter.
 Unplaced records remain available to chapter context but have no narrative moment and
 are not date-positioned. The generated activity array uses a deterministic topological
 order that preserves every definite narrative-moment relation. Stable array placement
@@ -1297,17 +1296,17 @@ result is therefore the world state inferred from the reader's selected chapter
 knowledge, not an assertion of the complete in-universe state at that date.
 
 Dated chapter-authored facts compare an ordering moment made from the effective story
-date and source chapter. Different years use numeric year order. Two indexed values in
-one year use their explicit indices; equal explicit indices remain tied. Two
-year-only values in one year use canonical numeric chapter order. A year-only value
-remains unordered relative to an indexed value in the same year. State-property writes
-still reject equal indexed and mixed-precision competing moments. Appearances, dated
-events, and generated activity use the same fact-to-fact ordering contract wherever a
-unique latest fact is required.
+date and source chapter. Non-overlapping Gregorian ranges order chronologically.
+Identical calendar portions compare effective suffix, then canonical numeric chapter;
+overlapping unequal-precision chapter facts use canonical chapter. State writes,
+appearances, dated events, activity, sightings, and travel history use this same
+fact-to-fact contract.
 
-The chapter fallback does not change the generic `date` partial order. Identical dates
-remain equal when deciding whether a fact is eligible at a requested display date.
-Meaningful-date controls and other values without a source chapter remain date-only.
+The chapter fallback does not apply to a requested display date. Eligibility is
+date-only: earlier non-overlap, identical calendar portions at or below the display
+suffix, and facts contained by the display range are eligible; later non-overlap and
+facts containing a less-precise display range are not. Meaningful-date controls may
+retain ordering-distinct values with the same reader-visible label.
 Chronologically unplaced events remain reader-visible but have no narrative moment.
 
 An event uses its projected optional `date` for its in-universe occurrence. If that
@@ -1459,9 +1458,13 @@ deterministic in-memory/build output and are not committed snapshots.
 
 Every chapter source record validates against the shared Draft 2020-12 schema contract.
 It requires the canonical `chapter` reference, nonempty reader-visible `title`,
-original plain-text `summary`, story `date`, and a default `location_id`. The default
-location may resolve to the zero state, an earlier chapter, or a location introduced in
-the same chapter. It must never be an invented coordinate or an implicit unknown.
+original plain-text `summary`, story `date`, and a default `location_id`. A summary is
+a synopsis, not a dateline: it begins with narrative action, subject, or change rather
+than repeating the structured date or mechanically leading with the default location.
+Location wording remains appropriate when it is naturally needed to explain the
+journey, arrival, survey, or other chapter action. The default location may resolve to
+the zero state, an earlier chapter, or a location introduced in the same chapter. It
+must never be an invented coordinate or an implicit unknown.
 Optional `picture_id` references one registered curated asset. Unknown IDs and
 non-asset IDs fail at the chapter source field; existing chapters need no assignment.
 
@@ -1814,11 +1817,11 @@ metadata; neither is inferred from the other.
 
 `current_state` does not establish a character location. A character location is only
 confirmed by an appearance with an effective location. From reader-visible appearances
-whose effective story dates are definitively at or before the requested display date,
+whose effective story dates are eligible at the requested display date,
 the generated projection exposes a `last_known_location` only when one appearance has
-a uniquely latest narrative moment. Equal year-only appearances use canonical chapter
-order. Equal indexed or mixed-precision appearances remain tied or incomparable and
-produce no singular result. The generated value records `location_id`,
+a uniquely latest narrative moment. Identical calendar portions and overlapping
+unequal-precision facts use the shared chapter fallback after any authoritative
+suffix comparison. The generated value records `location_id`,
 `source_chapter`, and `effective_date`; it is labelled as a last-known sighting and
 must not be treated as current presence or used to position the character on the map.
 
@@ -1954,9 +1957,8 @@ layer. It rejects at least:
   authored optional array; or an appearance array with no `lead` appearance;
 - a malformed, duplicate, unresolved, later-introduced, or structurally redundant
   supplemental mention target; or an asset/non-direct entity ID in `mentions`;
-- competing state writes with equal indexed moments, the same source chapter, or
-  incomparable mixed-precision effective dates; or a year-only requested display date
-  that cannot determine a needed indexed transition;
+- competing state writes from the same source chapter or otherwise equal narrative
+  moments;
 - a broken location parent tree; a parent/child/relation combination outside the shared
   location table; invalid transit endpoints; an unmapped descendant without explicit
   status; a forbidden or missing mapped-system astronomy reference; or incompatible

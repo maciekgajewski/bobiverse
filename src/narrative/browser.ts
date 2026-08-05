@@ -1,7 +1,7 @@
 import {
   compareNarrativeChapters,
-  compareNarrativeDates,
   compareNarrativeMoments,
+  isNarrativeDateEligible,
   type NarrativeActivity,
   type NarrativeEntity,
   type NarrativeWorld,
@@ -98,8 +98,7 @@ function activityAtOrBefore(
   displayDate: string,
 ): boolean {
   if (!activity.effective_date) return false;
-  const ordering = compareNarrativeDates(activity.effective_date, displayDate);
-  return ordering !== null && ordering <= 0;
+  return isNarrativeDateEligible(activity.effective_date, displayDate);
 }
 
 function latestActivity(
@@ -161,8 +160,11 @@ function isActive(
     world.view.display_date &&
     activities.some(
       (activity) =>
-        activity.effective_date === world.view.display_date &&
-        activityAtOrBefore(activity, world.view.display_date!),
+        activity.effective_date !== null &&
+        isNarrativeDateEligible(
+          activity.effective_date,
+          world.view.display_date!,
+        ),
     ),
   );
 }

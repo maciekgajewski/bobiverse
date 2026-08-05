@@ -67,7 +67,8 @@ export function normalizeCharacterInspectorSectionState(
   };
 }
 
-const storageKey = "bobiverse.app-state.v1";
+const storageKey = "bobiverse.app-state.v2";
+const legacyStorageKey = "bobiverse.app-state.v1";
 const defaultProgress: ReaderProgress = {
   furthestChapterRead: null,
   viewChapter: null,
@@ -167,6 +168,7 @@ export function loadReaderProgress(
   meaningfulDates: readonly string[],
 ): ReaderProgress {
   try {
+    window.localStorage.removeItem(legacyStorageKey);
     return normalizeReaderProgress(
       JSON.parse(window.localStorage.getItem(storageKey) ?? "null"),
       chapters,

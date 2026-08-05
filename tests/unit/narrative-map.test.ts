@@ -239,6 +239,33 @@ describe("narrative map projection", () => {
     });
   });
 
+  it("uses shared containment and suffix eligibility for date-mode active systems", () => {
+    const datedWorld: NarrativeWorld = {
+      ...world,
+      activity: [
+        {
+          ...world.activity[0]!,
+          effective_date: "2165-08",
+        },
+      ],
+      view: { chapter: "1.1", display_date: "2165" },
+    };
+    expect([
+      ...projectNarrativeMap(datedWorld, [system("known", 0)], 20, "date")
+        .activeSystemIds,
+    ]).toEqual(["known"]);
+    datedWorld.view.display_date = "2165-08.1";
+    expect([
+      ...projectNarrativeMap(datedWorld, [system("known", 0)], 20, "date")
+        .activeSystemIds,
+    ]).toEqual(["known"]);
+    datedWorld.activity[0]!.effective_date = "2165";
+    expect([
+      ...projectNarrativeMap(datedWorld, [system("known", 0)], 20, "date")
+        .activeSystemIds,
+    ]).toEqual([]);
+  });
+
   it("derives focus only from an unambiguous supported mapped context", () => {
     const ids = new Set(["known", "near"]);
     expect(

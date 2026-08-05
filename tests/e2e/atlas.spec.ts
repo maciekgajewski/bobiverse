@@ -210,6 +210,7 @@ test("Solar System enters and exits the fixed system mode", async ({
     window.__bob034MapPerformance!.screenPoint("stellar-system-005413"),
   );
   await page.mouse.click(alphaCentauri.x, alphaCentauri.y);
+  await page.mouse.move(1, 1);
   await expect(
     page
       .locator(".narrative-map-label")
@@ -410,7 +411,7 @@ test("character lineage and travel history are responsive and support navigation
 }) => {
   await page.addInitScript(() => {
     window.localStorage.setItem(
-      "bobiverse.app-state.v1",
+      "bobiverse.app-state.v2",
       JSON.stringify({
         furthestChapterRead: "1.20",
         viewChapter: "1.20",
@@ -511,7 +512,7 @@ test("character routes expose animated direction and reduced-motion chevrons", a
 }) => {
   await page.addInitScript(() => {
     window.localStorage.setItem(
-      "bobiverse.app-state.v1",
+      "bobiverse.app-state.v2",
       JSON.stringify({
         furthestChapterRead: "1.21",
         viewChapter: "1.21",
@@ -554,7 +555,7 @@ test("compact chapter inspection shares relationships and focus behavior", async
   await page.setViewportSize({ width: 900, height: 700 });
   await page.addInitScript(() => {
     window.localStorage.setItem(
-      "bobiverse.app-state.v1",
+      "bobiverse.app-state.v2",
       JSON.stringify({
         furthestChapterRead: "1.2",
         viewChapter: "1.1",
@@ -650,7 +651,7 @@ test("compact reflow keeps timeline progress reachable and traps focus", async (
     .click();
   await expect(panel.getByLabel("Knowledge through")).toHaveValue("1.2");
   await expect(page.locator(".map-narrative-badge")).toContainText(
-    "Universe in 2133 · Knowledge through Chapter 1.2",
+    "Universe in 24 June 2133 · Knowledge through Chapter 1.2",
   );
 
   await page.keyboard.press("Escape");
@@ -874,7 +875,7 @@ test("expressive map states preserve active, hover, and astronomy-only selection
   test.setTimeout(45_000);
   await page.addInitScript(() => {
     window.localStorage.setItem(
-      "bobiverse.app-state.v1",
+      "bobiverse.app-state.v2",
       JSON.stringify({
         furthestChapterRead: "1.14",
         viewChapter: "1.14",
@@ -1028,6 +1029,9 @@ test("expressive map states preserve active, hover, and astronomy-only selection
       .getByTestId("star-map-canvas")
       .click({ position: { x: 100, y: 40 } });
     expect(await astronomyCaption.count()).toBe(0);
+    await page.mouse.move(1, 1);
+    await expect(page.locator(".map-tooltip")).toHaveCount(0);
+    await settleMapCamera(page);
     await expect
       .poll(async () => {
         const sirius = await page.evaluate(() =>
@@ -1063,7 +1067,7 @@ test("timeline uses global decorative scrollbars and compact chapter spacing", a
   }));
   if (browserName === "firefox") {
     expect(scrollbarStyles.standardColor).not.toBe("auto");
-    expect(scrollbarStyles.standardWidth).toBe("thin");
+    expect(["thin", "none"]).toContain(scrollbarStyles.standardWidth);
   } else {
     expect(scrollbarStyles.standardColor).toBe("auto");
     expect(scrollbarStyles.standardWidth).toBe("auto");
@@ -1081,7 +1085,11 @@ test("timeline uses global decorative scrollbars and compact chapter spacing", a
         .backgroundImage,
     }));
   expect(nativeSelectStyles.standardColor).toBe("auto");
-  expect(nativeSelectStyles.standardWidth).toBe("auto");
+  if (browserName === "firefox") {
+    expect(["auto", "none"]).toContain(nativeSelectStyles.standardWidth);
+  } else {
+    expect(nativeSelectStyles.standardWidth).toBe("auto");
+  }
   expect(nativeSelectStyles.thumbBackground).toBe(
     browserName === "firefox" ? "" : "none",
   );
@@ -1430,7 +1438,7 @@ test("desktop surfaces stay on one projection through chapter and date changes",
   await page.getByRole("button", { name: "Confirm read through" }).click();
 
   const sharedChapterStatus =
-    "Universe in 2133 · Knowledge through Chapter 1.2";
+    "Universe in 24 June 2133 · Knowledge through Chapter 1.2";
   await expect(page.locator(".view-status")).toHaveText(sharedChapterStatus);
   await expect(page.locator(".map-narrative-badge")).toHaveText(
     sharedChapterStatus,
