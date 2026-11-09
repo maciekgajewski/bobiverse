@@ -614,6 +614,60 @@ describe("atlas shell", () => {
     );
   });
 
+  it("opens a transient Date context from a Date-mode event dot without history or progress changes", async () => {
+    window.localStorage.setItem(
+      "bobiverse.app-state.v2",
+      JSON.stringify({
+        furthestChapterRead: "1.2",
+        viewChapter: "1.2",
+        displayDate: "2133",
+        mode: "date",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+    const width = vi
+      .spyOn(HTMLElement.prototype, "clientWidth", "get")
+      .mockReturnValue(640);
+    try {
+      const user = userEvent.setup();
+      render(<App />);
+
+      const inspector = screen.getByRole("complementary", {
+        name: "Object inspector",
+      });
+      const dots =
+        document.querySelectorAll<HTMLButtonElement>(".date-event-dot");
+      expect(dots.length).toBeGreaterThan(0);
+      const selected =
+        [...dots].find((dot) => dot.getAttribute("aria-pressed") === "true") ??
+        dots[0]!;
+      await user.click(selected);
+      expect(within(inspector).getByText("Date context")).toBeInTheDocument();
+      expect(
+        within(inspector).getByRole("heading", { name: /2133|2016/ }),
+      ).toBeInTheDocument();
+      expect(within(inspector).getByText(/Source chapter/)).toBeInTheDocument();
+      expect(
+        screen.queryByRole("navigation", { name: "Inspector history" }),
+      ).not.toBeInTheDocument();
+      expect(screen.getAllByLabelText("Read through")[0]).toHaveValue("1.2");
+
+      await user.click(
+        screen.getByRole("button", { name: /^Solar System(?:Active)?$/ }),
+      );
+      expect(
+        within(inspector).queryByText("Date context"),
+      ).not.toBeInTheDocument();
+      expect(
+        within(inspector).getByRole("heading", { name: "Solar System" }),
+      ).toBeInTheDocument();
+      expect(screen.getAllByLabelText("Read through")[0]).toHaveValue("1.2");
+    } finally {
+      width.mockRestore();
+    }
+  });
+
   it("generates at most one world for zero-state and date-mode transitions", async () => {
     const generate = vi.spyOn(narrativeModel, "generateNarrativeWorld");
     const user = userEvent.setup();
