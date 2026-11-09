@@ -672,6 +672,20 @@ is map-driven until BOB-014 supplies the final query-only contextual astronomy D
 path. Neither the browser nor inspector owns map markers, astronomy context coverage,
 narrative schema facts, or a second spoiler filter.
 
+Transient Date context is session UI only. Activating a Date-mode event dot opens
+it in the shared inspector with the formatted date, reader-visible source chapter
+identity, and reader-safe same-date activity. It does not enter inspector history,
+does not change reader progress, and is not persisted. It temporarily replaces details
+without changing an eligible object selection or its existing Back/Forward path.
+It dismisses when the reader selects any object (map, browser, or relationship),
+clears the map selection
+(`onDeselect`), chooses a different date, leaves Date mode, or when a projection
+transition makes its date ineligible. While it is active the inspector does not
+render Back/Forward controls. On compact layouts, opening Date context also opens
+the inspector panel so the context is readable without a separate Inspect action.
+Date context is inspectable even with no object selected: after closing the panel,
+**Inspect selection** can reopen it and receives focus on dismissal.
+
 ## 11. Visual language
 
 The visual direction is an original strategic-space interface: dark layered space,

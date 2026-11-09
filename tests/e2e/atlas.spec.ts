@@ -179,6 +179,145 @@ test("empty map clicks clear inspection selection", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Measure" })).toHaveCount(0);
 });
 
+test("compact Date mode opens Date context in the inspector panel", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 720, height: 700 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.addInitScript(() => {
+    window.localStorage.setItem(
+      "bobiverse.app-state.v2",
+      JSON.stringify({
+        furthestChapterRead: "1.2",
+        viewChapter: "1.2",
+        displayDate: "2133-06-24",
+        mode: "date",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+  });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Timeline and progress" }).click();
+  const timeline = page.getByRole("dialog", { name: "Timeline and progress" });
+  await expect(
+    timeline.getByRole("button", { name: "Date mode" }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await expect(
+    page.getByRole("button", { name: "Inspect selection" }),
+  ).toHaveCount(0);
+  await timeline
+    .getByRole("button", {
+      name: "Story state 1 of 1 · 24 June 2133 · revealed in Chapter 1.2",
+    })
+    .click();
+  const inspector = page.getByRole("dialog", { name: "Selected object" });
+  await expect(inspector.getByText("Date context")).toBeVisible();
+  await expect(
+    inspector.getByRole("heading", { name: "24 June 2133", exact: true }),
+  ).toBeVisible();
+  await expect(
+    inspector.getByText("Chapter 1.2", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    inspector.getByRole("navigation", { name: "Inspector history" }),
+  ).toHaveCount(0);
+  await inspector.getByRole("button", { name: "Close" }).click();
+  const inspect = page.getByRole("button", { name: "Inspect selection" });
+  await expect(inspect).toBeFocused();
+  await inspect.click();
+  await expect(inspector.getByText("Date context")).toBeVisible();
+  expect(
+    await page.evaluate(() =>
+      JSON.parse(localStorage.getItem("bobiverse.app-state.v2")!),
+    ),
+  ).toMatchObject({
+    furthestChapterRead: "1.2",
+    viewChapter: "1.2",
+    displayDate: "2133-06-24",
+    mode: "date",
+  });
+});
+
+test("empty map click clears an open Date context", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  await page.getByLabel("Read through").selectOption("1.2");
+  await page.getByRole("button", { name: "Confirm read through" }).click();
+  await page.getByRole("button", { name: "Date mode" }).click();
+  await page.locator(".date-event-dot").first().click();
+  await expect(page.getByText("Date context")).toBeVisible();
+  await page
+    .getByTestId("star-map-canvas")
+    .click({ position: { x: 100, y: 40 } });
+  await expect(page.getByText("Date context")).toHaveCount(0);
+  await expect(
+    page.getByText(
+      "Select a map marker or browser item to inspect its reader-safe details.",
+    ),
+  ).toBeVisible();
+});
+
+test("canvas picking selects a known map system after framing settles", async ({
+  page,
+}) => {
+  test.setTimeout(45_000);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.addInitScript(() => {
+    window.localStorage.setItem(
+      "bobiverse.app-state.v2",
+      JSON.stringify({
+        furthestChapterRead: "1.14",
+        viewChapter: "1.14",
+        displayDate: "2144",
+        mode: "chapter",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+  });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/");
+  await page.waitForFunction(() => window.__bob034MapPerformance !== undefined);
+  await settleMapCamera(page);
+  await expect
+    .poll(() => page.locator(".narrative-map-label").count())
+    .toBeGreaterThan(1);
+  // Zoom through real OrbitControls so the fixed-size DOM caption is clear
+  // of Sol's marker; at the overview framing it can cover the projected centre.
+  await page
+    .getByTestId("star-map-canvas")
+    .hover({ position: { x: 100, y: 40 } });
+  for (let step = 0; step < 35; step += 1) {
+    await page.mouse.wheel(0, -120);
+  }
+  await page.mouse.move(1, 1);
+  await settleMapCamera(page);
+  const sol = await page.evaluate(() =>
+    window.__bob034MapPerformance!.screenPoint("sol"),
+  );
+  // Sol has one component at the canonical system position, so its projected
+  // centre is a marker hit target. A multi-component system need not put a
+  // component at its canonical centre.
+  // Use a real canvas click, not a DOM caption click, to exercise R3F picking.
+  expect(
+    await page.evaluate(
+      ({ x, y }) => document.elementFromPoint(x, y)?.tagName,
+      sol,
+    ),
+  ).toBe("CANVAS");
+  await page.mouse.click(sol.x, sol.y);
+  await page.mouse.move(1, 1);
+  await expect(
+    page
+      .getByRole("complementary", { name: "Object inspector" })
+      .getByRole("heading", { name: "Solar System" }),
+  ).toBeVisible();
+  await expect(
+    page.locator('.narrative-map-label[data-system-id="sol"]'),
+  ).toHaveCount(1);
+});
+
 test("Solar System enters and exits the fixed system mode", async ({
   page,
 }) => {
@@ -227,10 +366,13 @@ test("Solar System enters and exits the fixed system mode", async ({
   await expect(
     inspector.getByRole("button", { name: "Enter system" }),
   ).toBeVisible();
-  // screenPoint mouse clicks hover astronomy-only stars but do not select them
-  // (label vanishes after mouse.move). Use the object-browser path, same as the
-  // Sirius coverage, to prove the map/inspector respond after system-mode exit.
-  // Pre-existing on 3c818b9; not a Date-timeline regression.
+  // screenPoint projects a canonical system coordinate, not a guaranteed
+  // component hit target. In this fixture that click produced hover only
+  // (the label vanished after mouse.move). After
+  // system-mode exit, use the object-browser path (same as Sirius coverage) to
+  // prove the map/inspector respond. Canvas picking for known narrative systems
+  // remains covered separately. Pre-existing on 3c818b9; not a Date-timeline
+  // regression.
   const search = page.getByRole("searchbox", {
     name: "Search visible objects",
   });

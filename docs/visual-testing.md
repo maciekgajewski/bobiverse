@@ -425,6 +425,23 @@ ineligible selection must clear with an accessible announcement. Select an eligi
 object, inspect it, and return to Chapter mode, confirming that 2133 is restored and
 no later fact survives an earlier knowledge view.
 
+### Transient Date context
+
+Activate a Date-mode event dot. Confirm the inspector shows **Date context** with
+the formatted date, source chapter identity, and same-date activity, and that
+Back/Forward history controls are absent. First create a non-empty inspector path
+(e.g. Solar System → Sol → Back), then activate a dot and dismiss its context by
+pressing **Date mode** again. Confirm the selected object and the forward path to
+Sol survive unchanged. Select a map or browser object: the Date context must dismiss
+while the object details appear and **Read through** is
+unchanged. Clear the map selection with an empty canvas click: Date context must
+also dismiss, with no retained object details or history. Leave Date mode: Date
+context must not remain. Reload the page with Date mode restored from persistence: Date context must not reappear (it is not
+persisted). At a CSS viewport of **720 × 700**, without first selecting an object,
+open **Timeline and progress**, enter Date mode, activate a dot, and confirm the compact inspector dialog shows
+the same Date context without requiring a separate Inspect action. Close it and
+confirm **Inspect selection** receives focus and reopens the standalone context.
+
 Repeat the compact timeline/progress flow at a CSS viewport below 1200 pixels and at
 200% browser zoom. Also inspect a short desktop viewport with reduced motion enabled.
 Exercise empty search, no selection, explicitly unmapped, chronologically unplaced,
