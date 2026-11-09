@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import chapter40 from "../../data/narrative/chapters/1/40.json";
 import { mapDisplayConfig } from "../../src/domain/config";
 import { nearbySystems, validateNearbySystems } from "../../src/domain/data";
 
@@ -6,7 +7,9 @@ describe("reconciled astronomy runtime data", () => {
   it("contains every generated mapped-anchor neighbourhood and its coverage proof", () => {
     expect(nearbySystems).not.toBeNull();
     if (!nearbySystems) throw new Error("Fixture dataset failed validation");
-    expect(nearbySystems.systems).toHaveLength(271);
+    // Prior union: 271 systems. Chapter 1.40 adds the Epsilon Indi anchor;
+    // its 20 ly neighbourhood contributes six previously uncovered systems.
+    expect(nearbySystems.systems).toHaveLength(277);
     expect(nearbySystems.systems[0]?.id).toBe("sol");
     expect(nearbySystems.metadata.coverage).toEqual([
       {
@@ -101,7 +104,37 @@ describe("reconciled astronomy runtime data", () => {
         system_count: 85,
         gcns_boundary_pc: 100,
       },
+      {
+        // Chapter 1.40 maps Epsilon Indi (stellar-system-005631); its 20 ly
+        // neighbourhood adds six systems absent from the prior 271-system fixture.
+        anchor_id: "stellar-system-005631",
+        anchor_position_pc: {
+          xg: 2.2245862,
+          yg: -0.9827543,
+          zg: -2.7062633,
+        },
+        radius_ly: mapDisplayConfig.context_radius_ly,
+        source_record_count: 95,
+        system_count: 79,
+        gcns_boundary_pc: 100,
+      },
     ]);
+  });
+
+  it("maps Chapter 1.40 Epsilon Indi to its exact catalogue anchor", () => {
+    expect(chapter40.introducing).toContainEqual(
+      expect.objectContaining({
+        id: "location:epsilon-indi",
+        name: "Epsilon Indi",
+        astronomy_object_id: "stellar-system-005631",
+      }),
+    );
+    expect(nearbySystems?.systems).toContainEqual(
+      expect.objectContaining({
+        id: "stellar-system-005631",
+        name: "Epsilon Indi",
+      }),
+    );
   });
 
   it("uses the one owned context-radius configuration", () => {

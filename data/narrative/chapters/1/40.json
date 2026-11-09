@@ -1,0 +1,87 @@
+{
+  "chapter": "1.40",
+  "title": "40",
+  "date": "2165-04",
+  "location_id": "location:epsilon-indi",
+  "summary": "Linus reaches Epsilon Indi and finds Henry Roberts, an isolated Australian replicant trapped in a failing improvised structure. He recovers Henry's core and uses a realistic sailing VR to help him regain lucidity while traumatic memories gradually become less intense.",
+  "introducing": [
+    {
+      "id": "location:epsilon-indi",
+      "name": "Epsilon Indi",
+      "kind": "star_system",
+      "astronomy_object_id": "stellar-system-005631",
+      "description": "A stellar system centered on a cooler, smaller K-type star than Sol. Potentially livable worlds would orbit close to the star and would be likely to be tidally locked."
+    },
+    {
+      "id": "location:epsilon-indi-star",
+      "name": "Epsilon Indi",
+      "kind": "star",
+      "parent_location_id": "location:epsilon-indi",
+      "parent_relation": "member_of_system",
+      "description": "The cooler, smaller K-type star at the center of the Epsilon Indi system."
+    },
+    {
+      "id": "location:epsilon-indi-1",
+      "name": "Epsilon Indi 1",
+      "kind": "planet",
+      "parent_location_id": "location:epsilon-indi-star",
+      "parent_relation": "orbits",
+      "orbital_order": 1,
+      "body_class": "gas_giant",
+      "description": "A Jovian planet slightly outside Epsilon Indi's habitable zone."
+    },
+    {
+      "id": "character:henry-roberts",
+      "name": "Henry Roberts",
+      "current_state": "Recovering in a realistic virtual sailing life after Linus extracts his core from long isolation. He is lucid there but believes he is back on Earth, and memories of his replicant years return as nightmares."
+    },
+    {
+      "id": "vessel:heaven-8",
+      "name": "Heaven-8",
+      "description": "A FAITH ship identified by Linus as his vessel."
+    },
+    {
+      "id": "vessel:australian-probe",
+      "name": "Australian probe",
+      "description": "An Australian space probe built around a replicant core, fusion reactor, and autofactory systems. Its hardware was partly disassembled and incorporated into an improvised structure at Epsilon Indi."
+    },
+    {
+      "id": "vessel:contessa",
+      "name": "Contessa",
+      "description": "A sailing vessel Henry knew in detail during his human life. Linus reconstructs it in virtual reality so Henry can sail again while recovering."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:linus",
+      "role": "lead",
+      "location_id": "location:epsilon-indi"
+    },
+    {
+      "character_id": "character:henry-roberts",
+      "role": "other",
+      "location_id": "location:epsilon-indi"
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:linus",
+      "current_state": "At Epsilon Indi after a time-dilated solo journey from Epsilon Eridani, maintaining a realistic VR setting while helping Henry recover from traumatic isolation."
+    },
+    {
+      "entity_id": "technology:vr",
+      "description": "A virtual-reality interface Bob builds aboard Heaven-1 to provide sensory input and an embodied experience while he travels as a bodiless mind. It initially needs hardware modifications and remains an ongoing software project. Planned improvements are intended to support more direct interaction between users. It has become realistic enough to produce physical sensations that feel real and a full avatar that looks and behaves like a human. It can render virtual objects such as a Nerf basketball and hoop, though one observed basketball trajectory is unrealistic. Linus uses it to provide Henry with a realistic sailing life that includes eating, sleeping, and bodily functions."
+    }
+  ],
+  "mentions": [
+    "character:bill",
+    "character:calvin",
+    "character:goku",
+    "character:dr-landers",
+    "location:epsilon-eridani",
+    "location:earth",
+    "location:saturn",
+    "organization:free-american-independent-theocratic-hegemony",
+    "technology:guppi-interface"
+  ]
+}
