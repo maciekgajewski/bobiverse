@@ -722,6 +722,13 @@ export default function App() {
   const selectDate = (date: string, showContext = false) => {
     setDateContext(showContext ? date : null);
     updateProgress(selectDisplayDate(progress, date, meaningfulDates));
+    if (
+      showContext &&
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(max-width: 1199px)").matches
+    ) {
+      setMobilePanel("inspector");
+    }
   };
   const toggleBrowserGroup = (group: keyof ReaderProgress["browserGroups"]) =>
     setApplicationProjection((current) => ({
@@ -748,6 +755,7 @@ export default function App() {
     setPendingReadThrough(null);
   };
   const returnToChapterMode = () => {
+    setDateContext(null);
     if (!progress.viewChapter) return;
     updateProgress(
       selectKnowledgeChapter(
@@ -847,7 +855,7 @@ export default function App() {
           >
             Browse objects
           </button>
-          {selection && (
+          {(selection || activeDateContext) && (
             <button
               ref={inspectorButton}
               className="button mobile-command inspect-command"
@@ -959,6 +967,7 @@ export default function App() {
                   }}
                   onDeselect={() => {
                     if (systemMode) return;
+                    setDateContext(null);
                     setSelection(null);
                     setInspectorHistory(EMPTY_INSPECTOR_HISTORY);
                     setSelectionStatus("Selection cleared.");

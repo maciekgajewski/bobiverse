@@ -7,6 +7,33 @@ import {
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+const dateContextMapHarness = vi.hoisted(() => ({
+  stubStarMap: false,
+}));
+
+vi.mock("../../src/components/MapScene", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("../../src/components/MapScene")>();
+  return {
+    ...actual,
+    StarMap: (props: Parameters<typeof actual.StarMap>[0]) => {
+      if (!dateContextMapHarness.stubStarMap) {
+        return <actual.StarMap {...props} />;
+      }
+      return (
+        <button
+          type="button"
+          data-testid="star-map-deselect"
+          onClick={() => props.onDeselect()}
+        >
+          Deselect map
+        </button>
+      );
+    },
+  };
+});
+
 import App from "../../src/App";
 import * as narrativeMap from "../../src/narrative/map";
 import * as narrativeModel from "../../src/narrative/model";
@@ -15,6 +42,7 @@ import * as systemView from "../../src/system-view";
 
 describe("atlas shell", () => {
   afterEach(() => {
+    dateContextMapHarness.stubStarMap = false;
     cleanup();
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
@@ -614,58 +642,274 @@ describe("atlas shell", () => {
     );
   });
 
-  it("opens a transient Date context from a Date-mode event dot without history or progress changes", async () => {
+  const seedDateProgress = () => {
     window.localStorage.setItem(
       "bobiverse.app-state.v2",
       JSON.stringify({
         furthestChapterRead: "1.2",
         viewChapter: "1.2",
-        displayDate: "2133",
+        displayDate: "2133-06-24",
         mode: "date",
         timelineZoom: 1,
         timelinePan: 0,
       }),
     );
-    const width = vi
-      .spyOn(HTMLElement.prototype, "clientWidth", "get")
-      .mockReturnValue(640);
-    try {
-      const user = userEvent.setup();
-      render(<App />);
+    vi.spyOn(HTMLElement.prototype, "clientWidth", "get").mockReturnValue(640);
+  };
+  const dateDot = (date: string, chapter: string) =>
+    screen.getByRole("button", {
+      name: `Story state 1 of 1 · ${date} · revealed in Chapter ${chapter}`,
+    });
 
-      const inspector = screen.getByRole("complementary", {
-        name: "Object inspector",
-      });
-      const dots =
-        document.querySelectorAll<HTMLButtonElement>(".date-event-dot");
-      expect(dots.length).toBeGreaterThan(0);
-      const selected =
-        [...dots].find((dot) => dot.getAttribute("aria-pressed") === "true") ??
-        dots[0]!;
-      await user.click(selected);
-      expect(within(inspector).getByText("Date context")).toBeInTheDocument();
-      expect(
-        within(inspector).getByRole("heading", { name: /2133|2016/ }),
-      ).toBeInTheDocument();
-      expect(within(inspector).getByText(/Source chapter/)).toBeInTheDocument();
-      expect(
-        screen.queryByRole("navigation", { name: "Inspector history" }),
-      ).not.toBeInTheDocument();
-      expect(screen.getAllByLabelText("Read through")[0]).toHaveValue("1.2");
+  it("replaces details with the exact Date context without changing non-empty inspector history or progress", async () => {
+    seedDateProgress();
+    const user = userEvent.setup();
+    render(<App />);
+    const inspector = screen.getByRole("complementary", {
+      name: "Object inspector",
+    });
+    await user.click(
+      screen.getByRole("button", { name: /^Solar System(?:Active)?$/ }),
+    );
+    await user.click(within(inspector).getByRole("button", { name: "Sol" }));
+    await user.click(within(inspector).getByRole("button", { name: "Back" }));
+    expect(
+      within(inspector).getByRole("heading", { name: "Solar System" }),
+    ).toBeInTheDocument();
+    expect(
+      within(inspector).getByRole("button", { name: "Forward" }),
+    ).toBeEnabled();
 
-      await user.click(
-        screen.getByRole("button", { name: /^Solar System(?:Active)?$/ }),
-      );
-      expect(
-        within(inspector).queryByText("Date context"),
-      ).not.toBeInTheDocument();
-      expect(
-        within(inspector).getByRole("heading", { name: "Solar System" }),
-      ).toBeInTheDocument();
-      expect(screen.getAllByLabelText("Read through")[0]).toHaveValue("1.2");
-    } finally {
-      width.mockRestore();
-    }
+    await user.click(dateDot("24 June 2133", "1.2"));
+    expect(within(inspector).getByText("Date context")).toBeInTheDocument();
+    expect(
+      within(inspector).getByRole("heading", {
+        name: "24 June 2133",
+      }),
+    ).toBeInTheDocument();
+    expect(
+      within(inspector).getByText("Chapter 1.2", { exact: true }),
+    ).toBeInTheDocument();
+    expect(
+      within(inspector).getByRole("heading", { name: "Activity at this date" }),
+    ).toBeInTheDocument();
+    expect(
+      within(inspector).queryByRole("navigation", {
+        name: "Inspector history",
+      }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Read through")).toHaveValue("1.2");
+
+    // Dismiss without selecting an object: both the current entry and the
+    // existing forward branch must survive, not merely an empty history.
+    await user.click(screen.getByRole("button", { name: "Date mode" }));
+    expect(
+      within(inspector).getByRole("heading", { name: "Solar System" }),
+    ).toBeInTheDocument();
+    expect(
+      within(inspector).getByRole("button", { name: "Back" }),
+    ).toBeDisabled();
+    expect(
+      within(inspector).getByRole("button", { name: "Forward" }),
+    ).toBeEnabled();
+    await user.click(
+      within(inspector).getByRole("button", { name: "Forward" }),
+    );
+    expect(
+      within(inspector).getByRole("heading", { name: "Sol" }),
+    ).toBeInTheDocument();
+    expect(
+      within(inspector).getByRole("button", { name: "Forward" }),
+    ).toBeDisabled();
+    await user.click(within(inspector).getByRole("button", { name: "Back" }));
+
+    await user.click(dateDot("2016", "1.1"));
+    expect(
+      within(inspector).getByRole("heading", { name: "2016" }),
+    ).toBeInTheDocument();
+    expect(
+      within(inspector).getByText("Chapter 1.1", { exact: true }),
+    ).toBeInTheDocument();
+    expect(
+      within(inspector).queryByRole("heading", {
+        name: "24 June 2133",
+      }),
+    ).not.toBeInTheDocument();
+    expect(
+      JSON.parse(window.localStorage.getItem("bobiverse.app-state.v2")!),
+    ).toMatchObject({
+      furthestChapterRead: "1.2",
+      viewChapter: "1.2",
+      displayDate: "2016",
+      mode: "date",
+    });
+    await user.click(
+      screen.getByRole("button", { name: /^Solar System(?:Active)?$/ }),
+    );
+    expect(
+      within(inspector).queryByText("Date context"),
+    ).not.toBeInTheDocument();
+    expect(
+      within(inspector).getByRole("heading", { name: "Solar System" }),
+    ).toBeInTheDocument();
+    expect(
+      within(inspector).getByRole("button", { name: "Back" }),
+    ).toBeDisabled();
+    expect(
+      within(inspector).getByRole("button", { name: "Forward" }),
+    ).toBeDisabled();
+    expect(screen.getByLabelText("Read through")).toHaveValue("1.2");
+  });
+
+  it("opens and reopens standalone Date context in the compact inspector", async () => {
+    seedDateProgress();
+    vi.stubGlobal("matchMedia", (query: string) => ({
+      matches: query === "(max-width: 1199px)",
+      media: query,
+      onchange: null,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    }));
+    const user = userEvent.setup();
+    render(<App />);
+    expect(
+      screen.queryByRole("button", { name: "Inspect selection" }),
+    ).not.toBeInTheDocument();
+    await user.click(
+      screen.getByRole("button", { name: "Timeline and progress" }),
+    );
+    const timeline = screen.getByRole("dialog", {
+      name: "Timeline and progress",
+    });
+    await user.click(
+      within(timeline).getByRole("button", {
+        name: "Story state 1 of 1 · 24 June 2133 · revealed in Chapter 1.2",
+      }),
+    );
+    const inspector = await screen.findByRole("dialog", {
+      name: "Selected object",
+    });
+    expect(within(inspector).getByText("Date context")).toBeInTheDocument();
+    expect(
+      within(inspector).getByRole("heading", {
+        name: "24 June 2133",
+      }),
+    ).toBeInTheDocument();
+    expect(
+      within(inspector).queryByRole("navigation", {
+        name: "Inspector history",
+      }),
+    ).not.toBeInTheDocument();
+    await user.keyboard("{Escape}");
+    const inspect = screen.getByRole("button", { name: "Inspect selection" });
+    await waitFor(() => expect(inspect).toHaveFocus());
+    await user.click(inspect);
+    expect(
+      within(screen.getByRole("dialog", { name: "Selected object" })).getByText(
+        "Date context",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it("clears Date context and retained selection/history when the map deselects", async () => {
+    seedDateProgress();
+    dateContextMapHarness.stubStarMap = true;
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockImplementation(((
+      type: string,
+    ) =>
+      type === "webgl" || type === "webgl2"
+        ? ({} as RenderingContext)
+        : null) as typeof HTMLCanvasElement.prototype.getContext);
+    const user = userEvent.setup();
+    render(<App />);
+    await screen.findByTestId("star-map-deselect");
+    const inspector = screen.getByRole("complementary", {
+      name: "Object inspector",
+    });
+    await user.click(
+      screen.getByRole("button", { name: /^Solar System(?:Active)?$/ }),
+    );
+    await user.click(within(inspector).getByRole("button", { name: "Sol" }));
+    expect(
+      within(inspector).getByRole("button", { name: "Back" }),
+    ).toBeEnabled();
+    await user.click(dateDot("24 June 2133", "1.2"));
+    expect(within(inspector).getByText("Date context")).toBeInTheDocument();
+    await user.click(screen.getByTestId("star-map-deselect"));
+    expect(
+      within(inspector).queryByText("Date context"),
+    ).not.toBeInTheDocument();
+    expect(
+      within(inspector).getByText(
+        "Select a map marker or browser item to inspect its reader-safe details.",
+      ),
+    ).toBeInTheDocument();
+    expect(
+      within(inspector).queryByRole("navigation", {
+        name: "Inspector history",
+      }),
+    ).not.toBeInTheDocument();
+    await user.click(
+      screen.getByRole("button", { name: /^Solar System(?:Active)?$/ }),
+    );
+    expect(
+      within(inspector).getByRole("button", { name: "Back" }),
+    ).toBeDisabled();
+    expect(
+      within(inspector).getByRole("button", { name: "Forward" }),
+    ).toBeDisabled();
+    expect(screen.getByLabelText("Read through")).toHaveValue("1.2");
+  });
+
+  it("does not persist active Date context on reload or resurrect it after Date-mode exit", async () => {
+    seedDateProgress();
+    const user = userEvent.setup();
+    const view = render(<App />);
+    await user.click(dateDot("2016", "1.1"));
+    expect(screen.getByRole("heading", { name: "2016" })).toBeInTheDocument();
+    expect(
+      JSON.parse(window.localStorage.getItem("bobiverse.app-state.v2")!),
+    ).toMatchObject({
+      furthestChapterRead: "1.2",
+      viewChapter: "1.2",
+      displayDate: "2016",
+      mode: "date",
+    });
+    // Reload while the Date context is still active, not after dismissing it.
+    view.unmount();
+    render(<App />);
+    expect(screen.getByRole("button", { name: "Date mode" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    expect(dateDot("2016", "1.1")).toHaveAttribute("aria-pressed", "true");
+    expect(screen.queryByText("Date context")).not.toBeInTheDocument();
+    await user.click(dateDot("2016", "1.1"));
+    expect(screen.getByText("Date context")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Chapter mode" }));
+    expect(screen.queryByText("Date context")).not.toBeInTheDocument();
+    expect(
+      JSON.parse(window.localStorage.getItem("bobiverse.app-state.v2")!),
+    ).toMatchObject({
+      furthestChapterRead: "1.2",
+      viewChapter: "1.2",
+      displayDate: "2133-06-24",
+      mode: "chapter",
+    });
+    await user.click(screen.getByRole("button", { name: "Date mode" }));
+    expect(screen.queryByText("Date context")).not.toBeInTheDocument();
+    await user.click(dateDot("24 June 2133", "1.2"));
+    await user.click(screen.getByRole("button", { name: "Chapter mode" }));
+    await user.click(screen.getByRole("button", { name: "Date mode" }));
+    expect(dateDot("24 June 2133", "1.2")).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    expect(screen.queryByText("Date context")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Read through")).toHaveValue("1.2");
   });
 
   it("generates at most one world for zero-state and date-mode transitions", async () => {
