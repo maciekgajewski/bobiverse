@@ -179,7 +179,11 @@ function DateAxis({
     0.5 +
       axisLineBottom -
       eventDotDiameter / 2 +
-      (Math.max(...byPosition.values().map((dates) => dates.length)) - 1) *
+      (Math.max(
+        1,
+        ...Array.from(byPosition.values(), (dates) => dates.length),
+      ) -
+        1) *
         eventDotStep +
       eventDotDiameter,
   );

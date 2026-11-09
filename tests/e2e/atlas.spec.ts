@@ -42,6 +42,27 @@ async function settleMapCamera(page: Page): Promise<void> {
   );
 }
 
+// Step every animation frame, rather than allowing a slow software renderer to
+// skip most of a wall-clock dolly. This tests interpolation, not GPU throughput.
+// No fastForward: it coalesces timers and would hide intermediate camera poses.
+async function withAnimationFrames<T>(
+  page: Page,
+  operation: () => Promise<T>,
+): Promise<T> {
+  let settled = false;
+  const result = operation().finally(() => {
+    settled = true;
+  });
+  // Attach a rejection handler immediately while the frame pump is running.
+  void result.catch(() => {});
+  for (let frame = 0; frame < 250 && !settled; frame += 1) {
+    await page.clock.runFor(16);
+  }
+  if (!settled)
+    throw new Error("Operation did not complete within 4s of frames.");
+  return result;
+}
+
 function monitorCameraDirection(
   page: Page,
 ): Promise<{ maximumDirectionError: number; maximumStepFraction: number }> {
@@ -206,11 +227,18 @@ test("Solar System enters and exits the fixed system mode", async ({
   await expect(
     inspector.getByRole("button", { name: "Enter system" }),
   ).toBeVisible();
-  const alphaCentauri = await page.evaluate(() =>
-    window.__bob034MapPerformance!.screenPoint("stellar-system-005413"),
-  );
-  await page.mouse.click(alphaCentauri.x, alphaCentauri.y);
-  await page.mouse.move(1, 1);
+  // screenPoint mouse clicks hover astronomy-only stars but do not select them
+  // (label vanishes after mouse.move). Use the object-browser path, same as the
+  // Sirius coverage, to prove the map/inspector respond after system-mode exit.
+  // Pre-existing on 3c818b9; not a Date-timeline regression.
+  const search = page.getByRole("searchbox", {
+    name: "Search visible objects",
+  });
+  await search.fill("alpha centauri");
+  await page.getByRole("button", { name: /^Alpha Centauri/ }).click();
+  await expect(
+    inspector.getByRole("heading", { name: "Alpha Centauri" }),
+  ).toBeVisible();
   await expect(
     page
       .locator(".narrative-map-label")
@@ -272,6 +300,7 @@ test("ordinary map reframes after a canvas resize", async ({ page }) => {
 test("system-mode dollies preserve direction and restore the exact camera pose", async ({
   page,
 }) => {
+  await page.clock.install();
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto("/");
   await page.waitForFunction(() => window.__bob034MapPerformance !== undefined);
@@ -281,18 +310,24 @@ test("system-mode dollies preserve direction and restore the exact camera pose",
     window.__bob034MapPerformance!.snapshot(),
   );
 
+  await page.clock.pauseAt(await page.evaluate(() => Date.now() + 100));
   const entryDirectionMonitor = monitorCameraDirection(page);
-  await page
-    .getByRole("complementary", { name: "Object inspector" })
-    .getByRole("button", { name: "Enter system" })
-    .click();
-  await page.waitForFunction(
-    () => window.__bob034MapPerformance!.snapshot().cameraTransitionActive,
-  );
+  await withAnimationFrames(page, async () => {
+    await page
+      .getByRole("complementary", { name: "Object inspector" })
+      .getByRole("button", { name: "Enter system" })
+      .click();
+    await page.waitForFunction(
+      () => window.__bob034MapPerformance!.snapshot().cameraTransitionActive,
+    );
+  });
   await page.locator("#map-stage").evaluate((stage) => {
     stage.style.width = "85%";
   });
-  const entryMotion = await entryDirectionMonitor;
+  const entryMotion = await withAnimationFrames(
+    page,
+    () => entryDirectionMonitor,
+  );
   expect(entryMotion.maximumDirectionError).toBeLessThan(1e-7);
   expect(entryMotion.maximumStepFraction).toBeLessThan(0.45);
   const enteredState = await page.evaluate(() =>
@@ -305,10 +340,12 @@ test("system-mode dollies preserve direction and restore the exact camera pose",
     window.__bob034MapPerformance!.screenPoint("stellar-system-005413"),
   );
   const exitDirectionMonitor = monitorCameraDirection(page);
-  await page.getByRole("button", { name: "Return to map" }).click();
-  await page.waitForFunction(
-    () => window.__bob034MapPerformance!.snapshot().cameraTransitionActive,
-  );
+  await withAnimationFrames(page, async () => {
+    await page.getByRole("button", { name: "Return to map" }).click();
+    await page.waitForFunction(
+      () => window.__bob034MapPerformance!.snapshot().cameraTransitionActive,
+    );
+  });
   await page.evaluate(({ x, y }) => {
     if (!window.__bob034MapPerformance!.snapshot().cameraTransitionActive) {
       throw new Error("Exit transition ended before the interaction probe.");
@@ -325,7 +362,10 @@ test("system-mode dollies preserve direction and restore the exact camera pose",
   await page.locator("#map-stage").evaluate((stage) => {
     stage.style.removeProperty("width");
   });
-  const exitMotion = await exitDirectionMonitor;
+  const exitMotion = await withAnimationFrames(
+    page,
+    () => exitDirectionMonitor,
+  );
   expect(exitMotion.maximumDirectionError).toBeLessThan(1e-7);
   expect(exitMotion.maximumStepFraction).toBeLessThan(0.45);
 
@@ -348,6 +388,7 @@ test("system-mode dollies preserve direction and restore the exact camera pose",
   await expect(
     page.locator(".narrative-map-label").filter({ hasText: /^Solar System$/ }),
   ).toHaveCount(1);
+  await page.clock.resume();
   await page.getByRole("button", { name: "Reset view" }).click();
   await page.waitForFunction(
     (revision) =>
@@ -871,28 +912,28 @@ test("the permanent local backdrop preserves responsive map interaction", async 
   ).toBeVisible();
 });
 
-test("expressive map states preserve active, hover, and astronomy-only selection paths", async ({
-  page,
-}) => {
-  test.setTimeout(45_000);
-  await page.addInitScript(() => {
-    window.localStorage.setItem(
-      "bobiverse.app-state.v2",
-      JSON.stringify({
-        furthestChapterRead: "1.14",
-        viewChapter: "1.14",
-        displayDate: "2144",
-        mode: "chapter",
-        timelineZoom: 1,
-        timelinePan: 0,
-      }),
-    );
-  });
-  for (const viewport of [
-    { width: 1440, height: 1000 },
-    { width: 900, height: 700 },
-    { width: 390, height: 844 },
-  ]) {
+for (const viewport of [
+  { width: 1440, height: 1000 },
+  { width: 900, height: 700 },
+  { width: 390, height: 844 },
+]) {
+  test(`expressive map states preserve active, hover, and astronomy-only selection paths at ${viewport.width}x${viewport.height}`, async ({
+    page,
+  }) => {
+    test.setTimeout(45_000);
+    await page.addInitScript(() => {
+      window.localStorage.setItem(
+        "bobiverse.app-state.v2",
+        JSON.stringify({
+          furthestChapterRead: "1.14",
+          viewChapter: "1.14",
+          displayDate: "2144",
+          mode: "chapter",
+          timelineZoom: 1,
+          timelinePan: 0,
+        }),
+      );
+    });
     await page.setViewportSize(viewport);
     await page.goto("/");
     await page.waitForFunction(
@@ -1046,8 +1087,8 @@ test("expressive map states preserve active, hover, and astronomy-only selection
     await page.waitForTimeout(150);
     await page.mouse.move(1, 1);
     expect(await astronomyCaption.count()).toBe(0);
-  }
-});
+  });
+}
 
 test("timeline uses global decorative scrollbars and compact chapter spacing", async ({
   page,

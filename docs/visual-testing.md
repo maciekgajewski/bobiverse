@@ -10,11 +10,54 @@ npm run test:e2e
 Playwright writes reports to `playwright-report/` and retains screenshot, trace, and
 video artifacts for failed tests under `test-results/`. Tests within each browser
 project run serially to avoid exhausting headless software-WebGL resources; Chromium,
-Firefox, and WebKit projects still run as separate required targets. Chromium and
-WebKit use their headless modes. This host's Firefox headless mode does not expose a
-WebGL context, so the Firefox project runs headed inside the disposable Xvfb display
-created by `xvfb-run -a`; `npx playwright install --with-deps` supplies that system
-dependency.
+Firefox, and WebKit projects still run as separate required targets. All three
+projects currently use headless mode. The npm test wrapper also provides a disposable
+Xvfb display with `xvfb-run -a`; `npx playwright install --with-deps` supplies that
+system dependency on supported Linux runners.
+
+## GitHub Actions CI
+
+The `CI` workflow in `.github/workflows/ci.yml` runs on pull requests, pushes to
+`master`, and manual dispatch. All four jobs must be green before merge: Repository
+checks and one Playwright job each for Chromium, Firefox, and WebKit. Superseded
+runs for the same pull request are cancelled. Standard `ubuntu-latest` runners are
+free for this public repository; there are no deployment steps or secrets, only
+read-only repository permissions and official version-pinned `actions/*` actions.
+
+Each browser runs in its own fresh runner with `--workers=1 --retries=1` to limit
+software-WebGL contention. The command is:
+
+```bash
+npm run test:e2e -- --project=chromium --workers=1 --retries=1
+```
+
+Substitute `firefox` or `webkit` for the other jobs. The npm script generates the
+narrative manifest and uses `xvfb-run -a`; Playwright starts the strict-port Vite
+server itself. Do not start a second development server on port 5173. The workflow
+installs each browser with `--with-deps` and verifies `xvfb-run` and `xauth`.
+
+The expressive-map interaction paths run as three independent viewport cases,
+each with a fresh context and its own unchanged 45-second deadline. They must not
+share a cumulative deadline across desktop, tablet, and phone software rendering.
+The dolly interpolation test installs Playwright's clock before navigation and
+steps every animation frame in 16 ms increments during entry/exit. Real WebGL,
+clicks, resize, direction, exact pose restoration, and mid-exit picking guards
+remain exercised; the step fraction stays below 0.45 and direction error below
+1e-7 in every environment. It does not fast-forward/coalesce intermediate frames.
+The clock resumes before reset/resize/orbit interaction checks. This separates
+interpolation correctness from host rendering cadence, not a relaxation of the
+production performance budgets in ADR-0019 or the separate performance commands.
+
+One retry remains diagnostic, not a fix for recurrent failures; inspect any
+flaky-test annotations before merge. CI does not run the separate performance
+benchmarks or replace the Captain's real-browser smoothness/visual acceptance.
+
+For a failed job, open the workflow run from the pull request's **Checks** tab,
+then download its `playwright-<browser>-<attempt>` artifact from the run summary's
+**Artifacts** section. It contains `playwright-report/` and `test-results/`
+(screenshots, retained traces, and videos), retained for three days. Successful
+runs do not upload these artifacts. Public runner compute is free for this repo;
+artifact storage is not unlimited, hence failure-only upload and short retention.
 
 ## Production chapter-transition performance
 
