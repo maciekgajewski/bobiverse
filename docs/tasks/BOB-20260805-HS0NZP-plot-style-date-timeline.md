@@ -2,7 +2,7 @@
 
 Status: In progress
 Phase: 2 (narrative foundation and chapter timeline)
-Last updated: 2026-08-05
+Last updated: 2026-11-09
 
 ## Objective
 
@@ -138,3 +138,26 @@ wheel zooming. Record unavailable browsers as an acceptance gap.
 - The Captain selected regular plot-axis ticks, spacing-driven detail, dot-only
   selection, stacked coincident states, anchored wheel zoom, and a transient
   Date-context inspector on 2026-08-05.
+
+## Log
+
+### 2026-11-09
+
+- Captured WIP onto `bob-20260805-hs0nzp-date-timeline` at `f86294d` (Captain had already
+  committed the Date-timeline WIP onto master).
+- Fixed `tsc -b` errors: `ObjectInspector` Date-context activity names now go through
+  `stringValue` (`NarrativeEntity` index typing yields `unknown` for `name`);
+  `TimelineDock` stack-height uses `Array.from(byPosition.values(), ...)` instead of
+  calling `.map` on a `MapIterator`.
+- Updated `narrative-equivalence` snapshot: Earth `colony_of: [species:human]` already
+  present in zero-state and required by ADR-0025 / BOB-20260803-X52E0D; the snapshot was
+  stale on `3c818b9` as well (not caused by this UI change).
+- Fixed pre-existing chromium e2e `Solar System enters and exits the fixed system
+mode` (also fails on `3c818b9`): `mouse.click(screenPoint(...))` only hovers
+  astronomy-only stars, so `mouse.move(1,1)` cleared the Alpha Centauri label.
+  After system-mode exit, select Alpha Centauri via the object browser (same path as
+  the Sirius coverage) and assert the map label. Not a Date-timeline regression.
+- Added App-level regression coverage for transient Date context (no inspector history;
+  dismisses on object selection; spoiler ceiling unchanged).
+- Status remains **In progress** until the Captain accepts the visual result in a
+  supported browser (acceptance criterion 9).
