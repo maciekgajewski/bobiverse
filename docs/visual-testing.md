@@ -10,11 +10,43 @@ npm run test:e2e
 Playwright writes reports to `playwright-report/` and retains screenshot, trace, and
 video artifacts for failed tests under `test-results/`. Tests within each browser
 project run serially to avoid exhausting headless software-WebGL resources; Chromium,
-Firefox, and WebKit projects still run as separate required targets. Chromium and
-WebKit use their headless modes. This host's Firefox headless mode does not expose a
-WebGL context, so the Firefox project runs headed inside the disposable Xvfb display
-created by `xvfb-run -a`; `npx playwright install --with-deps` supplies that system
-dependency.
+Firefox, and WebKit projects still run as separate required targets. All three
+projects currently use headless mode. The npm test wrapper also provides a disposable
+Xvfb display with `xvfb-run -a`; `npx playwright install --with-deps` supplies that
+system dependency on supported Linux runners.
+
+## GitHub Actions CI
+
+The `CI` workflow in `.github/workflows/ci.yml` runs on pull requests, pushes to
+`master`, and manual dispatch. All four jobs must be green before merge: Repository
+checks and one Playwright job each for Chromium, Firefox, and WebKit. Superseded
+runs for the same pull request are cancelled. Standard `ubuntu-latest` runners are
+free for this public repository; there are no deployment steps or secrets, only
+read-only repository permissions and official version-pinned `actions/*` actions.
+
+Each browser runs in its own fresh runner with `--workers=1 --retries=1` to limit
+software-WebGL contention. The command is:
+
+```bash
+npm run test:e2e -- --project=chromium --workers=1 --retries=1
+```
+
+Substitute `firefox` or `webkit` for the other jobs. The npm script generates the
+narrative manifest and uses `xvfb-run -a`; Playwright starts the strict-port Vite
+server itself. Do not start a second development server on port 5173. The workflow
+installs each browser with `--with-deps` and verifies `xvfb-run` and `xauth`.
+
+Previously observed under parallel local load: WebKit's dolly-step fraction
+assertion and Chromium's expressive-map timeout. Both passed serially. A single
+retry is diagnostic, not a substitute for fixing recurrent failures; inspect any
+flaky-test annotations before merge. CI does not run the separate performance
+benchmarks or replace the Captain's real-browser visual acceptance.
+
+For a failed job, open the workflow run from the pull request's **Checks** tab,
+then download its `playwright-<browser>-<attempt>` artifact from the run summary's
+**Artifacts** section. It contains `playwright-report/` and `test-results/`
+(screenshots, retained traces, and videos), retained for seven days. Successful
+runs do not upload these artifacts.
 
 ## Production chapter-transition performance
 

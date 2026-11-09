@@ -105,6 +105,8 @@ schemas, contracts, tooling, or includes broader editorial remediation.
   schema validation, and spoiler behavior when those areas are changed.
 - Validate generated runtime data as part of the normal build or validation path.
 - Update directly affected documentation in the same change.
+- The GitHub Actions `CI` workflow (`.github/workflows/ci.yml`) must be green before
+  merge: Repository checks and all three Playwright browser jobs are required.
 - A task is complete only when its acceptance criteria and documented validation
   pass. Record deviations rather than silently reducing scope.
 
