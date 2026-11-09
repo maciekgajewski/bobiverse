@@ -166,9 +166,9 @@ describe("reader progress", () => {
   });
 
   it("keeps timeline panning within the normalized visible-content range", () => {
-    expect(setTimelineViewport(empty, 30, -1)).toMatchObject({
-      timelineZoom: 16,
-      timelinePan: 0,
+    expect(setTimelineViewport(empty, 20000, -1)).toMatchObject({
+      timelineZoom: 16384,
+      timelinePan: -1,
     });
     expect(setTimelineViewport(empty, 1, 2)).toMatchObject({
       timelineZoom: 1,

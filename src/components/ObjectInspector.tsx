@@ -6,6 +6,7 @@ import type {
   CharacterTravelStop,
   NarrativeChapterDetail,
   NarrativeChapterRelationship,
+  NarrativeActivity,
   NarrativeEntity,
   NarrativeRecord,
   NarrativeWorld,
@@ -47,6 +48,54 @@ function Detail({ label, children }: { label: string; children: ReactNode }) {
       <dt>{label}</dt>
       <dd>{children}</dd>
     </div>
+  );
+}
+
+function DateContextDetails({
+  date,
+  sourceChapters,
+  activity,
+  world,
+  headingId,
+}: {
+  date: string;
+  sourceChapters: readonly string[];
+  activity: readonly NarrativeActivity[];
+  world: NarrativeWorld;
+  headingId: string;
+}) {
+  const entities = new Map(world.entities.map((entity) => [entity.id, entity]));
+  return (
+    <article
+      className="details date-context-details"
+      aria-live="polite"
+      aria-labelledby={headingId}
+    >
+      <p className="eyebrow">Date context</p>
+      <h2 id={headingId}>{formatNarrativeDate(date)}</h2>
+      <section className="inspector-section">
+        <h3>
+          {sourceChapters.length === 1 ? "Source chapter" : "Source chapters"}
+        </h3>
+        <p>
+          {sourceChapters.map((chapter) => `Chapter ${chapter}`).join(" · ")}
+        </p>
+      </section>
+      <section className="inspector-section">
+        <h3>Activity at this date</h3>
+        {activity.length === 0 ? (
+          <p>No additional reader-visible activity is recorded at this date.</p>
+        ) : (
+          <ul className="date-context-activity">
+            {activity.map((item) => (
+              <li key={`${item.entity_id}-${item.source_chapter}`}>
+                {entities.get(item.entity_id)?.name ?? item.entity_id}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    </article>
   );
 }
 
@@ -756,6 +805,7 @@ export function ObjectInspector({
   selection,
   narrativeItem,
   chapterDetail,
+  dateContext = null,
   world,
   systems,
   knownAstronomySystemIds,
@@ -778,6 +828,7 @@ export function ObjectInspector({
   selection: SelectionIdentity | null;
   narrativeItem: NarrativeBrowserItem | null;
   chapterDetail?: NarrativeChapterDetail | null;
+  dateContext?: { date: string; sourceChapters: readonly string[] } | null;
   world: NarrativeWorld;
   systems: StellarSystem[];
   knownAstronomySystemIds?: ReadonlySet<string>;
@@ -797,6 +848,18 @@ export function ObjectInspector({
   onEnterSystem?: (entry: SystemViewEntry) => void;
   onComponentSelect?: (componentId: string) => void;
 }) {
+  if (dateContext)
+    return (
+      <DateContextDetails
+        date={dateContext.date}
+        sourceChapters={dateContext.sourceChapters}
+        activity={world.activity.filter(
+          (item) => item.effective_date === dateContext.date,
+        )}
+        world={world}
+        headingId={headingId}
+      />
+    );
   if (!selection)
     return (
       <section className="details empty-details" aria-live="polite">

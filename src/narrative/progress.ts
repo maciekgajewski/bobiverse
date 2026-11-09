@@ -141,13 +141,13 @@ export function normalizeReaderProgress(
     typeof record.timelineZoom === "number" &&
     Number.isFinite(record.timelineZoom) &&
     record.timelineZoom >= 1 &&
-    record.timelineZoom <= 16
+    record.timelineZoom <= 16384
       ? record.timelineZoom
       : 1;
   const pan =
     typeof record.timelinePan === "number" &&
     Number.isFinite(record.timelinePan)
-      ? Math.max(0, Math.min(1, record.timelinePan))
+      ? Math.max(-1, Math.min(1, record.timelinePan))
       : 0;
   return {
     furthestChapterRead: furthest,
@@ -284,7 +284,7 @@ export function setTimelineViewport(
 ): ReaderProgress {
   return {
     ...current,
-    timelineZoom: Math.max(1, Math.min(16, zoom)),
-    timelinePan: Math.max(0, Math.min(1, pan)),
+    timelineZoom: Math.max(1, Math.min(16384, zoom)),
+    timelinePan: Math.max(-1, Math.min(1, pan)),
   };
 }

@@ -247,6 +247,7 @@ export default function App() {
   const [pendingReadThrough, setPendingReadThrough] = useState<string | null>(
     null,
   );
+  const [dateContext, setDateContext] = useState<string | null>(null);
   const [mapScale, setMapScale] = useState<MapScale>({
     label: `1 ${DISPLAY_DISTANCE_UNIT}`,
     pixelWidth: 50,
@@ -267,6 +268,10 @@ export default function App() {
     [meaningfulDateOptions],
   );
   const narrativeWorld = applicationProjection.world;
+  const activeDateContext =
+    progress.mode === "date" && dateContext === progress.displayDate
+      ? dateContext
+      : null;
   const selectedChapterDetail =
     selection?.kind === "chapter" &&
     applicationProjection.chapterDetail?.chapter === selection.id
@@ -563,6 +568,7 @@ export default function App() {
     );
   };
   const showSelection = (nextSelection: SelectionIdentity) => {
+    setDateContext(null);
     setSelection(nextSelection);
     setSelectionStatus(`${selectionName(nextSelection) || "Object"} selected.`);
     if (
@@ -599,6 +605,7 @@ export default function App() {
     const nextSelection = inspectorHistory.entries[nextIndex];
     if (!nextSelection) return;
     setInspectorHistory((current) => ({ ...current, index: nextIndex }));
+    setDateContext(null);
     setSelection(nextSelection);
     setSelectionStatus(
       `${selectionName(nextSelection) || "Object"} restored from inspector history.`,
@@ -712,8 +719,10 @@ export default function App() {
       setMobilePanel("inspector");
     }
   };
-  const selectDate = (date: string) =>
+  const selectDate = (date: string, showContext = false) => {
+    setDateContext(showContext ? date : null);
     updateProgress(selectDisplayDate(progress, date, meaningfulDates));
+  };
   const toggleBrowserGroup = (group: keyof ReaderProgress["browserGroups"]) =>
     setApplicationProjection((current) => ({
       ...current,
@@ -748,14 +757,10 @@ export default function App() {
       ),
     );
   };
-  const zoomTimeline = (delta: number) =>
+  const zoomTimeline = (zoom: number, pan: number) =>
     setApplicationProjection((current) => ({
       ...current,
-      progress: setTimelineViewport(
-        current.progress,
-        current.progress.timelineZoom + delta,
-        current.progress.timelinePan,
-      ),
+      progress: setTimelineViewport(current.progress, zoom, pan),
     }));
   const panTimeline = (delta: number) =>
     setApplicationProjection((current) => ({
@@ -989,6 +994,15 @@ export default function App() {
             selection={selection}
             narrativeItem={selectedNarrativeItem}
             chapterDetail={selectedChapterDetail}
+            dateContext={
+              activeDateContext
+                ? {
+                    date: activeDateContext,
+                    sourceChapters:
+                      meaningfulDateSources.get(activeDateContext) ?? [],
+                  }
+                : null
+            }
             world={narrativeWorld}
             systems={mapProjection.contextSystems}
             knownAstronomySystemIds={mapProjection.knownSystemIds}
@@ -1098,6 +1112,15 @@ export default function App() {
                 selection={selection}
                 narrativeItem={selectedNarrativeItem}
                 chapterDetail={selectedChapterDetail}
+                dateContext={
+                  activeDateContext
+                    ? {
+                        date: activeDateContext,
+                        sourceChapters:
+                          meaningfulDateSources.get(activeDateContext) ?? [],
+                      }
+                    : null
+                }
                 world={narrativeWorld}
                 systems={mapProjection.contextSystems}
                 knownAstronomySystemIds={mapProjection.knownSystemIds}

@@ -604,7 +604,11 @@ trackpad interaction on a larger display provide the primary experience.
 Phones and tablets must still provide a usable responsive layout. At minimum, system
 selection and details must not depend exclusively on precise 3D picking. Controls need
 accessible labels, visible keyboard focus, sufficient contrast, 44-by-44 CSS-pixel
-phone targets, and non-color-only state cues. Reduced-motion preferences must disable
+phone targets, and non-color-only state cues. Dense Date-mode plot event points are
+the narrow exception: their compact visible dots remain individually pointer- and
+keyboard-operable because expanding their hit targets would obscure neighbouring,
+time-identical points.
+Reduced-motion preferences must disable
 nonessential camera animation. UI and display typography are bundled open-licensed
 Noto Sans resources with Latin Extended, Greek, and Cyrillic coverage; no runtime font
 service or browser fallback is the localization strategy for those scripts.

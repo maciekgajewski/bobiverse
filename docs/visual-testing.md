@@ -174,14 +174,16 @@ the center of the first and last dots. Inspect the timeline's horizontal scrollb
 the side rails, compact panels, and any overflowing relationship list; every
 application-owned scrollbar must use the same decorative treatment. In Date mode, use
 the mouse wheel to zoom and drag to pan; confirm the focused axis also accepts `+`/`−`
-and arrow keys. Verify that the year axis has linear spacing (a 100-year
-interval is visibly ten times a 10-year interval at one zoom). Click a year marker
-with one story state and confirm that it selects that year directly. For a year with
-multiple states, confirm that the marker opens a compact choice list at the shared year
-position. Confirm that each choice has unique, reader-visible source-chapter context,
-the latest year's full list remains reachable by panning, and no canonical internal
-ordering index is displayed. Returning to Chapter mode restores the selected chapter's
-story year. At 200% browser zoom, verify the command bar exposes **Timeline and
+and arrow keys. Verify that the plot line has regular labels below it, that label
+detail progresses from centuries or decades through years, months, and ISO days as
+available spacing grows, and that a 100-year interval is visibly ten times a 10-year
+interval at one zoom. Confirm that wheel zoom keeps the calendar point below the
+pointer fixed, including near the first and last dates where blank axis space appears.
+Click event dots,
+not labels, to select their states. Confirm that states at one coordinate stack as
+separate dots, each with unique spoiler-safe source context, and that no canonical
+internal ordering suffix is displayed. Returning to Chapter mode restores the selected
+chapter's story year. At 200% browser zoom, verify the command bar exposes **Timeline and
 progress** after the CSS viewport falls below the simultaneous-layout breakpoint.
 Open it and confirm the same **Read through**, mode, chapter/date, and timeline values
 appear in a non-animated modal panel. Tab and Shift+Tab must remain inside it; Escape
@@ -189,10 +191,11 @@ and the visible close control must return focus to the invoking command. The pag
 not gain horizontal scrolling, and the attribution footer must remain reachable after
 the panel closes.
 
-The dock remains one compact, fixed-height desktop row while switching between Chapter
-and Date modes; no mode change should move the map or footer vertically. The
-spoiler-limit card stays narrow, the mode controls stack vertically, and the chapter
-rail uses one uninterrupted central line with concise labels above.
+The dock remains one compact desktop row in ordinary Chapter and Date views; a dense
+same-coordinate Date-mode dot stack may increase its height so every compact plot point
+remains visible and independently operable. The spoiler-limit card stays
+narrow, the mode controls stack vertically, and the chapter rail uses one uninterrupted
+central line with concise labels above.
 
 ## BOB-012 progressive object browser and inspectors
 

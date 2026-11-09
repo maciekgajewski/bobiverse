@@ -1246,7 +1246,7 @@ test("reader progress is confirmed before chapter data is unlocked", async ({
       dateModeBox.y >= chapterModeBox.y + chapterModeBox.height,
   ).toBe(true);
   await page.getByRole("button", { name: "Date mode" }).click();
-  await page.getByRole("button", { name: "2016", exact: true }).click();
+  await page.locator(".date-event-dot").first().click();
   await expect(page.locator(".map-narrative-badge")).toContainText(
     "Universe in 2016",
   );
@@ -1448,7 +1448,9 @@ test("desktop surfaces stay on one projection through chapter and date changes",
   ).toBeVisible();
 
   await page.getByRole("button", { name: "Date mode" }).click();
-  await page.getByRole("button", { name: "2016", exact: true }).click();
+  await page
+    .getByRole("button", { name: /Story state 1 of 1 · 2016 ·/ })
+    .click();
   const sharedDateStatus = "Universe in 2016 · Knowledge through Chapter 1.2";
   await expect(page.locator(".view-status")).toHaveText(sharedDateStatus);
   await expect(page.locator(".map-narrative-badge")).toHaveText(

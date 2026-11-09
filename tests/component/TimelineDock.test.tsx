@@ -1,4 +1,10 @@
-import { cleanup, render, screen, within } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  within,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { TimelineDock } from "../../src/components/TimelineDock";
@@ -203,8 +209,8 @@ describe("timeline dock", () => {
     expect(chooseReadThrough).not.toHaveBeenCalled();
   });
 
-  it("uses true linear year spacing without exposing date indices", () => {
-    render(
+  it("uses a true linear plot axis without exposing date indices", () => {
+    const { container } = render(
       <TimelineDock
         chapters={chapters}
         progress={{ ...progress, mode: "date", displayDate: "2000" }}
@@ -222,20 +228,20 @@ describe("timeline dock", () => {
         onPan={vi.fn()}
       />,
     );
-    const positions = screen
-      .getAllByText(/^(2000|2010|2110)$/)
-      .map((node) =>
-        Number(
-          node.closest(".year-cluster")?.getAttribute("data-year-position"),
-        ),
-      );
-    expect(positions[2]! - positions[0]!).toBe(
+    expect(container.querySelector(".date-axis-line")).toBeInTheDocument();
+    const positions = [
+      ...container.querySelectorAll<HTMLElement>(".date-event-cluster"),
+    ].map((node) => Number(node.dataset.yearPosition));
+    expect(positions[2]! - positions[0]!).toBeCloseTo(
       (positions[1]! - positions[0]!) * 11,
     );
     expect(screen.queryByText("2000.1")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "2000" }),
+    ).not.toBeInTheDocument();
   });
 
-  it("selects the only story state by clicking its year marker", async () => {
+  it("selects the only story state by clicking its event dot", async () => {
     const user = userEvent.setup();
     const selectDate = vi.fn();
     render(
@@ -257,12 +263,54 @@ describe("timeline dock", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "2010" }));
+    await user.click(
+      screen.getByRole("button", {
+        name: "Story state 1 of 1 · 2010 · reader-visible source",
+      }),
+    );
 
-    expect(selectDate).toHaveBeenCalledWith("2010");
+    expect(selectDate).toHaveBeenCalledWith("2010", true);
   });
 
-  it("opens spoiler-safe choices when a year has multiple states", async () => {
+  it("increases regular tick detail with available rendered spacing", () => {
+    const width = vi
+      .spyOn(HTMLElement.prototype, "clientWidth", "get")
+      .mockReturnValue(500);
+    const { container } = render(
+      <TimelineDock
+        chapters={chapters}
+        progress={{
+          ...progress,
+          mode: "date",
+          displayDate: "2000",
+          timelineZoom: 256,
+        }}
+        meaningfulDates={["2000", "2010", "2110"]}
+        meaningfulDateSources={noDateSources}
+        pendingReadThrough={null}
+        onReadThroughChoice={vi.fn()}
+        onConfirmReadThrough={vi.fn()}
+        onCancelReadThrough={vi.fn()}
+        onReturnToZeroState={vi.fn()}
+        onKnowledgeChapter={vi.fn()}
+        onDate={vi.fn()}
+        onChapterMode={vi.fn()}
+        onZoom={vi.fn()}
+        onPan={vi.fn()}
+      />,
+    );
+
+    expect(
+      container.querySelectorAll(".date-axis-tick-label"),
+    ).not.toHaveLength(0);
+    expect(screen.getByText("2000-01")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "2000-01" }),
+    ).not.toBeInTheDocument();
+    width.mockRestore();
+  });
+
+  it("stacks same-coordinate states as independently selectable dots", async () => {
     const user = userEvent.setup();
     const selectDate = vi.fn();
     render(
@@ -290,30 +338,21 @@ describe("timeline dock", () => {
     );
 
     await user.click(
-      screen.getByRole("button", { name: "2000, 2 story states" }),
-    );
-
-    expect(selectDate).not.toHaveBeenCalled();
-    expect(
-      screen.getByRole("list", { name: "2000 story states" }),
-    ).toBeInTheDocument();
-    expect(screen.queryByText("2000.1")).not.toBeInTheDocument();
-
-    await user.click(
       screen.getByRole("button", {
         name: "Story state 1 of 2 · 2000 · revealed in Chapter 1.1",
       }),
     );
 
-    expect(selectDate).toHaveBeenCalledWith("2000");
+    expect(selectDate).toHaveBeenCalledWith("2000", true);
     expect(
-      screen.queryByRole("list", { name: "2000 story states" }),
-    ).not.toBeInTheDocument();
+      screen.getByRole("button", {
+        name: "Story state 2 of 2 · 2000 · revealed in Chapter 1.1",
+      }),
+    ).toBeInTheDocument();
   });
 
-  it("keeps latest-year choices unique and inside the pannable axis", async () => {
-    const user = userEvent.setup();
-    const dates = ["2000", "2110.0", "2110.1", "2110.2", "2110.3"];
+  it("keeps clustered dots at the same linear coordinate without clipping", () => {
+    const dates = ["2000", "2110.0", "2110.1", "2110.2", "2110.3", "2110.4"];
     const { container } = render(
       <TimelineDock
         chapters={chapters}
@@ -335,26 +374,79 @@ describe("timeline dock", () => {
       />,
     );
 
-    await user.click(
-      screen.getByRole("button", { name: "2110, 4 story states" }),
-    );
-
-    const choices = within(
-      screen.getByRole("list", { name: "2110 story states" }),
-    ).getAllByRole("button");
-    expect(new Set(choices.map((choice) => choice.textContent)).size).toBe(4);
-    expect(choices[1]).toHaveTextContent(
-      "Story state 2 of 4 · 2110 · revealed in Chapter 1.1",
-    );
+    const clusters = [
+      ...container.querySelectorAll<HTMLElement>(".date-event-cluster"),
+    ];
+    expect(clusters).toHaveLength(2);
+    expect(clusters[1]?.querySelectorAll(".date-event-dot")).toHaveLength(5);
+    expect(
+      Number.parseFloat(
+        container.querySelector<HTMLElement>(".date-axis")!.style.minHeight,
+      ),
+    ).toBeGreaterThan(6);
+    const stackedDots = [
+      ...clusters[1]!.querySelectorAll<HTMLElement>(".date-event-dot"),
+    ];
+    const firstBottom = Number.parseFloat(stackedDots[0]!.style.bottom);
+    const secondBottom = Number.parseFloat(stackedDots[1]!.style.bottom);
+    expect((secondBottom - firstBottom) / 0.75).toBeCloseTo(1.12);
     expect(screen.queryByText(/2110\.[0-9]/)).not.toBeInTheDocument();
+  });
+
+  it("preserves the pointer calendar coordinate when wheel zooming", () => {
+    const onZoom = vi.fn();
+    const width = vi
+      .spyOn(HTMLElement.prototype, "clientWidth", "get")
+      .mockReturnValue(500);
+    const { container } = render(
+      <TimelineDock
+        chapters={chapters}
+        progress={{ ...progress, mode: "date", displayDate: "2000" }}
+        meaningfulDates={["2000", "2010", "2110"]}
+        meaningfulDateSources={noDateSources}
+        pendingReadThrough={null}
+        onReadThroughChoice={vi.fn()}
+        onConfirmReadThrough={vi.fn()}
+        onCancelReadThrough={vi.fn()}
+        onReturnToZeroState={vi.fn()}
+        onKnowledgeChapter={vi.fn()}
+        onDate={vi.fn()}
+        onChapterMode={vi.fn()}
+        onZoom={onZoom}
+        onPan={vi.fn()}
+      />,
+    );
+    const viewport = container.querySelector<HTMLElement>(
+      ".date-axis-viewport",
+    )!;
+    vi.spyOn(viewport, "getBoundingClientRect").mockReturnValue({
+      bottom: 80,
+      height: 80,
+      left: 100,
+      right: 600,
+      top: 0,
+      width: 500,
+      x: 100,
+      y: 0,
+      toJSON: () => ({}),
+    });
 
     const axis = container.querySelector<HTMLElement>(".date-axis")!;
-    const lastCluster = container.querySelector<HTMLElement>(
-      ".year-cluster:last-child",
-    )!;
-    const trailingSpace =
-      Number.parseFloat(axis.style.width) -
-      Number(lastCluster.dataset.yearPosition);
-    expect(trailingSpace).toBeGreaterThanOrEqual(4 * 196);
+    const start = Number(axis.dataset.axisStart);
+    const pixelsPerYear = Number(axis.dataset.pixelsPerYear);
+    for (const [index, pointerX] of [5, 495].entries()) {
+      const before = start + (pointerX - 28) / pixelsPerYear;
+      fireEvent.wheel(viewport, { clientX: pointerX + 100, deltaY: -1 });
+
+      expect(onZoom).toHaveBeenNthCalledWith(index + 1, 2, expect.any(Number));
+      const nextZoom = onZoom.mock.calls[index]?.[0] as number;
+      const nextPan = onZoom.mock.calls[index]?.[1] as number;
+      const nextPixelsPerYear = pixelsPerYear * nextZoom;
+      const nextWidth = Math.max(500, 56 + 110 * nextPixelsPerYear);
+      const nextPanPixels = nextPan * (nextWidth + 500);
+      const after = start + (pointerX + nextPanPixels - 28) / nextPixelsPerYear;
+      expect(after).toBeCloseTo(before, 10);
+    }
+    width.mockRestore();
   });
 });

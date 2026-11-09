@@ -465,16 +465,23 @@ chapter may add a newly revealed earlier date, but that date appears only when t
 knowledge chapter reaches the reveal.
 
 Horizontal position is a linear function of Gregorian elapsed time. A 100-year gap
-occupies ten times the distance of a 10-year gap at the same zoom. The UI may zoom and
-pan the time axis uniformly, hide colliding text, and provide a full-range overview;
-it may not redistribute meaningful dates evenly.
+occupies ten times the distance of a 10-year gap at the same zoom. Date mode presents
+this as a plot-style line with regular calendar ticks and labels below it. Tick detail
+is selected from rendered spacing, progressing through centuries, decades, years,
+months, and ISO days without colliding text. The UI may zoom and pan the time axis
+uniformly and provide a full-range overview; it may not redistribute meaningful dates
+evenly. Wheel zoom preserves the calendar coordinate beneath the pointer, including at
+either data endpoint by allowing blank axis space beyond it; keyboard zoom remains
+centered in the viewport.
 
 Year values anchor at January 1, month values at the first of that month, and day
 values at that day's start, using elapsed whole days divided by the Gregorian year
 length. This is a non-semantic point-axis anchor and never narrows an imprecise fact.
-All suffix variants of one calendar portion share a coordinate and use a stacked
-cluster or accessible choice list. Suffixes are never displayed or converted into
-elapsed time. Labels use the shared English year, month-year, or day-month-year
+All suffix variants of one calendar portion share a coordinate and render as stacked,
+individually keyboard-operable event dots. Dots are the only date-selection controls;
+axis labels are not interactive. Their accessible names retain distinct spoiler-safe
+source context while suffixes are never displayed or converted into elapsed time.
+Reader-facing event dates use the shared English year, month-year, or day-month-year
 formatter.
 
 The persistent status line uses wording such as:

@@ -516,7 +516,8 @@ h2 {
   grid-template-columns: minmax(10.75rem, 12rem) 4.8rem minmax(0, 1fr);
   align-items: stretch;
   gap: 0.75rem;
-  height: 8.1rem;
+  min-height: 8.1rem;
+  height: auto;
   overflow: hidden;
   padding: 0.8rem 1rem;
   border: 1px solid var(--line-subtle);
@@ -596,8 +597,7 @@ h2 {
   border-radius: var(--radius-control);
 }
 .timeline-mode button,
-.chapter-track button,
-.year-cluster button {
+.chapter-track button {
   border: 1px solid var(--line-accent);
   border-radius: var(--radius-control);
   color: var(--text-primary);
@@ -613,7 +613,6 @@ h2 {
   font-size: 0.65rem;
 }
 .timeline-mode button.active,
-.year-cluster button.selected,
 .chapter-book button.selected {
   color: #9eeeff;
   border-color: rgb(125 233 255 / 60%);
@@ -767,7 +766,6 @@ h2 {
 .date-axis-viewport {
   width: 100%;
   overflow: hidden;
-  border-top: 1px solid var(--line-accent);
   cursor: grab;
   touch-action: none;
 }
@@ -776,49 +774,68 @@ h2 {
 }
 .date-axis {
   position: relative;
-  min-height: 4.6rem;
+  min-height: 5rem;
   transform-origin: left center;
 }
-.year-cluster {
+.date-axis-line {
   position: absolute;
-  top: 0.25rem;
+  right: 0;
+  bottom: 2.1rem;
+  left: 0;
+  height: 1px;
+  background: var(--line-accent);
+}
+.date-axis-tick {
+  position: absolute;
+  bottom: 0;
   width: max-content;
-  padding-left: 0.35rem;
-  border-left: 1px solid var(--accent-cyan);
+  transform: translateX(-50%);
 }
-.year-marker {
-  display: grid;
-  justify-items: start;
-  gap: 0.05rem;
-  min-width: 3.6rem;
-}
-.year-value {
-  color: var(--accent-cyan);
-  font-size: 0.78rem;
-  font-weight: 700;
-}
-.year-state-count {
-  color: var(--text-muted);
-  font-size: 0.56rem;
-  line-height: 1;
-}
-.year-state-choices {
-  display: flex;
-  gap: 0.25rem;
-  margin: 0.2rem 0 0;
-  padding: 0;
-  list-style: none;
-}
-.year-cluster button {
-  padding: 0.25rem 0.38rem;
-  font-size: 0.65rem;
-}
-.year-state-choices button {
+.date-axis-tick-mark {
   display: block;
-  max-width: 12rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  width: 1px;
+  height: 0.45rem;
+  margin: 0 auto 0.2rem;
+  background: var(--line-accent);
+}
+.date-axis-tick-label {
+  display: block;
+  color: var(--accent-cyan);
+  font-size: 0.68rem;
+  font-weight: 700;
   white-space: nowrap;
+}
+.date-event-cluster {
+  position: absolute;
+  bottom: 0;
+  width: 0;
+}
+.date-event-dot {
+  position: absolute;
+  box-sizing: border-box;
+  left: -0.375rem;
+  width: 0.75rem;
+  height: 0.75rem;
+  border: 2px solid #7490ae;
+  border-radius: 50%;
+  background: #08101d;
+  box-shadow: 0 0 0 1px rgb(5 8 18 / 90%);
+  cursor: pointer;
+}
+.date-context-activity {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+.date-event-dot.selected {
+  border-color: #ffd26d;
+  background: #ffd26d;
+  box-shadow:
+    0 0 0 3px rgb(5 8 18 / 90%),
+    0 0 0.7rem rgb(255 210 109 / 65%);
+}
+.date-event-dot:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 3px;
 }
 .confirmation-layer {
   position: fixed;

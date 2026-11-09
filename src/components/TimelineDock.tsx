@@ -41,10 +41,91 @@ interface TimelineDockProps {
   onReturnToZeroState: () => void;
   onKnowledgeChapter: (chapter: string) => void;
   onChapterTimeline?: (chapter: string) => void;
-  onDate: (date: string) => void;
+  onDate: (date: string, showContext?: boolean) => void;
   onChapterMode: () => void;
-  onZoom: (delta: number) => void;
+  onZoom: (zoom: number, pan: number) => void;
   onPan: (delta: number) => void;
+}
+
+type TickGranularity = "century" | "decade" | "year" | "month" | "day";
+
+function daysInYear(year: number): number {
+  return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0) ? 366 : 365;
+}
+
+function daysInMonth(year: number, month: number): number {
+  return [
+    31,
+    daysInYear(year) === 366 ? 29 : 28,
+    31,
+    30,
+    31,
+    30,
+    31,
+    31,
+    30,
+    31,
+    30,
+    31,
+  ][month - 1]!;
+}
+
+function coordinateForCalendarDate(year: number, month = 1, day = 1): number {
+  let elapsedDays = day - 1;
+  for (let currentMonth = 1; currentMonth < month; currentMonth += 1)
+    elapsedDays += daysInMonth(year, currentMonth);
+  return year + elapsedDays / daysInYear(year);
+}
+
+function tickGranularity(pixelsPerYear: number): TickGranularity {
+  if (pixelsPerYear / 366 >= 78) return "day";
+  if (pixelsPerYear / 12 >= 56) return "month";
+  if (pixelsPerYear >= 38) return "year";
+  if (pixelsPerYear * 10 >= 38) return "decade";
+  return "century";
+}
+
+function dateTicks(
+  granularity: TickGranularity,
+  minimum: number,
+  maximum: number,
+): { coordinate: number; label: string }[] {
+  const ticks: { coordinate: number; label: string }[] = [];
+  const firstYear = Math.floor(minimum);
+  const lastYear = Math.ceil(maximum);
+  if (
+    granularity === "century" ||
+    granularity === "decade" ||
+    granularity === "year"
+  ) {
+    const step =
+      granularity === "century" ? 100 : granularity === "decade" ? 10 : 1;
+    const first = Math.floor(firstYear / step) * step;
+    for (let year = first; year <= lastYear; year += step) {
+      if (year >= minimum - 1 && year <= maximum + 1)
+        ticks.push({ coordinate: year, label: String(year) });
+    }
+    return ticks;
+  }
+  for (let year = firstYear; year <= lastYear; year += 1) {
+    const finalMonth = granularity === "month" ? 12 : 12;
+    for (let month = 1; month <= finalMonth; month += 1) {
+      const finalDay = granularity === "day" ? daysInMonth(year, month) : 1;
+      for (let day = 1; day <= finalDay; day += 1) {
+        const coordinate = coordinateForCalendarDate(year, month, day);
+        if (coordinate < minimum - 1 / 366 || coordinate > maximum + 1 / 366)
+          continue;
+        ticks.push({
+          coordinate,
+          label:
+            granularity === "month"
+              ? `${year}-${String(month).padStart(2, "0")}`
+              : `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`,
+        });
+      }
+    }
+  }
+  return ticks;
 }
 
 function DateAxis({
@@ -68,7 +149,6 @@ function DateAxis({
   const viewport = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
   const [viewportWidth, setViewportWidth] = useState(0);
-  const [expandedYear, setExpandedYear] = useState<string | null>(null);
   useEffect(() => {
     const measure = () => setViewportWidth(viewport.current?.clientWidth ?? 0);
     measure();
@@ -90,23 +170,61 @@ function DateAxis({
     entries.push(date);
     byPosition.set(coordinate, entries);
   }
-  const width = Math.max(
-    160,
-    ...[...byPosition.values()].map((dates) => {
-      const position =
-        linearYearOffset(dates[0]!, firstDate) *
-        baseScale *
-        progress.timelineZoom;
-      const choiceSpace = dates.length > 1 ? dates.length * 196 + 8 : 120;
-      return position + choiceSpace;
-    }),
+  const horizontalPadding = 28;
+  const eventDotDiameter = 0.75;
+  const eventDotStep = eventDotDiameter * 1.12;
+  const axisLineBottom = 2.1;
+  const axisHeight = Math.max(
+    5,
+    0.5 +
+      axisLineBottom -
+      eventDotDiameter / 2 +
+      (Math.max(...byPosition.values().map((dates) => dates.length)) - 1) *
+        eventDotStep +
+      eventDotDiameter,
   );
-  const panDistance = Math.max(0, width - viewportWidth);
+  const pixelsPerYear = baseScale * progress.timelineZoom;
+  const width = Math.max(
+    viewportWidth,
+    horizontalPadding * 2 + span * pixelsPerYear,
+  );
+  const panDistance = width + viewportWidth;
+  const axisStart = numericYear(firstDate);
+  const panPixels = progress.timelinePan * panDistance;
+  const visibleMinimum =
+    axisStart + Math.max(0, panPixels - horizontalPadding) / pixelsPerYear;
+  const visibleMaximum =
+    axisStart + (panPixels + viewportWidth - horizontalPadding) / pixelsPerYear;
+  const granularity = tickGranularity(pixelsPerYear);
+  const ticks = dateTicks(granularity, visibleMinimum, visibleMaximum);
+  const updateZoom = (direction: 1 | -1, pointerX: number) => {
+    const nextZoom =
+      direction > 0 ? progress.timelineZoom * 2 : progress.timelineZoom / 2;
+    const boundedZoom = Math.max(1, Math.min(16384, nextZoom));
+    if (boundedZoom === progress.timelineZoom) return;
+    const coordinate =
+      axisStart + (pointerX + panPixels - horizontalPadding) / pixelsPerYear;
+    const nextScale = baseScale * boundedZoom;
+    const nextWidth = Math.max(
+      viewportWidth,
+      horizontalPadding * 2 + span * nextScale,
+    );
+    const nextPanDistance = nextWidth + viewportWidth;
+    const nextPan = Math.max(
+      -1,
+      Math.min(
+        1,
+        (horizontalPadding + (coordinate - axisStart) * nextScale - pointerX) /
+          nextPanDistance,
+      ),
+    );
+    onZoom(boundedZoom, nextPan);
+  };
 
   return (
     <div className="date-navigation">
       <p className="timeline-gesture-help" id={`${idPrefix}-date-axis-help`}>
-        Mouse wheel: zoom · Drag: pan · Keyboard: +/− and arrow keys
+        Mouse wheel: zoom at pointer · Drag: pan · Keyboard: +/− and arrow keys
       </p>
       <div
         className={`date-axis-viewport ${dragging ? "dragging" : ""}`}
@@ -116,15 +234,16 @@ function DateAxis({
         tabIndex={0}
         onWheel={(event) => {
           event.preventDefault();
-          onZoom(event.deltaY < 0 ? 1 : -1);
+          const bounds = event.currentTarget.getBoundingClientRect();
+          updateZoom(event.deltaY < 0 ? 1 : -1, event.clientX - bounds.left);
         }}
         onKeyDown={(event) => {
           if (event.key === "+" || event.key === "=") {
             event.preventDefault();
-            onZoom(1);
+            updateZoom(1, viewportWidth / 2);
           } else if (event.key === "-") {
             event.preventDefault();
-            onZoom(-1);
+            updateZoom(-1, viewportWidth / 2);
           } else if (event.key === "ArrowLeft") {
             event.preventDefault();
             onPan(-0.1);
@@ -157,93 +276,61 @@ function DateAxis({
       >
         <div
           className="date-axis"
+          data-axis-start={axisStart}
+          data-pan-pixels={panPixels}
+          data-pixels-per-year={pixelsPerYear}
           style={{
+            minHeight: `${axisHeight}rem`,
             width: `${width}px`,
             transform: `translateX(${progress.timelinePan * -panDistance}px)`,
           }}
         >
+          <div className="date-axis-line" aria-hidden="true" />
+          {ticks.map((tick) => (
+            <div
+              className="date-axis-tick"
+              key={`${granularity}-${tick.coordinate}`}
+              style={{
+                left: `${horizontalPadding + (tick.coordinate - axisStart) * pixelsPerYear}px`,
+              }}
+            >
+              <span className="date-axis-tick-mark" />
+              <span className="date-axis-tick-label">{tick.label}</span>
+            </div>
+          ))}
           {[...byPosition.entries()].map(([coordinate, dates]) => {
             const position =
-              linearYearOffset(dates[0]!, firstDate) *
-              baseScale *
-              progress.timelineZoom;
-            const multipleStates = dates.length > 1;
-            const positionLabel = formatNarrativeDate(dates[0]!);
+              horizontalPadding + (coordinate - axisStart) * pixelsPerYear;
             const clusterKey = String(coordinate);
-            const expanded = expandedYear === clusterKey;
-            const selected = dates.some(
-              (date) => date === progress.displayDate,
-            );
-            const choiceListId = `${idPrefix}-story-date-${clusterKey.replace(".", "-")}-choices`;
             return (
               <div
-                className="year-cluster"
+                className="date-event-cluster"
                 key={clusterKey}
                 style={{ left: `${position}px` }}
                 data-year-position={position}
               >
-                <button
-                  className={`year-marker ${selected ? "selected" : ""}`}
-                  aria-label={
-                    multipleStates
-                      ? `${positionLabel}, ${dates.length} story states`
-                      : positionLabel
-                  }
-                  aria-pressed={selected}
-                  aria-expanded={multipleStates ? expanded : undefined}
-                  aria-controls={multipleStates ? choiceListId : undefined}
-                  onPointerDown={(event) => event.stopPropagation()}
-                  onClick={() => {
-                    if (multipleStates) {
-                      setExpandedYear(expanded ? null : clusterKey);
-                    } else {
-                      onDate(dates[0]!);
-                    }
-                  }}
-                >
-                  <span className="year-value">{positionLabel}</span>
-                  {multipleStates && (
-                    <span className="year-state-count">
-                      {dates.length} states
-                    </span>
-                  )}
-                </button>
-                {multipleStates && expanded && (
-                  <ul
-                    id={choiceListId}
-                    className="year-state-choices"
-                    aria-label={`${positionLabel} story states`}
-                  >
-                    {dates.map((date, index) => {
-                      const sourceChapters =
-                        meaningfulDateSources.get(date) ?? [];
-                      const sourceContext =
-                        sourceChapters.length === 1
-                          ? `revealed in Chapter ${sourceChapters[0]}`
-                          : sourceChapters.length > 1
-                            ? `revealed in Chapters ${sourceChapters.join(", ")}`
-                            : "reader-visible source";
-                      const choiceLabel = `Story state ${index + 1} of ${dates.length} · ${formatNarrativeDate(date)} · ${sourceContext}`;
-                      return (
-                        <li key={date}>
-                          <button
-                            className={
-                              date === progress.displayDate ? "selected" : ""
-                            }
-                            aria-pressed={date === progress.displayDate}
-                            onPointerDown={(event) => event.stopPropagation()}
-                            onClick={() => {
-                              onDate(date);
-                              setExpandedYear(null);
-                            }}
-                          >
-                            {choiceLabel}
-                          </button>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                )}
+                {dates.map((date, index) => {
+                  const sourceChapters = meaningfulDateSources.get(date) ?? [];
+                  const sourceContext =
+                    sourceChapters.length === 1
+                      ? `revealed in Chapter ${sourceChapters[0]}`
+                      : sourceChapters.length > 1
+                        ? `revealed in Chapters ${sourceChapters.join(", ")}`
+                        : "reader-visible source";
+                  return (
+                    <button
+                      className={`date-event-dot ${date === progress.displayDate ? "selected" : ""}`}
+                      key={date}
+                      style={{
+                        bottom: `${axisLineBottom - eventDotDiameter / 2 + index * eventDotStep}rem`,
+                      }}
+                      aria-label={`Story state ${index + 1} of ${dates.length} · ${formatNarrativeDate(date)} · ${sourceContext}`}
+                      aria-pressed={date === progress.displayDate}
+                      onPointerDown={(event) => event.stopPropagation()}
+                      onClick={() => onDate(date, true)}
+                    />
+                  );
+                })}
               </div>
             );
           })}
