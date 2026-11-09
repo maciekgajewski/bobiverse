@@ -35,7 +35,7 @@ application architecture, narrative data, or accepted ADR behavior.
   pip caching, and a fresh `.venv` matching existing data script paths.
 - Task, formatting, lint, typecheck, Vitest, Python/data validation, and build checks.
 - Chromium, Firefox, and WebKit matrix jobs, one worker and at most one retry;
-  retained failure reports and diagnostics for seven days.
+  retained failure reports and diagnostics for three days.
 - Read-only token, official major-version-pinned actions, standard free runners.
 - Directly affected merge and browser-testing documentation.
 - Four minimal, separately attributed prerequisite corrections already present in
@@ -57,7 +57,7 @@ application architecture, narrative data, or accepted ADR behavior.
    and an isolated Python environment; no local checkout-only dependency is needed.
 3. All three browser targets run independently (`fail-fast: false`) using one worker
    and one retry at most, with browser/system dependencies installed.
-4. Failed browser jobs upload uniquely named reports and test-results for seven days.
+4. Failed browser jobs upload uniquely named reports and test-results for three days.
 5. All runners are `ubuntu-latest`, token permissions are `contents: read`, checkout
    does not persist credentials, and no secrets or third-party actions are used.
 6. AGENTS.md requires the named CI workflow to be green before merge and browser
@@ -189,3 +189,37 @@ Checks tab and actual GitHub run statuses separately from local validation.
   user-authorisation context, then observe the real GitHub run. No hosted CI result
   or workflow-push permission result is claimed here. Task remains In progress.
 - Independent review and the Captain's workflow-browser checklist remain required.
+
+### 2026-11-09 — PR #2 review corrections (local, not published)
+
+- Review at 9a7cf0f requested changes. Plan: reproduce the pip-vendored JS lint
+  failure, globally ignore the environment, isolate expressive-map viewports,
+  control dolly sampling cadence without weakening assertions, reduce artifact
+  retention, and rerun repository plus serial cross-browser checks before handing
+  new commits to the parent for publication. Do not rewrite the pushed history.
+- Hosted run 42707648067: Chromium timed out at differing valid hover/evaluate
+  operations; WebKit at differing Close/Browse actions. One 45-second test had
+  accumulated all three viewport workflows. Each viewport is now an independent
+  test with the same 45-second limit and every existing assertion retained.
+- WebKit's observed entry maximumStepFraction was 0.693622 and 0.461513 versus
+  0.45. CameraController interpolates from performance.now() over 300–850 ms;
+  a wall-clock requestAnimationFrame observer conflated sparse software-rendered
+  samples with discontinuous interpolation. The dolly test now pumps every 16 ms
+  animation frame using Playwright clock.runFor, never fastForward. Existing 0.45
+  step and 1e-7 direction bounds, 4-second settlement, exact saved/restored poses,
+  resize and mid-exit interaction guard remain; no application change or new retry.
+  The clock is installed before navigation and resumes before reset/resize/orbit.
+  This is a correctness test, not a replacement for ADR-0019 benchmarks or manual
+  real-GPU smoothness acceptance. No numeric threshold has been relaxed.
+- Reproduced all six hosted no-undef errors with Python 3.14 venv and pip 26.2.2
+  (the version recorded by the hosted job). Piotr's bundled pip 25.1.1 lacks that
+  vendored JS, explaining its false-green local lint. Added .venv/** to ESLint's
+  global ignores; npm run lint now passes with the offending file still present.
+- Upload already used if: failure(); retained it, reduced retention-days from 7
+  to 3, and clarified storage quotas in AGENTS.md/browser guidance and PR draft.
+- Read hosted job logs through the GitHub connector and public run metadata.
+  The public artifact archive endpoint returned HTTP 401; no authenticated
+  artifact-download tool is available. Hosted trace contents are NOT claimed as
+  inspected. Local reproduction evidence and validation results follow below.
+- Another worker's Vite occupied 5173 on the first focused-run attempt; the run
+  stopped before starting tests. Did not kill or reuse that worker's server.
