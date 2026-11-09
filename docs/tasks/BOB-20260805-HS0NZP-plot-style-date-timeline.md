@@ -118,8 +118,11 @@ python3 scripts/tasks.py check
 npm run format:check
 npm run lint
 npm run typecheck
-npm run test -- --run tests/component/TimelineDock.test.tsx tests/component/App.test.tsx tests/unit/narrative-progress.test.ts
-npm run test:e2e -- --grep "Date mode|timeline"
+npm run test
+npm run data:test
+npm run data:validate
+npm run build
+npm run test:e2e -- --workers=1
 git diff --check
 ```
 
@@ -161,3 +164,43 @@ mode` (also fails on `3c818b9`): `mouse.click(screenPoint(...))` only hovers
   dismisses on object selection; spoiler ceiling unchanged).
 - Status remains **In progress** until the Captain accepts the visual result in a
   supported browser (acceptance criterion 9).
+
+### 2026-11-09 (PR review)
+
+- Completed the interrupted review patch without rewriting the pushed `29af45a`
+  history.
+- B1: activating a Date-mode dot opens the compact inspector automatically; the
+  Inspect selection command is also available for standalone Date context when no
+  object is selected. Closing returns focus to that command and it reopens the
+  same context. Component and 720 × 700 e2e regressions cover the full flow.
+- B2: map `onDeselect` clears `dateContext` together with object selection/history.
+  Component coverage starts with a real non-empty relationship path; empty-map
+  e2e coverage verifies dismissal through the canvas.
+- Strengthened Date-context coverage with exact `2016` / `24 June 2133` dates and
+  source chapters, preserved non-empty Back/Forward history (including a forward
+  branch), unchanged knowledge/progress, reload while context is active, and
+  Date-mode exit/re-entry at both different and identical dates.
+- Qualified the system-mode `screenPoint` comment: a projected canonical system
+  coordinate is not a guaranteed component hit target. Separate Sol coverage uses
+  a real mouse click on the canvas, not a dispatched DOM caption event.
+- Documented the Date-context lifecycle and compact standalone reopening in
+  `technical-design.md` and `visual-testing.md`; expanded this task's validation
+  commands and the local PR-body manual browser checklist.
+- Status remains **In progress**, pending Captain visual acceptance and independent
+  re-review of these fixes.
+- Final local validation (Node 22.23.1 / npm 10.9.8): task check (54 files),
+  format check, lint, typecheck, Vitest (239 tests / 29 files), Python data tests
+  (78), data validation (271 systems), production build, and `git diff --check`
+  all passed. Full Playwright passed 87/87 (29 each in Chromium, Firefox, WebKit)
+  with `--workers=1` and zero local retries. Port 5173 was free before each run;
+  no other checkout's server was reused or killed.
+- Regression proof: the compact standalone-open and map-deselect component tests
+  fail against `29af45a`'s `App.tsx` and pass with the fixes. The production map
+  component is preserved outside the targeted deselect harness.
+- Initial canvas-target experiments failed because a DOM caption covered Sol's
+  marker. The final test zooms via real OrbitControls before asserting the target
+  is the canvas and issuing a real mouse click. Failure artifacts and validation
+  logs are retained outside git in `~/pr1-review-validation/`.
+- Prepared the local PR body in `~/src/bobiverse-pr1-body.md` (also copied to the
+  executor box at `/workspace/pr1-body.md`), including B1/B2 manual steps. Review
+  fixes are committed locally only; the owner will push. No GitHub changes made.
