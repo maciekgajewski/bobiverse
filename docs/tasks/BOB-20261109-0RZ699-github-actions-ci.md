@@ -165,3 +165,27 @@ Checks tab and actual GitHub run statuses separately from local validation.
   browser repair selects astronomy-only Alpha Centauri through the object browser,
   asserts inspector selection, then retains the map-label assertion. The snapshot
   refresh matches the already-authored zero-state/ADR-0025 contract.
+
+- Corrected sequence: all requested checks pass after a second npm ci and pinned
+  Python requirements install: 55 task files, formatting, lint, typecheck, 235/235
+  Vitest tests across 29 files, 78/78 Python tests, runtime validation of 271 systems
+  and six source catalogues, and production build. Narrative validation covers zero
+  state and 39 chapter source files. YAML parsing, actionlint 1.7.12, workflow-policy
+  assertions, and git diff --check pass. Build emits its existing large-chunk warning.
+- Local browser verification uses preinstalled system libraries (no sudo) and
+  Playwright's cached browser installations. The workflow performs --with-deps on
+  clean GitHub runners and verifies Xvfb/xauth separately.
+
+- Full corrected browser run: Chromium 26/26 (3.2 minutes), Firefox 26/26
+  (2.2 minutes), WebKit 26/26 (3.0 minutes): 78/78 pass with CI=true, one worker,
+  one allowed retry, and no retries/flakes observed. The CLI override deliberately
+  caps the existing config's two CI retries without changing that shared config.
+- Confirmed PR #1's main checkout remains on its original branch/head 29af45a;
+  the chapters worktree and read-only owner/project/source-text directories were
+  not modified or read. Only this new worktree's tracked corpus is used.
+- Publication and actual hosted CI observation are still outstanding: this executor
+  has only relayed authorisation for external writes, so no branch push or PR
+  creation was attempted. Parent/manager must handle publication under its direct
+  user-authorisation context, then observe the real GitHub run. No hosted CI result
+  or workflow-push permission result is claimed here. Task remains In progress.
+- Independent review and the Captain's workflow-browser checklist remain required.
