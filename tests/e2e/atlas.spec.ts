@@ -206,11 +206,18 @@ test("Solar System enters and exits the fixed system mode", async ({
   await expect(
     inspector.getByRole("button", { name: "Enter system" }),
   ).toBeVisible();
-  const alphaCentauri = await page.evaluate(() =>
-    window.__bob034MapPerformance!.screenPoint("stellar-system-005413"),
-  );
-  await page.mouse.click(alphaCentauri.x, alphaCentauri.y);
-  await page.mouse.move(1, 1);
+  // screenPoint mouse clicks hover astronomy-only stars but do not select them
+  // (label vanishes after mouse.move). Use the object-browser path, same as the
+  // Sirius coverage, to prove the map/inspector respond after system-mode exit.
+  // Pre-existing on 3c818b9; not a Date-timeline regression.
+  const search = page.getByRole("searchbox", {
+    name: "Search visible objects",
+  });
+  await search.fill("alpha centauri");
+  await page.getByRole("button", { name: /^Alpha Centauri/ }).click();
+  await expect(
+    inspector.getByRole("heading", { name: "Alpha Centauri" }),
+  ).toBeVisible();
   await expect(
     page
       .locator(".narrative-map-label")

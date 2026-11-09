@@ -89,7 +89,8 @@ function DateContextDetails({
           <ul className="date-context-activity">
             {activity.map((item) => (
               <li key={`${item.entity_id}-${item.source_chapter}`}>
-                {entities.get(item.entity_id)?.name ?? item.entity_id}
+                {stringValue(entities.get(item.entity_id)?.name) ??
+                  item.entity_id}
               </li>
             ))}
           </ul>

@@ -21,6 +21,8 @@ remains the Captain's responsibility.
 - `../technical-design.md`, Sections 5.2, 5.3, and 7
 - `../implementation-plan.md`, Phase 1 verification foundation
 - `../visual-testing.md`
+- `../adrs/0025-spoiler-projected-location-status-and-system-markers.md` (baseline
+  snapshot prerequisite only)
 - `../tasks/README.md`
 
 No new ADR: this automates the existing verification contract without changing
@@ -36,6 +38,9 @@ application architecture, narrative data, or accepted ADR behavior.
   retained failure reports and diagnostics for seven days.
 - Read-only token, official major-version-pinned actions, standard free runners.
 - Directly affected merge and browser-testing documentation.
+- Four minimal, separately attributed prerequisite corrections already present in
+  PR #1: two build type fixes, the justified Earth snapshot refresh, and the existing
+  astronomy-only selection test repair. PR #1 itself remains unchanged.
 
 ## Out of scope
 
@@ -100,8 +105,9 @@ Checks tab and actual GitHub run statuses separately from local validation.
 ## Known risks and decisions
 
 - Captain authorised via the manager, 2026-11-09.
-- Master initially contains known WIP failures separately fixed in PR #1. Do not
-  alter its head; record baseline failures instead of presenting CI as green.
+- Master initially contains known WIP failures separately fixed in PR #1. Preserve
+  its head; carry only the four prerequisite repairs in this independent CI branch
+  and distinguish red baseline results from repaired results.
 - Parallel local runs previously flaked on WebKit dolly-step fraction and Chromium
   expressive-map timeout; both passed serially. Single-worker jobs and one retry
   limit contention without hiding repeatedly failing behavior.
@@ -148,3 +154,14 @@ Checks tab and actual GitHub run statuses separately from local validation.
   the CI task independently green without changing PR #1, carry its two type
   corrections, justified snapshot refresh, and astronomy-only selection-test repair
   into this branch in a separate, explicitly attributed prerequisite commit.
+
+- Baseline Chromium: 25/26 pass in 3.4 minutes; the known Alpha Centauri label test
+  fails both initially and on its sole retry. Firefox reproduced the same failure
+  before the baseline run was deliberately interrupted; WebKit baseline not run.
+  Stopped only this task's own runner/Playwright processes, retaining Chromium
+  reports and interrupted Firefox evidence outside the worktree.
+- Applied the exact four-file prerequisite diff from PR #1 head 29af45a onto
+  f86294d. No new behavioral interpretation or weakened assertions; the existing
+  browser repair selects astronomy-only Alpha Centauri through the object browser,
+  asserts inspector selection, then retains the map-label assertion. The snapshot
+  refresh matches the already-authored zero-state/ADR-0025 contract.
