@@ -108,7 +108,8 @@ schemas, contracts, tooling, or includes broader editorial remediation.
 - The GitHub Actions `CI` workflow (`.github/workflows/ci.yml`) must be green before
   merge: Repository checks and all three Playwright browser jobs are required.
   Upload browser diagnostics only on failure, with a three-day retention limit;
-  artifact storage is quota-limited even when public-repository runner compute is\n  free.
+  artifact storage is quota-limited even when public-repository runner compute is
+  free.
 - A task is complete only when its acceptance criteria and documented validation
   pass. Record deviations rather than silently reducing scope.
 

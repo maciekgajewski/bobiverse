@@ -223,3 +223,40 @@ Checks tab and actual GitHub run statuses separately from local validation.
   inspected. Local reproduction evidence and validation results follow below.
 - Another worker's Vite occupied 5173 on the first focused-run attempt; the run
   stopped before starting tests. Did not kill or reuse that worker's server.
+
+- Corrected repository validation: 55 task files; format:check; lint with pip
+  26.2.2 and emscripten_fetch_worker.js still installed; typecheck; 235/235 Vitest
+  tests in 29 files; 78/78 Python tests; data validation (271 systems/six pinned
+  sources); production build (zero state/39 chapters); actionlint 1.7.12; policy
+  assertions and git diff --check all pass. Existing Three.js duplicate-import
+  and large-chunk warnings remain, not new failures.
+- Repeated focused test run: CI=1 npm run test:e2e -- --workers=1 --retries=0
+  --grep "system-mode dollies|expressive map states" --repeat-each=2: 24/24 pass
+  (eight per browser, 3.7 minutes), zero retries. Full CI=1 npm run test:e2e --
+  --workers=1 --retries=0: 84/84 pass (28 each Chromium/Firefox/WebKit, 8.4 minutes).
+- Additional controlled reproduction uses an external scratch copy of the exact
+  old/new tests, CI=1, Xvfb, Chromium forced --use-gl=angle --use-angle=swiftshader
+  --enable-unsafe-swiftshader, LIBGL_ALWAYS_SOFTWARE=1, CDP CPU throttling rate 4,
+  one worker, zero retries and trace=on. Renderer confirms ANGLE SwiftShader.
+  Baseline 9a7cf0f fails both cases: expressive-map exhausts 45 seconds during
+  tablet Close; dolly races past the mid-exit interaction probe (not a reproduction
+  of the exact hosted WebKit 0.693622 metric). Corrected tests pass 4/4: dolly
+  26.4s, desktop 26.4s, tablet 31.7s, phone 29.3s. No threshold or assertion change
+  was needed; the controlled entry/exit step fractions are 0.038705/0.037287,
+  direction error 2.22e-16. The same four-fold slowdown reproduces the old timing
+  problems while the corrected test contracts pass without retries.
+- Inspected local baseline trace events: desktop navigation consumes about 9.6s,
+  tablet navigation about 7.2s, desktop workflow about 25.7s before moving to
+  tablet; the cumulative deadline expires at an otherwise actionable Close.
+  Dolly trace records the delayed interaction probe finding transition inactive.
+  Scratch reports, JSON, screenshots, video and traces are retained outside git in
+  /home/grok-developer/ci-review-scratch/ (full-report/, focused-report/,
+  slow-baseline-results/, slow-corrected-results/, checks.tsv, slow.log, and trace
+  summaries). The initial scratch harness lacked ESM metadata; corrected it before
+  the actual CPU-throttled comparisons, without changing repository config.
+- Updated the box PR-DRAFT.md body/checklist with findings, unchanged numeric
+  thresholds, real-GPU acceptance boundary, three-day retention and local results.
+  All changes are new local commits above pushed 9a7cf0f; publication and a fresh
+  hosted green run remain the parent/manager's next steps. No push, PR update,
+  GitHub comment, source-text access or changes to another worktree occurred.
+  Independent re-review and the Captain's manual checklist still block completion.
