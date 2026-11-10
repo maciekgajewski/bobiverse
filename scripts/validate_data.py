@@ -451,15 +451,13 @@ def validate_join_accounting(
         raise ValueError("Gaia enrichment chunk accounting is incomplete")
 
 
-def validate_acquisition_queries(
-    gcns_manifest: dict[str, Any],
-    cns5_manifest: dict[str, Any],
+def _expected_acquisition_queries(
     gcns_rows: list[dict[str, str]],
     cns5_rows: list[dict[str, str]],
     bootstraps: list[dict[str, str]],
     config: dict[str, Any],
     anchor_ids: list[str],
-) -> None:
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     radius_pc = config["context_radius_ly"] / LY_PER_PC
     non_sol = [anchor for anchor in anchor_ids if anchor != "sol"]
     bootstrap_by_anchor = {
@@ -490,12 +488,6 @@ def validate_acquisition_queries(
                 ),
             }
         )
-    if (
-        cns5_manifest.get("adql") != cns5_query()
-        or cns5_manifest.get("queries") != expected_cns5
-    ):
-        raise ValueError("CNS5 acquisition queries differ from the exact plan")
-
     sol_query = gcns_query(radius_pc)
     expected_gcns = [
         {"stage": "coverage", "anchor_id": "sol", "adql": sol_query}
@@ -553,11 +545,59 @@ def validate_acquisition_queries(
                 "adql": gcns_anchor_query(position, radius_pc),
             }
         )
-    if (
-        gcns_manifest.get("adql") != sol_query
-        or gcns_manifest.get("queries") != expected_gcns
-    ):
-        raise ValueError("GCNS acquisition queries differ from the exact plan")
+    return expected_gcns, expected_cns5
+
+
+def validate_acquisition_queries(
+    gcns_manifest: dict[str, Any],
+    cns5_manifest: dict[str, Any],
+    gcns_rows: list[dict[str, str]],
+    cns5_rows: list[dict[str, str]],
+    bootstraps: list[dict[str, str]],
+    config: dict[str, Any],
+    anchor_ids: list[str],
+) -> None:
+    expected_gcns, expected_cns5 = _expected_acquisition_queries(
+        gcns_rows, cns5_rows, bootstraps, config, anchor_ids
+    )
+    gcns_base_matches = gcns_manifest.get("adql") == expected_gcns[0]["adql"]
+    cns5_base_matches = cns5_manifest.get("adql") == expected_cns5[0]["adql"]
+    gcns_matches = gcns_base_matches and gcns_manifest.get("queries") == expected_gcns
+    cns5_matches = cns5_base_matches and cns5_manifest.get("queries") == expected_cns5
+    if gcns_matches and cns5_matches:
+        return
+
+    # Diagnose staging only if BOTH pinned plans exactly match a smaller anchor set.
+    # Missing coverage alone is not enough: changed query bytes, bootstrap accounting,
+    # ordering, unknown anchors, or any other tampering must retain the exact-plan error.
+    queries = gcns_manifest.get("queries")
+    if gcns_base_matches and cns5_base_matches and isinstance(queries, list):
+        covered = {
+            query.get("anchor_id")
+            for query in queries
+            if isinstance(query, dict)
+            and query.get("stage") == "coverage"
+            and isinstance(query.get("anchor_id"), str)
+        }
+        uncovered = sorted(set(anchor_ids) - covered)
+        if uncovered and "sol" not in uncovered:
+            prior_gcns, prior_cns5 = _expected_acquisition_queries(
+                gcns_rows, cns5_rows, bootstraps, config,
+                [anchor for anchor in anchor_ids if anchor in covered],
+            )
+            if queries == prior_gcns and cns5_manifest.get("queries") == prior_cns5:
+                raise ValueError(
+                    "Narrative anchors require a GCNS acquisition plan not covered "
+                    "by the pinned sources: " + ", ".join(uncovered) + ". "
+                    "Run the astronomy refresh in an isolated staging checkout, "
+                    "then independent snapshot acceptance and runtime generation "
+                    "before promotion; see docs/data/astronomy-pipeline.md "
+                    "(Chapter-driven staging order)."
+                )
+
+    if not cns5_matches:
+        raise ValueError("CNS5 acquisition queries differ from the exact plan")
+    raise ValueError("GCNS acquisition queries differ from the exact plan")
 
 
 def validate_source_union(
