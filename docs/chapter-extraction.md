@@ -333,7 +333,7 @@ make refresh see it. Instead:
    exact ordered candidate chain, at its intended canonical paths only inside that
    isolated checkout.
 3. Run narrative validation there, followed by the normal networked astronomy
-   refresh and deterministic generation commands.
+   refresh. Do not generate runtime astronomy from a changed candidate snapshot yet.
 4. Inspect the complete astronomy diff. Permit only required bootstrap and coverage
    acquisition, query accounting, checksums, and deterministic consequences.
    Unrelated substantive catalogue, identity, naming, membership, adopted-source,
@@ -352,11 +352,15 @@ make refresh see it. Instead:
    Only then may the orchestrator update the checksum and transparent agent-review
    attribution in `system-review.json`; the reviewer never edits the metadata it
    judged. If the checksum is unchanged, record that fact without a redundant review.
-7. After any required snapshot acceptance, generate runtime astronomy and run narrative
-   and astronomy validation against the complete staged candidate chain.
-8. Present the exact combined chapter-and-astronomy diff for approval. Apply no part
+7. After any required snapshot acceptance, generate runtime astronomy. A pre-refresh
+   runtime file is expected to carry the previously accepted provenance and is not
+   part of the candidate-snapshot review. Generation must propagate the current WDS
+   manifest candidate count and checksum into runtime metadata and verify the written
+   artifact before the combined-package review.
+8. Run narrative and astronomy validation against the complete staged candidate chain.
+9. Present the exact combined chapter-and-astronomy diff for approval. Apply no part
    of it to the real worktree until the Captain approves that exact combined result.
-9. Apply the approved result atomically, revalidate the canonical corpus, and append
+10. Apply the approved result atomically, revalidate the canonical corpus, and append
    the promotion-log rows. Never copy the disposable checkout, source text, ledgers,
    evidence excerpts, or unrelated refresh drift into the repository.
 

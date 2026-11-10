@@ -119,3 +119,66 @@ starts with chapter `1.3` and does not duplicate those records.
 | 2026-08-04   | `1.37`  | `707998713b54c396b54fba68ed4bdc751e2fddb04f3da44dd62e83d373178f22` | Passed     | Removed the redundant opening date and formulaic default-location lead from the synopsis; every remaining reviewed summary fact and all structured chapter data remained unchanged. |
 | 2026-08-04   | `1.38`  | `9619943c20d94a7da12151c5c4497f2c9c0d48570443b0036bebefea37fb5635` | Passed     | Removed the redundant opening date and formulaic default-location lead from the synopsis; every remaining reviewed summary fact and all structured chapter data remained unchanged. |
 | 2026-08-04   | `1.39`  | `051fc6b864835e489d2e21f32c862ae1d8cfbd723206260bd4a0bae20037d428` | Passed     | Removed the redundant opening date and formulaic default-location lead from the synopsis; every remaining reviewed summary fact and all structured chapter data remained unchanged. |
+| 2026-08-06   | `1.40`  | `3b22a788f1419154182f4df7b2d351ad9814db1a389b6b823c0709a7d3d56dfb` | Passed     | Promoted the approved April 2165 candidate; introduced mapped Epsilon Indi and its surveyed Jovian, Henry Roberts, Heaven-8, the Australian probe, and Contessa; updated Linus and VR; completed supplemental mentions; and applied the independently accepted deterministic Epsilon Indi astronomy acquisition. |
+| 2026-08-06   | `1.41`  | `a58d7de9fa40b476e3dbc9bedd84df3f7fa3ed7a08c09a270104ab8e3f0e50e0` | Passed     | Promoted the approved May 2162 candidate; introduced Ambassador Gerrold; updated SCUT, Riker, Bill, and Earth; and recorded six complete supplemental mentions. |
+| 2026-08-06   | `1.42`  | `14d087b5b08d335c57e7ba34abe15136a0e5756e34decef6df90757b01fb9ffd` | Passed     | Promoted the approved April 2162 candidate with standard whitespace formatting; introduced explicitly unmapped Ragnarök; updated EE-2, SURGE, Garfield, and VR; recorded three complete supplemental mentions; and deliberately did not equate Ragnarök with EE-2. |
+| 2026-11-10 | `1.42` | `29da2c7f6a4bb65b88abd0947658234a0fb841e230d2f934870f0246685aa0e4` | Narrative/projection and astronomy passed locally | Supersedes the earlier `14d087b5` candidate and editorial decisions with the explicitly approved Extractor final merge; see the provenance and validation qualification below. |
+
+## Chapter 1.42 replacement provenance (2026-11-10)
+
+Chapter 1.42 was produced by a **NON-CONFORMING** own-model two-pass extraction
+(not the documented `gpt-5.6-terra` Codex model) and then merged/reconciled.
+The Original Bob mapping (`/mentions/3`, `character:robert-johansson`) was omitted
+per Maciej; otherwise the final candidate's JSON values are unchanged from the
+reviewed merge. Maciej approved: **"Promote the Extractor's merged 1.42."** and
+**"No, leave the Original Bob mapping out."** This is a one-off approval, not a
+change to the normal extraction contract.
+
+The Bobiverse Extractor's final source is
+`/home/grok-developer/extraction-scratch/1.42-verify/final/candidate.json`.
+It matches `~/bobiverse-approved-chapters`, commit
+`b6ff548974ecbb63d7a5388d5200bd92e403d173`, annotated tag
+`chapter-1.42-approved`, path `chapters/1.42/candidate.json`, byte-for-byte.
+The approved file SHA-256 is
+`8980ef57e99dbfa6b7c5f04db32fec7637cc5c88cc8d11a89fb45e1de3f7039f`.
+The installed `data/narrative/chapters/1/42.json` received only standard Prettier
+whitespace changes; its committed-file SHA-256 is
+`29da2c7f6a4bb65b88abd0947658234a0fb841e230d2f934870f0246685aa0e4`.
+JSON-value identity was checked explicitly.
+
+This supersedes the earlier re-approval of the old file SHA-256
+`14d087b5b08d335c57e7ba34abe15136a0e5756e34decef6df90757b01fb9ffd`;
+`cb3b1aff0260bca40ee3b498d6cac36dd1fc2d9629d5c05468209d02c5d79db1`
+is that old file's indent-2 reformat, not a normalized/value checksum.
+The historical row's unmapped Ragnarök editorial decision is superseded by the
+approved final merge's update to `location:ee-2`; no further editorial inference
+was made during installation.
+
+Narrative validation and projections for `1.40`, `1.41`, and `1.42` passed.
+The pre-existing prior-corpus astronomy diagnostic is
+`ValueError: GCNS acquisition queries differ from the exact plan`
+(`scripts/validate_data.py:560`); it was not bypassed. Fresh validation narrows its
+context: clean master `8c108a0` with its canonical corpus passes (271 systems),
+and the refreshed chapter branch passes with both the full corpus and the prior
+corpus through `1.41` (277 systems). Pairing master astronomy inputs with that
+staged prior-`1.41` corpus reproduces the exact diagnostic. The follow-up must
+reconcile the source/root contexts and fix any remaining exact-plan defect, not
+suppress the guard or describe coherent canonical master as failing today.
+The normal validation/build gate remains intact; no preflight exception is needed
+for this refreshed local package. Historical Passed rows do not certify a
+mismatched staging context. Publication, independent review, hosted CI, and manual
+browser acceptance remain outstanding.
+
+Maciej: **"Wait for the extraction docs and astronomy check fixes before 1.43."**
+
+
+### Local validation of the refreshed package (2026-11-10)
+
+Node 22.23.1 / npm 10.9.8: task check (56 files), format check, lint, typecheck,
+240 Vitest tests, 79 Python data tests, full narrative validation, projections for
+1.40–1.42, astronomy validation (277 systems), normal gated production build, and
+diff hygiene all passed. Full Playwright passed 93/93 with `CI=1`, one worker,
+and zero retries. Its temporary external config used only loopback port 5174;
+port 5173 and PID 2556940 remained untouched. Logs and the HTML report are retained
+outside Git in `~/bobiverse-pr3-backup/`. Publication, fresh independent PR review,
+hosted CI, and Maciej's manual visual acceptance are still outstanding.

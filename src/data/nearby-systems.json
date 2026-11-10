@@ -100,9 +100,21 @@
         "radius_ly": 20.0,
         "source_record_count": 103,
         "system_count": 85
+      },
+      {
+        "anchor_id": "stellar-system-005631",
+        "anchor_position_pc": {
+          "xg": 2.2245862,
+          "yg": -0.9827543,
+          "zg": -2.7062633
+        },
+        "gcns_boundary_pc": 100.0,
+        "radius_ly": 20.0,
+        "source_record_count": 95,
+        "system_count": 79
       }
     ],
-    "generated_at": "2026-08-04T14:21:16+00:00",
+    "generated_at": "2026-08-05T19:24:05+00:00",
     "render_mapping": "scene.x=Xg; scene.y=Zg; scene.z=-Yg",
     "sources": {
       "c20pc": {
@@ -131,13 +143,13 @@
       },
       "gcns": {
         "acknowledgement": "Gaia Catalogue of Nearby Stars data from GAVO DC.",
-        "normalised_sha256": "1bcea416563b05d8a7be55e42a9cf4b2ea05500e4ceb0008cc41332bfcf6a298",
-        "row_count": 421
+        "normalised_sha256": "e46789c524687e9182632339cdfc26c8ed4de8ec44ea300af84d1a442fc294f5",
+        "row_count": 431
       },
       "wds": {
         "acknowledgement": "This research has made use of the Washington Double Star Catalog maintained at the U.S. Naval Observatory.",
-        "candidate_row_count": 3428,
-        "candidate_sha256": "d309dfd2c6814ac19d2bb070d66dbff84cbaaa096bcd6445b8cdaef10f7b68f7",
+        "candidate_row_count": 3430,
+        "candidate_sha256": "f274a6538d47eb15d1526e19f1572d3d0e305a70276b728ddda611c892210ecf",
         "row_count": 157917,
         "snapshot_sha256": "6dddff2bf2f910aa8259634f0357045925fcaf98c48a0d00f126227935c4ffe8"
       }
@@ -15150,6 +15162,113 @@
       }
     },
     {
+      "alternates": ["CNS5 5811", "Gaia DR3 2640434056928150400"],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": null,
+            "ruwe": 1.1472371,
+            "visibility_periods_used": null
+          },
+          "c20pc_enrichment": null,
+          "cns5_id": "5811",
+          "designation": "GJ 1286",
+          "gaia_enrichment": {
+            "bp_rp": 3.7062197,
+            "effective_temperature_k": 2863.0981,
+            "logg_gspphot": 5.0978,
+            "luminosity_solar": 0.0014102381,
+            "non_single_star": "0",
+            "phot_bp_mean_mag": 14.952096,
+            "phot_g_mean_mag": 12.623748,
+            "phot_rp_mean_mag": 11.245876,
+            "phot_variable_flag": "NOT_AVAILABLE",
+            "radial_velocity_error_km_s": 0.78175205,
+            "radial_velocity_km_s": -40.813717,
+            "radius_solar": 0.15220806,
+            "spectral_type": "M",
+            "star_class_probability": 0.999998,
+            "variability_class": null,
+            "variability_class_score": null
+          },
+          "gaia_source_id": "2640434056928150400",
+          "icrs": {
+            "dec_deg": -2.3927993943668993,
+            "epoch_year": null,
+            "parallax_error_mas": 0.04413923,
+            "parallax_mas": 139.3389,
+            "ra_deg": 353.7970694377148
+          },
+          "id": "stellar-component-002482",
+          "identifiers": {
+            "bayer_designation": null,
+            "c20pc_source_key": null,
+            "cns5_component_id": "--",
+            "cns5_id": "5811",
+            "cns6_system_id": "137",
+            "flamsteed_designation": null,
+            "gaia_dr3_source_id": "2640434056928150400",
+            "gcns_source_id": "2640434056928150400",
+            "gj_id": "1286",
+            "hd_id": null,
+            "hip_id": null,
+            "hr_id": null,
+            "published_name": null,
+            "twomass_id": null,
+            "wise_id": null
+          },
+          "object_class": null,
+          "photometry": {
+            "bp_rp": 3.7062197,
+            "g_magnitude": 12.623748
+          },
+          "provenance": {
+            "catalogues": ["GCNS", "CNS5", "Gaia DR3"],
+            "enrichment": "Gaia DR3 left join",
+            "position": "gcns median Bayesian Cartesian geometry"
+          },
+          "source_identities": ["cns5:5811", "gaia-dr3:2640434056928150400"],
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 effective temperature; approximate fixed temperature bands",
+            "intensity": 1.0,
+            "marker_radius": 0.09,
+            "pick_radius": 0.09,
+            "source_facts": {
+              "bp_rp": 3.7062197,
+              "c20pc_effective_temperature_k": null,
+              "c20pc_spectral_type": null,
+              "effective_temperature_k": 2863.0981,
+              "object_class": null,
+              "spectral_type": "M",
+              "wds_spectral_type": null
+            }
+          }
+        }
+      ],
+      "distance_from_sol_pc": 7.176750745694,
+      "distance_uncertainty_pc": 0.0023164,
+      "id": "stellar-system-002043",
+      "name": "GJ 1286",
+      "position_pc": {
+        "xg": 0.43050602,
+        "yg": 3.6430895,
+        "zg": -6.1683316
+      },
+      "provenance": {
+        "adopted_component_id": "stellar-component-002482",
+        "catalogues": ["CNS5", "GCNS", "Gaia DR3"],
+        "review_version": "1.0.0",
+        "source_object_ids": ["cns5:5811", "gaia-dr3:2640434056928150400"],
+        "wds_designations": []
+      },
+      "render_position": {
+        "x": 0.43050602,
+        "y": -6.1683316,
+        "z": -3.6430895
+      }
+    },
+    {
       "alternates": [
         "CNS5 658",
         "CNS5 659",
@@ -15346,6 +15465,335 @@
         "x": -4.6739016,
         "y": -5.3379188,
         "z": -1.3928173
+      }
+    },
+    {
+      "alternates": ["CNS5 5522", "Gaia DR3 2595284016771502080"],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": null,
+            "ruwe": 1.1723644,
+            "visibility_periods_used": null
+          },
+          "c20pc_enrichment": null,
+          "cns5_id": "5522",
+          "designation": "GJ 4274",
+          "gaia_enrichment": {
+            "bp_rp": 3.3034801,
+            "effective_temperature_k": null,
+            "logg_gspphot": null,
+            "luminosity_solar": null,
+            "non_single_star": "0",
+            "phot_bp_mean_mag": 13.5313,
+            "phot_g_mean_mag": 11.550707,
+            "phot_rp_mean_mag": 10.227819,
+            "phot_variable_flag": "NOT_AVAILABLE",
+            "radial_velocity_error_km_s": 0.34539244,
+            "radial_velocity_km_s": -3.3060381,
+            "radius_solar": null,
+            "spectral_type": "M",
+            "star_class_probability": 0.9999804,
+            "variability_class": null,
+            "variability_class_score": null
+          },
+          "gaia_source_id": "2595284016771502080",
+          "icrs": {
+            "dec_deg": -17.610507570693272,
+            "epoch_year": null,
+            "parallax_error_mas": 0.048167944,
+            "parallax_mas": 138.228,
+            "ra_deg": 335.78059284429975
+          },
+          "id": "stellar-component-002435",
+          "identifiers": {
+            "bayer_designation": null,
+            "c20pc_source_key": null,
+            "cns5_component_id": "--",
+            "cns5_id": "5522",
+            "cns6_system_id": "140",
+            "flamsteed_designation": null,
+            "gaia_dr3_source_id": "2595284016771502080",
+            "gcns_source_id": "2595284016771502080",
+            "gj_id": "4274",
+            "hd_id": null,
+            "hip_id": null,
+            "hr_id": null,
+            "published_name": null,
+            "twomass_id": null,
+            "wise_id": null
+          },
+          "object_class": null,
+          "photometry": {
+            "bp_rp": 3.3034801,
+            "g_magnitude": 11.550707
+          },
+          "provenance": {
+            "catalogues": ["GCNS", "CNS5", "Gaia DR3"],
+            "enrichment": "Gaia DR3 left join",
+            "position": "gcns median Bayesian Cartesian geometry"
+          },
+          "source_identities": [
+            "cns5:5522",
+            "cns5:6648",
+            "cns5:6649",
+            "gaia-dr3:2595284016771502080"
+          ],
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 spectral classification; approximate class family",
+            "intensity": 1.0,
+            "marker_radius": 0.09,
+            "pick_radius": 0.09,
+            "source_facts": {
+              "bp_rp": 3.3034801,
+              "c20pc_effective_temperature_k": null,
+              "c20pc_spectral_type": null,
+              "effective_temperature_k": null,
+              "object_class": null,
+              "spectral_type": "M",
+              "wds_spectral_type": null
+            }
+          }
+        }
+      ],
+      "distance_from_sol_pc": 7.234615882321,
+      "distance_uncertainty_pc": 0.0025287,
+      "id": "stellar-system-005477",
+      "name": "GJ 4274",
+      "position_pc": {
+        "xg": 3.1846867,
+        "yg": 2.7306054,
+        "zg": -5.8941693
+      },
+      "provenance": {
+        "adopted_component_id": "stellar-component-002435",
+        "catalogues": ["CNS5", "GCNS", "Gaia DR3"],
+        "review_version": "1.0.0",
+        "source_object_ids": [
+          "cns5:5522",
+          "cns5:6648",
+          "cns5:6649",
+          "gaia-dr3:2595284016771502080"
+        ],
+        "wds_designations": []
+      },
+      "render_position": {
+        "x": 3.1846867,
+        "y": -5.8941693,
+        "z": -2.7306054
+      }
+    },
+    {
+      "alternates": [
+        "CNS5 4252",
+        "CNS5 4253",
+        "Gaia DR3 5975663354131618304",
+        "Gaia DR3 5975663422846187008",
+        "HIP 84709"
+      ],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": null,
+            "ruwe": 0.95609975,
+            "visibility_periods_used": null
+          },
+          "c20pc_enrichment": null,
+          "cns5_id": "4253",
+          "designation": "GJ 667",
+          "gaia_enrichment": {
+            "bp_rp": 2.2938309,
+            "effective_temperature_k": 3313.4404,
+            "logg_gspphot": 4.2748,
+            "luminosity_solar": 0.013898835,
+            "non_single_star": "0",
+            "phot_bp_mean_mag": 10.588366,
+            "phot_g_mean_mag": 9.386162,
+            "phot_rp_mean_mag": 8.294535,
+            "phot_variable_flag": "NOT_AVAILABLE",
+            "radial_velocity_error_km_s": 0.29869586,
+            "radial_velocity_km_s": 6.128468,
+            "radius_solar": 0.3577749,
+            "spectral_type": "M",
+            "star_class_probability": 1.0000273e-6,
+            "variability_class": null,
+            "variability_class_score": null
+          },
+          "gaia_source_id": "5975663354131618304",
+          "icrs": {
+            "dec_deg": -34.997795092684065,
+            "epoch_year": null,
+            "parallax_error_mas": 0.028331729,
+            "parallax_mas": 138.06627,
+            "ra_deg": 259.75125274377365
+          },
+          "id": "stellar-component-005408",
+          "identifiers": {
+            "bayer_designation": null,
+            "c20pc_source_key": null,
+            "cns5_component_id": "C",
+            "cns5_id": "4253",
+            "cns6_system_id": "125",
+            "flamsteed_designation": null,
+            "gaia_dr3_source_id": "5975663354131618304",
+            "gcns_source_id": "5975663354131618304",
+            "gj_id": "667",
+            "hd_id": null,
+            "hip_id": "84709",
+            "hr_id": null,
+            "published_name": null,
+            "twomass_id": null,
+            "wise_id": null
+          },
+          "object_class": null,
+          "photometry": {
+            "bp_rp": 2.2938309,
+            "g_magnitude": 9.386162
+          },
+          "provenance": {
+            "catalogues": ["GCNS", "CNS5", "Gaia DR3"],
+            "enrichment": "Gaia DR3 left join",
+            "position": "gcns median Bayesian Cartesian geometry"
+          },
+          "source_identities": [
+            "cns5:4253",
+            "cns5:6313",
+            "cns5:6314",
+            "cns5:6315",
+            "cns5:6316",
+            "cns5:6317",
+            "gaia-dr3:5975663354131618304"
+          ],
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 effective temperature; approximate fixed temperature bands",
+            "intensity": 1.0,
+            "marker_radius": 0.09,
+            "pick_radius": 0.09,
+            "source_facts": {
+              "bp_rp": 2.2938309,
+              "c20pc_effective_temperature_k": null,
+              "c20pc_spectral_type": null,
+              "effective_temperature_k": 3313.4404,
+              "object_class": null,
+              "spectral_type": "M",
+              "wds_spectral_type": null
+            }
+          }
+        },
+        {
+          "astrometry_quality": {
+            "parallax_over_error": null,
+            "ruwe": null,
+            "visibility_periods_used": null
+          },
+          "c20pc_enrichment": null,
+          "cns5_id": "4252",
+          "designation": "GJ 667",
+          "gaia_enrichment": {
+            "bp_rp": 1.1105585,
+            "effective_temperature_k": null,
+            "logg_gspphot": null,
+            "luminosity_solar": null,
+            "non_single_star": "0",
+            "phot_bp_mean_mag": 6.178592,
+            "phot_g_mean_mag": 6.7382493,
+            "phot_rp_mean_mag": 5.0680337,
+            "phot_variable_flag": "NOT_AVAILABLE",
+            "radial_velocity_error_km_s": null,
+            "radial_velocity_km_s": null,
+            "radius_solar": null,
+            "spectral_type": null,
+            "star_class_probability": 0.99981266,
+            "variability_class": null,
+            "variability_class_score": null
+          },
+          "gaia_source_id": "5975663422846187008",
+          "icrs": {
+            "dec_deg": -34.989574385589,
+            "epoch_year": 1991.25,
+            "parallax_error_mas": 0.028331589,
+            "parallax_mas": 138.10833165503735,
+            "ra_deg": 259.7348350358554
+          },
+          "id": "stellar-component-005409",
+          "identifiers": {
+            "bayer_designation": null,
+            "c20pc_source_key": null,
+            "cns5_component_id": "AB",
+            "cns5_id": "4252",
+            "cns6_system_id": "125",
+            "flamsteed_designation": null,
+            "gaia_dr3_source_id": "5975663422846187008",
+            "gcns_source_id": null,
+            "gj_id": "667",
+            "hd_id": null,
+            "hip_id": "84709",
+            "hr_id": null,
+            "published_name": null,
+            "twomass_id": null,
+            "wise_id": null
+          },
+          "object_class": null,
+          "photometry": {
+            "bp_rp": 1.1105585,
+            "g_magnitude": 6.7382493
+          },
+          "provenance": {
+            "catalogues": ["CNS5", "Gaia DR3"],
+            "enrichment": "Gaia DR3 left join",
+            "position": "CNS5 astrometry transformed by Astropy"
+          },
+          "source_identities": ["cns5:4252", "gaia-dr3:5975663422846187008"],
+          "visual": {
+            "color_family": "yellow",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "intensity": 1.0,
+            "marker_radius": 0.09,
+            "pick_radius": 0.09,
+            "source_facts": {
+              "bp_rp": 1.1105585,
+              "c20pc_effective_temperature_k": null,
+              "c20pc_spectral_type": null,
+              "effective_temperature_k": null,
+              "object_class": null,
+              "spectral_type": null,
+              "wds_spectral_type": null
+            }
+          }
+        }
+      ],
+      "distance_from_sol_pc": 7.240692780923,
+      "distance_uncertainty_pc": 0.001485358121,
+      "id": "stellar-system-005615",
+      "name": "GJ 667",
+      "position_pc": {
+        "xg": 7.165179750467,
+        "yg": -1.027317050361,
+        "zg": 0.180140970484
+      },
+      "provenance": {
+        "adopted_component_id": "stellar-component-005409",
+        "catalogues": ["CNS5", "GCNS", "Gaia DR3"],
+        "review_version": "1.0.0",
+        "source_object_ids": [
+          "cns5:4252",
+          "cns5:4253",
+          "cns5:6313",
+          "cns5:6314",
+          "cns5:6315",
+          "cns5:6316",
+          "cns5:6317",
+          "gaia-dr3:5975663354131618304",
+          "gaia-dr3:5975663422846187008"
+        ],
+        "wds_designations": []
+      },
+      "render_position": {
+        "x": 7.165179750467,
+        "y": 0.180140970484,
+        "z": 1.027317050361
       }
     },
     {
@@ -15686,6 +16134,195 @@
     },
     {
       "alternates": [
+        "24 Piscis Austrini",
+        "CNS5 5660",
+        "CNS5 5665",
+        "GJ 879",
+        "GJ 881",
+        "Gaia DR3 6604147121141267712",
+        "HIP 113283",
+        "HIP 113368"
+      ],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": null,
+            "ruwe": null,
+            "visibility_periods_used": null
+          },
+          "c20pc_enrichment": null,
+          "cns5_id": "5665",
+          "designation": "Alpha Piscis Austrini",
+          "gaia_enrichment": null,
+          "gaia_source_id": null,
+          "icrs": {
+            "dec_deg": -29.621836802955258,
+            "epoch_year": 1991.25,
+            "parallax_error_mas": 0.027468354,
+            "parallax_mas": 131.5740602311468,
+            "ra_deg": 344.4117729896118
+          },
+          "id": "stellar-component-000499",
+          "identifiers": {
+            "bayer_designation": "Alpha Piscis Austrini",
+            "c20pc_source_key": null,
+            "cns5_component_id": "A",
+            "cns5_id": "5665",
+            "cns6_system_id": "148",
+            "flamsteed_designation": "24 Piscis Austrini",
+            "gaia_dr3_source_id": null,
+            "gcns_source_id": null,
+            "gj_id": "881",
+            "hd_id": "216956",
+            "hip_id": "113368",
+            "hr_id": "8728",
+            "published_name": null,
+            "twomass_id": null,
+            "wise_id": null
+          },
+          "object_class": null,
+          "photometry": {
+            "bp_rp": null,
+            "g_magnitude": null
+          },
+          "provenance": {
+            "catalogues": ["CNS5", "VizieR IV/27A classical names"],
+            "enrichment": "exact HIP match to VizieR IV/27A",
+            "position": "CNS5 astrometry transformed by Astropy"
+          },
+          "source_identities": ["cns5:5665"],
+          "visual": {
+            "color_family": "neutral",
+            "derivation": "Gaia DR3 bp_rp fixed bands; neutral when unavailable",
+            "intensity": 1.0,
+            "marker_radius": 0.09,
+            "pick_radius": 0.09,
+            "source_facts": {
+              "bp_rp": null,
+              "c20pc_effective_temperature_k": null,
+              "c20pc_spectral_type": null,
+              "effective_temperature_k": null,
+              "object_class": null,
+              "spectral_type": null,
+              "wds_spectral_type": null
+            }
+          }
+        },
+        {
+          "astrometry_quality": {
+            "parallax_over_error": null,
+            "ruwe": 0.9246975,
+            "visibility_periods_used": null
+          },
+          "c20pc_enrichment": null,
+          "cns5_id": "5660",
+          "designation": "GJ 879",
+          "gaia_enrichment": {
+            "bp_rp": 1.3403125,
+            "effective_temperature_k": 4463.109,
+            "logg_gspphot": 4.5396,
+            "luminosity_solar": 0.19891936,
+            "non_single_star": "0",
+            "phot_bp_mean_mag": 6.6866508,
+            "phot_g_mean_mag": 6.0918646,
+            "phot_rp_mean_mag": 5.3463383,
+            "phot_variable_flag": "NOT_AVAILABLE",
+            "radial_velocity_error_km_s": 0.12388866,
+            "radial_velocity_km_s": 6.78536,
+            "radius_solar": 0.74598,
+            "spectral_type": "K",
+            "star_class_probability": 0.99648726,
+            "variability_class": null,
+            "variability_class_score": null
+          },
+          "gaia_source_id": "6604147121141267712",
+          "icrs": {
+            "dec_deg": -31.56626896213439,
+            "epoch_year": null,
+            "parallax_error_mas": 0.027515385,
+            "parallax_mas": 131.5525,
+            "ra_deg": 344.10194140173917
+          },
+          "id": "stellar-component-005988",
+          "identifiers": {
+            "bayer_designation": null,
+            "c20pc_source_key": null,
+            "cns5_component_id": "B",
+            "cns5_id": "5660",
+            "cns6_system_id": "148",
+            "flamsteed_designation": null,
+            "gaia_dr3_source_id": "6604147121141267712",
+            "gcns_source_id": "6604147121141267712",
+            "gj_id": "879",
+            "hd_id": null,
+            "hip_id": "113283",
+            "hr_id": null,
+            "published_name": null,
+            "twomass_id": null,
+            "wise_id": null
+          },
+          "object_class": null,
+          "photometry": {
+            "bp_rp": 1.3403125,
+            "g_magnitude": 6.0918646
+          },
+          "provenance": {
+            "catalogues": ["GCNS", "CNS5", "Gaia DR3"],
+            "enrichment": "Gaia DR3 left join",
+            "position": "gcns median Bayesian Cartesian geometry"
+          },
+          "source_identities": ["cns5:5660", "gaia-dr3:6604147121141267712"],
+          "visual": {
+            "color_family": "orange",
+            "derivation": "Gaia DR3 effective temperature; approximate fixed temperature bands",
+            "intensity": 1.0,
+            "marker_radius": 0.09,
+            "pick_radius": 0.09,
+            "source_facts": {
+              "bp_rp": 1.3403125,
+              "c20pc_effective_temperature_k": null,
+              "c20pc_spectral_type": null,
+              "effective_temperature_k": 4463.109,
+              "object_class": null,
+              "spectral_type": "K",
+              "wds_spectral_type": null
+            }
+          }
+        }
+      ],
+      "distance_from_sol_pc": 7.600282291534,
+      "distance_uncertainty_pc": 0.001586689991,
+      "id": "stellar-system-000498",
+      "name": "Alpha Piscis Austrini",
+      "position_pc": {
+        "xg": 3.019090553097,
+        "yg": 1.128133879697,
+        "zg": -6.883073230228
+      },
+      "provenance": {
+        "adopted_component_id": "stellar-component-000499",
+        "catalogues": [
+          "CNS5",
+          "GCNS",
+          "Gaia DR3",
+          "VizieR IV/27A classical names"
+        ],
+        "review_version": "1.0.0",
+        "source_object_ids": [
+          "cns5:5660",
+          "cns5:5665",
+          "gaia-dr3:6604147121141267712"
+        ],
+        "wds_designations": []
+      },
+      "render_position": {
+        "x": 3.019090553097,
+        "y": -6.883073230228,
+        "z": -1.128133879697
+      }
+    },
+    {
+      "alternates": [
         "CNS5 438",
         "GJ 68",
         "Gaia DR3 96331172942614528",
@@ -15911,6 +16548,113 @@
         "x": 4.564918,
         "y": -6.1389403,
         "z": -0.5150885
+      }
+    },
+    {
+      "alternates": ["CNS5 5623", "Gaia DR3 6623351805412369024"],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": null,
+            "ruwe": 1.2056623,
+            "visibility_periods_used": null
+          },
+          "c20pc_enrichment": null,
+          "cns5_id": "5623",
+          "designation": "GJ 13282",
+          "gaia_enrichment": {
+            "bp_rp": 3.0147228,
+            "effective_temperature_k": null,
+            "logg_gspphot": null,
+            "luminosity_solar": null,
+            "non_single_star": "0",
+            "phot_bp_mean_mag": 12.877803,
+            "phot_g_mean_mag": 11.129232,
+            "phot_rp_mean_mag": 9.86308,
+            "phot_variable_flag": "NOT_AVAILABLE",
+            "radial_velocity_error_km_s": 0.57990056,
+            "radial_velocity_km_s": 5.773293,
+            "radius_solar": null,
+            "spectral_type": "M",
+            "star_class_probability": 0.9990192,
+            "variability_class": null,
+            "variability_class_score": null
+          },
+          "gaia_source_id": "6623351805412369024",
+          "icrs": {
+            "dec_deg": -24.369627417603155,
+            "epoch_year": null,
+            "parallax_error_mas": 0.03249052,
+            "parallax_mas": 130.27066,
+            "ra_deg": 342.0203381724408
+          },
+          "id": "stellar-component-006008",
+          "identifiers": {
+            "bayer_designation": null,
+            "c20pc_source_key": null,
+            "cns5_component_id": "--",
+            "cns5_id": "5623",
+            "cns6_system_id": "157",
+            "flamsteed_designation": null,
+            "gaia_dr3_source_id": "6623351805412369024",
+            "gcns_source_id": "6623351805412369024",
+            "gj_id": "13282",
+            "hd_id": null,
+            "hip_id": null,
+            "hr_id": null,
+            "published_name": null,
+            "twomass_id": null,
+            "wise_id": null
+          },
+          "object_class": null,
+          "photometry": {
+            "bp_rp": 3.0147228,
+            "g_magnitude": 11.129232
+          },
+          "provenance": {
+            "catalogues": ["GCNS", "CNS5", "Gaia DR3"],
+            "enrichment": "Gaia DR3 left join",
+            "position": "gcns median Bayesian Cartesian geometry"
+          },
+          "source_identities": ["cns5:5623", "gaia-dr3:6623351805412369024"],
+          "visual": {
+            "color_family": "red",
+            "derivation": "Gaia DR3 spectral classification; approximate class family",
+            "intensity": 1.0,
+            "marker_radius": 0.09,
+            "pick_radius": 0.09,
+            "source_facts": {
+              "bp_rp": 3.0147228,
+              "c20pc_effective_temperature_k": null,
+              "c20pc_spectral_type": null,
+              "effective_temperature_k": null,
+              "object_class": null,
+              "spectral_type": "M",
+              "wds_spectral_type": null
+            }
+          }
+        }
+      ],
+      "distance_from_sol_pc": 7.67641269815,
+      "distance_uncertainty_pc": 0.0017655,
+      "id": "stellar-system-004976",
+      "name": "GJ 13282",
+      "position_pc": {
+        "xg": 3.0528002,
+        "yg": 1.8804208,
+        "zg": -6.7876167
+      },
+      "provenance": {
+        "adopted_component_id": "stellar-component-006008",
+        "catalogues": ["CNS5", "GCNS", "Gaia DR3"],
+        "review_version": "1.0.0",
+        "source_object_ids": ["cns5:5623", "gaia-dr3:6623351805412369024"],
+        "wds_designations": []
+      },
+      "render_position": {
+        "x": 3.0528002,
+        "y": -6.7876167,
+        "z": -1.8804208
       }
     },
     {
@@ -17462,6 +18206,113 @@
         "x": 1.0584232,
         "y": -7.012125,
         "z": 4.149504
+      }
+    },
+    {
+      "alternates": ["CNS5 5672", "Gaia DR3 2396530698208685312", "HIP 113576"],
+      "components": [
+        {
+          "astrometry_quality": {
+            "parallax_over_error": null,
+            "ruwe": 1.0888942,
+            "visibility_periods_used": null
+          },
+          "c20pc_enrichment": null,
+          "cns5_id": "5672",
+          "designation": "GJ 884",
+          "gaia_enrichment": {
+            "bp_rp": 1.7334809,
+            "effective_temperature_k": 3828.1167,
+            "logg_gspphot": 4.4736,
+            "luminosity_solar": 0.10074715,
+            "non_single_star": "0",
+            "phot_bp_mean_mag": 8.093845,
+            "phot_g_mean_mag": 7.259579,
+            "phot_rp_mean_mag": 6.3603644,
+            "phot_variable_flag": "NOT_AVAILABLE",
+            "radial_velocity_error_km_s": 0.1366247,
+            "radial_velocity_km_s": 15.854662,
+            "radius_solar": 0.7218945,
+            "spectral_type": "K",
+            "star_class_probability": 0.9992449,
+            "variability_class": null,
+            "variability_class_score": null
+          },
+          "gaia_source_id": "2396530698208685312",
+          "icrs": {
+            "dec_deg": -22.524089212751498,
+            "epoch_year": null,
+            "parallax_error_mas": 0.024886552,
+            "parallax_mas": 121.47236,
+            "ra_deg": 345.06283531994274
+          },
+          "id": "stellar-component-002270",
+          "identifiers": {
+            "bayer_designation": null,
+            "c20pc_source_key": null,
+            "cns5_component_id": "--",
+            "cns5_id": "5672",
+            "cns6_system_id": "192",
+            "flamsteed_designation": null,
+            "gaia_dr3_source_id": "2396530698208685312",
+            "gcns_source_id": "2396530698208685312",
+            "gj_id": "884",
+            "hd_id": null,
+            "hip_id": "113576",
+            "hr_id": null,
+            "published_name": null,
+            "twomass_id": null,
+            "wise_id": null
+          },
+          "object_class": null,
+          "photometry": {
+            "bp_rp": 1.7334809,
+            "g_magnitude": 7.259579
+          },
+          "provenance": {
+            "catalogues": ["GCNS", "CNS5", "Gaia DR3"],
+            "enrichment": "Gaia DR3 left join",
+            "position": "gcns median Bayesian Cartesian geometry"
+          },
+          "source_identities": ["cns5:5672", "gaia-dr3:2396530698208685312"],
+          "visual": {
+            "color_family": "orange",
+            "derivation": "Gaia DR3 effective temperature; approximate fixed temperature bands",
+            "intensity": 1.0,
+            "marker_radius": 0.09,
+            "pick_radius": 0.09,
+            "source_facts": {
+              "bp_rp": 1.7334809,
+              "c20pc_effective_temperature_k": null,
+              "c20pc_spectral_type": null,
+              "effective_temperature_k": 3828.1167,
+              "object_class": null,
+              "spectral_type": "K",
+              "wds_spectral_type": null
+            }
+          }
+        }
+      ],
+      "distance_from_sol_pc": 8.232162644618,
+      "distance_uncertainty_pc": 0.001652,
+      "id": "stellar-system-001869",
+      "name": "GJ 884",
+      "position_pc": {
+        "xg": 2.8345792,
+        "yg": 2.1466198,
+        "zg": -7.4246674
+      },
+      "provenance": {
+        "adopted_component_id": "stellar-component-002270",
+        "catalogues": ["CNS5", "GCNS", "Gaia DR3"],
+        "review_version": "1.0.0",
+        "source_object_ids": ["cns5:5672", "gaia-dr3:2396530698208685312"],
+        "wds_designations": []
+      },
+      "render_position": {
+        "x": 2.8345792,
+        "y": -7.4246674,
+        "z": -2.1466198
       }
     },
     {

@@ -300,6 +300,20 @@ Network acquisition is one explicit operator action:
 npm run data:refresh
 ```
 
+Refresh writes source manifests and the reconciled candidate snapshot; it does not
+accept a changed candidate checksum or make an older generated runtime current. When
+`system-candidates.json` changes, stop before runtime generation, complete the
+independent ADR-0023 snapshot review, and update only the accepted checksum and
+review attribution after a clean acceptance. Then run `npm run data:generate`.
+
+Generation derives runtime source metadata from that exact accepted manifest set.
+In particular, the WDS snapshot checksum, candidate checksum, source row count, and
+candidate row count are copied from the current pinned WDS manifest. The generator
+verifies the in-memory document and the written runtime artifact against those
+manifests. A stale pre-refresh runtime is not evidence against an otherwise clean
+candidate snapshot, but it must never enter the final combined package; full data
+validation after generation enforces the same equality independently.
+
 The implemented command orchestrates six independently inspectable acquisition
 stages. Each user-facing acquisition script must implement `--help`.
 

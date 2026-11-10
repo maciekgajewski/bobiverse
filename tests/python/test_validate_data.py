@@ -55,7 +55,11 @@ from classical_names import (
     exact_classical_matches,
     flamsteed_designation,
 )
-from generate_nearby_systems import presentation
+from generate_nearby_systems import (
+    assert_runtime_source_metadata,
+    presentation,
+    runtime_source_metadata,
+)
 from validate_data import (
     validate_anchor_bootstraps,
     validate_acquisition_queries,
@@ -704,6 +708,48 @@ class MultiCatalogueContractTest(unittest.TestCase):
         )
         self.assertEqual(family, "blue")
         self.assertIn("effective temperature", derivation)
+
+    def test_runtime_source_metadata_propagates_refreshed_wds_candidates(self) -> None:
+        manifests = {
+            "gcns": {
+                "normalised_sha256": "gcns-sha",
+                "row_count": 10,
+                "acknowledgement": "GCNS",
+            },
+            "wds": {
+                "uncompressed_sha256": "wds-snapshot",
+                "candidate_sha256": "old-candidates",
+                "row_count": 100,
+                "candidate_row_count": 3,
+                "acknowledgement": "WDS",
+            },
+            "c20pc": {
+                "queries": {
+                    "table4": {"normalised_sha256": "table", "row_count": 4},
+                    "notes4": {"normalised_sha256": "notes", "row_count": 5},
+                    "refs": {"normalised_sha256": "refs", "row_count": 6},
+                },
+                "acknowledgement": "20 pc",
+            },
+        }
+        baseline = runtime_source_metadata(manifests)
+        self.assertEqual(baseline["wds"]["candidate_row_count"], 3)
+        self.assertEqual(baseline["wds"]["candidate_sha256"], "old-candidates")
+
+        manifests["wds"]["candidate_row_count"] = 5
+        manifests["wds"]["candidate_sha256"] = "refreshed-candidates"
+        refreshed = runtime_source_metadata(manifests)
+        self.assertEqual(refreshed["wds"]["candidate_row_count"], 5)
+        self.assertEqual(
+            refreshed["wds"]["candidate_sha256"], "refreshed-candidates"
+        )
+
+        stale_runtime = {"metadata": {"sources": baseline}}
+        with self.assertRaisesRegex(ValueError, "accepted pinned manifests"):
+            assert_runtime_source_metadata(stale_runtime, manifests)
+        assert_runtime_source_metadata(
+            {"metadata": {"sources": refreshed}}, manifests
+        )
 
     def test_multiple_without_mapped_primary_requires_review(self) -> None:
         components = {

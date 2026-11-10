@@ -88,6 +88,44 @@ def presentation(
     return "neutral", "Gaia DR3 bp_rp fixed bands; neutral when unavailable"
 
 
+def runtime_source_metadata(manifests: dict[str, dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    sources = {
+        name: {
+            "normalised_sha256": manifest["normalised_sha256"],
+            "row_count": manifest["row_count"],
+            "acknowledgement": manifest["acknowledgement"],
+        }
+        for name, manifest in manifests.items()
+        if name not in {"wds", "c20pc"}
+    }
+    sources["wds"] = {
+        "snapshot_sha256": manifests["wds"]["uncompressed_sha256"],
+        "candidate_sha256": manifests["wds"]["candidate_sha256"],
+        "row_count": manifests["wds"]["row_count"],
+        "candidate_row_count": manifests["wds"]["candidate_row_count"],
+        "acknowledgement": manifests["wds"]["acknowledgement"],
+    }
+    sources["c20pc"] = {
+        "table4_sha256": manifests["c20pc"]["queries"]["table4"]["normalised_sha256"],
+        "notes_sha256": manifests["c20pc"]["queries"]["notes4"]["normalised_sha256"],
+        "references_sha256": manifests["c20pc"]["queries"]["refs"]["normalised_sha256"],
+        "table4_row_count": manifests["c20pc"]["queries"]["table4"]["row_count"],
+        "notes_row_count": manifests["c20pc"]["queries"]["notes4"]["row_count"],
+        "reference_row_count": manifests["c20pc"]["queries"]["refs"]["row_count"],
+        "acknowledgement": manifests["c20pc"]["acknowledgement"],
+    }
+    return sources
+
+
+def assert_runtime_source_metadata(
+    document: dict[str, Any], manifests: dict[str, dict[str, Any]]
+) -> None:
+    if document.get("metadata", {}).get("sources") != runtime_source_metadata(manifests):
+        raise ValueError(
+            "Generated runtime source provenance differs from the accepted pinned manifests"
+        )
+
+
 def component_runtime(component: dict[str, Any], gcns: dict[str, dict[str, str]], cns5: dict[str, dict[str, str]], gaia: dict[str, dict[str, str]], override: dict[str, Any], wds_spectral_type: str | None = None) -> dict[str, Any]:
     gaia_id = component["gaia_source_id"]
     gcns_row = gcns.get(gaia_id)
@@ -394,31 +432,11 @@ def main() -> None:
         "provenance": {"catalogues": ["Generated canonical origin"], "source_object_ids": [], "adopted_component_id": "stellar-component-sol", "review_version": review["schema_version"], "wds_designations": []},
     }
     coverage = [{"anchor_id": anchor_id, "anchor_position_pc": anchor_position, "radius_ly": radius_ly, "system_count": sum(1 for system in systems if distance(system["position_pc"], anchor_position) <= radius_pc + 1e-12), "source_record_count": sum(len(system["components"]) for system in systems if distance(system["position_pc"], anchor_position) <= radius_pc + 1e-12), "gcns_boundary_pc": 100.0} for anchor_id, anchor_position in sorted(anchor_positions.items())]
-    runtime_sources = {name: {"normalised_sha256": manifest["normalised_sha256"], "row_count": manifest["row_count"], "acknowledgement": manifest["acknowledgement"]} for name, manifest in manifests.items() if name not in {"wds", "c20pc"}}
-    runtime_sources["wds"] = {"snapshot_sha256": manifests["wds"]["uncompressed_sha256"], "candidate_sha256": manifests["wds"]["candidate_sha256"], "row_count": manifests["wds"]["row_count"], "candidate_row_count": manifests["wds"]["candidate_row_count"], "acknowledgement": manifests["wds"]["acknowledgement"]}
-    runtime_sources["c20pc"] = {
-        "table4_sha256": manifests["c20pc"]["queries"]["table4"][
-            "normalised_sha256"
-        ],
-        "notes_sha256": manifests["c20pc"]["queries"]["notes4"][
-            "normalised_sha256"
-        ],
-        "references_sha256": manifests["c20pc"]["queries"]["refs"][
-            "normalised_sha256"
-        ],
-        "table4_row_count": manifests["c20pc"]["queries"]["table4"][
-            "row_count"
-        ],
-        "notes_row_count": manifests["c20pc"]["queries"]["notes4"][
-            "row_count"
-        ],
-        "reference_row_count": manifests["c20pc"]["queries"]["refs"][
-            "row_count"
-        ],
-        "acknowledgement": manifests["c20pc"]["acknowledgement"],
-    }
+    runtime_sources = runtime_source_metadata(manifests)
     output = {"schema_version": "4.0.0", "metadata": {"generated_at": max(manifest["retrieved_at"] for manifest in manifests.values()), "coordinate_frame": "Sun-centered Galactic Cartesian", "units": "pc", "render_mapping": "scene.x=Xg; scene.y=Zg; scene.z=-Yg", "configuration": {"context_radius_ly": radius_ly}, "coverage": coverage, "sources": runtime_sources}, "systems": [sol, *systems]}
+    assert_runtime_source_metadata(output, manifests)
     write_json(GENERATED_PATH, output)
+    assert_runtime_source_metadata(read_json(GENERATED_PATH), manifests)
     print(f"Wrote {len(output['systems'])} reconciled system markers to {GENERATED_PATH.relative_to(GENERATED_PATH.parent.parent)}")
 
 

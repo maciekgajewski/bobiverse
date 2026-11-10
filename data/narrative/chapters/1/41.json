@@ -1,0 +1,68 @@
+{
+  "chapter": "1.41",
+  "title": "41",
+  "date": "2162-05",
+  "location_id": "location:sol",
+  "summary": "Riker and Homer test SCUT, allowing Riker to speak with Bill across interstellar distance and share the worsening news from Earth. Riker tells survivor groups that Romulus and Vulcan are the two available destinations and proposes sending each ready group there, with priority for any later worlds based on departure order. The announcement brings both relief and renewed disputes over sharing planets.",
+  "introducing": [
+    {
+      "id": "character:ambassador-gerrold",
+      "name": "Ambassador Gerrold",
+      "current_state": "New Zealand's delegate, challenging Riker during a community discussion about the emigration plan."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "technology:subspace-communications",
+      "name": "SCUT",
+      "description": "SCUT, short for Subspace Communications Universal Transceiver, is a communications technology that carries signals through subspace. A finished unit uses a different transport layer while retaining the same object and virtual-reality interfaces. Its notes describe instantaneous communication across interstellar distances; earlier tests predicted dropouts at roughly twenty-five light-years, requiring stations to route longer links. The finished product is unadorned, without chrome or a logo."
+    },
+    {
+      "entity_id": "character:riker",
+      "current_state": "At Sol, coordinating an emigration plan that assigns ready groups to Romulus or Vulcan, with first refusal on later destinations ordered by departure."
+    },
+    {
+      "entity_id": "character:bill",
+      "current_state": "At Epsilon Eridani, communicating with Riker through SCUT after seventeen years pass from his perspective and offering software, VR, and hardware upgrades."
+    },
+    {
+      "entity_id": "location:earth",
+      "state": "Bill reports that 99.9 percent of humanity is dead, and the planet is becoming uninhabitable, making the planned emigration urgent."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:riker",
+      "role": "lead",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:homer",
+      "role": "other",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:george-butterworth",
+      "role": "other",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:gudmund-valter",
+      "role": "other",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:ambassador-gerrold",
+      "role": "other",
+      "location_id": "location:sol"
+    }
+  ],
+  "mentions": [
+    "location:epsilon-eridani",
+    "location:omicron2-eridani",
+    "location:romulus",
+    "location:vulcan",
+    "organization:spitsbergen-refuge",
+    "location:ee-2"
+  ]
+}

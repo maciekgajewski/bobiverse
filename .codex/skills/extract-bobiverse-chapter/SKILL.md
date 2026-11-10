@@ -492,7 +492,8 @@ corpus. Follow the isolated staging-checkout workflow in
 
 1. create a disposable checkout from the exact reviewed repository revision;
 2. verify and install the exact candidate or ordered candidate chain only there;
-3. run the normal networked astronomy refresh and deterministic generation there;
+3. run the normal networked astronomy refresh there, but do not generate runtime
+   astronomy from a changed, not-yet-accepted candidate snapshot;
 4. reject unrelated substantive catalogue, identity, naming, membership,
    adopted-source, adopted-component, coordinate-authority, or review drift;
 5. if `system-candidates.json` changes, spawn a fresh, read-only independent agent to
@@ -507,8 +508,11 @@ corpus. Follow the isolated staging-checkout workflow in
 7. after a clean acceptance, record the agent, UTC date, checksums, permitted change
    classes, and absence of prohibited changes, then update only the accepted checksum
    and transparent agent-review attribution; the reviewer never edits the metadata;
-8. validate the complete staged narrative and astronomy result; and
-9. present one exact combined chapter-and-astronomy diff for approval before applying
+8. generate runtime astronomy from the accepted refreshed snapshot; require its WDS
+   candidate count and checksum to match the pinned WDS manifest, and treat any older
+   pre-acceptance runtime as stale rather than as part of the snapshot review;
+9. validate the complete staged narrative and astronomy result; and
+10. present one exact combined chapter-and-astronomy diff for approval before applying
    any part of it to the real worktree.
 
 An existing system or source row does not prove that its explicit bootstrap query,

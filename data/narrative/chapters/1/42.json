@@ -1,0 +1,49 @@
+{
+  "chapter": "1.42",
+  "title": "42",
+  "summary": "Bill considers preserved seeds and reusable large-body SURGE drives to accelerate Ragnarök’s terraforming. Garfield challenges the ice-delivery plan’s safety and his subordinate role, leading Bill to accept greater collaboration and run simulations that favor two drives and a twenty-five-year delivery schedule. Their virtual softball practice tests the physics and helps preserve their sense of humanity.",
+  "date": "2162-04",
+  "location_id": "location:epsilon-eridani",
+  "appearances": [
+    {
+      "character_id": "character:bill",
+      "role": "lead"
+    },
+    {
+      "character_id": "character:garfield",
+      "role": "other"
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bill",
+      "current_state": "Working more collaboratively with Garfield on a simulated two-drive plan that could supply Ragnarök with its required ice within twenty-five years."
+    },
+    {
+      "entity_id": "character:garfield",
+      "aliases": ["Gar"],
+      "current_state": "Continuing his research partnership with Bill with greater input into projects and technical decisions."
+    },
+    {
+      "entity_id": "location:ee-2",
+      "name": "Ragnarök",
+      "description": "A planet orbiting at 0.85 AU, about 90 percent of Earth's size, with comparatively little water. Its isolated seas cover about 30 percent of the surface and are surrounded by land. Its atmosphere contains about 3 percent oxygen, which may reflect photosynthetic life in the seas or a natural process. Bare rock shows no green, while snow, polar ice, and morning frost reach the equator. It seems barely livable, though people could probably live there with substantial technological assistance such as domes; its atmosphere and water make it comparatively favorable against Mars. A described small moon is noted. Bob proposes early terraforming by directing Kuiper objects inward to increase the oceans. Known as Epsilon Eridani 2 and Ragnarök, it requires roughly 500–600 cubic kilometres of additional ice to connect its seas into oceans. Bill considers selected plants and moss from the Svalbard seed vault potential candidates for its bare terrain; successful establishment could accelerate atmospheric oxygenation by millennia.",
+      "state": "Terraforming plans use two reusable drives to capture incoming ice in orbit and fragment it into extra rainfall over several weeks; simulations suggest the required ice could be delivered within twenty-five years. Riker has promised seed transport."
+    },
+    {
+      "entity_id": "technology:surge-drive",
+      "description": "A drive technology enabled by a breakthrough in subspace theory and used to equip spacecraft for interstellar operations. Beyond prototypes, only a small number of SURGE-equipped vessels are in active service. On Heaven-1, it provides reactionless propulsion rather than using gathered hydrogen as reaction mass. It can also accelerate a projectile through an axial launch tube, requiring the vessel to rotate to aim and to stop its drive before firing. Bob believes it may push against the fabric of space. A low-intensity, wide-field configuration can accelerate an asteroid as a unit without tidal forces or field drop-off tearing it apart. The large-body variant can propel icy Kuiper objects and is comparatively simple to construct but material-intensive. A proposed transport scheme detaches a drive after accelerating an ice body so it can be reused on another; a drive must also be available to intercept arriving bodies."
+    },
+    {
+      "entity_id": "technology:vr",
+      "description": "A virtual-reality interface developed aboard Heaven-1 to provide sensory input and an embodied experience for a bodiless mind. Its initial construction required hardware modifications, and its software remains under development. It provides convincing physical sensations and a full humanlike avatar, renders interactive objects such as a Nerf basketball and hoop, and supports shared environments including libraries, parks, and command decks. Users can create objects during a session and play games together. Ball games expose remaining physics inaccuracies and provide test cases for refinement. Bill regards varied embodied activity as important to retaining a human sense of self."
+    }
+  ],
+  "mentions": [
+    "character:riker",
+    "character:homer",
+    "character:bob-replicant",
+    "species:human",
+    "location:epsilon-eridani-star"
+  ]
+}

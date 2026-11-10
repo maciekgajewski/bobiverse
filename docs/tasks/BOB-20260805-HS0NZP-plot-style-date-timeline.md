@@ -204,3 +204,10 @@ mode` (also fails on `3c818b9`): `mouse.click(screenPoint(...))` only hovers
 - Prepared the local PR body in `~/src/bobiverse-pr1-body.md` (also copied to the
   executor box at `/workspace/pr1-body.md`), including B1/B2 manual steps. Review
   fixes are committed locally only; the owner will push. No GitHub changes made.
+
+### 2026-11-10 (publication correction)
+
+- The review fixes described above as committed locally only were subsequently
+  pushed. PR #1 was reviewed at `d085179` and squash-merged to master as
+  `8c108a0`; they are no longer unpushed. Status remains **In progress** until
+  Maciej completes visual acceptance. The master acceptance server is untouched.

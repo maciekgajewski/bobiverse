@@ -49978,11 +49978,11 @@
       "is_cns5_primary": true,
       "membership_key": "446",
       "membership_reason": "CNS5 grouping",
-      "position_derivation": "CNS5 astrometry transformed by Astropy",
+      "position_derivation": "gcns median Bayesian Cartesian geometry",
       "position_pc": {
-        "xg": 4.265113664043,
-        "yg": 4.756503038274,
-        "zg": -8.806852332488
+        "xg": 4.268559,
+        "yg": 4.7603436,
+        "zg": -8.813965
       },
       "preferred_name_candidate": "GJ 4281",
       "source_identities": ["cns5:5555", "gaia-dr3:2601148128510120576"],
@@ -84715,11 +84715,11 @@
       "is_cns5_primary": true,
       "membership_key": "171",
       "membership_reason": "CNS5 grouping",
-      "position_derivation": "CNS5 astrometry transformed by Astropy",
+      "position_derivation": "gcns median Bayesian Cartesian geometry",
       "position_pc": {
-        "xg": 7.735739665306,
-        "yg": 1.893669465598,
-        "zg": 0.298815477677
+        "xg": 7.737143,
+        "yg": 1.8940121,
+        "zg": 0.29887003
       },
       "preferred_name_candidate": "GJ 1224",
       "source_identities": ["cns5:4485", "gaia-dr3:4145870293808914688"],
@@ -90163,11 +90163,11 @@
       "is_cns5_primary": true,
       "membership_key": "224",
       "membership_reason": "CNS5 grouping",
-      "position_derivation": "CNS5 astrometry transformed by Astropy",
+      "position_derivation": "gcns median Bayesian Cartesian geometry",
       "position_pc": {
-        "xg": 7.740268206992,
-        "yg": 2.059442802796,
-        "zg": 3.392209338066
+        "xg": 7.7434936,
+        "yg": 2.0603,
+        "zg": 3.3936234
       },
       "preferred_name_candidate": "GJ 1207",
       "source_identities": ["cns5:4146", "gaia-dr3:4365609170043180416"],
@@ -90352,11 +90352,11 @@
       "is_cns5_primary": true,
       "membership_key": "264",
       "membership_reason": "CNS5 grouping",
-      "position_derivation": "CNS5 astrometry transformed by Astropy",
+      "position_derivation": "gcns median Bayesian Cartesian geometry",
       "position_pc": {
-        "xg": 8.079121083465,
-        "yg": 3.870281145941,
-        "zg": 2.13722221369
+        "xg": 8.079458,
+        "yg": 3.8704417,
+        "zg": 2.1373117
       },
       "preferred_name_candidate": "GJ 12573",
       "source_identities": ["cns5:4416", "gaia-dr3:4371611781971072768"],
@@ -144397,11 +144397,11 @@
       "is_cns5_primary": true,
       "membership_key": "319",
       "membership_reason": "CNS5 grouping",
-      "position_derivation": "CNS5 astrometry transformed by Astropy",
+      "position_derivation": "gcns median Bayesian Cartesian geometry",
       "position_pc": {
-        "xg": 7.793709912722,
-        "yg": 1.534514587239,
-        "zg": -5.844341578664
+        "xg": 7.8408,
+        "yg": 1.5437851,
+        "zg": -5.8796525
       },
       "preferred_name_candidate": "GJ 799",
       "source_identities": ["cns5:5103", "gaia-dr3:6792436799475128960"],
@@ -144428,11 +144428,11 @@
       "is_cns5_primary": false,
       "membership_key": "319",
       "membership_reason": "CNS5 grouping",
-      "position_derivation": "CNS5 astrometry transformed by Astropy",
+      "position_derivation": "gcns median Bayesian Cartesian geometry",
       "position_pc": {
-        "xg": 7.793680643677,
-        "yg": 1.534438644101,
-        "zg": -5.844400549421
+        "xg": 7.7497787,
+        "yg": 1.525794,
+        "zg": -5.811478
       },
       "preferred_name_candidate": "GJ 799",
       "source_identities": ["cns5:5104", "gaia-dr3:6792436799477051904"],
@@ -144483,11 +144483,11 @@
       "is_cns5_primary": true,
       "membership_key": "309",
       "membership_reason": "CNS5 grouping",
-      "position_derivation": "CNS5 astrometry transformed by Astropy",
+      "position_derivation": "gcns median Bayesian Cartesian geometry",
       "position_pc": {
-        "xg": 7.586393350282,
-        "yg": 1.703128206386,
-        "zg": -5.817464309789
+        "xg": 7.5891414,
+        "yg": 1.703744,
+        "zg": -5.819571
       },
       "preferred_name_candidate": "GJ 803",
       "source_identities": [
@@ -145192,11 +145192,11 @@
       "is_cns5_primary": true,
       "membership_key": "366",
       "membership_reason": "CNS5 grouping",
-      "position_derivation": "CNS5 astrometry transformed by Astropy",
+      "position_derivation": "gcns median Bayesian Cartesian geometry",
       "position_pc": {
-        "xg": 4.835962345844,
-        "yg": 3.927234514368,
-        "zg": -8.122774130581
+        "xg": 4.836578,
+        "yg": 3.927733,
+        "zg": -8.123806
       },
       "preferred_name_candidate": "GJ 1265",
       "source_identities": [
@@ -145405,11 +145405,11 @@
       "is_cns5_primary": true,
       "membership_key": "588",
       "membership_reason": "CNS5 grouping",
-      "position_derivation": "CNS5 astrometry transformed by Astropy",
+      "position_derivation": "gcns median Bayesian Cartesian geometry",
       "position_pc": {
-        "xg": 6.529326103902,
-        "yg": 5.028167314498,
-        "zg": -8.538272456863
+        "xg": 6.4031444,
+        "yg": 4.9309945,
+        "zg": -8.373265
       },
       "preferred_name_candidate": "Delta Capricorni",
       "source_identities": ["cns5:5370", "gaia-dr3:6838311796136238976"],
@@ -145652,11 +145652,11 @@
       "is_cns5_primary": true,
       "membership_key": "232",
       "membership_reason": "CNS5 grouping",
-      "position_derivation": "CNS5 astrometry transformed by Astropy",
+      "position_derivation": "gcns median Bayesian Cartesian geometry",
       "position_pc": {
-        "xg": 7.390549583997,
-        "yg": 2.067033084928,
-        "zg": -4.324694274428
+        "xg": 7.3930545,
+        "yg": 2.0677326,
+        "zg": -4.3261595
       },
       "preferred_name_candidate": "GJ 785",
       "source_identities": [
@@ -223799,5 +223799,5 @@
       "wds_membership_evidence": []
     }
   ],
-  "wds_candidate_sha256": "d309dfd2c6814ac19d2bb070d66dbff84cbaaa096bcd6445b8cdaef10f7b68f7"
+  "wds_candidate_sha256": "f274a6538d47eb15d1526e19f1572d3d0e305a70276b728ddda611c892210ecf"
 }
