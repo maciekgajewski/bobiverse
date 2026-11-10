@@ -138,27 +138,60 @@ function monitorCameraDirection(
 
 test("phone browser opens, selection opens inspector, and light-years remain fixed", async ({
   page,
-}) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/");
-  expect(
+}, testInfo) => {
+  const startedAt = Date.now();
+  const startupEvents: { elapsedMs: number; kind: string; detail: string }[] =
+    [];
+  const record = (kind: string, detail: string) => {
+    startupEvents.push({ elapsedMs: Date.now() - startedAt, kind, detail });
+  };
+  page.on("console", (message) => {
+    if (message.type() === "warning" || message.type() === "error") {
+      record(message.type(), message.text());
+    }
+  });
+  page.on("pageerror", (error) => record("pageerror", error.message));
+  page.on("requestfailed", (request) =>
+    record(
+      "requestfailed",
+      `${request.url()}: ${request.failure()?.errorText}`,
+    ),
+  );
+  try {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/");
+    record("navigation", "load event completed");
+    expect(
+      await page
+        .getByTestId("star-map-canvas")
+        .evaluate((canvas) => canvas.clientHeight),
+    ).toBeGreaterThan(0);
+    await page.waitForFunction(
+      () => window.__bob034MapPerformance !== undefined,
+    );
+    record("map", "renderer bridge available");
+    await page.getByRole("button", { name: "Browse objects" }).click();
+    await page.getByRole("button", { name: "Solar System" }).click();
+    await expect(
+      page.getByRole("heading", { name: "Solar System" }),
+    ).toBeVisible();
     await page
-      .getByTestId("star-map-canvas")
-      .evaluate((canvas) => canvas.clientHeight),
-  ).toBeGreaterThan(0);
-  await page.getByRole("button", { name: "Browse objects" }).click();
-  await page.getByRole("button", { name: "Solar System" }).click();
-  await expect(
-    page.getByRole("heading", { name: "Solar System" }),
-  ).toBeVisible();
-  await page
-    .getByRole("dialog", { name: "Selected object" })
-    .getByRole("button", { name: "Close" })
-    .click();
-  await expect(page.getByLabel("Distance unit")).toHaveCount(0);
-  await expect(page.getByRole("button", { name: "pc" })).toHaveCount(0);
-  await expect(page.getByRole("button", { name: "ly" })).toHaveCount(0);
-  await expect(page.getByTestId("map-scale-label")).toContainText("ly");
+      .getByRole("dialog", { name: "Selected object" })
+      .getByRole("button", { name: "Close" })
+      .click();
+    await expect(page.getByLabel("Distance unit")).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "pc" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "ly" })).toHaveCount(0);
+    await expect(page.getByTestId("map-scale-label")).toContainText("ly");
+  } catch (error) {
+    // Do not replace the canvas assertion with a fallback or a retry. Preserve
+    // driver/startup errors even when the overall test deadline closes the page.
+    await testInfo.attach("map-startup", {
+      body: JSON.stringify(startupEvents, null, 2),
+      contentType: "application/json",
+    });
+    throw error;
+  }
 });
 
 test("empty map clicks clear inspection selection", async ({ page }) => {
@@ -442,7 +475,9 @@ test("ordinary map reframes after a canvas resize", async ({ page }) => {
 test("system-mode dollies preserve direction and restore the exact camera pose", async ({
   page,
 }) => {
-  await page.clock.install();
+  // A fixed, future pause boundary cannot become stale between protocol calls.
+  // Keep natural loading timers until the map is ready, as Playwright recommends.
+  await page.clock.install({ time: new Date("2026-01-01T00:00:00Z") });
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto("/");
   await page.waitForFunction(() => window.__bob034MapPerformance !== undefined);
@@ -452,7 +487,7 @@ test("system-mode dollies preserve direction and restore the exact camera pose",
     window.__bob034MapPerformance!.snapshot(),
   );
 
-  await page.clock.pauseAt(await page.evaluate(() => Date.now() + 100));
+  await page.clock.pauseAt(new Date("2026-01-02T00:00:00Z"));
   const entryDirectionMonitor = monitorCameraDirection(page);
   await withAnimationFrames(page, async () => {
     await page
@@ -530,40 +565,56 @@ test("system-mode dollies preserve direction and restore the exact camera pose",
   await expect(
     page.locator(".narrative-map-label").filter({ hasText: /^Solar System$/ }),
   ).toHaveCount(1);
-  await page.clock.resume();
-  await page.getByRole("button", { name: "Reset view" }).click();
-  await page.waitForFunction(
-    (revision) =>
-      window.__bob034MapPerformance!.snapshot().framingRevision > revision,
-    restoredState.framingRevision,
-  );
+  // Continue explicit frames through reset/resize/orbit. Resuming the clock here
+  // needlessly put the final interaction back at the mercy of software GL cadence.
+  await withAnimationFrames(page, async () => {
+    await page.getByRole("button", { name: "Reset view" }).click();
+    await page.waitForFunction(
+      (revision) =>
+        window.__bob034MapPerformance!.snapshot().framingRevision > revision,
+      restoredState.framingRevision,
+    );
+  });
   const resetState = await page.evaluate(() =>
     window.__bob034MapPerformance!.snapshot(),
   );
-  await page.setViewportSize({ width: 1280, height: 740 });
-  await page.waitForFunction(
-    (revision) =>
-      window.__bob034MapPerformance!.snapshot().framingRevision > revision,
-    resetState.framingRevision,
-  );
+  await withAnimationFrames(page, async () => {
+    await page.setViewportSize({ width: 1280, height: 740 });
+    await page.waitForFunction(
+      (revision) =>
+        window.__bob034MapPerformance!.snapshot().framingRevision > revision,
+      resetState.framingRevision,
+    );
+  });
   const beforeRotation = await page.evaluate(() =>
     window.__bob034MapPerformance!.snapshot(),
   );
   const canvas = page.getByTestId("star-map-canvas");
   const bounds = await canvas.boundingBox();
   expect(bounds).not.toBeNull();
-  await page.mouse.move(
-    bounds!.x + bounds!.width / 2,
-    bounds!.y + bounds!.height / 2,
-  );
-  await page.mouse.down();
-  await page.mouse.move(
-    bounds!.x + bounds!.width / 2 + 90,
-    bounds!.y + bounds!.height / 2 + 45,
-    { steps: 8 },
-  );
-  await page.mouse.up();
-  await page.waitForTimeout(500);
+  await withAnimationFrames(page, async () => {
+    await page.mouse.move(
+      bounds!.x + bounds!.width / 2,
+      bounds!.y + bounds!.height / 2,
+    );
+    await page.mouse.down();
+    await page.mouse.move(
+      bounds!.x + bounds!.width / 2 + 90,
+      bounds!.y + bounds!.height / 2 + 45,
+      { steps: 8 },
+    );
+    await page.mouse.up();
+    await page.waitForFunction((before) => {
+      const after = window.__bob034MapPerformance!.snapshot();
+      return (
+        Math.hypot(
+          after.camera[0] - before[0],
+          after.camera[1] - before[1],
+          after.camera[2] - before[2],
+        ) > 0.01
+      );
+    }, beforeRotation.camera);
+  });
   const afterRotation = await page.evaluate(() =>
     window.__bob034MapPerformance!.snapshot(),
   );
@@ -1213,7 +1264,8 @@ for (const viewport of [
     await page
       .getByTestId("star-map-canvas")
       .click({ position: { x: 100, y: 40 } });
-    expect(await astronomyCaption.count()).toBe(0);
+    // R3F/React can commit caption removal after the click protocol call returns.
+    await expect(astronomyCaption).toHaveCount(0);
     await page.mouse.move(1, 1);
     await expect(page.locator(".map-tooltip")).toHaveCount(0);
     await settleMapCamera(page);
@@ -1228,7 +1280,7 @@ for (const viewport of [
       .toBe(1);
     await page.waitForTimeout(150);
     await page.mouse.move(1, 1);
-    expect(await astronomyCaption.count()).toBe(0);
+    await expect(astronomyCaption).toHaveCount(0);
   });
 }
 

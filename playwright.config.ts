@@ -22,7 +22,9 @@ export default defineConfig({
     { name: "chromium", use: { ...devices["Desktop Chrome"] } },
     {
       name: "firefox",
-      use: { ...devices["Desktop Firefox"], headless: true },
+      // Firefox's native headless WebGL path is not portable across Linux GL
+      // drivers (Mozilla 1375585). The npm wrapper already supplies Xvfb.
+      use: { ...devices["Desktop Firefox"], headless: false },
     },
     { name: "webkit", use: { ...devices["Desktop Safari"] } },
   ],

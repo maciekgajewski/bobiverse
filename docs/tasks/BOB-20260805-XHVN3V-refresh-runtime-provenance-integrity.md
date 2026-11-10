@@ -307,3 +307,10 @@ the Captain explicitly approves that final diff.
   `~/src/bobiverse-pr3-body.md`. No push, force-push, or PR creation is performed.
   Hosted CI, fresh independent exact-SHA review, and Maciej's manual browser
   acceptance remain publication-time gates; HS0NZP remains **In progress**.
+
+### 2026-11-10 (Europe/Amsterdam; post-merge status clarification)
+
+- PR #3 is now squash-merged as `63bbd98` (reviewed head `08c9de9`), so Done is
+  correct for this merged work. Manager clarification: set Done only after merge
+  going forward; implemented/local/in-review work remains In progress. This does
+  not waive any separately pending Captain visual-acceptance requirement.

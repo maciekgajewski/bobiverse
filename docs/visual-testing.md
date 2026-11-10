@@ -11,9 +11,14 @@ Playwright writes reports to `playwright-report/` and retains screenshot, trace,
 video artifacts for failed tests under `test-results/`. Tests within each browser
 project run serially to avoid exhausting headless software-WebGL resources; Chromium,
 Firefox, and WebKit projects still run as separate required targets. All three
-projects currently use headless mode. The npm test wrapper also provides a disposable
-Xvfb display with `xvfb-run -a`; `npx playwright install --with-deps` supplies that
-system dependency on supported Linux runners.
+projects use headless mode except Firefox, which uses a real browser window on the
+disposable Xvfb display provided by the npm wrapper (`xvfb-run -a`). Native headless
+Firefox WebGL is not portable across Linux graphics environments (see
+[Mozilla 1375585](https://bugzilla.mozilla.org/show_bug.cgi?id=1375585) and
+[Playwright 21783](https://github.com/microsoft/playwright/issues/21783)); merely
+setting DISPLAY while retaining `headless: true` does not select its display-backed
+rendering path. Do not bypass the real canvas assertions when WebGL fails.
+`npx playwright install --with-deps` supplies that system dependency on supported Linux runners.
 
 ## GitHub Actions CI
 
@@ -39,17 +44,31 @@ installs each browser with `--with-deps` and verifies `xvfb-run` and `xauth`.
 The expressive-map interaction paths run as three independent viewport cases,
 each with a fresh context and its own unchanged 45-second deadline. They must not
 share a cumulative deadline across desktop, tablet, and phone software rendering.
-The dolly interpolation test installs Playwright's clock before navigation and
-steps every animation frame in 16 ms increments during entry/exit. Real WebGL,
+The dolly interpolation test installs Playwright's clock at a fixed epoch before
+navigation, lets loading complete naturally, then pauses at a fixed next-day
+boundary (beyond the entire unchanged test deadline). Do not compute `pauseAt`
+from a separately queried `Date.now() + 100`: protocol/scheduling latency can make
+that target stale. It steps every animation frame in 16 ms increments during
+entry/exit and subsequent reset/resize/orbit checks. Real WebGL,
 clicks, resize, direction, exact pose restoration, and mid-exit picking guards
 remain exercised; the step fraction stays below 0.45 and direction error below
 1e-7 in every environment. It does not fast-forward/coalesce intermediate frames.
-The clock resumes before reset/resize/orbit interaction checks. This separates
+Reset/resize wait for framing revisions and orbit waits for the existing camera
+movement condition, not a wall-clock sleep. `page.waitForTimeout` in Playwright
+1.61.1 is a server-side wall-clock timer, not a page timer controlled by the clock;
+it still spends the test's cumulative deadline and does not guarantee rendered
+frames. Explicit `clock.runFor` steps drive page rAF callbacks. This separates
 interpolation correctness from host rendering cadence, not a relaxation of the
 production performance budgets in ADR-0019 or the separate performance commands.
 
 One retry remains diagnostic, not a fix for recurrent failures; inspect any
-flaky-test annotations before merge. CI does not run the separate performance
+flaky-test annotations before merge. For flake investigations use
+`--workers=1 --retries=0 --repeat-each=20`; neither retries nor increased deadlines
+are a repair. The phone case retains browser warnings/errors, request failures and
+startup milestones in a `map-startup` attachment on failure, and requires the real
+renderer bridge as well as nonzero canvas height. CI's existing one retry is
+unchanged by this task; dropping it should be a separately reviewed follow-up once
+hosted no-retry evidence confirms stability. CI does not run the separate performance
 benchmarks or replace the Captain's real-browser smoothness/visual acceptance.
 
 For a failed job, open the workflow run from the pull request's **Checks** tab,
