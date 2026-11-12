@@ -235,11 +235,25 @@ describe("blind Pass 1 boundary", () => {
       expect(blindMaterials).not.toContain(pilotFact);
     }
 
+    // The alias "Will" makes a sentence-initial modal a leak; keep the brief free of it.
+    expect(blindMaterials).not.toMatch(/(?:^|[.!?:]\s+)Will\b/m);
+
     const forbidden = await chapterSpecificTokens();
     const leaked = [...forbidden].filter((token) =>
       wholeToken(token).test(blindMaterials),
     );
     expect(leaked).toEqual([]);
+  });
+
+  it("matches leak tokens as whole, case-sensitive words", () => {
+    expect(wholeToken("Will").test("Will this recur?")).toBe(true);
+    expect(wholeToken("Will").test("it will be recorded")).toBe(false);
+    expect(wholeToken("Will").test("Willing")).toBe(false);
+    expect(wholeToken("natives").test("alternatives")).toBe(false);
+    expect(wholeToken("nanites").test("the nanites.")).toBe(true);
+    expect(wholeToken("asteroid belt").test("asteroid belts")).toBe(false);
+    expect(wholeToken("1.1").test("chapter 1.12")).toBe(false);
+    expect(wholeToken("1.1").test("chapter 1.1.")).toBe(true);
   });
 
   it("documents direct Earth-gravity retention and bounded SI conversion", async () => {
@@ -304,6 +318,10 @@ function addNames(records: unknown, into: Set<string>) {
 
 // Chapter-specific facts for the blind boundary: canonical chapter references,
 // canonical entity IDs, and names or aliases introduced or set by any chapter.
+// Zero-state names (for example Earth, Moon, and AMI) are deliberately not caught:
+// they are the pre-book baseline, not chapter facts. Matching is whole-token and
+// case-sensitive, so ordinary lowercase prose such as "will" or "alternatives"
+// does not collide with chapter names such as "Will" or "natives".
 async function chapterSpecificTokens(): Promise<Set<string>> {
   const narrativeRoot = path.join(repositoryRoot, "data/narrative");
   const tokens = new Set<string>();

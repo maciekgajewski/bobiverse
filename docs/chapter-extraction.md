@@ -8,16 +8,19 @@ candidate. It is provider-independent. Companion files:
   cite this contract and restate no rules.
 - [Pass 1 blind brief](../.codex/skills/extract-bobiverse-chapter/references/pass1-blind-brief.md):
   the rules-only part of this contract that is staged to blind Pass 1. It is part of
-  this contract; Section 5 points to it instead of repeating it.
+  this contract; §Pass 1 blind claim capture points to it instead of repeating it.
 - [Claim ledger format](../.codex/skills/extract-bobiverse-chapter/references/claim-ledger.md).
 - [Codex adapter](../.codex/skills/extract-bobiverse-chapter/SKILL.md): Codex
   invocation, the conforming profile and spawning mechanics only.
+
+Sections are cited by heading, as in §Context isolation, never by dotted numbers,
+which would collide with chapter references.
 
 Field shapes and ownership belong to [the data model](data-model-definition.md);
 accepted ADRs and [the technical design](technical-design.md) Section 13 bind this
 contract. If they conflict with it, stop and surface the conflict (AGENTS.md).
 
-## 1. Scope and authority
+## Scope and authority
 
 1. The workflow is an editorial assistant. Model output is a candidate, never
    authority, and nothing is silently published. Process exactly one chapter per run.
@@ -33,13 +36,13 @@ contract. If they conflict with it, stop and surface the conflict (AGENTS.md).
    ledgers, temporary candidates, or temporary narrative roots. Keep source evidence
    outside the published application and outside version control.
 5. Never send book text to an external model unless the Captain has explicitly
-   approved the provider and workflow (Section 3.4).
+   approved the provider and workflow (§Approved alternative).
 6. Roles and the authority split are defined in AGENTS.md, not here.
 7. Do not use Kindle Computer Use in the initial workflow. It is recorded only as
    possible future verification for questionable plaintext conversion or disputed
    evidence.
 
-## 2. Inputs
+## Inputs
 
 Require the repository root, an explicit canonical chapter reference such as `1.3`,
 and one UTF-8 source file outside the repository. Accept source filenames only as
@@ -54,9 +57,9 @@ Operators need not repeat the blind-extraction, evidence, validation, comparison
 approval, or no-write instructions; they are mandatory parts of the workflow. The
 Codex invocation is documented in the adapter.
 
-## 3. Execution profiles and prerequisites
+## Execution profiles and prerequisites
 
-### 3.1 Conforming profile
+### Conforming profile
 
 The conforming profile is the Captain-approved Codex profile pinned by BOB-028: Pass
 1 and Pass 2 run in separately spawned Codex agents with `model: gpt-5.6-terra`,
@@ -64,7 +67,7 @@ The conforming profile is the Captain-approved Codex profile pinned by BOB-028: 
 orchestrator. A pass that runs with inherited configuration is invalid. The adapter
 holds the exact spawning instructions.
 
-### 3.2 Prerequisite check
+### Prerequisite check
 
 Before any source text is read, the operator verifies that the conforming profile can
 actually be requested: a Codex launcher is available to the operating account and can
@@ -72,20 +75,20 @@ explicitly set the model, reasoning level, and non-forked spawning for both pass
 (Checklist A). Status on 2026-11-12: piotr has no `codex` binary for
 `grok-developer`, so a conforming run is not possible there.
 
-### 3.3 No silent substitution
+### No silent substitution
 
 If the conforming profile, or any part of it, is unavailable for either pass, stop
 and ask the Captain before substituting another configuration.
 
-### 3.4 Approved alternative (NON-CONFORMING)
+### Approved alternative (NON-CONFORMING)
 
 A different runtime, provider, or model may run only after the Captain explicitly
 approves that provider, model, and workflow for the run. Such a run:
 
 - is labelled **NON-CONFORMING** in every artifact, the review package, the approved
   chapters repository, and the promotion-log decision cell;
-- keeps every isolation rule in Section 4, including separately started fresh
-  contexts for Pass 1 and Pass 2;
+- keeps every isolation rule in §Context isolation, including separately started
+  fresh contexts for Pass 1 and Pass 2;
 - records the requested profile, the actual runtime and model as reported, and the
   approval wording, date, and relay path;
 - never claims a setting that the runtime cannot show, such as a reasoning level;
@@ -94,10 +97,10 @@ approves that provider, model, and workflow for the run. Such a run:
 **Open Captain decision D1:** whether an alternative approval may be standing rather
 than per run, and which providers and models qualify. Until D1 is decided, the
 current rule applies: every substitution needs the Captain's explicit approval of the
-provider, model, and workflow (Section 3.3). The 2026-11-09 approval named only the
-Chapter `1.42` verification.
+provider, model, and workflow (§No silent substitution). The 2026-11-09 approval
+named only the Chapter `1.42` verification.
 
-## 4. Context isolation
+## Context isolation
 
 1. Create a new workspace with `mktemp -d`. Put draft claims, sealed evidence,
    candidate JSON, and the temporary narrative root only there. Record the initial
@@ -115,29 +118,29 @@ Chapter `1.42` verification.
    Pass 2: it contains canonical constants and is not a blind-extraction input.
 5. The Pass 1 forbidden-read list is in the blind brief and is binding.
 6. Pass 2 runs in a separately started fresh context, staged only with the sealed
-   Pass 1 ledger and the canonical material permitted in Section 6.1. It must not
+   Pass 1 ledger and the canonical material permitted in §Pass 2 inputs. It must not
    inherit the orchestrator's broader conversation or receive later-chapter state.
 7. The event and reconciliation exception registries are read only in Pass 2, never
    in Pass 1.
 8. These rules apply under every execution profile. Running the blind and
    reconciliation stages sequentially in one worker does not satisfy them.
 
-## 5. Pass 1: blind claim capture
+## Pass 1 blind claim capture
 
 Pass 1 follows the blind brief and writes the format in `claim-ledger.md`. After
 sealing, Pass 1 calculates and records the sealed-ledger SHA-256, verifies that every
 chunk ID was processed, and stops. Source claims are never revised later merely to
 match canonical state.
 
-## 6. Pass 2: reconciliation
+## Pass 2 reconciliation
 
-### 6.1 Inputs
+### Pass 2 inputs
 
 Begin only from the sealed Pass 1 ledger. Load the reader-visible canonical state
 immediately before the target chapter: for the first chapter, use only zero state;
 otherwise, generate the preceding chapter projection; never use later chapters to
-resolve an earlier chapter. The narrative schema, `AGENTS.md`, binding ADRs, and any active task may be
-read in Pass 2.
+resolve an earlier chapter. The narrative schema, `AGENTS.md`, binding ADRs, and any
+active task may be read in Pass 2.
 
 After verifying the chapter, source SHA-256, and sealed-ledger SHA-256, read the
 reconciliation exception registry. Apply only entries whose complete fingerprinted
@@ -146,7 +149,7 @@ ledger immutable and record each applied exception in the reconciliation report.
 When human evidence review finds that a sealed claim overstates its source, record
 the adjudication in that registry; the original sealed ledger is never rewritten.
 
-### 6.2 Classification
+### Classification
 
 Classify each claim as `introducing`, `update`, `appearance`, `supplemental-mention`,
 `already-known`, `not-modeled`, `unsupported`, or `ambiguous`. Use `not-modeled`
@@ -155,7 +158,7 @@ because it is incidental, redundant at the chapter-object level, or lacks enough
 identity to support a durable entity. Record the editorial reason. Never use it to
 hide an unresolved contradiction or weak evidence.
 
-### 6.3 Identity, names, and ordering
+### Identity, names, and ordering
 
 Resolve `source_mentions` against known entities and aliases. Entity names preserve
 the source's primary surface form. When the source primarily uses an acronym, that
@@ -176,7 +179,7 @@ inventing a workaround.
 Ask the Captain one question at a time for material ambiguities. Keep the sealed
 source claim unchanged and record the reconciliation decision separately.
 
-### 6.4 Supplemental mentions
+### Supplemental mentions
 
 For Chapter `1.14` and later (ADR-0017), classify every resolved source mention
 against supplemental-mention completeness. Promote it to `supplemental-mention` when
@@ -190,11 +193,11 @@ astronomy IDs are not mention targets, and ID-shaped prose is not structural. Do
 apply an importance or curation threshold. A supplemental mention advances otherwise
 absent narrative activity; do not infer presence, participation, ownership,
 membership, location, use, relationship, or state from it. Each qualifying canonical
-`mentions` entry is mandatory, requires sealed evidence, and receives its own explicit
-row in the human-review table. A mentioned mapped location retains derived
+`mentions` entry is mandatory, requires sealed evidence, and receives its own
+explicit row in the human-review table. A mentioned mapped location retains derived
 `mapped_system_ancestry` activity.
 
-### 6.5 Lineage
+### Lineage
 
 For source-supported lineage, author the child's optional `parent_id` with sealed
 evidence. The same field supports replicant and biological genealogy. A replicant
@@ -204,7 +207,7 @@ behavior, species, backup possession, or operation of cloning machinery. An
 unresolved parent remains a reconciliation question. Later chapters may set,
 replace, or clear the field through an ordinary character update.
 
-### 6.6 Event significance
+### Event significance
 
 Reserve canonical `event:` entities for major, memorable turning points in the book
 timeline whose durable consequences shape the fate of many beings, not only the
@@ -237,7 +240,7 @@ project-complex raid as event entities.
 Classify a rejected event claim as `not-modeled`, record the failed significance or
 scale test, and preserve useful facts in the summary or an appropriate entity record.
 
-### 6.7 Locations
+### Locations
 
 Use `colony_of` only for durable, reader-visible established presence: a settlement,
 colony, or operated prominent installation. Do not infer it from visits, vessels,
@@ -268,7 +271,7 @@ to satisfy a required field. Classify a source-supported fine-grained place as
 in the chapter summary, an event description, or another suitable entity
 description. The rule limits browser granularity without deleting source knowledge.
 
-### 6.8 System surveys
+### System surveys
 
 Beginning with Chapter `1.16`, a source-described system survey overrides ordinary
 durable-location curation for celestial bodies. Author every surveyed planet or dwarf
@@ -280,9 +283,9 @@ colour wording), `visual_description` (visible appearance only), and
 `surface_gravity_g` (a positive finite number in Earth gravities).
 
 Retain a value already in Earth gravities at source precision. Convert metres per
-second squared with `surface_gravity_g = surface_gravity_m_s2 / 9.80665`, keep no more
-significant digits than the source, and record the conversion in reconciliation. For
-example, direct `1.20 g` becomes `surface_gravity_g: 1.20`, while
+second squared with `surface_gravity_g = surface_gravity_m_s2 / 9.80665`, keep no
+more significant digits than the source, and record the conversion in reconciliation.
+For example, direct `1.20 g` becomes `surface_gravity_g: 1.20`, while
 `19.6 m/s² / 9.80665` becomes `surface_gravity_g: 2.00`; neither invents precision.
 Gravity in other units, qualitative gravity, and every other survey fact remain in
 `description`; a missing dedicated field never permits discarding evidence.
@@ -306,7 +309,7 @@ for qualitative counts. The three stable ordinals follow OE-2 in the ADR-0020
 schematic sequence; later names without unique identity evidence bind in source
 order to the lowest still-anonymous ordinal.
 
-### 6.9 Descriptions
+### Descriptions
 
 Every authored `description` is a concise, original, spoiler-safe mini-encyclopedia
 entry, not a narrative extract or a retelling of the scene where the entity appeared.
@@ -349,8 +352,8 @@ Type checklists:
   predators, and other non-sentient life remain unmodeled as `species:` entities and
   appear only as concise context in an eligible entity, event, or chapter summary;
 - `technology`: what kind of technology it is, what it does, how it works at the
-  revealed level, distinguishing capabilities or limitations, and any source-supported
-  acronym expansion;
+  revealed level, distinguishing capabilities or limitations, and any
+  source-supported acronym expansion;
 - `organization`: what kind of organization it is, its purpose, constituency or
   scope, defining policies, and durable capabilities or relationships;
 - `vessel`: what named ship, reusable design, or ship family it represents, its
@@ -376,10 +379,10 @@ Description updates replace the complete field. Preserve useful prior reviewed
 knowledge and integrate the newly revealed information rather than emitting only the
 latest chapter fact. When updating an existing description, start from the complete
 prior reviewed entry and integrate the newly supported information; never erase
-useful reader-visible knowledge by emitting only the new chapter fact. Section 7
-records an open decision about this rule; the rule stays in force.
+useful reader-visible knowledge by emitting only the new chapter fact. §Reading order
+and story dates records an open decision about this rule; the rule stays in force.
 
-### 6.10 Summaries
+### Summaries
 
 Every chapter `summary` is an original, spoiler-safe synopsis of what happens, not a
 dateline. The structured chapter `date` is displayed separately, so never begin the
@@ -389,19 +392,20 @@ chapter action, subject, or change. Retain a location only when it is a natural 
 of the synopsis, such as a journey, arrival, survey target, or another fact needed to
 understand what happens.
 
-## 7. Reading order and story dates
+## Reading order and story dates
 
 Reader order is the spoiler-visibility gate and story time is the state-projection
 gate (ADR-0002); they are never collapsed. Every dated chapter-authored fact carries
 an ordering moment made from its effective story date and canonical source chapter
 (ADR-0009, ADR-0013, and `adrs/0026-calendar-precision-narrative-dates.md`). Author
 dates as `YYYY[-MM[-DD]][.d+]`, preserving exactly the Gregorian precision stated by
-the heading or opening-scene boundary. Non-overlapping calendar ranges order normally.
-Identical calendar portions compare the effective suffix (omitted means zero), then
-canonical chapter; overlapping unequal-precision chapter facts use canonical chapter.
-Apply this rule consistently to state writes, appearances, dated events, and any
-generated activity. Requested display dates use range containment without a chapter
-fallback, and chronologically unplaced events have no source-chapter moment.
+the heading or opening-scene boundary. Non-overlapping calendar ranges order
+normally. Identical calendar portions compare the effective suffix (omitted means
+zero), then canonical chapter; overlapping unequal-precision chapter facts use
+canonical chapter. Apply this rule consistently to state writes, appearances, dated
+events, and any generated activity. Requested display dates use range containment
+without a chapter fallback, and chronologically unplaced events have no
+source-chapter moment.
 
 Do not add mechanical suffixes merely to force validation or reproduce canonical
 chapter order. If the source reveals that chronology differs from chapter order,
@@ -412,15 +416,17 @@ month precision: Chapter `1.31` is `2158-01`, Chapter `1.33` is `2158-03`, Chapt
 `1.34` and `1.36` are `2158-09`, and Chapter `1.32` is `2158-10`.
 
 **Open Captain decision D2.** When reading order and story dates diverge, the
-full-field update rule in Section 6.9 can carry a fact into an update dated earlier
+full-field update rule in §Descriptions can carry a fact into an update dated earlier
 than the chapter that first established it. Under ADR-0002, an existing later-dated
 write can also hide newly revealed knowledge at later story dates. The current rule
-in Section 6.9 stays in force until the Captain decides D2; no other baseline
+in §Descriptions stays in force until the Captain decides D2; no other baseline
 applies. As reporting only, the review package lists every update whose prior entry
 contains a fact first established at a later story date than the target chapter's.
+This list is not a promotion gate, and it must not be used to rewrite a candidate
+while D2 is open.
 The options are recorded in BOB-20261112-1TWD9T.
 
-## 8. Candidate assembly and temporary corpus
+## Candidate assembly and temporary corpus
 
 Create candidate JSON under `/tmp`, never directly under `data/narrative/`. Build a
 new temporary narrative root with `source_evidence.py prepare-corpus`. It copies the
@@ -457,7 +463,7 @@ before reading the existing target chapter. Then compare omissions, unsupported
 claims, reconciliation choices, and review effort. Do not silently alter the
 candidate to resemble the existing file.
 
-## 9. Astronomy preflight and isolated acquisition
+## Astronomy preflight and isolated acquisition
 
 Astronomy validation is mandatory before canonical promotion. Run it on the exact
 prior chain before extraction (Checklist A), so that a baseline failure is not
@@ -475,8 +481,8 @@ If identity resolves but validation reports that acquisition queries differ from
 exact plan, do not conclude that the validator contract must change. An existing
 anchor row alone does not prove that its explicit bootstrap query, complete context
 sphere, and provenance accounting are current. The canonical refresh discovers
-anchors from canonical narrative data, but never copy an unapproved candidate into the
-real worktree merely to make refresh see it. Instead:
+anchors from canonical narrative data, but never copy an unapproved candidate into
+the real worktree merely to make refresh see it. Instead:
 
 1. Create an isolated disposable checkout from the exact repository revision under
    review and record its clean baseline.
@@ -521,12 +527,12 @@ authority nor spoiler projection: static astronomy acquisition may precede a
 narrative reveal, while runtime narrative mapping remains governed by approved
 chapter records.
 
-## 10. Review package
+## Review package
 
 Resolve human-review questions one at a time, then present:
 
 - the execution profile requested and actually used for each pass, with the
-  NON-CONFORMING label and approval reference when Section 3.4 applies;
+  NON-CONFORMING label and approval reference when §Approved alternative applies;
 - source fingerprint and chapter/title derivation, sealed-ledger SHA-256, and the
   `prepare-corpus` provenance output;
 - the candidate JSON and its frozen SHA-256;
@@ -537,21 +543,23 @@ Resolve human-review questions one at a time, then present:
   targets, and intentionally unmodeled mentions;
 - evidence IDs with bounded excerpts rendered by `source_evidence.py review`; these
   stay on the extraction host;
-- unresolved or low-confidence items, applied exceptions, and the Section 7 D2 list;
+- unresolved or low-confidence items and applied exceptions;
+- the D2 list from §Reading order and story dates. It is not a promotion gate and
+  must not be used to rewrite a candidate while D2 is open;
 - narrative and astronomy preflight output, including any automatically resolved
   mapped-anchor bootstrap;
 - the exact canonical diff that approval would create, or the exact combined
   chapter-and-astronomy diff when isolated staging was required.
 
-## 11. Approval, promotion, and provenance
+## Approval, promotion, and provenance
 
-### 11.1 Approval
+### Approval
 
 Review the exact candidate, then ask explicitly, for example: `Accept this
 candidate.json as chapter 1.2.` A task-scoped dry run stops without writing even if
 the candidate is approved for quality.
 
-### 11.2 Checksum provenance
+### Checksum provenance
 
 - Label every hash by kind: file SHA-256 of exact bytes, Git commit, or Git blob.
   Never cite a bare prefix without its kind.
@@ -569,13 +577,14 @@ the candidate is approved for quality.
   differs from the canonical one, the approved-chapters commit and tag, and any
   NON-CONFORMING label. Historical rows are never rewritten.
 
-### 11.3 Promotion
+### Promotion
 
 1. Build a fresh temporary narrative root from the current canonical baseline,
    assets, books, presentation registry, and chapters plus the exact approved
-   candidate at its intended chapter path (Section 8).
-2. Run both Section 8 validators against that root.
-3. Resolve astronomy under Section 9.
+   candidate at its intended chapter path (§Candidate assembly and temporary corpus).
+2. Run both validators from §Candidate assembly and temporary corpus against that
+   root.
+3. Resolve astronomy under §Astronomy preflight and isolated acquisition.
 4. If either preflight fails, leave canonical chapter files and the promotion log
    byte-for-byte unchanged.
 5. Only after both pass, write the exact approved candidate canonically and confirm
@@ -584,16 +593,17 @@ the candidate is approved for quality.
    also run its validation commands and update directly affected documentation.
 7. Append one row to [the chapter-promotion log](chapter-promotion-log.md) with the
    chapter, applied date, canonical SHA-256, validation result, and material
-   editorial decisions (Section 11.2).
+   editorial decisions (§Checksum provenance).
 
-### 11.4 Post-write validation
+### Post-write validation
 
 ```bash
 chapter_ref="1.3" # Replace with the approved chapter.
 npm run narrative:manifest
 npm run narrative:validate
 npm run data:validate
-npm run narrative:generate -- --chapter "$chapter_ref" --output "/tmp/bobiverse-world-$chapter_ref.json"
+npm run narrative:generate -- --chapter "$chapter_ref" --output
+"/tmp/bobiverse-world-$chapter_ref.json"
 npm run format:check
 npm run lint
 npm run typecheck
