@@ -79,8 +79,8 @@ disputed book facts, chapter approval and visual acceptance.
    6. Pass 2 reconciliation: classifications, names, events, location granularity,
       surveys, descriptions, summaries, supplemental mentions and lineage.
    7. Reading order and story dates: ordering moments (pointing to the ADRs); the
-      baseline for full-field updates; no backdating of facts from later story
-      dates.
+      current full-field-update rule kept verbatim; D2 recorded as an open Captain
+      decision. No new baseline.
    8. Temporary corpus assembly (including the species presentation registry,
       manifest regeneration and recorded base revision) and validation.
    9. Astronomy preflight and isolated acquisition staging, stated once.
@@ -123,23 +123,28 @@ disputed book facts, chapter approval and visual acceptance.
 - Approved-model alternative: document only the approval mechanism, the
   NON-CONFORMING labelling and the provenance that must be recorded. The task does
   not itself approve any provider or model (see D1).
-- Blind isolation: write the facts-free Pass 1 brief and keep book-derived examples,
-  canonical entity names and chapter facts out of everything staged to Pass 1. This
-  includes removing or relocating examples currently inside staged text, such as
-  `SKILL.md` 338 (`Bob uses it to`). Require separate fresh contexts for Pass 1 and
-  Pass 2 under every profile.
+- Blind isolation: write the facts-free Pass 1 brief. The Pass 1 staging list
+  becomes exactly `references/pass1-blind-brief.md`, `references/claim-ledger.md`,
+  the source file, and `scripts/source_evidence.py`, which is invoked rather than
+  read as guidance. Nothing else is staged: not `SKILL.md`, the contract, the
+  exception registries, `agents/openai.yaml`, nor any other repository file. Keep
+  book-derived examples, canonical entity names and chapter facts out of the staged
+  files, removing or relocating examples such as `SKILL.md` 338 (`Bob uses it to`).
+  Require separate fresh contexts for Pass 1 and Pass 2 under every profile.
 - Presentation stage: make `source_evidence.py prepare-corpus` copy
   `data/presentation/species.json` into the temporary root's
   `presentation/species.json`, which `scripts/narrative-cli.ts` `loadCorpus`
   requires for a root not named `narrative`. Report in its JSON output the base Git
   commit, whether the canonical inputs were clean, and the SHA-256 of every copied
   file. Document regenerating the narrative manifest after manual staging.
-- Reading order versus story dates: encode the rule that follows from ADR-0002. A
-  chapter's writes take its effective story date, so a full-field update must not
-  carry facts first established at a later story date. Its baseline is the value
-  eligible at the target chapter's story date within the preceding reader-visible
-  set, not the latest reader-known value. Leave the forward-propagation question to
-  D2.
+- Reading order versus story dates: consolidate the existing ordering-moment rules
+  into one section that cites the ADRs. Keep the current full-field-update rule as
+  the rule, worded as it is now (`chapter-extraction.md` 140–142, `SKILL.md`
+  385–388). State D2 as an open Captain decision beside it. Do not encode a new
+  update baseline while D2 is open. The review package lists every update whose
+  prior entry contains a fact first established at a later story date than the
+  target chapter's, so the Captain can see the D2 cases. This is reporting only and
+  changes no authoring rule.
 - Checksum provenance: label every hash by kind (file SHA-256 of exact bytes, Git
   commit, Git blob). Record the source, sealed-ledger, approved-candidate and
   canonical SHA-256 separately when they differ. Freeze and hash a candidate before
@@ -152,9 +157,17 @@ disputed book facts, chapter approval and visual acceptance.
   revision; Node and Python environments; and narrative plus astronomy validation of
   the exact prior chapter chain. Any failure stops the run; never bypass it. The
   execution-profile task later automates this checklist.
+- Rule mapping: go through `chapter-extraction.md`, `SKILL.md` and `claim-ledger.md`
+  paragraph by paragraph and give every normative rule a row, unique or duplicated,
+  with its old file and lines and its new location. Unique rules count as much as
+  duplicates; examples are disclosure-gap omission (ADR-0015),
+  introduction-versus-update ownership, the ADR-0021 lower-bound exception, dry-run
+  comparison, and the deferred Kindle fallback.
 - Update directly affected documents: `README.md` (link only),
   `docs/tasks/README.md` and `AGENTS.md` (link targets only, if anchors move), and
-  `technical-design.md` Section 13 (optional one-line pointer, no semantic change).
+  `technical-design.md` Section 13. Section 13 gets at most a one-line pointer to the
+  contract, which must say that the architecture boundary stays provider-independent;
+  no semantic change.
 
 ## Out of scope
 
@@ -178,16 +191,33 @@ disputed book facts, chapter approval and visual acceptance.
 1. `docs/chapter-extraction.md` is the single authoritative contract with the
    sections above. `SKILL.md`, `claim-ledger.md`, `README.md` and the checklists
    contain no restated normative rule that is also stated in the contract; they link
-   to it.
-2. The logged rule-mapping table accounts for every normative rule in the pre-change
-   `docs/chapter-extraction.md`, `SKILL.md` and `claim-ledger.md`. The independent
-   reviewer finds no dropped or weakened rule.
+   to it. One exception: strings asserted verbatim by
+   `tests/unit/source-evidence-helper.test.ts` stay verbatim. The BOB-028
+   orchestration sentences (fresh isolated Codex context; explicit Terra, high and
+   `fork_turns: none`; no inheritance; Pass 2 staging; stop before substituting; the
+   requested-configuration review line) stay in `SKILL.md`. Any other tested rule
+   sentence may move to the contract only if its assertion moves with it, unchanged
+   apart from the file it reads. The two gravity examples stay in
+   `docs/chapter-extraction.md`.
+2. The logged rule-mapping table covers every normative rule, unique or duplicated,
+   in the pre-change `docs/chapter-extraction.md`, `SKILL.md` and `claim-ledger.md`,
+   using the method in Scope. The independent reviewer finds no dropped or weakened
+   rule.
 3. The combined line count of `docs/chapter-extraction.md`,
    `docs/chapter-extraction-checklists.md` and the skill directory's Markdown files is
    lower than the pre-change combined count (1,171 lines: 392 + 563 + 178 + 16 + 22).
-4. The Pass 1 brief and every other file staged to Pass 1 contain no canonical entity
-   ID, no name or alias of a chapter-introduced entity in `data/narrative/`, and no
-   chapter-specific fact. A unit test enforces this against the canonical corpus.
+4. The files staged to Pass 1 (exactly the brief and `claim-ledger.md`; the helper is
+   code) contain no chapter-specific fact. For the test this means none of the
+   following, each matched case-sensitively as a whole token:
+   - a canonical chapter reference (`<book>.<chapter>` for any file in
+     `data/narrative/chapters/`);
+   - a canonical entity ID from zero state or any chapter (any `id` value);
+   - a name or alias introduced or set by any chapter (`introducing[].name`,
+     `introducing[].aliases`, `updates[].name`, `updates[].aliases`).
+
+   Zero-state names are not banned. The test reads the canonical corpus; the
+   existing pilot-fact denylist (`Robert`, `Las Vegas`, `Bob Version`) stays.
+
 5. The prerequisite check, stop-before-substitution, approved-alternative approval,
    NON-CONFORMING labelling and requested-versus-actual provenance are documented.
    The BOB-028 regression assertions still pass, or are updated in the same change
@@ -199,10 +229,10 @@ disputed book facts, chapter approval and visual acceptance.
    manual copying. Its JSON output includes the base commit, the clean flag and the
    per-file SHA-256 values. Regression tests cover the presentation copy and the
    provenance fields.
-7. The reading-order and story-date section states the no-backdating rule and the
-   full-field-update baseline. It cites ADR-0002, ADR-0009, ADR-0013 and the
-   calendar-precision ADR-0026, uses a non-monotonic example made only of dates (no
-   book facts), and records D2 as open unless the Captain has decided it.
+7. The reading-order and story-date section consolidates the ordering rules. It cites
+   ADR-0002, ADR-0009, ADR-0013 and the calendar-precision ADR-0026, keeps the current
+   full-field-update wording as the rule, and records D2 as open, giving the current
+   rule, the proposed alternative and the options. It introduces no new baseline.
 8. Checksum labelling and the approved-versus-canonical rule are documented, and the
    promotion-log header explains what its SHA-256 column means. Historical rows are
    not rewritten.
@@ -256,22 +286,36 @@ Captain decisions (record them here; do not decide them in implementation):
   workflow." The recorded approval covered the 1.42 verification only. Because piotr
   has no `codex`, Chapter `1.43` cannot run conforming without either a Codex
   launcher or a new explicit approval.
-- D2 (spoiler and temporal semantics): when a later-read chapter has an earlier story
-  date, ADR-0002 makes the chronologically latest eligible write win. A full-field
-  description update in the earlier-dated chapter is therefore hidden at later story
-  dates by an existing later-dated write, which can drop newly revealed knowledge.
-  Options: accept it; require a later chapter to re-integrate; or treat descriptions
-  as reader-knowledge rather than story-time state (an ADR and a projection change,
-  out of scope here).
+- D2 (spoiler and temporal semantics): how a full-field update behaves when reading
+  order and story dates diverge.
+  - Current rule, which stays in force: "Description updates replace the complete
+    field. Preserve useful prior reviewed knowledge and integrate the newly revealed
+    information rather than emitting only the latest chapter fact."
+    (`chapter-extraction.md` 140–142; `SKILL.md` 385–388: "start from the complete
+    prior reviewed entry".)
+  - The problem, shown with dates only: chapters are read as A (`2165-04`), B
+    (`2162-05`) and C (`2162-04`). C's full-field update may then carry facts first
+    established in A. ADR-0002 also makes the chronologically latest eligible write
+    win, so at later story dates A's write hides whatever C newly revealed.
+  - Proposed alternative, not adopted: build a full-field update on the value
+    eligible at the target chapter's story date within the reader-visible set before
+    it, so no fact from a later story date is carried back.
+  - Options:
+    (a) keep the current rule;
+    (b) adopt the alternative and accept that later-dated writes hide newly revealed
+    knowledge at later dates;
+    (c) adopt (b), and require a later chapter to re-integrate what was hidden;
+    (d) treat descriptions as reader knowledge rather than story-time state, which
+    needs an ADR and a projection change outside this task.
 
-Manager-confirmable, within design:
+Manager decisions, within design (accepted 2026-11-12):
 
-- D3: the contract lives in `docs/chapter-extraction.md`, and the skill becomes an
-  adapter. This explicitly supersedes the BOB-028 documentation note that the Codex
-  model is "an orchestration detail rather than part of the provider-independent
-  workflow contract presented to operators".
-- D4: approved-versus-canonical checksums are recorded in the decision cell, rather
-  than in a new promotion-log column.
+- D3, accepted: the contract lives in `docs/chapter-extraction.md`, and the skill
+  becomes an adapter. This explicitly supersedes the BOB-028 documentation note that
+  the Codex model is "an orchestration detail rather than part of the
+  provider-independent workflow contract presented to operators".
+- D4, accepted: approved-versus-canonical checksums are recorded in the
+  promotion-log decision cell, not in a new column.
 
 Risks:
 
@@ -289,3 +333,15 @@ Risks:
 - Created Ready from the manager-relayed, Captain-authorised scope, on
   origin/master 3053e95 in `~/src/bobiverse-extract`. Preparation only: no
   implementation, no source-text access, no push.
+- Task-doc review of a89bdf8 (draft PR #6) requested changes.
+  - B1: the proposed new full-field-update baseline was removed from the scope, the
+    structure and AC7. The current wording stays the rule, and D2 now records the
+    current rule, the proposed alternative and the options.
+  - Nit 1: the mapping method now covers unique rules as well as duplicates.
+  - Nit 2: AC1 keeps the strings the test asserts verbatim.
+  - Nit 3: the Pass 1 staging list is exact, and the test's definition of a
+    chapter-specific fact is precise.
+  - Nit 4: any Section 13 pointer must say the architecture boundary stays
+    provider-independent.
+- Recorded the manager's acceptance of D3 and D4. D1 and D2 stay open. Status stays
+  Ready until implementation starts.
