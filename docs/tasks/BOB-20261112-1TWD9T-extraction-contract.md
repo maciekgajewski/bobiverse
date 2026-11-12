@@ -439,3 +439,29 @@ Risks:
 | Review package contents (SK 527–544; CE 26–29)                                                                          | §10 (tested); adapter adds the profile lines (tested)          |
 | Promotion preflight, failure leaves files unchanged, value identity, log row (SK 550–558; CE 295–319)                   | §11.3                                                          |
 | Standard preflight and post-write command blocks (CE 371–392)                                                           | §8, §11.4                                                      |
+
+### 2026-11-12 (Europe/Amsterdam; local validation)
+
+- Line counts after: contract 601, checklists 51, `SKILL.md` 78, `claim-ledger.md`
+  98, brief 104, event exceptions 16, reconciliation exceptions 22. That is 970 in
+  total, against 1,171 before.
+- At 1e36d32 every check passed:
+  - task check (58 files);
+  - format:check, lint and typecheck;
+  - Vitest 245/245 across 29 files;
+  - Python data tests 79/79;
+  - data:validate (277 systems);
+  - build (42 chapters);
+  - skill `quick_validate.py`, `source_evidence.py --help` and `git diff --check`.
+- Full e2e passed **93/93**, with zero retries, skips or flakes, in 9.8 minutes. It
+  ran with `CI=1`, one worker, through the external 127.0.0.1:5175 wrapper.
+- The icon-specimen PNG rewrite was restored; a copy is kept outside git.
+- Ports and processes: 5173 and the acceptance checkout were not touched. Nothing
+  was pushed.
+- Outstanding:
+  - fresh independent exact-SHA review;
+  - hosted CI;
+  - the Captain's D1 and D2 decisions;
+  - merge.
+
+  The status stays In progress and becomes Done only after merge.
