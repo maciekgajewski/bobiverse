@@ -1,6 +1,6 @@
 # BOB-20261112-1TWD9T: One authoritative chapter-extraction contract
 
-Status: Ready
+Status: In progress
 Phase: 4 (LLM-assisted editorial pipeline; process hardening before Chapter 1.43)
 Last updated: 2026-11-12
 
@@ -345,3 +345,97 @@ Risks:
     provider-independent.
 - Recorded the manager's acceptance of D3 and D4. D1 and D2 stay open. Status stays
   Ready until implementation starts.
+- Implementation started under the manager-relayed authorisation, on top of 3002629;
+  status In progress. D1 and D2 remain open. The contract records them as open
+  decisions, D1 keeps the stop-and-ask rule, and §6.9 keeps the current
+  full-field-update wording verbatim, with no new baseline. Applied the accepted D3
+  and D4.
+- Line counts before: contract 392, `SKILL.md` 563, `claim-ledger.md` 178, event
+  exceptions 16, reconciliation exceptions 22 (1,171 in total). See the next log
+  entry for the counts after.
+- Judgement calls:
+  - The Pass 1 staging list is exact: the brief, the ledger format, the source file
+    and the helper. It no longer stages `SKILL.md` or verified contract excerpts,
+    which is stricter than before.
+  - The old test assertions now read the file where each rule lives. The BOB-028
+    sentences are still checked in `SKILL.md`, the reconciliation rules in the
+    contract, and the Pass 1 rules in the brief.
+  - `prepare-corpus` reports unclean inputs rather than refusing them, because
+    isolated staging checkouts are dirty by design. It refuses a root named
+    `narrative`, because the validator would read that root's parent presentation
+    registry instead.
+  - The `claim-ledger.md` paragraph that had split the confidence-value list was
+    repaired.
+- Verified that a root built by the old helper fails narrative validation with
+  ENOENT on `presentation/species.json`. With the new helper, a root using canonical
+  1.42 as the stand-in candidate (41 prior chapters) passes narrative validation (42
+  chapters) and `data:validate` (277 systems). It reports `inputs_clean: true` and a
+  candidate SHA-256 beginning `29da2c7f`, which matches the promotion log. Logs are
+  in `~/bobiverse-extract-artifacts/`.
+
+#### Rule mapping (CE = old `docs/chapter-extraction.md`, SK = old `SKILL.md`, CL = old `claim-ledger.md`; line numbers at 3053e95)
+
+| Rule (pre-change location)                                                                                              | New home                                                       |
+| ----------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Review-only, one chapter, model output is candidate (CE 3–5; SK 8–9, 30–34)                                             | Contract §1.1–1.2                                              |
+| Explicit approval before canonical write; `dry-run` never writes (CE 283–291; SK 30–34, 546–548)                        | §1.2, §11.1                                                    |
+| Promotion needs no per-chapter task; task for code/schema/contract/tooling (CE 295–296, 321–322; SK 64–66)              | §1.3                                                           |
+| Never commit source text, excerpts, ledgers, candidates, roots (CE 289–291, 364–365; SK 9, 557–558)                     | §1.4                                                           |
+| Kindle Computer Use deferred (SK 560–563)                                                                               | §1.7                                                           |
+| Inputs, filename forms, title derivation, `metadata` fingerprint (CE 9–18; SK 36–59)                                    | §2                                                             |
+| No need to repeat mandatory instructions (SK 26–28)                                                                     | §2; adapter Quick start                                        |
+| Terra/high/fork none, no inheritance, invalid if inherited (SK 71–74)                                                   | Adapter (verbatim, tested); §3.1                               |
+| Stop before substituting (SK 95–97)                                                                                     | Adapter (verbatim, tested); §3.3                               |
+| Pass 1 fresh isolated context; orchestrator may hold state (SK 76–80)                                                   | Adapter (verbatim, tested); §4.2                               |
+| Pass 1 staging allowlist; verified contract excerpts (SK 82–87)                                                         | §4.3, adapter (tightened to an exact list)                     |
+| Do not stage schema, corpus, task, contract docs, ADR examples, tests, fixtures (SK 89–92)                              | §4.4 (tested)                                                  |
+| Pass 2 staging; no inherited conversation or later state (SK 94–95; BOB-028)                                            | Adapter (verbatim, tested); §4.6                               |
+| Workspace `mktemp -d`; record `git status` (SK 68–69)                                                                   | §4.1                                                           |
+| Pass 1 forbidden reads; no broad searches; format docs only after no-facts check (SK 101–112)                           | Brief "Your inputs"; §4.5 (nothing else is staged)             |
+| Manifest/chunk each once; overlap; no inferred boundaries (SK 114–116)                                                  | Brief "Read the source"                                        |
+| Claims not introductions; `source_mentions`; capture list (SK 118–136)                                                  | Brief "Capture source claims"                                  |
+| Fine-grained places captured in Pass 1 (SK 138–141; CL 85–88; CE 226–228)                                               | Brief "Places"                                                 |
+| Survey inventory, gravity value and unit, moon counts (SK 143–147; CL 97–109; CE 234–239)                               | Brief "Surveys" (tested)                                       |
+| Capture every event claim, no gate in Pass 1 (SK 149–152; CL 114–117)                                                   | Brief "Events"                                                 |
+| Acronym label, no invented expansion, record absence (SK 154–161; CL 53–57, 139–144)                                    | Brief "Names"; §6.3                                            |
+| Description evidence checklist; no model memory (SK 163–176; CL 128–142; CE 127–132)                                    | Brief "Descriptions"; CL keeps uncertainty note                |
+| Relationship is not a definition (CL 146–148)                                                                           | Brief "Descriptions"; CL                                       |
+| Lineage capture and no-inference rules (CL 150–156)                                                                     | Brief "Lineage"; §6.5                                          |
+| Short exact excerpts; `seal`; post-seal steps; no later revision (SK 178–190)                                           | Brief "Evidence and sealing"; §5                               |
+| Ledger JSON, IDs, confidence values, claim types, occurrence, sealed form (CL 3–83, 169–178)                            | `claim-ledger.md` (format only; confidence paragraph repaired) |
+| Pass 2 inputs: zero state or preceding projection, never later (SK 194–199)                                             | §6.1                                                           |
+| Fingerprinted exception registry, Pass 2 only, immutable ledger (SK 201–205; CE 134–138)                                | §6.1, §4.7; adapter names the files (tested)                   |
+| Classification list; `not-modeled` limits (SK 207–222)                                                                  | §6.2                                                           |
+| Event significance gate, categories, insufficiency, non-events (SK 224–262; CE 166–190; CL 119–126)                     | §6.6                                                           |
+| Foundational incident via registry only; spoiler-safe at introduction (SK 241–250; CE 179–183)                          | §6.6; `event-exceptions.md` unchanged                          |
+| Retroactive event audit outcome (CE 192–194)                                                                            | §6.6                                                           |
+| `colony_of`, `possible_colony_target`, `prominent`, no transit (CE 198–206)                                             | §6.7                                                           |
+| Settlement scale, `locale`, `megastructure`, disposable and internal places (SK 264–276; CE 208–217; CL 88–95)          | §6.7 (tested)                                                  |
+| Structured references climb to nearest parent; `not-modeled` reason; keep facts (SK 278–290; CE 219–230)                | §6.7 (tested)                                                  |
+| Survey override from 1.16; body fields (SK 292–302; CE 234–249; CL 110–112)                                             | §6.8 (tested)                                                  |
+| Gravity retention and conversion, worked examples (SK 304–309; CE 251–259)                                              | §6.8 (examples tested in the contract)                         |
+| Four-moon cap, ordering, `Moon 1`–`Moon 4`, IDs, later name binding (SK 311–320; CE 261–271)                            | §6.8 (tested)                                                  |
+| ADR-0021 lower-bound exception for one chapter (CE 273–279)                                                             | §6.8                                                           |
+| Description quality gate (SK 322–358; CE 72–94; CL 158–167)                                                             | §6.9 (tested)                                                  |
+| Disclosure-gap omission, ADR-0015 (SK 347–351; CE 89–94; CL 162–164)                                                    | §6.9 (tested)                                                  |
+| `state`/`current_state` brevity; unified vessel record with optional `current_state` (SK 353–356; CE 96–99; CL 164–167) | §6.9 (tested)                                                  |
+| Type checklists incl. species gates (SK 366–383; CE 101–119)                                                            | §6.9 (tested)                                                  |
+| Partial entries valid; no invented completeness (SK 360–364; CE 121–125)                                                | §6.9                                                           |
+| Full-field description update, current wording (SK 385–388; CE 140–142)                                                 | §6.9 verbatim (tested); D2 open in §7                          |
+| Reader order before story time; ownership; no invented ID or chronology (SK 390–393)                                    | §6.3, §7                                                       |
+| Ordering moments, date format, suffix rules, 2158 example (SK 395–402; CE 144–164)                                      | §7                                                             |
+| Introductions hold end state; not in updates; ordering; reference cycles (SK 404–409)                                   | §6.3                                                           |
+| Ask one question at a time; sealed claim unchanged (SK 411–412)                                                         | §6.3, §10                                                      |
+| Supplemental mentions from 1.14, structural list, no threshold, mandatory rows (SK 414–427; CE 31–40; CL 48–50)         | §6.4 (tested)                                                  |
+| Parent lineage authoring (SK 429–435; CE 42–49)                                                                         | §6.5 (tested)                                                  |
+| Primary-name and acronym rule (CE 51–54)                                                                                | §6.3                                                           |
+| Summary standard (SK 437–445; CE 56–68)                                                                                 | §6.10                                                          |
+| Candidate under `/tmp`; `prepare-corpus`; validators; authoritative validator (SK 447–476)                              | §8                                                             |
+| Disclosure-gap audit before validation (SK 469–472)                                                                     | §6.9 (tested)                                                  |
+| ADR-0016 exact bootstrap and stop conditions (SK 478–485; CE 304–310)                                                   | §9                                                             |
+| Isolated acquisition staging, ten steps (SK 487–516; CE 324–365)                                                        | §9                                                             |
+| No hand edits; existing row not proof; staging changes no authority (SK 518–521; CE 308–310, 367–369)                   | §9                                                             |
+| Dry run: read target only after validation; no silent alteration (SK 523–525)                                           | §8 (and freeze first)                                          |
+| Review package contents (SK 527–544; CE 26–29)                                                                          | §10 (tested); adapter adds the profile lines (tested)          |
+| Promotion preflight, failure leaves files unchanged, value identity, log row (SK 550–558; CE 295–319)                   | §11.3                                                          |
+| Standard preflight and post-write command blocks (CE 371–392)                                                           | §8, §11.4                                                      |

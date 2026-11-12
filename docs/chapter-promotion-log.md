@@ -5,6 +5,12 @@ candidates. The shared workflow and validation commands live in
 [chapter extraction](chapter-extraction.md); do not create a per-chapter task for
 these promotions.
 
+The `Canonical SHA-256` column is the file SHA-256 of the exact canonical chapter
+bytes as written. When standard formatting changed the approved bytes, the decision
+cell also records the approved-candidate file SHA-256, together with the
+approved-chapters repository commit and tag and any NON-CONFORMING label. Historical
+rows are not rewritten. See the extraction contract, Section 11.2.
+
 Earlier chapter-authoring history remains in the existing completed tasks. This log
 starts with chapter `1.3` and does not duplicate those records.
 

@@ -81,6 +81,7 @@ Every task must contain:
 does not replace the requirement for explicit authorization from the Captain.
 
 Routine promotion of an exact, explicitly approved chapter candidate is not tracked
-as a task. Follow `../chapter-extraction.md` and append the result to
+as a task. Follow `../chapter-extraction.md` and its operator checklists in
+`../chapter-extraction-checklists.md`, and append the result to
 `../chapter-promotion-log.md`. Create a task when chapter work also changes code,
 schemas, contracts, tooling, or includes broader editorial remediation.

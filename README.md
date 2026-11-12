@@ -211,8 +211,8 @@ Convenience shell wrappers and the same examples are in [bin/README.md](bin/READ
 
 ### Chapter extraction
 
-Use the repository-local Codex skill to turn one plaintext chapter into a reviewed
-candidate chapter object. See [chapter extraction](docs/chapter-extraction.md) for
-the one-line invocation and approval workflow. Entity descriptions contain supported
-positive knowledge and omit notices about details that have not been revealed;
-uncertainty remains available in the extraction review package.
+The [chapter extraction contract](docs/chapter-extraction.md) is the single
+authority for turning one plaintext chapter into a reviewed candidate chapter object
+and promoting it; operators follow its
+[checklists](docs/chapter-extraction-checklists.md). The repository-local Codex
+skill is the conforming adapter for that contract.

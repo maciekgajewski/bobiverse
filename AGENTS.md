@@ -33,7 +33,8 @@ accepted ADR without saying so explicitly.
 Routine promotion of an exact chapter candidate produced by the
 `extract-bobiverse-chapter` workflow is an editorial-authoring exception: do not
 create a per-chapter task. Require explicit approval and application authority,
-follow `docs/chapter-extraction.md`, and append the result to
+follow the contract in `docs/chapter-extraction.md` and the operator checklists in
+`docs/chapter-extraction-checklists.md`, and append the result to
 `docs/chapter-promotion-log.md`. A task is still required when the work changes code,
 schemas, contracts, tooling, or includes broader editorial remediation.
 
