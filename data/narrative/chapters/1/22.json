@@ -45,14 +45,6 @@
   ],
   "updates": [
     {
-      "entity_id": "character:riker",
-      "current_state": "Has departed Epsilon Eridani with Homer five years before September 2150."
-    },
-    {
-      "entity_id": "character:homer",
-      "current_state": "Has departed Epsilon Eridani with Riker five years before September 2150."
-    },
-    {
       "entity_id": "technology:von-neumann-probe",
       "description": "A self-replicating spacecraft designed to travel between star systems and construct new copies of itself along the way. Interstellar use became possible after a breakthrough in subspace theory, and such probes are central to a competitive international colonization effort. Their exponential replication could eventually explore the galaxy, but practical self-construction remains the central obstacle."
     },
@@ -80,6 +72,8 @@
   "mentions": [
     "character:bob-replicant",
     "character:ernesto-medeiros",
+    "character:homer",
+    "character:riker",
     "location:sol",
     "organization:china",
     "organization:united-states-of-eurasia",
