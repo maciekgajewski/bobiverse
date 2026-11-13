@@ -15,13 +15,13 @@ This document relaxes none of these rules:
 
 ## Roles and authority
 
-| Role                         | May decide or do                                                                                                                                                                                                                 | May not                                                                                                                                      | Recorded in                                  |
-| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| Captain (Maciej)             | Design reviews; final acceptance in a real browser; a standing OK for merges that pass the merge gate. Reserved decisions (below).                                                                                               | —                                                                                                                                            | Task log or PR, with date and quoted wording |
-| Manager bot                  | Assigns and coordinates tasks; authorises routine, in-design tasks outside the reserved decisions; relays Captain decisions; posts the reviewer's approval record; merges PRs that pass the merge gate without asking each time. | Make or pre-empt a reserved decision; merge a PR that fails any gate item                                                                    | Task log; PR approval record; merge commit   |
-| Developer bot                | One task, one branch, one PR, with tests and a manual browser checklist. Pushes only its own task branch (through the repository-scoped deploy key on the development host) and opens that PR itself.                            | Push to `master`; force-push a published branch; amend or rebase published commits; mark a task Done before merge                            | Task log; PR body                            |
-| Independent one-off reviewer | Reviews one exact SHA in a fresh context, read-only; approves or requests changes.                                                                                                                                               | Edit what it reviews; carry an approval to another SHA; approve a PR that implements a reserved decision without a recorded Captain decision | Review report; approval record on the PR     |
-| Extractor bot                | Chapter extraction under [`chapter-extraction.md`](chapter-extraction.md); it produces candidates only. It has no GitHub write access (current, otherwise unwritten practice).                                                   | Approve or promote a chapter                                                                                                                 | Promotion log and review package             |
+| Role                         | May decide or do                                                                                                                                                                                                                                                      | May not                                                                                                                                      | Recorded in                                  |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| Captain (Maciej)             | Design reviews; final acceptance in a real browser; a standing OK for merges that pass the merge gate. Reserved decisions (below).                                                                                                                                    | —                                                                                                                                            | Task log or PR, with date and quoted wording |
+| Manager bot                  | Assigns and coordinates tasks; authorises routine, in-design tasks outside the reserved decisions; relays Captain decisions; posts the reviewer's approval record; merges PRs that pass the merge gate without asking each time.                                      | Make or pre-empt a reserved decision; merge a PR that fails any gate item                                                                    | Task log; PR approval record; merge commit   |
+| Developer bot                | Code only, plus content-specific UI when a chapter warrants it. One task, one branch, one PR, with tests and a manual browser checklist. Pushes only its own task branch (through the repository-scoped deploy key on the development host) and opens that PR itself. | Push to `master`; force-push a published branch; amend or rebase published commits; mark a task Done before merge                            | Task log; PR body                            |
+| Independent one-off reviewer | Reviews one exact SHA in a fresh context, read-only; approves or requests changes.                                                                                                                                                                                    | Edit what it reviews; carry an approval to another SHA; approve a PR that implements a reserved decision without a recorded Captain decision | Review report; approval record on the PR     |
+| Extractor bot                | Chapter extraction under [`chapter-extraction.md`](chapter-extraction.md). Once the Captain approves a chapter, it pushes its own data branch and opens a data-only PR for it (below).                                                                                | Approve a chapter; merge its own PR; change code                                                                                             | Review package; data PR body                 |
 
 Reserved to the Captain: design decisions; model, provider and privacy changes;
 disputed book facts; chapter approval; visual acceptance. A PR that implements a
@@ -57,6 +57,36 @@ available.
    its own criteria require (for example the Captain's visual acceptance) is
    complete.
 
+## Data-only chapter PRs
+
+Since 2026-11-13 (the Captain's decision of 21:43 CET, relayed by the manager), the
+Extractor submits each Captain-approved chapter, or a short run of them, as its own
+data-only PR, and the manager reviews and merges it. Such a PR needs no task file
+and no manual browser checklist. Per-chapter facts in
+`tests/fixtures/narrative-meaning.json` and a row in
+[`chapter-promotion-log.md`](chapter-promotion-log.md) are not required. Existing
+fixture facts stay; changing an existing one is a disputed book fact and needs the
+Captain's recorded decision.
+
+A data-only PR may change only this path:
+
+- `data/narrative/chapters/` — the canonical chapter JSON that
+  `scripts/chapter_promotion.py promote` writes, at
+  `data/narrative/chapters/<book>/<number>.json`.
+
+`npm run narrative:manifest`, which `promote` runs in post-write validation, also
+rewrites `generated/narrative/chapter-manifest.json`. That file is gitignored and
+must not be committed. Touching anything outside this list makes the change a
+normal code PR, which needs a task file and follows the developer lifecycle above.
+
+Its gate is the merge gate below, with item 4 met by the PR body. The body quotes
+the Captain's approval of each chapter with its date and time, and the relay path when
+relayed. The independent review checks that the data is exactly the approved
+candidate, that the PR stays within the path allowlist, and that the required
+safety nets in [`chapter-extraction.md`](chapter-extraction.md) pass: the generic
+validators and the merged-text sentence-preservation check. A chapter that needs
+code or content-specific UI goes to the developer as a separate task.
+
 ## Merge gate checklist
 
 A PR merges only when every item holds for its current head SHA:
@@ -69,7 +99,7 @@ A PR merges only when every item holds for its current head SHA:
    names in [`ci.yml`](../.github/workflows/ci.yml) are the source of truth).
 3. The branch is up to date with `master`.
 4. If the PR implements a reserved decision, the Captain's decision is recorded in the
-   task or PR.
+   task or PR. For a data-only chapter PR, that is the quoted chapter approval.
 5. The merge is a squash pinned to that SHA, for example
    `gh pr merge <n> --squash --match-head-commit <sha>`, or the REST merge call with
    `sha`.
