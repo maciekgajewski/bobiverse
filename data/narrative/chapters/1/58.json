@@ -1,0 +1,103 @@
+{
+  "chapter": "1.58",
+  "title": "58",
+  "summary": "The colony ships have been checked out end to end, inspected by the USE delegation and taken on a shakedown cruise to Jupiter and back, and now wait in low Earth orbit. With Bill's VR upgrades, Homer can dance around Riker's captain's chair in person, which has its downsides. Ten shuttles of five hundred seats make forty trips to bring the USE colonists up to the ships, where they are sedated and locked into stasis pods; a share of the Svalbard Vaults' contents goes aboard each ship and the shuttles are docked in the holds. During the long round of speeches Riker switches off his proprioception emulation and lets sandbox Bob stand in on video. Howard, the newest Bob, escorts the ships and privately is to make sure the colonists behave, with a few of Bill's recent inventions in his hold. Limited to 1 g, the ships face a little over eighteen years in transit, about six aboard, crewed by Riker clones and ROAMers; Riker installed the replicant matrices at the last moment, and there have been no hacking attempts. The third ship, for the Spits and FAITH's enclave, will follow in four months to found the first settlement on whichever planet the USE contingent does not pick, a price Valter accepts philosophically. Three more ships are under construction, and kudzu production and leftover resources will feed those who stay. Watching the ships pass the orbit of Mars in the holotank after more than a decade of work, Riker tears up, then he and Homer get back to the day's list.",
+  "date": "2171-04",
+  "location_id": "location:sol",
+  "introducing": [
+    {
+      "id": "character:howard",
+      "name": "Howard",
+      "current_state": "The newest Bob, he is travelling with Exodus-1 and Exodus-2 as their escort and, by a private understanding with Riker, is to make sure the colonists behave at the other end. Riker has loaded his cargo hold with a few of Bill's recent inventions, just in case."
+    },
+    {
+      "id": "event:first-colony-ships-departure",
+      "name": "Departure of the first colony ships",
+      "date": "2171-04",
+      "location_id": "location:sol",
+      "participant_ids": [
+        "character:riker",
+        "character:homer",
+        "character:howard"
+      ],
+      "description": "The launch from Sol of the first two USE colony ships, Exodus-1 and Exodus-2, after more than a decade of work. Ten ground-to-orbit shuttles made forty trips, carrying up to five hundred people each, to move the USE colonists to the ships in low Earth orbit, where they were sedated and locked into stasis pods; a share of the Svalbard Vaults' contents was loaded aboard and the shuttles were docked in the cargo holds. A long ceremony of speeches followed, by USE leaders and by groups from the other side of the planet. Crewed by Riker clones and ROAMers and escorted by the newest Bob, Howard, the ships set out on a voyage of a little over eighteen years, about six of them aboard, and passed the orbit of Mars as Riker and Homer watched."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:riker",
+      "current_state": "At Sol, he has seen the first two colony ships, Exodus-1 and Exodus-2, launched after more than a decade of work, having installed their replicant matrices as one of the last tasks so that no one had time to tamper with them; there were no hacking attempts, so whoever might have tried may have given up. He hopes that new builds and returning ships will sustain a steady stream of emigrants for as long as people want to leave, and that more colonizable worlds are found before people start shooting at each other again. He keeps in regular video contact with the Hendricks household, his sister's descendants, which makes him feel real and is a satisfying next-best to being a parent or grandparent."
+    },
+    {
+      "entity_id": "character:gudmund-valter",
+      "current_state": "Leading the Spitsbergen refuge, which is to leave with FAITH's enclave aboard the third colony ship and found the first settlement on whichever planet the USE contingent does not choose. He is philosophical about the price of going first, building infrastructure for later settlers, and says in a speech that second prize is still a magnificent gift."
+    },
+    {
+      "entity_id": "vessel:exodus-1",
+      "current_state": "Having passed an end-to-end checkout, an inspection by a USE delegation and a shakedown cruise to Jupiter and back, it left low Earth orbit in April 2171 with its sister ship, carrying USE colonists in stasis pods and a share of the Svalbard Vaults' contents, with ground-to-orbit shuttles docked in the cargo holds. Crewed by Riker clones and ROAMers and escorted by Howard, it has passed the orbit of Mars on a voyage of a little over eighteen years, about six of them aboard."
+    },
+    {
+      "entity_id": "vessel:exodus-2",
+      "current_state": "Having passed an end-to-end checkout, an inspection by a USE delegation and a shakedown cruise to Jupiter and back, it left low Earth orbit in April 2171 with its sister ship, carrying USE colonists in stasis pods and a share of the Svalbard Vaults' contents, with ground-to-orbit shuttles docked in the cargo holds. Crewed by Riker clones and ROAMers and escorted by Howard, it has passed the orbit of Mars on a voyage of a little over eighteen years, about six of them aboard."
+    },
+    {
+      "entity_id": "vessel:exodus-3",
+      "current_state": "Designated for the Spitsbergen refuge and FAITH's enclave, it is due to leave Sol four months after Exodus-1 and Exodus-2 departed in April 2171. It is also to carry Julia Hendricks's family, a placement Riker secured from Minister Cranston before agreeing to his proposal, with FAITH's enclave taking the balance of its allocation. Its colonists are to found the first settlement on whichever planet the USE contingent does not pick, building enough infrastructure for later groups to settle without undue hardship. About three hundred people who cannot fit aboard will be the first onto the fourth ship instead."
+    },
+    {
+      "entity_id": "vessel:use-colony-ship",
+      "description": "A USE colony-ship design created by refugee scientists as an off-world refuge. Its plans require a space-based construction yard and a viable destination. It can carry ten thousand people at a time in stasis pods. Each ship has two drive rings and a massive reactor cooling section to move its huge central cargo section, and shielding for the stasis cargo makes up a significant share of its mass. Riker likens its appearance to an unarmed science-fiction warship. Its maximum sustained acceleration is 1 g, so a voyage takes slightly longer than it would for a version-1 Bob. The ships carry no human crew; they are crewed by a couple of Riker clones and large numbers of ROAMers, with replicant matrices installed aboard. Colonists ride up in ground-to-orbit shuttles holding five hundred people each, then are sedated, hooked up and locked into coffin-sized stasis pods, in which no time passes for them during the voyage; the shuttles travel docked in the cargo holds.",
+      "current_state": "Exodus-1 and Exodus-2 left Sol in April 2171 after end-to-end checkout, a USE inspection and a shakedown cruise to Jupiter and back, carrying USE colonists and a share of the Svalbard Vaults' contents on a voyage of a little over eighteen years, about six of them aboard, escorted by Howard. Exodus-3, for the Spitsbergen refuge and FAITH's enclave, is due to leave four months later, and three more ships are already under construction; about three hundred people who cannot fit on Exodus-3 will be the first onto a fourth ship, with established homes guaranteed at Omicron2 Eridani. Between new builds and returning colony ships, Riker hopes to keep up a steady stream of emigrants for as long as people want to leave. Diverting scavenged materials to farming space stations reduces the number of future colony ships."
+    },
+    {
+      "entity_id": "organization:united-states-of-eurasia",
+      "current_state": "Its colonists left Earth first, aboard Exodus-1 and Exodus-2 in April 2171, after a USE delegation inspected the ships; the arrangement, granted because USE supplied the colony-ship plans, had been opposed by many other survivor groups. The USE contingent gets first choice of planet at the destination, and the settlers on the third ship will take the other. The Spitsbergen refuge is technically part of USE but does not recognize Colonel Butterworth's authority."
+    },
+    {
+      "entity_id": "organization:spitsbergen-refuge",
+      "current_state": "It is to leave aboard Exodus-3 with FAITH's enclave four months after the first colony ships departed in April 2171, and to found the first settlement on whichever planet the USE contingent does not pick; that settlement must build enough infrastructure for later groups to settle without undue hardship."
+    },
+    {
+      "entity_id": "organization:free-american-independent-theocratic-hegemony",
+      "current_state": "Its enclave, which agreed to give up its food surplus in exchange for the balance of ship three's allocation, is to leave aboard Exodus-3 with the Spits four months after the first colony ships departed in April 2171, to help found the first settlement on whichever planet the USE contingent does not pick."
+    },
+    {
+      "entity_id": "organization:svalbard-global-trust",
+      "current_state": "Riker's team has access to its vaults, and a share of their contents was loaded onto each of the first colony ships."
+    },
+    {
+      "entity_id": "technology:vr",
+      "description": "A virtual-reality interface Bob builds aboard Heaven-1 to provide sensory input and an embodied experience for a bodiless mind. Its initial construction required hardware modifications, and its software remains under development. It provides convincing physical sensations and a full humanlike avatar, renders interactive objects such as a Nerf basketball and hoop, and supports shared environments including libraries, parks, and command decks. Users can create objects during a session and play games together. Ball games, in which one observed basketball trajectory was unrealistic, expose remaining physics inaccuracies and provide test cases for refinement. Bill regards varied embodied activity as important to retaining a human sense of self. Linus uses it to provide Henry with a realistic sailing life that includes eating, sleeping, and bodily functions. Improvements were planned to support more direct interaction between users, and upgrades from Bill now let Bobs interact physically with one another instead of only talking through video windows, though this has its downsides. Its proprioception emulation can be switched off, as Riker does to avoid falling over when he is virtually asleep."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:riker",
+      "role": "lead",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:homer",
+      "role": "other",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:howard",
+      "role": "other",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:gudmund-valter",
+      "role": "other"
+    }
+  ],
+  "mentions": [
+    "character:bill",
+    "location:earth",
+    "location:jupiter",
+    "location:mars",
+    "technology:roamers",
+    "technology:replicant-matrix",
+    "technology:kudzu-gardens"
+  ]
+}
