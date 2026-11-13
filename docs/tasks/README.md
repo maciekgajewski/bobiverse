@@ -10,7 +10,7 @@ derived from `../implementation-plan.md` and must remain consistent with
 - `Ready`: sufficiently specified, but not automatically authorized for execution.
 - `In progress`: explicitly authorized and currently being implemented.
 - `Blocked`: cannot proceed without a recorded external decision or dependency.
-- `Done`: acceptance criteria and validation are complete.
+- `Done`: acceptance criteria and validation are complete and the task's PR has merged.
 
 ## Generated index
 
@@ -78,7 +78,10 @@ Every task must contain:
 - Known risks or unresolved decisions.
 
 `Ready` means the task is implementable without recovering conversation history. It
-does not replace the requirement for explicit authorization from the Captain.
+does not replace explicit authorization: by the Captain, or by the manager for a
+routine, in-design task outside the Captain's reserved decisions. Roles, the merge
+gate, and the Done-after-merge rule are defined in
+[`../development-process.md`](../development-process.md).
 
 Routine promotion of an exact, explicitly approved chapter candidate is not tracked
 as a task. Follow `../chapter-extraction.md` and its operator checklists in
