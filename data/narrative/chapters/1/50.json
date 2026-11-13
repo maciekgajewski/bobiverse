@@ -1,0 +1,83 @@
+{
+  "chapter": "1.50",
+  "title": "50",
+  "summary": "At first light a large gorilloid pack ambushes the Deltan migration beyond the pass, attacking on several fronts while the drones' infrared is useless and seizing about a dozen females and juveniles. Bob and Marvin's busters break the assault and the spear-armed Deltans rally; with busters running short, Marvin has them strike at low speed to stun gorilloids for the defenders, and Bob orders more from the autofactory. They rescue perhaps a third of the abductees, Arnold organizes retrieval parties, and almost twenty Deltans die. Facing an overwhelming list of tasks, Bob raises his buster target, sets one printer group to building more printers, and considers making explosive warheads in a chemistry lab worked by ROAMers, while Marvin foresees a long war to exterminate the gorilloids. Speaking through a drone, Bob persuades a sceptical tribal circle, which Arnold has now joined, to halt for five days while he rebuilds his busters and counts the gorilloids, and the tribe sets up a longer-term camp. Archimedes judges Bob's tent idea impractical for a travelling tribe, but he and Arnold eagerly take up straightening spear shafts with steam and bending jigs.",
+  "date": "2166-06",
+  "location_id": "location:delta-eridani",
+  "introducing": [
+    {
+      "id": "event:gorilloid-raid-on-deltan-migration",
+      "name": "Gorilloid raid on the Deltan migration",
+      "date": "2166-06",
+      "location_id": "location:delta-eridani-4",
+      "description": "A dawn assault by a large gorilloid pack on the Deltan migration shortly after it crossed the pass into what Bob judges to be gorilloid heartland. Striking on several fronts while drone infrared was ineffective, the gorilloids seized about a dozen females and juveniles and killed almost twenty Deltans. Buster-drone strikes and defenders with flint-tipped spears broke the assault, and about a third of the abductees were rescued. The losses halt the migration in a longer-term camp while Bob rebuilds his buster supply, and Bob and Marvin expect a prolonged war against the gorilloids.",
+      "participant_ids": [
+        "character:bob-replicant",
+        "character:marvin",
+        "character:arnold"
+      ]
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "At Delta Eridani, protecting the Deltan migration, now halted in a longer-term camp beyond the pass after a costly gorilloid raid. He is rebuilding his busters, bootstrapping printer capacity, counting the gorilloids, and considering explosive warheads."
+    },
+    {
+      "entity_id": "character:marvin",
+      "current_state": "At Delta Eridani, helping Bob defend the halted Deltan migration and expecting a long war to exterminate the gorilloids. He has started a batch of new Bobs at the autofactory."
+    },
+    {
+      "entity_id": "character:archimedes",
+      "current_state": "Effectively a member of the tribal council, he is at the migration's longer-term camp, where he judged Bob's tent idea impractical for a travelling tribe and is gathering materials to straighten spear shafts."
+    },
+    {
+      "entity_id": "character:arnold",
+      "current_state": "Now a member of the tribal circle, he organized retrieval and hunting parties after the gorilloid raid and is gathering materials to straighten spear shafts at the migration's camp."
+    },
+    {
+      "entity_id": "species:delta-eridani-natives",
+      "description": "An intelligent native population of Delta Eridani 4, named Deltans by Bob. Bob judges them to be fire-using and probably intelligent. They have bat- and pig-like faces, long spiderish limbs, light brownish-gray to orangey-tan fur, patterned heads, and mobile expressive ears; ears pointing straight down are their equivalent of an incredulous stare. Their language is far more guttural than any sound humans can produce. Bob observes six apparently friendly groups, each tending a fire and interacting with the others. He observes two genders, tribal organization, loose pairings, and some individuals with multiple significant others; males patrol their territory while females and children form the tribe's center, and tribal matters are put before a council of elders, while juveniles have lower standing. Bob regards them as a decisive people who, when action is required, carry out orders without argument. They have an annual breeding cycle. Marvin finds no concept of religion among them, only basic animism such as honoring the animals they kill for food and venerating their dead. A planetary survey finds Deltans on only one continent of Eden, their cradle, making them a strictly local mutation; many related species live there, but none use fire or make tools. Their traditional weapons are clubs, handheld rocks, and pointed sticks, and axes and spears are now in use. A small tribal population with a small gene pool is under pressure from larger, stronger gorilloid predators, and Bob's group helps them regain flintworking, learn to preserve meat, and improve their defenses. The tribe once lived in older villages, some with flint, a better water supply, more food, and better defenses, before being driven out."
+    },
+    {
+      "entity_id": "technology:buster-drone",
+      "description": "A buster drone is an observation drone reinforced internally and fitted with steel impact caps. It can strike with forty pounds of high-tensile steel at twice the speed of a high-powered rifle bullet, delivering a lethal kinetic blow and sonic boom against a gorilloid. Atmospheric entry requires a controlled descent, so a deployment can take about ten minutes to reach a surface target. Units kept on standby can be brought into action in under ten seconds, while reserves held at the autofactory can need almost a day in transit at maximum acceleration. It can also strike at roughly the speed of a thrown rock, a blow that would kill a human but only briefly stuns a gorilloid. A unit can survive up to about a dozen strikes before something malfunctions, so spent units need to be collected for repair. Bob regards it as far from ideal: an imprecise weapon, comparable to fishing with dynamite, that makes up for its lack of precision with theatrical effect, and it endangers anyone close to its target, such as captives held by an attacker."
+    },
+    {
+      "entity_id": "technology:guppi-interface",
+      "description": "An interface that offloads tasks for replicants while retaining their human limits on multitasking. Its name expands to General Unit Primary Peripheral Interface, and its logs retain monitoring-interface and script activity. Its operating system is firmware; changing its replication priority would require a new core and ship. Version-2 GUPPI is being given enough memory capacity that a personality matrix is contemplated. It can take messages and arrange callbacks for Riker, acting as a secretary and receptionist. It can estimate buster-drone deployment time and launch buster drones on Bob's order. It can report blocked firewall breach attempts, display a stack trace of an attack, and trace injected packets back to their originating stream. It can display a relief map marking the locations and status of tracked individuals, assign drones to follow them, and pass production orders to the autofactory, warning when an order carries a high operational cost."
+    },
+    {
+      "entity_id": "technology:pointy-sticks",
+      "description": "Pointy sticks are Deltan wooden weapons, improved by Archimedes with straighter shafts and later flint points. They let defenders brace against charging gorilloids and can be thrown as spears when weighted at the point. Flint-tipped spears give Deltan defenders the upper hand against gorilloids in close fighting. Bob has introduced a way to straighten almost any shaft by steaming crooked wood and shaping it in bending jigs."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead"
+    },
+    {
+      "character_id": "character:marvin",
+      "role": "other"
+    },
+    {
+      "character_id": "character:arnold",
+      "role": "other",
+      "location_id": "location:delta-eridani-4"
+    },
+    {
+      "character_id": "character:archimedes",
+      "role": "other",
+      "location_id": "location:delta-eridani-4"
+    }
+  ],
+  "mentions": [
+    "technology:3d-printers",
+    "technology:autofactory",
+    "technology:hand-axe",
+    "technology:planetary-exploration-drone",
+    "technology:roamers",
+    "technology:translation-routine"
+  ]
+}
