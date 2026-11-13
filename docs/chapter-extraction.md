@@ -93,7 +93,7 @@ A different runtime, provider, or model may run only under the Captain's explici
 approval of that provider, model, and workflow, per run or standing (D1). Such a run:
 
 - is labelled **NON-CONFORMING** in every artifact, the review package, the approved
-  chapters repository, and the promotion-log decision cell;
+  chapters repository, and the data PR body;
 - keeps every isolation rule in §Context isolation, including separately started
   fresh contexts for Pass 1 and Pass 2;
 - records the requested profile, the actual runtime and model as reported, and the
@@ -574,8 +574,8 @@ the real worktree merely to make refresh see it. Instead:
    The final combined-chain preflight must pass; no earlier failure was waived.
 9. Present the exact combined chapter-and-astronomy diff. Apply no part of it to the
    real worktree until the Captain approves that exact combined result.
-10. Apply the approved result atomically, revalidate the canonical corpus, and append
-    the promotion-log rows. Never copy the disposable checkout, source text, ledgers,
+10. Apply the approved result atomically, revalidate the canonical corpus, and submit
+    it as a data-only PR (§Promotion). Never copy the disposable checkout, source text, ledgers,
     evidence excerpts, or unrelated refresh drift into the repository.
 
 Never hand-edit downloaded manifests, checksums, normalized extracts, candidates, or
@@ -629,13 +629,15 @@ the candidate is approved for quality.
   validation results, approval reference; never book text or free-form review
   notes) in the local no-remote repository `~/bobiverse-approved-chapters` with
   `scripts/chapter_promotion.py record`, which tags it `chapter-<ref>-approved`.
-  The developer then runs `scripts/chapter_promotion.py promote`. It reruns the
-  offline validators, writes canonically, appends the log row and runs
-  §Post-write validation, restoring everything on failure. Isolated acquisition
-  (§Promotion step 3) stays manual. `verify` checks tagged chapters.
-- The promotion-log decision cell records the approved-candidate SHA-256 when it
-  differs from the canonical one, the approved-chapters commit and tag, and any
-  NON-CONFORMING label. Historical rows are never rewritten.
+  The Extractor then runs `scripts/chapter_promotion.py promote` on its own data
+  branch. It reruns the offline validators, writes canonically, appends a log row
+  (no longer needed; drop it) and runs §Post-write validation, restoring everything
+  on failure. Isolated acquisition (§Promotion step 3) stays manual. `verify` checks
+  tagged chapters.
+- The data PR body records the approved-candidate SHA-256 when it differs from the
+  canonical one, the approved-chapters commit and tag, and any NON-CONFORMING label.
+  The [chapter-promotion log](chapter-promotion-log.md) is frozen as history; its
+  rows are never rewritten.
 
 ### Promotion
 
@@ -645,15 +647,16 @@ the candidate is approved for quality.
 2. Run both validators from §Candidate assembly and temporary corpus against that
    root.
 3. Resolve astronomy under §Astronomy preflight and isolated acquisition.
-4. If either preflight fails, leave canonical chapter files and the promotion log
-   byte-for-byte unchanged.
+4. If either preflight fails, leave canonical chapter files byte-for-byte unchanged.
 5. Only after both pass, write the exact approved candidate canonically and confirm
    that it remains value-identical.
 6. Run the post-write validation below. When an active task exists for broader work,
    also run its validation commands and update directly affected documentation.
-7. Append one row to [the chapter-promotion log](chapter-promotion-log.md) with the
-   chapter, applied date, canonical SHA-256, validation result, and material
-   editorial decisions (§Checksum provenance).
+7. Open a data-only PR under
+   [§Data-only chapter PRs](development-process.md#data-only-chapter-prs). Its body
+   quotes the Captain's approval with date and time and lists the material editorial
+   decisions and §Checksum provenance. No promotion-log row and no per-chapter
+   regression facts are required.
 
 ### Post-write validation
 
@@ -669,3 +672,9 @@ npm run lint
 npm run typecheck
 git diff --check
 ```
+
+These generic validators are required safety nets for every chapter, as is the
+merged-text sentence-preservation check: when a chapter writes a merged text for a
+field, the write keeps every sentence of the earlier canonical value that is visible
+for that field. That check is not automated yet; a follow-up PR adds it. Until then
+the Extractor and the reviewer compare the sentences by hand.
