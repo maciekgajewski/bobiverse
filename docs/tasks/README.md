@@ -84,7 +84,8 @@ gate, and the Done-after-merge rule are defined in
 [`../development-process.md`](../development-process.md).
 
 Routine promotion of an exact, explicitly approved chapter candidate is not tracked
-as a task. Follow `../chapter-extraction.md` and its operator checklists in
-`../chapter-extraction-checklists.md`, and append the result to
-`../chapter-promotion-log.md`. Create a task when chapter work also changes code,
+as a task. The Extractor submits it as a data-only PR under
+`../chapter-extraction.md`, its operator checklists in
+`../chapter-extraction-checklists.md`, and §Data-only chapter PRs in
+`../development-process.md`. Create a task when chapter work also changes code,
 schemas, contracts, tooling, or includes broader editorial remediation.

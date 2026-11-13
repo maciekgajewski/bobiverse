@@ -62,19 +62,22 @@ spawning for both passes; the run's own records attest those settings.
 ## C. Promotion and post-write
 
 `scripts/chapter_promotion.py promote` runs items 2–5. Items 3–5 form one fail-closed
-transaction: any failure restores the chapter and the log. Isolated acquisition
-(§Promotion step 3) stays manual.
+transaction: any failure restores the chapter. Isolated acquisition
+(§Promotion step 3) stays manual. The Extractor runs this section on its own data
+branch.
 
 1. The Captain's approval names this exact candidate (§Approval).
 2. Rebuild a fresh root from current canonical inputs plus the approved candidate,
    and rerun both validators (§Promotion).
 3. Write canonically; confirm value identity and record both SHA-256 values if
    formatting changed bytes (§Checksum provenance and §Promotion).
-4. Append one promotion-log row; the decision cell carries the approved SHA-256 when
-   it differs, the approved-chapters commit and tag, and any NON-CONFORMING label
-   (§Checksum provenance).
+4. No promotion-log row is needed; drop the one `promote` appends (§Checksum
+   provenance).
 5. Run the post-write validation (§Post-write validation); if it fails, restore the
-   chapter and the log.
-6. Add meaning-level expectations to `tests/fixtures/narrative-meaning.json` for facts
-   worth guarding, especially ones an approval answer decided. Changing an existing
-   one is a disputed book fact and needs the Captain's recorded decision.
+   chapter. Check merged-text sentence preservation (§Post-write validation).
+6. Open a data-only PR whose body quotes the Captain's approval with date and time,
+   plus the provenance from §Checksum provenance, limited to the path allowlist in
+   [§Data-only chapter PRs](development-process.md#data-only-chapter-prs).
+   Per-chapter facts in `tests/fixtures/narrative-meaning.json` are not required.
+   Existing facts stay; changing an existing one is a disputed book fact and needs
+   the Captain's recorded decision.
