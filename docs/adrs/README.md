@@ -22,8 +22,9 @@ Use `NNNN-short-title.md`, beginning with `0001`.
 
 Numbers are contiguous and unique, and the heading number matches the filename;
 `python3 scripts/tasks.py check` enforces this. Numbers 0018 and 0026 were each
-used twice before that check existed, so cite those ADRs by filename. Take the next
-free number for a new ADR.
+used twice before that check existed. They are frozen as they are, not renumbered,
+so cite those ADRs by filename. New ADRs are numbered from 0028, and any other
+duplicate fails the check.
 
 ## Statuses
 

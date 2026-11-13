@@ -50,22 +50,20 @@ fast. Keep it small; no new tool, no CI workflow change.
 
 ## Out of scope
 
-- **ADR renumbering.** The duplicates are real, but both 0018s and the 0026
-  calendar ADR are Accepted, the README forbids rewriting accepted ADRs, and 55
-  bare `ADR-0018` plus 12 `ADR-0026` mentions would each need a judgement about
-  which ADR they mean (many in Captain-reviewed BOB-034 records). Proposal only, below; it
-  needs the Captain.
+- **ADR renumbering** (decided against; see §Decisions).
 - Back-filling merge SHAs into legacy tasks; checking that a cited SHA exists in
   git (CI clones are shallow); section-heading or log-format rules (headings vary
   widely across 67 tasks, and a rule would mean churn without accuracy value).
 
-## Renumbering proposal (for the Captain)
+## Decisions
 
-Keep the current numbers and freeze the two duplicates (done here via the
-allowlist). Cite 0018 and 0026 by filename, as 1TWD9T already does. New ADRs take
-0028 onward; the lint rejects any new collision. Alternative: renumber the later
-file of each pair to 0028/0029 and disambiguate every reference; the cost is high
-and it rewrites accepted history.
+Manager decision under its delegation, 2026-11-13 17:13:
+
+- Keep the duplicate ADRs 0018 and 0026 frozen; they are not renumbered. Cite them
+  by filename. New ADRs are numbered from 0028. The lint allow-lists exactly those
+  two numbers, at two files each, and fails on any new duplicate. The ADR README
+  records this.
+- Rejected alternative: renumber the later ADR of each pair to 0028/0029.
 
 ## Acceptance criteria
 
@@ -102,3 +100,6 @@ and it rewrites accepted history.
 
   No other violations were found, and no ADR was renumbered. Status In progress;
   it becomes Done after merge.
+
+- 17:13: the manager decided the ADR question; see §Decisions.
+- 17:13, item 6 (97Z771): ~68 s CI cost accepted, full invariant kept; revisit past ~3 min.
