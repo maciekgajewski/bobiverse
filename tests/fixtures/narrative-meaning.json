@@ -1,0 +1,117 @@
+[
+  {
+    "chapter": "1.43",
+    "kind": "location",
+    "subject": "character:homer",
+    "expected": "location:earth",
+    "basis": "Captain approval 2026-11-13 (1.43)"
+  },
+  {
+    "chapter": "1.43",
+    "kind": "location",
+    "subject": "character:charles",
+    "expected": "location:earth",
+    "basis": "Captain approval 2026-11-13 (1.43)"
+  },
+  {
+    "chapter": "1.43",
+    "kind": "location",
+    "subject": "character:riker",
+    "expected": "location:sol",
+    "basis": "canonical 1.43"
+  },
+  {
+    "chapter": "1.43",
+    "kind": "location",
+    "subject": "character:arthur",
+    "expected": "location:sol",
+    "basis": "canonical 1.43"
+  },
+  {
+    "chapter": "1.42",
+    "kind": "location",
+    "subject": "character:bill",
+    "expected": "location:epsilon-eridani",
+    "basis": "canonical 1.42"
+  },
+  {
+    "chapter": "1.41",
+    "kind": "location",
+    "subject": "character:george-butterworth",
+    "expected": "location:sol",
+    "basis": "canonical 1.41"
+  },
+  {
+    "chapter": "1.28",
+    "kind": "location",
+    "subject": "character:calvin",
+    "expected": "location:alpha-centauri",
+    "basis": "canonical 1.28"
+  },
+  {
+    "chapter": "1.1",
+    "kind": "visible",
+    "subject": "location:earth",
+    "basis": "canonical zero state"
+  },
+  {
+    "chapter": "1.19",
+    "kind": "not_visible",
+    "subject": "character:homer",
+    "basis": "canonical 1.20 introduction"
+  },
+  {
+    "chapter": "1.20",
+    "kind": "visible",
+    "subject": "character:homer",
+    "basis": "canonical 1.20 introduction"
+  },
+  {
+    "chapter": "1.30",
+    "kind": "not_visible",
+    "subject": "character:charles",
+    "basis": "canonical 1.31 introduction"
+  },
+  {
+    "chapter": "1.31",
+    "kind": "visible",
+    "subject": "character:charles",
+    "basis": "canonical 1.31 introduction"
+  },
+  {
+    "chapter": "1.25",
+    "kind": "not_visible",
+    "subject": "event:solar-system-war",
+    "basis": "canonical 1.26 introduction"
+  },
+  {
+    "chapter": "1.26",
+    "kind": "visible",
+    "subject": "event:solar-system-war",
+    "basis": "canonical 1.26 introduction"
+  },
+  {
+    "chapter": "1.43",
+    "kind": "field",
+    "subject": "character:homer",
+    "field": "parent_id",
+    "expected": "character:riker",
+    "basis": "canonical 1.20"
+  },
+  {
+    "chapter": "1.43",
+    "kind": "field",
+    "subject": "character:charles",
+    "field": "parent_id",
+    "expected": "character:riker",
+    "basis": "canonical 1.31"
+  },
+  {
+    "chapter": "1.17",
+    "kind": "field",
+    "subject": "character:riker",
+    "field": "parent_id",
+    "expected": "character:bob-replicant",
+    "basis": "canonical 1.17"
+  }
+]
