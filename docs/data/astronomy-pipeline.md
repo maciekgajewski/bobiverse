@@ -376,7 +376,7 @@ context sphere or its exact bootstrap-query accounting.
    or promotion. Do not substitute the canonical corpus for a staged prior chain.
 2. If the prior chain or approved candidate adds resolved anchors absent from the
    pinned plan, stop canonical promotion and follow
-   [Stage new astronomy acquisition](../chapter-extraction.md#stage-new-astronomy-acquisition).
+   [Astronomy preflight and isolated acquisition](../chapter-extraction.md#astronomy-preflight-and-isolated-acquisition).
    Install only the exact authorized candidate chain in an isolated disposable
    checkout. Validate narrative data there and record the pre-refresh astronomy
    failure; it is a blocked staging context, not permission to bypass preflight.

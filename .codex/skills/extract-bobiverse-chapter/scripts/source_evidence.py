@@ -8,6 +8,7 @@ import hashlib
 import json
 import re
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -381,6 +382,47 @@ def chapter_key(chapter: str) -> tuple[int, int]:
     return parse_chapter(chapter)
 
 
+def file_sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def git_output(repository_root: Path, *arguments: str) -> str | None:
+    try:
+        completed = subprocess.run(
+            ["git", "-C", str(repository_root), *arguments],
+            capture_output=True,
+            check=False,
+            text=True,
+        )
+    except OSError:
+        return None
+    if completed.returncode != 0:
+        return None
+    return completed.stdout
+
+
+def input_provenance(repository_root: Path) -> dict[str, Any]:
+    """Report the base commit and whether the canonical corpus inputs are clean."""
+    head = git_output(repository_root, "rev-parse", "--verify", "HEAD")
+    status = git_output(
+        repository_root,
+        "status",
+        "--porcelain",
+        "--untracked-files=all",
+        "--",
+        "data/narrative",
+        "data/presentation",
+    )
+    if head is None or status is None:
+        return {"base_commit": None, "inputs_clean": None, "dirty_paths": None}
+    dirty_paths = sorted(line[3:] for line in status.splitlines() if line.strip())
+    return {
+        "base_commit": head.strip(),
+        "inputs_clean": not dirty_paths,
+        "dirty_paths": dirty_paths,
+    }
+
+
 def command_prepare_corpus(arguments: argparse.Namespace) -> None:
     repository_root = arguments.repository_root.resolve()
     output_root = arguments.output_root.resolve()
@@ -388,13 +430,26 @@ def command_prepare_corpus(arguments: argparse.Namespace) -> None:
         raise EvidenceError("Temporary corpus root must be outside the repository.")
     if output_root.exists():
         raise EvidenceError("Temporary corpus root already exists; choose a new path.")
+    if output_root.name == "narrative":
+        raise EvidenceError(
+            'Temporary corpus root must not be named "narrative"; the validator would '
+            "read the presentation registry from its parent directory."
+        )
     candidate = load_json(arguments.candidate, "candidate chapter")
     if not isinstance(candidate, dict) or candidate.get("chapter") != arguments.chapter:
         raise EvidenceError("Candidate chapter does not match the explicit chapter.")
     narrative_root = repository_root / "data" / "narrative"
+    presentation_source = repository_root / "data" / "presentation" / "species.json"
+    if not presentation_source.is_file():
+        raise EvidenceError(
+            "Species presentation registry is missing: data/presentation/species.json."
+        )
+    provenance = input_provenance(repository_root)
     shutil.copytree(narrative_root / "baseline", output_root / "baseline")
     shutil.copy2(narrative_root / "assets.json", output_root / "assets.json")
     shutil.copy2(narrative_root / "books.json", output_root / "books.json")
+    (output_root / "presentation").mkdir()
+    shutil.copy2(presentation_source, output_root / "presentation" / "species.json")
     target_key = chapter_key(arguments.chapter)
     copied_prior: list[str] = []
     chapters_root = narrative_root / "chapters"
@@ -416,11 +471,35 @@ def command_prepare_corpus(arguments: argparse.Namespace) -> None:
     target = output_root / "chapters" / book / f"{chapter_number}.json"
     target.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(arguments.candidate, target)
+    candidate_relative = target.relative_to(output_root).as_posix()
+    files = []
+    for copied in sorted(path for path in output_root.rglob("*") if path.is_file()):
+        relative = copied.relative_to(output_root).as_posix()
+        if relative == candidate_relative:
+            continue
+        source = (
+            "data/presentation/species.json"
+            if relative == "presentation/species.json"
+            else f"data/narrative/{relative}"
+        )
+        files.append(
+            {"path": relative, "source": source, "sha256": file_sha256(copied)}
+        )
     emit_json(
         {
             "temporary_root": str(output_root),
             "candidate": arguments.chapter,
             "prior_chapters": copied_prior,
+            "provenance": {
+                "repository_root": str(repository_root),
+                **provenance,
+                "files": files,
+                "candidate": {
+                    "path": candidate_relative,
+                    "source": str(arguments.candidate.resolve()),
+                    "sha256": file_sha256(target),
+                },
+            },
         },
         arguments.output,
     )
