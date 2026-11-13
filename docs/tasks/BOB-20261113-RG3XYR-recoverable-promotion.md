@@ -1,6 +1,6 @@
 # BOB-20261113-RG3XYR: recoverable chapter promotion via the approved-chapters repository
 
-Status: Ready
+Status: In progress
 Phase: 4 (LLM-assisted editorial pipeline; process hardening before Chapter 1.43)
 Last updated: 2026-11-13
 
@@ -82,7 +82,9 @@ approval stays with the Captain.
        with Prettier and checks JSON value identity;
      - inserts one row at the end of the promotion-log table. The row has the
        Europe/Amsterdam date, the canonical SHA-256 (the log's existing column),
-       the decisions text, the approved-chapters tag and any NON-CONFORMING label;
+       the decisions text, the approved-chapters commit and tag, the approved
+       SHA-256 when formatting changed bytes (§Checksum provenance) and any
+       NON-CONFORMING label (`"label": "NON-CONFORMING"` in the approval);
      - runs the §Post-write validation commands.
 
      Before writing, it saves the chapter file (or notes its absence) and the log.
@@ -227,3 +229,17 @@ No e2e: no application code changes.
 
 - Status Ready on the manager's authorisation, relaying the Captain's answers.
   Implementation follows in the same PR.
+- Status In progress. Implemented `scripts/chapter_promotion.py` (`record`,
+  `promote`, `verify`) with 13 fixture tests in `tests/unit/chapter-promotion.test.ts`
+  and a `--help` entry in `script-help.test.ts`. Pointers were added in
+  §Checksum provenance and Checklists B7 and C.
+- Validation on piotr (Node 22.23.1):
+  - `tasks check` passed (65 files); `format:check`, `lint` and `typecheck`
+    passed;
+  - `test` passed (31 files, 306 tests); `data:test` passed (85 tests);
+  - `data:validate` passed (277 systems); `build` passed;
+  - `prettier --check` on the changed Markdown and `git diff --check` passed.
+- Read-only smoke: `verify` against the real approved-chapters repository reports
+  `1.42: matches chapter-1.42-approved` and 41 untagged latest rows, and leaves it
+  clean. `record` and `promote` were not run against the real repositories.
+- Done only after merge.

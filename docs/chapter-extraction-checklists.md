@@ -54,10 +54,13 @@ spawning for both passes; the run's own records attest those settings.
 6. Assemble the review package (§Review package), including the D2 list (§Reading
    order and story dates). The list is reporting only: not a promotion gate, and
    never a reason to rewrite the candidate while D2 is open.
-7. Commit run outputs, never book text, to the approved-chapters repository after
-   approval and tag it `chapter-<ref>-approved` (§Checksum provenance).
+7. After C1, record the run outputs with `scripts/chapter_promotion.py record`
+   (allowlisted files only, never book text; §Checksum provenance).
 
 ## C. Promotion and post-write
+
+`scripts/chapter_promotion.py promote` runs items 2–5 and restores the chapter and
+log on any failure; isolated acquisition (§Promotion step 3) stays manual.
 
 1. The Captain's approval names this exact candidate (§Approval).
 2. Rebuild a fresh root from current canonical inputs plus the approved candidate,

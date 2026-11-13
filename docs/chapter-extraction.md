@@ -595,11 +595,14 @@ the candidate is approved for quality.
 - Standard formatting at promotion may change whitespace only, and the canonical JSON
   must remain value-identical. When formatting changes bytes, record both the
   approved and canonical SHA-256.
-- Commit each approved run's outputs (candidate, review notes, validation results,
-  approval reference, base revision; never book text) to the local no-remote
-  repository `~/bobiverse-approved-chapters` and tag it `chapter-<ref>-approved`.
-  This interim manual step stands until the recoverable-promotion task automates
-  it.
+- After approval, the Extractor records the run's allowlisted outputs (candidate,
+  validation results, approval reference; never book text or free-form review
+  notes) in the local no-remote repository `~/bobiverse-approved-chapters` with
+  `scripts/chapter_promotion.py record`, which tags it `chapter-<ref>-approved`.
+  The developer then runs `scripts/chapter_promotion.py promote`. It reruns the
+  offline validators, writes canonically, appends the log row and runs
+  §Post-write validation, restoring everything on failure. Isolated acquisition
+  (§Promotion step 3) stays manual. `verify` checks tagged chapters.
 - The promotion-log decision cell records the approved-candidate SHA-256 when it
   differs from the canonical one, the approved-chapters commit and tag, and any
   NON-CONFORMING label. Historical rows are never rewritten.
