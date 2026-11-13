@@ -773,10 +773,13 @@ describe("extraction preflight", () => {
       "fails item 3 for a non-writable workspace",
       () => {
         chmodSync(workspace, 0o555);
+        let result: ReturnType<typeof runPreflight>;
+        try {
+          result = runPreflight();
+        } finally {
+          chmodSync(workspace, 0o755);
+        }
 
-        const result = runPreflight();
-
-        chmodSync(workspace, 0o755);
         expect(failedItems(result.report)).toEqual([3, 7, 8]);
         expect(itemOf(result.report, 3).evidence.problems).toEqual([
           "is not writable",
