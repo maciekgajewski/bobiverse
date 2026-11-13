@@ -16,6 +16,7 @@ Read these documents before changing code or data:
 3. `docs/technical-design.md` defines the integrated architecture and invariants.
 4. `docs/implementation-plan.md` defines delivery order and phase boundaries.
 5. `docs/project-idea.md` records the product vision.
+6. `docs/development-process.md` defines roles, authority, and the merge gate.
 
 If these sources conflict, stop and surface the conflict. Do not silently choose one.
 An active task may narrow scope, but it may not override the technical design or an
