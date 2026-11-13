@@ -103,3 +103,6 @@ Manager decision under its delegation, 2026-11-13 17:13:
 
 - 17:13: the manager decided the ADR question; see §Decisions.
 - 17:13, item 6 (97Z771): ~68 s CI cost accepted, full invariant kept; revisit past ~3 min.
+- Merged origin/master `f4177fd` (PR #16) into this branch with no conflicts. The
+  lint passes on the merged tree, #16's files included. Ride-along: 97Z771 is marked
+  Done (PR #16, `f4177fd`), and so is RG3XYR (PR #12, `ef01c2e`).

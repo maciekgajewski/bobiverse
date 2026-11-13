@@ -1,6 +1,6 @@
 # BOB-20261113-97Z771: meaning-level regression tests for the canonical narrative
 
-Status: In progress
+Status: Done
 Phase: 4 (LLM-assisted editorial pipeline; process hardening)
 Last updated: 2026-11-13
 
@@ -136,3 +136,5 @@ Manager decisions under its delegation, 2026-11-13 15:50:
 - Cost: projecting late chapters takes about 2 s each, so this test file takes
   about 21 s on piotr. One shared cache serves all tests, and the world-using tests
   have a 120 s timeout.
+- PR #16 was squash-merged to master as `f4177fd` on Friday 2026-11-13. Status is now
+  **Done**, recorded after that merge (in BOB-20261113-GTFZA1).
