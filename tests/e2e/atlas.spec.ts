@@ -82,6 +82,27 @@ async function withAnimationFrames<T>(
   return result;
 }
 
+// Trigger first, then advance the paused clock one 16ms frame at a time and read
+// the map bridge from the test runner after each frame. page.waitForFunction polls
+// on the browser's real animation frames, not the paused clock, so pumping frames
+// concurrently with it races: on a slow WebKit renderer a whole camera transition
+// can start and finish between two real polls, and a fixed frame budget spent
+// during a slow click or resize can run out before the action lands. Here the
+// frame budget only starts once the action has completed, and a transient state
+// (an active transition) is observed on the first frame it exists.
+async function advanceFramesUntil(
+  page: Page,
+  description: string,
+  condition: () => Promise<boolean>,
+): Promise<void> {
+  for (let frame = 0; frame < 250; frame += 1) {
+    if (await condition()) return;
+    await page.clock.runFor(16);
+  }
+  if (await condition()) return;
+  throw new Error(`${description} did not happen within 4s of frames.`);
+}
+
 function monitorCameraDirection(
   page: Page,
 ): Promise<{ maximumDirectionError: number; maximumStepFraction: number }> {
@@ -511,15 +532,15 @@ test("system-mode dollies preserve direction and restore the exact camera pose",
 
   await page.clock.pauseAt(new Date("2026-01-02T00:00:00Z"));
   const entryDirectionMonitor = monitorCameraDirection(page);
-  await withAnimationFrames(page, async () => {
-    await page
-      .getByRole("complementary", { name: "Object inspector" })
-      .getByRole("button", { name: "Enter system" })
-      .click();
-    await page.waitForFunction(
+  await page
+    .getByRole("complementary", { name: "Object inspector" })
+    .getByRole("button", { name: "Enter system" })
+    .click();
+  await advanceFramesUntil(page, "Entry transition", () =>
+    page.evaluate(
       () => window.__bob034MapPerformance!.snapshot().cameraTransitionActive,
-    );
-  });
+    ),
+  );
   await page.locator("#map-stage").evaluate((stage) => {
     stage.style.width = "85%";
   });
@@ -539,12 +560,12 @@ test("system-mode dollies preserve direction and restore the exact camera pose",
     window.__bob034MapPerformance!.screenPoint("stellar-system-005413"),
   );
   const exitDirectionMonitor = monitorCameraDirection(page);
-  await withAnimationFrames(page, async () => {
-    await page.getByRole("button", { name: "Return to map" }).click();
-    await page.waitForFunction(
+  await page.getByRole("button", { name: "Return to map" }).click();
+  await advanceFramesUntil(page, "Exit transition", () =>
+    page.evaluate(
       () => window.__bob034MapPerformance!.snapshot().cameraTransitionActive,
-    );
-  });
+    ),
+  );
   await page.evaluate(({ x, y }) => {
     if (!window.__bob034MapPerformance!.snapshot().cameraTransitionActive) {
       throw new Error("Exit transition ended before the interaction probe.");
@@ -589,44 +610,45 @@ test("system-mode dollies preserve direction and restore the exact camera pose",
   ).toHaveCount(1);
   // Continue explicit frames through reset/resize/orbit. Resuming the clock here
   // needlessly put the final interaction back at the mercy of software GL cadence.
-  await withAnimationFrames(page, async () => {
-    await page.getByRole("button", { name: "Reset view" }).click();
-    await page.waitForFunction(
+  // Each action completes before its frames start (see advanceFramesUntil).
+  await page.getByRole("button", { name: "Reset view" }).click();
+  await advanceFramesUntil(page, "Reset view framing", () =>
+    page.evaluate(
       (revision) =>
         window.__bob034MapPerformance!.snapshot().framingRevision > revision,
       restoredState.framingRevision,
-    );
-  });
+    ),
+  );
   const resetState = await page.evaluate(() =>
     window.__bob034MapPerformance!.snapshot(),
   );
-  await withAnimationFrames(page, async () => {
-    await page.setViewportSize({ width: 1280, height: 740 });
-    await page.waitForFunction(
+  await page.setViewportSize({ width: 1280, height: 740 });
+  await advanceFramesUntil(page, "Resize framing", () =>
+    page.evaluate(
       (revision) =>
         window.__bob034MapPerformance!.snapshot().framingRevision > revision,
       resetState.framingRevision,
-    );
-  });
+    ),
+  );
   const beforeRotation = await page.evaluate(() =>
     window.__bob034MapPerformance!.snapshot(),
   );
   const canvas = page.getByTestId("star-map-canvas");
   const bounds = await canvas.boundingBox();
   expect(bounds).not.toBeNull();
-  await withAnimationFrames(page, async () => {
-    await page.mouse.move(
-      bounds!.x + bounds!.width / 2,
-      bounds!.y + bounds!.height / 2,
-    );
-    await page.mouse.down();
-    await page.mouse.move(
-      bounds!.x + bounds!.width / 2 + 90,
-      bounds!.y + bounds!.height / 2 + 45,
-      { steps: 8 },
-    );
-    await page.mouse.up();
-    await page.waitForFunction((before) => {
+  await page.mouse.move(
+    bounds!.x + bounds!.width / 2,
+    bounds!.y + bounds!.height / 2,
+  );
+  await page.mouse.down();
+  await page.mouse.move(
+    bounds!.x + bounds!.width / 2 + 90,
+    bounds!.y + bounds!.height / 2 + 45,
+    { steps: 8 },
+  );
+  await page.mouse.up();
+  await advanceFramesUntil(page, "Orbit rotation", () =>
+    page.evaluate((before) => {
       const after = window.__bob034MapPerformance!.snapshot();
       return (
         Math.hypot(
@@ -635,8 +657,8 @@ test("system-mode dollies preserve direction and restore the exact camera pose",
           after.camera[2] - before[2],
         ) > 0.01
       );
-    }, beforeRotation.camera);
-  });
+    }, beforeRotation.camera),
+  );
   const afterRotation = await page.evaluate(() =>
     window.__bob034MapPerformance!.snapshot(),
   );
@@ -1873,6 +1895,16 @@ for (const viewport of [
     expect(chipBox!.height).toBeGreaterThanOrEqual(43.5);
     expect(chipBox!.x + chipBox!.width).toBeLessThanOrEqual(viewport.width);
     expect(chipBox!.x).toBeGreaterThan(viewport.width / 3);
+    // The collapsed chip itself shows the short backdrop credit, unclipped.
+    const summary = chip.locator(".astronomy-notice-summary");
+    await expect(summary).toHaveText(/^NASA\/GSFC SVS\s·\sESA\/Gaia\/DPAC$/);
+    expect(
+      await summary.evaluate(
+        (element) =>
+          element.scrollHeight <= element.clientHeight + 1 &&
+          element.scrollWidth <= element.clientWidth + 1,
+      ),
+    ).toBe(true);
     await chip.click();
     await expect(chip).toHaveAttribute("aria-expanded", "true");
     const card = page.getByRole("region", { name: "Astronomy data credits" });
