@@ -1,0 +1,93 @@
+{
+  "chapter": "1.54",
+  "title": "54",
+  "summary": "Riker, Homer, Charles and Ralph drift half a kilometer from the first two colony ships to watch their final assembly in person, though they had agreed a drone feed would be just as good; even Colonel Butterworth had considered taking a shuttle up. Construction had been balanced so both ships reached the same stage together, and only the connection of the drive rings to the hull remained. Every UN delegate streams the event, and the UN sensibly skips the speeches. When the construction AMI reports all connections successful, the two colony ships, officially Exodus-1 and Exodus-2, are complete, and Riker finds himself tearing up. Afterwards he talks by video with Julia Hendricks and her family, his sister's descendants, for whom these calls with their famous ancestor have become routine; seeing them makes him feel more real than VR does. He outlines the remaining system, integration and stress tests and the shakedown cruise. Julia's family and the Spits group will travel on Exodus-3, a promise Riker obtained from Cranston before agreeing to his proposal, while about three hundred people who cannot fit aboard will be first onto the fourth ship, with established homes guaranteed at Omicron2 Eridani; Cranston asked for volunteers and got them. Julia is glad the old fear that hers might be humanity's last generation did not come true, and her young son Justin, one of the newest members of Clan Bob, laughs at the face his uncle William makes.",
+  "date": "2170-10",
+  "location_id": "location:sol",
+  "introducing": [
+    {
+      "id": "character:ralph",
+      "name": "Ralph",
+      "current_state": "At Sol, he watches the final assembly of the first two colony ships in person with Riker, Homer and Charles."
+    },
+    {
+      "id": "character:justin-hendricks",
+      "name": "Justin Hendricks",
+      "species_id": "species:human",
+      "aliases": ["Justin", "Justin Hendriks"],
+      "current_state": "A young child, son of Julia Hendricks and one of the newest members of Clan Bob. He sits on his mother's lap during her video calls with Riker, whom he loves as his uncle William, and he and his family are to travel on Exodus-3."
+    },
+    {
+      "id": "vessel:exodus-1",
+      "name": "Exodus-1",
+      "description": "A USE colony ship, officially named Exodus-1, built at Sol alongside Exodus-2 as the first two ships of the colony fleet.",
+      "current_state": "Complete after the final connection of its drive rings to the hull, which the construction AMI reported successful; system, integration and stress tests and a shakedown cruise remain."
+    },
+    {
+      "id": "vessel:exodus-2",
+      "name": "Exodus-2",
+      "description": "A USE colony ship, officially named Exodus-2, built at Sol alongside Exodus-1 as the first two ships of the colony fleet.",
+      "current_state": "Complete after the final connection of its drive rings to the hull, which the construction AMI reported successful; system, integration and stress tests and a shakedown cruise remain."
+    },
+    {
+      "id": "vessel:exodus-3",
+      "name": "Exodus-3",
+      "description": "The third USE colony ship, known earlier as ship three, following Exodus-1 and Exodus-2.",
+      "current_state": "Still to follow the first two ships. It is to carry Julia Hendricks's family and the Spitsbergen group, a placement Riker secured from Minister Cranston before agreeing to his proposal, with FAITH's enclave taking the balance of its allocation. About three hundred people who cannot fit aboard will be the first onto the fourth ship instead."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:riker",
+      "current_state": "At Sol, he has seen the first two colony ships, Exodus-1 and Exodus-2, completed and plans their system, integration and stress tests and a shakedown cruise. He keeps in regular video contact with the Hendricks household, his sister's descendants, which makes him feel real and is a satisfying next-best to being a parent or grandparent."
+    },
+    {
+      "entity_id": "character:julia-hendricks",
+      "current_state": "Treating Riker readily as a relative, she now talks with him by video regularly, often surrounded by family at the Hendricks household, and calls him Will. She and her family are to travel on Exodus-3, and her young son Justin sits on her lap during the calls. She is glad that the earlier fear of being humanity's last generation did not come true."
+    },
+    {
+      "entity_id": "character:cranston",
+      "current_state": "His deal with Riker, trading FAITH's food surplus for the balance of ship three's allocation, came with Riker's condition that Julia Hendricks's family and the Spits travel on Exodus-3, and Riker sees no reason for him to renege. He asked for volunteers among the people who cannot fit on Exodus-3 to go first onto the fourth ship, with established homes guaranteed at Omicron2 Eridani, and got them. He has admitted that FAITH's probe technology may have been partly borrowed from Australian research."
+    },
+    {
+      "entity_id": "vessel:use-colony-ship",
+      "current_state": "The first two ships, officially Exodus-1 and Exodus-2, are complete after their drive rings were connected to the hull, construction having been balanced so both finished together; system, integration and stress tests and a shakedown cruise remain. Ship three, Exodus-3, is assigned to the Spitsbergen refuge and Julia Hendricks's family, with FAITH's enclave taking the balance of its allocation, and about three hundred people who cannot fit aboard will be the first onto a fourth ship, with established homes guaranteed at Omicron2 Eridani. Diverting scavenged materials to farming space stations reduces the number of future colony ships."
+    },
+    {
+      "entity_id": "organization:united-nations",
+      "current_state": "Every delegate followed the completion of Exodus-1 and Exodus-2 by video stream, and the assembly decided against making speeches for the occasion."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:riker",
+      "role": "lead",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:homer",
+      "role": "other",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:charles",
+      "role": "other",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:ralph",
+      "role": "other",
+      "location_id": "location:sol"
+    },
+    { "character_id": "character:julia-hendricks", "role": "other" },
+    { "character_id": "character:justin-hendricks", "role": "other" }
+  ],
+  "mentions": [
+    "character:andrea-johansson",
+    "character:george-butterworth",
+    "location:omicron2-eridani",
+    "organization:spitsbergen-refuge",
+    "technology:ami",
+    "technology:vr"
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "chapter": "1.59",
+  "title": "59",
+  "summary": "At the Skunk Works in Epsilon Eridani, Bill quiets the room with an air-horn blast and welcomes everyone to the first Bob-moot, held in VR on a matrix he has built there that is more than big enough for every Bob. When he calls them the Bobiverse, a name he has only just thought of, Garfield objects that between that and BobNet the galaxy may not be big enough for their ego. The turnout is modest: Riker, Homer and the other clones from Sol, Bart and his clones at Alpha Centauri, and the Bobs travelling with the colonists to Omicron2 Eridani, who will drop out of touch in a month or so when their tau gets too high for VR. Bill hopes a few more Bobs will have picked up the SCUT plans and linked in by then. Over Homer's booing, he proposes making the moot a regular event to keep everyone up to date; Bart predicts it will be an excuse to inflict baseball on them, and Bill declines to answer. Then everyone moves to the pub VR for beer, coffee and a celebration.",
+  "date": "2172-05",
+  "location_id": "location:bill-skunkworks",
+  "updates": [
+    {
+      "entity_id": "location:bill-skunkworks",
+      "description": "Bill's dedicated Epsilon Eridani workshop for the new system's manufacturing and research work. Bill has built a matrix there that is more than big enough to run every Bob in VR, and it hosted the first Bob-moot in May 2172."
+    },
+    {
+      "entity_id": "technology:vr",
+      "description": "A virtual-reality interface developed aboard Heaven-1 to provide sensory input and an embodied experience for a bodiless mind. Its initial construction required hardware modifications, and its software remains under development. It provides convincing physical sensations and a full humanlike avatar, renders interactive objects such as a Nerf basketball and hoop, and supports shared environments including libraries, parks, and command decks. Users can create objects during a session and play games together. Ball games expose remaining physics inaccuracies and provide test cases for refinement. Bill regards varied embodied activity as important to retaining a human sense of self. Linus uses it to provide Henry with a realistic sailing life that includes eating, sleeping, and bodily functions. One observed basketball trajectory was unrealistic. Improvements were planned to support more direct interaction between users, and upgrades from Bill now let Bobs interact physically with one another instead of only talking through video windows, though this has its downsides. Its proprioception emulation can be switched off, as Riker does to avoid falling over when he is virtually asleep. Bobs in different star systems can meet in one shared VR session, such as a virtual pub, but a travelling Bob can no longer interface with VR once his tau gets too high."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bill",
+      "role": "lead",
+      "location_id": "location:bill-skunkworks"
+    },
+    {
+      "character_id": "character:garfield",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:riker",
+      "role": "other",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:homer",
+      "role": "other",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:bart",
+      "role": "other",
+      "location_id": "location:alpha-centauri"
+    }
+  ],
+  "mentions": [
+    "location:omicron2-eridani",
+    "organization:bobnet",
+    "technology:subspace-communications"
+  ]
+}
