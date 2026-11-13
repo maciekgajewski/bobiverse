@@ -34,10 +34,10 @@ accepted ADR without saying so explicitly.
 
 Routine promotion of an exact chapter candidate produced by the
 `extract-bobiverse-chapter` workflow is an editorial-authoring exception: do not
-create a per-chapter task. Require explicit approval and application authority,
-follow the contract in `docs/chapter-extraction.md` and the operator checklists in
-`docs/chapter-extraction-checklists.md`, and append the result to
-`docs/chapter-promotion-log.md`. A task is still required when the work changes code,
+create a per-chapter task. The Extractor submits each Captain-approved chapter as a
+data-only PR under the contract in `docs/chapter-extraction.md`, its operator
+checklists in `docs/chapter-extraction-checklists.md`, and §Data-only chapter PRs in
+`docs/development-process.md`. A task is still required when the work changes code,
 schemas, contracts, tooling, or includes broader editorial remediation.
 
 ## Architectural invariants
@@ -135,7 +135,7 @@ which also defines each role's authority and when a relayed approval counts.
   task IDs, titles, and statuses; do not maintain a duplicated task list.
 - Run `python3 scripts/tasks.py check` after creating a task, changing task metadata,
   or integrating parallel task branches or worktrees.
-- Do not create tasks for routine promotion of approved chapter candidates; use the
-  chapter-promotion log described above.
+- Do not create tasks for routine promotion of approved chapter candidates; they go
+  through data-only PRs as described above.
 - Record significant architecture changes in `docs/adrs/` using the process defined
   in `docs/adrs/README.md`.
