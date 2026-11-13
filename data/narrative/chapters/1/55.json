@@ -1,0 +1,78 @@
+{
+  "chapter": "1.55",
+  "title": "55",
+  "summary": "Bob brings the Deltan migration to the flint site, a former camp on a rocky rise above the forest with a commanding view, a sheltered hollow beneath a rock shelf, rain-fed rock pools and a central mesa. Nobody can say why so good a site was abandoned: most elders do not know, Moses remembers only his parents' fear and thinks gorilloids overran it, and one elder seems uneasy with that answer, so Bob means to speak with him later. A drone survey finds gorilloids everywhere around the site. Belatedly turning to biology, Bob concludes that gorilloids are omnivores living mainly on the tough, nutritious seedpods of a local tree, which likely lack complete protein and so make protein-rich Deltans highly attractive, though something about the gorilloid numbers still does not add up for him. Guppy, under Bob's standing order to busterize any gorilloid within a hundred meters of the Deltans, kills two that come too close and the rest flee. Arnold moves the tribe into a defensible position, and the Deltans settle easily among old firepits, sleeping areas and piled rocks; Arnold posts sentries and is dismayed by what Bob tells him about the local gorilloids. Archimedes and Moses at once go off to start making axes and spearheads, a venture Bob jokingly names a company, shadowed by a drone and two busters. Bob agrees with Marvin to reject a mass culling in favour of buster AMI sentries that kill any gorilloid that comes too close until the animals learn to avoid the area. Marvin quips that the tribe will come to expect the bawbe's protection, then shows Bob drone video of Deltans who have arranged buster fragments and small torches into an altar to the bawbe.",
+  "date": "2166-07",
+  "location_id": "location:delta-eridani",
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "aliases": ["Bob-1", "bawbe"],
+      "current_state": "At Delta Eridani, he has brought the Deltan migration to the flint site and settled the tribe in its former camp. Rejecting a mass culling, he keeps buster AMIs on sentry duty to kill any gorilloid that comes too close, with a standing order to Guppy covering a hundred meters around the Deltans, so that the gorilloids learn to avoid the area and teach their young to do the same. Having neglected biological study since finding the Deltans, he now traces the dense local gorilloid population to its seedpod diet and attraction to protein, though something about its numbers still puzzles him, and he means to question an elder who seemed uneasy about why the camp was abandoned. He means to help the Deltans for about a generation and then fade into legend."
+    },
+    {
+      "entity_id": "character:marvin",
+      "current_state": "At Delta Eridani with Bob, with a batch of new Bobs under way at the autofactory. He opposed a mass culling of the gorilloids around the flint site and warns, with an edge to his humour, that the tribe will learn to expect the bawbe's protection; he has shown Bob drone video of Deltans who built an altar of buster pieces and torches to the bawbe. He expects to leave in about a generation to explore and meet other species."
+    },
+    {
+      "entity_id": "character:moses",
+      "current_state": "At the flint site with the resettled tribe. He remembers only that his parents were very frightened when the former camp was abandoned, and believes gorilloids overran it. As soon as the tribe arrived he went off with Archimedes to a spot he had picked to start making axes and spearheads."
+    },
+    {
+      "entity_id": "character:archimedes",
+      "current_state": "Effectively a member of the tribal council and recently attached to Diana. At the flint site, he and Moses have set off to start making axes and spearheads, shadowed by a drone and a couple of busters. He trusts Bob's ideas but will not confront the tribe's medicine woman, and has agreed to introduce Bob to her."
+    },
+    {
+      "entity_id": "character:arnold",
+      "current_state": "A member of the tribal circle, he moved the tribe into a defensible position at the flint site at Bob's word and set up sentries at once. He is unhappy with what Bob told him about how many gorilloids live around the site."
+    },
+    {
+      "entity_id": "species:delta-eridani-natives",
+      "description": "An intelligent native population of Delta Eridani 4, named Deltans by Bob. Bob judges them to be fire-using and probably intelligent. They have bat- and pig-like faces, long spiderish limbs, light brownish-gray to orangey-tan fur, patterned heads, and mobile expressive ears; ears pointing straight down are their equivalent of an incredulous stare. Their language is far more guttural than any sound humans can produce. Bob observes six apparently friendly groups, each tending a fire and interacting with the others. He observes two genders, tribal organization, loose pairings, and some individuals with multiple significant others; males patrol their territory while females and children form the tribe's center, and tribal matters are put before a council of elders, while juveniles have lower standing. Bob regards them as a decisive people who, when action is required, carry out orders without argument. They have an annual breeding cycle. Marvin finds no concept of religion among them, only basic animism such as honoring the animals they kill for food and venerating their dead, but some Deltans have since arranged pieces of a buster, ringed with small torches, into an altar to the bawbe, their name for Bob. A planetary survey finds Deltans on only one continent of Eden, their cradle, making them a strictly local mutation; many related species live there, but none use fire or make tools. Their traditional weapons are clubs, handheld rocks, and pointed sticks, and axes and spears are now in use. A small tribal population with a small gene pool is under pressure from larger, stronger gorilloid predators, and Bob's group helps them regain flintworking, learn to preserve meat, and improve their defenses. The tribe once lived in older villages, some with flint, a better water supply, more food, and better defenses, before being driven out. It has now resettled at one of them, the former camp at the flint site, abandoned within living memory for a reason most elders say they do not know. They have grown used to the sonic booms of buster strikes. Their medicine, overseen in the tribe by a medicine woman, is at a potion-and-poultice stage, and Bob doubts it can mend injuries such as a broken leg."
+    },
+    {
+      "entity_id": "location:delta-eridani-4",
+      "description": "The fourth inner rocky planet in the Delta Eridani system, also called Delta Eridani 4 and DE-4. It is slightly larger than Earth, with lower surface gravity, a somewhat denser atmosphere, and conditions that support soaring flyers and tall tree analogues. Its observed temperate-to-subtropical landscape has meadows, rocky bluffs, and forest-like expanses of exceptionally large brownish trees with wide horizontal branches and thick leaf canopies. Documented wildlife includes six-legged exoskeletal insect analogues, small furry six-legged mammal analogues, larger four-limbed mammal analogues, feather-like bird analogues, and a three-segment mammalian snake equivalent. One four-legged winged variant, provisionally called a hippogriff by Bob, shows limited color-change camouflage. Bob, Marvin, Luke, and Bender adopt Eden as the world name associated with the Deltans' birthplace. A mountainous spine runs down the center of the Deltans' home continent, and only a couple of its passes are low enough to be useful. Its ecosystem is as full and diverse as Earth's, with more than one apex predator, among them pack-hunting leopard-like predators, which Bob calls leopard-analogues, that kill with a suffocating death grip. Gorilloids are omnivores whose primary staple is the nutritious seedpods of a local tree; the pods are hard to reach and hard to open, which accounts for the animals' size and strength. Bob reasons that if Eden's biochemistry follows Earth's the pods are an incomplete protein source, which would explain why gorilloids are so strongly drawn to protein such as Deltans. The seedpods support a dense gorilloid population around the flint site."
+    },
+    {
+      "entity_id": "technology:buster-drone",
+      "description": "A buster drone is an observation drone reinforced internally and fitted with steel impact caps. It can strike with forty pounds of high-tensile steel at twice the speed of a high-powered rifle bullet, delivering a lethal kinetic blow and sonic boom against a gorilloid. Atmospheric entry requires a controlled descent, so a deployment can take about ten minutes to reach a surface target. Units kept on standby can be brought into action in under ten seconds, while reserves held at the autofactory can need almost a day in transit at maximum acceleration. It can also strike at roughly the speed of a thrown rock, a blow that would kill a human but only briefly stuns a gorilloid. A unit can survive up to about a dozen strikes before something malfunctions, so spent units need to be collected for repair. Bob regards it as far from ideal: an imprecise weapon, comparable to fishing with dynamite, that makes up for its lack of precision with theatrical effect, and it endangers anyone close to its target, such as captives held by an attacker. Busters can be kept on sentry duty under AMI control to strike any gorilloid that comes too close, and a couple can be assigned with a drone to shadow individual Deltans."
+    },
+    {
+      "entity_id": "technology:guppi-interface",
+      "description": "An interface that offloads tasks for replicants while retaining their human limits on multitasking. Its name expands to General Unit Primary Peripheral Interface, and its logs retain monitoring-interface and script activity. Its operating system is firmware; changing its replication priority would require a new core and ship. Version-2 GUPPI is being given enough memory capacity that a personality matrix is contemplated. It can take messages and arrange callbacks for Riker, acting as a secretary and receptionist. It can estimate buster-drone deployment time and launch buster drones on Bob's order. It can report blocked firewall breach attempts, display a stack trace of an attack, and trace injected packets back to their originating stream. It can display a relief map marking the locations and status of tracked individuals, assign drones to follow them, and pass production orders to the autofactory, warning when an order carries a high operational cost. It can summarize the contents of incoming messages, report whether an attached backup transmission arrived complete, and archive a backup on instruction. It can carry out a standing order to busterize any gorilloid that comes within a set distance of the Deltans, reporting each neutralization."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead"
+    },
+    {
+      "character_id": "character:marvin",
+      "role": "other"
+    },
+    {
+      "character_id": "character:moses",
+      "role": "other",
+      "location_id": "location:delta-eridani-4"
+    },
+    {
+      "character_id": "character:arnold",
+      "role": "other",
+      "location_id": "location:delta-eridani-4"
+    },
+    {
+      "character_id": "character:archimedes",
+      "role": "other",
+      "location_id": "location:delta-eridani-4"
+    }
+  ],
+  "mentions": [
+    "event:deltan-migration",
+    "technology:ami",
+    "technology:hand-axe",
+    "technology:planetary-exploration-drone",
+    "technology:pointy-sticks"
+  ]
+}
