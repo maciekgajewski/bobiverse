@@ -936,5 +936,977 @@
     "field": "description",
     "expected": "sha256:f99ce4fd2db0e4c3",
     "basis": "Captain approval 2026-11-13 (1.53)"
+  },
+  {
+    "chapter": "1.54",
+    "kind": "visible",
+    "subject": "character:ralph",
+    "basis": "Captain approval 2026-11-13 (1.54)"
+  },
+  {
+    "chapter": "1.53",
+    "kind": "not_visible",
+    "subject": "character:ralph",
+    "basis": "Captain approval 2026-11-13 (1.53)"
+  },
+  {
+    "chapter": "1.54",
+    "kind": "field",
+    "subject": "character:ralph",
+    "field": "name",
+    "expected": "sha256:b808b3be2949a354",
+    "basis": "Captain approval 2026-11-13 (1.54)"
+  },
+  {
+    "chapter": "1.54",
+    "kind": "field",
+    "subject": "character:ralph",
+    "field": "current_state",
+    "expected": "sha256:dcf43e1146825141",
+    "basis": "Captain approval 2026-11-13 (1.54)"
+  },
+  {
+    "chapter": "1.54",
+    "kind": "visible",
+    "subject": "character:justin-hendricks",
+    "basis": "Captain approval 2026-11-13 (1.54)"
+  },
+  {
+    "chapter": "1.53",
+    "kind": "not_visible",
+    "subject": "character:justin-hendricks",
+    "basis": "Captain approval 2026-11-13 (1.53)"
+  },
+  {
+    "chapter": "1.54",
+    "kind": "field",
+    "subject": "character:justin-hendricks",
+    "field": "name",
+    "expected": "sha256:6b7ca5350b89e77a",
+    "basis": "Captain approval 2026-11-13 (1.54)"
+  },
+  {
+    "chapter": "1.54",
+    "kind": "field",
+    "subject": "character:justin-hendricks",
+    "field": "species_id",
+    "expected": "species:human",
+    "basis": "Captain approval 2026-11-13 (1.54)"
+  },
+  {
+    "chapter": "1.54",
+    "kind": "field",
+    "subject": "character:justin-hendricks",
+    "field": "current_state",
+    "expected": "sha256:f952b2b26bf83e41",
+    "basis": "Captain approval 2026-11-13 (1.54)"
+  },
+  {
+    "chapter": "1.54",
+    "kind": "visible",
+    "subject": "vessel:exodus-1",
+    "basis": "Captain approval 2026-11-13 (1.54)"
+  },
+  {
+    "chapter": "1.53",
+    "kind": "not_visible",
+    "subject": "vessel:exodus-1",
+    "basis": "Captain approval 2026-11-13 (1.53)"
+  },
+  {
+    "chapter": "1.54",
+    "kind": "field",
+    "subject": "vessel:exodus-1",
+    "field": "name",
+    "expected": "sha256:6e5eaef0ddfc2dec",
+    "basis": "Captain approval 2026-11-13 (1.54)"
+  },
+  {
+    "chapter": "1.54",
+    "kind": "field",
+    "subject": "vessel:exodus-1",
+    "field": "description",
+    "expected": "sha256:dcbf52305f365975",
+    "basis": "Captain approval 2026-11-13 (1.54)"
+  },
+  {
+    "chapter": "1.54",
+    "kind": "field",
+    "subject": "vessel:exodus-1",
+    "field": "current_state",
+    "expected": "sha256:a4b710da77ac3da8",
+    "basis": "Captain approval 2026-11-13 (1.54)"
+  },
+  {
+    "chapter": "1.54",
+    "kind": "visible",
+    "subject": "vessel:exodus-2",
+    "basis": "Captain approval 2026-11-13 (1.54)"
+  },
+  {
+    "chapter": "1.53",
+    "kind": "not_visible",
+    "subject": "vessel:exodus-2",
+    "basis": "Captain approval 2026-11-13 (1.53)"
+  },
+  {
+    "chapter": "1.54",
+    "kind": "field",
+    "subject": "vessel:exodus-2",
+    "field": "name",
+    "expected": "sha256:91b96a5d33e10b4f",
+    "basis": "Captain approval 2026-11-13 (1.54)"
+  },
+  {
+    "chapter": "1.54",
+    "kind": "field",
+    "subject": "vessel:exodus-2",
+    "field": "description",
+    "expected": "sha256:285102881baa1acd",
+    "basis": "Captain approval 2026-11-13 (1.54)"
+  },
+  {
+    "chapter": "1.54",
+    "kind": "field",
+    "subject": "vessel:exodus-2",
+    "field": "current_state",
+    "expected": "sha256:a4b710da77ac3da8",
+    "basis": "Captain approval 2026-11-13 (1.54)"
+  },
+  {
+    "chapter": "1.54",
+    "kind": "visible",
+    "subject": "vessel:exodus-3",
+    "basis": "Captain approval 2026-11-13 (1.54)"
+  },
+  {
+    "chapter": "1.53",
+    "kind": "not_visible",
+    "subject": "vessel:exodus-3",
+    "basis": "Captain approval 2026-11-13 (1.53)"
+  },
+  {
+    "chapter": "1.54",
+    "kind": "field",
+    "subject": "vessel:exodus-3",
+    "field": "name",
+    "expected": "sha256:7e7fdb80367436a1",
+    "basis": "Captain approval 2026-11-13 (1.54)"
+  },
+  {
+    "chapter": "1.54",
+    "kind": "field",
+    "subject": "vessel:exodus-3",
+    "field": "description",
+    "expected": "sha256:3c02cb67f5f6bdf3",
+    "basis": "Captain approval 2026-11-13 (1.54)"
+  },
+  {
+    "chapter": "1.54",
+    "kind": "field",
+    "subject": "vessel:exodus-3",
+    "field": "current_state",
+    "expected": "sha256:310c0958de8fc7b5",
+    "basis": "Captain approval 2026-11-13 (1.54)"
+  },
+  {
+    "chapter": "1.54",
+    "kind": "field",
+    "subject": "character:riker",
+    "field": "current_state",
+    "expected": "sha256:e0bb8244b452891c",
+    "basis": "Captain approval 2026-11-13 (1.54)"
+  },
+  {
+    "chapter": "1.54",
+    "kind": "field",
+    "subject": "character:julia-hendricks",
+    "field": "current_state",
+    "expected": "sha256:fd67bca5b3280975",
+    "basis": "Captain approval 2026-11-13 (1.54)"
+  },
+  {
+    "chapter": "1.54",
+    "kind": "field",
+    "subject": "character:cranston",
+    "field": "current_state",
+    "expected": "sha256:4f77d135603dfc10",
+    "basis": "Captain approval 2026-11-13 (1.54)"
+  },
+  {
+    "chapter": "1.54",
+    "kind": "field",
+    "subject": "vessel:use-colony-ship",
+    "field": "current_state",
+    "expected": "sha256:269c1ba7c6f7dce1",
+    "basis": "Captain approval 2026-11-13 (1.54)"
+  },
+  {
+    "chapter": "1.54",
+    "kind": "field",
+    "subject": "organization:united-nations",
+    "field": "current_state",
+    "expected": "sha256:c4e1941c8bd0f10c",
+    "basis": "Captain approval 2026-11-13 (1.54)"
+  },
+  {
+    "chapter": "1.54",
+    "kind": "location",
+    "subject": "character:riker",
+    "expected": "location:sol",
+    "basis": "Captain approval 2026-11-13 (1.54)"
+  },
+  {
+    "chapter": "1.54",
+    "kind": "location",
+    "subject": "character:homer",
+    "expected": "location:sol",
+    "basis": "Captain approval 2026-11-13 (1.54)"
+  },
+  {
+    "chapter": "1.54",
+    "kind": "location",
+    "subject": "character:charles",
+    "expected": "location:sol",
+    "basis": "Captain approval 2026-11-13 (1.54)"
+  },
+  {
+    "chapter": "1.54",
+    "kind": "location",
+    "subject": "character:ralph",
+    "expected": "location:sol",
+    "basis": "Captain approval 2026-11-13 (1.54)"
+  },
+  {
+    "chapter": "1.55",
+    "kind": "field",
+    "subject": "character:bob-replicant",
+    "field": "current_state",
+    "expected": "sha256:43c596e923609dad",
+    "basis": "Captain approval 2026-11-13 (1.55)"
+  },
+  {
+    "chapter": "1.55",
+    "kind": "field",
+    "subject": "character:marvin",
+    "field": "current_state",
+    "expected": "sha256:805d4094970ce286",
+    "basis": "Captain approval 2026-11-13 (1.55)"
+  },
+  {
+    "chapter": "1.55",
+    "kind": "field",
+    "subject": "character:moses",
+    "field": "current_state",
+    "expected": "sha256:f7f4427832f355b4",
+    "basis": "Captain approval 2026-11-13 (1.55)"
+  },
+  {
+    "chapter": "1.55",
+    "kind": "field",
+    "subject": "character:archimedes",
+    "field": "current_state",
+    "expected": "sha256:7bb48c12b805a9e0",
+    "basis": "Captain approval 2026-11-13 (1.55)"
+  },
+  {
+    "chapter": "1.55",
+    "kind": "field",
+    "subject": "character:arnold",
+    "field": "current_state",
+    "expected": "sha256:a2ebdf6915d13c16",
+    "basis": "Captain approval 2026-11-13 (1.55)"
+  },
+  {
+    "chapter": "1.55",
+    "kind": "field",
+    "subject": "species:delta-eridani-natives",
+    "field": "description",
+    "expected": "sha256:ce16e445a78d2da9",
+    "basis": "Captain approval 2026-11-13 (1.55)"
+  },
+  {
+    "chapter": "1.55",
+    "kind": "field",
+    "subject": "location:delta-eridani-4",
+    "field": "description",
+    "expected": "sha256:ae621a71ba4a4230",
+    "basis": "Captain approval 2026-11-13 (1.55)"
+  },
+  {
+    "chapter": "1.55",
+    "kind": "field",
+    "subject": "technology:buster-drone",
+    "field": "description",
+    "expected": "sha256:507f19c15416c952",
+    "basis": "Captain approval 2026-11-13 (1.55)"
+  },
+  {
+    "chapter": "1.55",
+    "kind": "write",
+    "subject": "technology:guppi-interface",
+    "field": "description",
+    "expected": "sha256:85dd2c5c3eb704f2",
+    "basis": "Captain approval 2026-11-13 (1.55)"
+  },
+  {
+    "chapter": "1.55",
+    "kind": "location",
+    "subject": "character:moses",
+    "expected": "location:delta-eridani-4",
+    "basis": "Captain approval 2026-11-13 (1.55)"
+  },
+  {
+    "chapter": "1.55",
+    "kind": "location",
+    "subject": "character:arnold",
+    "expected": "location:delta-eridani-4",
+    "basis": "Captain approval 2026-11-13 (1.55)"
+  },
+  {
+    "chapter": "1.55",
+    "kind": "location",
+    "subject": "character:archimedes",
+    "expected": "location:delta-eridani-4",
+    "basis": "Captain approval 2026-11-13 (1.55)"
+  },
+  {
+    "chapter": "1.56",
+    "kind": "visible",
+    "subject": "technology:bullwinkle",
+    "basis": "Captain approval 2026-11-13 (1.56)"
+  },
+  {
+    "chapter": "1.55",
+    "kind": "not_visible",
+    "subject": "technology:bullwinkle",
+    "basis": "Captain approval 2026-11-13 (1.55)"
+  },
+  {
+    "chapter": "1.56",
+    "kind": "field",
+    "subject": "technology:bullwinkle",
+    "field": "name",
+    "expected": "sha256:c2732aea355284e8",
+    "basis": "Captain approval 2026-11-13 (1.56)"
+  },
+  {
+    "chapter": "1.56",
+    "kind": "field",
+    "subject": "technology:bullwinkle",
+    "field": "description",
+    "expected": "sha256:41652a0745e3d3ee",
+    "basis": "Captain approval 2026-11-13 (1.56)"
+  },
+  {
+    "chapter": "1.56",
+    "kind": "write",
+    "subject": "character:bill",
+    "field": "current_state",
+    "expected": "sha256:2fd71c4ec2479780",
+    "basis": "Captain approval 2026-11-13 (1.56)"
+  },
+  {
+    "chapter": "1.56",
+    "kind": "field",
+    "subject": "character:garfield",
+    "field": "current_state",
+    "expected": "sha256:6334ea76ecd3fc1a",
+    "basis": "Captain approval 2026-11-13 (1.56)"
+  },
+  {
+    "chapter": "1.56",
+    "kind": "write",
+    "subject": "location:ee-2",
+    "field": "state",
+    "expected": "sha256:61ceff69ee6b9261",
+    "basis": "Captain approval 2026-11-13 (1.56)"
+  },
+  {
+    "chapter": "1.56",
+    "kind": "write",
+    "subject": "technology:guppi-interface",
+    "field": "description",
+    "expected": "sha256:1b937693fd985170",
+    "basis": "Captain approval 2026-11-13 (1.56)"
+  },
+  {
+    "chapter": "1.56",
+    "kind": "field",
+    "subject": "technology:surge-drive",
+    "field": "description",
+    "expected": "sha256:b79c47413dcbe45f",
+    "basis": "Captain approval 2026-11-13 (1.56)"
+  },
+  {
+    "chapter": "1.56",
+    "kind": "field",
+    "subject": "technology:subspace-communications",
+    "field": "description",
+    "expected": "sha256:3969a9cea877226f",
+    "basis": "Captain approval 2026-11-13 (1.56)"
+  },
+  {
+    "chapter": "1.56",
+    "kind": "field",
+    "subject": "technology:artificial-muscle-fiber-analogues",
+    "field": "description",
+    "expected": "sha256:8d0a1ea9e0dbe75f",
+    "basis": "Captain approval 2026-11-13 (1.56)"
+  },
+  {
+    "chapter": "1.56",
+    "kind": "field",
+    "subject": "technology:3d-printers",
+    "field": "description",
+    "expected": "sha256:019b7b97a625aa6e",
+    "basis": "Captain approval 2026-11-13 (1.56)"
+  },
+  {
+    "chapter": "1.56",
+    "kind": "location",
+    "subject": "character:garfield",
+    "expected": "location:epsilon-eridani",
+    "basis": "Captain approval 2026-11-13 (1.56)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "visible",
+    "subject": "location:beta-hydri-star",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.56",
+    "kind": "not_visible",
+    "subject": "location:beta-hydri-star",
+    "basis": "Captain approval 2026-11-13 (1.56)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "field",
+    "subject": "location:beta-hydri-star",
+    "field": "name",
+    "expected": "sha256:953731e0729a591f",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "field",
+    "subject": "location:beta-hydri-star",
+    "field": "kind",
+    "expected": "sha256:525eca1d5089dbdc",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "field",
+    "subject": "location:beta-hydri-star",
+    "field": "parent_location_id",
+    "expected": "location:beta-hydri",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "field",
+    "subject": "location:beta-hydri-star",
+    "field": "parent_relation",
+    "expected": "sha256:94000561e26499e1",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "field",
+    "subject": "location:beta-hydri-star",
+    "field": "description",
+    "expected": "sha256:e900d3aa47a04ef2",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "visible",
+    "subject": "location:gl19-4",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.56",
+    "kind": "not_visible",
+    "subject": "location:gl19-4",
+    "basis": "Captain approval 2026-11-13 (1.56)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "field",
+    "subject": "location:gl19-4",
+    "field": "name",
+    "expected": "sha256:5c22322e09265662",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "field",
+    "subject": "location:gl19-4",
+    "field": "kind",
+    "expected": "sha256:cb5815fe5c3c9d7b",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "field",
+    "subject": "location:gl19-4",
+    "field": "parent_location_id",
+    "expected": "location:beta-hydri-star",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "field",
+    "subject": "location:gl19-4",
+    "field": "parent_relation",
+    "expected": "sha256:82da9fa55f89ccbd",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "field",
+    "subject": "location:gl19-4",
+    "field": "body_class",
+    "expected": "sha256:6510126aae54bb1a",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "field",
+    "subject": "location:gl19-4",
+    "field": "color",
+    "expected": "sha256:184b2c9377eabeef",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "field",
+    "subject": "location:gl19-4",
+    "field": "visual_description",
+    "expected": "sha256:ff7d918d989614e2",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "field",
+    "subject": "location:gl19-4",
+    "field": "description",
+    "expected": "sha256:741435bc704c92c1",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "field",
+    "subject": "location:gl19-4",
+    "field": "state",
+    "expected": "sha256:1c450812c7f9d2ff",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "visible",
+    "subject": "vessel:alien-cargo-carrier",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.56",
+    "kind": "not_visible",
+    "subject": "vessel:alien-cargo-carrier",
+    "basis": "Captain approval 2026-11-13 (1.56)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "field",
+    "subject": "vessel:alien-cargo-carrier",
+    "field": "name",
+    "expected": "sha256:9e3a17218e481723",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "field",
+    "subject": "vessel:alien-cargo-carrier",
+    "field": "description",
+    "expected": "sha256:4aa5da25d79afb32",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "field",
+    "subject": "vessel:alien-cargo-carrier",
+    "field": "current_state",
+    "expected": "sha256:aeb710d08588f23e",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "visible",
+    "subject": "technology:mechanical-ants",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.56",
+    "kind": "not_visible",
+    "subject": "technology:mechanical-ants",
+    "basis": "Captain approval 2026-11-13 (1.56)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "field",
+    "subject": "technology:mechanical-ants",
+    "field": "name",
+    "expected": "sha256:d2dd94d34df2879f",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "field",
+    "subject": "technology:mechanical-ants",
+    "field": "description",
+    "expected": "sha256:5315934e87b98bf5",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "visible",
+    "subject": "event:gl19-4-die-off",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.56",
+    "kind": "not_visible",
+    "subject": "event:gl19-4-die-off",
+    "basis": "Captain approval 2026-11-13 (1.56)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "field",
+    "subject": "event:gl19-4-die-off",
+    "field": "name",
+    "expected": "sha256:9ac829cce26fe83d",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "field",
+    "subject": "event:gl19-4-die-off",
+    "field": "location_id",
+    "expected": "location:gl19-4",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "field",
+    "subject": "event:gl19-4-die-off",
+    "field": "description",
+    "expected": "sha256:d2215fbf102a5b90",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "field",
+    "subject": "character:mario",
+    "field": "current_state",
+    "expected": "sha256:222a2db07da316cf",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "field",
+    "subject": "location:beta-hydri",
+    "field": "description",
+    "expected": "sha256:06fe5bd85afe1f75",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "field",
+    "subject": "location:beta-hydri",
+    "field": "state",
+    "expected": "sha256:aea9af6719b915d7",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "write",
+    "subject": "technology:guppi-interface",
+    "field": "description",
+    "expected": "sha256:bf2943a952164af8",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "field",
+    "subject": "technology:roamers",
+    "field": "description",
+    "expected": "sha256:4aa6ca885cc63b04",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "field",
+    "subject": "technology:suddar",
+    "field": "description",
+    "expected": "sha256:23cc03bc341d6afc",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "field",
+    "subject": "technology:planetary-exploration-drone",
+    "field": "description",
+    "expected": "sha256:5e22d0d6e4291664",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.58",
+    "kind": "visible",
+    "subject": "character:howard",
+    "basis": "Captain approval 2026-11-13 (1.58)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "not_visible",
+    "subject": "character:howard",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.58",
+    "kind": "field",
+    "subject": "character:howard",
+    "field": "name",
+    "expected": "sha256:f186449d7e0e56f2",
+    "basis": "Captain approval 2026-11-13 (1.58)"
+  },
+  {
+    "chapter": "1.58",
+    "kind": "field",
+    "subject": "character:howard",
+    "field": "current_state",
+    "expected": "sha256:901ac52807382c6d",
+    "basis": "Captain approval 2026-11-13 (1.58)"
+  },
+  {
+    "chapter": "1.58",
+    "kind": "visible",
+    "subject": "event:first-colony-ships-departure",
+    "basis": "Captain approval 2026-11-13 (1.58)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "not_visible",
+    "subject": "event:first-colony-ships-departure",
+    "basis": "Captain approval 2026-11-13 (1.57)"
+  },
+  {
+    "chapter": "1.58",
+    "kind": "field",
+    "subject": "event:first-colony-ships-departure",
+    "field": "name",
+    "expected": "sha256:d4d8a320decb289d",
+    "basis": "Captain approval 2026-11-13 (1.58)"
+  },
+  {
+    "chapter": "1.58",
+    "kind": "field",
+    "subject": "event:first-colony-ships-departure",
+    "field": "date",
+    "expected": "sha256:030f4b6d4ce079dd",
+    "basis": "Captain approval 2026-11-13 (1.58)"
+  },
+  {
+    "chapter": "1.58",
+    "kind": "field",
+    "subject": "event:first-colony-ships-departure",
+    "field": "location_id",
+    "expected": "location:sol",
+    "basis": "Captain approval 2026-11-13 (1.58)"
+  },
+  {
+    "chapter": "1.58",
+    "kind": "field",
+    "subject": "event:first-colony-ships-departure",
+    "field": "description",
+    "expected": "sha256:a94ddddac9ec45c1",
+    "basis": "Captain approval 2026-11-13 (1.58)"
+  },
+  {
+    "chapter": "1.58",
+    "kind": "field",
+    "subject": "character:riker",
+    "field": "current_state",
+    "expected": "sha256:3254ce250fa49c28",
+    "basis": "Captain approval 2026-11-13 (1.58)"
+  },
+  {
+    "chapter": "1.58",
+    "kind": "field",
+    "subject": "character:gudmund-valter",
+    "field": "current_state",
+    "expected": "sha256:95b60a5c08df6f6a",
+    "basis": "Captain approval 2026-11-13 (1.58)"
+  },
+  {
+    "chapter": "1.58",
+    "kind": "field",
+    "subject": "vessel:exodus-1",
+    "field": "current_state",
+    "expected": "sha256:62d37e126ab5cf54",
+    "basis": "Captain approval 2026-11-13 (1.58)"
+  },
+  {
+    "chapter": "1.58",
+    "kind": "field",
+    "subject": "vessel:exodus-2",
+    "field": "current_state",
+    "expected": "sha256:62d37e126ab5cf54",
+    "basis": "Captain approval 2026-11-13 (1.58)"
+  },
+  {
+    "chapter": "1.58",
+    "kind": "field",
+    "subject": "vessel:exodus-3",
+    "field": "current_state",
+    "expected": "sha256:22c7274d1f2d8790",
+    "basis": "Captain approval 2026-11-13 (1.58)"
+  },
+  {
+    "chapter": "1.58",
+    "kind": "field",
+    "subject": "vessel:use-colony-ship",
+    "field": "description",
+    "expected": "sha256:0f8fd5cce7663ec1",
+    "basis": "Captain approval 2026-11-13 (1.58)"
+  },
+  {
+    "chapter": "1.58",
+    "kind": "field",
+    "subject": "vessel:use-colony-ship",
+    "field": "current_state",
+    "expected": "sha256:46f76ba6c27b9ef0",
+    "basis": "Captain approval 2026-11-13 (1.58)"
+  },
+  {
+    "chapter": "1.58",
+    "kind": "field",
+    "subject": "organization:united-states-of-eurasia",
+    "field": "current_state",
+    "expected": "sha256:3e3dd720b913c4b6",
+    "basis": "Captain approval 2026-11-13 (1.58)"
+  },
+  {
+    "chapter": "1.58",
+    "kind": "field",
+    "subject": "organization:spitsbergen-refuge",
+    "field": "current_state",
+    "expected": "sha256:7917ac06cd9e8fe9",
+    "basis": "Captain approval 2026-11-13 (1.58)"
+  },
+  {
+    "chapter": "1.58",
+    "kind": "field",
+    "subject": "organization:free-american-independent-theocratic-hegemony",
+    "field": "current_state",
+    "expected": "sha256:7ae0c90a450653c3",
+    "basis": "Captain approval 2026-11-13 (1.58)"
+  },
+  {
+    "chapter": "1.58",
+    "kind": "field",
+    "subject": "organization:svalbard-global-trust",
+    "field": "current_state",
+    "expected": "sha256:af3c20cb14f5c360",
+    "basis": "Captain approval 2026-11-13 (1.58)"
+  },
+  {
+    "chapter": "1.58",
+    "kind": "field",
+    "subject": "technology:vr",
+    "field": "description",
+    "expected": "sha256:6cd1314bbf0dd225",
+    "basis": "Captain approval 2026-11-13 (1.58)"
+  },
+  {
+    "chapter": "1.55",
+    "kind": "field",
+    "subject": "technology:guppi-interface",
+    "field": "description",
+    "expected": "sha256:bfd1a2695744f2b2",
+    "basis": "Captain approval 2026-11-13 (1.55) pre-(c)"
+  },
+  {
+    "chapter": "1.55",
+    "kind": "visible_write",
+    "subject": "technology:guppi-interface",
+    "field": "description",
+    "expected": "1.51",
+    "basis": "Captain approval 2026-11-13 (1.55) pre-(c)"
+  },
+  {
+    "chapter": "1.56",
+    "kind": "field",
+    "subject": "character:bill",
+    "field": "current_state",
+    "expected": "sha256:990e3e36eb3449f4",
+    "basis": "Captain approval 2026-11-13 (1.56) pre-(c)"
+  },
+  {
+    "chapter": "1.56",
+    "kind": "visible_write",
+    "subject": "character:bill",
+    "field": "current_state",
+    "expected": "1.51",
+    "basis": "Captain approval 2026-11-13 (1.56) pre-(c)"
+  },
+  {
+    "chapter": "1.56",
+    "kind": "field",
+    "subject": "location:ee-2",
+    "field": "state",
+    "expected": "sha256:e585768ab8a4bc60",
+    "basis": "Captain approval 2026-11-13 (1.56) pre-(c)"
+  },
+  {
+    "chapter": "1.56",
+    "kind": "visible_write",
+    "subject": "location:ee-2",
+    "field": "state",
+    "expected": "1.51",
+    "basis": "Captain approval 2026-11-13 (1.56) pre-(c)"
+  },
+  {
+    "chapter": "1.56",
+    "kind": "field",
+    "subject": "technology:guppi-interface",
+    "field": "description",
+    "expected": "sha256:bfd1a2695744f2b2",
+    "basis": "Captain approval 2026-11-13 (1.56) pre-(c)"
+  },
+  {
+    "chapter": "1.56",
+    "kind": "visible_write",
+    "subject": "technology:guppi-interface",
+    "field": "description",
+    "expected": "1.51",
+    "basis": "Captain approval 2026-11-13 (1.56) pre-(c)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "field",
+    "subject": "technology:guppi-interface",
+    "field": "description",
+    "expected": "sha256:bfd1a2695744f2b2",
+    "basis": "Captain approval 2026-11-13 (1.57) pre-(c)"
+  },
+  {
+    "chapter": "1.57",
+    "kind": "visible_write",
+    "subject": "technology:guppi-interface",
+    "field": "description",
+    "expected": "1.51",
+    "basis": "Captain approval 2026-11-13 (1.57) pre-(c)"
   }
 ]

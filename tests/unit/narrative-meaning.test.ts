@@ -23,7 +23,11 @@ import { narrativeCorpus } from "../../src/narrative/runtime";
 // as "true" or "false". Two kinds check the canonical chapter record itself rather
 // than the projection: `effective_date` pins the backdating date of the chapter's
 // write to `subject`, and `no_write` pins that the chapter does not write `field`
-// of `subject` (ADR-0028).
+// of `subject` (ADR-0028). `write` pins the value the chapter writes to `field` of
+// `subject`, also from the record. `visible_write` pins which chapter's write the
+// projection shows for `field` at the read-through chapter; `expected` is that
+// chapter's ref, so a write shadowed by a story-later chapter names the other
+// chapter, and an unshadowed one names the read-through chapter itself.
 
 const kinds = [
   "location",
@@ -33,6 +37,8 @@ const kinds = [
   "unset",
   "effective_date",
   "no_write",
+  "write",
+  "visible_write",
 ] as const;
 type Kind = (typeof kinds)[number];
 
@@ -87,13 +93,21 @@ function entryProblems(raw: unknown): string[] {
     check("basis", BASIS, true);
     check(
       "expected",
-      VALUE,
-      kind === "location" || kind === "field" || kind === "effective_date",
+      kind === "visible_write" ? CHAPTER : VALUE,
+      kind === "location" ||
+        kind === "field" ||
+        kind === "effective_date" ||
+        kind === "write" ||
+        kind === "visible_write",
     );
     check(
       "field",
       FIELD,
-      kind === "field" || kind === "unset" || kind === "no_write",
+      kind === "field" ||
+        kind === "unset" ||
+        kind === "no_write" ||
+        kind === "write" ||
+        kind === "visible_write",
     );
     if (
       (kind === "visible" ||
@@ -143,9 +157,70 @@ function chapterWrites(
   ];
 }
 
+/** Compare a value with a pinned one; report only hashes for hashed pins. */
+function mismatch(
+  actual: unknown,
+  expected: string | undefined,
+): string | null {
+  if (expected !== undefined && HASHED.test(expected)) {
+    const got = typeof actual === "string" ? shortHash(actual) : typeof actual;
+    return got === expected ? null : `expected ${expected}, got ${got}`;
+  }
+  const comparable = typeof actual === "boolean" ? String(actual) : actual;
+  return comparable === expected
+    ? null
+    : `expected ${expected}, got ${String(actual)}`;
+}
+
+/** The value a canonical chapter writes to `field` of `subject`, if any. */
+function writtenValue(
+  chapter: string,
+  subject: string,
+  field: string,
+): { written: boolean; value: unknown } {
+  const write = chapterWrites(chapter, subject).find(
+    (record) => field in record,
+  );
+  return { written: write !== undefined, value: write?.[field] };
+}
+
+/**
+ * The latest chapter read by `chapter` (reader order) whose write to `field` of
+ * `subject` equals `value`, or null when no such write exists.
+ */
+function sourceChapter(
+  chapter: string,
+  subject: string,
+  field: string,
+  value: unknown,
+): string | null {
+  if (!narrativeCorpus)
+    throw new Error("Canonical narrative preparation failed.");
+  const read = preparedNarrativeChapters(narrativeCorpus)
+    .map((record) => String(record.chapter))
+    .filter((ref) => compareNarrativeChapters(ref, chapter) <= 0);
+  for (const ref of read.reverse()) {
+    const { written, value: candidate } = writtenValue(ref, subject, field);
+    if (written && JSON.stringify(candidate) === JSON.stringify(value))
+      return ref;
+  }
+  return null;
+}
+
 /** Evaluate one expectation; return a failure message, or null when it holds. */
 function evaluate(entry: Expectation, worldAt: WorldAt): string | null {
   const label = `${entry.chapter} / ${entry.kind} / ${entry.subject}`;
+  if (entry.kind === "write") {
+    const { written, value } = writtenValue(
+      entry.chapter,
+      entry.subject,
+      entry.field ?? "",
+    );
+    if (!written)
+      return `${label}: expected a ${entry.field} write, but the chapter has none`;
+    const problem = mismatch(value, entry.expected);
+    return problem ? `${label}: ${entry.field} write ${problem}` : null;
+  }
   if (entry.kind === "no_write" || entry.kind === "effective_date") {
     const writes = chapterWrites(entry.chapter, entry.subject);
     if (entry.kind === "no_write")
@@ -172,17 +247,20 @@ function evaluate(entry: Expectation, worldAt: WorldAt): string | null {
     return actual === undefined || actual === null
       ? null
       : `${label}: expected ${entry.field} unset, but it is set`;
-  if (entry.expected !== undefined && HASHED.test(entry.expected)) {
-    // Report only the hash, never the projected text.
-    const got = typeof actual === "string" ? shortHash(actual) : typeof actual;
-    return got === entry.expected
+  if (entry.kind === "visible_write") {
+    const source = sourceChapter(
+      entry.chapter,
+      entry.subject,
+      entry.field ?? "",
+      actual,
+    );
+    return source === entry.expected
       ? null
-      : `${label}: expected ${entry.expected}, got ${got}`;
+      : `${label}: expected ${entry.field} from the ${entry.expected} write, got ${source ? `the ${source} write` : "no matching write"}`;
   }
-  const comparable = typeof actual === "boolean" ? String(actual) : actual;
-  return comparable === entry.expected
-    ? null
-    : `${label}: expected ${entry.expected}, got ${String(actual)}`;
+  // Report only the hash, never the projected text.
+  const problem = mismatch(actual, entry.expected);
+  return problem ? `${label}: ${problem}` : null;
 }
 
 /** IDs introduced in a chapter that are already visible before it. */
@@ -425,6 +503,39 @@ describe("meaning-level checks catch breakage (synthetic entries)", () => {
       },
       "1.51 / field / location:82-eridani: expected false, got true",
     ],
+    [
+      {
+        chapter: "1.56",
+        kind: "write",
+        subject: "technology:bullwinkle",
+        field: "description",
+        expected: "sha256:0000000000000000",
+        basis: "synthetic",
+      },
+      "1.56 / write / technology:bullwinkle: description write expected sha256:0000000000000000, got sha256:41652a0745e3d3ee",
+    ],
+    [
+      {
+        chapter: "1.55",
+        kind: "write",
+        subject: "technology:bullwinkle",
+        field: "description",
+        expected: "sha256:41652a0745e3d3ee",
+        basis: "synthetic",
+      },
+      "1.55 / write / technology:bullwinkle: expected a description write, but the chapter has none",
+    ],
+    [
+      {
+        chapter: "1.57",
+        kind: "visible_write",
+        subject: "technology:bullwinkle",
+        field: "description",
+        expected: "1.57",
+        basis: "synthetic",
+      },
+      "1.57 / visible_write / technology:bullwinkle: expected description from the 1.57 write, got the 1.56 write",
+    ],
   ];
 
   it.each(wrong)(
@@ -538,6 +649,27 @@ describe("meaning-level checks catch breakage (synthetic entries)", () => {
         basis: "ok",
       },
       "missing expected",
+    ],
+    [
+      {
+        chapter: "1.56",
+        kind: "visible_write",
+        subject: "technology:bullwinkle",
+        field: "description",
+        expected: "location:sol",
+        basis: "ok",
+      },
+      "expected is not a short ID-like string",
+    ],
+    [
+      {
+        chapter: "1.56",
+        kind: "write",
+        subject: "technology:bullwinkle",
+        expected: "sha256:41652a0745e3d3ee",
+        basis: "ok",
+      },
+      "missing field",
     ],
     [
       {
