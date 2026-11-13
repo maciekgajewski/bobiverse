@@ -3,8 +3,9 @@
 
 record  commit an approved run's allowlisted outputs to the approved-chapters
         repository and create an annotated tag chapter-<ref>-approved.
-promote write the tagged candidate canonically, append the promotion-log row and
-        run the post-write validation; any failure restores the previous bytes.
+promote write the tagged candidate canonically and run the post-write validation;
+        any failure restores the previous bytes. It prints the provenance the
+        data-only PR body records; the promotion log is frozen history.
 verify  check that each tagged chapter is value-identical to its canonical file.
 
 Exit codes: 0 success, 1 refused or failed with nothing changed, 2 usage error,
@@ -23,9 +24,7 @@ import shutil
 import stat
 import subprocess
 import sys
-from datetime import datetime
 from pathlib import Path
-from zoneinfo import ZoneInfo
 
 REPOSITORY = Path(__file__).resolve().parents[1]
 HELPER = (
@@ -214,7 +213,7 @@ def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
-def log_row(
+def provenance(
     chapter: str,
     approved: bytes,
     canonical: bytes,
@@ -222,30 +221,18 @@ def log_row(
     ref: str,
     label: str,
 ) -> str:
-    applied = datetime.now(ZoneInfo("Europe/Amsterdam")).date().isoformat()
-    note = f" Approved-chapters {ref}."
+    """Summarise what the data-only PR body records (no book text)."""
+    lines = [
+        f"Chapter: {chapter}",
+        f"Canonical SHA-256: {sha256(canonical)}",
+        f"Approved-chapters: {ref}",
+        f"Decisions: {decisions.strip()}",
+    ]
     if approved != canonical:
-        note += f" Approved candidate SHA-256 `{sha256(approved)}`."
-    note += f" {label}." if label else ""
-    cell = decisions.strip().replace("|", "\\|").replace("\n", " ") + note
-    return f"| {applied} | `{chapter}` | `{sha256(canonical)}` | Passed | {cell} |\n"
-
-
-def insert_row(log_text: str, row: str) -> str:
-    lines = log_text.splitlines(keepends=True)
-    start = next(
-        (i for i, line in enumerate(lines) if line.startswith("| Applied date")), None
-    )
-    if (
-        start is None
-        or start + 1 >= len(lines)
-        or not lines[start + 1].startswith("| -")
-    ):
-        raise Refusal(f"{LOG.name} has no promotion-log table to append to")
-    end = start + 2
-    while end < len(lines) and lines[end].startswith("|"):
-        end += 1
-    return "".join(lines[:end] + [row] + lines[end:])
+        lines.insert(2, f"Approved candidate SHA-256: {sha256(approved)}")
+    if label:
+        lines.append(f"Label: {label}")
+    return "\n".join(lines)
 
 
 def promote(args: argparse.Namespace) -> None:
@@ -291,13 +278,7 @@ def promote(args: argparse.Namespace) -> None:
         )
 
     target = chapter_path(args.chapter)
-    try:
-        insert_row(LOG.read_text(encoding="utf-8"), "")
-    except (OSError, UnicodeDecodeError):
-        raise Refusal(f"{LOG.name} is missing or unreadable") from None
-    saved = {
-        path: path.read_bytes() if path.exists() else None for path in (target, LOG)
-    }
+    saved = {target: target.read_bytes() if target.exists() else None}
     backups = workspace / "saved"
     backups.mkdir()
     for path, content in saved.items():
@@ -315,15 +296,16 @@ def promote(args: argparse.Namespace) -> None:
                 "the formatted chapter is not value-identical to the candidate"
             )
         label = "NON-CONFORMING" if approval.get("label") == "NON-CONFORMING" else ""
-        commit = git(repo, "rev-list", "-n", "1", tag)[:12]
-        ref = f"commit `{commit}`, tag `{tag}`"
-        canonical = target.read_bytes()
-        row = log_row(
-            args.chapter, candidate.read_bytes(), canonical, args.decisions, ref, label
+        commit = git(repo, "rev-list", "-n", "1", tag)
+        ref = f"commit {commit}, tag {tag}"
+        summary = provenance(
+            args.chapter,
+            candidate.read_bytes(),
+            target.read_bytes(),
+            args.decisions,
+            ref,
+            label,
         )
-        LOG.write_text(insert_row(saved[LOG].decode("utf-8"), row), encoding="utf-8")
-        if row not in LOG.read_text(encoding="utf-8"):
-            raise Refusal("the promotion-log row was not written")
         for command in post_write_commands(args.chapter, workspace):
             if npm(*command).returncode:
                 raise Refusal(f"post-write command failed: npm {' '.join(command)}")
@@ -345,11 +327,12 @@ def promote(args: argparse.Namespace) -> None:
         )
         if not restored:
             raise Unconfirmed(
-                f"restore unconfirmed for {target} and {LOG}; their previous bytes are "
-                f"in {backups} (a file not there did not exist before): {error}"
+                f"restore unconfirmed for {target}; its previous bytes are in "
+                f"{backups} (no copy there means it did not exist before): {error}"
             )
         raise Refusal(f"promotion failed and was restored: {error}") from None
     print(f"Promoted {args.chapter} from {tag}; review the diff and open the PR.")
+    print(summary)
 
 
 def verify(args: argparse.Namespace) -> None:
@@ -368,13 +351,16 @@ def verify(args: argparse.Namespace) -> None:
             problems.append(f"{chapter}: canonical file differs from {tag}")
         else:
             print(f"{chapter}: matches {tag}")
+    # The promotion log is frozen history: new chapters add no rows, and a missing
+    # log is fine. Historical rows are only counted for information.
     latest: dict[str, str] = {}
-    for line in LOG.read_text(encoding="utf-8").splitlines():
-        match = re.match(r"^\|[^|]*\|\s*`([0-9.]+)`\s*\|", line)
-        if match:
-            latest[match.group(1)] = line
-    untagged = sum("-approved`" not in row for row in latest.values())
-    print(f"{untagged} chapter(s) whose latest promotion-log row cites no tag.")
+    if LOG.is_file():
+        for line in LOG.read_text(encoding="utf-8").splitlines():
+            match = re.match(r"^\|[^|]*\|\s*`([0-9.]+)`\s*\|", line)
+            if match:
+                latest[match.group(1)] = line
+        untagged = sum("-approved`" not in row for row in latest.values())
+        print(f"{untagged} chapter(s) whose latest promotion-log row cites no tag.")
     if problems:
         raise Refusal("; ".join(problems))
 

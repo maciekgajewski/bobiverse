@@ -26,6 +26,14 @@ import {
 } from "../src/narrative/json-source-map";
 import { formatSchemaDiagnostics } from "../src/narrative/schema-diagnostics";
 import { iconSvgViolation } from "../src/narrative/icon-svg";
+import {
+  applySentencePreservationExceptions,
+  findSentencePreservationViolations,
+  formatSentencePreservationViolation,
+  parseSentencePreservationExceptions,
+  sentencePreservationExceptionsPath,
+  type SentencePreservationException,
+} from "../src/narrative/sentence-preservation";
 
 const repositoryRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -268,6 +276,80 @@ async function assertCanonicalManifest(
   }
 }
 
+async function pathExists(filePath: string): Promise<boolean> {
+  try {
+    await access(filePath);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Merged-text sentence preservation (src/narrative/sentence-preservation.ts).
+ * Exceptions come from the validated root's own exceptions file, or from the
+ * canonical one when the root has none (a candidate root built by
+ * prepare-corpus). An exception that excuses nothing fails only for the root
+ * that owns the file, so the list cannot go stale.
+ */
+async function sentencePreservationErrors(
+  rootArgument: string,
+  loaded: LoadedCorpus,
+): Promise<string[]> {
+  const root = path.resolve(repositoryRoot, rootArgument);
+  const ownPath = path.join(
+    root,
+    path.basename(sentencePreservationExceptionsPath),
+  );
+  const canonicalPath = path.join(
+    repositoryRoot,
+    sentencePreservationExceptionsPath,
+  );
+  const ownsFile = await pathExists(ownPath);
+  const exceptionsPath = ownsFile ? ownPath : canonicalPath;
+  let source: LoadedJson | undefined;
+  let exceptions: SentencePreservationException[] = [];
+  if (ownsFile || (await pathExists(canonicalPath))) {
+    source = await readJson(exceptionsPath);
+    try {
+      exceptions = parseSentencePreservationExceptions(source.value);
+    } catch (error) {
+      return [
+        `${displayPath(exceptionsPath)}:1:1: error: ${error instanceof Error ? error.message : String(error)}`,
+      ];
+    }
+  }
+  const { unexcused, unused } = applySentencePreservationExceptions(
+    findSentencePreservationViolations(loaded.corpus.chapters),
+    exceptions,
+  );
+  const errors = unexcused.map((violation) => {
+    const chapter = loaded.sources.find(
+      (candidate) =>
+        candidate.definition === "chapter_source" &&
+        candidate.value.chapter === violation.chapter,
+    )!;
+    return errorAt(
+      chapter,
+      violation.pointer,
+      formatSentencePreservationViolation(violation),
+    ).message;
+  });
+  if (ownsFile && source) {
+    for (const entry of unused) {
+      const index = exceptions.indexOf(entry);
+      errors.push(
+        errorAt(
+          source,
+          `/exceptions/${index}`,
+          `Sentence-preservation exception for chapter ${entry.chapter} ${entry.entity_id}.${entry.field} excuses nothing; remove it.`,
+        ).message,
+      );
+    }
+  }
+  return errors;
+}
+
 function sourceSchemaErrorFormatter(
   loaded: LoadedCorpus,
 ): FormatNarrativeStructureErrors {
@@ -354,6 +436,12 @@ async function main(): Promise<void> {
   }
   await assertCanonicalManifest(root, loaded);
   if (command === "validate") {
+    const preservationErrors = await sentencePreservationErrors(root, loaded);
+    if (preservationErrors.length) {
+      console.error(preservationErrors.join("\n"));
+      process.exitCode = 1;
+      return;
+    }
     console.log(
       `Narrative corpus is valid: zero state and ${loaded.corpus.chapters.length} chapter source file(s).`,
     );

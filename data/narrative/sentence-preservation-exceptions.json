@@ -1,0 +1,227 @@
+{
+  "about": "Reviewed opt-outs from the merged-text sentence-preservation check (narrative:validate). One entry excuses one chapter's write to one field of one entity. Every new entry needs a specific reason, such as a real state change; remove an entry once its write keeps the earlier sentences.",
+  "exceptions": [
+    {
+      "chapter": "1.6",
+      "entity_id": "technology:guppi-interface",
+      "field": "description",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.6",
+      "entity_id": "technology:roamers",
+      "field": "description",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.9",
+      "entity_id": "technology:roamers",
+      "field": "description",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.13",
+      "entity_id": "technology:roamers",
+      "field": "description",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.13",
+      "entity_id": "character:bob-replicant",
+      "field": "current_state",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.14",
+      "entity_id": "technology:suddar",
+      "field": "description",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.14",
+      "entity_id": "vessel:heaven-1",
+      "field": "description",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.16",
+      "entity_id": "location:epsilon-eridani",
+      "field": "description",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.16",
+      "entity_id": "character:bob-replicant",
+      "field": "current_state",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.17",
+      "entity_id": "technology:replicant-matrix",
+      "field": "description",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.26",
+      "entity_id": "technology:vr",
+      "field": "description",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.26",
+      "entity_id": "character:riker",
+      "field": "current_state",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.26",
+      "entity_id": "character:homer",
+      "field": "current_state",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.27",
+      "entity_id": "location:delta-eridani",
+      "field": "description",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.27",
+      "entity_id": "technology:planetary-exploration-drone",
+      "field": "description",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.27",
+      "entity_id": "technology:roamers",
+      "field": "description",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.28",
+      "entity_id": "technology:exploration-scouts",
+      "field": "description",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.30",
+      "entity_id": "species:delta-eridani-natives",
+      "field": "description",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.30",
+      "entity_id": "location:delta-eridani-4",
+      "field": "description",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.30",
+      "entity_id": "character:bob-replicant",
+      "field": "current_state",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.37",
+      "entity_id": "technology:buster-drone",
+      "field": "description",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.39",
+      "entity_id": "technology:planetary-exploration-drone",
+      "field": "description",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.41",
+      "entity_id": "technology:subspace-communications",
+      "field": "description",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.42",
+      "entity_id": "character:bill",
+      "field": "current_state",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.42",
+      "entity_id": "technology:surge-drive",
+      "field": "description",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.42",
+      "entity_id": "technology:vr",
+      "field": "description",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.43",
+      "entity_id": "vessel:use-colony-ship",
+      "field": "description",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.44",
+      "entity_id": "species:delta-eridani-natives",
+      "field": "description",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.44",
+      "entity_id": "technology:planetary-exploration-drone",
+      "field": "description",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.44",
+      "entity_id": "technology:translation-routine",
+      "field": "description",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.46",
+      "entity_id": "location:82-eridani",
+      "field": "description",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.48",
+      "entity_id": "species:delta-eridani-natives",
+      "field": "description",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.50",
+      "entity_id": "species:delta-eridani-natives",
+      "field": "description",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.51",
+      "entity_id": "character:milo",
+      "field": "current_state",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.53",
+      "entity_id": "character:bob-replicant",
+      "field": "current_state",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.53",
+      "entity_id": "character:marvin",
+      "field": "current_state",
+      "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.53",
+      "entity_id": "character:archimedes",
+      "field": "current_state",
+      "reason": "pre-existing, predates check"
+    }
+  ]
+}
