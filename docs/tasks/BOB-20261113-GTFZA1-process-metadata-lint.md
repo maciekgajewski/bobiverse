@@ -1,6 +1,6 @@
 # BOB-20261113-GTFZA1: process-metadata lint
 
-Status: Ready
+Status: In progress
 Phase: 4 (LLM-assisted editorial pipeline; process hardening)
 Last updated: 2026-11-13
 
@@ -88,3 +88,17 @@ and it rewrites accepted history.
   short task doc plus the implementation in one PR, with no separate doc review.
   Status Ready. Worktree `~/src/bobiverse-item7` on
   `bob-20261113-gtfza1-process-metadata-lint`, from origin/master `279b626`.
+- Implemented scope 1–5. The lint found X52E0D's four non-existent ADR paths.
+  They were fixed as follows:
+  - `0002-reader-knowledge-visibility` became
+    `0002-reader-order-visibility-and-story-time-projection` (same number and
+    topic);
+  - `0017-narrative-extraction-mention-completeness` became
+    `0017-supplemental-mention-completeness` (same number and topic);
+  - `0004-narrative-zero-state` became `0006-generalized-narrative-zero-state`
+    (chosen by topic, not number);
+  - `0005-generalized-narrative-entity-model` became
+    `0007-additional-narrative-entity-types` (chosen by topic, not number).
+
+  No other violations were found, and no ADR was renumbered. Status In progress;
+  it becomes Done after merge.
