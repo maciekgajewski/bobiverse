@@ -352,7 +352,7 @@ describe("chapter_promotion.py promote and verify", () => {
     expect(record().status).toBe(0);
   });
 
-  it("writes the chapter, inserts the log row and runs the validators", () => {
+  it("writes the chapter, prints its provenance and runs the validators", () => {
     const result = promote();
     expect(result.stderr).toBe("");
     expect(result.status).toBe(0);
@@ -360,12 +360,13 @@ describe("chapter_promotion.py promote and verify", () => {
       chapter: "1.2",
       events: [],
     });
-    const lines = readFileSync(log(), "utf8").split("\n");
-    expect(lines[5]).toMatch(
-      /^\| \d{4}-\d\d-\d\d \| `1\.2` \| `[0-9a-f]{64}` \| Passed \|/,
+    // The promotion log is frozen history: promote adds no row.
+    expect(readFileSync(log(), "utf8")).toBe(logHeader);
+    expect(result.stdout).toMatch(/^Canonical SHA-256: [0-9a-f]{64}$/m);
+    expect(result.stdout).toMatch(
+      /^Approved-chapters: commit [0-9a-f]{40}, tag chapter-1\.2-approved$/m,
     );
-    expect(lines[5]).toContain("Synthetic decision. Approved-chapters commit");
-    expect(lines[6]).toBe("");
+    expect(result.stdout).toContain("Decisions: Synthetic decision.");
     const calls = readFileSync(npmLog, "utf8");
     expect(calls).toContain("narrative:validate -- --root");
     expect(calls).toContain("data:validate -- --narrative-root");
@@ -380,7 +381,7 @@ describe("chapter_promotion.py promote and verify", () => {
     expect(readFileSync(log(), "utf8")).toBe(logHeader);
   });
 
-  it("restores the chapter and log when a post-write command fails", () => {
+  it("restores the chapter when a post-write command fails", () => {
     const result = promote({ FAKE_NPM_FAIL: "npm run -s lint" });
     expect(result.status).toBe(1);
     expect(result.stderr).toContain("restored");
@@ -388,21 +389,6 @@ describe("chapter_promotion.py promote and verify", () => {
     expect(readFileSync(log(), "utf8")).toBe(logHeader);
     expect(git(bobiverse, "status", "--porcelain")).toBe("");
   });
-
-  it.skipIf(process.getuid?.() === 0)(
-    "restores the chapter when the log write fails",
-    () => {
-      chmodSync(log(), 0o444);
-      try {
-        const result = promote();
-        expect(result.status).toBe(1);
-        expect(existsSync(chapter())).toBe(false);
-        expect(readFileSync(log(), "utf8")).toBe(logHeader);
-      } finally {
-        chmodSync(log(), 0o644);
-      }
-    },
-  );
 
   it.each([
     ["missing", () => rmSync(log())],
@@ -414,19 +400,17 @@ describe("chapter_promotion.py promote and verify", () => {
       "that is not valid UTF-8",
       () => writeFileSync(log(), Buffer.from([0xff, 0xfe, 0x7c, 0x0a])),
     ],
-  ])(
-    "refuses a promotion log %s before writing the chapter",
-    (_case, damage) => {
-      damage();
-      git(bobiverse, "add", "-A");
-      git(bobiverse, "commit", "-q", "-m", "damage the log");
-      const result = promote();
-      expect(result.status).toBe(1);
-      expect(result.stderr).toContain("chapter-promotion-log.md");
-      expect(existsSync(chapter())).toBe(false);
-      expect(readFileSync(npmLog, "utf8")).not.toContain("prettier");
-    },
-  );
+  ])("promotes and leaves alone a promotion log %s", (_case, damage) => {
+    damage();
+    git(bobiverse, "add", "-A");
+    git(bobiverse, "commit", "-q", "-m", "change the log");
+    const before = existsSync(log()) ? readFileSync(log()) : null;
+    const result = promote();
+    expect(result.stderr).toBe("");
+    expect(result.status).toBe(0);
+    expect(existsSync(chapter())).toBe(true);
+    expect(existsSync(log()) ? readFileSync(log()) : null).toEqual(before);
+  });
 
   it.skipIf(process.getuid?.() === 0)(
     "exits 3 and names the saved copies when the restore cannot be confirmed",
@@ -446,7 +430,7 @@ describe("chapter_promotion.py promote and verify", () => {
     },
   );
 
-  it("verifies tagged chapters and reports untagged log rows", () => {
+  it("verifies tagged chapters, with or without the historical log", () => {
     expect(promote().status).toBe(0);
     const passing = run(["verify", "--repo", approved]);
     expect(passing.status).toBe(0);
@@ -454,6 +438,11 @@ describe("chapter_promotion.py promote and verify", () => {
     expect(passing.stdout).toContain(
       "1 chapter(s) whose latest promotion-log row cites no tag",
     );
+    rmSync(log());
+    const withoutLog = run(["verify", "--repo", approved]);
+    expect(withoutLog.status).toBe(0);
+    expect(withoutLog.stdout).toContain("1.2: matches chapter-1.2-approved");
+    expect(withoutLog.stdout).not.toContain("promotion-log row");
     write(chapter(), '{ "chapter": "1.2", "events": ["changed"] }\n');
     const failing = run(["verify", "--repo", approved]);
     expect(failing.status).toBe(1);
