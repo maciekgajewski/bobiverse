@@ -1,0 +1,89 @@
+{
+  "chapter": "1.46",
+  "title": "46",
+  "summary": "Milo arrives at 82 Eridani, a system that astronomical data had marked as a strong candidate for a habitable planet, and his survey finds two planets in the comfort zone. He sends the news to Bill at Epsilon Eridani and heads for the closer, outer planet, a world with large bodies of water and two moons, the larger of which looks blue. As he moves into orbit, four missiles swing around a moon toward him; unable to outrun them, he launches all eight of his busters against them with orders to hunt for a Brazilian ship afterward. A second wave of four missiles then appears from the moon's other side. Realizing that Medeiros has outflanked him, Milo fires his rail gun while transmitting a situation report and a differential backup that he calculates will not finish in time as the final missiles close in.",
+  "date": "2165-08",
+  "location_id": "location:82-eridani",
+  "introducing": [
+    {
+      "id": "location:82-eridani-star",
+      "name": "82 Eridani",
+      "kind": "star",
+      "parent_location_id": "location:82-eridani",
+      "parent_relation": "member_of_system",
+      "description": "The G5V star at the center of the 82 Eridani system. It is smaller and less luminous than Sol but within the range of yellow suns that humans would prefer."
+    },
+    {
+      "id": "location:82-eridani-1",
+      "name": "82 Eridani 1",
+      "kind": "planet",
+      "parent_location_id": "location:82-eridani-star",
+      "parent_relation": "orbits",
+      "orbital_order": 1024,
+      "description": "The inner of two planets in 82 Eridani's comfort zone, lying at the zone's inside edge."
+    },
+    {
+      "id": "location:82-eridani-2",
+      "name": "82 Eridani 2",
+      "kind": "planet",
+      "parent_location_id": "location:82-eridani-star",
+      "parent_relation": "orbits",
+      "orbital_order": 2048,
+      "description": "The outer of two planets in 82 Eridani's comfort zone, lying almost at the zone's outside edge. It has large bodies of water and two moons: a smaller one closer in and a larger, blue one farther out."
+    },
+    {
+      "id": "location:82-eridani-2-moon-01",
+      "name": "Moon 1",
+      "kind": "moon",
+      "parent_location_id": "location:82-eridani-2",
+      "parent_relation": "orbits",
+      "orbital_order": 1024,
+      "description": "The smaller of 82 Eridani 2's two moons, orbiting closer to the planet."
+    },
+    {
+      "id": "location:82-eridani-2-moon-02",
+      "name": "Moon 2",
+      "kind": "moon",
+      "parent_location_id": "location:82-eridani-2",
+      "parent_relation": "orbits",
+      "orbital_order": 2048,
+      "color": "blue",
+      "description": "The larger of 82 Eridani 2's two moons, orbiting farther from the planet. It shows a blue color, and Milo suspects it may have open water."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:milo",
+      "current_state": "At 82 Eridani, caught in a two-wave missile ambush he attributes to Medeiros, with his busters spent and his rail gun unable to stop every missile. The last missiles were reaching him as he transmitted a situation report and a differential backup toward Epsilon Eridani."
+    },
+    {
+      "entity_id": "character:ernesto-medeiros",
+      "current_state": "Milo concludes that Medeiros outflanked him in a two-wave missile ambush at 82 Eridani."
+    },
+    {
+      "entity_id": "location:82-eridani",
+      "description": "A stellar system centered on a G5V star that is smaller and less luminous than Sol but within the range of yellow suns humans would prefer. Astronomical data marked it as a very good candidate for a habitable planet, and Milo selected it as his next destination from Omicron2 Eridani. Its survey finds two planets in the comfort zone, one at the inside edge and one almost at the outside edge; the outer planet has large bodies of water and two moons.",
+      "state": "Hostile missiles, which Milo attributes to Medeiros, ambushed him as he approached orbit around the outer comfort-zone planet."
+    },
+    {
+      "entity_id": "technology:ship-busters",
+      "description": "Improvised attack units carrying small reactors, oversized SURGE drives, AMI pilots, and dense metal projectiles instead of explosive warheads. They can intercept missiles or strike vessels at very high acceleration. They can drift on stored power with their reactors off and destroy targets through kinetic-energy ramming, which requires enough speed to penetrate a hull. Their steel balls can also serve as rail-gun ammunition. Against missiles they are usually launched in pairs, and they can be given follow-on instructions, such as seeking out a ship matching a given profile once the missiles are dealt with."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:milo",
+      "role": "lead",
+      "location_id": "location:82-eridani"
+    }
+  ],
+  "mentions": [
+    "character:bill",
+    "character:bob-replicant",
+    "location:epsilon-eridani",
+    "location:sol",
+    "organization:brazilian-empire",
+    "species:human",
+    "technology:guppi-interface"
+  ]
+}
