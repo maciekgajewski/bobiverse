@@ -1,4 +1,5 @@
 import { spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import {
   chmodSync,
   existsSync,
@@ -628,6 +629,129 @@ describe("extraction preflight", () => {
         inputs_clean: false,
         dirty_paths: ["data/narrative/chapters/1/1.json"],
       });
+    });
+  });
+
+  describe("pending predecessors", () => {
+    function pendingFile(chapter: string, name = `${chapter}.json`): string {
+      const file = path.join(fixture, "pending", name);
+      writeJson(file, { chapter, synthetic: true });
+      return file;
+    }
+
+    function withPending(chapter: string, files: string[]) {
+      return runPreflight({
+        chapter,
+        extra: files.flatMap((file) => ["--pending-predecessor", file]),
+      });
+    }
+
+    it("builds the prior root from canonical chapters plus one pending candidate", () => {
+      const pending = pendingFile("1.3");
+      const result = withPending("1.4", [pending]);
+
+      expect(result.status, result.stderr).toBe(0);
+      expect(failedItems(result.report)).toEqual([]);
+      expect(itemOf(result.report, 7).evidence).toMatchObject({
+        basis: "PENDING",
+        chapters: ["1.1", "1.2", "1.3"],
+        inputs_clean: true,
+      });
+      const priorRoot = path.join(workspace, "prior-root");
+      expect(readdirSync(path.join(priorRoot, "chapters/1")).sort()).toEqual([
+        "1.json",
+        "2.json",
+        "3.json",
+      ]);
+      expect(readFileSync(validatorLog, "utf8")).toContain(
+        `python scripts/validate_data.py --narrative-root ${priorRoot}`,
+      );
+      const report = result.report as unknown as Record<string, unknown>;
+      expect(report.prior_chain_basis).toBe("PENDING");
+      expect(report.pending_predecessors).toEqual([
+        {
+          path: pending,
+          ref: "1.3",
+          sha256: createHash("sha256")
+            .update(readFileSync(pending))
+            .digest("hex"),
+        },
+      ]);
+      expect(result.stderr).toContain("PENDING predecessors");
+      expect(result.stderr).toContain("1.3");
+    });
+
+    it("accepts an ordered chain of two pending candidates", () => {
+      const result = withPending("1.5", [
+        pendingFile("1.3"),
+        pendingFile("1.4"),
+      ]);
+
+      expect(result.status, result.stderr).toBe(0);
+      expect(itemOf(result.report, 7).evidence.chapters).toEqual([
+        "1.1",
+        "1.2",
+        "1.3",
+        "1.4",
+      ]);
+      expect(
+        readdirSync(path.join(workspace, "prior-root/chapters/1")).sort(),
+      ).toEqual(["1.json", "2.json", "3.json", "4.json"]);
+    });
+
+    it.each([
+      ["a gap", "1.5", ["1.4"]],
+      ["the wrong order", "1.5", ["1.4", "1.3"]],
+      ["a canonical predecessor", "1.3", ["1.2"]],
+    ])("refuses %s", (_case, chapter, refs) => {
+      const result = withPending(
+        chapter,
+        refs.map((ref) => pendingFile(ref)),
+      );
+
+      expect(result.status).toBe(1);
+      expect(failedItems(result.report)).toEqual([7, 8]);
+      expect(itemOf(result.report, 7).evidence.problem).toContain(
+        "pending predecessors must be exactly",
+      );
+      expect(readFileSync(validatorLog, "utf8")).not.toContain("--root");
+    });
+
+    it("refuses an invalid pending file", () => {
+      const bad = path.join(fixture, "pending", "bad.json");
+      write(bad, "not json\n");
+      const result = withPending("1.4", [bad]);
+
+      expect(failedItems(result.report)).toEqual([7, 8]);
+      expect(itemOf(result.report, 7).evidence.problem).toContain(
+        "not a readable JSON file",
+      );
+      const missing = withPending("1.4", [path.join(fixture, "missing.json")]);
+      expect(failedItems(missing.report)).toEqual([7, 8]);
+    });
+
+    it("refuses a pending file inside the repository", () => {
+      const inside = path.join(repository, "1.3.json");
+      writeJson(inside, { chapter: "1.3" });
+      git(repository, "add", "1.3.json");
+      git(repository, "commit", "-q", "-m", "fixture pending inside");
+      const result = withPending("1.4", [inside]);
+
+      expect(failedItems(result.report)).toEqual([7, 8]);
+      expect(itemOf(result.report, 7).evidence.problem).toContain(
+        "must be outside the repository",
+      );
+    });
+
+    it("leaves the report unchanged without the flag", () => {
+      const result = runPreflight();
+      const report = result.report as unknown as Record<string, unknown>;
+
+      expect(result.status).toBe(0);
+      expect(report).not.toHaveProperty("prior_chain_basis");
+      expect(report).not.toHaveProperty("pending_predecessors");
+      expect(itemOf(result.report, 7).evidence).not.toHaveProperty("basis");
+      expect(result.stderr).not.toContain("PENDING");
     });
   });
 

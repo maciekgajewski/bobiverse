@@ -456,6 +456,15 @@ JSON output records the base Git commit, whether the canonical inputs were clean
 candidate. Keep that output with the review package and explain any unclean or
 unknown result.
 
+Pending predecessors: when the chapters just before the target are candidates not
+yet promoted (approved or awaiting approval), the prior root is the canonical
+chapters plus those candidates, in chapter order. Pass each one to
+`scripts/extraction_preflight.py` with `--pending-predecessor`, in order. Each must
+be a file outside the repository, and together they must be exactly the chapters
+after the latest canonical one up to the target's predecessor. The same validators
+run on that root. The report marks the run as based on PENDING predecessors and
+lists each one's chapter, path and SHA-256.
+
 After manually staging canonical files into any checkout, run
 `npm run narrative:manifest` before generating projections, and confirm that the
 manifest lists exactly the intended chapters.

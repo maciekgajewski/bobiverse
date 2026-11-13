@@ -61,6 +61,10 @@ K1_CAVEAT = (
     "reasoning level and fork_turns: none for both passes; the run's own records "
     "attest the spawning settings (K1)."
 )
+PENDING_CAVEAT = (
+    "The prior chain includes PENDING predecessors (candidates not yet promoted): "
+    "{}. Re-run this preflight if any of them changes before promotion."
+)
 K5_CAVEAT = (
     "The approval file's format is checked, not its authenticity; it substitutes "
     "for item 1 only and never waives items 2-8 (K5)."
@@ -102,6 +106,11 @@ target and "date" must be YYYY-MM-DD. The approval covers item 1 only.
 Item 7 builds the prior root with source_evidence.py prepare-corpus, using the
 target's immediate canonical predecessor as the stand-in candidate. A zero-state
 target (1.1), a missing predecessor and a book boundary (b.1 with b > 1) fail closed.
+With --pending-predecessor (repeatable, in chapter order), the prior root is built
+from the canonical chapters plus those not-yet-promoted candidates instead. They
+must be files outside the repository, exactly the chapters after the latest
+canonical one up to the target's predecessor, in order; the report marks the run
+as based on PENDING predecessors.
 
 Output carries only source fingerprint fields, never source bytes. The JSON report
 goes to stdout, or to --report (outside the repository); a short summary goes to
@@ -426,8 +435,58 @@ def predecessor(chapter: str) -> tuple[str | None, str | None]:
     return f"{book}.{number - 1}", None
 
 
+def read_pending(
+    paths: list[Path], repository: Path
+) -> tuple[list[dict[str, Any]], str | None]:
+    """Fingerprint each pending candidate; never relay its contents."""
+    entries: list[dict[str, Any]] = []
+    for path in paths:
+        resolved = path.expanduser().resolve()
+        entry: dict[str, Any] = {"path": str(resolved)}
+        entries.append(entry)
+        if is_within(resolved, repository):
+            return entries, f"pending predecessor {path} must be outside the repository"
+        try:
+            entry["sha256"] = sha256_file(resolved)
+            record = json.loads(resolved.read_text(encoding="utf-8"))
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
+            return entries, (
+                f"pending predecessor {path} is not a readable JSON file: "
+                f"{type(error).__name__}"
+            )
+        ref = record.get("chapter") if isinstance(record, dict) else None
+        if not isinstance(ref, str) or not CHAPTER_RE.fullmatch(ref):
+            return entries, f"pending predecessor {path} has no valid chapter field"
+        entry["ref"] = ref
+    return entries, None
+
+
+def pending_problem(
+    pending: list[dict[str, Any]], chapters: Path, previous: str
+) -> str | None:
+    book, number = previous.split(".")
+    canonical = [
+        int(path.stem) for path in chapters.glob("*.json") if path.stem.isdigit()
+    ]
+    if not canonical:
+        return f"no canonical chapter in book {book} to build the pending chain on"
+    latest = max(canonical)
+    expected = [f"{book}.{n}" for n in range(latest + 1, int(number) + 1)]
+    refs = [entry["ref"] for entry in pending]
+    if refs != expected:
+        return (
+            f"pending predecessors must be exactly [{', '.join(expected)}] in order "
+            f"after the latest canonical chapter {book}.{latest}; got [{', '.join(refs)}]"
+        )
+    return None
+
+
 def check_prior_chain(
-    chapter: str, repository: Path, workspace: Path, workspace_ok: bool
+    chapter: str,
+    repository: Path,
+    workspace: Path,
+    workspace_ok: bool,
+    pending_paths: list[Path],
 ) -> tuple[dict[str, Any], Path | None]:
     previous, refusal = predecessor(chapter)
     evidence: dict[str, Any] = {"target": chapter, "predecessor": previous}
@@ -435,14 +494,27 @@ def check_prior_chain(
         evidence["problem"] = refusal
         return item(7, False, evidence), None
     book, number = previous.split(".")
-    candidate = repository / "data" / "narrative" / "chapters" / book / f"{number}.json"
-    evidence["candidate"] = candidate.relative_to(repository).as_posix()
-    if not candidate.is_file():
-        evidence["problem"] = (
-            f"the immediate predecessor {previous} is not canonical; staged chains stay a "
-            "manual check (K7)"
-        )
-        return item(7, False, evidence), None
+    chapters = repository / "data" / "narrative" / "chapters" / book
+    pending: list[dict[str, Any]] = []
+    if pending_paths:
+        evidence["basis"] = "PENDING"
+        pending, problem = read_pending(pending_paths, repository)
+        evidence["pending_predecessors"] = pending
+        problem = problem or pending_problem(pending, chapters, previous)
+        if problem:
+            evidence["problem"] = problem
+            return item(7, False, evidence), None
+        candidate, stand_in = Path(pending[0]["path"]), pending[0]["ref"]
+        evidence["candidate"] = str(candidate)
+    else:
+        candidate, stand_in = chapters / f"{number}.json", previous
+        evidence["candidate"] = candidate.relative_to(repository).as_posix()
+        if not candidate.is_file():
+            evidence["problem"] = (
+                f"the immediate predecessor {previous} is not canonical; pass pending "
+                "predecessors with --pending-predecessor (K7)"
+            )
+            return item(7, False, evidence), None
     if not workspace_ok:
         evidence["problem"] = "workspace check failed; the prior root was not built"
         return item(7, False, evidence), None
@@ -455,7 +527,7 @@ def check_prior_chain(
             "--repository-root",
             str(repository),
             "--chapter",
-            previous,
+            stand_in,
             "--candidate",
             str(candidate),
             "--output-root",
@@ -468,10 +540,16 @@ def check_prior_chain(
         return item(7, False, evidence), None
     corpus = json.loads(result.stdout)
     provenance = corpus.get("provenance", {})
+    for entry in pending[1:]:
+        shutil.copyfile(
+            entry["path"],
+            root / "chapters" / book / f"{entry['ref'].split('.')[1]}.json",
+        )
+    stand_ins = [entry["ref"] for entry in pending] or [previous]
     evidence.update(
         {
             "prior_root": str(root),
-            "chapters": [*corpus.get("prior_chapters", []), previous],
+            "chapters": [*corpus.get("prior_chapters", []), *stand_ins],
             "base_commit": provenance.get("base_commit"),
             "inputs_clean": provenance.get("inputs_clean"),
             "dirty_paths": provenance.get("dirty_paths"),
@@ -567,6 +645,15 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         help="write the JSON report here (outside the repository)",
     )
+    parser.add_argument(
+        "--pending-predecessor",
+        type=Path,
+        action="append",
+        default=[],
+        metavar="CANDIDATE",
+        help="not-yet-promoted predecessor candidate outside the repository; "
+        "repeat in chapter order",
+    )
     return parser
 
 
@@ -622,6 +709,7 @@ def main() -> int:
         repository,
         arguments.workspace,
         workspace_item["result"] == "pass",
+        arguments.pending_predecessor,
     )
     items.append(prior_item)
     items.append(check_validators(repository, root, prior_item["result"] == "pass"))
@@ -650,6 +738,12 @@ def main() -> int:
         ],
         "limits": [K1_CAVEAT, *([K5_CAVEAT] if arguments.approval_file else [])],
     }
+    if arguments.pending_predecessor:
+        pending = prior_item["evidence"].get("pending_predecessors", [])
+        report["prior_chain_basis"] = "PENDING"
+        report["pending_predecessors"] = pending
+        refs = ", ".join(entry.get("ref", entry["path"]) for entry in pending)
+        report["limits"].append(PENDING_CAVEAT.format(refs))
     serialized = json.dumps(report, indent=2, ensure_ascii=False) + "\n"
     if report_path is None:
         sys.stdout.write(serialized)

@@ -33,6 +33,8 @@ spawning for both passes; the run's own records attest those settings.
 7. Prior chain: build a root of the chapters before the target with `prepare-corpus`,
    using the last prior chapter as the stand-in candidate, and check that its
    provenance shows `inputs_clean: true` (§Candidate assembly and temporary corpus).
+   If the chapters just before the target are not yet promoted, pass their candidates
+   in order with `--pending-predecessor`; the report marks the run PENDING.
 8. Run both validators from §Candidate assembly and temporary corpus on that prior
    root. An astronomy failure here is a baseline problem: stop and report it
    (§Astronomy preflight and isolated acquisition).
