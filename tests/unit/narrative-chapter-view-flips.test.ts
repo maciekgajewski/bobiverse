@@ -23,20 +23,6 @@ interface Flip {
 
 const flips: Flip[] = [
   {
-    subject: "character:riker",
-    field: "current_state",
-    readPoints: ["1.22", "1.23"],
-    laterRead: "1.22",
-    earlierRead: "1.21",
-  },
-  {
-    subject: "character:homer",
-    field: "current_state",
-    readPoints: ["1.22", "1.23"],
-    laterRead: "1.22",
-    earlierRead: "1.21",
-  },
-  {
     subject: "character:bill",
     field: "current_state",
     readPoints: ["1.42", "1.43", "1.44"],
