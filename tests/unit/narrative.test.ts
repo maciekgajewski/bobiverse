@@ -483,10 +483,11 @@ describe("narrative corpus validation and projection", () => {
     const world = generateNarrativeWorld(prepared, "1.3");
     expect(world.view).toEqual({ chapter: "1.3", display_date: "2200.1" });
     // 1.2 (2200.2) is later in story time than 1.3 (2200.1); both are revealed.
+    // Chapter view: the last chapter read wins (ADR-0028, decision (c)).
     expect(
       world.entities.find((entity) => entity.id === "character:fixture-alex")
         ?.current_state,
-    ).toBe("later state");
+    ).toBe("middle state");
     expect(
       generateNarrativeWorld(prepared, "1.3", "2200.1").entities.find(
         (entity) => entity.id === "character:fixture-alex",
@@ -741,9 +742,15 @@ describe("narrative corpus validation and projection", () => {
         (entity) => entity.id === "character:fixture-alex",
       )?.parent_id,
     ).toBe("character:fixture-parent-b");
-    // Chapter view: 1.2's replacement (2200.2) is the latest known value.
+    // Chapter view: 1.3, read last, clears it, although 1.2 (2200.2) is later
+    // in story time (ADR-0028, decision (c)).
     expect(
       generateNarrativeWorld(prepared, "1.3").entities.find(
+        (entity) => entity.id === "character:fixture-alex",
+      ),
+    ).toHaveProperty("parent_id", null);
+    expect(
+      generateNarrativeWorld(prepared, "1.3", "2200.2").entities.find(
         (entity) => entity.id === "character:fixture-alex",
       )?.parent_id,
     ).toBe("character:fixture-parent-b");
@@ -1330,6 +1337,14 @@ describe("narrative corpus validation and projection", () => {
     nonChronologicalKindChange.chapters[2]!.updates = [
       { entity_id: "location:mars", color: "rust red" },
     ];
+    // Chapter view applies 1.3, read last, over 1.2's later-dated kind change,
+    // leaving a survey colour on a locale (ADR-0028, decision (c)).
+    expect(() => validateNarrativeCorpus(nonChronologicalKindChange)).toThrow(
+      "leaves survey properties color on effective location kind locale for location:mars",
+    );
+    nonChronologicalKindChange.chapters[2]!.updates = [
+      { entity_id: "location:mars", kind: "planet", color: "rust red" },
+    ];
     expect(() =>
       validateNarrativeCorpus(nonChronologicalKindChange),
     ).not.toThrow();
@@ -1338,12 +1353,17 @@ describe("narrative corpus validation and projection", () => {
       generateNarrativeWorld(nonChronological, "1.3").entities.find(
         (entity) => entity.id === "location:mars",
       ),
-    ).toMatchObject({ kind: "locale", color: null });
+    ).toMatchObject({ kind: "planet", color: "rust red" });
     expect(
       generateNarrativeWorld(nonChronological, "1.3", "2200.1").entities.find(
         (entity) => entity.id === "location:mars",
       ),
     ).toMatchObject({ kind: "planet", color: "rust red" });
+    expect(
+      generateNarrativeWorld(nonChronological, "1.3", "2200.2").entities.find(
+        (entity) => entity.id === "location:mars",
+      ),
+    ).toMatchObject({ kind: "locale", color: null });
 
     const nonChronologicalMoonOverflow = createNarrativeFixtureCorpus();
     nonChronologicalMoonOverflow.chapters[1]!.updates = [
