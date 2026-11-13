@@ -9,11 +9,11 @@ the contract holds the rules. Any failed item stops the run; never bypass it.
 [`scripts/extraction_preflight.py`](../scripts/extraction_preflight.py) checks items
 1–8 against the profile record
 [`profile.json`](../.codex/skills/extract-bobiverse-chapter/profile.json) and exits
-non-zero on any failure; item 9 stays manual. Run it from the repository root (see
-`--help`); its report never contains source bytes. For item 1 it runs
-`codex --version`, which shows only that the launcher is present, not that it can set
-the model, reasoning level, and non-forked spawning for both passes; the run's own
-records attest those settings.
+non-zero on any failure; item 9 stays manual. Run it from inside the checkout that
+contains it; any other checkout is refused (see `--help`). Its report never contains
+source bytes. For item 1 it runs `codex --version`, which shows only that the
+launcher is present, not that it can set the model, reasoning level, and non-forked
+spawning for both passes; the run's own records attest those settings.
 
 1. Profile: the conforming Codex profile can be requested for both passes, or the
    Captain's explicit approval of provider, model, and workflow for this run is
