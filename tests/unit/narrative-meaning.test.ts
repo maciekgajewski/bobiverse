@@ -410,6 +410,41 @@ describe("Milo's backdated death (1.51, ADR-0028)", () => {
   );
 });
 
+describe("merged-text restorations (BOB-20261113-FSHPA9)", () => {
+  // Each check takes the restored sentence from the earlier canonical write at
+  // run time, so no text is held here. The sentence must survive in the later
+  // chapter's own write, in chapter view under either write order, and in date
+  // view at that chapter's date (where it may show early; ADR-0028 accepts this).
+  const lastSentence = (text: string) => text.split(/(?<=\.) /).at(-1)!;
+  const field = (subject: string, name: string) => (world: NarrativeWorld) =>
+    (
+      world.entities.find((entity) => entity.id === subject) as unknown as
+        Record<string, unknown> | undefined
+    )?.[name];
+  const written = (chapter: string, subject: string, name: string) =>
+    chapterWrites(chapter, subject).find((write) => name in write)?.[name];
+
+  it.each([
+    ["technology:vr", "description", "1.40", "1.42", "2162-04"],
+    ["location:ee-2", "state", "1.42", "1.51", "2174-01"],
+  ])(
+    "%s %s keeps %s's last sentence from %s on",
+    (subject, name, source, target, date) => {
+      if (!narrativeCorpus)
+        throw new Error("Canonical narrative preparation failed.");
+      const sentence = lastSentence(String(written(source, subject, name)));
+      expect(sentence.length).toBeGreaterThan(20);
+      expect(String(written(target, subject, name))).toContain(sentence);
+      const read = field(subject, name);
+      expect(String(read(worldAt(target)))).toContain(sentence);
+      expect(
+        String(read(generateNarrativeWorld(narrativeCorpus, target, date))),
+      ).toContain(sentence);
+    },
+    SLOW,
+  );
+});
+
 describe("meaning-level checks catch breakage (synthetic entries)", () => {
   const wrong: [Expectation, string][] = [
     [

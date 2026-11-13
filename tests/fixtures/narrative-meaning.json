@@ -765,8 +765,8 @@
     "kind": "field",
     "subject": "location:ee-2",
     "field": "state",
-    "expected": "sha256:e585768ab8a4bc60",
-    "basis": "Captain approval 2026-11-13 (1.51)"
+    "expected": "sha256:c41c0fcebdcdfbab",
+    "basis": "task BOB-20261113-FSHPA9"
   },
   {
     "chapter": "1.51",
@@ -936,6 +936,52 @@
     "field": "description",
     "expected": "sha256:f99ce4fd2db0e4c3",
     "basis": "Captain approval 2026-11-13 (1.53)"
+  },
+  {
+    "chapter": "1.22",
+    "kind": "no_write",
+    "subject": "character:riker",
+    "field": "current_state",
+    "basis": "task BOB-20261113-FSHPA9"
+  },
+  {
+    "chapter": "1.22",
+    "kind": "no_write",
+    "subject": "character:homer",
+    "field": "current_state",
+    "basis": "task BOB-20261113-FSHPA9"
+  },
+  {
+    "chapter": "1.22",
+    "kind": "field",
+    "subject": "character:riker",
+    "field": "current_state",
+    "expected": "sha256:65f163fa9eb7afbe",
+    "basis": "canonical 1.21 (FSHPA9)"
+  },
+  {
+    "chapter": "1.22",
+    "kind": "field",
+    "subject": "character:homer",
+    "field": "current_state",
+    "expected": "sha256:c3e7e71f23a8f495",
+    "basis": "canonical 1.21 (FSHPA9)"
+  },
+  {
+    "chapter": "1.23",
+    "kind": "field",
+    "subject": "character:riker",
+    "field": "current_state",
+    "expected": "sha256:65f163fa9eb7afbe",
+    "basis": "canonical 1.21 (FSHPA9)"
+  },
+  {
+    "chapter": "1.23",
+    "kind": "field",
+    "subject": "character:homer",
+    "field": "current_state",
+    "expected": "sha256:c3e7e71f23a8f495",
+    "basis": "canonical 1.21 (FSHPA9)"
   },
   {
     "chapter": "1.54",
