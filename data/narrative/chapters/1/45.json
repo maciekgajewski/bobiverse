@@ -1,0 +1,65 @@
+{
+  "chapter": "1.45",
+  "title": "45",
+  "summary": "Bart, a new Bob from Calvin's first cohort at Alpha Centauri, makes his first SCUT call to Bill, who drops uninvited into Bart's log-cabin VR and welcomes him to BobNet. Bart reports that Calvin and Goku scouted Alpha Centauri A and B as planned, found the wreckage of a USE probe and autofactory at B, and used the improved version-3 Heavens in a sneak attack that wiped out a working Brazilian factory at A, though one Brazilian probe, probably unfinished, escaped. The system is good for resources but has no livable planets. Calvin and Goku set up a Bob factory and moved on once a new Bob could take over, and Bart built the SCUT after receiving Bill's transmission. Bill worries that Medeiros may hijack another installation or later raid Alpha Centauri, but with early warning systems in place and no way to track him, he lets it go, relieved that a Bob factory is finally running. Bart promises to drop by for Scrub baseball, and with two more Bobs being completed there will at last be enough players to fill the outfield.",
+  "date": "2165-01",
+  "location_id": "location:epsilon-eridani",
+  "introducing": [
+    {
+      "id": "organization:bobnet",
+      "name": "BobNet",
+      "description": "A SCUT-based network linking Bob replicants across star systems. Newly contacted Bobs are welcomed into it, and it provides instant communications up to about twenty-five light-years."
+    },
+    {
+      "id": "character:bart",
+      "name": "Bart",
+      "current_state": "At Alpha Centauri, where he has taken over from Calvin and Goku and his group has set up early warning systems. He has built a SCUT and joined BobNet."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bill",
+      "current_state": "At Epsilon Eridani, welcoming Bart of Alpha Centauri to BobNet and relieved that a Bob factory is operating there."
+    },
+    {
+      "entity_id": "character:calvin",
+      "current_state": "Has left Alpha Centauri with Goku after setting up a Bob factory there and waiting until one of its new Bobs could take over."
+    },
+    {
+      "entity_id": "character:goku",
+      "current_state": "Has left Alpha Centauri with Calvin after setting up a Bob factory there and waiting until one of its new Bobs could take over."
+    },
+    {
+      "entity_id": "location:alpha-centauri",
+      "description": "A nearby stellar system considered an obvious first destination for an interstellar probe. It is good for resources but has no colonizable or livable planets.",
+      "state": "Overseen by Bart, a Bob from the Bob factory that Calvin and Goku set up after destroying the Brazilian installation; early warning systems now monitor the system."
+    },
+    {
+      "entity_id": "location:alpha-centauri-a",
+      "description": "The A star component of the Alpha Centauri system, surveyed by Goku. A Brazilian factory building probes operated there until Calvin and Goku destroyed it in a sneak attack."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bill",
+      "role": "lead",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:bart",
+      "role": "other",
+      "location_id": "location:alpha-centauri"
+    }
+  ],
+  "mentions": [
+    "character:ernesto-medeiros",
+    "location:alpha-centauri-b",
+    "organization:brazilian-empire",
+    "organization:united-states-of-eurasia",
+    "technology:autofactory",
+    "technology:guppi-interface",
+    "technology:subspace-communications",
+    "vessel:heaven-10",
+    "vessel:heaven-9"
+  ]
+}

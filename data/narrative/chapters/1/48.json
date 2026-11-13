@@ -1,0 +1,89 @@
+{
+  "chapter": "1.48",
+  "title": "48",
+  "summary": "Bob spends almost a month preparing the Deltan tribe for a long trek to the abandoned village that Moses remembers as having the best flint, while Marvin surveys a route across the mountainous spine of their continent. Bob teaches the Deltans to preserve meat, the tribe waits out its annual births, and Bob and Marvin build more busters as gorilloids watch from a distance. Archimedes, now showing signs of puberty, has effectively joined the tribal council. On the rainy first night of the trek, Marvin cautions against introducing too many new ideas, notes the Deltans' simple animism, and reveals that he has started a batch of new Bobs at the autofactory, though he does not plan to leave yet; his planetary survey shows that Deltans live only on this continent. Later, a daytime gorilloid raid carries off two juveniles, and one is killed before the Deltans drive the attackers off and bury him. To widen the small gene pool, Bob and Marvin locate isolated Deltan groups and persuade them to join, swelling the migration to well over five hundred. The Deltans cross the mountain pass faster than planned and feast at the edge of the forest beyond, but two days later disaster strikes.",
+  "date": "2166-05",
+  "location_id": "location:delta-eridani",
+  "introducing": [
+    {
+      "id": "event:deltan-migration",
+      "name": "Deltan migration",
+      "date": "2166-05",
+      "location_id": "location:delta-eridani-4",
+      "description": "A mass relocation of the Deltan tribe from its home territory toward the abandoned village with the best flint supply, prepared and guarded by Bob and Marvin. Isolated Deltan groups recruited along the way widen the small population's gene pool and swell the migration to well over five hundred individuals, most of them females and juveniles. It crosses a high pass through the mountainous spine of the Deltans' continent ahead of schedule, despite losing a juvenile to a gorilloid raid.",
+      "participant_ids": [
+        "character:bob-replicant",
+        "character:marvin",
+        "character:archimedes",
+        "character:moses",
+        "character:arnold"
+      ]
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "At Delta Eridani, guiding and guarding the Deltan migration toward the tribe's old flint village. Disaster strikes two days after the migration crosses the mountain pass and reaches the forest beyond."
+    },
+    {
+      "entity_id": "character:marvin",
+      "current_state": "At Delta Eridani, helping Bob guard and enlarge the Deltan migration. He has started a batch of new Bobs at the autofactory but does not plan to leave immediately."
+    },
+    {
+      "entity_id": "character:archimedes",
+      "current_state": "Showing signs of Deltan puberty and effectively a member of the tribal council, he is travelling with the tribe's migration."
+    },
+    {
+      "entity_id": "character:moses",
+      "current_state": "Travelling with the tribe's migration toward the abandoned village he identified as having the best flint supply."
+    },
+    {
+      "entity_id": "character:arnold",
+      "current_state": "Travelling with the migration, where Bob credits his large axe and the flint-tipped spears with keeping disputes among merging Deltan groups to harsh words."
+    },
+    {
+      "entity_id": "species:delta-eridani-natives",
+      "description": "An intelligent native population of Delta Eridani 4, named Deltans by Bob. Bob judges them to be fire-using and probably intelligent. They have bat- and pig-like faces, long spiderish limbs, light brownish-gray to orangey-tan fur, patterned heads, and mobile expressive ears. Their language is far more guttural than any sound humans can produce. Bob observes six apparently friendly groups, each tending a fire and interacting with the others. He observes two genders, tribal organization, loose pairings, and some individuals with multiple significant others; males patrol their territory while females and children form the tribe's center, and tribal matters are put before a council of elders, while juveniles have lower standing. They have an annual breeding cycle. Marvin finds no concept of religion among them, only basic animism such as honoring the animals they kill for food and venerating their dead. A planetary survey finds Deltans on only one continent of Eden, their cradle, making them a strictly local mutation; many related species live there, but none use fire or make tools. Their traditional weapons are clubs, handheld rocks, and pointed sticks, and axes and spears are now in use. A small tribal population with a small gene pool is under pressure from larger, stronger gorilloid predators, and Bob's group helps them regain flintworking, learn to preserve meat, and improve their defenses. The tribe once lived in older villages, some with flint, a better water supply, more food, and better defenses, before being driven out."
+    },
+    {
+      "entity_id": "location:delta-eridani-4",
+      "description": "The fourth inner rocky planet in the Delta Eridani system, also called Delta Eridani 4 and DE-4. It is slightly larger than Earth, with lower surface gravity, a somewhat denser atmosphere, and conditions that support soaring flyers and tall tree analogues. Its observed temperate-to-subtropical landscape has meadows, rocky bluffs, and forest-like expanses of exceptionally large brownish trees with wide horizontal branches and thick leaf canopies. Documented wildlife includes six-legged exoskeletal insect analogues, small furry six-legged mammal analogues, larger four-limbed mammal analogues, feather-like bird analogues, and a three-segment mammalian snake equivalent. One four-legged winged variant, provisionally called a hippogriff by Bob, shows limited color-change camouflage. Bob, Marvin, Luke, and Bender adopt Eden as the world name associated with the Deltans' birthplace. A mountainous spine runs down the center of the Deltans' home continent, and only a couple of its passes are low enough to be useful."
+    },
+    {
+      "entity_id": "technology:buster-drone",
+      "description": "A buster drone is an observation drone reinforced internally and fitted with steel impact caps. It can strike with forty pounds of high-tensile steel at twice the speed of a high-powered rifle bullet, delivering a lethal kinetic blow and sonic boom against a gorilloid. Atmospheric entry requires a controlled descent, so a deployment can take about ten minutes to reach a surface target. Bob regards it as far from ideal: an imprecise weapon, comparable to fishing with dynamite, that makes up for its lack of precision with theatrical effect, and it endangers anyone close to its target, such as captives held by an attacker."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead"
+    },
+    {
+      "character_id": "character:marvin",
+      "role": "other"
+    },
+    {
+      "character_id": "character:archimedes",
+      "role": "other",
+      "location_id": "location:delta-eridani-4"
+    },
+    {
+      "character_id": "character:moses",
+      "role": "other",
+      "location_id": "location:delta-eridani-4"
+    },
+    {
+      "character_id": "character:arnold",
+      "role": "other",
+      "location_id": "location:delta-eridani-4"
+    }
+  ],
+  "mentions": [
+    "character:bender",
+    "character:luke",
+    "species:human",
+    "technology:autofactory",
+    "technology:planetary-exploration-drone"
+  ]
+}

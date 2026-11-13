@@ -1,0 +1,98 @@
+{
+  "chapter": "1.44",
+  "title": "44",
+  "summary": "Bob and Marvin decide to open contact with the Deltans through a speaker-equipped drone, choosing the curious juvenile Archimedes rather than an elder. Speaking from a drone camouflaged as part of a tree trunk, Bob tells Archimedes that he killed the gorilloid that attacked him and supplied the flint, and urges the tribe to return to one of the old villages they were driven from, some of which offer flint, better water, more food, and better defenses. When the elders scoff at Archimedes, Bob floats the probe above his head and the gathering falls silent; its resemblance to the buster drone's fragments convinces the Deltans. Moses gloats that his stories of other villages were true, an elder Bob calls Hoffa asks whether the bawbe, as Archimedes calls the probe, will protect them, and Arnold backs the move because the current camp is too open to defend. The debate drags on for hours as some Deltans resist change, leaving Bob and Marvin to conclude that politics is universal.",
+  "date": "2166-01",
+  "location_id": "location:delta-eridani",
+  "introducing": [
+    {
+      "id": "character:hoffa",
+      "name": "Hoffa",
+      "species_id": "species:delta-eridani-natives",
+      "current_state": "An elder Deltan whom Bob calls Hoffa, asking whether the bawbe will protect the tribe from gorilloids."
+    },
+    {
+      "id": "event:first-contact-with-the-deltans",
+      "name": "First contact with the Deltans",
+      "date": "2166-01",
+      "location_id": "location:delta-eridani-4",
+      "description": "Bob opens direct communication with the Deltans by speaking to Archimedes through a camouflaged, speaker-equipped drone, then reveals the drone to the village during a council of elders. The Deltans learn that the bawbe destroyed a gorilloid and brought them flint, and that it offers guidance and limited help while they fight their own battles, and the tribe begins debating a move to a better-defended old village.",
+      "participant_ids": [
+        "character:bob-replicant",
+        "character:archimedes",
+        "character:moses",
+        "character:hoffa",
+        "character:arnold"
+      ]
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "At Delta Eridani, in direct contact with the Deltans through a speaker-equipped drone and urging them to move to a better-defended old village."
+    },
+    {
+      "entity_id": "character:marvin",
+      "current_state": "At Delta Eridani, assisting Bob as he opens direct contact with the Deltans."
+    },
+    {
+      "entity_id": "character:archimedes",
+      "current_state": "Still a juvenile despite his rising status, he has become the Deltans' go-between with Bob and has put Bob's proposal to move to an old village before the elders."
+    },
+    {
+      "entity_id": "character:moses",
+      "current_state": "Vindicated after years of dismissal, since Bob's message confirms his stories of other villages."
+    },
+    {
+      "entity_id": "character:arnold",
+      "current_state": "Backing the move to an old village, arguing that the current camp is too open to defend."
+    },
+    {
+      "entity_id": "species:delta-eridani-natives",
+      "description": "An intelligent native population of Delta Eridani 4, named Deltans by Bob. Bob judges them to be fire-using and probably intelligent. They have bat- and pig-like faces, long spiderish limbs, light brownish-gray to orangey-tan fur, patterned heads, and mobile expressive ears. Their language is far more guttural than any sound humans can produce. Bob observes six apparently friendly groups, each tending a fire and interacting with the others. He observes two genders, tribal organization, loose pairings, and some individuals with multiple significant others; males patrol their territory while females and children form the tribe's center, and tribal matters are put before a council of elders, while juveniles have lower standing. Their traditional weapons are clubs, handheld rocks, and pointed sticks, and axes and spears are now in use. A small tribal population is under pressure from larger, stronger gorilloid predators, and Bob's group helps them regain flintworking and improve their defenses. The tribe once lived in older villages, some with flint, a better water supply, more food, and better defenses, before being driven out."
+    },
+    {
+      "entity_id": "technology:planetary-exploration-drone",
+      "description": "A practical drone design for planetary exploration, with variants for surveillance and biological analysis. The football-sized surveillance variant has remote cameras, microphones, extendable gripping limbs, and small shielded reactors that can detect incoming craft before detection. It can relay live video, record speech, and provide footage for a virtual-reality reconstruction of observed inhabitants. The roughly meter-long biological-analysis variant has visual and auditory input optimized for close work and many extendable appendages for varied tasks; it also carries systems for examining local life and mechanical stomachs that process organics as a human stomach would, with sample-output analysis taking about a day. The drones can change color with limited pattern mimicry, enough to pass as part of a tree trunk, and can float and hover in the air. Some are now fitted with speakers that allow direct conversation with the Deltans."
+    },
+    {
+      "entity_id": "technology:translation-routine",
+      "description": "A software routine for interpreting speech. One version interprets the standard twenty-second-century accent so smoothly that differing speech patterns become effectively transparent to its user. Another lets its user converse in English with the Deltans, whose language is far more guttural than human speech."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead"
+    },
+    {
+      "character_id": "character:marvin",
+      "role": "other"
+    },
+    {
+      "character_id": "character:archimedes",
+      "role": "other",
+      "location_id": "location:delta-eridani-4"
+    },
+    {
+      "character_id": "character:moses",
+      "role": "other",
+      "location_id": "location:delta-eridani-4"
+    },
+    {
+      "character_id": "character:hoffa",
+      "role": "other",
+      "location_id": "location:delta-eridani-4"
+    },
+    {
+      "character_id": "character:arnold",
+      "role": "other",
+      "location_id": "location:delta-eridani-4"
+    }
+  ],
+  "mentions": [
+    "technology:buster-drone",
+    "technology:hand-axe",
+    "technology:pointy-sticks"
+  ]
+}

@@ -113,5 +113,573 @@
     "field": "parent_id",
     "expected": "character:bob-replicant",
     "basis": "canonical 1.17"
+  },
+  {
+    "chapter": "1.44",
+    "kind": "visible",
+    "subject": "event:first-contact-with-the-deltans",
+    "basis": "Captain approval 2026-11-13 (1.44)"
+  },
+  {
+    "chapter": "1.44",
+    "kind": "field",
+    "subject": "event:first-contact-with-the-deltans",
+    "field": "date",
+    "expected": "2166-01",
+    "basis": "Captain approval 2026-11-13 (1.44)"
+  },
+  {
+    "chapter": "1.44",
+    "kind": "field",
+    "subject": "event:first-contact-with-the-deltans",
+    "field": "location_id",
+    "expected": "location:delta-eridani-4",
+    "basis": "Captain approval 2026-11-13 (1.44)"
+  },
+  {
+    "chapter": "1.44",
+    "kind": "visible",
+    "subject": "technology:translation-routine",
+    "basis": "Captain approval 2026-11-13 (1.44)"
+  },
+  {
+    "chapter": "1.44",
+    "kind": "field",
+    "subject": "technology:translation-routine",
+    "field": "description",
+    "expected": "sha256:9cfbbed0a9e8f748",
+    "basis": "Captain approval 2026-11-13 (1.44)"
+  },
+  {
+    "chapter": "1.44",
+    "kind": "not_visible",
+    "subject": "technology:deltan-translation-routine",
+    "basis": "Captain approval 2026-11-13 (1.44)"
+  },
+  {
+    "chapter": "1.44",
+    "kind": "location",
+    "subject": "character:archimedes",
+    "expected": "location:delta-eridani-4",
+    "basis": "Captain approval 2026-11-13 (1.44)"
+  },
+  {
+    "chapter": "1.44",
+    "kind": "location",
+    "subject": "character:moses",
+    "expected": "location:delta-eridani-4",
+    "basis": "Captain approval 2026-11-13 (1.44)"
+  },
+  {
+    "chapter": "1.44",
+    "kind": "location",
+    "subject": "character:hoffa",
+    "expected": "location:delta-eridani-4",
+    "basis": "Captain approval 2026-11-13 (1.44)"
+  },
+  {
+    "chapter": "1.44",
+    "kind": "location",
+    "subject": "character:arnold",
+    "expected": "location:delta-eridani-4",
+    "basis": "Captain approval 2026-11-13 (1.44)"
+  },
+  {
+    "chapter": "1.44",
+    "kind": "location",
+    "subject": "character:bob-replicant",
+    "expected": "location:delta-eridani",
+    "basis": "Captain approval 2026-11-13 (1.44)"
+  },
+  {
+    "chapter": "1.45",
+    "kind": "unset",
+    "subject": "character:bart",
+    "field": "parent_id",
+    "basis": "Captain approval 2026-11-13 (1.45)"
+  },
+  {
+    "chapter": "1.45",
+    "kind": "visible",
+    "subject": "technology:guppi-interface",
+    "basis": "Captain approval 2026-11-13 (1.45)"
+  },
+  {
+    "chapter": "1.45",
+    "kind": "unset",
+    "subject": "technology:guppi-interface",
+    "field": "aliases",
+    "basis": "Captain approval 2026-11-13 (1.45)"
+  },
+  {
+    "chapter": "1.45",
+    "kind": "visible",
+    "subject": "organization:bobnet",
+    "basis": "Captain approval 2026-11-13 (1.45)"
+  },
+  {
+    "chapter": "1.45",
+    "kind": "not_visible",
+    "subject": "technology:bobnet",
+    "basis": "Captain approval 2026-11-13 (1.45)"
+  },
+  {
+    "chapter": "1.45",
+    "kind": "location",
+    "subject": "character:bart",
+    "expected": "location:alpha-centauri",
+    "basis": "Captain approval 2026-11-13 (1.45)"
+  },
+  {
+    "chapter": "1.45",
+    "kind": "field",
+    "subject": "character:ernesto-medeiros",
+    "field": "current_state",
+    "expected": "sha256:fadb06222ccdc3ab",
+    "basis": "Captain approval 2026-11-13 (1.45)"
+  },
+  {
+    "chapter": "1.46",
+    "kind": "unset",
+    "subject": "character:milo",
+    "field": "death_date",
+    "basis": "Captain approval 2026-11-13 (1.46)"
+  },
+  {
+    "chapter": "1.46",
+    "kind": "field",
+    "subject": "character:ernesto-medeiros",
+    "field": "current_state",
+    "expected": "sha256:8dc8111e0cfd5e99",
+    "basis": "Captain approval 2026-11-13 (1.46)"
+  },
+  {
+    "chapter": "1.46",
+    "kind": "field",
+    "subject": "location:82-eridani-1",
+    "field": "name",
+    "expected": "sha256:a9b6d15605078097",
+    "basis": "Captain approval 2026-11-13 (1.46)"
+  },
+  {
+    "chapter": "1.46",
+    "kind": "field",
+    "subject": "location:82-eridani-2",
+    "field": "name",
+    "expected": "sha256:5b14fa12a8e3c629",
+    "basis": "Captain approval 2026-11-13 (1.46)"
+  },
+  {
+    "chapter": "1.46",
+    "kind": "field",
+    "subject": "location:82-eridani-2-moon-01",
+    "field": "name",
+    "expected": "sha256:65c6feeb230b373e",
+    "basis": "Captain approval 2026-11-13 (1.46)"
+  },
+  {
+    "chapter": "1.46",
+    "kind": "field",
+    "subject": "location:82-eridani-2-moon-02",
+    "field": "name",
+    "expected": "sha256:61c90c6bda889b91",
+    "basis": "Captain approval 2026-11-13 (1.46)"
+  },
+  {
+    "chapter": "1.46",
+    "kind": "unset",
+    "subject": "location:82-eridani-1",
+    "field": "possible_colony_target",
+    "basis": "Captain approval 2026-11-13 (1.46)"
+  },
+  {
+    "chapter": "1.46",
+    "kind": "unset",
+    "subject": "location:82-eridani-2",
+    "field": "possible_colony_target",
+    "basis": "Captain approval 2026-11-13 (1.46)"
+  },
+  {
+    "chapter": "1.46",
+    "kind": "visible",
+    "subject": "technology:guppi-interface",
+    "basis": "Captain approval 2026-11-13 (1.46)"
+  },
+  {
+    "chapter": "1.46",
+    "kind": "visible",
+    "subject": "technology:ship-busters",
+    "basis": "Captain approval 2026-11-13 (1.46)"
+  },
+  {
+    "chapter": "1.46",
+    "kind": "field",
+    "subject": "technology:ship-busters",
+    "field": "description",
+    "expected": "sha256:f2c23693ec31af95",
+    "basis": "Captain approval 2026-11-13 (1.46)"
+  },
+  {
+    "chapter": "1.47",
+    "kind": "visible",
+    "subject": "character:george-butterworth",
+    "basis": "Captain approval 2026-11-13 (1.47)"
+  },
+  {
+    "chapter": "1.47",
+    "kind": "location",
+    "subject": "character:george-butterworth",
+    "expected": "location:sol",
+    "basis": "Captain approval 2026-11-13 (1.47)"
+  },
+  {
+    "chapter": "1.47",
+    "kind": "field",
+    "subject": "character:george-butterworth",
+    "field": "current_state",
+    "expected": "sha256:7ad74f21168f870b",
+    "basis": "Captain approval 2026-11-13 (1.47)"
+  },
+  {
+    "chapter": "1.47",
+    "kind": "field",
+    "subject": "character:arthur",
+    "field": "death_date",
+    "expected": "2166-01",
+    "basis": "Captain approval 2026-11-13 (1.47)"
+  },
+  {
+    "chapter": "1.47",
+    "kind": "unset",
+    "subject": "character:arthur",
+    "field": "death_event_id",
+    "basis": "Captain approval 2026-11-13 (1.47)"
+  },
+  {
+    "chapter": "1.47",
+    "kind": "field",
+    "subject": "organization:united-states-of-eurasia",
+    "field": "current_state",
+    "expected": "sha256:da26cd50d961debb",
+    "basis": "Captain approval 2026-11-13 (1.47)"
+  },
+  {
+    "chapter": "1.47",
+    "kind": "field",
+    "subject": "organization:free-american-independent-theocratic-hegemony",
+    "field": "current_state",
+    "expected": "sha256:76ec2c5bec7ecd4d",
+    "basis": "Captain approval 2026-11-13 (1.47)"
+  },
+  {
+    "chapter": "1.47",
+    "kind": "visible",
+    "subject": "technology:3d-printers",
+    "basis": "Captain approval 2026-11-13 (1.47)"
+  },
+  {
+    "chapter": "1.47",
+    "kind": "field",
+    "subject": "character:charles",
+    "field": "current_state",
+    "expected": "sha256:5e6f32c01827ea62",
+    "basis": "Captain approval 2026-11-13 (1.47)"
+  },
+  {
+    "chapter": "1.48",
+    "kind": "visible",
+    "subject": "event:deltan-migration",
+    "basis": "Captain approval 2026-11-13 (1.48)"
+  },
+  {
+    "chapter": "1.48",
+    "kind": "field",
+    "subject": "event:deltan-migration",
+    "field": "date",
+    "expected": "2166-05",
+    "basis": "Captain approval 2026-11-13 (1.48)"
+  },
+  {
+    "chapter": "1.48",
+    "kind": "field",
+    "subject": "event:deltan-migration",
+    "field": "location_id",
+    "expected": "location:delta-eridani-4",
+    "basis": "Captain approval 2026-11-13 (1.48)"
+  },
+  {
+    "chapter": "1.48",
+    "kind": "field",
+    "subject": "technology:buster-drone",
+    "field": "description",
+    "expected": "sha256:c766d80aad02e90b",
+    "basis": "Captain approval 2026-11-13 (1.48)"
+  },
+  {
+    "chapter": "1.48",
+    "kind": "not_visible",
+    "subject": "event:gorilloid-raid",
+    "basis": "Captain approval 2026-11-13 (1.48)"
+  },
+  {
+    "chapter": "1.48",
+    "kind": "location",
+    "subject": "character:moses",
+    "expected": "location:delta-eridani-4",
+    "basis": "Captain approval 2026-11-13 (1.48)"
+  },
+  {
+    "chapter": "1.48",
+    "kind": "location",
+    "subject": "character:arnold",
+    "expected": "location:delta-eridani-4",
+    "basis": "Captain approval 2026-11-13 (1.48)"
+  },
+  {
+    "chapter": "1.48",
+    "kind": "field",
+    "subject": "character:moses",
+    "field": "current_state",
+    "expected": "sha256:bde95a1a75f365b8",
+    "basis": "Captain approval 2026-11-13 (1.48)"
+  },
+  {
+    "chapter": "1.48",
+    "kind": "field",
+    "subject": "character:arnold",
+    "field": "current_state",
+    "expected": "sha256:aa1ff5eb3318f116",
+    "basis": "Captain approval 2026-11-13 (1.48)"
+  },
+  {
+    "chapter": "1.48",
+    "kind": "visible",
+    "subject": "technology:planetary-exploration-drone",
+    "basis": "Captain approval 2026-11-13 (1.48)"
+  },
+  {
+    "chapter": "1.48",
+    "kind": "not_visible",
+    "subject": "technology:travois",
+    "basis": "Captain approval 2026-11-13 (1.48)"
+  },
+  {
+    "chapter": "1.48",
+    "kind": "not_visible",
+    "subject": "technology:meat-preservation",
+    "basis": "Captain approval 2026-11-13 (1.48)"
+  },
+  {
+    "chapter": "1.49",
+    "kind": "field",
+    "subject": "technology:guppi-interface",
+    "field": "description",
+    "expected": "sha256:771de51ec0c18e60",
+    "basis": "Captain approval 2026-11-13 (1.49)"
+  },
+  {
+    "chapter": "1.49",
+    "kind": "visible",
+    "subject": "technology:kudzu-gardens",
+    "basis": "Captain approval 2026-11-13 (1.49)"
+  },
+  {
+    "chapter": "1.49",
+    "kind": "field",
+    "subject": "technology:kudzu-gardens",
+    "field": "name",
+    "expected": "sha256:d192b2f78ac84022",
+    "basis": "Captain approval 2026-11-13 (1.49)"
+  },
+  {
+    "chapter": "1.49",
+    "kind": "not_visible",
+    "subject": "location:new-zealand",
+    "basis": "Captain approval 2026-11-13 (1.49)"
+  },
+  {
+    "chapter": "1.49",
+    "kind": "not_visible",
+    "subject": "organization:new-zealand",
+    "basis": "Captain approval 2026-11-13 (1.49)"
+  },
+  {
+    "chapter": "1.49",
+    "kind": "not_visible",
+    "subject": "technology:asteroid-movers",
+    "basis": "Captain approval 2026-11-13 (1.49)"
+  },
+  {
+    "chapter": "1.49",
+    "kind": "not_visible",
+    "subject": "event:riker-un-speech",
+    "basis": "Captain approval 2026-11-13 (1.49)"
+  },
+  {
+    "chapter": "1.49",
+    "kind": "field",
+    "subject": "organization:united-nations",
+    "field": "current_state",
+    "expected": "sha256:86dfc11901de285f",
+    "basis": "Captain approval 2026-11-13 (1.49)"
+  },
+  {
+    "chapter": "1.49",
+    "kind": "field",
+    "subject": "character:julia-hendricks",
+    "field": "current_state",
+    "expected": "sha256:5dbf8196ff36761f",
+    "basis": "Captain approval 2026-11-13 (1.49)"
+  },
+  {
+    "chapter": "1.49",
+    "kind": "location",
+    "subject": "character:julia-hendricks",
+    "expected": "location:sol",
+    "basis": "Captain approval 2026-11-13 (1.49)"
+  },
+  {
+    "chapter": "1.50",
+    "kind": "visible",
+    "subject": "event:gorilloid-raid-on-deltan-migration",
+    "basis": "Captain approval 2026-11-13 (1.50)"
+  },
+  {
+    "chapter": "1.50",
+    "kind": "field",
+    "subject": "event:gorilloid-raid-on-deltan-migration",
+    "field": "date",
+    "expected": "2166-06",
+    "basis": "Captain approval 2026-11-13 (1.50)"
+  },
+  {
+    "chapter": "1.50",
+    "kind": "field",
+    "subject": "event:gorilloid-raid-on-deltan-migration",
+    "field": "location_id",
+    "expected": "location:delta-eridani-4",
+    "basis": "Captain approval 2026-11-13 (1.50)"
+  },
+  {
+    "chapter": "1.50",
+    "kind": "field",
+    "subject": "event:gorilloid-raid-on-deltan-migration",
+    "field": "description",
+    "expected": "sha256:2a55f784f3296da0",
+    "basis": "Captain approval 2026-11-13 (1.50)"
+  },
+  {
+    "chapter": "1.50",
+    "kind": "not_visible",
+    "subject": "species:gorilloid",
+    "basis": "Captain approval 2026-11-13 (1.50)"
+  },
+  {
+    "chapter": "1.50",
+    "kind": "visible",
+    "subject": "event:deltan-migration",
+    "basis": "Captain approval 2026-11-13 (1.50)"
+  },
+  {
+    "chapter": "1.50",
+    "kind": "field",
+    "subject": "event:deltan-migration",
+    "field": "date",
+    "expected": "2166-05",
+    "basis": "Captain approval 2026-11-13 (1.50)"
+  },
+  {
+    "chapter": "1.50",
+    "kind": "field",
+    "subject": "event:deltan-migration",
+    "field": "location_id",
+    "expected": "location:delta-eridani-4",
+    "basis": "Captain approval 2026-11-13 (1.50)"
+  },
+  {
+    "chapter": "1.50",
+    "kind": "field",
+    "subject": "event:deltan-migration",
+    "field": "description",
+    "expected": "sha256:87a0fc0cf83b6d9b",
+    "basis": "Captain approval 2026-11-13 (1.50)"
+  },
+  {
+    "chapter": "1.50",
+    "kind": "location",
+    "subject": "character:arnold",
+    "expected": "location:delta-eridani-4",
+    "basis": "Captain approval 2026-11-13 (1.50)"
+  },
+  {
+    "chapter": "1.50",
+    "kind": "location",
+    "subject": "character:archimedes",
+    "expected": "location:delta-eridani-4",
+    "basis": "Captain approval 2026-11-13 (1.50)"
+  },
+  {
+    "chapter": "1.50",
+    "kind": "field",
+    "subject": "species:delta-eridani-natives",
+    "field": "description",
+    "expected": "sha256:a24e930eaafedc3d",
+    "basis": "Captain approval 2026-11-13 (1.50)"
+  },
+  {
+    "chapter": "1.50",
+    "kind": "field",
+    "subject": "technology:buster-drone",
+    "field": "description",
+    "expected": "sha256:9673298809c1e5a2",
+    "basis": "Captain approval 2026-11-13 (1.50)"
+  },
+  {
+    "chapter": "1.50",
+    "kind": "field",
+    "subject": "technology:guppi-interface",
+    "field": "description",
+    "expected": "sha256:4df6c41b8f093744",
+    "basis": "Captain approval 2026-11-13 (1.50)"
+  },
+  {
+    "chapter": "1.50",
+    "kind": "field",
+    "subject": "technology:pointy-sticks",
+    "field": "description",
+    "expected": "sha256:16f02c735ae7bd4f",
+    "basis": "Captain approval 2026-11-13 (1.50)"
+  },
+  {
+    "chapter": "1.50",
+    "kind": "field",
+    "subject": "character:bob-replicant",
+    "field": "current_state",
+    "expected": "sha256:ceed8fc194cc686f",
+    "basis": "Captain approval 2026-11-13 (1.50)"
+  },
+  {
+    "chapter": "1.50",
+    "kind": "field",
+    "subject": "character:marvin",
+    "field": "current_state",
+    "expected": "sha256:0218debae66856c8",
+    "basis": "Captain approval 2026-11-13 (1.50)"
+  },
+  {
+    "chapter": "1.50",
+    "kind": "field",
+    "subject": "character:archimedes",
+    "field": "current_state",
+    "expected": "sha256:4605c98f5f0bc76e",
+    "basis": "Captain approval 2026-11-13 (1.50)"
+  },
+  {
+    "chapter": "1.50",
+    "kind": "field",
+    "subject": "character:arnold",
+    "field": "current_state",
+    "expected": "sha256:8d22b33c5f3ceab7",
+    "basis": "Captain approval 2026-11-13 (1.50)"
   }
 ]
