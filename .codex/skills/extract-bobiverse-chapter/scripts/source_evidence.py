@@ -401,6 +401,28 @@ def git_output(repository_root: Path, *arguments: str) -> str | None:
     return completed.stdout
 
 
+def porcelain_z_paths(status: str) -> list[str]:
+    """Return every path in `git status --porcelain -z` output.
+
+    Entries are NUL-separated `XY path` records with unquoted paths. A rename or
+    copy record is followed by one more NUL-separated field holding its original
+    path; both paths are reported.
+    """
+    fields = status.split("\0")
+    paths: list[str] = []
+    index = 0
+    while index < len(fields):
+        entry = fields[index]
+        index += 1
+        if not entry:
+            continue
+        paths.append(entry[3:])
+        if entry[0] in "RC" and index < len(fields):
+            paths.append(fields[index])
+            index += 1
+    return paths
+
+
 def input_provenance(repository_root: Path) -> dict[str, Any]:
     """Report the base commit and whether the canonical corpus inputs are clean."""
     head = git_output(repository_root, "rev-parse", "--verify", "HEAD")
@@ -408,6 +430,7 @@ def input_provenance(repository_root: Path) -> dict[str, Any]:
         repository_root,
         "status",
         "--porcelain",
+        "-z",
         "--untracked-files=all",
         "--",
         "data/narrative",
@@ -415,7 +438,7 @@ def input_provenance(repository_root: Path) -> dict[str, Any]:
     )
     if head is None or status is None:
         return {"base_commit": None, "inputs_clean": None, "dirty_paths": None}
-    dirty_paths = sorted(line[3:] for line in status.splitlines() if line.strip())
+    dirty_paths = sorted(porcelain_z_paths(status))
     return {
         "base_commit": head.strip(),
         "inputs_clean": not dirty_paths,

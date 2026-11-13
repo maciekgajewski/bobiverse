@@ -478,6 +478,30 @@ describe("temporary corpus preparation", () => {
     ]);
   });
 
+  it("reports renamed and unusually named inputs verbatim", async () => {
+    git(
+      fixtureRepository,
+      "mv",
+      "data/narrative/chapters/1/3.json",
+      "data/narrative/chapters/1/3 later.json",
+    );
+    await writeFile(
+      path.join(fixtureRepository, "data/narrative/naïve note.txt"),
+      "",
+    );
+
+    const result = prepare(path.join(temporaryRoot, "corpus"));
+
+    expect(result.status, result.stderr).toBe(0);
+    const { provenance } = JSON.parse(result.stdout);
+    expect(provenance.inputs_clean).toBe(false);
+    expect(provenance.dirty_paths).toEqual([
+      "data/narrative/chapters/1/3 later.json",
+      "data/narrative/chapters/1/3.json",
+      "data/narrative/naïve note.txt",
+    ]);
+  });
+
   it("refuses a root named narrative", () => {
     const result = prepare(path.join(temporaryRoot, "narrative"));
 
