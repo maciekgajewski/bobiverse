@@ -640,27 +640,28 @@ test("compact inspector stays inside the viewport", async ({ page }) => {
   expect(bounds.bottom).toBeLessThanOrEqual(700.01);
 });
 
-test("character lineage and travel history are responsive and support navigation", async ({
-  page,
-}) => {
-  await page.addInitScript(() => {
-    window.localStorage.setItem(
-      "bobiverse.app-state.v2",
-      JSON.stringify({
-        furthestChapterRead: "1.20",
-        viewChapter: "1.20",
-        displayDate: "2145",
-        mode: "chapter",
-        timelineZoom: 1,
-        timelinePan: 0,
-      }),
-    );
-  });
+// One test per viewport: each needs its own page load and timeout budget.
+for (const viewport of [
+  { width: 1440, height: 1000 },
+  { width: 900, height: 700 },
+]) {
+  test(`character lineage and travel history are responsive and support navigation at ${viewport.width}x${viewport.height}`, async ({
+    page,
+  }) => {
+    await page.addInitScript(() => {
+      window.localStorage.setItem(
+        "bobiverse.app-state.v2",
+        JSON.stringify({
+          furthestChapterRead: "1.20",
+          viewChapter: "1.20",
+          displayDate: "2145",
+          mode: "chapter",
+          timelineZoom: 1,
+          timelinePan: 0,
+        }),
+      );
+    });
 
-  for (const viewport of [
-    { width: 1440, height: 1000 },
-    { width: 900, height: 700 },
-  ]) {
     await page.setViewportSize(viewport);
     await page.goto("/");
     if (viewport.width < 1200) {
@@ -740,8 +741,8 @@ test("character lineage and travel history are responsive and support navigation
     await expect(
       inspector.getByText("Book 1 · We Are Legion (We are Bob)"),
     ).toBeVisible();
-  }
-});
+  });
+}
 
 test("character routes expose animated direction and reduced-motion chevrons", async ({
   page,
@@ -887,7 +888,7 @@ test("compact reflow keeps timeline progress reachable and traps focus", async (
     .click();
   await expect(panel.getByLabel("Knowledge through")).toHaveValue("1.2");
   await expect(page.locator(".map-narrative-badge")).toContainText(
-    "Universe in 24 June 2133 · Knowledge through Chapter 1.2",
+    "Latest known · Knowledge through Chapter 1.2",
   );
 
   await page.keyboard.press("Escape");
@@ -1374,7 +1375,7 @@ test("reader progress is confirmed before chapter data is unlocked", async ({
   await page.getByRole("button", { name: "Confirm read through" }).click();
   await expect(page.getByText("1 - Bob Version 1.0")).toBeVisible();
   await expect(page.locator(".map-narrative-badge")).toContainText(
-    "Universe in 2016",
+    "Latest known · Knowledge through Chapter 1.1",
   );
   await expect(
     page.getByRole("button", { name: "Book 1, Chapter 2, locked" }),
@@ -1669,8 +1670,7 @@ test("desktop surfaces stay on one projection through chapter and date changes",
   await page.getByLabel("Read through").selectOption("1.2");
   await page.getByRole("button", { name: "Confirm read through" }).click();
 
-  const sharedChapterStatus =
-    "Universe in 24 June 2133 · Knowledge through Chapter 1.2";
+  const sharedChapterStatus = "Latest known · Knowledge through Chapter 1.2";
   await expect(page.locator(".view-status")).toHaveText(sharedChapterStatus);
   await expect(page.locator(".map-narrative-badge")).toHaveText(
     sharedChapterStatus,

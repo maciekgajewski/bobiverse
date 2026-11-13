@@ -1,6 +1,6 @@
 # ADR-0028: backdated updates revealed by a later chapter
 
-Status: Proposed
+Status: Accepted
 Date: 2026-11-13
 
 ## Context
@@ -36,26 +36,32 @@ fact appeared only from the reveal chapter's date and not from the real date.
   introductions, events, activity, last-known locations, travel history and the
   map. Chapter view is an explicit projection mode (no requested date); it is not
   a Date-mode request at the chapter's date.
-- Date view keeps cutting at the requested date by `effective_date ?? chapter
-date`, among revealed chapters only. Its date options come only from revealed
+- Date view keeps cutting at the requested date by
+  `effective_date ?? chapter date`, among revealed chapters only. Its date options come only from revealed
   chapters, never from the whole book.
 - Nothing from a chapter after N is visible at read-through N, in any view, even
   when it is dated earlier than chapters already read.
 - An `effective_date` must not be earlier than the date of the chapter that
   introduced the entity.
+- Competing writes to one property keep story-date order, then chapter (Maciej,
+  Q1, 2026-11-13 19:12 CET: "Q1: story date wins, but extractor merges texts in
+  the next write"). When a later-read chapter adds facts to a field, the Extractor
+  merges the field's earlier text into that write at extraction time, so the
+  story-date winner already carries everything known. The projection does not
+  merge text.
 
 ## Consequences
 
-- Competing writes to one property are ordered by story date, then chapter (Q1
-  is still pending, so this is unchanged). With Q3 = b that order also decides
-  chapter view: an earlier-dated write read later is shadowed there by a
-  later-dated write read earlier. Concretely, at read-through 1.52 (dated
-  2168-01) the 2174-01 value written by 1.51 beats 1.52's own 2168-01 value for
-  `technology:kudzu-gardens` `description`; 1.52's value shows only in Date view
-  from 2168-01 until 2174-01. The same already happens on master for
-  `character:riker` and `character:homer` `current_state` at 1.22 (after 1.21)
-  and for `character:bill` `current_state` and `technology:vr` `description` at
-  1.42 (after 1.41 and 1.40).
+- With Q3 = b, story-date order also decides chapter view: an earlier-dated write
+  read later is shadowed there by a later-dated write read earlier. For example,
+  if 1.51 (2174-01) and then 1.52 (2168-01) both wrote one field, at read-through
+  1.52 the 2174-01 value from 1.51 would beat 1.52's own 2168-01 value, and 1.52's
+  value would show only in Date view from 2168-01 until 2174-01. That is why the
+  extraction-time merge matters.
+- Existing data already has such pairs: `character:riker` and `character:homer`
+  `current_state` at 1.22 (after 1.21), and `character:bill` `current_state` and
+  `technology:vr` `description` at 1.42 (after 1.41 and 1.40). Applying the merge
+  rule to them is a separate data follow-up.
 - `effective_date` applies to the whole update object, because a chapter has at most
   one update per entity.
 
@@ -69,8 +75,8 @@ date`, among revealed chapters only. Its date options come only from revealed
 
 ## Follow-up
 
-- Q1 (how competing writes are ordered: story date, later reveal, or rejected by
-  validation) is open. This ADR stays Proposed until it is answered.
-
 - `docs/data-model-definition.md` and the schema record the field.
-- Extraction guidance for when to backdate is the Extractor's.
+- Extraction guidance for when to backdate, and the merge rule above, are the
+  Extractor's. `docs/chapter-extraction.md` is not changed here because its open
+  Captain decision D2 covers the same full-field update question.
+- Apply the merge rule to the existing 1.22 and 1.42 pairs in a separate change.

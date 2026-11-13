@@ -171,9 +171,9 @@ describe("backdated updates and chapter-view latest known state", () => {
     expect(entity("1.5", "2170-03", sam).current_state).toBe("travelling");
   });
 
-  it("orders competing writes by story date in chapter view (Q1 pending)", () => {
-    // 1.3 writes sam at 2170-03; 1.5, read later, writes sam at 2166-02. Under
-    // the current story-date rule the 2170-03 value is the latest known state.
+  it("orders competing writes by story date in chapter view", () => {
+    // 1.3 writes sam at 2170-03; 1.5, read later, writes sam at 2166-02. Story
+    // date wins (ADR-0028), so the 2170-03 value is the latest known state.
     expect(entity("1.5", null, sam).current_state).toBe("travelling");
     const shadowed = prepareNarrativeCorpus(
       corpus({ "1.3": [{ entity_id: alex, current_state: "seen" }] }),

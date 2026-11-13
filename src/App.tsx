@@ -329,9 +329,12 @@ export default function App() {
       ),
     [mapProjection.contextSystems, mapProjection.knownSystemIds],
   );
+  // Chapter view has no story-time cutoff (ADR-0028), so it names no date.
   const viewStatus =
     progress.viewChapter && progress.displayDate
-      ? `Universe in ${formatNarrativeDate(progress.displayDate)} · Knowledge through Chapter ${progress.viewChapter}`
+      ? progress.mode === "chapter"
+        ? `Latest known · Knowledge through Chapter ${progress.viewChapter}`
+        : `Universe in ${formatNarrativeDate(progress.displayDate)} · Knowledge through Chapter ${progress.viewChapter}`
       : "Pre-book zero state";
   const selectedNarrativeItem =
     selection?.kind === "narrative"

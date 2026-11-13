@@ -22,7 +22,7 @@ in 2165-08.
 - `../adrs/0002-reader-order-visibility-and-story-time-projection.md`,
   `../adrs/0013-chapter-order-for-narrative-moments.md`,
   `../adrs/0026-calendar-precision-narrative-dates.md`
-- `../adrs/0028-backdated-updates.md` (new, Proposed)
+- `../adrs/0028-backdated-updates.md` (new, Accepted)
 - `../data-model-definition.md` §Reader progress and projection, §Updates
 
 ## Scope
@@ -48,17 +48,19 @@ in 2165-08.
 - Events, which already have `date`; location updates, which feed separate location,
   orbital and sighting paths; introductions. Backdating these is out of scope by
   decision (Q2 = a).
-- Changing how competing writes are ordered (Q1, pending): story date, then chapter,
-  is kept.
+- Changing how competing writes are ordered: story date, then chapter, is kept
+  (Q1). The extraction-time merge is the Extractor's; existing 1.22 and 1.42 data is
+  a separate follow-up.
 - Extraction-contract wording, and the 1.51 candidate itself.
 - Python pipeline: `scripts/common.py` reads only location updates.
 
 ## Design choices (Maciej, relayed 2026-11-13 18:33 CET)
 
-1. **Q1, competing writes: pending.** Story-date ordering is kept. A real case is
-   `technology:kudzu-gardens` `description`, written by 1.51 (2174-01) and then by
-   1.52 (2168-01): at read-through 1.52, chapter view shows the 1.51 value. ADR-0028
-   stays Proposed until Q1 is answered.
+1. **Q1: story date wins** (Maciej, 19:12 CET: "Q1: story date wins, but extractor
+   merges texts in the next write"). Ordering is unchanged. A later-read chapter
+   that adds facts to a field merges the earlier text into its write at extraction
+   time, so the story-date winner already carries everything. ADR-0028 is
+   Accepted.
 2. **Q2 = a.** No backdating of introductions or location updates now.
 3. **Q3 = b.** Chapter view shows the latest known state from all revealed chapters,
    with no date cutoff. Nothing from an unread chapter shows anywhere. Date view
@@ -148,3 +150,14 @@ changed Markdown, `git diff --check`.
   port-5183 config (5173 left alone); prettier `--check` on the changed Markdown,
   except the date table already failing on master in
   `docs/data-model-definition.md`; `git diff --check`. All passed.
+- Q1 decided (Maciej, 19:12 CET, relayed): story date wins and the Extractor merges
+  texts in the next write. ADR-0028 is now Accepted; the "Q1 pending" markers are
+  gone. The 1.51 v3 candidate drops the kudzu write; the 1.22 and 1.42 data stay
+  for a separate follow-up.
+- Chapter-view status line now reads "Latest known · Knowledge through Chapter N",
+  because chapter view has no date cutoff; Date view keeps its wording.
+- CI chromium failure in the lineage and travel-history e2e test: the test ran
+  both viewports in one 30 s budget and timed out on the slower CI runner (it
+  takes 16–19 s locally, the CI run is about 1.9 times slower, and it failed the
+  same way on master `7d52c3f`). Split into one test per viewport with unchanged
+  assertions.
