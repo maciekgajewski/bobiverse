@@ -3,8 +3,8 @@
 **Frozen as history (2026-11-13).** New chapters no longer add rows here: they go
 through data-only PRs, and the PR body carries the approval and provenance
 ([development process](development-process.md#data-only-chapter-prs)).
-`scripts/chapter_promotion.py promote` still appends a row until a follow-up changes
-it; drop that row from the data PR.
+`scripts/chapter_promotion.py promote` no longer appends rows; it prints the
+provenance for the data PR body instead.
 
 This append-only log recorded routine promotion of explicitly approved chapter
 candidates. The shared workflow and validation commands lived in

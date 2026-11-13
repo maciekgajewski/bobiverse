@@ -71,8 +71,8 @@ branch.
    and rerun both validators (§Promotion).
 3. Write canonically; confirm value identity and record both SHA-256 values if
    formatting changed bytes (§Checksum provenance and §Promotion).
-4. No promotion-log row is needed; drop the one `promote` appends (§Checksum
-   provenance).
+4. No promotion-log row is needed; `promote` prints provenance for the PR body
+   (§Checksum provenance).
 5. Run the post-write validation (§Post-write validation); if it fails, restore the
    chapter. Check merged-text sentence preservation (§Post-write validation).
 6. Open a data-only PR whose body quotes the Captain's approval with date and time,

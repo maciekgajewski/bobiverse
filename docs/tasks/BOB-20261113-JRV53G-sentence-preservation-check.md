@@ -45,10 +45,8 @@ The same PR makes `scripts/chapter_promotion.py` stop writing promotion-log rows
 ## Out of scope
 
 - Any canonical chapter data change.
-- The process docs PR #27 changes; its "not automated yet; a follow-up PR adds it"
-  wording in `docs/chapter-extraction.md` §Post-write validation and the "still
-  appends a row" note in `docs/chapter-promotion-log.md` are updated in a later
-  cleanup.
+- Canonical process wording that belonged to PR #27 was left unchanged until #27
+  merged; this PR now updates it after merging `10e1871`.
 - Zero-state values: only chapter-authored writes are compared.
 
 ## Design
@@ -135,3 +133,8 @@ Markdown, `git diff --check`. No UI code changes, so no e2e.
   1.26 `character:riker`, 1.26 `character:homer`, 1.30 `character:bob-replicant`,
   1.51 `character:milo`, 1.53 `character:bob-replicant`, 1.53 `character:marvin`,
   1.53 `character:archimedes`.
+- After #27 merged as `10e1871`, merged `origin/master` and updated the stale
+  process-doc lines: the sentence-preservation check now runs in
+  `narrative:validate`; `promote` prints provenance for the PR body and no longer
+  appends a log row (`chapter-extraction.md`, `chapter-promotion-log.md`, and the
+  matching checklist item).

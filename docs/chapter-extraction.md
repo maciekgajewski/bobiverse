@@ -630,9 +630,9 @@ the candidate is approved for quality.
   notes) in the local no-remote repository `~/bobiverse-approved-chapters` with
   `scripts/chapter_promotion.py record`, which tags it `chapter-<ref>-approved`.
   The Extractor then runs `scripts/chapter_promotion.py promote` on its own data
-  branch. It reruns the offline validators, writes canonically, appends a log row
-  (no longer needed; drop it) and runs §Post-write validation, restoring everything
-  on failure. Isolated acquisition (§Promotion step 3) stays manual. `verify` checks
+  branch. It reruns the offline validators, writes canonically, prints provenance
+  for the PR body, and runs §Post-write validation, restoring everything on
+  failure. Isolated acquisition (§Promotion step 3) stays manual. `verify` checks
   tagged chapters.
 - The data PR body records the approved-candidate SHA-256 when it differs from the
   canonical one, the approved-chapters commit and tag, and any NON-CONFORMING label.
@@ -678,5 +678,5 @@ git diff --check
 These generic validators are required safety nets for every chapter, as is the
 merged-text sentence-preservation check: when a chapter writes a merged text for a
 field, the write keeps every sentence of the earlier canonical value that is visible
-for that field. That check is not automated yet; a follow-up PR adds it. Until then
-the Extractor and the reviewer compare the sentences by hand.
+for that field. That check runs in `narrative:validate`. A reviewed exception in
+`data/narrative/sentence-preservation-exceptions.json` can excuse one write.
