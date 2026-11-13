@@ -238,23 +238,34 @@ of scope.
     passes on a canonical-only chain when the target's immediate predecessor is not
     canonical: it fails closed. Leftover staged files alone are not a reason to
     refuse.
-- **K8. Existing tooling cannot validate a zero-state or strict-prefix root against
-  current canonical data.** On 2026-11-13, a disposable zero-state root was built in
-  `/tmp` from the same four inputs `prepare-corpus` copies (`baseline/`,
-  `assets.json`, `books.json`, `presentation/species.json`), validated, and deleted.
-  No book text was involved.
+- **K8. Existing tooling cannot validate a zero-state root, and some short canonical
+  prefixes fail exact-plan validation.** On 2026-11-13, a disposable zero-state root
+  was built in `/tmp` from the same four inputs `prepare-corpus` copies
+  (`baseline/`, `assets.json`, `books.json`, `presentation/species.json`),
+  validated, and deleted. No book text was involved.
   - Narrative validation failed: the canonical species presentation registry
     references species that chapters introduce.
-  - `data:validate` failed with `CNS5 acquisition queries differ from the exact
-plan`, because the pinned plan covers anchors from all 42 chapters.
+  - `data:validate` failed with
+    `CNS5 acquisition queries differ from the exact plan`
+    because the zero-state root's mapped anchor set differs from the pinned plan.
 
-  The same exact-plan guard means that any strict canonical prefix fails item 8, as
-  the astronomy staging order already says ("extra queries also fail exact-plan
-  validation"). The preflight therefore certifies only a target whose predecessor
-  is the current canonical tip, such as `1.43`. Re-extracting an earlier chapter
-  fails closed.
-  - Resolution: fail closed, as designed. Changing validators, the presentation
-    registry or the pinned sources is out of scope.
+  Exact-plan validation fails only when a prior root's mapped anchor set differs
+  from the pinned plan, as the astronomy staging order says. It does not fail for
+  every shorter prefix. Canonical-only prior roots built with `prepare-corpus`
+  (re-review and reproduction, 2026-11-13):
+  - through `1.41` (to re-extract `1.42`): both validators pass, 277 systems;
+  - through `1.40` (to re-extract `1.41`): both pass;
+  - through `1.39` (to re-extract `1.40`): narrative passes, `data:validate` fails
+    with `GCNS acquisition queries differ from the exact plan`. The last new mapped
+    anchor is in `1.40`.
+
+  So today item 8 can pass for `1.43` and for re-extraction of `1.41` and `1.42`.
+  Earlier prefixes fail whenever the existing validators fail. Item 8 adds no
+  position gate of its own: it runs the existing validators and fails when they
+  fail.
+  - Resolution: the zero-state target fails closed (B4). Otherwise item 8 reports
+    the validators' result. Changing validators, the presentation registry or the
+    pinned sources is out of scope.
 
 - **No conflict:** the astronomy staging order already requires exact prior-root
   validation before extraction and says it is not a refresh. The command runs exactly
@@ -391,3 +402,13 @@ reports are written outside the repository and never committed.
   - Nits: the out-of-scope line now cites K7. The uncovered-anchor diagnostic line's
     indent is restored by keeping its code span on one line: Prettier dedents a
     wrapped code span's continuation line.
+- Re-review of `dd83b90` requested changes (B6, N11).
+  - B6: K8 wrongly said every strict canonical prefix fails item 8, so that the
+    preflight was tip-only. Exact-plan fails only when the mapped anchor set
+    differs from the pinned plan. I reproduced the reviewer's three cases on
+    canonical JSON only, with disposable roots in `/tmp` deleted afterwards:
+    through `1.41` and `1.40` both validators pass (277 systems), and through
+    `1.39` `data:validate` fails with the GCNS exact-plan error. K8 is rewritten:
+    item 8 runs the existing validators with no position gate. The B4 and B5
+    fail-closed rules are unchanged.
+  - N11: K8's exact-plan code span is on its own line, keeping its indent.
