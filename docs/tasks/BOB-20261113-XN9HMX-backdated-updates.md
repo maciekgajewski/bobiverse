@@ -33,24 +33,36 @@ in 2165-08.
    corpus is prepared. It drives world projection, state-write ordering and update
    activity, so it adds an option to the date list only once its chapter is
    revealed.
-3. Docs: ADR-0028; data-model definition (schema listing, projection, Updates); one
-   line in the technical design.
+3. Docs: ADR-0028; data-model definition (schema listing, projection, Updates); the
+   technical design's projection paragraph.
 4. Synthetic tests in `tests/unit/narrative-effective-date.test.ts`.
+5. Chapter view latest known state (Q3 = b): Chapter mode is an explicit projection
+   mode with no story-time cutoff, applied together to entity fields,
+   introductions, events, activity, last-known locations, travel history and the
+   map. Date mode keeps its cutoff. Chapter detail accepts only a Chapter-mode
+   world.
+6. An `effective_date` earlier than the entity's introduction is rejected.
 
 ## Out of scope
 
 - Events, which already have `date`; location updates, which feed separate location,
-  orbital and sighting paths; introductions.
+  orbital and sighting paths; introductions. Backdating these is out of scope by
+  decision (Q2 = a).
+- Changing how competing writes are ordered (Q1, pending): story date, then chapter,
+  is kept.
 - Extraction-contract wording, and the 1.51 candidate itself.
 - Python pipeline: `scripts/common.py` reads only location updates.
 
-## Open design choices (for Maciej)
+## Design choices (Maciej, relayed 2026-11-13 18:33 CET)
 
-1. **Shadowing.** Writes are ordered by story time, so a later-dated write of the same
-   property from an earlier chapter still wins after its date over a backdated write.
-   This is implemented, and a test pins it.
-2. **Introductions and location updates** have no effective date yet.
-3. **A flashback chapter's view** shows the world at that chapter's date, as before.
+1. **Q1, competing writes: pending.** Story-date ordering is kept. A real case is
+   `technology:kudzu-gardens` `description`, written by 1.51 (2174-01) and then by
+   1.52 (2168-01): at read-through 1.52, chapter view shows the 1.51 value. ADR-0028
+   stays Proposed until Q1 is answered.
+2. **Q2 = a.** No backdating of introductions or location updates now.
+3. **Q3 = b.** Chapter view shows the latest known state from all revealed chapters,
+   with no date cutoff. Nothing from an unread chapter shows anywhere. Date view
+   still filters by `effective_date ?? chapter date` among revealed chapters.
 
 ## Acceptance criteria
 
@@ -58,9 +70,14 @@ in 2165-08.
    date option, and its date is not an option there.
 2. At its reveal chapter, and later, it shows in Chapter mode, and in Date mode from
    its effective date onwards but not before.
-3. An out-of-order pair projects by effective date in both views.
-4. An `effective_date` later than the chapter date, or a coarser one containing it, is
-   rejected. It is also rejected on events, on locations and when it is an update's
+3. An out-of-order pair projects by effective date in Date view. In Chapter view,
+   read-through N shows the states of every chapter up to N, including an
+   earlier-dated chapter read after a later-dated one, and conflicts follow story
+   order. Chapter view at N never includes a change from a chapter after N, even
+   one dated earlier, in world, date options, activity or chapter detail.
+   Last-known location and travel history agree in both views.
+4. An `effective_date` later than the chapter date, or a coarser one containing it, or
+   earlier than the entity's introduction, is rejected. It is also rejected on events, on locations and when it is an update's
    only field.
 5. Full validation passes, plus e2e chromium.
 
@@ -103,3 +120,31 @@ changed Markdown, `git diff --check`.
   - `git diff --check`.
 
   All passed.
+
+- Merged origin/master `7d52c3f` (PR #19, chapters 1.44–1.50) into the branch as
+  `8831bf0`, without rebasing; no conflicts.
+- Recorded Maciej's answers (relayed 18:33 CET): Q2 = a, Q3 = b, Q1 pending with
+  story-date ordering kept.
+- Implemented Q3 = b in `src/narrative/model.ts`: a Chapter-mode world (no
+  requested date) carries no story-time cutoff for world updates, introductions,
+  last-known locations and travel history; location validation also checks the
+  uncut projection. `projectNarrativeChapterDetail` accepts only a Chapter-mode
+  world. Map, browser and `App.tsx` call sites were audited; they are already
+  mode-aware.
+- Added the introduction-date check on `effective_date`.
+- Tests: updated the chapter-cutoff expectations in `tests/unit/narrative.test.ts`
+  (each now also checks the Date-mode cutoff), flipped the out-of-order Chapter-view
+  case and added no-leak, earlier-dated-later-chapter, location-agreement,
+  chapter-detail-mode and introduction-date tests.
+- Q1 data search over master and the held 1.51 and 1.52 candidates (read-only)
+  found one 1.51/1.52 conflict (`technology:kudzu-gardens` `description`) and four
+  on master (`character:riker` and `character:homer` `current_state` at 1.22;
+  `character:bill` `current_state` and `technology:vr` `description` at 1.42). In
+  each, chapter view at the later-read chapter now shows the earlier-read,
+  later-dated value.
+- Validation on the merged state (Node 22.23.1): tasks check (71 files, 30 ADRs);
+  format:check, lint and typecheck; Vitest 360/360 in 33 files; Python data tests
+  90/90; data:validate (277 systems); build; e2e chromium 31/31 on a throwaway
+  port-5183 config (5173 left alone); prettier `--check` on the changed Markdown,
+  except the date table already failing on master in
+  `docs/data-model-definition.md`; `git diff --check`. All passed.
