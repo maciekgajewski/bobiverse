@@ -1,0 +1,46 @@
+{
+  "chapter": "1.51",
+  "title": "51",
+  "summary": "A message from Milo reaches Bill at Epsilon Eridani while he is raising mosses, lichens and grasses in a farm donut as base stock for seeding Ragnarök. Milo's report from 82 Eridani describes a highly promising colonization prospect, then the approach of missiles, and it carries a record of his vessel's destruction. The differential backup he attached was cut off before completion; judging that forcing a restoration would probably yield a deranged or non-functional copy, Bill has it archived as a memorial. He orders four more version-3 Bobs on top of the four already under construction, all with extra busters, and resolves to make Medeiros, whom he blames for earlier trouble at Epsilon Eridani and Alpha Centauri as well as Milo's loss, pay for it.",
+  "date": "2174-01",
+  "location_id": "location:epsilon-eridani",
+  "updates": [
+    {
+      "entity_id": "character:bill",
+      "current_state": "At Epsilon Eridani, growing plant stock in a farm donut to seed Ragnarök and mourning Milo. He has ordered four more version-3 Bobs beyond the four already being built, all with extra busters, and intends to make Medeiros pay for Milo's loss. He judged Milo's incomplete differential backup too risky to restore and had it archived as a memorial."
+    },
+    {
+      "entity_id": "character:milo",
+      "effective_date": "2165-08",
+      "current_state": "Lost at 82 Eridani when hostile missiles destroyed his vessel.",
+      "death_date": "2165-08"
+    },
+    {
+      "entity_id": "location:82-eridani",
+      "description": "A stellar system centered on a G5V star that is smaller and less luminous than Sol but within the range of yellow suns humans would prefer. Astronomical data marked it as a very good candidate for a habitable planet, and Milo selected it as his next destination from Omicron2 Eridani. Its survey finds two planets in the comfort zone, one at the inside edge and one almost at the outside edge; the outer planet has large bodies of water and two moons. Milo's early survey report describes the system as a very promising potential colonization destination.",
+      "state": "Milo's vessel was destroyed there by the hostile missiles that ambushed him; Bill blames Medeiros.",
+      "possible_colony_target": true
+    },
+    {
+      "entity_id": "location:ee-2",
+      "state": "Terraforming plans use two reusable drives to capture incoming ice and break it into extra rainfall, with the required ice expected within about twenty-five years. Bill is growing mosses, lichens and grasses as base stock in a farm donut for introduction onto its surface."
+    },
+    {
+      "entity_id": "technology:guppi-interface",
+      "description": "An interface that offloads tasks for replicants while retaining their human limits on multitasking. Its name expands to General Unit Primary Peripheral Interface, and its logs retain monitoring-interface and script activity. Its operating system is firmware; changing its replication priority would require a new core and ship. Version-2 GUPPI is being given enough memory capacity that a personality matrix is contemplated. It can take messages and arrange callbacks for Riker, acting as a secretary and receptionist. It can estimate buster-drone deployment time and launch buster drones on Bob's order. It can report blocked firewall breach attempts, display a stack trace of an attack, and trace injected packets back to their originating stream. It can display a relief map marking the locations and status of tracked individuals, assign drones to follow them, and pass production orders to the autofactory, warning when an order carries a high operational cost. It can summarize the contents of incoming messages, report whether an attached backup transmission arrived complete, and archive a backup on instruction."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bill",
+      "role": "lead"
+    }
+  ],
+  "mentions": [
+    "character:ernesto-medeiros",
+    "character:homer",
+    "location:alpha-centauri",
+    "technology:kudzu-gardens",
+    "technology:ship-busters"
+  ]
+}
