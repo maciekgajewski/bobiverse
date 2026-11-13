@@ -1,0 +1,42 @@
+{
+  "chapter": "1.52",
+  "title": "52",
+  "summary": "Riker visits Homer in his VR. Homer, now an industrial tycoon wholly absorbed in the space farms he proposed, is pressing his plan for a ranch donut: Farm-1 turned out heavily over-engineered, and its early environmental instability, which needed four full-time AMIs until it was damped, has given way to working atmosphere controls, so he believes the next design can safely give half a gee at the rim. The donuts, wheel-shaped stations built as simply as possible and lit by mirrors through a transparent rim roof, are beyond VEHEMENT's reach, which Riker welcomes. With further attacks on Earth's food supplies forcing changes to supply schedules, Farm-1 already delivers raw kudzu allocated by population and need, though Julia has assured Riker that no spicing makes it taste of anything but kudzu. Riker expects the second farm, entering production within a week, to bring a comfortable food surplus for about three years before falling Earth production becomes a significant problem again. The third station, about half finished, will grow mixed crops, and Homer wants to ranch cattle, pigs and chickens on the fourth, and perhaps sheep; the Svalbard vault holds genetic material, but using it would require building artificial wombs.",
+  "date": "2168-01",
+  "location_id": "location:sol",
+  "updates": [
+    {
+      "entity_id": "character:riker",
+      "current_state": "At Sol, overseeing kudzu deliveries from Farm-1 to Earth's survivors and shifting supply schedules to offset further attacks on food supplies. He expects the second space farm, entering production within a week, to give a comfortable food surplus for about three years."
+    },
+    {
+      "entity_id": "character:homer",
+      "current_state": "An industrial tycoon wholly absorbed in the space-farm program, which has worked well. He is pressing to build the fourth station as a ranch donut with half a gee at the rim, raising cattle, pigs and chickens."
+    },
+    {
+      "entity_id": "organization:svalbard-global-trust",
+      "description": "The Svalbard Global Trust is an organization associated with vaults that prospective colonists regard as valuable. Its vaults hold plant cultivars, including kudzu cultivars suited to different growing environments. The Svalbard vault also holds genetic material that could restock livestock, though using it would require building artificial wombs."
+    },
+    {
+      "entity_id": "technology:kudzu-gardens",
+      "description": "Kudzu gardens are unpopulated farming space stations, proposed by Homer as a way to feed Earth's starving survivors. Because they house no people, they avoid the burdens of human habitation such as gravity, radiation shielding, micrometeor armor, and living quarters: they need only enough spin to establish up and down, an interior that is one large cavern under constant sunlight, and equipment to keep the air mix and temperatures in range. Their crop is a gene-engineered kudzu from a library entry, with improved nutritional content, a simplified growth environment, and human digestibility, chosen to produce calories as densely as possible; it needs strong sunlight, temperatures around 20 degrees Celsius, and a lot of water, and the best-matching cultivar can be chosen from the Svalbard vaults. Water must be trucked up or brought in as icebergs from Saturn by the asteroid movers, which can also supply regolith for soil, while fertilizer is needed only in small volumes. They can be built with Homer's printers from scavenged materials, which does not affect the colony-ship schedule but reduces the number of future colony ships. The stations, informally called donuts, are shaped like fat bicycle wheels: carbon-fiber cables running from hub to rim provide most of the structural support, and three thicker spokes carry elevators between rim and hub. Each faces perpendicular to the sun, with mirrors between rim and hub reflecting sunlight into the interior through the rim's transparent roof, and the design is kept as simple as possible to minimize construction time and material requirements. Being in space, they are out of reach of ground-based saboteurs such as VEHEMENT. The first station, Farm-1, was heavily over-engineered, and its environment at first kept falling into positive feedback loops, needing four full-time AMIs until the resonances were damped; atmosphere controls have since been worked out. Its raw kudzu is delivered to Earth's survivors, allocated by population and need; the crop has digestive effects similar to beans, and no seasoning changes its taste. Later stations can grow a mix of crops for dietary variety and nutrition, and Homer estimates that a new design can safely give half a gee at the rim, enough for a proposed ranching station."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:riker",
+      "role": "lead"
+    },
+    {
+      "character_id": "character:homer",
+      "role": "other"
+    }
+  ],
+  "mentions": [
+    "character:julia-hendricks",
+    "location:earth",
+    "organization:vehement",
+    "technology:ami",
+    "technology:vr"
+  ]
+}
