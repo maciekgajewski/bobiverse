@@ -1,6 +1,6 @@
 # BOB-20261113-XN9HMX: backdated updates revealed by a later chapter
 
-Status: In progress
+Status: Done
 Phase: 4 (LLM-assisted editorial pipeline)
 Last updated: 2026-11-13
 
@@ -161,3 +161,5 @@ changed Markdown, `git diff --check`.
   takes 16–19 s locally, the CI run is about 1.9 times slower, and it failed the
   same way on master `7d52c3f`). Split into one test per viewport with unchanged
   assertions.
+- PR #20 was squash-merged to master as `ed5fc0f` on Friday 2026-11-13. Status is now
+  **Done**, recorded after that merge (in the chapters 1.51–1.53 promotion PR).
