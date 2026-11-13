@@ -1,14 +1,13 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type RefObject,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StarMap, type MapScale } from "./components/MapScene";
 import { ObjectBrowser } from "./components/ObjectBrowser";
 import { ObjectInspector } from "./components/ObjectInspector";
+import {
+  KnowledgeThroughSelect,
+  ResetViewIcon,
+  TimelineModeToggle,
+  TopbarReadThrough,
+} from "./components/ProgressControls";
 import { TimelineDock } from "./components/TimelineDock";
 import { nearbySystems, nearbySystemsResult } from "./domain/data";
 import { mapDisplayConfig } from "./domain/config";
@@ -87,6 +86,9 @@ const SYSTEM_VIEW_HISTORY_KEY = "bobiverse.system-view";
 interface SystemMode {
   entry: SystemViewEntry;
 }
+type MobilePanel = "menu" | "browser" | "inspector" | "timeline";
+const ASTRONOMY_CATALOGUE_LINE =
+  "GCNS · CNS5 · Gaia DR3 · WDS · Kirkpatrick 20-pc census · VizieR IV/27A";
 const FOCUSABLE_PANEL_ELEMENTS =
   'a[href], button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])';
 
@@ -229,13 +231,11 @@ export default function App() {
   );
   const [browserQuery, setBrowserQuery] = useState("");
   const [selectionStatus, setSelectionStatus] = useState("");
-  const [mobilePanel, setMobilePanel] = useState<
-    "browser" | "inspector" | "timeline" | null
-  >(null);
-  const browserButton = useRef<HTMLButtonElement>(null);
-  const inspectorButton = useRef<HTMLButtonElement>(null);
-  const timelineButton = useRef<HTMLButtonElement>(null);
+  const [mobilePanel, setMobilePanel] = useState<MobilePanel | null>(null);
+  const menuButton = useRef<HTMLButtonElement>(null);
   const mobilePanelElement = useRef<HTMLDivElement>(null);
+  const [astronomyNoticeOpen, setAstronomyNoticeOpen] = useState(false);
+  const astronomyNoticeButton = useRef<HTMLButtonElement>(null);
   const [webgl, setWebgl] = useState<"checking" | "ready" | "unsupported">(
     "checking",
   );
@@ -246,6 +246,12 @@ export default function App() {
   const progress = applicationProjection.progress;
   const [pendingReadThrough, setPendingReadThrough] = useState<string | null>(
     null,
+  );
+  // Which Read through control opened the pending confirmation. The top-bar
+  // control renders its own dialog because the desktop dock is hidden on
+  // compact layouts.
+  const [readThroughOrigin, setReadThroughOrigin] = useState<"topbar" | "dock">(
+    "dock",
   );
   const [dateContext, setDateContext] = useState<string | null>(null);
   const [mapScale, setMapScale] = useState<MapScale>({
@@ -456,23 +462,18 @@ export default function App() {
     systemMode,
   ]);
 
-  const invokerForPanel = useCallback(
-    (
-      panel: "browser" | "inspector" | "timeline",
-    ): RefObject<HTMLButtonElement | null> =>
-      panel === "browser"
-        ? browserButton
-        : panel === "inspector"
-          ? inspectorButton
-          : timelineButton,
-    [],
-  );
+  // Every compact panel is reached from the top-bar menu, so focus returns
+  // to the menu button when any of them closes.
   const closeMobilePanel = useCallback(() => {
     if (!mobilePanel) return;
-    const invoker = invokerForPanel(mobilePanel);
     setMobilePanel(null);
-    window.setTimeout(() => invoker.current?.focus(), 0);
-  }, [invokerForPanel, mobilePanel]);
+    window.setTimeout(() => menuButton.current?.focus(), 0);
+  }, [mobilePanel]);
+  const closeAstronomyNotice = useCallback(() => {
+    setAstronomyNoticeOpen(false);
+    window.setTimeout(() => astronomyNoticeButton.current?.focus(), 0);
+  }, []);
+  const resetView = () => setResetToken((value) => value + 1);
 
   useEffect(() => {
     if (!mobilePanel) return;
@@ -510,9 +511,11 @@ export default function App() {
             ? document.getElementById("desktop-read-through")
             : panel === "browser"
               ? document.querySelector<HTMLElement>(".left-rail input")
-              : document.querySelector<HTMLElement>(
-                  ".right-rail button, .right-rail a, .topbar .button",
-                );
+              : panel === "menu"
+                ? document.getElementById("topbar-read-through")
+                : document.querySelector<HTMLElement>(
+                    ".right-rail button, .right-rail a, .topbar select",
+                  );
         destination?.focus();
       }, 0);
     };
@@ -825,8 +828,11 @@ export default function App() {
         Skip to star map
       </a>
       <header className="topbar">
-        <div>
-          <p className="eyebrow">Bobiverse · astronomy atlas</p>
+        <div className="topbar-title">
+          <p className="eyebrow">
+            <span className="eyebrow-brand">Bobiverse</span>
+            <span className="eyebrow-detail"> · astronomy atlas</span>
+          </p>
           <nav className="map-breadcrumb" aria-label="Star map breadcrumb">
             {systemMode ? (
               <button
@@ -850,50 +856,41 @@ export default function App() {
           <p className="view-status" aria-live="polite">
             {viewStatus}
           </p>
-          <button
-            ref={browserButton}
-            className="button mobile-command"
-            aria-expanded={mobilePanel === "browser"}
-            onClick={() => setMobilePanel("browser")}
-          >
-            Browse objects
-          </button>
-          {(selection || activeDateContext) && (
+          <TopbarReadThrough
+            chapters={narrativeChapters}
+            progress={progress}
+            pendingReadThrough={pendingReadThrough}
+            ownsConfirmation={readThroughOrigin === "topbar"}
+            onReadThroughChoice={(chapter) => {
+              setReadThroughOrigin("topbar");
+              setPendingReadThrough(chapter);
+            }}
+            onConfirmReadThrough={confirmPendingReadThrough}
+            onCancelReadThrough={() => setPendingReadThrough(null)}
+          />
+          {systemMode && (
             <button
-              ref={inspectorButton}
-              className="button mobile-command inspect-command"
-              aria-expanded={mobilePanel === "inspector"}
-              onClick={() => setMobilePanel("inspector")}
+              className="button return-to-map"
+              type="button"
+              onClick={() =>
+                restoreSystemMode("Returned to the interstellar map.")
+              }
             >
-              Inspect selection
+              Return to map
             </button>
           )}
           <button
-            ref={timelineButton}
-            className="button mobile-command timeline-command"
-            aria-expanded={mobilePanel === "timeline"}
-            onClick={() => setMobilePanel("timeline")}
-          >
-            Timeline and progress
-          </button>
-          <button
-            className="button quiet"
-            onClick={() => setResetToken((value) => value + 1)}
-            disabled={Boolean(systemMode)}
-          >
-            Reset view
-          </button>
-          <button
-            className={`button return-to-map${systemMode ? "" : " return-to-map-placeholder"}`}
+            ref={menuButton}
             type="button"
-            disabled={!systemMode}
-            aria-hidden={!systemMode}
-            tabIndex={systemMode ? 0 : -1}
-            onClick={() =>
-              restoreSystemMode("Returned to the interstellar map.")
-            }
+            className="button menu-button"
+            aria-label="Menu"
+            aria-haspopup="dialog"
+            aria-expanded={mobilePanel === "menu"}
+            onClick={() => setMobilePanel("menu")}
           >
-            Return to map
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 7h14M5 12h14M5 17h14" />
+            </svg>
           </button>
         </div>
       </header>
@@ -985,6 +982,20 @@ export default function App() {
           <span className="map-narrative-badge" aria-live="polite">
             {viewStatus}
           </span>
+          <div className="map-controls">
+            <button
+              type="button"
+              className="reset-view"
+              aria-label="Reset view"
+              onClick={resetView}
+              disabled={Boolean(systemMode)}
+            >
+              <ResetViewIcon />
+            </button>
+            <span className="reset-view-tooltip" role="tooltip">
+              Reset view
+            </span>
+          </div>
           <div className="map-overlay">
             <span
               className="scale-line"
@@ -1000,6 +1011,59 @@ export default function App() {
                 : "Pre-book projection"}
             </span>
           </div>
+          <footer
+            className={`astronomy-notice${astronomyNoticeOpen ? " expanded" : ""}`}
+            onKeyDown={(event) => {
+              if (event.key === "Escape" && astronomyNoticeOpen) {
+                event.preventDefault();
+                event.stopPropagation();
+                closeAstronomyNotice();
+              }
+            }}
+          >
+            {astronomyNoticeOpen && (
+              <div
+                id="astronomy-notice-card"
+                className="astronomy-notice-card"
+                role="region"
+                aria-label="Astronomy data credits"
+              >
+                <p className="astronomy-notice-catalogues">
+                  {ASTRONOMY_CATALOGUE_LINE}
+                </p>
+                <p>
+                  {Object.values(nearbySystems.metadata.sources)
+                    .map((source) => source.acknowledgement)
+                    .join(" ")}
+                </p>
+                <p>
+                  <a
+                    href={GALACTIC_STARFIELD_SOURCE_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {GALACTIC_STARFIELD_UI_CREDIT}
+                  </a>
+                </p>
+              </div>
+            )}
+            <button
+              ref={astronomyNoticeButton}
+              type="button"
+              className="astronomy-notice-chip"
+              aria-expanded={astronomyNoticeOpen}
+              aria-controls="astronomy-notice-card"
+              onClick={() => setAstronomyNoticeOpen((open) => !open)}
+            >
+              <span className="astronomy-notice-icon" aria-hidden="true">
+                i
+              </span>
+              <span className="visually-hidden">Astronomy data credits:</span>{" "}
+              <span className="astronomy-notice-summary">
+                {ASTRONOMY_CATALOGUE_LINE}
+              </span>
+            </button>
+          </footer>
         </section>
         <aside className="right-rail" aria-label="Object inspector">
           <ObjectInspector
@@ -1058,8 +1122,13 @@ export default function App() {
         progress={progress}
         meaningfulDates={meaningfulDates}
         meaningfulDateSources={meaningfulDateSources}
-        pendingReadThrough={pendingReadThrough}
-        onReadThroughChoice={setPendingReadThrough}
+        pendingReadThrough={
+          readThroughOrigin === "topbar" ? null : pendingReadThrough
+        }
+        onReadThroughChoice={(chapter) => {
+          setReadThroughOrigin("dock");
+          setPendingReadThrough(chapter);
+        }}
         onConfirmReadThrough={confirmPendingReadThrough}
         onCancelReadThrough={() => setPendingReadThrough(null)}
         onReturnToZeroState={returnToZeroKnowledge}
@@ -1072,18 +1141,24 @@ export default function App() {
       />
       {mobilePanel && (
         <>
-          <div className="compact-panel-backdrop" aria-hidden="true" />
+          <div
+            className="compact-panel-backdrop"
+            aria-hidden="true"
+            onClick={mobilePanel === "menu" ? closeMobilePanel : undefined}
+          />
           <div
             className={`mobile-panel ${mobilePanel}`}
             ref={mobilePanelElement}
             role="dialog"
             aria-modal="true"
             aria-label={
-              mobilePanel === "browser"
-                ? "Object browser"
-                : mobilePanel === "inspector"
-                  ? "Selected object"
-                  : "Timeline and progress"
+              mobilePanel === "menu"
+                ? "Menu"
+                : mobilePanel === "browser"
+                  ? "Object browser"
+                  : mobilePanel === "inspector"
+                    ? "Selected object"
+                    : "Timeline and progress"
             }
             onKeyDown={(event) => {
               if (event.key !== "Tab") return;
@@ -1106,7 +1181,64 @@ export default function App() {
             <button className="button close-panel" onClick={closeMobilePanel}>
               Close
             </button>
-            {mobilePanel === "browser" ? (
+            {mobilePanel === "menu" ? (
+              <nav className="compact-menu" aria-label="Atlas menu">
+                <div className="compact-menu-heading">
+                  <p className="eyebrow">Bobiverse · astronomy atlas</p>
+                  <h2>Star Map</h2>
+                </div>
+                {progress.mode === "chapter" && (
+                  <KnowledgeThroughSelect
+                    id="menu-knowledge-through"
+                    chapters={narrativeChapters}
+                    progress={progress}
+                    onKnowledgeChapter={selectKnowledge}
+                    onReturnToZeroState={returnToZeroKnowledge}
+                  />
+                )}
+                <TimelineModeToggle
+                  progress={progress}
+                  meaningfulDates={meaningfulDates}
+                  onDate={selectDate}
+                  onChapterMode={returnToChapterMode}
+                />
+                <button
+                  type="button"
+                  className="button menu-row"
+                  onClick={() => setMobilePanel("browser")}
+                >
+                  Browse objects
+                </button>
+                {(selection || activeDateContext) && (
+                  <button
+                    type="button"
+                    className="button menu-row inspect-command"
+                    onClick={() => setMobilePanel("inspector")}
+                  >
+                    Inspect selection
+                  </button>
+                )}
+                <button
+                  type="button"
+                  className="button menu-row timeline-command"
+                  onClick={() => setMobilePanel("timeline")}
+                >
+                  Timeline and progress
+                </button>
+                <button
+                  type="button"
+                  className="button menu-row menu-reset-view"
+                  disabled={Boolean(systemMode)}
+                  onClick={() => {
+                    resetView();
+                    closeMobilePanel();
+                  }}
+                >
+                  <ResetViewIcon />
+                  Reset view
+                </button>
+              </nav>
+            ) : mobilePanel === "browser" ? (
               <ObjectBrowser
                 groups={visibleBrowserGroups}
                 astronomySystems={astronomySearchSystems}
@@ -1179,8 +1311,13 @@ export default function App() {
                   progress={progress}
                   meaningfulDates={meaningfulDates}
                   meaningfulDateSources={meaningfulDateSources}
-                  pendingReadThrough={pendingReadThrough}
-                  onReadThroughChoice={setPendingReadThrough}
+                  pendingReadThrough={
+                    readThroughOrigin === "topbar" ? null : pendingReadThrough
+                  }
+                  onReadThroughChoice={(chapter) => {
+                    setReadThroughOrigin("dock");
+                    setPendingReadThrough(chapter);
+                  }}
                   onConfirmReadThrough={confirmPendingReadThrough}
                   onCancelReadThrough={() => setPendingReadThrough(null)}
                   onReturnToZeroState={returnToZeroKnowledge}
@@ -1196,24 +1333,6 @@ export default function App() {
           </div>
         </>
       )}
-      <footer>
-        <span>
-          GCNS · CNS5 · Gaia DR3 · WDS · Kirkpatrick 20-pc census · VizieR
-          IV/27A
-        </span>
-        <span>
-          {Object.values(nearbySystems.metadata.sources)
-            .map((source) => source.acknowledgement)
-            .join(" ")}
-        </span>
-        <a
-          href={GALACTIC_STARFIELD_SOURCE_URL}
-          target="_blank"
-          rel="noreferrer"
-        >
-          {GALACTIC_STARFIELD_UI_CREDIT}
-        </a>
-      </footer>
     </main>
   );
 }

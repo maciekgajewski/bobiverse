@@ -591,8 +591,13 @@ timeline navigation, and reading details, but must not attempt to present all of
 those surfaces at once. Layout composition changes by viewport: it selects an
 appropriate focused arrangement of the same domain state and UI components rather
 than creating a separate mobile application or a parallel feature stack. The
-application shell uses a map-first phone composition: the browser opens from a command
-bar control and a selected item's inspector opens as a non-animated bottom panel.
+application shell uses a map-first phone composition: one slim command bar holds the
+identity, the **Read through** select and a menu button; the menu drawer opens the
+browser, **Timeline and progress**, **Knowledge through**, Chapter/Date mode and a
+secondary **Reset view**; and a selected item's inspector opens as a non-animated
+bottom panel. Map tools such as **Reset view** are icon controls inside the map, and
+source attribution is a notice chip in the map's corner that expands to the full
+credits (`tasks/BOB-20261113-3VCGFP-mobile-map-chrome.md`).
 
 Phase 1 is desktop-first and targets current Chrome, Firefox, Safari, and Edge.
 Automated browser projects cover the Chromium, Firefox, and WebKit engines; manual
@@ -625,14 +630,15 @@ Phase 2's approved desktop workspace is specified in
 `design/phase-2-desktop-ui.md`. At `>= 1200px`, it presents the progressive grouped
 object browser, true-scale map, selected-object inspector, and chapter/date timeline
 dock together. Search lives at the top of the browser. The map remains the largest
-surface, and the attribution footer remains visible. The shared application state and
+surface, and the attribution notice remains visible as a map-corner chip that
+expands to the full credits. The shared application state and
 components are later recomposed for mobile by BOB-016; desktop implementation must not
 create a parallel domain or spoiler model.
 
 Below the simultaneous-layout breakpoint, including when 200% desktop zoom reduces
 the CSS viewport, the BOB-003 map-first browser and inspector panels remain in use.
-The command bar additionally opens **Timeline and progress** as a non-animated modal
-panel containing the same `TimelineDock` component and shared projection state as the
+The command-bar menu additionally opens **Timeline and progress** as a non-animated
+modal panel containing the same `TimelineDock` component and shared projection state as the
 desktop dock. The compact panel provides a visible close control, Escape dismissal,
 focus containment, and focus return. This is the BOB-015 desktop-zoom contract;
 BOB-016 may later recompose the same components for a first-class phone and tablet

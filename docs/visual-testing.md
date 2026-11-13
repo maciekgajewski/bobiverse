@@ -256,9 +256,9 @@ chapter's story year. At 200% browser zoom, verify the command bar exposes **Tim
 progress** after the CSS viewport falls below the simultaneous-layout breakpoint.
 Open it and confirm the same **Read through**, mode, chapter/date, and timeline values
 appear in a non-animated modal panel. Tab and Shift+Tab must remain inside it; Escape
-and the visible close control must return focus to the invoking command. The page must
-not gain horizontal scrolling, and the attribution footer must remain reachable after
-the panel closes.
+and the visible close control must return focus to the invoking command (the menu
+button since BOB-20261113-3VCGFP). The page must not gain horizontal scrolling, and the
+attribution notice must remain reachable after the panel closes.
 
 The dock remains one compact desktop row in ordinary Chapter and Date views; a dense
 same-coordinate Date-mode dot stack may increase its height so every compact plot point
@@ -555,6 +555,28 @@ interstellar distances, Galactic coordinate components, hover separations, and m
 scale remain in light-years. This does not alter the project-wide Safari
 pre-publication gap.
 
+## BOB-20261113-3VCGFP mobile map chrome (Variant A)
+
+On a phone in portrait (about 390×844) and landscape (about 844×390), and on desktop
+(about 1440×900):
+
+- The top bar is one slim row: "Star Map", **Read through**, and on phones a menu
+  button. The map fills everything below it, edge to edge on phones.
+- **Read through** in the bar asks for confirmation before revealing a chapter, the
+  same as the dock and the Timeline and progress panel.
+- The menu opens a right-hand drawer with **Knowledge through**, Chapter/Date mode,
+  **Browse objects**, **Inspect selection** (when something is selected),
+  **Timeline and progress** and **Reset view**. Close, Escape and tapping outside
+  close it, and focus returns to the menu button.
+- The astronomy notice is a chip in the map's bottom-right corner, collapsed by
+  default. Tapping it shows the catalogue line, acknowledgements and the backdrop
+  credit link; tapping again or Escape collapses it.
+- **Reset view** is a round house icon in the map's top-right corner. It resets the
+  camera, shows a "Reset view" tooltip on desktop hover or keyboard focus, and is
+  dimmed and inactive in system view.
+- On desktop, both rails and the timeline dock remain, and the map is larger than
+  before.
+
 ## Default and reset camera
 
 The repeatable default camera pose preserves the documented Three.js viewing
@@ -569,6 +591,6 @@ canvas aspect ratio:
 
 Reset cancels any in-progress automatic focus motion and restores both the fitted
 camera position and controls target to this pose. It does not change the selected
-system. During manual acceptance, move and rotate the camera, press Reset view, and
+system. During manual acceptance, move and rotate the camera, press the Reset view map control (the house icon in the map's top-right corner), and
 confirm that Sol is targeted from this same repeatable orientation with every known
 system visible.

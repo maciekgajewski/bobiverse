@@ -1,4 +1,12 @@
 import { Fragment, useEffect, useRef, useState } from "react";
+import {
+  KnowledgeThroughSelect,
+  ReadThroughConfirmation,
+  ReadThroughOptions,
+  ShieldIcon,
+  TimelineModeToggle,
+} from "./ProgressControls";
+import { useReadThroughConfirmationFocus } from "./useReadThroughConfirmationFocus";
 import type {
   NarrativeChapterSummary,
   ReaderProgress,
@@ -16,15 +24,6 @@ function numericYear(date: string): number {
 
 function linearYearOffset(date: string, firstDate: string): number {
   return numericYear(date) - numericYear(firstDate);
-}
-
-function ShieldIcon() {
-  return (
-    <svg className="shield-icon" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 2.5 20 6v5.6c0 4.7-3.2 8.7-8 9.9-4.8-1.2-8-5.2-8-9.9V6l8-3.5Z" />
-      <path d="m8.5 12 2.1 2.1 4.9-4.9" />
-    </svg>
-  );
 }
 
 interface TimelineDockProps {
@@ -366,34 +365,16 @@ export function TimelineDock({
   const readThroughId = `${idPrefix}-read-through`;
   const knowledgeThroughId = `${idPrefix}-knowledge-through`;
   const confirmationHeadingId = `${idPrefix}-read-through-confirmation`;
-  const unlocked = progress.furthestChapterRead
-    ? chapters.filter(
-        (chapter) =>
-          compareNarrativeChapters(
-            chapter.chapter,
-            progress.furthestChapterRead!,
-          ) <= 0,
-      )
-    : [];
   const selectedReadThrough =
     pendingReadThrough ?? progress.furthestChapterRead ?? "";
   const readThroughSelect = useRef<HTMLSelectElement>(null);
   const confirmButton = useRef<HTMLButtonElement>(null);
-  const confirmationDialog = useRef<HTMLDivElement>(null);
-  const confirmationWasOpen = useRef(false);
-
-  useEffect(() => {
-    if (!renderConfirmation) return;
-    if (pendingReadThrough !== null) {
-      confirmationWasOpen.current = true;
-      confirmButton.current?.focus();
-      return;
-    }
-    if (confirmationWasOpen.current) {
-      confirmationWasOpen.current = false;
-      readThroughSelect.current?.focus();
-    }
-  }, [pendingReadThrough, renderConfirmation]);
+  useReadThroughConfirmationFocus(
+    renderConfirmation,
+    pendingReadThrough,
+    confirmButton,
+    readThroughSelect,
+  );
 
   return (
     <section
@@ -411,67 +392,29 @@ export function TimelineDock({
           value={selectedReadThrough}
           onChange={(event) => onReadThroughChoice(event.target.value)}
         >
-          <option value="">Pre-book zero state</option>
-          {chapters.map((chapter) => (
-            <option key={chapter.chapter} value={chapter.chapter}>
-              Book {chapter.chapter.split(".")[0]} · Chapter{" "}
-              {chapter.chapter.split(".")[1]}
-            </option>
-          ))}
+          <ReadThroughOptions chapters={chapters} />
         </select>
         <p>
           <strong>Spoiler-free limit.</strong> Confirm before revealing more.
         </p>
       </div>
 
-      <div className="timeline-mode" role="group" aria-label="Timeline mode">
-        <button
-          className={progress.mode === "chapter" ? "active" : ""}
-          aria-pressed={progress.mode === "chapter"}
-          onClick={onChapterMode}
-        >
-          Chapter mode
-        </button>
-        <button
-          className={progress.mode === "date" ? "active" : ""}
-          aria-pressed={progress.mode === "date"}
-          disabled={!progress.viewChapter || meaningfulDates.length === 0}
-          onClick={() =>
-            meaningfulDates[0] &&
-            onDate(
-              progress.displayDate &&
-                meaningfulDates.includes(progress.displayDate)
-                ? progress.displayDate
-                : meaningfulDates[0],
-            )
-          }
-        >
-          Date mode
-        </button>
-      </div>
+      <TimelineModeToggle
+        progress={progress}
+        meaningfulDates={meaningfulDates}
+        onDate={onDate}
+        onChapterMode={onChapterMode}
+      />
 
       {progress.mode === "chapter" ? (
         <div className="chapter-navigation">
-          <div className="knowledge-control">
-            <label htmlFor={knowledgeThroughId}>Knowledge through</label>
-            <select
-              id={knowledgeThroughId}
-              value={progress.viewChapter ?? ""}
-              disabled={!progress.furthestChapterRead}
-              onChange={(event) =>
-                event.target.value
-                  ? onKnowledgeChapter(event.target.value)
-                  : onReturnToZeroState()
-              }
-            >
-              <option value="">Zero state</option>
-              {unlocked.map((chapter) => (
-                <option key={chapter.chapter} value={chapter.chapter}>
-                  Chapter {chapter.chapter}
-                </option>
-              ))}
-            </select>
-          </div>
+          <KnowledgeThroughSelect
+            id={knowledgeThroughId}
+            chapters={chapters}
+            progress={progress}
+            onKnowledgeChapter={onKnowledgeChapter}
+            onReturnToZeroState={onReturnToZeroState}
+          />
           <ol
             className="chapter-track"
             aria-label="Reading-order chapter timeline"
@@ -552,58 +495,13 @@ export function TimelineDock({
       )}
 
       {renderConfirmation && pendingReadThrough !== null && (
-        <div className="confirmation-layer">
-          <div className="confirmation-backdrop" aria-hidden="true" />
-          <div
-            ref={confirmationDialog}
-            className="confirmation-dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby={confirmationHeadingId}
-            onKeyDown={(event) => {
-              event.stopPropagation();
-              if (event.key === "Escape") {
-                onCancelReadThrough();
-                return;
-              }
-              if (event.key !== "Tab") return;
-              const buttons =
-                confirmationDialog.current?.querySelectorAll<HTMLButtonElement>(
-                  "button:not(:disabled)",
-                );
-              if (!buttons?.length) return;
-              const first = buttons[0]!;
-              const last = buttons[buttons.length - 1]!;
-              if (event.shiftKey && document.activeElement === first) {
-                event.preventDefault();
-                last.focus();
-              } else if (!event.shiftKey && document.activeElement === last) {
-                event.preventDefault();
-                first.focus();
-              }
-            }}
-          >
-            <div className="confirmation-heading">
-              <ShieldIcon />
-              <h2 id={confirmationHeadingId}>Confirm read progress</h2>
-            </div>
-            <p>
-              {pendingReadThrough
-                ? `Set spoiler progress through Chapter ${pendingReadThrough}? This reveals its chapter information.`
-                : "Return to the pre-book zero state? This hides every chapter-derived fact."}
-            </p>
-            <button
-              ref={confirmButton}
-              className="button"
-              onClick={onConfirmReadThrough}
-            >
-              Confirm read through
-            </button>
-            <button className="button quiet" onClick={onCancelReadThrough}>
-              Cancel
-            </button>
-          </div>
-        </div>
+        <ReadThroughConfirmation
+          headingId={confirmationHeadingId}
+          pendingReadThrough={pendingReadThrough}
+          confirmButton={confirmButton}
+          onConfirm={onConfirmReadThrough}
+          onCancel={onCancelReadThrough}
+        />
       )}
     </section>
   );

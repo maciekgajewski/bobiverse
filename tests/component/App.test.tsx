@@ -40,6 +40,21 @@ import * as narrativeModel from "../../src/narrative/model";
 import { narrativeRuntimePreparationCount } from "../../src/narrative/runtime";
 import * as systemView from "../../src/system-view";
 
+// The desktop timeline dock and the top bar both expose a "Read through"
+// select; these tests drive the dock's control unless they say otherwise.
+const dockReadThrough = () =>
+  screen.getByLabelText("Read through", { selector: "#desktop-read-through" });
+const compactMatchMedia = (query: string) => ({
+  matches: query === "(max-width: 1199px)",
+  media: query,
+  onchange: null,
+  addEventListener: vi.fn(),
+  removeEventListener: vi.fn(),
+  addListener: vi.fn(),
+  removeListener: vi.fn(),
+  dispatchEvent: vi.fn(),
+});
+
 describe("atlas shell", () => {
   afterEach(() => {
     dateContextMapHarness.stubStarMap = false;
@@ -149,7 +164,7 @@ describe("atlas shell", () => {
     await user.click(screen.getByRole("button", { name: "Enter system" }));
 
     entryResolver.mockReturnValue(null);
-    await user.selectOptions(screen.getByLabelText("Read through"), "1.1");
+    await user.selectOptions(dockReadThrough(), "1.1");
     await user.click(
       screen.getByRole("button", { name: "Confirm read through" }),
     );
@@ -219,7 +234,7 @@ describe("atlas shell", () => {
       },
     );
 
-    await user.selectOptions(screen.getByLabelText("Read through"), "1.1");
+    await user.selectOptions(dockReadThrough(), "1.1");
     await user.click(
       screen.getByRole("button", { name: "Confirm read through" }),
     );
@@ -251,7 +266,7 @@ describe("atlas shell", () => {
       screen.getByRole("searchbox", { name: "Search visible objects" }),
     );
     await user.click(screen.getByRole("button", { name: "Solar System" }));
-    await user.selectOptions(screen.getByLabelText("Read through"), "1.1");
+    await user.selectOptions(dockReadThrough(), "1.1");
     await user.click(
       screen.getByRole("button", { name: "Confirm read through" }),
     );
@@ -570,7 +585,7 @@ describe("atlas shell", () => {
         name: "Book 1, 2 - Bob Version 2.0",
       }),
     );
-    await user.selectOptions(screen.getByLabelText("Read through"), "1.1");
+    await user.selectOptions(dockReadThrough(), "1.1");
     await user.click(
       screen.getByRole("button", { name: "Confirm read through" }),
     );
@@ -635,11 +650,16 @@ describe("atlas shell", () => {
     expect(
       screen.queryByRole("dialog", { name: "Selected object" }),
     ).not.toBeInTheDocument();
+    // Compact panels are opened from the menu, so focus returns to it.
     await waitFor(() =>
-      expect(
-        screen.getByRole("button", { name: "Inspect selection" }),
-      ).toHaveFocus(),
+      expect(screen.getByRole("button", { name: "Menu" })).toHaveFocus(),
     );
+    await user.click(screen.getByRole("button", { name: "Menu" }));
+    expect(
+      within(screen.getByRole("dialog", { name: "Menu" })).getByRole("button", {
+        name: "Inspect selection",
+      }),
+    ).toBeInTheDocument();
   });
 
   const seedDateProgress = () => {
@@ -698,7 +718,7 @@ describe("atlas shell", () => {
         name: "Inspector history",
       }),
     ).not.toBeInTheDocument();
-    expect(screen.getByLabelText("Read through")).toHaveValue("1.2");
+    expect(dockReadThrough()).toHaveValue("1.2");
 
     // Dismiss without selecting an object: both the current entry and the
     // existing forward branch must survive, not merely an empty history.
@@ -758,7 +778,7 @@ describe("atlas shell", () => {
     expect(
       within(inspector).getByRole("button", { name: "Forward" }),
     ).toBeDisabled();
-    expect(screen.getByLabelText("Read through")).toHaveValue("1.2");
+    expect(dockReadThrough()).toHaveValue("1.2");
   });
 
   it("opens and reopens standalone Date context in the compact inspector", async () => {
@@ -775,6 +795,7 @@ describe("atlas shell", () => {
     }));
     const user = userEvent.setup();
     render(<App />);
+    await user.click(screen.getByRole("button", { name: "Menu" }));
     expect(
       screen.queryByRole("button", { name: "Inspect selection" }),
     ).not.toBeInTheDocument();
@@ -804,9 +825,10 @@ describe("atlas shell", () => {
       }),
     ).not.toBeInTheDocument();
     await user.keyboard("{Escape}");
-    const inspect = screen.getByRole("button", { name: "Inspect selection" });
-    await waitFor(() => expect(inspect).toHaveFocus());
-    await user.click(inspect);
+    const menu = screen.getByRole("button", { name: "Menu" });
+    await waitFor(() => expect(menu).toHaveFocus());
+    await user.click(menu);
+    await user.click(screen.getByRole("button", { name: "Inspect selection" }));
     expect(
       within(screen.getByRole("dialog", { name: "Selected object" })).getByText(
         "Date context",
@@ -861,7 +883,7 @@ describe("atlas shell", () => {
     expect(
       within(inspector).getByRole("button", { name: "Forward" }),
     ).toBeDisabled();
-    expect(screen.getByLabelText("Read through")).toHaveValue("1.2");
+    expect(dockReadThrough()).toHaveValue("1.2");
   });
 
   it("does not persist active Date context on reload or resurrect it after Date-mode exit", async () => {
@@ -909,7 +931,7 @@ describe("atlas shell", () => {
       "true",
     );
     expect(screen.queryByText("Date context")).not.toBeInTheDocument();
-    expect(screen.getByLabelText("Read through")).toHaveValue("1.2");
+    expect(dockReadThrough()).toHaveValue("1.2");
   });
 
   it("generates at most one world for zero-state and date-mode transitions", async () => {
@@ -918,7 +940,7 @@ describe("atlas shell", () => {
     render(<App />);
     let expectedCalls = generate.mock.calls.length;
 
-    await user.selectOptions(screen.getByLabelText("Read through"), "1.2");
+    await user.selectOptions(dockReadThrough(), "1.2");
     await user.click(
       screen.getByRole("button", { name: "Confirm read through" }),
     );
@@ -980,8 +1002,15 @@ describe("atlas shell", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("always exposes the accessible text-only backdrop credit", () => {
+  it("exposes the accessible text-only backdrop credit from the astronomy notice", async () => {
+    const user = userEvent.setup();
     render(<App />);
+    const chip = screen.getByRole("button", {
+      name: /^Astronomy data credits:\s*GCNS/,
+    });
+    expect(chip).toHaveAttribute("aria-expanded", "false");
+    await user.click(chip);
+    expect(chip).toHaveAttribute("aria-expanded", "true");
     expect(
       screen.getByRole("link", {
         name: /Astronomy backdrop: NASA\/Goddard Space Flight Center/i,
@@ -1074,7 +1103,7 @@ describe("atlas shell", () => {
   it("shows last-seen and unmapped details, then clears an ineligible selection", async () => {
     const user = userEvent.setup();
     render(<App />);
-    await user.selectOptions(screen.getByLabelText("Read through"), "1.2");
+    await user.selectOptions(dockReadThrough(), "1.2");
     await user.click(
       screen.getByRole("button", { name: "Confirm read through" }),
     );
@@ -1105,5 +1134,132 @@ describe("atlas shell", () => {
         "Select a map marker or browser item to inspect its reader-safe details.",
       ),
     ).toBeInTheDocument();
+  });
+  it("confirms a top-bar Read through choice before revealing and keeps the dock in step", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    const topbar = screen.getByLabelText("Read through", {
+      selector: "#topbar-read-through",
+    });
+    await user.selectOptions(topbar, "1.1");
+    const confirmation = screen.getByRole("dialog", {
+      name: "Confirm read progress",
+    });
+    expect(
+      within(confirmation).getByRole("button", {
+        name: "Confirm read through",
+      }),
+    ).toHaveFocus();
+    expect(dockReadThrough()).toHaveValue("");
+    await user.click(
+      within(confirmation).getByRole("button", { name: "Cancel" }),
+    );
+    expect(topbar).toHaveValue("");
+    await waitFor(() => expect(topbar).toHaveFocus());
+
+    await user.selectOptions(topbar, "1.1");
+    await user.click(
+      screen.getByRole("button", { name: "Confirm read through" }),
+    );
+    expect(topbar).toHaveValue("1.1");
+    expect(dockReadThrough()).toHaveValue("1.1");
+    expect(
+      screen.queryByRole("dialog", { name: "Confirm read progress" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("opens compact commands from the menu drawer and returns focus to the menu", async () => {
+    vi.stubGlobal("matchMedia", compactMatchMedia);
+    const user = userEvent.setup();
+    render(<App />);
+    const menu = screen.getByRole("button", { name: "Menu" });
+    expect(menu).toHaveAttribute("aria-expanded", "false");
+    await user.click(menu);
+    const drawer = screen.getByRole("dialog", { name: "Menu" });
+    expect(within(drawer).getByRole("button", { name: "Close" })).toHaveFocus();
+    expect(within(drawer).getByLabelText("Knowledge through")).toBeDisabled();
+    expect(
+      within(drawer).getByRole("button", { name: "Chapter mode" }),
+    ).toHaveAttribute("aria-pressed", "true");
+    for (const name of [
+      "Browse objects",
+      "Timeline and progress",
+      "Reset view",
+    ]) {
+      expect(within(drawer).getByRole("button", { name })).toBeEnabled();
+    }
+    await user.keyboard("{Escape}");
+    expect(
+      screen.queryByRole("dialog", { name: "Menu" }),
+    ).not.toBeInTheDocument();
+    await waitFor(() => expect(menu).toHaveFocus());
+
+    await user.click(menu);
+    await user.click(screen.getByRole("button", { name: "Browse objects" }));
+    expect(
+      screen.getByRole("dialog", { name: "Object browser" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("dialog", { name: "Menu" }),
+    ).not.toBeInTheDocument();
+    await user.keyboard("{Escape}");
+    await waitFor(() => expect(menu).toHaveFocus());
+
+    await user.click(menu);
+    await user.click(
+      within(screen.getByRole("dialog", { name: "Menu" })).getByRole("button", {
+        name: "Reset view",
+      }),
+    );
+    expect(
+      screen.queryByRole("dialog", { name: "Menu" }),
+    ).not.toBeInTheDocument();
+    await waitFor(() => expect(menu).toHaveFocus());
+  });
+
+  it("puts Reset view on the map as one labelled icon control", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    const map = screen.getByRole("region", {
+      name: "Interactive three dimensional nearby stellar-system map",
+    });
+    const reset = within(map).getByRole("button", { name: "Reset view" });
+    expect(reset).toBeEnabled();
+    expect(reset.querySelector("svg.reset-view-icon")).toBeInTheDocument();
+    expect(reset).not.toHaveTextContent("Reset view");
+    expect(screen.getAllByRole("button", { name: "Reset view" })).toHaveLength(
+      1,
+    );
+    expect(
+      within(document.querySelector<HTMLElement>(".topbar")!).queryByRole(
+        "button",
+        {
+          name: "Reset view",
+        },
+      ),
+    ).not.toBeInTheDocument();
+    await user.click(
+      screen.getByRole("button", { name: /^Solar System(?:Active)?$/ }),
+    );
+    await user.click(screen.getByRole("button", { name: "Enter system" }));
+    expect(reset).toBeDisabled();
+  });
+
+  it("closes the expanded astronomy notice with Escape and restores focus", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    const chip = screen.getByRole("button", {
+      name: /^Astronomy data credits:\s*GCNS/,
+    });
+    await user.click(chip);
+    const card = screen.getByRole("region", { name: "Astronomy data credits" });
+    expect(chip).toHaveAttribute("aria-controls", card.id);
+    expect(card).toHaveTextContent(/mission Gaia/);
+    await user.keyboard("{Escape}");
+    expect(
+      screen.queryByRole("region", { name: "Astronomy data credits" }),
+    ).not.toBeInTheDocument();
+    expect(chip).toHaveAttribute("aria-expanded", "false");
+    await waitFor(() => expect(chip).toHaveFocus());
   });
 });
