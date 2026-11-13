@@ -4,7 +4,9 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   compareNarrativeChapters,
+  compareNarrativeDates,
   generateNarrativeWorld,
+  meaningfulNarrativeDates,
   prepareNarrativeCorpus,
   preparedNarrativeChapters,
   type NarrativeRecord,
@@ -17,9 +19,21 @@ import { narrativeCorpus } from "../../src/narrative/runtime";
 // docs/tasks/BOB-20261113-97Z771-meaning-regression-tests.md.
 // A text field is pinned as `sha256:` plus the first 16 hex characters of the
 // SHA-256 of its projected UTF-8 string, so the fixture holds no text; `unset`
-// pins a field that must be absent (undefined or null).
+// pins a field that must be absent (undefined or null). A boolean field is pinned
+// as "true" or "false". Two kinds check the canonical chapter record itself rather
+// than the projection: `effective_date` pins the backdating date of the chapter's
+// write to `subject`, and `no_write` pins that the chapter does not write `field`
+// of `subject` (ADR-0028).
 
-const kinds = ["location", "visible", "not_visible", "field", "unset"] as const;
+const kinds = [
+  "location",
+  "visible",
+  "not_visible",
+  "field",
+  "unset",
+  "effective_date",
+  "no_write",
+] as const;
 type Kind = (typeof kinds)[number];
 
 interface Expectation {
@@ -71,10 +85,21 @@ function entryProblems(raw: unknown): string[] {
     check("chapter", CHAPTER, true);
     check("subject", ID, true);
     check("basis", BASIS, true);
-    check("expected", VALUE, kind === "location" || kind === "field");
-    check("field", FIELD, kind === "field" || kind === "unset");
+    check(
+      "expected",
+      VALUE,
+      kind === "location" || kind === "field" || kind === "effective_date",
+    );
+    check(
+      "field",
+      FIELD,
+      kind === "field" || kind === "unset" || kind === "no_write",
+    );
     if (
-      (kind === "visible" || kind === "not_visible" || kind === "unset") &&
+      (kind === "visible" ||
+        kind === "not_visible" ||
+        kind === "unset" ||
+        kind === "no_write") &&
       "expected" in record
     )
       problems.push(`${at}: ${kind} takes no expected value`);
@@ -99,9 +124,39 @@ function canonicalWorldAt(): WorldAt {
   };
 }
 
+/** The canonical chapter's introducing and update records for one entity. */
+function chapterWrites(
+  chapter: string,
+  subject: string,
+): Record<string, unknown>[] {
+  if (!narrativeCorpus)
+    throw new Error("Canonical narrative preparation failed.");
+  const record = narrativeCorpus.chapters.find(
+    (candidate) => String(candidate.chapter) === chapter,
+  );
+  if (!record) throw new Error(`No canonical chapter ${chapter}.`);
+  const list = (key: string) =>
+    (record[key] as Record<string, unknown>[] | undefined) ?? [];
+  return [
+    ...list("introducing").filter((write) => write.id === subject),
+    ...list("updates").filter((write) => write.entity_id === subject),
+  ];
+}
+
 /** Evaluate one expectation; return a failure message, or null when it holds. */
 function evaluate(entry: Expectation, worldAt: WorldAt): string | null {
   const label = `${entry.chapter} / ${entry.kind} / ${entry.subject}`;
+  if (entry.kind === "no_write" || entry.kind === "effective_date") {
+    const writes = chapterWrites(entry.chapter, entry.subject);
+    if (entry.kind === "no_write")
+      return writes.some((write) => (entry.field ?? "") in write)
+        ? `${label}: expected no ${entry.field} write, but the chapter writes it`
+        : null;
+    const dates = writes.map((write) => write.effective_date);
+    return dates.includes(entry.expected)
+      ? null
+      : `${label}: expected effective_date ${entry.expected}, got ${dates.map(String).join(", ") || "no write"}`;
+  }
   const entity = worldAt(entry.chapter).entities.find(
     (candidate) => candidate.id === entry.subject,
   );
@@ -124,7 +179,8 @@ function evaluate(entry: Expectation, worldAt: WorldAt): string | null {
       ? null
       : `${label}: expected ${entry.expected}, got ${got}`;
   }
-  return actual === entry.expected
+  const comparable = typeof actual === "boolean" ? String(actual) : actual;
+  return comparable === entry.expected
     ? null
     : `${label}: expected ${entry.expected}, got ${String(actual)}`;
 }
@@ -229,6 +285,88 @@ describe("introduction order", () => {
   );
 });
 
+describe("Milo's backdated death (1.51, ADR-0028)", () => {
+  // Date view is a story-date cutoff over the chapters read so far, so a fact
+  // hidden at the latest meaningful date is hidden at every date, and one shown
+  // at a date stays shown at every later date. Checking the boundary dates is
+  // therefore enough; a sweep over every date takes minutes.
+  const milo = "character:milo";
+  const deathAt = (chapter: string, date: string | null) => {
+    if (!narrativeCorpus)
+      throw new Error("Canonical narrative preparation failed.");
+    return generateNarrativeWorld(narrativeCorpus, chapter, date).entities.find(
+      (entity) => entity.id === milo,
+    )?.death_date;
+  };
+  const datesAt = (chapter: string) =>
+    [...meaningfulNarrativeDates(narrativeCorpus!, chapter)].sort(
+      (left, right) =>
+        compareNarrativeDates(left, right) ?? left.localeCompare(right),
+    );
+
+  it(
+    "is not visible at read-through 1.50 in chapter view or at any date",
+    () => {
+      expect(deathAt("1.50", null)).toBeUndefined();
+      const dates = datesAt("1.50");
+      const probes = [dates[0], dates.at(-1)!];
+      if (dates.includes("2165-08")) probes.push("2165-08");
+      for (const date of probes)
+        expect(deathAt("1.50", date), date).toBeUndefined();
+    },
+    SLOW,
+  );
+
+  it(
+    "is visible at 1.51 in chapter view, and in date view first at 2165-08",
+    () => {
+      expect(deathAt("1.51", null)).toBe("2165-08");
+      const dates = datesAt("1.51");
+      const at = dates.indexOf("2165-08");
+      expect(at).toBeGreaterThan(0);
+      expect(deathAt("1.51", dates[at - 1]), dates[at - 1]).toBeUndefined();
+      expect(deathAt("1.51", "2165-08")).toBe("2165-08");
+      expect(deathAt("1.51", dates.at(-1)!), dates.at(-1)).toBe("2165-08");
+    },
+    SLOW,
+  );
+});
+
+describe("merged-text restorations (BOB-20261113-FSHPA9)", () => {
+  // Each check takes the restored sentence from the earlier canonical write at
+  // run time, so no text is held here. The sentence must survive in the later
+  // chapter's own write, in chapter view under either write order, and in date
+  // view at that chapter's date (where it may show early; ADR-0028 accepts this).
+  const lastSentence = (text: string) => text.split(/(?<=\.) /).at(-1)!;
+  const field = (subject: string, name: string) => (world: NarrativeWorld) =>
+    (
+      world.entities.find((entity) => entity.id === subject) as unknown as
+        Record<string, unknown> | undefined
+    )?.[name];
+  const written = (chapter: string, subject: string, name: string) =>
+    chapterWrites(chapter, subject).find((write) => name in write)?.[name];
+
+  it.each([
+    ["technology:vr", "description", "1.40", "1.42", "2162-04"],
+    ["location:ee-2", "state", "1.42", "1.51", "2174-01"],
+  ])(
+    "%s %s keeps %s's last sentence from %s on",
+    (subject, name, source, target, date) => {
+      if (!narrativeCorpus)
+        throw new Error("Canonical narrative preparation failed.");
+      const sentence = lastSentence(String(written(source, subject, name)));
+      expect(sentence.length).toBeGreaterThan(20);
+      expect(String(written(target, subject, name))).toContain(sentence);
+      const read = field(subject, name);
+      expect(String(read(worldAt(target)))).toContain(sentence);
+      expect(
+        String(read(generateNarrativeWorld(narrativeCorpus, target, date))),
+      ).toContain(sentence);
+    },
+    SLOW,
+  );
+});
+
 describe("meaning-level checks catch breakage (synthetic entries)", () => {
   const wrong: [Expectation, string][] = [
     [
@@ -290,6 +428,37 @@ describe("meaning-level checks catch breakage (synthetic entries)", () => {
         basis: "synthetic",
       },
       `1.43 / field / character:homer: expected sha256:0000000000000000, got ${shortHash("character:riker")}`,
+    ],
+    [
+      {
+        chapter: "1.51",
+        kind: "effective_date",
+        subject: "character:milo",
+        expected: "2165-09",
+        basis: "synthetic",
+      },
+      "1.51 / effective_date / character:milo: expected effective_date 2165-09, got 2165-08",
+    ],
+    [
+      {
+        chapter: "1.51",
+        kind: "no_write",
+        subject: "character:milo",
+        field: "death_date",
+        basis: "synthetic",
+      },
+      "1.51 / no_write / character:milo: expected no death_date write, but the chapter writes it",
+    ],
+    [
+      {
+        chapter: "1.51",
+        kind: "field",
+        subject: "location:82-eridani",
+        field: "possible_colony_target",
+        expected: "false",
+        basis: "synthetic",
+      },
+      "1.51 / field / location:82-eridani: expected false, got true",
     ],
   ];
 
@@ -384,6 +553,26 @@ describe("meaning-level checks catch breakage (synthetic entries)", () => {
         basis: "ok",
       },
       "unset takes no expected value",
+    ],
+    [
+      {
+        chapter: "1.51",
+        kind: "no_write",
+        subject: "character:milo",
+        field: "death_date",
+        expected: "x",
+        basis: "ok",
+      },
+      "no_write takes no expected value",
+    ],
+    [
+      {
+        chapter: "1.51",
+        kind: "effective_date",
+        subject: "character:milo",
+        basis: "ok",
+      },
+      "missing expected",
     ],
     [
       {

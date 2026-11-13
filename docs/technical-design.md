@@ -757,8 +757,9 @@ UI, selects a chapter at or before that ceiling. Both are absent before the read
 selects a chapter, when the zero state is rendered. Reader order first decides which
 facts the reader may know; story time then orders those facts. A chapter view shows
 the latest known state from every chapter read so far, with no story-time cutoff, so
-an earlier-dated chapter read after a later-dated one shows both chapters' states
-(ADR-0028). A Date-mode view cuts at its requested date. A future story-state change
+an earlier-dated chapter read after a later-dated one shows both chapters' states,
+and where both write one property the later-read chapter's value wins (ADR-0028).
+A Date-mode view cuts at its requested date and keeps story-date order. A future story-state change
 must not alter an earlier in-universe Date-mode view merely because its chapter was
 read first. Conversely, a fact first revealed later must not alter an earlier
 reader-knowledge view in any mode, even if it was already true in-universe. ADR-0002,

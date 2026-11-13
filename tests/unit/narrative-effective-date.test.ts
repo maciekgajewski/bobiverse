@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   compareNarrativeChapters,
+  compareWriteMoments,
   generateNarrativeWorld,
   meaningfulNarrativeDates,
   prepareNarrativeCorpus,
@@ -12,8 +13,9 @@ import {
 import { createNarrativeFixtureCorpus } from "../fixtures/narrative";
 
 // Synthetic, fictional records only (ADR-0028). Reader order reveals a write.
-// Chapter view shows the latest known state from every revealed chapter; Date
-// view cuts at the requested date using `effective_date ?? chapter date`.
+// Chapter view shows the latest known state from every revealed chapter, and
+// the last chapter read wins a competing write; Date view cuts at the requested
+// date using `effective_date ?? chapter date` and keeps story-date order.
 
 function chapter(
   id: string,
@@ -171,10 +173,11 @@ describe("backdated updates and chapter-view latest known state", () => {
     expect(entity("1.5", "2170-03", sam).current_state).toBe("travelling");
   });
 
-  it("orders competing writes by story date in chapter view", () => {
-    // 1.3 writes sam at 2170-03; 1.5, read later, writes sam at 2166-02. Story
-    // date wins (ADR-0028), so the 2170-03 value is the latest known state.
-    expect(entity("1.5", null, sam).current_state).toBe("travelling");
+  it("lets the latest-read chapter win competing writes in chapter view", () => {
+    // 1.3 (2170-03) writes sam; 1.5, read later, writes sam with an earlier
+    // effective date (2166-02). Decision (c) (ADR-0028): in chapter view the
+    // write from the last chapter read wins.
+    expect(entity("1.5", null, sam).current_state).toBe("repairing");
     const shadowed = prepareNarrativeCorpus(
       corpus({ "1.3": [{ entity_id: alex, current_state: "seen" }] }),
     );
@@ -182,7 +185,66 @@ describe("backdated updates and chapter-view latest known state", () => {
       (candidate) => candidate.id === alex,
     )!;
     expect(alexAt14.death_date).toBe("2165-09");
-    expect(alexAt14.current_state).toBe("seen");
+    expect(alexAt14.current_state).toBe("lost");
+  });
+
+  it("keeps story-date order for competing writes in date view", () => {
+    const dates = meaningfulNarrativeDates(prepared, "1.5");
+    expect(dates).toEqual(
+      expect.arrayContaining(["2166-02", "2170-03", "2174-01"]),
+    );
+    expect(entity("1.5", "2166-02", sam).current_state).toBe("repairing");
+    // From 1.3's story date on, its write wins even though 1.5 was read later.
+    expect(entity("1.5", "2170-03", sam).current_state).toBe("travelling");
+    expect(entity("1.5", "2174-01", sam).current_state).toBe("travelling");
+    const shadowed = prepareNarrativeCorpus(
+      corpus({ "1.3": [{ entity_id: alex, current_state: "seen" }] }),
+    );
+    const alexAt = (date: string) =>
+      generateNarrativeWorld(shadowed, "1.4", date).entities.find(
+        (candidate) => candidate.id === alex,
+      )!;
+    expect(alexAt("2165-09").current_state).toBe("lost");
+    expect(alexAt("2174-01")).toMatchObject({
+      death_date: "2165-09",
+      current_state: "seen",
+    });
+  });
+
+  it("keeps story-date order between writes from the same chapter in both orders", () => {
+    // Validation allows one update per entity per chapter, so this pins the
+    // comparator directly: within one chapter, reading order falls back to the
+    // existing story-date order.
+    const early = { date: "2165-09", sourceChapter: "1.4" };
+    const late = { date: "2174-01", sourceChapter: "1.4" };
+    for (const order of ["reading", "story"] as const) {
+      expect(compareWriteMoments(early, late, order), order).toBeLessThan(0);
+      expect(compareWriteMoments(late, early, order), order).toBeGreaterThan(0);
+      expect(compareWriteMoments(late, late, order), order).toBe(0);
+    }
+    // Across chapters, only reading order ignores the story date.
+    const laterRead = { date: "2166-02", sourceChapter: "1.5" };
+    expect(compareWriteMoments(late, laterRead, "reading")).toBeLessThan(0);
+    expect(compareWriteMoments(late, laterRead, "story")).toBeGreaterThan(0);
+  });
+
+  it("applies the same write order to locations in both views", () => {
+    // Location writes cannot be backdated, but chapter dates still diverge
+    // from reading order: 1.5 (2168-06) is read after 1.4 (2174-01).
+    const earth = "location:earth";
+    const located = prepareNarrativeCorpus(
+      corpus({
+        "1.4": [{ entity_id: earth, state: "Fixture later-dated state." }],
+        "1.5": [{ entity_id: earth, state: "Fixture later-read state." }],
+      }),
+    );
+    const stateAt = (date: string | null) =>
+      generateNarrativeWorld(located, "1.5", date).entities.find(
+        (candidate) => candidate.id === earth,
+      )!.state;
+    expect(stateAt(null)).toBe("Fixture later-read state.");
+    expect(stateAt("2168-06")).toBe("Fixture later-read state.");
+    expect(stateAt("2174-01")).toBe("Fixture later-dated state.");
   });
 
   it("keeps last-known location and travel history in agreement in both views", () => {

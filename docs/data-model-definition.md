@@ -1268,11 +1268,12 @@ to the zero state:
    introduction or ordinary update has the effective story date of its enclosing
    chapter, unless a non-event, non-location update supplies `effective_date`
    (ADR-0028); dated events keep their own `date`. A chapter view applies every
-   reader-visible value with no story-time cutoff and uses the chronologically
-   latest value for each entity property, so it shows the latest known state from
-   all chapters read so far, whatever their dates (ADR-0028). A Date-mode view
-   applies only reader-visible values whose effective date is definitively at or
-   before the requested display date, then uses the chronologically latest value.
+   reader-visible value with no story-time cutoff and, for each entity property,
+   uses the value from the latest-read chapter (story-date order only breaks ties
+   within one chapter), so it shows the latest known state from all chapters read
+   so far, whatever their dates (ADR-0028). A Date-mode view applies only
+   reader-visible values whose effective date is definitively at or before the
+   requested display date, then uses the chronologically latest value.
    The chapter view still reports `viewChapter.date` as its `display_date`.
 
 Raw zero-state, asset, book, and chapter records must first cross

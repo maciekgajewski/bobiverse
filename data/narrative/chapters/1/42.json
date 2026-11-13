@@ -36,7 +36,7 @@
     },
     {
       "entity_id": "technology:vr",
-      "description": "A virtual-reality interface developed aboard Heaven-1 to provide sensory input and an embodied experience for a bodiless mind. Its initial construction required hardware modifications, and its software remains under development. It provides convincing physical sensations and a full humanlike avatar, renders interactive objects such as a Nerf basketball and hoop, and supports shared environments including libraries, parks, and command decks. Users can create objects during a session and play games together. Ball games expose remaining physics inaccuracies and provide test cases for refinement. Bill regards varied embodied activity as important to retaining a human sense of self."
+      "description": "A virtual-reality interface developed aboard Heaven-1 to provide sensory input and an embodied experience for a bodiless mind. Its initial construction required hardware modifications, and its software remains under development. It provides convincing physical sensations and a full humanlike avatar, renders interactive objects such as a Nerf basketball and hoop, and supports shared environments including libraries, parks, and command decks. Users can create objects during a session and play games together. Ball games expose remaining physics inaccuracies and provide test cases for refinement. Bill regards varied embodied activity as important to retaining a human sense of self. Linus uses it to provide Henry with a realistic sailing life that includes eating, sleeping, and bodily functions."
     }
   ],
   "mentions": [
