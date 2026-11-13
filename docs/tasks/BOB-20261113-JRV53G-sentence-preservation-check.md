@@ -138,3 +138,8 @@ Markdown, `git diff --check`. No UI code changes, so no e2e.
   `narrative:validate`; `promote` prints provenance for the PR body and no longer
   appends a log row (`chapter-extraction.md`, `chapter-promotion-log.md`, and the
   matching checklist item).
+- Splitter fix: a possessive full stop (`Romulus's.`, `Bobs'.`) was treated as
+  an initial because the word regex captured only the `s` after the apostrophe.
+  Initials and abbreviations now count only when preceded by the start of the text
+  or a non-letter that is not an apostrophe. `narrative:validate` still passes;
+  the exceptions list is unchanged (no unused entries, no new unexcused writes).

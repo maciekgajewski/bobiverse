@@ -47,6 +47,33 @@ describe("splitSentences", () => {
     ]);
   });
 
+  it("splits after a possessive full stop, for both apostrophe forms", () => {
+    expect(
+      splitSentences(
+        "The moon is probably related to Romulus's. Its local ecosystem is distinct.",
+      ),
+    ).toEqual([
+      "The moon is probably related to Romulus's.",
+      "Its local ecosystem is distinct.",
+    ]);
+    expect(
+      splitSentences(
+        "The moon is probably related to Romulus\u2019s. Its local ecosystem is distinct.",
+      ),
+    ).toEqual([
+      "The moon is probably related to Romulus\u2019s.",
+      "Its local ecosystem is distinct.",
+    ]);
+    expect(splitSentences("That is the Bobs'. They left.")).toEqual([
+      "That is the Bobs'.",
+      "They left.",
+    ]);
+    expect(splitSentences("That is the Bobs\u2019. They left.")).toEqual([
+      "That is the Bobs\u2019.",
+      "They left.",
+    ]);
+  });
+
   it("keeps closing quotes and brackets with their sentence", () => {
     expect(splitSentences('He said "go." (It went.) Done...')).toEqual([
       'He said "go."',

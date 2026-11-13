@@ -76,9 +76,11 @@ const nonTerminalAbbreviations = new Set([
  * single full stop does not end a sentence when the word before it is a single
  * letter or a dotted run of single letters (an initial, as in `R. Riker`, or
  * `U.S.`), or a listed abbreviation (`St.`, `Dr.`, `Mt.`, `e.g.` and the others
- * above). A decimal point (`99.9`) is never followed by whitespace, so it never
- * splits. Each sentence is trimmed and its internal whitespace collapsed to one
- * space; empty pieces are dropped.
+ * above), and that word is preceded by the start of the text or by a non-letter
+ * that is not an apostrophe (`'` or `\u2019`). A possessive such as `Romulus's.`
+ * or `Bobs'.` therefore ends the sentence. A decimal point (`99.9`) is never
+ * followed by whitespace, so it never splits. Each sentence is trimmed and its
+ * internal whitespace collapsed to one space; empty pieces are dropped.
  */
 export function splitSentences(text: string): string[] {
   const sentences: string[] = [];
@@ -86,11 +88,16 @@ export function splitSentences(text: string): string[] {
   const terminator = /[.!?]+["'\u201d\u2019)\]]*(?=\s|$)/g;
   for (const match of text.matchAll(terminator)) {
     if (/^\.(?![.!?])/.test(match[0])) {
-      const word = /([A-Za-z]+(?:\.[A-Za-z]+)*)$/.exec(
-        text.slice(start, match.index),
-      )?.[1];
+      const prefix = text.slice(start, match.index);
+      const wordMatch = /(?:^|([^A-Za-z]))([A-Za-z]+(?:\.[A-Za-z]+)*)$/.exec(
+        prefix,
+      );
+      const preceding = wordMatch?.[1];
+      const word = wordMatch?.[2];
       if (
         word !== undefined &&
+        (preceding === undefined ||
+          (preceding !== "'" && preceding !== "\u2019")) &&
         (/^(?:[A-Za-z]\.)*[A-Za-z]$/.test(word) ||
           nonTerminalAbbreviations.has(word.toLowerCase()))
       ) {
