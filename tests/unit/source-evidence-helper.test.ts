@@ -239,10 +239,7 @@ describe("blind Pass 1 boundary", () => {
     expect(blindMaterials).not.toMatch(/(?:^|[.!?:]\s+)Will\b/m);
 
     const forbidden = await chapterSpecificTokens();
-    const leaked = [...forbidden].filter((token) =>
-      wholeToken(token).test(blindMaterials),
-    );
-    expect(leaked).toEqual([]);
+    expect(leakedChapterTokens(blindMaterials, forbidden)).toEqual([]);
   });
 
   it("matches leak tokens as whole, case-sensitive words", () => {
@@ -254,6 +251,28 @@ describe("blind Pass 1 boundary", () => {
     expect(wholeToken("asteroid belt").test("asteroid belts")).toBe(false);
     expect(wholeToken("1.1").test("chapter 1.12")).toBe(false);
     expect(wholeToken("1.1").test("chapter 1.1.")).toBe(true);
+  });
+
+  it("exempts only allowlisted generic names from ordinary-prose leak checks", () => {
+    const forbidden = ["backup", "nanites", "technology:backup"];
+    expect(
+      leakedChapterTokens(
+        "possession of a backup, or operation of a replica",
+        forbidden,
+      ),
+    ).toEqual([]);
+    expect(
+      leakedChapterTokens("the technology:backup design", forbidden),
+    ).toEqual(["technology:backup"]);
+    expect(
+      leakedChapterTokens("introduce nanites into the brief", forbidden),
+    ).toEqual(["nanites"]);
+    expect(
+      leakedChapterTokens("named `backup` in the ledger", forbidden),
+    ).toEqual(["backup"]);
+    expect(leakedChapterTokens('the "backup" process', forbidden)).toEqual([
+      "backup",
+    ]);
   });
 
   it("documents direct Earth-gravity retention and bounded SI conversion", async () => {
@@ -348,6 +367,37 @@ async function chapterSpecificTokens(): Promise<Set<string>> {
 function wholeToken(token: string): RegExp {
   const escaped = token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   return new RegExp(`(?<![\\w.:-])${escaped}(?![\\w:-]|\\.\\w)`);
+}
+
+// Generic English words that also occur as chapter entity names. The leak
+// check exempts only exact matches of these names when they appear as
+// ordinary prose, so everyday brief language is not treated as a leak.
+// Do not skip lowercase names generally: a real lowercase entity name must
+// still fail the test if it appears in the blind materials.
+const GENERIC_ENTITY_NAME_ALLOWLIST = new Set(["backup"]);
+
+function isEntitySpecificMention(token: string, text: string): boolean {
+  const escaped = token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  // Quoted or backticked typography marks a name, not ordinary prose.
+  // Canonical ids such as technology:backup are separate tokens and are
+  // not exempted by this allowlist.
+  return new RegExp("[`\"']" + escaped + "[`\"']").test(text);
+}
+
+function leakedChapterTokens(
+  text: string,
+  forbidden: Iterable<string>,
+): string[] {
+  return [...forbidden].filter((token) => {
+    if (!wholeToken(token).test(text)) return false;
+    if (
+      GENERIC_ENTITY_NAME_ALLOWLIST.has(token) &&
+      !isEntitySpecificMention(token, text)
+    ) {
+      return false;
+    }
+    return true;
+  });
 }
 
 async function writeJson(file: string, value: unknown) {
