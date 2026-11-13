@@ -1,6 +1,6 @@
 # BOB-20261113-CS63EM: preflight on pending predecessors
 
-Status: In progress
+Status: Done
 Phase: 4 (LLM-assisted editorial pipeline; process hardening before Chapter 1.43)
 Last updated: 2026-11-13
 
@@ -94,3 +94,6 @@ git diff --check
   Item 8 passed: narrative valid over 43 chapter files, and `data:validate` 277
   systems. Item 1 failed (no `codex` launcher and no approval file passed) and item
   5 failed (uncommitted work at the time); both are unrelated to this mode.
+- PR #14 was squash-merged to master as `3b87545` on Friday 2026-11-13. Status is now
+  **Done**, recorded after that merge (in BOB-20261113-ARAQFT). The squash dropped
+  the executable bit on `scripts/extraction_preflight.py`; ARAQFT restores it.

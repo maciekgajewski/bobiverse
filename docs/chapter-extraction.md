@@ -89,8 +89,8 @@ and ask the Captain before substituting another configuration.
 
 ### Approved alternative (NON-CONFORMING)
 
-A different runtime, provider, or model may run only after the Captain explicitly
-approves that provider, model, and workflow for the run. Such a run:
+A different runtime, provider, or model may run only under the Captain's explicit
+approval of that provider, model, and workflow, per run or standing (D1). Such a run:
 
 - is labelled **NON-CONFORMING** in every artifact, the review package, the approved
   chapters repository, and the promotion-log decision cell;

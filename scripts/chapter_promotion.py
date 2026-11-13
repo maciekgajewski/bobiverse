@@ -17,8 +17,10 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 import shutil
+import stat
 import subprocess
 import sys
 from datetime import datetime
@@ -78,6 +80,8 @@ def within(path: Path, parent: Path) -> bool:
 
 
 def check_workspace(workspace: Path, repo: Path) -> Path:
+    if workspace.expanduser().is_symlink():
+        raise Refusal("workspace must not be a symlink")
     resolved = workspace.expanduser().resolve()
     tmp = Path("/tmp").resolve()
     if not resolved.is_dir() or resolved == tmp or not within(resolved, tmp):
@@ -103,10 +107,25 @@ def chapter_path(chapter: str) -> Path:
     return REPOSITORY / "data" / "narrative" / "chapters" / book / f"{number}.json"
 
 
-def load_json(path: Path, label: str) -> object:
+def read_regular(path: Path) -> bytes:
+    """Read a regular, singly linked file without following a symlink."""
     try:
-        return json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+    except OSError:
+        raise Refusal(
+            f"{path.name} is not a regular file (symlink or unreadable)"
+        ) from None
+    with os.fdopen(descriptor, "rb") as handle:
+        info = os.fstat(handle.fileno())
+        if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1:
+            raise Refusal(f"{path.name} is not a regular, singly linked file")
+        return handle.read()
+
+
+def load_json(data: bytes, label: str) -> object:
+    try:
+        return json.loads(data.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError):
         raise Refusal(f"{label} is not readable JSON") from None
 
 
@@ -117,14 +136,20 @@ def record(args: argparse.Namespace) -> None:
     if git(repo, "tag", "--list", tag) or target.exists():
         raise Refusal(f"{tag} or chapters/{args.chapter}/ already exists")
     names = {entry.name for entry in workspace.iterdir()}
-    if names - REQUIRED - OPTIONAL or not all((workspace / n).is_file() for n in names):
+    if names - REQUIRED - OPTIONAL:
         raise Refusal(f"not on the allowlist: {sorted(names - REQUIRED - OPTIONAL)}")
     if REQUIRED - names:
         raise Refusal(f"missing required files: {sorted(REQUIRED - names)}")
-    candidate = load_json(workspace / "candidate.json", "candidate.json")
+    for name in names:
+        if not stat.S_ISREG(os.lstat(workspace / name).st_mode):
+            raise Refusal(f"{name} is not a regular file (symlink, directory or FIFO)")
+    # Read every file once, without following symlinks, and write those bytes.
+    contents = {name: read_regular(workspace / name) for name in names}
+    approval_bytes = read_regular(args.approval)
+    candidate = load_json(contents["candidate.json"], "candidate.json")
     if not isinstance(candidate, dict) or candidate.get("chapter") != args.chapter:
         raise Refusal(f"candidate.json is not chapter {args.chapter}")
-    approval = load_json(args.approval, "approval file")
+    approval = load_json(approval_bytes, "approval file")
     missing = [
         field
         for field in APPROVAL_FIELDS
@@ -135,8 +160,9 @@ def record(args: argparse.Namespace) -> None:
 
     start = git(repo, "rev-parse", "HEAD")
     try:
-        shutil.copytree(workspace, target)
-        shutil.copyfile(args.approval, target / "APPROVAL.json")
+        target.mkdir(parents=True)
+        for name, data in {**contents, "APPROVAL.json": approval_bytes}.items():
+            (target / name).write_bytes(data)
         git(repo, "add", "--", f"chapters/{args.chapter}")
         git(repo, "commit", "-q", "-m", f"chapter {args.chapter}: approved")
         git(repo, "tag", "-a", tag, "-m", f"chapter {args.chapter} approved")
@@ -207,8 +233,16 @@ def log_row(
 
 def insert_row(log_text: str, row: str) -> str:
     lines = log_text.splitlines(keepends=True)
-    start = next(i for i, line in enumerate(lines) if line.startswith("| Applied date"))
-    end = start
+    start = next(
+        (i for i, line in enumerate(lines) if line.startswith("| Applied date")), None
+    )
+    if (
+        start is None
+        or start + 1 >= len(lines)
+        or not lines[start + 1].startswith("| -")
+    ):
+        raise Refusal(f"{LOG.name} has no promotion-log table to append to")
+    end = start + 2
     while end < len(lines) and lines[end].startswith("|"):
         end += 1
     return "".join(lines[:end] + [row] + lines[end:])
@@ -257,9 +291,18 @@ def promote(args: argparse.Namespace) -> None:
         )
 
     target = chapter_path(args.chapter)
+    try:
+        insert_row(LOG.read_text(encoding="utf-8"), "")
+    except (OSError, UnicodeDecodeError):
+        raise Refusal(f"{LOG.name} is missing or unreadable") from None
     saved = {
         path: path.read_bytes() if path.exists() else None for path in (target, LOG)
     }
+    backups = workspace / "saved"
+    backups.mkdir()
+    for path, content in saved.items():
+        if content is not None:
+            (backups / path.name).write_bytes(content)
     try:
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(candidate, target)
@@ -301,7 +344,10 @@ def promote(args: argparse.Namespace) -> None:
             for path, content in saved.items()
         )
         if not restored:
-            raise Unconfirmed(f"restore unconfirmed for {target} and {LOG}: {error}")
+            raise Unconfirmed(
+                f"restore unconfirmed for {target} and {LOG}; their previous bytes are "
+                f"in {backups} (a file not there did not exist before): {error}"
+            )
         raise Refusal(f"promotion failed and was restored: {error}") from None
     print(f"Promoted {args.chapter} from {tag}; review the diff and open the PR.")
 
