@@ -1,6 +1,6 @@
 # BOB-20261113-ARAQFT: chapter promotion review nits (PR #12)
 
-Status: In progress
+Status: Done
 Phase: 4 (LLM-assisted editorial pipeline; process hardening before Chapter 1.43)
 Last updated: 2026-11-13
 
@@ -87,3 +87,5 @@ git diff --check
 - `chapter-extraction.md` §Approved alternative now opens with "per run or standing
   (D1)" instead of "for the run".
 - Done only after merge.
+- PR #15 was squash-merged to master as `279b626` on Friday 2026-11-13. Status is now
+  **Done**, recorded after that merge (in BOB-20261113-97Z771).
