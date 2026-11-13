@@ -101,11 +101,20 @@ approves that provider, model, and workflow for the run. Such a run:
 - never claims a setting that the runtime cannot show, such as a reasoning level;
 - still needs separate exact-candidate approval before promotion.
 
-**Open Captain decision D1:** whether an alternative approval may be standing rather
-than per run, and which providers and models qualify. Until D1 is decided, the
-current rule applies: every substitution needs the Captain's explicit approval of the
-provider, model, and workflow (§No silent substitution). The 2026-11-09 approval
-named only the Chapter `1.42` verification.
+**Captain decision D1 (decided 2026-11-13):** a standing approval. The Bobiverse
+Extractor may extract with its own model; each such run is still NON-CONFORMING and
+follows every rule above. Recorded per [§Relayed approvals](development-process.md#relayed-approvals):
+
+- Date: 2026-11-13. Role: the Captain, relayed by the manager (Piotr Developer
+  Manager).
+- The manager proposed a standing OK for the Bobiverse Extractor to extract with its
+  own model so that work could start that day. Maciej replied: "Yea, go ahead".
+- The same day he also said: "It's ok to read the text as many time as required, as
+  long as it stays on the box. Accuracy of extraction is the primary goal. I see no
+  reason for checksum checks, we don't need this level of formality. We need
+  lightweight agile process and should get moving."
+
+The 2026-11-09 approval named only the Chapter `1.42` verification.
 
 ## Context isolation
 

@@ -243,3 +243,7 @@ No e2e: no application code changes.
   `1.42: matches chapter-1.42-approved` and 41 untagged latest rows, and leaves it
   clean. `record` and `promote` were not run against the real repositories.
 - Done only after merge.
+- Recorded Captain decision D1 (standing approval for the Bobiverse Extractor to
+  extract with its own model, NON-CONFORMING), relayed by the manager on
+  2026-11-13, in `chapter-extraction.md` §Approved alternative. Checklist A item 1
+  no longer says "D1 open".

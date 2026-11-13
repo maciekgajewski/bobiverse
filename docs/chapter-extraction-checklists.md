@@ -18,7 +18,7 @@ spawning for both passes; the run's own records attest those settings.
 1. Profile: the conforming Codex profile can be requested for both passes, or the
    Captain's explicit approval of provider, model, and workflow for this run is
    recorded, labelled NON-CONFORMING (§Prerequisite check to §Approved alternative;
-   D1 open).
+   D1 standing approval, 2026-11-13).
 2. Source: one readable UTF-8 file outside the repository, named
    `<book>.<chapter>.txt` or `<book>.<chapter> - <title>.txt`;
    `source_evidence.py metadata` passes and its SHA-256 is recorded (§Inputs).
