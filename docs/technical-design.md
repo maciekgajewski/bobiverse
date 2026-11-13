@@ -751,8 +751,9 @@ facts the reader may know; story time then decides which of those facts form the
 represented world state at `viewChapter.date`. A future story-state change must not alter an
 earlier in-universe view merely because its chapter was read first. Conversely, a fact
 first revealed later must not alter an earlier reader-knowledge view, even if it was
-already true in-universe. ADR-0002, as refined by ADR-0005, ADR-0009, ADR-0013, and ADR-0026,
-defines this two-stage projection and its temporal validation rules.
+already true in-universe. ADR-0002, as refined by ADR-0005, ADR-0009, ADR-0013, ADR-0026, and ADR-0028
+(backdated updates), defines this two-stage projection and its temporal validation
+rules.
 
 Dated chapter-authored facts compare a Gregorian calendar range, optional hidden
 ordering suffix, and source chapter. Non-overlapping ranges use calendar order;

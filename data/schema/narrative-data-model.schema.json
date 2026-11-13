@@ -204,6 +204,7 @@
       "required": ["entity_id"],
       "properties": {
         "entity_id": { "$ref": "#/$defs/character_id" },
+        "effective_date": { "$ref": "#/$defs/date" },
         "name": { "type": "string", "minLength": 1 },
         "gender": { "type": ["string", "null"], "minLength": 1 },
         "species_id": {
@@ -268,6 +269,7 @@
       "required": ["entity_id"],
       "properties": {
         "entity_id": { "$ref": "#/$defs/species_id" },
+        "effective_date": { "$ref": "#/$defs/date" },
         "name": { "type": "string", "minLength": 1 },
         "description": {
           "anyOf": [{ "$ref": "#/$defs/description" }, { "type": "null" }]
@@ -302,6 +304,7 @@
       "required": ["entity_id"],
       "properties": {
         "entity_id": { "$ref": "#/$defs/technology_id" },
+        "effective_date": { "$ref": "#/$defs/date" },
         "name": { "type": "string", "minLength": 1 },
         "description": {
           "anyOf": [{ "$ref": "#/$defs/description" }, { "type": "null" }]
@@ -326,6 +329,7 @@
       "required": ["entity_id"],
       "properties": {
         "entity_id": { "$ref": "#/$defs/organization_id" },
+        "effective_date": { "$ref": "#/$defs/date" },
         "name": { "type": "string", "minLength": 1 },
         "description": {
           "anyOf": [{ "$ref": "#/$defs/description" }, { "type": "null" }]
@@ -357,6 +361,7 @@
       "required": ["entity_id"],
       "properties": {
         "entity_id": { "$ref": "#/$defs/vessel_id" },
+        "effective_date": { "$ref": "#/$defs/date" },
         "name": { "type": "string", "minLength": 1 },
         "description": {
           "anyOf": [{ "$ref": "#/$defs/description" }, { "type": "null" }]

@@ -1000,6 +1000,21 @@ function openingSummarySentence(summary: string): string {
   return summary;
 }
 
+/**
+ * The story date from which a chapter-authored write takes effect. Reader order
+ * (the chapter file) decides whether the write is revealed at all; this date only
+ * places it in story time. Non-event updates may backdate it with `effective_date`
+ * (ADR-0028); everything else defaults to the enclosing chapter's date.
+ */
+function updateEffectiveDate(
+  update: NarrativeRecord,
+  chapter: NarrativeRecord,
+): string {
+  return typeof update.effective_date === "string"
+    ? update.effective_date
+    : chapterDate(chapter);
+}
+
 function sourceProperties(
   record: NarrativeRecord,
   excludes: readonly string[],
@@ -1045,10 +1060,13 @@ function assertTemporalWrites(chapters: NarrativeRecord[]): void {
         ["id"],
       );
     }
-    for (const update of (chapter.updates as unknown[] | undefined) ?? []) {
-      addWrites(asRecord(update, `Update in ${sourceChapter}`), moment, [
-        "entity_id",
-      ]);
+    for (const candidate of (chapter.updates as unknown[] | undefined) ?? []) {
+      const update = asRecord(candidate, `Update in ${sourceChapter}`);
+      addWrites(
+        update,
+        { date: updateEffectiveDate(update, chapter), sourceChapter },
+        ["entity_id", "effective_date"],
+      );
     }
   }
 }
@@ -1129,7 +1147,10 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
     for (const [key, entry] of Object.entries(value as NarrativeRecord)) {
       const entryPointer = `${pointer}/${key}`;
       if (
-        (key === "date" || key === "birth_date" || key === "death_date") &&
+        (key === "date" ||
+          key === "birth_date" ||
+          key === "death_date" ||
+          key === "effective_date") &&
         typeof entry === "string"
       ) {
         try {
@@ -1367,6 +1388,16 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
       if (updatedIds.has(targetId))
         throw new Error(`Chapter ${id} has multiple updates for ${targetId}.`);
       updatedIds.add(targetId);
+      if (
+        typeof update.effective_date === "string" &&
+        !isNarrativeDateEligible(update.effective_date, chapterDate(chapter))
+      ) {
+        throw chapterSemanticError(
+          id,
+          `/updates/${updateIndex}/effective_date`,
+          `${update.effective_date} must be on or before the chapter date ${chapterDate(chapter)}.`,
+        );
+      }
       const roleMessage = pictureRoleMessage(
         update,
         `Update ${targetId} picture_id`,
@@ -2239,7 +2270,7 @@ function generateNarrativeActivity(
       );
       const entity = byId.get(id);
       if (!entity) continue;
-      applySourceRecord(entity, update, ["entity_id"]);
+      applySourceRecord(entity, update, ["entity_id", "effective_date"]);
       if (entity.entity_type === "event") {
         eventIds.add(id);
         add(
@@ -2249,7 +2280,7 @@ function generateNarrativeActivity(
           "update",
         );
       } else {
-        add(id, sourceChapter, date, "update");
+        add(id, sourceChapter, updateEffectiveDate(update, chapter), "update");
       }
     }
     for (const candidate of (chapter.appearances as unknown[] | undefined) ??
@@ -2424,14 +2455,14 @@ export function generateNarrativeWorld(
             : typeof target.date === "string"
               ? target.date
               : date
-          : date;
+          : updateEffectiveDate(update, chapter);
       if (!isDateAtOrBefore(effectiveDate, displayDate)) continue;
       applyProperties(
         target,
         update,
         { date: effectiveDate, sourceChapter },
         latestMoments,
-        ["entity_id"],
+        ["entity_id", "effective_date"],
       );
       if (target.entity_type === "location") {
         orbitalWrites.push({
