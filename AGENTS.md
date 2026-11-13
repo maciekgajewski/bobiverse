@@ -25,8 +25,9 @@ accepted ADR without saying so explicitly.
 
 - Read the relevant task, technical design, implementation plan, and referenced ADRs.
 - Inspect `git status` and preserve unrelated or pre-existing changes.
-- Confirm that the task is `Ready` and that the Captain has explicitly authorized
-  implementation.
+- Confirm that the task is `Ready` and that implementation is explicitly authorized:
+  by the Captain, or by the manager for a routine, in-design task outside the
+  Captain's reserved decisions (`docs/development-process.md`).
 - Present a short implementation plan before editing.
 - Ask one question at a time if a material decision is still unresolved.
 
@@ -106,20 +107,29 @@ schemas, contracts, tooling, or includes broader editorial remediation.
   schema validation, and spoiler behavior when those areas are changed.
 - Validate generated runtime data as part of the normal build or validation path.
 - Update directly affected documentation in the same change.
-- The GitHub Actions `CI` workflow (`.github/workflows/ci.yml`) must be green before
-  merge: Repository checks and all three Playwright browser jobs are required.
+- The GitHub Actions `CI` workflow (`.github/workflows/ci.yml`) must be green on the
+  reviewed head SHA before merge: Repository checks and all three Playwright browser
+  jobs are required.
   Upload browser diagnostics only on failure, with a three-day retention limit;
   artifact storage is quota-limited even when public-repository runner compute is
   free.
-- A task is complete only when its acceptance criteria and documented validation
-  pass. Record deviations rather than silently reducing scope.
+- A task is complete (`Done`) only when its acceptance criteria and documented
+  validation pass and its PR has merged. Record deviations rather than silently
+  reducing scope.
+
+## Roles and merge gate
+
+Changes reach `master` only through the merge gate in `docs/development-process.md`,
+which also defines each role's authority and when a relayed approval counts.
 
 ## Task and ADR workflow
 
 - `docs/implementation-plan.md` is the initial phased roadmap, not the live task
   tracker.
 - Create self-contained work items in `docs/tasks/` as phases are approached.
-- After creating a task document, use [$review-agent] to review the document. Address all findings, repeat the review until it comes clean.
+- Have each task document, and later its implementation, reviewed by an independent
+  one-off reviewer at an exact SHA; re-review after every push, as defined in
+  `docs/development-process.md`.
 - Keep exactly one status in each task file. Task files are the sole authority for
   task IDs, titles, and statuses; do not maintain a duplicated task list.
 - Run `python3 scripts/tasks.py check` after creating a task, changing task metadata,
@@ -128,4 +138,3 @@ schemas, contracts, tooling, or includes broader editorial remediation.
   chapter-promotion log described above.
 - Record significant architecture changes in `docs/adrs/` using the process defined
   in `docs/adrs/README.md`.
-- After implementing a task, use [$review-agent] to review the document. Address all findings, repeat the review until it comes clean.

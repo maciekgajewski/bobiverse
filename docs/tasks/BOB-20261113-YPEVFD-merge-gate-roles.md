@@ -1,6 +1,6 @@
 # BOB-20261113-YPEVFD: merge gate and roles in AGENTS.md
 
-Status: Ready
+Status: In progress
 Phase: Cross-cutting (development process and governance)
 Last updated: 2026-11-13
 
@@ -35,8 +35,9 @@ The change is documentation only. No code, CI, data, schema or GitHub settings c
   provenance (chapter approval stays with the Captain).
 - `../adrs/0023-agent-review-of-deterministic-astronomy-refreshes.md`: the existing
   precedent for a fresh, read-only, independent reviewer under delegated authority.
-- `../adrs/README.md`: process rules are not an ADR trigger, so no ADR is needed
-  unless the Captain decides otherwise (Q6).
+- `../adrs/README.md`: process rules are not listed as an ADR trigger, although "a
+  core technology or ownership boundary" could arguably cover the authority split.
+  Q6 decides: no ADR.
 - `BOB-20261112-1TWD9T-extraction-contract.md`: recent example of the task format and
   of how open Captain decisions are recorded.
 - `BOB-20261110-M3AMGW-e2e-flake-stabilisation.md`: the flake policy and the retry
@@ -46,10 +47,11 @@ The change is documentation only. No code, CI, data, schema or GitHub settings c
 
 The manager relayed this scope on 2026-11-13 as process item 3, "Merge gate and roles
 in AGENTS.md" (items 1 and 5 of the earlier process review). It was agreed with the
-Captain. The retry-drop rule (three consecutive clean hosted runs on `master`, as defined
-in Q3) is already approved. The Captain answered Q1–Q6 on 2026-11-13 (relayed by the manager; see
-Decisions and the log). This file is `Ready` for manager review. Under the
-2026-11-09 delegation (Q5), the manager may then authorise implementation.
+Captain. The retry-drop rule (three consecutive clean hosted runs on `master`, as
+defined in Q3) is already approved. The Captain answered Q1–Q6 on 2026-11-13
+(relayed by the manager; see Captain decisions and the log). The task-doc review
+approved `bd7c9ab`, and the manager authorised implementation under the 2026-11-09
+delegation (Q5).
 
 ## Scope
 
@@ -73,7 +75,8 @@ Decisions and the log). This file is `Ready` for manager review. Under the
        SHA, read-only. This is the same independence model as ADR-0023, without
        widening ADR-0023's astronomy-acceptance authority.
      - Extractor bot: chapter extraction under `chapter-extraction.md` only. Chapter
-       approval stays with the Captain.
+       approval stays with the Captain. It has no GitHub write access (unwritten
+       practice, like C6).
    - **Relayed approvals.** An approval relayed by an agent counts as the Captain's
      only when the relaying role is defined for that kind of decision. Record the
      approval in the task log or PR, with its date and the quoted wording when
@@ -92,8 +95,10 @@ Decisions and the log). This file is `Ready` for manager review. Under the
      - any push after approval needs a new full review of the new head;
      - a master merge into the branch, including the update merges that strict
        up-to-date requires (Q4), gets a merge-only re-review. That review confirms
-       the merge adds nothing beyond master and any conflict resolution, as with
-       PR #6 (`7885e91`). CI must then pass on the new head;
+       the merge adds nothing beyond master and any conflict resolution. PR #6's
+       published merge `8ae1aef1d9e3af63ee5a86d7de99b5f1a7a87517` is the example; it
+       also carried a semantic link fix, so it was not purely conflict-only, but the
+       rule stands. CI must then pass on the new head;
      - stale approvals never carry over.
 
    - **Flaky tests.** Fix them; never retry, skip or extend deadlines to get past
@@ -103,6 +108,10 @@ Decisions and the log). This file is `Ready` for manager review. Under the
    - **Task status.** A task becomes `Done` only after its PR merges, and after any
      extra acceptance its own criteria require, for example the Captain's visual
      acceptance (HS0NZP stays In progress for that reason).
+   - **No relaxation.** A short pointer that the document relaxes neither the
+     `AGENTS.md` content and IP rules (source text never committed or copied off the
+     host; book text only to a Captain-approved provider) nor the extraction
+     preflight, which is never bypassed.
    - **Draft `master` ruleset** (an appendix, marked as a proposal that Maciej applies
      himself; see the next section).
 2. **`AGENTS.md`.** Make small edits only:
@@ -211,8 +220,10 @@ ruleset setting.
   - `visual-testing.md` calls the one retry "diagnostic" and says that dropping it
     "should be a separately reviewed follow-up once hosted no-retry evidence confirms
     stability". This agrees with the approved rule, but the threshold is not stated.
-  - The config's `2` would apply to any local `CI=1` run without `--retries`; local
-    instructions always pass `--retries=0`.
+  - The config's `2` would apply to any local `CI=1` run without `--retries`.
+    Local runs without `CI` get zero retries from `playwright.config.ts` itself:
+    `package.json`'s `test:e2e` does not pass `--retries=0`, and `visual-testing.md`
+    passes it only on the flake-investigation command.
   - Proposed: document the allowance and its drop condition. Leave both values
     unchanged in this task.
 - **C5. Done.** `docs/tasks/README.md` defines `Done` as "acceptance criteria and
@@ -344,5 +355,39 @@ artifacts.
   - Q4: strict up-to-date branches on, as in the ruleset draft already sent to
     Maciej; update merges get the merge-only re-review.
   - Q5: yes. On 2026-11-09 Maciej delegated authorisation of routine in-design tasks
-    to the manager: "Do all, except keep approved chapters in local git repo."
+    to the manager: "Do all, except keep approved chapters in local git repo." That
+    quote is the source of the delegation. The operative bound is the
+    reserved-decisions list (design, model/provider/privacy, disputed book facts,
+    chapter approval, visual acceptance), not "Do all".
   - Q6: no ADR.
+- Implementation started under the manager's authorisation (task-doc review approved
+  `bd7c9ab`); status In progress. Folded in the review nits:
+  - R1: the Q5 log keeps the 2026-11-09 quote as the source and states that the
+    operative bound is the reserved-decisions list.
+  - R2: PR #6's published merge is cited as
+    `8ae1aef1d9e3af63ee5a86d7de99b5f1a7a87517`, noting that it also carried a
+    semantic link fix.
+  - R3: C4 now says where local zero retries come from.
+  - R4: the ADR README reference is softened; Q6 is decided as no ADR.
+  - R5: the Extractor role records that it has no GitHub write access.
+  - R6: the process document states that it does not relax the content and IP
+    rules or the extraction preflight.
+- Added `docs/development-process.md` (120 lines). Edited `AGENTS.md` (+17/−8, net
+  +9 lines), `docs/tasks/README.md` and the retry paragraph of
+  `docs/visual-testing.md`. `ci.yml` and `playwright.config.ts` are unchanged; no ADR.
+- Link check by hand (no checker exists): every relative Markdown link in the
+  changed files resolves to an existing file. That is 11 links: 9 in
+  `development-process.md` and 1 each in `docs/tasks/README.md` and
+  `visual-testing.md`. The backticked paths in `AGENTS.md` and this task also exist.
+- Validation (Node 22.23.1, fresh `npm ci` and `.venv`):
+  - tasks check (61 files);
+  - format:check, lint and typecheck;
+  - Vitest 247/247 in 29 files;
+  - Python data tests 85/85;
+  - data:validate (277 systems, six pinned sources);
+  - build (zero state and 42 chapters);
+  - prettier `--check` on all five changed Markdown files;
+  - `git diff --check`.
+
+  All passed. No e2e was run, since the change is docs only. Nothing was pushed.
+  Status stays In progress until merge.

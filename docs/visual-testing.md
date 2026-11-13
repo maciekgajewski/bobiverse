@@ -70,10 +70,12 @@ flaky-test annotations before merge. For flake investigations use
 `--workers=1 --retries=0 --repeat-each=20`; neither retries nor increased deadlines
 are a repair. The phone case retains browser warnings/errors, request failures and
 startup milestones in a `map-startup` attachment on failure, and requires the real
-renderer bridge as well as nonzero canvas height. CI's existing one retry is
-unchanged by this task; dropping it should be a separately reviewed follow-up once
-hosted no-retry evidence confirms stability. CI does not run the separate performance
-benchmarks or replace the Captain's real-browser smoothness/visual acceptance.
+renderer bridge as well as nonzero canvas height. CI's one retry is a temporary
+allowance: a separate, reviewed change drops it after three consecutive `master` runs
+with all four jobs green on attempt 1, no flaky tests and no re-runs (see
+[`development-process.md`](development-process.md)). CI does not run the separate
+performance benchmarks or replace the Captain's real-browser smoothness/visual
+acceptance.
 
 For a failed job, open the workflow run from the pull request's **Checks** tab,
 then download its `playwright-<browser>-<attempt>` artifact from the run summary's
