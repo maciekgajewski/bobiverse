@@ -295,7 +295,12 @@ version control.
 Routine promotion of an exact, explicitly approved candidate does not require a new
 task. Before applying the candidate:
 
-1. Build a fresh temporary narrative root from the current canonical baseline,
+1. Identify the exact prior chapter chain used for extraction (including any earlier
+   staged chapters); record its root, baseline revision, and pinned astronomy
+   context. Run narrative and astronomy validation against that exact prior root.
+   Canonical-master success is not a substitute. If it requires new acquisition,
+   stop and follow **Stage new astronomy acquisition** below before proceeding.
+   Build a fresh temporary narrative root from the current canonical baseline,
    assets, books, and chapters plus the exact approved candidate at its intended
    chapter path.
 2. Run narrative validation against that temporary root.
@@ -305,9 +310,12 @@ task. Before applying the candidate:
    bootstrap to resolve automatically without separate approval. Fuzzy, partial,
    punctuation-different, multiple, unsupported, or source-incomplete matches stop
    for an authorized astronomy task. If identity resolves but validation reports
-   that acquisition queries differ from the exact plan, follow **Stage new astronomy
-   acquisition** below; an existing anchor row alone does not prove that its complete
-   context sphere and provenance plan are current.
+   `Narrative anchors require a GCNS acquisition plan not covered by the pinned
+   sources`, follow **Stage new astronomy acquisition** below for the listed anchors.
+   An existing anchor row alone does not prove that its complete context sphere and
+   provenance plan are current. An `acquisition queries differ from the exact plan`
+   error instead requires investigating inconsistent or tampered query accounting;
+   do not assume a refresh will resolve it or hand-edit the manifests.
 5. If either preflight fails, do not change canonical chapter files or the promotion
    log.
 6. Only after both checks pass, write the exact approved candidate canonically and
@@ -331,9 +339,13 @@ make refresh see it. Instead:
    review and record its clean baseline.
 2. Verify the sealed-ledger and candidate hashes. Install the exact candidate, or
    exact ordered candidate chain, at its intended canonical paths only inside that
-   isolated checkout.
-3. Run narrative validation there, followed by the normal networked astronomy
-   refresh. Do not generate runtime astronomy from a changed candidate snapshot yet.
+   isolated checkout. Preserve the exact prior-root context as well as the complete
+   staged chain; neither may be replaced with an unrelated canonical baseline.
+3. Run narrative validation and the normal astronomy preflight against the exact
+   staged root. Record any uncovered-anchor diagnostic as a failure requiring
+   acquisition, then run the normal networked astronomy refresh. Do not generate
+   runtime astronomy from a changed candidate snapshot yet. See
+   [the pipeline staging order](data/astronomy-pipeline.md#chapter-driven-staging-order).
 4. Inspect the complete astronomy diff. Permit only required bootstrap and coverage
    acquisition, query accounting, checksums, and deterministic consequences.
    Unrelated substantive catalogue, identity, naming, membership, adopted-source,
@@ -358,6 +370,11 @@ make refresh see it. Instead:
    manifest candidate count and checksum into runtime metadata and verify the written
    artifact before the combined-package review.
 8. Run narrative and astronomy validation against the complete staged candidate chain.
+   Retain a passing exact-prior-chain preflight with its matching source/plan context;
+   if that prior chain needed acquisition, validate it separately before using it
+   for extraction. Do not test a prior root against a refreshed full-chain plan when
+   their anchor sets differ: extra queries correctly fail the exact-plan guard too.
+   The final combined-chain preflight must pass; no earlier failure was waived.
 9. Present the exact combined chapter-and-astronomy diff for approval. Apply no part
    of it to the real worktree until the Captain approves that exact combined result.
 10. Apply the approved result atomically, revalidate the canonical corpus, and append
