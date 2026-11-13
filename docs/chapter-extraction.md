@@ -69,11 +69,17 @@ holds the exact spawning instructions.
 
 ### Prerequisite check
 
-Before any source text is read, the operator verifies that the conforming profile can
-actually be requested: a Codex launcher is available to the operating account and can
+Before any model reads source text, the operator verifies that the conforming profile
+can actually be requested: a Codex launcher is available to the operating account and can
 explicitly set the model, reasoning level, and non-forked spawning for both passes
 (Checklist A). Status on 2026-11-12: piotr has no `codex` binary for
 `grok-developer`, so a conforming run is not possible there.
+
+[`scripts/extraction_preflight.py`](../scripts/extraction_preflight.py) automates
+Checklist A items 1–8, using the derived profile record
+[`profile.json`](../.codex/skills/extract-bobiverse-chapter/profile.json); the
+adapter's sentences stay the source of truth. For this check it confirms only that the
+launcher is present and reports a version, not that it can set these values.
 
 ### No silent substitution
 

@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "decision": "BOB-028",
+  "profile": "conforming",
+  "source_of_truth": [
+    ".codex/skills/extract-bobiverse-chapter/SKILL.md",
+    "docs/chapter-extraction.md#conforming-profile"
+  ],
+  "launcher": "codex",
+  "passes": ["pass1", "pass2"],
+  "separate_spawns": true,
+  "inherit_from_orchestrator": false,
+  "spawn": {
+    "model": "gpt-5.6-terra",
+    "reasoning_effort": "high",
+    "fork_turns": "none"
+  }
+}
