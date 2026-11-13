@@ -29,7 +29,7 @@ Use $extract-bobiverse-chapter for chapter <book.chapter> from "<source-path>".
 
 Do not require the Captain to repeat blind-extraction, evidence, validation,
 comparison, approval, or no-write instructions. Treat every invocation as review-only
-(contract §Scope and authority). Before reading source text, complete Checklist A.
+(contract §Scope and authority). Before any model reads source text, complete Checklist A.
 
 ## Conforming profile and spawning
 
@@ -40,7 +40,9 @@ read canonical narrative data yet. Create the run workspace and record the initi
 Run Pass 1 and Pass 2 in separately spawned Codex agents. For both passes, explicitly
 set `model: gpt-5.6-terra`, `reasoning_effort: high`, and `fork_turns: none`. Never
 inherit the model, reasoning level, or conversation turns from the orchestrator. A
-pass is invalid if it runs with inherited configuration.
+pass is invalid if it runs with inherited configuration. `profile.json` beside this
+file is a derived record of this profile for `scripts/extraction_preflight.py`; these
+sentences stay the source of truth.
 
 Pass 1 must therefore run in a fresh isolated Codex context. Never use the
 orchestrating conversation for blind extraction, even if it appears not to have read

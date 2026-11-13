@@ -1,6 +1,6 @@
 # BOB-20261113-BR7HZS: versioned execution profiles and automated extraction preflight
 
-Status: Ready
+Status: In progress
 Phase: 4 (LLM-assisted editorial pipeline; process hardening before Chapter 1.43)
 Last updated: 2026-11-13
 
@@ -414,3 +414,39 @@ reports are written outside the repository and never committed.
   - N11: K8's exact-plan code span is on its own line, keeping its indent.
 - The task-doc re-review approved `7c9c3da`. Status Ready; the manager authorised
   implementation under its delegation (Q6).
+- Implemented on this branch (status In progress; Done only after merge):
+  - `.codex/skills/extract-bobiverse-chapter/profile.json`: schema version 1,
+    decision BOB-028, the Codex launcher, `model`, `reasoning_effort`,
+    `fork_turns`, separate spawns and no inheritance; no alternative profile.
+  - `scripts/extraction_preflight.py`: `--help`, items 1–8, JSON report on stdout
+    or `--report` (outside the repository), summary on stderr; exit 0 pass, 1 any
+    failed item, 2 usage error. No skip flag. Items 7 and 8 fail closed for a
+    zero-state target, a missing predecessor and a book boundary.
+  - Docs: the Q5 wording in the Checklist A heading, the adapter's quick-start
+    sentence and §Prerequisite check, plus pointers to the command and the record.
+  - Tests: `tests/unit/extraction-preflight.test.ts` (33 tests) in `npm run test`,
+    next to the existing helper tests, plus the `--help` case in
+    `tests/unit/script-help.test.ts`. Synthetic fixtures only: fake `codex`, `node`,
+    `tsx` and `.venv/bin/python` stand-ins, temporary git repositories, no network
+    and no book text.
+- Implementation choices within the approved scope:
+  - The approval file is JSON with the string fields `chapter`, `date`
+    (YYYY-MM-DD), `label` (`NON-CONFORMING`), `provider`, `model`, `workflow`,
+    `captain_approval_quote` and `relaying_role`. When it is passed, item 1 is
+    judged on it alone, and the launcher result is reported for information.
+  - The repository is the git top level of the working directory, so no extra
+    argument is needed. The helper and the profile record are the ones beside the
+    script.
+  - Item 6 runs the command behind `npm run narrative:validate`:
+    `node_modules/.bin/tsx scripts/narrative-cli.ts validate`. Item 8 runs it with
+    `--root`, and the command behind `npm run data:validate`:
+    `.venv/bin/python scripts/validate_data.py --narrative-root`. Calling them
+    directly lets fixtures substitute stand-ins and keeps a fake `node` from
+    breaking `npm`.
+  - The Python file follows the existing scripts' Black style; the repository has
+    no Python formatter or linter.
+- Validation: `tasks check` (63 task files), `format:check`, `lint`, `typecheck`,
+  `test` (30 files, 281 tests), `data:test` (85 tests), `data:validate` (277
+  systems), `build`, `extraction_preflight.py --help` and `git diff --check` all
+  pass. No e2e: no application code or test config changed. Links in the changed
+  docs were checked by hand.
