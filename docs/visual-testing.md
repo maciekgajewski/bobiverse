@@ -27,7 +27,8 @@ display. On a headless host, use `npm run test:e2e`, or run
 ## GitHub Actions CI
 
 The `CI` workflow in `.github/workflows/ci.yml` runs on pull requests, pushes to
-`master`, and manual dispatch. All four jobs must be green before merge: Repository
+`master`, and manual dispatch. All four jobs must be green on the reviewed head SHA
+before merge ([`development-process.md`](development-process.md)): Repository
 checks and one Playwright job each for Chromium, Firefox, and WebKit. Superseded
 runs for the same pull request are cancelled. Standard `ubuntu-latest` runners are
 free for this public repository; there are no deployment steps or secrets, only

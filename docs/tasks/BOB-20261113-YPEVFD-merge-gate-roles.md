@@ -1,6 +1,6 @@
 # BOB-20261113-YPEVFD: merge gate and roles in AGENTS.md
 
-Status: In progress
+Status: Done
 Phase: Cross-cutting (development process and governance)
 Last updated: 2026-11-13
 
@@ -391,3 +391,11 @@ artifacts.
 
   All passed. No e2e was run, since the change is docs only. Nothing was pushed.
   Status stays In progress until merge.
+
+### 2026-11-13 (Europe/Amsterdam; merge)
+
+- Publication correction: the "Nothing was pushed" line above was true when written,
+  but the implementation commit `0ed136f` was then pushed. CI run 43398318656 was
+  green on it, and it was approved and merged.
+- PR #8 was squash-merged to master as `f89c9c4` on Friday 2026-11-13. Status is now
+  **Done**, recorded after that merge.
