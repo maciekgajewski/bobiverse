@@ -191,5 +191,21 @@ Manual: the Captain's visual acceptance on a phone and on desktop after deployme
   PR #20) passed in every browser.
 - The e2e run rewrites `../design/artifacts/icon-asset-specimen-chromium.png`; that
   change was discarded.
+- PR #21 review fixes (after head `2f22b67`):
+  - WebKit CI failed the system-mode dolly e2e test with "Operation did not complete
+    within 4s of frames". Root cause is a test-harness race, not this chrome:
+    `withAnimationFrames` pumped the paused clock while `page.waitForFunction` polled on the browser's real animation
+    frames, so a slow WebKit renderer could miss the transient
+    `cameraTransitionActive` state or spend the frame budget while a click or resize
+    was still in flight. On WebKit pinned to 2 CPUs, master `ed5fc0f` and `2f22b67`
+    both failed 4/4 with the CI error. The test now completes each action first,
+    then steps the clock one 16ms frame at a time and checks the map bridge after
+    each frame (`advanceFramesUntil`): same 250-frame budget, same assertions.
+  - The collapsed credits chip shows "NASA/GSFC SVS · ESA/Gaia/DPAC"
+    (`GALACTIC_STARFIELD_SHORT_CREDIT`). `aria-controls` is set only while the card
+    is mounted. Menu Knowledge through also shows in Date mode. A backdrop click
+    closes Browse, Timeline and Inspect as well as the menu. Stale "attribution
+    footer" wording updated, with a note on BOB-005 acceptance criterion 8.
+  - Merged origin/master (`a7017da`) as merge commits; no rebase.
 - Remains In progress until the Captain's visual acceptance on a phone and desktop
   after deployment.
