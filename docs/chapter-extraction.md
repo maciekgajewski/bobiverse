@@ -101,11 +101,20 @@ approves that provider, model, and workflow for the run. Such a run:
 - never claims a setting that the runtime cannot show, such as a reasoning level;
 - still needs separate exact-candidate approval before promotion.
 
-**Open Captain decision D1:** whether an alternative approval may be standing rather
-than per run, and which providers and models qualify. Until D1 is decided, the
-current rule applies: every substitution needs the Captain's explicit approval of the
-provider, model, and workflow (§No silent substitution). The 2026-11-09 approval
-named only the Chapter `1.42` verification.
+**Captain decision D1 (decided 2026-11-13):** a standing approval. The Bobiverse
+Extractor may extract with its own model; each such run is still NON-CONFORMING and
+follows every rule above. Recorded per [§Relayed approvals](development-process.md#relayed-approvals):
+
+- Date: 2026-11-13. Role: the Captain, relayed by the manager (Piotr Developer
+  Manager).
+- The manager proposed a standing OK for the Bobiverse Extractor to extract with its
+  own model so that work could start that day. Maciej replied: "Yea, go ahead".
+- The same day he also said: "It's ok to read the text as many time as required, as
+  long as it stays on the box. Accuracy of extraction is the primary goal. I see no
+  reason for checksum checks, we don't need this level of formality. We need
+  lightweight agile process and should get moving."
+
+The 2026-11-09 approval named only the Chapter `1.42` verification.
 
 ## Context isolation
 
@@ -604,11 +613,14 @@ the candidate is approved for quality.
 - Standard formatting at promotion may change whitespace only, and the canonical JSON
   must remain value-identical. When formatting changes bytes, record both the
   approved and canonical SHA-256.
-- Commit each approved run's outputs (candidate, review notes, validation results,
-  approval reference, base revision; never book text) to the local no-remote
-  repository `~/bobiverse-approved-chapters` and tag it `chapter-<ref>-approved`.
-  This interim manual step stands until the recoverable-promotion task automates
-  it.
+- After approval, the Extractor records the run's allowlisted outputs (candidate,
+  validation results, approval reference; never book text or free-form review
+  notes) in the local no-remote repository `~/bobiverse-approved-chapters` with
+  `scripts/chapter_promotion.py record`, which tags it `chapter-<ref>-approved`.
+  The developer then runs `scripts/chapter_promotion.py promote`. It reruns the
+  offline validators, writes canonically, appends the log row and runs
+  §Post-write validation, restoring everything on failure. Isolated acquisition
+  (§Promotion step 3) stays manual. `verify` checks tagged chapters.
 - The promotion-log decision cell records the approved-candidate SHA-256 when it
   differs from the canonical one, the approved-chapters commit and tag, and any
   NON-CONFORMING label. Historical rows are never rewritten.
