@@ -1,6 +1,6 @@
 # BOB-20261113-WZGAM4: chapter view uses the last chapter read for competing writes
 
-Status: In progress
+Status: Done
 Phase: 4 (LLM-assisted editorial pipeline)
 Last updated: 2026-11-13
 
@@ -114,3 +114,5 @@ changed Markdown, `git diff --check`.
   writes from one chapter (`compareWriteMoments` is exported for it); the ADR-0028
   "Story time" bullet is re-wrapped; the D2 pointer to BOB-20261112-1TWD9T now says
   it records the options considered.
+- PR #23 was squash-merged to master as `c5a66df` on Friday 2026-11-13. Status is now
+  **Done**, recorded after that merge (in the chapters 1.54–1.58 promotion PR).

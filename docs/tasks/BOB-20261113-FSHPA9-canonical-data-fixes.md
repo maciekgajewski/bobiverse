@@ -1,6 +1,6 @@
 # BOB-20261113-FSHPA9: canonical data fixes for chapters 1.22, 1.42 and 1.51
 
-Status: In progress
+Status: Done
 Phase: 4 (LLM-assisted editorial pipeline)
 Last updated: 2026-11-13
 
@@ -12,8 +12,8 @@ state over a newer one. The fixes are bounded editorial remediation of approved
 chapters, so they need this task and the Captain's approval of the exact change
 (`../chapter-extraction.md` §Scope and authority, items 2–3; precedent: BOB-019).
 
-**Awaiting Captain approval of the exact change.** The PR is do-not-merge until his
-approval of the exact before and after values is recorded on it.
+**Approved:** the Captain approved the exact change on PR #24 (see §Log); it was
+recorded on the PR before merge.
 
 ## User-visible outcome
 
@@ -121,3 +121,7 @@ Plus e2e chromium on a throwaway, uncommitted config on port 5186.
 
 - 2026-11-13: implemented on a branch from master `916470ba6cb7`; awaiting the
   Captain's approval of the exact change.
+- The Captain approved the exact change on PR #24: "Approve PR 24 exactly as shown"
+  (2026-11-13 21:22 CET, recorded on the PR by the manager).
+- PR #24 was squash-merged to master as `90dab38` on Friday 2026-11-13. Status is now
+  **Done**, recorded after that merge (in the chapters 1.54–1.58 promotion PR).
