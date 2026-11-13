@@ -1,8 +1,8 @@
 # BOB-20261110-845KTJ: clarify astronomy staging context failures
 
-Status: In progress
+Status: Done
 Phase: 2 (narrative and astronomy integration)
-Last updated: 2026-11-12
+Last updated: 2026-11-13
 
 ## Objective and user-visible outcome
 
@@ -86,8 +86,9 @@ this task. No generated or pinned artifacts should change. Draft PR body lives a
 
 The unrefreshed pairing is expected to fail: an existing anchor row is not a coverage
 proof. Avoid classifying arbitrary plan tampering as routine refresh advice. The
-base is master 63bbd98, not the PR #4 worktree; inherited browser flakes may fail a
-zero-retry run and must be reported, not fixed by expanding this task.
+branch started on master 63bbd98 and was rebased onto master 3053e95 (PR #4) before
+publication; the 2026-11-12 log records a 93/93 e2e run with zero retries there, so
+no inherited flake remained. The task merged as 34f2a71.
 
 ## Log
 
@@ -180,3 +181,8 @@ zero-retry run and must be reported, not fixed by expanding this task.
   icon-specimen test rewrote the tracked PNG; the generated copy was saved
   outside Git and the reviewed artifact was restored. Port 5173 was not used.
   Status remains In progress until merge.
+
+### 2026-11-13 (Europe/Amsterdam)
+
+- PR #5 was squash-merged to master as `34f2a71` on Friday 2026-11-13. Status is now
+  **Done**, recorded after that merge.
