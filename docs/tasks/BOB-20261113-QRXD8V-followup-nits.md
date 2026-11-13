@@ -1,6 +1,6 @@
 # BOB-20261113-QRXD8V: follow-up nits from PRs #7–#8
 
-Status: In progress
+Status: Done
 Phase: 1 (verification infrastructure and process hygiene)
 Last updated: 2026-11-13
 
@@ -79,3 +79,8 @@ No e2e run is required: no application code or test configuration changes.
   - `git diff --check`.
 
   All passed. No e2e was run.
+
+### 2026-11-13 (Europe/Amsterdam; merge)
+
+- PR #9 was squash-merged to master as `9312a6f` on Friday 2026-11-13. Status is now
+  **Done**, recorded after that merge.
