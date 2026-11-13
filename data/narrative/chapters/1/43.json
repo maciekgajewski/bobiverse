@@ -1,0 +1,70 @@
+{
+  "chapter": "1.43",
+  "title": "43",
+  "summary": "Riker inspects the two half-built colony ships by drone and finds construction running smoothly, with a third ship due four months after the first two. Homer's crew, bootstrapped with borrowed printers, is lifting refined metal from Earth faster than expected, but 3D printing has only moved the bottleneck, forcing a trade-off between hauling drones, colony ships, and more printers, while evacuation negotiations continue and Earth's climate worsens. When Homer and Charles take a break from outer-system patrols, Riker, Homer, Charles, and Arthur hold a rare all-Bobs meeting on keeping Earth's fifteen million survivors alive. Proposals including triage with relocation toward the equator, space mirrors, space stations, and moon colonies all founder on missing infrastructure, engineering limits, or delays to ship-building. The Bobs conclude that they can only press on, knowing that even the current plan probably cannot save everyone.",
+  "date": "2164-09",
+  "location_id": "location:sol",
+  "appearances": [
+    {
+      "character_id": "character:riker",
+      "role": "lead",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:homer",
+      "role": "other",
+      "location_id": "location:earth"
+    },
+    {
+      "character_id": "character:charles",
+      "role": "other",
+      "location_id": "location:earth"
+    },
+    {
+      "character_id": "character:arthur",
+      "role": "other",
+      "location_id": "location:sol"
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:riker",
+      "current_state": "At Sol, overseeing colony-ship construction while evacuation negotiations continue. He and the other Bobs have found no way to improve the survivors' prospects on Earth without delaying ship-building."
+    },
+    {
+      "entity_id": "character:homer",
+      "current_state": "Leading a supply crew that scours the system for resources and lifts refined metal from Earth for ship construction, with better results than expected. He is on a break in Earth orbit from outer-system patrols with Charles."
+    },
+    {
+      "entity_id": "character:charles",
+      "current_state": "On a break in Earth orbit from outer-system patrols with Homer."
+    },
+    {
+      "entity_id": "location:earth",
+      "state": "About fifteen million survivors remain, and the climate continues to deteriorate, possibly at an accelerating rate, making starvation a real risk. Radioactivity is spreading and ecosystems are damaged or destroyed; most equatorial locations, though some are now more temperate, lack the infrastructure, power, and water to support relocated people. Considerable refined metal remains despite the war and later bombardment."
+    },
+    {
+      "entity_id": "vessel:use-colony-ship",
+      "description": "A USE colony-ship design created by refugee scientists as an off-world refuge. Its plans require a space-based construction yard and a viable destination. It can carry ten thousand people at a time in stasis pods. Each ship has two drive rings and a massive reactor cooling section to move its huge central cargo section, and shielding for the stasis cargo makes up a significant share of its mass. Riker likens its appearance to an unarmed science-fiction warship.",
+      "current_state": "Two ships are half-built, one farther along because a concession to the Spitsbergen refuge shifted some manufacturing capacity, and work is being balanced so both finish together; a third ship is due four months later. Construction is proceeding without current issues, with printers and supply crews keeping pace and construction running around the clock."
+    },
+    {
+      "entity_id": "organization:united-nations",
+      "current_state": "The shouting that marked its recent sessions has subsided."
+    },
+    {
+      "entity_id": "technology:ami",
+      "description": "Artificial Machine Intelligence (AMI) is an artificial intelligence created directly as a machine mind rather than copied from a biological mind. It can pilot a vessel. Manufacturing AMIs can carry out construction work on their own, avoiding labor issues."
+    },
+    {
+      "entity_id": "technology:3d-printers",
+      "description": "Manufacturing equipment that gives Bob virtually unlimited flexibility for building things. The technology has become increasingly common but remains in its infancy; companies have demonstrated arranging individual atoms on a substrate. It can build more printers, robotic workers, miners, and Von Neumann machines. Some observers regard it as an early step toward practical self-assembling manufacturing systems. It does not eliminate scarcity but moves the bottleneck: capacity spent printing more printers, or drones to haul raw materials, is capacity not spent on end products such as colony ships."
+    }
+  ],
+  "mentions": [
+    "character:george-butterworth",
+    "organization:spitsbergen-refuge",
+    "event:solar-system-war",
+    "technology:roamers"
+  ]
+}
