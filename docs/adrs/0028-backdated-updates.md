@@ -22,9 +22,9 @@ fact appeared only from the reveal chapter's date and not from the real date.
 - Reader order alone decides reveal: an update is never visible to a knowledge
   chapter earlier than its own chapter.
 - Story time is `effective_date ?? chapter date`. It drives Date-mode eligibility,
-  state-write ordering (ADR-0013 moments, with the source chapter as before) and
-  update activity, so the date joins the meaningful-date options only once the
-  update is revealed.
+  Date-mode state-write ordering (ADR-0013 moments, with the source chapter as
+  before) and update activity, so the date joins the meaningful-date options only
+  once the update is revealed.
 - The reveal chapter's date is never a filter for such an update; it is only the
   default effective date.
 - Events keep their own `date`. Location updates and introductions are unchanged:
@@ -36,32 +36,49 @@ fact appeared only from the reveal chapter's date and not from the real date.
   introductions, events, activity, last-known locations, travel history and the
   map. Chapter view is an explicit projection mode (no requested date); it is not
   a Date-mode request at the chapter's date.
-- Date view keeps cutting at the requested date by
-  `effective_date ?? chapter date`, among revealed chapters only. Its date options come only from revealed
-  chapters, never from the whole book.
+- Date view keeps cutting at the requested date by `effective_date ?? chapter date`,
+  among revealed chapters only. Its date options come only from revealed chapters,
+  never from the whole book.
 - Nothing from a chapter after N is visible at read-through N, in any view, even
   when it is dated earlier than chapters already read.
 - An `effective_date` must not be earlier than the date of the chapter that
   introduced the entity.
-- Competing writes to one property keep story-date order, then chapter (Maciej,
-  Q1, 2026-11-13 19:12 CET: "Q1: story date wins, but extractor merges texts in
-  the next write"). When a later-read chapter adds facts to a field, the Extractor
-  merges the field's earlier text into that write at extraction time, so the
-  story-date winner already carries everything known. The projection does not
-  merge text.
+- Competing writes to one property are ordered by view (Maciej, decision (c),
+  2026-11-13 19:59 CET, relayed by the manager: "Gap: (c) chapter view uses last
+  chapter read, date view keeps story date"):
+  - Chapter view: the write from the latest-read chapter wins, that is the highest
+    revealed chapter in reading order, whatever its story date. Writes within one
+    chapter keep story-date order.
+  - Date view: story-date order (`effective_date ?? chapter date`), then chapter,
+    as before.
+
+  This replaces the earlier Q1 answer for chapter view (Maciej, 2026-11-13 19:12
+  CET: "Q1: story date wins, but extractor merges texts in the next write"), which
+  still describes Date view. The same order applies to every entity field,
+  including locations, so the map and inspectors agree. Last-known locations and
+  travel history are derived from appearances, not field writes, and keep their
+  story-date order.
+
+- A later-read write carries the full merged text (Maciej, 2026-11-13 20:01 CET,
+  relayed by the manager: "Merge: (a) keep full merged texts"). When a later-read
+  chapter writes a field, the Extractor merges the field's prior reviewed text into
+  that write at extraction time, so the chapter-view winner carries everything
+  known. The projection does not merge text.
 
 ## Consequences
 
-- With Q3 = b, story-date order also decides chapter view: an earlier-dated write
-  read later is shadowed there by a later-dated write read earlier. For example,
-  if 1.51 (2174-01) and then 1.52 (2168-01) both wrote one field, at read-through
-  1.52 the 2174-01 value from 1.51 would beat 1.52's own 2168-01 value, and 1.52's
-  value would show only in Date view from 2168-01 until 2174-01. That is why the
-  extraction-time merge matters.
-- Existing data already has such pairs: `character:riker` and `character:homer`
-  `current_state` at 1.22 (after 1.21), and `character:bill` `current_state` and
-  `technology:vr` `description` at 1.42 (after 1.41 and 1.40). Applying the merge
-  rule to them is a separate data follow-up.
+- Under decision (c), an earlier-dated write read later is no longer shadowed in
+  chapter view. For example, if 1.51 (2174-01) and then 1.52 (2168-01) both write
+  one field, chapter view at read-through 1.52 shows 1.52's value. Date view shows
+  1.52's value from 2168-01 and 1.51's from 2174-01.
+- Known, accepted limitation: because merged writes carry full texts, Date view may
+  show a fact early, before the story date it belongs to. In the example above, if
+  1.52's merged text includes a fact first established at 2174-01, Date view shows
+  that fact from 2168-01.
+- Existing data with such pairs changes in chapter view: `character:riker` and
+  `character:homer` `current_state` at 1.22 (after 1.21), `character:bill`
+  `current_state` at 1.42 (after 1.41) and `technology:vr` `description` at 1.42
+  (after 1.40). Any data correction is a separate change.
 - `effective_date` applies to the whole update object, because a chapter has at most
   one update per entity.
 
@@ -77,6 +94,6 @@ fact appeared only from the reveal chapter's date and not from the real date.
 
 - `docs/data-model-definition.md` and the schema record the field.
 - Extraction guidance for when to backdate, and the merge rule above, are the
-  Extractor's. `docs/chapter-extraction.md` is not changed here because its open
-  Captain decision D2 covers the same full-field update question.
-- Apply the merge rule to the existing 1.22 and 1.42 pairs in a separate change.
+  Extractor's. `docs/chapter-extraction.md` closes Captain decision D2 to match
+  decisions (c) and (a).
+- Review the existing 1.22 and 1.42 pairs in a separate change.
