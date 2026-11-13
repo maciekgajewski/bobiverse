@@ -1,0 +1,99 @@
+{
+  "chapter": "1.49",
+  "title": "49",
+  "summary": "A breach attempt on Riker's systems, exploiting a back door in the encryption of the original HEAVEN design, runs into Bob-1's firewall; Riker suspects the FAITH enclave, but Guppy traces the packets to New Zealand. Homer proposes unpopulated farming space stations growing gene-engineered kudzu, built with the printers that are producing Arthur's replacement and supplied with water and soil by the asteroid movers. Colonel Butterworth and most of the UN assembly react with outrage, but Riker argues that people will starve within six months to a year and that he will trade future colony ships for current lives, calling the stations kudzu gardens. Minister Cranston then offers FAITH's food surplus in exchange for the rest of ship three's allocation alongside the Spits, and admits that FAITH may have borrowed probe ideas from Australia, whose survivors largely fled to New Zealand after Brazil's bombardment. Charles and Homer agree, and the deal is struck.",
+  "date": "2166-05",
+  "location_id": "location:sol",
+  "introducing": [
+    {
+      "id": "technology:kudzu-gardens",
+      "name": "kudzu gardens",
+      "description": "Kudzu gardens are unpopulated farming space stations, proposed by Homer as a way to feed Earth's starving survivors. Because they house no people, they avoid the burdens of human habitation such as gravity, radiation shielding, micrometeor armor, and living quarters: they need only enough spin to establish up and down, an interior that is one large cavern under constant sunlight, and equipment to keep the air mix and temperatures in range. Their crop is a gene-engineered kudzu from a library entry, with improved nutritional content, a simplified growth environment, and human digestibility, chosen to produce calories as densely as possible; it needs strong sunlight, temperatures around 20 degrees Celsius, and a lot of water, and the best-matching cultivar can be chosen from the Svalbard vaults. Water must be trucked up or brought in as icebergs from Saturn by the asteroid movers, which can also supply regolith for soil, while fertilizer is needed only in small volumes. They can be built with Homer's printers from scavenged materials, which does not affect the colony-ship schedule but reduces the number of future colony ships."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:riker",
+      "current_state": "At Sol, defending a plan for unpopulated kudzu-farming space stations against outrage in the UN assembly while Homer's printers build Arthur's replacement. He has agreed to give FAITH's enclave the balance of ship three's allocation in exchange for its food surplus, and is monitoring a hack attempt traced to New Zealand."
+    },
+    {
+      "entity_id": "character:homer",
+      "current_state": "Proposing unpopulated farming space stations growing gene-engineered kudzu, to be built with his printers, which are currently building Arthur's replacement. He agrees to the FAITH deal."
+    },
+    {
+      "entity_id": "character:charles",
+      "current_state": "Has agreed to the FAITH proposal, noting that it also saves relatives of the Bobs."
+    },
+    {
+      "entity_id": "character:george-butterworth",
+      "current_state": "Upset by the plan to build farming space stations with printers and scavenged materials, since he regards any such equipment as capacity that could work on his colony ships."
+    },
+    {
+      "entity_id": "character:cranston",
+      "current_state": "Has offered FAITH's food surplus in exchange for the balance of ship three's allocation, a deal Riker accepts, and has admitted that FAITH's probe technology may have been partly borrowed from Australian research."
+    },
+    {
+      "entity_id": "character:julia-hendricks",
+      "current_state": "Has sent Riker a long message about family history, readily treating him as a relative."
+    },
+    {
+      "entity_id": "organization:free-american-independent-theocratic-hegemony",
+      "description": "The Free American Independent Theocratic Hegemony, a theocratic U.S. government that makes criticism a felony and permits the deactivation of machine persons for it. It restricts information by default; the domestic internet no longer exists, and genealogy records are unavailable to the public. It is divided into factions and power blocs, including factions that regard artificial intelligence and replicants as abominations or advocate abandoning technology from steam power onward. It finances the replicant project and owns Bob. It controls most of North America, while several internal factions oppose Project HEAVEN, the Habitable Earths Abiogenic Vessel Exploration Network, and seek to stop it. Security personnel believe internal factions leaked the project's progress to provoke competing nations into reacting. According to Minister Cranston, its probe technology may not have been entirely original research: one of its agents may have borrowed ideas from Australia's probe work.",
+      "current_state": "Its enclave, not the richest but holding some food surplus, has agreed to give up that surplus in exchange for the balance of ship three's allocation alongside the Spits."
+    },
+    {
+      "entity_id": "organization:united-nations",
+      "current_state": "Its assembly reacted with outrage to the plan for farming space stations, except for the groups facing starvation, and after Riker defended the plan its speaker was inundated with requests to speak."
+    },
+    {
+      "entity_id": "organization:australia",
+      "description": "A suspected participant in the international interstellar-probe race, referred to as Australia. Dr. Landers's organization suspects it of operating a probe project. Also called the Australian Federation, it was working on the probe concept that FAITH's agents may have partly borrowed, so Minister Cranston considers it likely to have good insight into Riker's original design.",
+      "current_state": "Most of its survivors likely ended up in New Zealand after Brazil's bombardment, and Minister Cranston implies that they are the source of the hack attempt on Riker's systems."
+    },
+    {
+      "entity_id": "organization:svalbard-global-trust",
+      "description": "The Svalbard Global Trust is an organization associated with vaults that prospective colonists regard as valuable. Its vaults hold plant cultivars, including kudzu cultivars suited to different growing environments.",
+      "current_state": "Riker's team now has access to its vaults."
+    },
+    {
+      "entity_id": "technology:guppi-interface",
+      "description": "An interface that offloads tasks for replicants while retaining their human limits on multitasking. Its name expands to General Unit Primary Peripheral Interface, and its logs retain monitoring-interface and script activity. Its operating system is firmware; changing its replication priority would require a new core and ship. Version-2 GUPPI is being given enough memory capacity that a personality matrix is contemplated. It can take messages and arrange callbacks for Riker, acting as a secretary and receptionist. It can estimate buster-drone deployment time and launch buster drones on Bob's order. It can report blocked firewall breach attempts, display a stack trace of an attack, and trace injected packets back to their originating stream."
+    },
+    {
+      "entity_id": "vessel:heaven-1",
+      "description": "A converted interplanetary freighter equipped as a Von Neumann probe. It is a small, light, resilient design intended to build copies of itself. It has a SURGE drive ring, fusion reactor, ramscoop generator, fabrication equipment including three large 3D printers, communications and sensor systems, and ROAMer and nanite systems; its autonomous cargo carriers move miners and materials; it has no weapons and little spare room. The version-2 HEAVEN design adds a larger reactor and drive, a rail-gun, ship-buster storage and launch facilities, higher-capacity replicant systems, room for ROAMers and mining drones, and greater cargo capacity. The HEAVEN project's communications are designed to send information from its vessels to Earth, not to support conversations across interstellar light-time delays. Version-2 HEAVEN vessels have better reactor shielding, and Riker's and Homer's versions are further strengthened. HEAVEN vessels are not designed to land or enter an atmosphere. The original HEAVEN vessels had no firewalling and relied on encrypting all communications, but their encryption routines appear to contain a back door; Bob-1's firewall blocks packets injected through it."
+    },
+    {
+      "entity_id": "vessel:use-colony-ship",
+      "current_state": "Construction continues on schedule, with the Spitsbergen refuge assigned to ship three and FAITH's enclave to receive the balance of that ship's allocation. Diverting scavenged materials to farming space stations will reduce the number of future colony ships without affecting the current schedule."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:riker",
+      "role": "lead",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:homer",
+      "role": "other"
+    },
+    {
+      "character_id": "character:george-butterworth",
+      "role": "other"
+    },
+    {
+      "character_id": "character:cranston",
+      "role": "other"
+    }
+  ],
+  "mentions": [
+    "character:arthur",
+    "character:bob-replicant",
+    "location:saturn",
+    "organization:brazilian-empire",
+    "organization:spitsbergen-refuge",
+    "technology:3d-printers",
+    "technology:vr"
+  ]
+}

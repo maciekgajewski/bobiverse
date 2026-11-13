@@ -1,0 +1,65 @@
+{
+  "chapter": "1.47",
+  "title": "47",
+  "summary": "Riker spends three fruitless hours negotiating with Colonel Butterworth for food aid to survivor groups whose supplies were destroyed by VEHEMENT attacks, leaving them out of food with half the winter still to go. The USE encampment, the FAITH enclave, and the Spits hold the richest reserves but refuse to share, and the Spits' own surpluses are dwindling. Homer warns that the climate is not improving and wonders whether space stations could help if approached differently, until drone telemetry shows that Arthur has been killed by a booby-trapped nuclear detonation while working on wreckage near Saturn. Arthur kept no backup off his ship, and Riker regrets never building backup storage into the Sol space station. After mourning, Riker has Homer's drones recover what they can, decides that a fourth Bob and a backup storage matrix are needed, and accepts Homer's suggestion to use the printers from his Earth-scavenging operations instead of reworking the schedule with the colonel. He sends Bill an In Memoriam entry about Arthur for the archives and plans a wake for when Charles is back in Earth orbit.",
+  "date": "2166-01",
+  "location_id": "location:sol",
+  "updates": [
+    {
+      "entity_id": "character:arthur",
+      "current_state": "Killed by a booby-trapped nuclear detonation while working on wreckage near Saturn, with no backup stored off his ship.",
+      "death_date": "2166-01"
+    },
+    {
+      "entity_id": "character:riker",
+      "current_state": "At Sol, mourning Arthur after failing to win food aid for starving survivor groups. He plans to make a fourth Bob with the printers from Homer's Earth-scavenging operations and to build backup storage."
+    },
+    {
+      "entity_id": "character:homer",
+      "current_state": "Running Earth-scavenging operations whose printers he has offered for making a fourth Bob without reworking the schedule. After reporting Arthur's death from drone telemetry, he is having the drones recover what they can."
+    },
+    {
+      "entity_id": "character:charles",
+      "current_state": "Away from Earth orbit; a wake for Arthur is planned for his return."
+    },
+    {
+      "entity_id": "character:george-butterworth",
+      "current_state": "Locked in a combative, fruitless negotiation with Riker over food aid for survivor groups left without food by VEHEMENT attacks."
+    },
+    {
+      "entity_id": "organization:vehement",
+      "description": "VEHEMENT is an anonymous movement that advocates human extinction. It threatens violence and guerrilla tactics to coerce people into ending reproduction, with reported incidents appearing opportunistic and geographically dispersed. It has also attacked food production and supply facilities, most often as token gestures that amount to statements.",
+      "current_state": "Its latest three attacks destroyed food supplies that the targeted survivor groups could not spare, leaving them out of food or nearly so with half the winter remaining."
+    },
+    {
+      "entity_id": "organization:spitsbergen-refuge",
+      "current_state": "One of the survivor groups with the richest food reserves, it refuses to share them and is stretching its resources as far as it can. Its annual surpluses are shrinking fast, and Riker expects it to become a have-not within a few years."
+    },
+    {
+      "entity_id": "location:earth",
+      "state": "About fifteen million survivors remain, and the climate continues to deteriorate, possibly at an accelerating rate, making starvation a real risk; many survivor groups live on reserves rather than producing enough food. Radioactivity is spreading and ecosystems are damaged or destroyed; most equatorial locations, though some are now more temperate, lack the infrastructure, power, and water to support relocated people, and farms there would last perhaps twenty years, while existing farming infrastructure lies in the formerly temperate zones. Considerable refined metal remains despite the war and later bombardment."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:riker",
+      "role": "lead",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:george-butterworth",
+      "role": "other"
+    },
+    {
+      "character_id": "character:homer",
+      "role": "other"
+    }
+  ],
+  "mentions": [
+    "character:bill",
+    "location:saturn",
+    "organization:free-american-independent-theocratic-hegemony",
+    "organization:united-states-of-eurasia",
+    "technology:3d-printers"
+  ]
+}

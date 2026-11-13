@@ -1,6 +1,6 @@
 # BOB-20261113-YRMT4T: review nits from PRs #16 and #17 and chapter promotion
 
-Status: In progress
+Status: Done
 Phase: 4 (LLM-assisted editorial pipeline; process hardening)
 Last updated: 2026-11-13
 
@@ -96,3 +96,6 @@ git diff --check
   - `git diff --check`.
 
   All passed.
+
+- PR #18 was squash-merged to master as `baa4578` on Friday 2026-11-13. Status is now
+  **Done**, recorded after that merge (in the chapters 1.44–1.50 promotion PR).
