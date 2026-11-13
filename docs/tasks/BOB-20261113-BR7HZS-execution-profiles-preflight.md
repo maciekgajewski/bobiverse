@@ -450,3 +450,16 @@ reports are written outside the repository and never committed.
   systems), `build`, `extraction_preflight.py --help` and `git diff --check` all
   pass. No e2e: no application code or test config changed. Links in the changed
   docs were checked by hand.
+- Synthetic run on this repository, after the implementation commit, with a clean
+  worktree: a synthetic `/tmp` source file (no book text), a temporary
+  approved-chapters repository and a synthetic NON-CONFORMING approval file, since
+  piotr has no `codex`. All temporary files were deleted afterwards.
+  - `1.43`: PASS, exit 0. The prior root had 42 chapters, and both validators passed
+    (277 systems).
+  - `1.40`: FAIL, exit 1. Only item 8 failed: `data:validate` reported
+    `GCNS acquisition queries differ from the exact plan`, classed as an astronomy
+    baseline failure, which matches K8.
+  - `1.1`: FAIL, exit 1. Items 7–8 failed with "cannot certify a zero-state prior
+    chain".
+  - Follow-up: the human summary now names the item 8 failure class; the
+    uncovered-anchor test asserts it.

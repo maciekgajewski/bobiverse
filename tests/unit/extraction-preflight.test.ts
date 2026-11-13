@@ -627,6 +627,7 @@ describe("extraction preflight", () => {
         failure_classes: ["uncovered-anchor"],
         see: "§Astronomy preflight and isolated acquisition",
       });
+      expect(result.stderr).toContain("8. Validators: fail (uncovered-anchor)");
     });
 
     it("reports any other astronomy failure as a baseline failure", () => {

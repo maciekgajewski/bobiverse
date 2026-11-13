@@ -512,6 +512,7 @@ def summary(report: dict[str, Any]) -> str:
     for entry in report["items"]:
         detail = entry["evidence"].get("problem") or "; ".join(
             entry["evidence"].get("problems", [])
+            or entry["evidence"].get("failure_classes", [])
         )
         lines.append(
             f"  {entry['item']}. {entry['name']}: {entry['result']}"
