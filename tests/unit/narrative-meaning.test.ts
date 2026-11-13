@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
@@ -14,8 +15,11 @@ import { narrativeCorpus } from "../../src/narrative/runtime";
 // Meaning-level expectations: facts about the projected canonical world, written
 // only as IDs, chapter refs and enum values (never book text). See
 // docs/tasks/BOB-20261113-97Z771-meaning-regression-tests.md.
+// A text field is pinned as `sha256:` plus the first 16 hex characters of the
+// SHA-256 of its projected UTF-8 string, so the fixture holds no text; `unset`
+// pins a field that must be absent (undefined or null).
 
-const kinds = ["location", "visible", "not_visible", "field"] as const;
+const kinds = ["location", "visible", "not_visible", "field", "unset"] as const;
 type Kind = (typeof kinds)[number];
 
 interface Expectation {
@@ -34,6 +38,11 @@ const FIELD = /^[a-z_]{1,32}$/;
 // A short label naming where the fact was confirmed; no quotes or prose.
 const BASIS = /^[A-Za-z0-9 .:()-]{1,48}$/;
 const KEYS = ["chapter", "kind", "subject", "field", "expected", "basis"];
+const HASHED = /^sha256:[0-9a-f]{16}$/;
+
+function shortHash(text: string): string {
+  return `sha256:${createHash("sha256").update(text, "utf8").digest("hex").slice(0, 16)}`;
+}
 
 /** Return the problems with raw fixture entries; empty when every entry is valid. */
 function entryProblems(raw: unknown): string[] {
@@ -63,8 +72,11 @@ function entryProblems(raw: unknown): string[] {
     check("subject", ID, true);
     check("basis", BASIS, true);
     check("expected", VALUE, kind === "location" || kind === "field");
-    check("field", FIELD, kind === "field");
-    if ((kind === "visible" || kind === "not_visible") && "expected" in record)
+    check("field", FIELD, kind === "field" || kind === "unset");
+    if (
+      (kind === "visible" || kind === "not_visible" || kind === "unset") &&
+      "expected" in record
+    )
       problems.push(`${at}: ${kind} takes no expected value`);
   });
   return problems;
@@ -101,6 +113,17 @@ function evaluate(entry: Expectation, worldAt: WorldAt): string | null {
     entry.kind === "location"
       ? entity.last_known_location?.location_id
       : (entity as unknown as Record<string, unknown>)[entry.field ?? ""];
+  if (entry.kind === "unset")
+    return actual === undefined || actual === null
+      ? null
+      : `${label}: expected ${entry.field} unset, but it is set`;
+  if (entry.expected !== undefined && HASHED.test(entry.expected)) {
+    // Report only the hash, never the projected text.
+    const got = typeof actual === "string" ? shortHash(actual) : typeof actual;
+    return got === entry.expected
+      ? null
+      : `${label}: expected ${entry.expected}, got ${got}`;
+  }
   return actual === entry.expected
     ? null
     : `${label}: expected ${entry.expected}, got ${String(actual)}`;
@@ -247,6 +270,27 @@ describe("meaning-level checks catch breakage (synthetic entries)", () => {
       },
       "1.43 / field / character:homer: expected character:bill, got character:riker",
     ],
+    [
+      {
+        chapter: "1.43",
+        kind: "unset",
+        subject: "character:homer",
+        field: "parent_id",
+        basis: "synthetic",
+      },
+      "1.43 / unset / character:homer: expected parent_id unset, but it is set",
+    ],
+    [
+      {
+        chapter: "1.43",
+        kind: "field",
+        subject: "character:homer",
+        field: "parent_id",
+        expected: "sha256:0000000000000000",
+        basis: "synthetic",
+      },
+      `1.43 / field / character:homer: expected sha256:0000000000000000, got ${shortHash("character:riker")}`,
+    ],
   ];
 
   it.each(wrong)(
@@ -329,6 +373,17 @@ describe("meaning-level checks catch breakage (synthetic entries)", () => {
         note: "x",
       },
       "unknown key note",
+    ],
+    [
+      {
+        chapter: "1.43",
+        kind: "unset",
+        subject: "character:homer",
+        field: "parent_id",
+        expected: "x",
+        basis: "ok",
+      },
+      "unset takes no expected value",
     ],
     [
       {
