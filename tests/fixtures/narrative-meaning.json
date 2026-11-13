@@ -681,5 +681,260 @@
     "field": "current_state",
     "expected": "sha256:8d22b33c5f3ceab7",
     "basis": "Captain approval 2026-11-13 (1.50)"
+  },
+  {
+    "chapter": "1.49",
+    "kind": "field",
+    "subject": "technology:kudzu-gardens",
+    "field": "description",
+    "expected": "sha256:8a236b8ad3a43dc2",
+    "basis": "Captain approval 2026-11-13 (1.49)"
+  },
+  {
+    "chapter": "1.50",
+    "kind": "unset",
+    "subject": "character:milo",
+    "field": "death_date",
+    "basis": "Captain approval 2026-11-13 (1.50)"
+  },
+  {
+    "chapter": "1.50",
+    "kind": "field",
+    "subject": "technology:kudzu-gardens",
+    "field": "description",
+    "expected": "sha256:8a236b8ad3a43dc2",
+    "basis": "Captain approval 2026-11-13 (1.50)"
+  },
+  {
+    "chapter": "1.51",
+    "kind": "field",
+    "subject": "character:bill",
+    "field": "current_state",
+    "expected": "sha256:990e3e36eb3449f4",
+    "basis": "Captain approval 2026-11-13 (1.51)"
+  },
+  {
+    "chapter": "1.51",
+    "kind": "field",
+    "subject": "character:milo",
+    "field": "current_state",
+    "expected": "sha256:ea0b410d4525cc8b",
+    "basis": "Captain approval 2026-11-13 (1.51)"
+  },
+  {
+    "chapter": "1.51",
+    "kind": "field",
+    "subject": "character:milo",
+    "field": "death_date",
+    "expected": "2165-08",
+    "basis": "Captain approval 2026-11-13 (1.51)"
+  },
+  {
+    "chapter": "1.51",
+    "kind": "effective_date",
+    "subject": "character:milo",
+    "expected": "2165-08",
+    "basis": "Captain approval 2026-11-13 (1.51)"
+  },
+  {
+    "chapter": "1.51",
+    "kind": "field",
+    "subject": "location:82-eridani",
+    "field": "description",
+    "expected": "sha256:ac27d84970d17a3a",
+    "basis": "Captain approval 2026-11-13 (1.51)"
+  },
+  {
+    "chapter": "1.51",
+    "kind": "field",
+    "subject": "location:82-eridani",
+    "field": "state",
+    "expected": "sha256:e7127db6b78d94c5",
+    "basis": "Captain approval 2026-11-13 (1.51)"
+  },
+  {
+    "chapter": "1.51",
+    "kind": "field",
+    "subject": "location:82-eridani",
+    "field": "possible_colony_target",
+    "expected": "true",
+    "basis": "Captain approval 2026-11-13 (1.51)"
+  },
+  {
+    "chapter": "1.51",
+    "kind": "field",
+    "subject": "location:ee-2",
+    "field": "state",
+    "expected": "sha256:e585768ab8a4bc60",
+    "basis": "Captain approval 2026-11-13 (1.51)"
+  },
+  {
+    "chapter": "1.51",
+    "kind": "field",
+    "subject": "technology:guppi-interface",
+    "field": "description",
+    "expected": "sha256:bfd1a2695744f2b2",
+    "basis": "Captain approval 2026-11-13 (1.51)"
+  },
+  {
+    "chapter": "1.51",
+    "kind": "field",
+    "subject": "technology:kudzu-gardens",
+    "field": "description",
+    "expected": "sha256:8a236b8ad3a43dc2",
+    "basis": "Captain approval 2026-11-13 (1.51)"
+  },
+  {
+    "chapter": "1.51",
+    "kind": "no_write",
+    "subject": "technology:kudzu-gardens",
+    "field": "description",
+    "basis": "Captain approval 2026-11-13 (1.51)"
+  },
+  {
+    "chapter": "1.52",
+    "kind": "field",
+    "subject": "character:riker",
+    "field": "current_state",
+    "expected": "sha256:ed01a3c497f53d40",
+    "basis": "Captain approval 2026-11-13 (1.52)"
+  },
+  {
+    "chapter": "1.52",
+    "kind": "field",
+    "subject": "character:homer",
+    "field": "current_state",
+    "expected": "sha256:b5d760a509598269",
+    "basis": "Captain approval 2026-11-13 (1.52)"
+  },
+  {
+    "chapter": "1.52",
+    "kind": "field",
+    "subject": "organization:svalbard-global-trust",
+    "field": "description",
+    "expected": "sha256:732a3b0ccf8333ca",
+    "basis": "Captain approval 2026-11-13 (1.52)"
+  },
+  {
+    "chapter": "1.52",
+    "kind": "field",
+    "subject": "technology:kudzu-gardens",
+    "field": "description",
+    "expected": "sha256:f99ce4fd2db0e4c3",
+    "basis": "Captain approval 2026-11-13 (1.52)"
+  },
+  {
+    "chapter": "1.52",
+    "kind": "field",
+    "subject": "character:milo",
+    "field": "death_date",
+    "expected": "2165-08",
+    "basis": "Captain approval 2026-11-13 (1.52)"
+  },
+  {
+    "chapter": "1.52",
+    "kind": "not_visible",
+    "subject": "character:diana",
+    "basis": "Captain approval 2026-11-13 (1.52)"
+  },
+  {
+    "chapter": "1.53",
+    "kind": "visible",
+    "subject": "character:diana",
+    "basis": "Captain approval 2026-11-13 (1.53)"
+  },
+  {
+    "chapter": "1.53",
+    "kind": "field",
+    "subject": "character:diana",
+    "field": "name",
+    "expected": "sha256:b554d1a66d41abf7",
+    "basis": "Captain approval 2026-11-13 (1.53)"
+  },
+  {
+    "chapter": "1.53",
+    "kind": "field",
+    "subject": "character:diana",
+    "field": "species_id",
+    "expected": "species:delta-eridani-natives",
+    "basis": "Captain approval 2026-11-13 (1.53)"
+  },
+  {
+    "chapter": "1.53",
+    "kind": "field",
+    "subject": "character:diana",
+    "field": "current_state",
+    "expected": "sha256:f2be5dc0bf8268b3",
+    "basis": "Captain approval 2026-11-13 (1.53)"
+  },
+  {
+    "chapter": "1.53",
+    "kind": "field",
+    "subject": "character:bob-replicant",
+    "field": "current_state",
+    "expected": "sha256:6bd4ced312db5f8e",
+    "basis": "Captain approval 2026-11-13 (1.53)"
+  },
+  {
+    "chapter": "1.53",
+    "kind": "field",
+    "subject": "character:marvin",
+    "field": "current_state",
+    "expected": "sha256:65ca4f407995a216",
+    "basis": "Captain approval 2026-11-13 (1.53)"
+  },
+  {
+    "chapter": "1.53",
+    "kind": "field",
+    "subject": "character:archimedes",
+    "field": "current_state",
+    "expected": "sha256:d56a2a64c4f67f3c",
+    "basis": "Captain approval 2026-11-13 (1.53)"
+  },
+  {
+    "chapter": "1.53",
+    "kind": "field",
+    "subject": "species:delta-eridani-natives",
+    "field": "description",
+    "expected": "sha256:f42db2255fa9b1e5",
+    "basis": "Captain approval 2026-11-13 (1.53)"
+  },
+  {
+    "chapter": "1.53",
+    "kind": "field",
+    "subject": "location:delta-eridani-4",
+    "field": "description",
+    "expected": "sha256:63ad7a937a7b0da3",
+    "basis": "Captain approval 2026-11-13 (1.53)"
+  },
+  {
+    "chapter": "1.53",
+    "kind": "location",
+    "subject": "character:archimedes",
+    "expected": "location:delta-eridani-4",
+    "basis": "Captain approval 2026-11-13 (1.53)"
+  },
+  {
+    "chapter": "1.53",
+    "kind": "location",
+    "subject": "character:diana",
+    "expected": "location:delta-eridani-4",
+    "basis": "Captain approval 2026-11-13 (1.53)"
+  },
+  {
+    "chapter": "1.53",
+    "kind": "field",
+    "subject": "character:milo",
+    "field": "death_date",
+    "expected": "2165-08",
+    "basis": "Captain approval 2026-11-13 (1.53)"
+  },
+  {
+    "chapter": "1.53",
+    "kind": "field",
+    "subject": "technology:kudzu-gardens",
+    "field": "description",
+    "expected": "sha256:f99ce4fd2db0e4c3",
+    "basis": "Captain approval 2026-11-13 (1.53)"
   }
 ]
