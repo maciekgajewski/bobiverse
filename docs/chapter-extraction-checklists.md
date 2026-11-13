@@ -75,3 +75,6 @@ transaction: any failure restores the chapter and the log. Isolated acquisition
    (§Checksum provenance).
 5. Run the post-write validation (§Post-write validation); if it fails, restore the
    chapter and the log.
+6. Add meaning-level expectations to `tests/fixtures/narrative-meaning.json` for facts
+   worth guarding, especially ones an approval answer decided. Changing an existing
+   one is a disputed book fact and needs the Captain's recorded decision.

@@ -1,6 +1,6 @@
 # BOB-20261113-97Z771: meaning-level regression tests for the canonical narrative
 
-Status: Draft
+Status: Ready
 Phase: 4 (LLM-assisted editorial pipeline; process hardening)
 Last updated: 2026-11-13
 
@@ -57,8 +57,8 @@ expected X, got Y`. It runs in `npm run test`, so CI's Repository checks job
 
    About 10–20 entries in total, not a full backfill.
 
-5. **Docs**: one line in Checklist C. A promotion PR adds or updates expectations
-   for the facts the Captain's approval names. Changing an existing expectation
+5. **Docs**: one line in Checklist C. When promoting, add expectations for facts
+   worth guarding, especially ones an approval answer decided (Q2). Changing an existing expectation
    counts as a disputed book fact (a reserved decision), so the PR must cite the
    Captain's decision.
 
@@ -101,19 +101,15 @@ git diff --check
    `npx vitest run tests/unit/narrative-meaning.test.ts`. It fails and names the
    entry.
 
-## Open questions for the Captain
+## Decisions
 
-- **Q1. Who may add expectations?**
-  - (a) Only facts the Captain has confirmed (approval wording or a recorded
-    decision).
-  - (b) The developer may also pin facts read from canonical data at promotion
-    time, which the Captain reviews in the PR.
+Manager decisions under its delegation, 2026-11-13 15:50:
 
-  Proposed: (b). It is faster, and (a) would leave most chapters unpinned.
-
-- **Q2. Per-chapter minimum:** should every promotion add at least one
-  expectation, or only when the approval names a fact? Proposed: only when the
-  approval names a fact (light process).
+- **Q1 = (b).** The developer may pin facts read from canonical data; Maciej sees
+  them in the PR.
+- **Q2: no fixed rule.** When promoting a chapter, add an expectation whenever a
+  fact is worth guarding, especially one an approval answer decided (for example,
+  Homer and Charles at `location:earth` in 1.43).
 
 ## Log
 
@@ -124,3 +120,5 @@ git diff --check
   and Q2.
 - Worktree `~/src/bobiverse-item6` on
   `bob-20261113-97z771-meaning-regression-tests`, from origin/master `279b626`.
+- The manager approved the scope at 15:50 and decided Q1 and Q2 under its
+  delegation (above). Status Ready; the implementation follows in the same PR (#16).
