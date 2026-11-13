@@ -26,6 +26,10 @@ const scripts = [
     argumentsList: ["scripts/extraction_preflight.py", "--help"],
   },
   {
+    command: "./.venv/bin/python",
+    argumentsList: ["scripts/chapter_promotion.py", "--help"],
+  },
+  {
     command: "bash",
     argumentsList: ["scripts/convert_galactic_starfield.sh", "--help"],
   },

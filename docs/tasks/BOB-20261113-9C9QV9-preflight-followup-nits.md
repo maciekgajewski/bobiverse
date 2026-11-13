@@ -1,6 +1,6 @@
 # BOB-20261113-9C9QV9: follow-up nits from PR #10 (extraction preflight)
 
-Status: In progress
+Status: Done
 Phase: 4 (LLM-assisted editorial pipeline; process hardening before Chapter 1.43)
 Last updated: 2026-11-13
 
@@ -105,3 +105,11 @@ No e2e run is required: no application code or test configuration changes.
   - `git diff --check`.
 
   All passed. No e2e: no application code or test configuration changed.
+
+### 2026-11-13 (Europe/Amsterdam; merge)
+
+- PR #11 was squash-merged to master as `f005b72` on Friday 2026-11-13. Status is now
+  **Done**, recorded after that merge.
+- PR #11 review ride-alongs, made in BOB-20261113-RG3XYR's PR: the Checklist A
+  pointer no longer says "repository root" (it names the script's own checkout), and
+  the non-writable-workspace test restores the directory mode in a `finally`.

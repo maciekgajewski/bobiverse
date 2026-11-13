@@ -9,16 +9,16 @@ the contract holds the rules. Any failed item stops the run; never bypass it.
 [`scripts/extraction_preflight.py`](../scripts/extraction_preflight.py) checks items
 1–8 against the profile record
 [`profile.json`](../.codex/skills/extract-bobiverse-chapter/profile.json) and exits
-non-zero on any failure; item 9 stays manual. Run it from the repository root (see
-`--help`); its report never contains source bytes. For item 1 it runs
-`codex --version`, which shows only that the launcher is present, not that it can set
-the model, reasoning level, and non-forked spawning for both passes; the run's own
-records attest those settings.
+non-zero on any failure; item 9 stays manual. Run it from inside the checkout that
+contains it; any other checkout is refused (see `--help`). Its report never contains
+source bytes. For item 1 it runs `codex --version`, which shows only that the
+launcher is present, not that it can set the model, reasoning level, and non-forked
+spawning for both passes; the run's own records attest those settings.
 
 1. Profile: the conforming Codex profile can be requested for both passes, or the
    Captain's explicit approval of provider, model, and workflow for this run is
    recorded, labelled NON-CONFORMING (§Prerequisite check to §Approved alternative;
-   D1 open).
+   D1 standing approval, 2026-11-13).
 2. Source: one readable UTF-8 file outside the repository, named
    `<book>.<chapter>.txt` or `<book>.<chapter> - <title>.txt`;
    `source_evidence.py metadata` passes and its SHA-256 is recorded (§Inputs).
@@ -54,10 +54,13 @@ records attest those settings.
 6. Assemble the review package (§Review package), including the D2 list (§Reading
    order and story dates). The list is reporting only: not a promotion gate, and
    never a reason to rewrite the candidate while D2 is open.
-7. Commit run outputs, never book text, to the approved-chapters repository after
-   approval and tag it `chapter-<ref>-approved` (§Checksum provenance).
+7. After C1, record the run outputs with `scripts/chapter_promotion.py record`
+   (allowlisted files only, never book text; §Checksum provenance).
 
 ## C. Promotion and post-write
+
+`scripts/chapter_promotion.py promote` runs items 2–5 and restores the chapter and
+log on any failure; isolated acquisition (§Promotion step 3) stays manual.
 
 1. The Captain's approval names this exact candidate (§Approval).
 2. Rebuild a fresh root from current canonical inputs plus the approved candidate,
