@@ -424,6 +424,7 @@ applies. As reporting only, the review package lists every update whose prior en
 contains a fact first established at a later story date than the target chapter's.
 This list is not a promotion gate, and it must not be used to rewrite a candidate
 while D2 is open.
+
 The options are recorded in BOB-20261112-1TWD9T.
 
 ## Candidate assembly and temporary corpus

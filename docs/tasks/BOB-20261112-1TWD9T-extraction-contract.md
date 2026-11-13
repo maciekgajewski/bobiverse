@@ -1,8 +1,8 @@
 # BOB-20261112-1TWD9T: One authoritative chapter-extraction contract
 
-Status: In progress
+Status: Done
 Phase: 4 (LLM-assisted editorial pipeline; process hardening before Chapter 1.43)
-Last updated: 2026-11-12
+Last updated: 2026-11-13
 
 ## Objective and user-visible outcome
 
@@ -493,3 +493,8 @@ Risks:
   uses one style, §Heading (for example §Context isolation), with ", item n" for
   numbered items. This avoids collisions with chapter references. No test referenced
   section numbers.
+
+### 2026-11-13 (Europe/Amsterdam)
+
+- PR #6 was squash-merged to master as `0433761` on Friday 2026-11-13. Status is now
+  **Done**, recorded after that merge. D1 and D2 remain open Captain decisions.

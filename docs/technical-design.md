@@ -1037,6 +1037,9 @@ The tool is provider-independent at the architecture boundary. It is not part of
 published application, cannot publish source book text, and cannot commit credentials.
 No extraction result is authoritative without human approval.
 
+The operator contract is [`chapter-extraction.md`](chapter-extraction.md); it adds
+procedure only, and the architecture boundary stays provider-independent.
+
 ## 14. Security, privacy, and publication
 
 - The local development server is trusted-LAN only.
