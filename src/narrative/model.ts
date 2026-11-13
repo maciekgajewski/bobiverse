@@ -249,6 +249,19 @@ export type CharacterTravelHistories = ReadonlyMap<
  * location state is projected once per distinct appearance date, so changing the
  * selected character is only a map lookup.
  */
+/**
+ * Story-time cutoff of a generated world. Chapter mode (no requested display
+ * date) has none: it shows the latest known state from every revealed chapter,
+ * whatever their story dates (ADR-0028). Date mode cuts at the requested date.
+ * Worlds not built by generateNarrativeWorld fall back to their display date.
+ */
+const narrativeWorldCutoffs = new WeakMap<NarrativeWorld, string | null>();
+
+function storyTimeCutoff(world: NarrativeWorld): string | null {
+  const cutoff = narrativeWorldCutoffs.get(world);
+  return cutoff !== undefined ? cutoff : world.view.display_date;
+}
+
 export function projectCharacterTravelHistories(
   corpus: PreparedNarrativeCorpus,
   world: NarrativeWorld,
@@ -268,7 +281,7 @@ export function projectCharacterTravelHistories(
   const appearanceDates = new Set<string>();
   for (const chapter of chapters) {
     const effectiveDate = chapterDate(chapter);
-    if (!isDateAtOrBefore(effectiveDate, world.view.display_date)) continue;
+    if (!isDateAtOrBefore(effectiveDate, storyTimeCutoff(world))) continue;
     const sourceChapter = chapterId(chapter);
     for (const [appearanceIndex, candidate] of (
       (chapter.appearances as unknown[] | undefined) ?? []
@@ -1000,6 +1013,21 @@ function openingSummarySentence(summary: string): string {
   return summary;
 }
 
+/**
+ * The story date from which a chapter-authored write takes effect. Reader order
+ * (the chapter file) decides whether the write is revealed at all; this date only
+ * places it in story time. Non-event updates may backdate it with `effective_date`
+ * (ADR-0028); everything else defaults to the enclosing chapter's date.
+ */
+function updateEffectiveDate(
+  update: NarrativeRecord,
+  chapter: NarrativeRecord,
+): string {
+  return typeof update.effective_date === "string"
+    ? update.effective_date
+    : chapterDate(chapter);
+}
+
 function sourceProperties(
   record: NarrativeRecord,
   excludes: readonly string[],
@@ -1045,10 +1073,13 @@ function assertTemporalWrites(chapters: NarrativeRecord[]): void {
         ["id"],
       );
     }
-    for (const update of (chapter.updates as unknown[] | undefined) ?? []) {
-      addWrites(asRecord(update, `Update in ${sourceChapter}`), moment, [
-        "entity_id",
-      ]);
+    for (const candidate of (chapter.updates as unknown[] | undefined) ?? []) {
+      const update = asRecord(candidate, `Update in ${sourceChapter}`);
+      addWrites(
+        update,
+        { date: updateEffectiveDate(update, chapter), sourceChapter },
+        ["entity_id", "effective_date"],
+      );
     }
   }
 }
@@ -1129,7 +1160,10 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
     for (const [key, entry] of Object.entries(value as NarrativeRecord)) {
       const entryPointer = `${pointer}/${key}`;
       if (
-        (key === "date" || key === "birth_date" || key === "death_date") &&
+        (key === "date" ||
+          key === "birth_date" ||
+          key === "death_date" ||
+          key === "effective_date") &&
         typeof entry === "string"
       ) {
         try {
@@ -1196,6 +1230,7 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
     }
   };
   const availableIds = new Set(zeroStateEntities.map((entity) => entity.id));
+  const introductionDates = new Map<string, string>();
   const allCanonicalSpeciesIds = new Set(
     zeroStateEntities
       .filter((entity) => entity.entity_type === "species")
@@ -1367,6 +1402,28 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
       if (updatedIds.has(targetId))
         throw new Error(`Chapter ${id} has multiple updates for ${targetId}.`);
       updatedIds.add(targetId);
+      if (
+        typeof update.effective_date === "string" &&
+        !isNarrativeDateEligible(update.effective_date, chapterDate(chapter))
+      ) {
+        throw chapterSemanticError(
+          id,
+          `/updates/${updateIndex}/effective_date`,
+          `${update.effective_date} must be on or before the chapter date ${chapterDate(chapter)}.`,
+        );
+      }
+      const introducedOn = introductionDates.get(targetId);
+      if (
+        typeof update.effective_date === "string" &&
+        introducedOn &&
+        compareNarrativeDates(update.effective_date, introducedOn) === -1
+      ) {
+        throw chapterSemanticError(
+          id,
+          `/updates/${updateIndex}/effective_date`,
+          `${update.effective_date} is before ${targetId} was introduced (${introducedOn}).`,
+        );
+      }
       const roleMessage = pictureRoleMessage(
         update,
         `Update ${targetId} picture_id`,
@@ -1487,7 +1544,10 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
         );
       }
     }
-    for (const entityId of introducedThisChapter) availableIds.add(entityId);
+    for (const entityId of introducedThisChapter) {
+      availableIds.add(entityId);
+      introductionDates.set(entityId, chapterDate(chapter));
+    }
   }
   assertTemporalWrites(chapters);
   assertProjectedLocationConstraints(zeroStateEntities, chapters);
@@ -1798,10 +1858,11 @@ function assertProjectedLocationConstraints(
   for (const [selectedIndex, selectedChapter] of chapters.entries()) {
     const knowledgeChapter = chapterId(selectedChapter);
     const readerVisible = chapters.slice(0, selectedIndex + 1);
-    for (const displayDate of locationProjectionDates(
-      readerVisible,
-      chapterDate(selectedChapter),
-    )) {
+    for (const cutoff of [
+      null,
+      ...locationProjectionDates(readerVisible, chapterDate(selectedChapter)),
+    ]) {
+      const displayDate = cutoff ?? chapterDate(selectedChapter);
       const locations = new Map(
         zeroStateEntities
           .filter((entity) => entity.entity_type === "location")
@@ -1811,7 +1872,7 @@ function assertProjectedLocationConstraints(
       for (const chapter of readerVisible) {
         const date = chapterDate(chapter);
         const sourceChapter = chapterId(chapter);
-        if (!isDateAtOrBefore(date, displayDate)) continue;
+        if (!isDateAtOrBefore(date, cutoff)) continue;
         const before = new Map(
           [...locations].map(([id, location]) => [
             id,
@@ -2239,7 +2300,7 @@ function generateNarrativeActivity(
       );
       const entity = byId.get(id);
       if (!entity) continue;
-      applySourceRecord(entity, update, ["entity_id"]);
+      applySourceRecord(entity, update, ["entity_id", "effective_date"]);
       if (entity.entity_type === "event") {
         eventIds.add(id);
         add(
@@ -2249,7 +2310,7 @@ function generateNarrativeActivity(
           "update",
         );
       } else {
-        add(id, sourceChapter, date, "update");
+        add(id, sourceChapter, updateEffectiveDate(update, chapter), "update");
       }
     }
     for (const candidate of (chapter.appearances as unknown[] | undefined) ??
@@ -2338,6 +2399,8 @@ export function generateNarrativeWorld(
   const displayDate = selectedChapter
     ? (requestedDisplayDate ?? chapterDate(selectedChapter))
     : null;
+  // Chapter mode has no story-time cutoff; only Date mode filters by date.
+  const cutoff = requestedDisplayDate ?? null;
   const entities = assertZeroStateSemantics(
     corpus.zeroState,
     corpus.knownAstronomyObjectIds,
@@ -2381,7 +2444,7 @@ export function generateNarrativeWorld(
         type === "event" && typeof introduced.date === "string"
           ? introduced.date
           : date;
-      if (!isDateAtOrBefore(effectiveDate, displayDate)) continue;
+      if (!isDateAtOrBefore(effectiveDate, cutoff)) continue;
       const entity: NarrativeEntity = { id, entity_type: type };
       applyProperties(
         entity,
@@ -2424,14 +2487,14 @@ export function generateNarrativeWorld(
             : typeof target.date === "string"
               ? target.date
               : date
-          : date;
-      if (!isDateAtOrBefore(effectiveDate, displayDate)) continue;
+          : updateEffectiveDate(update, chapter);
+      if (!isDateAtOrBefore(effectiveDate, cutoff)) continue;
       applyProperties(
         target,
         update,
         { date: effectiveDate, sourceChapter },
         latestMoments,
-        ["entity_id"],
+        ["entity_id", "effective_date"],
       );
       if (target.entity_type === "location") {
         orbitalWrites.push({
@@ -2462,7 +2525,7 @@ export function generateNarrativeWorld(
     );
   }
   deriveLocationChildren(entities);
-  deriveLastKnownLocations(entities, readerVisible, displayDate);
+  deriveLastKnownLocations(entities, readerVisible, cutoff);
   const world: NarrativeWorld = {
     entities,
     activity: generateNarrativeActivity(
@@ -2476,6 +2539,7 @@ export function generateNarrativeWorld(
     },
   };
   assertSchema("narrative_world", world, "Generated narrative world");
+  narrativeWorldCutoffs.set(world, cutoff);
   return world;
 }
 
@@ -2501,7 +2565,9 @@ export function projectNarrativeChapterDetail(
   }
   if (
     world.view.chapter !== selectedChapterId ||
-    world.view.display_date !== chapterDate(sourceChapter)
+    world.view.display_date !== chapterDate(sourceChapter) ||
+    !narrativeWorldCutoffs.has(world) ||
+    narrativeWorldCutoffs.get(world) !== null
   ) {
     throw new Error(
       `Chapter ${selectedChapterId} detail requires its exact Chapter-mode projection.`,

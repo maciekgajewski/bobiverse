@@ -747,12 +747,16 @@ Spoiler safety has two independent dimensions:
 explicit confirmation. `viewChapter`, labelled **Knowledge through** in the Phase 2
 UI, selects a chapter at or before that ceiling. Both are absent before the reader
 selects a chapter, when the zero state is rendered. Reader order first decides which
-facts the reader may know; story time then decides which of those facts form the
-represented world state at `viewChapter.date`. A future story-state change must not alter an
-earlier in-universe view merely because its chapter was read first. Conversely, a fact
-first revealed later must not alter an earlier reader-knowledge view, even if it was
-already true in-universe. ADR-0002, as refined by ADR-0005, ADR-0009, ADR-0013, and ADR-0026,
-defines this two-stage projection and its temporal validation rules.
+facts the reader may know; story time then orders those facts. A chapter view shows
+the latest known state from every chapter read so far, with no story-time cutoff, so
+an earlier-dated chapter read after a later-dated one shows both chapters' states
+(ADR-0028). A Date-mode view cuts at its requested date. A future story-state change
+must not alter an earlier in-universe Date-mode view merely because its chapter was
+read first. Conversely, a fact first revealed later must not alter an earlier
+reader-knowledge view in any mode, even if it was already true in-universe. ADR-0002,
+as refined by ADR-0005, ADR-0009, ADR-0013, ADR-0026, and ADR-0028 (backdated updates
+and chapter-view latest state), defines this two-stage projection and its temporal
+validation rules.
 
 Dated chapter-authored facts compare a Gregorian calendar range, optional hidden
 ordering suffix, and source chapter. Non-overlapping ranges use calendar order;
@@ -768,8 +772,8 @@ chapter view in one deliberate action. Later increases to `furthestChapterRead` 
 change an already valid `viewChapter`; lowering the ceiling below it clamps
 `viewChapter` to the new ceiling and recomputes the projection.
 
-Phase 2 Date mode may use a meaningful requested story date for the second stage,
-rather than `viewChapter.date`. It retains the first stage's reader-visible chapter
+Phase 2 Date mode may use a meaningful requested story date as a cutoff for the
+second stage, which a chapter view does not apply. It retains the first stage's reader-visible chapter
 set: no later chapter becomes available merely because its story date precedes the
 requested date. The result is explicitly the state inferred from selected reader
 knowledge at that date, not a claim about unrevealed in-universe facts. The UI exposes

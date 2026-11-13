@@ -225,6 +225,7 @@ the identical listing below documents its shared definitions.
       "required": ["entity_id"],
       "properties": {
         "entity_id": { "$ref": "#/$defs/character_id" },
+        "effective_date": { "$ref": "#/$defs/date" },
         "name": { "type": "string", "minLength": 1 },
         "gender": { "type": ["string", "null"], "minLength": 1 },
         "species_id": {
@@ -289,6 +290,7 @@ the identical listing below documents its shared definitions.
       "required": ["entity_id"],
       "properties": {
         "entity_id": { "$ref": "#/$defs/species_id" },
+        "effective_date": { "$ref": "#/$defs/date" },
         "name": { "type": "string", "minLength": 1 },
         "description": {
           "anyOf": [{ "$ref": "#/$defs/description" }, { "type": "null" }]
@@ -323,6 +325,7 @@ the identical listing below documents its shared definitions.
       "required": ["entity_id"],
       "properties": {
         "entity_id": { "$ref": "#/$defs/technology_id" },
+        "effective_date": { "$ref": "#/$defs/date" },
         "name": { "type": "string", "minLength": 1 },
         "description": {
           "anyOf": [{ "$ref": "#/$defs/description" }, { "type": "null" }]
@@ -347,6 +350,7 @@ the identical listing below documents its shared definitions.
       "required": ["entity_id"],
       "properties": {
         "entity_id": { "$ref": "#/$defs/organization_id" },
+        "effective_date": { "$ref": "#/$defs/date" },
         "name": { "type": "string", "minLength": 1 },
         "description": {
           "anyOf": [{ "$ref": "#/$defs/description" }, { "type": "null" }]
@@ -378,6 +382,7 @@ the identical listing below documents its shared definitions.
       "required": ["entity_id"],
       "properties": {
         "entity_id": { "$ref": "#/$defs/vessel_id" },
+        "effective_date": { "$ref": "#/$defs/date" },
         "name": { "type": "string", "minLength": 1 },
         "description": {
           "anyOf": [{ "$ref": "#/$defs/description" }, { "type": "null" }]
@@ -1261,10 +1266,14 @@ to the zero state:
    the facts the reader is allowed to know.
 2. Story time is the world-state gate. Every state-bearing property supplied by an
    introduction or ordinary update has the effective story date of its enclosing
-   chapter. From the reader-visible records, apply only values whose effective date
-   is definitively at or before the requested display date, then use the
-   chronologically latest value for each entity property. A normal chapter view uses
-   `viewChapter.date` as that date.
+   chapter, unless a non-event, non-location update supplies `effective_date`
+   (ADR-0028); dated events keep their own `date`. A chapter view applies every
+   reader-visible value with no story-time cutoff and uses the chronologically
+   latest value for each entity property, so it shows the latest known state from
+   all chapters read so far, whatever their dates (ADR-0028). A Date-mode view
+   applies only reader-visible values whose effective date is definitively at or
+   before the requested display date, then uses the chronologically latest value.
+   The chapter view still reports `viewChapter.date` as its `display_date`.
 
 Raw zero-state, asset, book, and chapter records must first cross
 `prepareNarrativeCorpus`. That boundary performs one complete structural and semantic
@@ -1288,8 +1297,8 @@ surfaces commit that result together. Chapter detail is a typed immutable runtim
 view, not a second world or generated snapshot. State that does not change the
 knowledge chapter, display date, or mode does not generate another world.
 
-A future date-exploration UI may request any valid story date in place of
-`viewChapter.date`, including a date earlier or later than the selected chapter. It
+A future date-exploration UI may request any valid story date as the cutoff,
+including a date earlier or later than the selected chapter. It
 must reuse the same reader-visible chapter set chosen in stage 1; it must not load or
 infer a later chapter merely because that chapter has an earlier effective date. Its
 result is therefore the world state inferred from the reader's selected chapter
@@ -1535,6 +1544,14 @@ before the requested display date.
 update object has `entity_id` plus one or more ordinary properties of that entity:
 
 - A chapter has at most one update object for a given entity.
+- A character, species, technology, organization or vessel update may carry an
+  optional `effective_date` (ADR-0028). It is not an entity property: it places
+  every property in that update at that story date instead of the chapter's date. It
+  must be on or before the chapter's own `date` (definitively eligible at it).
+  Revealing stays with the chapter: the update is invisible to any reader-knowledge
+  view earlier than its chapter, whatever its date. It must not be earlier than the
+  date of the chapter that introduced the entity. An update must still supply at
+  least one ordinary property.
 - An omitted property is unchanged.
 - A supplied scalar or object replaces its prior value.
 - A supplied list replaces the complete prior list.
@@ -1817,8 +1834,8 @@ metadata; neither is inferred from the other.
 
 `current_state` does not establish a character location. A character location is only
 confirmed by an appearance with an effective location. From reader-visible appearances
-whose effective story dates are eligible at the requested display date,
-the generated projection exposes a `last_known_location` only when one appearance has
+whose effective story dates are eligible at the requested display date (every
+reader-visible appearance in a chapter view), the generated projection exposes a `last_known_location` only when one appearance has
 a uniquely latest narrative moment. Identical calendar portions and overlapping
 unequal-precision facts use the shared chapter fallback after any authoritative
 suffix comparison. The generated value records `location_id`,

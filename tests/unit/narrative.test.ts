@@ -260,7 +260,12 @@ describe("narrative corpus validation and projection", () => {
         { id: "character:fixture-alex", name: "Fixture Alex" },
         { id: "character:fixture-riley", name: "Fixture Riley" },
       ],
-      events: [{ id: "event:fixture-present", name: "Fixture present event" }],
+      // Chapter view has no story-time cutoff (ADR-0028), so a revealed event
+      // dated after the chapter is listed too.
+      events: [
+        { id: "event:fixture-present", name: "Fixture present event" },
+        { id: "event:fixture-future", name: "Fixture future event" },
+      ],
       vessels: [{ id: "vessel:fixture-ship", name: "Fixture ship" }],
       technologies: [{ id: "technology:fixture-drive", name: "Fixture drive" }],
       appearingCharacters: [
@@ -268,15 +273,20 @@ describe("narrative corpus validation and projection", () => {
         { id: "character:fixture-riley", name: "Fixture Riley" },
       ],
     });
-    expect(detail.events).not.toContainEqual(
-      expect.objectContaining({ id: "event:fixture-future" }),
-    );
     expect(Object.isFrozen(detail)).toBe(true);
     expect(() =>
       projectNarrativeChapterDetail(
         prepared,
         "1.1",
         generateNarrativeWorld(prepared, "1.1", "2199"),
+      ),
+    ).toThrow("requires its exact Chapter-mode projection");
+    // A Date-mode world at the chapter's own date is still not Chapter mode.
+    expect(() =>
+      projectNarrativeChapterDetail(
+        prepared,
+        "1.1",
+        generateNarrativeWorld(prepared, "1.1", "2200.0"),
       ),
     ).toThrow("requires its exact Chapter-mode projection");
   });
@@ -468,15 +478,19 @@ describe("narrative corpus validation and projection", () => {
     }
   });
 
-  it("uses story time rather than reader order for the selected chapter world", () => {
-    const world = generateNarrativeWorld(
-      prepareNarrativeCorpus(createNarrativeFixtureCorpus()),
-      "1.3",
-    );
+  it("shows the latest known state in chapter view and cuts at the date in date view", () => {
+    const prepared = prepareNarrativeCorpus(createNarrativeFixtureCorpus());
+    const world = generateNarrativeWorld(prepared, "1.3");
     expect(world.view).toEqual({ chapter: "1.3", display_date: "2200.1" });
+    // 1.2 (2200.2) is later in story time than 1.3 (2200.1); both are revealed.
     expect(
       world.entities.find((entity) => entity.id === "character:fixture-alex")
         ?.current_state,
+    ).toBe("later state");
+    expect(
+      generateNarrativeWorld(prepared, "1.3", "2200.1").entities.find(
+        (entity) => entity.id === "character:fixture-alex",
+      )?.current_state,
     ).toBe("middle state");
   });
 
@@ -727,8 +741,14 @@ describe("narrative corpus validation and projection", () => {
         (entity) => entity.id === "character:fixture-alex",
       )?.parent_id,
     ).toBe("character:fixture-parent-b");
+    // Chapter view: 1.2's replacement (2200.2) is the latest known value.
     expect(
       generateNarrativeWorld(prepared, "1.3").entities.find(
+        (entity) => entity.id === "character:fixture-alex",
+      )?.parent_id,
+    ).toBe("character:fixture-parent-b");
+    expect(
+      generateNarrativeWorld(prepared, "1.3", "2200.1").entities.find(
         (entity) => entity.id === "character:fixture-alex",
       ),
     ).toHaveProperty("parent_id", null);
@@ -873,10 +893,18 @@ describe("narrative corpus validation and projection", () => {
         }),
       ]),
     );
+    // Chapter view includes every revealed stop; Date view cuts at the date.
     expect(
       characterTravelStops(corpus, world, "character:fixture-alex").map(
         (stop) => stop.source_chapter,
       ),
+    ).toEqual(["1.1", "1.3", "1.2"]);
+    expect(
+      characterTravelStops(
+        corpus,
+        generateNarrativeWorld(corpus, "1.3", "2200.1"),
+        "character:fixture-alex",
+      ).map((stop) => stop.source_chapter),
     ).toEqual(["1.1", "1.3"]);
   });
 
@@ -885,7 +913,7 @@ describe("narrative corpus validation and projection", () => {
     const world = generateNarrativeWorld(corpus, "1.3");
     const generationCount = narrativeWorldGenerationCount(corpus);
     const histories = projectCharacterTravelHistories(corpus, world);
-    expect(histories.get("character:fixture-alex")).toHaveLength(2);
+    expect(histories.get("character:fixture-alex")).toHaveLength(3);
     expect(narrativeWorldGenerationCount(corpus)).toBe(generationCount);
   });
 
@@ -1008,9 +1036,18 @@ describe("narrative corpus validation and projection", () => {
       current_state: null,
     });
 
+    // Chapter view at 1.3 shows 1.2's later-dated values (asserted below for
+    // the vessel); Date view at 1.3's own date shows the earlier story time.
+    const prepared = prepareNarrativeCorpus(corpus);
+    expect(
+      generateNarrativeWorld(prepared, "1.3").entities.find(
+        (entity) => entity.id === "vessel:fixture-probe",
+      ),
+    ).toMatchObject({ name: "Renamed fixture probe", current_state: null });
     const readerVisibleEarlierStoryTime = generateNarrativeWorld(
-      prepareNarrativeCorpus(corpus),
+      prepared,
       "1.3",
+      "2200.1",
     );
     expect(
       readerVisibleEarlierStoryTime.entities.find(
@@ -1296,11 +1333,16 @@ describe("narrative corpus validation and projection", () => {
     expect(() =>
       validateNarrativeCorpus(nonChronologicalKindChange),
     ).not.toThrow();
+    const nonChronological = prepareNarrativeCorpus(nonChronologicalKindChange);
     expect(
-      generateNarrativeWorld(
-        prepareNarrativeCorpus(nonChronologicalKindChange),
-        "1.3",
-      ).entities.find((entity) => entity.id === "location:mars"),
+      generateNarrativeWorld(nonChronological, "1.3").entities.find(
+        (entity) => entity.id === "location:mars",
+      ),
+    ).toMatchObject({ kind: "locale", color: null });
+    expect(
+      generateNarrativeWorld(nonChronological, "1.3", "2200.1").entities.find(
+        (entity) => entity.id === "location:mars",
+      ),
     ).toMatchObject({ kind: "planet", color: "rust red" });
 
     const nonChronologicalMoonOverflow = createNarrativeFixtureCorpus();
