@@ -469,6 +469,12 @@ Astronomy validation is mandatory before canonical promotion. Run it on the exac
 prior chain before extraction (Checklist A), so that a baseline failure is not
 mistaken for a candidate failure. Never bypass an exact-plan failure.
 
+Identify the exact prior chapter chain used for extraction (including any earlier
+staged chapters); record its root, baseline revision, and pinned astronomy context.
+Run narrative and astronomy validation against that exact prior root.
+Canonical-master success is not a substitute. If it requires new acquisition, stage
+it as below before proceeding.
+
 Under ADR-0016, an exact normalized narrative name that is unique across one accepted
 astronomy system's effective name and aliases receives a deterministic source-backed
 bootstrap without separate Captain approval. Normalization only case-folds, trims,
@@ -477,10 +483,14 @@ coordinate, or model-confidence matching. If the accepted identity, adopted
 component, source-backed geometry, or pinned coverage cannot support the anchor,
 stop before any canonical write and report the required astronomy task.
 
-If identity resolves but validation reports that acquisition queries differ from the
-exact plan, do not conclude that the validator contract must change. An existing
-anchor row alone does not prove that its explicit bootstrap query, complete context
-sphere, and provenance accounting are current. The canonical refresh discovers
+If identity resolves but validation reports `Narrative anchors require a GCNS
+acquisition plan not covered by the pinned sources`, stage new acquisition for the
+listed anchors as below; do not conclude that the validator contract must change.
+An `acquisition queries differ from the exact plan` error instead requires
+investigating inconsistent or tampered query accounting; do not assume a refresh
+will resolve it or hand-edit the manifests. An existing anchor row alone does not
+prove that its explicit bootstrap query, complete context sphere, and provenance
+accounting are current. The canonical refresh discovers
 anchors from canonical narrative data, but never copy an unapproved candidate into
 the real worktree merely to make refresh see it. Instead:
 
@@ -488,9 +498,13 @@ the real worktree merely to make refresh see it. Instead:
    review and record its clean baseline.
 2. Verify the sealed-ledger and candidate hashes. Install the exact candidate, or
    exact ordered candidate chain, at its intended canonical paths only inside that
-   checkout.
-3. Run narrative validation there, followed by the normal networked astronomy
-   refresh. Do not generate runtime astronomy from a changed candidate snapshot yet.
+   isolated checkout. Preserve the exact prior-root context as well as the complete
+   staged chain; neither may be replaced with an unrelated canonical baseline.
+3. Run narrative validation and the normal astronomy preflight against the exact
+   staged root. Record any uncovered-anchor diagnostic as a failure requiring
+   acquisition, then run the normal networked astronomy refresh. Do not generate
+   runtime astronomy from a changed candidate snapshot yet. See
+   [the pipeline staging order](data/astronomy-pipeline.md#chapter-driven-staging-order).
 4. Inspect the complete astronomy diff. Permit only required bootstrap and coverage
    acquisition, query accounting, checksums, and deterministic consequences.
    Unrelated substantive catalogue, identity, naming, membership, adopted-source,
@@ -514,7 +528,12 @@ the real worktree merely to make refresh see it. Instead:
    as part of the snapshot review. Generation must propagate the current WDS manifest
    candidate count and checksum into runtime metadata and verify the written artifact
    before the combined review.
-8. Run narrative and astronomy validation against the complete staged chain.
+8. Run narrative and astronomy validation against the complete staged candidate chain.
+   Retain a passing exact-prior-chain preflight with its matching source/plan context;
+   if that prior chain needed acquisition, validate it separately before using it
+   for extraction. Do not test a prior root against a refreshed full-chain plan when
+   their anchor sets differ: extra queries correctly fail the exact-plan guard too.
+   The final combined-chain preflight must pass; no earlier failure was waived.
 9. Present the exact combined chapter-and-astronomy diff. Apply no part of it to the
    real worktree until the Captain approves that exact combined result.
 10. Apply the approved result atomically, revalidate the canonical corpus, and append

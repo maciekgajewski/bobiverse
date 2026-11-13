@@ -361,6 +361,56 @@ For a continuously updated source such as WDS, the manifest must identify the
 upstream snapshot date and checksum used for extraction. A later remote response is
 not assumed equivalent.
 
+## Chapter-driven staging order
+
+A narrative root and its pinned astronomy inputs form one validation context.
+`data:validate -- --narrative-root <root>` discovers anchors from that exact root;
+it does not refresh sources. Passing on canonical master is not evidence that a
+different staged prior chain passes. An already acquired source row or an anchor
+inside Sol’s neighbourhood does not prove acquisition of that anchor’s own complete
+context sphere or its exact bootstrap-query accounting.
+
+1. Record the baseline revision, pinned source context, and exact ordered prior
+   chapter chain used for extraction. Run narrative validation and
+   `npm run data:validate -- --narrative-root <exact-prior-root>` before extraction
+   or promotion. Do not substitute the canonical corpus for a staged prior chain.
+2. If the prior chain or approved candidate adds resolved anchors absent from the
+   pinned plan, stop canonical promotion and follow
+   [Astronomy preflight and isolated acquisition](../chapter-extraction.md#astronomy-preflight-and-isolated-acquisition).
+   Install only the exact authorized candidate chain in an isolated disposable
+   checkout. Validate narrative data there and record the pre-refresh astronomy
+   failure; it is a blocked staging context, not permission to bypass preflight.
+3. Run the explicit `npm run data:refresh` in that checkout. Review the complete
+   diff. A changed candidate checksum requires fresh independent ADR-0023
+   acceptance before updating review attribution/checksum or generating runtime.
+   Prohibited or judgmental changes still require the Captain’s decision.
+4. After acceptance, run `npm run data:generate`, then narrative and astronomy
+   validation against the complete staged chain. Retain the passing exact-prior-chain
+   preflight with its matching source/plan context. If the prior chain itself needed
+   acquisition, first obtain a passing context for that chain; do not substitute a
+   later chapter to repair its extraction input. A refreshed full-chain plan is not
+   interchangeable with a prior root having a different anchor set: extra queries
+   also fail exact-plan validation. Only a green final combined-chain preflight
+   permits presenting the package for exact Captain approval and atomic promotion.
+
+For a coherent pinned plan covering only a subset of required anchors, validation
+fails with `Narrative anchors require a GCNS acquisition plan not covered by the
+pinned sources`, lists the uncovered stable anchor IDs, and points here. This is
+still a failure, not automatic acquisition or snapshot acceptance. Both GCNS and
+CNS5 query lists must exactly match the plan for the smaller anchor set before this
+diagnostic is used. Changed query bytes, inconsistent bootstrap accounting,
+ordering, unknown anchors, or other plan tampering retain the `acquisition queries
+differ from the exact plan` failure. Never hand-edit manifests to silence it.
+
+Historical example: pre-refresh master `8c108a0` validates its own corpus (271
+systems). Pairing its pinned sources with the staged chain through `1.41` adds the
+Chapter `1.40` Epsilon Indi anchor (`stellar-system-005631`). Its source row
+`6412595290592307840` already exists, but its ID is absent from the GCNS bootstrap
+query and its 20-light-year coverage query is absent. The rejection is correct;
+the old exact-plan wording obscured the staging remedy. The refreshed package
+merged in `63bbd98` validates both the full chain and the prior chain through `1.41`
+(277 systems). This task changes diagnostics only, not that pinned package.
+
 ## Extraction stages
 
 ### Stage 1: bootstrap source-backed anchor geometry

@@ -1,8 +1,8 @@
 # BOB-20261110-M3AMGW: Stabilise cross-browser map interaction tests
 
-Status: In progress
+Status: Done
 Phase: 1 (verification infrastructure; supports Phase 2 interactions)
-Last updated: 2026-11-10
+Last updated: 2026-11-12
 
 ## Objective and user-visible outcome
 
@@ -174,3 +174,9 @@ No new ADR is required. Local software rendering is not identical to hosted runn
   ~/bobiverse-flakes-artifacts/. Task remains In progress, not Done.
 - Publication, fresh independent exact-SHA review, all hosted CI checks, Captain
   manual real-GPU/Firefox-phone acceptance and merge remain outstanding.
+
+### 2026-11-12 (Europe/Amsterdam)
+
+- PR #4 was squash-merged to master as `3053e95` on Tuesday 2026-11-10. The
+  independently reviewed head was `3196b24`. Status is now **Done**, recorded
+  after that merge.
