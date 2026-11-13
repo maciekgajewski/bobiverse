@@ -1,0 +1,111 @@
+{
+  "chapter": "1.61",
+  "title": "61",
+  "summary": "Howard crosses into the Omicron2 Eridani system ahead of the two colony ships, whose Bobs have named themselves Bert and Ernie, and with their arrival humanity no longer has all its eggs in one basket. He parks at the L4 point between Vulcan and Romulus, drops a beacon and sends drones to extend Milo's survey of both planets. He finds that the automation Milo left behind has spent a couple of decades stockpiling refined metal in orbit inside the asteroid belt, and that the farming donut Riker had an AMI start a decade earlier only needs seeding. After checking in briefly with Bill and Riker, who sends a list of colony ships already on their way, he welcomes Exodus-1 and Exodus-2 into orbit and meets Bert and Ernie, in Battlestar Galactica uniforms, in VR, where a joke about Vulcan cruisers gets a belly laugh. Wanting the colonists offloaded quickly and the ships sent back to Earth, Howard has the survey material passed to Colonel Butterworth when he comes out of stasis. Butterworth chooses Vulcan, whose biocompatible ecosystem can bridge the gap until the colony grows its own food, and hopes to help the Spits when they arrive. With the farm not yet producing, most colonists stay in stasis while ship stores cover the first month; setup crews land printers, roamers build housing, and the first civilians are due to be woken in two days.",
+  "date": "2188-09",
+  "location_id": "location:omicron2-eridani",
+  "introducing": [
+    {
+      "id": "character:bert",
+      "name": "Bert",
+      "current_state": "One of the two Bobs who crew the first colony ships, he has brought his ship into orbit at Omicron2 Eridani and keeps a virtual bulletin board of the colony's setup work. He is to fly back to Earth once the colonists are offloaded."
+    },
+    {
+      "id": "character:ernie",
+      "name": "Ernie",
+      "current_state": "One of the two Bobs who crew the first colony ships, he has brought his ship into orbit at Omicron2 Eridani and prepared the survey material for Colonel Butterworth's choice of a colony world. He is to fly back to Earth once the colonists are offloaded."
+    },
+    {
+      "id": "event:first-colony-ships-arrival",
+      "name": "Arrival of the first colony ships at Omicron2 Eridani",
+      "date": "2188-09",
+      "location_id": "location:omicron2-eridani",
+      "description": "The arrival of the first two USE colony ships, Exodus-1 and Exodus-2, at Omicron2 Eridani after a voyage of a little over eighteen years under Howard's escort, which began the first human colony beyond the Solar System, so that humanity no longer had all its eggs in one basket. Colonel Butterworth chose Vulcan over Romulus for its robust, biocompatible ecosystem, which could feed the colonists until their own food production was established. Setup crews landed printers and began building housing while most of the colonists remained in stasis.",
+      "participant_ids": [
+        "character:howard",
+        "character:bert",
+        "character:ernie",
+        "character:george-butterworth"
+      ]
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:howard",
+      "current_state": "Having escorted Exodus-1 and Exodus-2 to Omicron2 Eridani, he is stationed at the L4 point between Vulcan and Romulus supporting the founding of the colony on Vulcan. He wants the colonists offloaded as early as possible so that Bert and Ernie can head back to Earth."
+    },
+    {
+      "entity_id": "character:george-butterworth",
+      "current_state": "Arrived at Omicron2 Eridani aboard Exodus-1, he has chosen Vulcan for the colony and is much more relaxed now that his civilians seem to have a future, though their food margin is tighter than he likes. He hopes the colony can help the Spits when they arrive, until their own food production is set up."
+    },
+    {
+      "entity_id": "vessel:exodus-1",
+      "current_state": "In orbit at Omicron2 Eridani since September 2188 and on station-keeping, it is supporting the colony setup on Vulcan while most of its colonists remain in stasis. Once they are offloaded it is to fly back to Earth."
+    },
+    {
+      "entity_id": "vessel:exodus-2",
+      "current_state": "In orbit at Omicron2 Eridani since September 2188 and on station-keeping, it is supporting the colony setup on Vulcan while most of its colonists remain in stasis. Once they are offloaded it is to fly back to Earth."
+    },
+    {
+      "entity_id": "vessel:use-colony-ship",
+      "current_state": "Exodus-1 and Exodus-2 reached Omicron2 Eridani in September 2188 after their voyage of a little over eighteen years, and are to return to Earth once their colonists are offloaded, beginning a shuttle service that may last up to a couple of centuries. Further colony ships have already been launched from Sol."
+    },
+    {
+      "entity_id": "location:omicron2-eridani",
+      "state": "Automation left behind by Milo has kept mining the system for a couple of decades, and a farming donut that an AMI has been building there as a backup food source needs only to be seeded. The first colony ships arrived in September 2188, and a colony is being set up on Vulcan."
+    },
+    {
+      "entity_id": "location:omicron2-asteroid-belt",
+      "state": "Several hundred thousand tons of ready-to-use refined material, bundled as beaconed ingots by Milo's autofactory drones, is stockpiled in orbit inside the belt."
+    },
+    {
+      "entity_id": "location:vulcan",
+      "description": "The larger member of a double planet at 0.81 AU from Omicron Eridani A, also designated OE-1A. It has about 0.9 Earth masses and orbits Romulus every 20 days at about 364,000 km. It is on the cool side of the habitable zone, with an atmosphere, extensive oceans, atmospheric oxygen, and large green land areas. Its thicker, more carbon-dioxide-rich atmosphere gives it a higher mean surface temperature than Romulus. Its diverse life includes animals nearly as large as dinosaurs, and cellular analysis indicates that its life is probably related to Romulus's. Its local ecosystem has been confirmed to be biocompatible with humans.",
+      "state": "Chosen in September 2188 as the site of the first colony from the colony ships, it has setup crews, roamers and AMI-controlled ground equipment building modular housing on the surface, and the first civilians are about to be woken and brought down.",
+      "colony_of": ["species:human"],
+      "possible_colony_target": false
+    },
+    {
+      "entity_id": "technology:kudzu-gardens",
+      "description": "Kudzu gardens are unpopulated farming space stations, proposed by Homer as a way to feed Earth's starving survivors. Because they house no people, they avoid the burdens of human habitation such as gravity, radiation shielding, micrometeor armor, and living quarters: they need only enough spin to establish up and down, an interior that is one large cavern under constant sunlight, and equipment to keep the air mix and temperatures in range. Their crop is a gene-engineered kudzu from a library entry, with improved nutritional content, a simplified growth environment, and human digestibility, chosen to produce calories as densely as possible; it needs strong sunlight, temperatures around 20 degrees Celsius, and a lot of water, and the best-matching cultivar can be chosen from the Svalbard vaults. Water must be trucked up or brought in as icebergs from Saturn by the asteroid movers, which can also supply regolith for soil, while fertilizer is needed only in small volumes. They can be built with Homer's printers from scavenged materials, which does not affect the colony-ship schedule but reduces the number of future colony ships. The stations, informally called donuts, are shaped like fat bicycle wheels: carbon-fiber cables running from hub to rim provide most of the structural support, and three thicker spokes carry elevators between rim and hub. Each faces perpendicular to the sun, with mirrors between rim and hub reflecting sunlight into the interior through the rim's transparent roof, and the design is kept as simple as possible to minimize construction time and material requirements. Being in space, they are out of reach of ground-based saboteurs such as VEHEMENT. The first station, Farm-1, was heavily over-engineered, and its environment at first kept falling into positive feedback loops, needing four full-time AMIs until the resonances were damped; atmosphere controls have since been worked out. Its raw kudzu is delivered to Earth's survivors, allocated by population and need; the crop has digestive effects similar to beans, and no seasoning changes its taste. Later stations can grow a mix of crops for dietary variety and nutrition, and Homer estimates that a new design can safely give half a gee at the rim, enough for a proposed ranching station. One was started by an AMI at Omicron2 Eridani about a decade before the first colony ships arrived, as a backup food source for the colonists that needs only to be seeded from stocks the ships bring."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:howard",
+      "role": "lead",
+      "location_id": "location:omicron2-eridani"
+    },
+    {
+      "character_id": "character:bert",
+      "role": "other",
+      "location_id": "location:omicron2-eridani"
+    },
+    {
+      "character_id": "character:ernie",
+      "role": "other",
+      "location_id": "location:omicron2-eridani"
+    },
+    {
+      "character_id": "character:george-butterworth",
+      "role": "other",
+      "location_id": "location:omicron2-eridani"
+    }
+  ],
+  "mentions": [
+    "character:milo",
+    "character:riker",
+    "character:bill",
+    "organization:spitsbergen-refuge",
+    "location:earth",
+    "location:romulus",
+    "technology:guppi-interface",
+    "technology:ami",
+    "technology:subspace-communications",
+    "technology:vr",
+    "technology:roamers",
+    "technology:3d-printers",
+    "technology:planetary-exploration-drone",
+    "technology:autofactory"
+  ]
+}

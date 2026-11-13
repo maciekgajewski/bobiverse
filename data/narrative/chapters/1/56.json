@@ -1,0 +1,65 @@
+{
+  "chapter": "1.56",
+  "title": "56",
+  "summary": "At Epsilon Eridani, one of the largest Kuiper Belt icebergs yet found comes in toward Ragnarök slightly off course, and Bill has to run his asteroid drive at full power until the last moment while Guppy, appearing as Admiral Ackbar, applies course corrections. Bill and Garfield are shepherding ice inward about a week apart, Garfield sending chunks from the outer system and Bill catching them, and Bill expects about ten more years of drops to join Ragnarök's seas into oceans as a step toward a world fit for human colonists. With only 650 seconds instead of the twelve minutes a clean retrieval needs, AMI-controlled drones pull the drive segments off the ice; Bill writes off the anchors, then detonates explosives so the berg breaks into fragments that will melt high in the atmosphere and fall as rain over days to weeks. A set of anchors and two drive segments are lost to the surface, and with no drive ready, the next chunk, due in a week, will hit the planet. Garfield, watching from the outer system through Bill's VR, agrees to fly over a couple of segments so Bill can catch the chunks after that one and then build spares, and Bill outlines a longer-term method that would hold the segments in orbit around each chunk instead of anchoring them, using two drive channels. Claiming he needs a break from his Android Project, Bill nonetheless opens it as soon as the surviving segments are parked and reviews his moose-sized quadruped prototype, Bullwinkle, on one of the orbiting labs. Its skeleton, memory-plastic muscles and mechanics work, but its senses, reflexes and communications still fall short of the immersive remote body he wants, partly because he cannot yet make a SCUT small enough to fit inside it. Judging the project ninety percent done, he returns to the asteroid-mover work.",
+  "date": "2167-03",
+  "location_id": "location:epsilon-eridani",
+  "introducing": [
+    {
+      "id": "technology:bullwinkle",
+      "name": "Bullwinkle",
+      "description": "Bullwinkle is the current prototype in Bill's Android Project: a quadruped android about the size of a moose, many versions into development, kept on one of the orbiting labs at Epsilon Eridani. Its external comms array sits on its head like a pair of antlers. It has a carbon-fiber-matrix skeleton, memory-plastic muscles that contract under electric current, and sensors meant to replicate the five senses. Packaged with a remote control system, it is meant to let a replicant control it as if it were his own body, as an immersive experience of running, touch, heat, cold and wind, unlike the video-game feel of controlling a drone or buster. It works mechanically, but its senses, reflexes and communications remain unsolved. Touch, heat and cold sensing needs neurosurgery-level wiring that printers only partly help with. More onboard processing demands a bigger local computer, and more remote processing demands more bandwidth and suffers from light-speed latency. Faster-than-light links would help, but no SCUT is yet small enough to fit inside it. Bill judges it about ninety percent finished."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bill",
+      "current_state": "At Epsilon Eridani, growing plant stock in a farm donut to seed Ragnarök and mourning Milo. He has ordered four more version-3 Bobs beyond the four already being built, all with extra busters, and intends to make Medeiros pay for Milo's loss. He judged Milo's incomplete differential backup too risky to restore and had it archived as a memorial. He catches the Kuiper Belt ice chunks that Garfield sends inward about a week apart, with Guppy handling course corrections, and as of March 2167 expects about ten more years of drops to join Ragnarök's seas into oceans so that it can eventually be colonized by humans. After losing a set of anchors and two drive segments while capturing a huge iceberg, he is designing a way to hold drive segments in orbit around each chunk without ground anchors. He is also developing Bullwinkle, a moose-sized quadruped android meant to give him an immersive remote body, which he judges about ninety percent finished."
+    },
+    {
+      "entity_id": "character:garfield",
+      "current_state": "Continuing his research partnership with Bill with greater input into projects and technical decisions. From Epsilon Eridani's outer system he finds Kuiper Belt ice chunks and sends them inward toward Ragnarök about a week apart with his own asteroid-moving drive. After Bill lost two drive segments, he agreed to fly a couple of segments to Bill."
+    },
+    {
+      "entity_id": "location:ee-2",
+      "state": "Terraforming plans use two reusable drives to capture incoming ice and break it into extra rainfall, with the required ice expected within about twenty-five years. By March 2167, with Kuiper Belt chunks arriving about a week apart, Bill expects about ten more years of drops to join its small seas into oceans. In March 2167 a huge iceberg was fractured into a mass of fragments that melt high in the atmosphere and fall as rain over days to weeks, but a set of drive anchors and two drive segments fell to the surface, and the next chunk, due a week later, was expected to strike the planet uncontrolled. Riker has promised seed transport. Bill is growing mosses, lichens and grasses as base stock in a farm donut for introduction onto its surface."
+    },
+    {
+      "entity_id": "technology:guppi-interface",
+      "description": "An interface that offloads tasks for replicants while retaining their human limits on multitasking. Its name expands to General Unit Primary Peripheral Interface, and its logs retain monitoring-interface and script activity. Its operating system is firmware; changing its replication priority would require a new core and ship. Version-2 GUPPI is being given enough memory capacity that a personality matrix is contemplated. It can take messages and arrange callbacks for Riker, acting as a secretary and receptionist. It can estimate buster-drone deployment time and launch buster drones on Bob's order. It can report blocked firewall breach attempts, display a stack trace of an attack, and trace injected packets back to their originating stream. It can display a relief map marking the locations and status of tracked individuals, assign drones to follow them, and pass production orders to the autofactory, warning when an order carries a high operational cost. It can summarize the contents of incoming messages, report whether an attached backup transmission arrived complete, and archive a backup on instruction. It can carry out a standing order to busterize any gorilloid that comes within a set distance of the Deltans, reporting each neutralization. It presents itself to Bill as Admiral Ackbar, with a blank, fishy expression. During an ice capture it applies course corrections in real time, estimates the odds of saving the ice and the drive, and reports alignment, shutdown and the time left before atmospheric entry."
+    },
+    {
+      "entity_id": "technology:surge-drive",
+      "description": "A drive technology enabled by a breakthrough in subspace theory and used to equip spacecraft for interstellar operations. Beyond prototypes, only a small number of SURGE-equipped vessels are in active service. On Heaven-1, it provides reactionless propulsion rather than using gathered hydrogen as reaction mass. It can also accelerate a projectile through an axial launch tube, requiring the vessel to rotate to aim and to stop its drive before firing. Bob believes it may push against the fabric of space. A low-intensity, wide-field configuration can accelerate an asteroid as a unit without tidal forces or field drop-off tearing it apart. The large-body variant can propel icy Kuiper objects and is comparatively simple to construct but material-intensive. A proposed transport scheme detaches a drive after accelerating an ice body so it can be reused on another; a drive must also be available to intercept arriving bodies. At Epsilon Eridani the large-body drives, which Bill and Garfield call asteroid drives, work in pairs: Garfield's sends ice inward and Bill's captures it. Bill's drive is made up of twelve separate segments anchored to the ice and run up to a shutdown shortly before atmospheric entry; AMI-controlled drones then release the segments and fly them off, a job that takes about twelve minutes for a clean retrieval, while the ground anchors are written off. Losing the capture drive would leave the following chunks uncontrolled. Bill is considering holding the segments in orbit around each chunk instead, with no ground contact; this would need two separate drive channels but would be much faster."
+    },
+    {
+      "entity_id": "technology:subspace-communications",
+      "description": "SCUT, short for Subspace Communications Universal Transceiver, is a communications technology that carries signals through subspace. A finished unit uses a different transport layer while retaining the same object and virtual-reality interfaces. Its notes describe instantaneous communication across interstellar distances; earlier tests predicted dropouts at roughly twenty-five light-years, requiring stations to route longer links. The finished product is unadorned, without chrome or a logo. SCUT units cannot yet be made small enough to fit inside Bill's moose-sized android prototype, where faster-than-light links would relieve its control latency."
+    },
+    {
+      "entity_id": "technology:artificial-muscle-fiber-analogues",
+      "description": "Artificial muscle-fiber analogues are under development for constructing realistic robots or androids. Bill judges that a workable android needs muscles that resemble natural muscle in operation and appearance, rather than gears, pistons, or cables. Bill's android prototype uses muscles made of memory plastics that contract when an electric current is applied."
+    },
+    {
+      "entity_id": "technology:3d-printers",
+      "description": "Manufacturing equipment that gives Bob virtually unlimited flexibility for building things. The technology has become increasingly common but remains in its infancy; companies have demonstrated arranging individual atoms on a substrate. It can build more printers, robotic workers, miners, and Von Neumann machines. Some observers regard it as an early step toward practical self-assembling manufacturing systems. It does not eliminate scarcity but moves the bottleneck: capacity spent printing more printers, or drones to haul raw materials, is capacity not spent on end products such as colony ships. Printers help only partly with the micro-precision wiring an android needs for touch, heat and cold sensing."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bill",
+      "role": "lead"
+    },
+    {
+      "character_id": "character:garfield",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    }
+  ],
+  "mentions": [
+    "location:epsilon-eridani-star",
+    "technology:ami",
+    "technology:buster-drone",
+    "technology:vr"
+  ]
+}
