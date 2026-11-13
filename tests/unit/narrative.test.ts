@@ -493,6 +493,12 @@ describe("narrative corpus validation and projection", () => {
         (entity) => entity.id === "character:fixture-alex",
       )?.current_state,
     ).toBe("middle state");
+    // Date view keeps story order: 1.2's later-dated write wins at 2200.2.
+    expect(
+      generateNarrativeWorld(prepared, "1.3", "2200.2").entities.find(
+        (entity) => entity.id === "character:fixture-alex",
+      )?.current_state,
+    ).toBe("later state");
   });
 
   it("accepts every seeded non-location type with order-independent whole-snapshot references", () => {

@@ -23,8 +23,8 @@ fact appeared only from the reveal chapter's date and not from the real date.
   chapter earlier than its own chapter.
 - Story time is `effective_date ?? chapter date`. It drives Date-mode eligibility,
   Date-mode state-write ordering (ADR-0013 moments, with the source chapter as
-  before) and update activity, so the date joins the meaningful-date options only once the
-  update is revealed.
+  before) and update activity, so the date joins the meaningful-date options only
+  once the update is revealed.
 - The reveal chapter's date is never a filter for such an update; it is only the
   default effective date.
 - Events keep their own `date`. Location updates and introductions are unchanged:

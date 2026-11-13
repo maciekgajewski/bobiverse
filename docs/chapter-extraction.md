@@ -452,7 +452,8 @@ established at a later story date than the target chapter's, so the Captain can 
 where this happens. The list is not a promotion gate and is not a reason to drop
 merged facts from a candidate.
 
-The options are recorded in BOB-20261112-1TWD9T.
+BOB-20261112-1TWD9T records the options that were considered; ADR-0028 records the
+decision.
 
 ## Candidate assembly and temporary corpus
 

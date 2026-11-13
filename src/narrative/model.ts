@@ -1819,7 +1819,7 @@ export function preparedNarrativeChapters(
  */
 type WriteOrder = "story" | "reading";
 
-function compareWriteMoments(
+export function compareWriteMoments(
   left: NarrativeMoment,
   right: NarrativeMoment,
   order: WriteOrder,

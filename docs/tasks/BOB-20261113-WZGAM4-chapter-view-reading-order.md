@@ -103,3 +103,14 @@ changed Markdown, `git diff --check`.
   config (5173 left alone); prettier `--check` on the changed Markdown, except the
   date table already failing on master in `docs/data-model-definition.md`;
   `git diff --check`. All passed.
+- Merged origin/master `916470b` (PR #22, chapters 1.51–1.53) with a merge
+  commit, without rebasing; no conflicts. With 1.51–1.53 canonical, the same four
+  pairs flip and no others; #22's meaning-regression facts and Milo tests pass
+  with both the old and the new projection.
+- Review nits from #23: the four canonical flips are pinned by IDs, fields and
+  chapter refs in `tests/unit/narrative-chapter-view-flips.test.ts` (all four
+  fail against the old projection); the first flipped `narrative.test.ts` case also
+  checks Date view at 2200.2; a comparator test pins story-date order between
+  writes from one chapter (`compareWriteMoments` is exported for it); the ADR-0028
+  "Story time" bullet is re-wrapped; the D2 pointer to BOB-20261112-1TWD9T now says
+  it records the options considered.

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   compareNarrativeChapters,
+  compareWriteMoments,
   generateNarrativeWorld,
   meaningfulNarrativeDates,
   prepareNarrativeCorpus,
@@ -208,6 +209,23 @@ describe("backdated updates and chapter-view latest known state", () => {
       death_date: "2165-09",
       current_state: "seen",
     });
+  });
+
+  it("keeps story-date order between writes from the same chapter in both orders", () => {
+    // Validation allows one update per entity per chapter, so this pins the
+    // comparator directly: within one chapter, reading order falls back to the
+    // existing story-date order.
+    const early = { date: "2165-09", sourceChapter: "1.4" };
+    const late = { date: "2174-01", sourceChapter: "1.4" };
+    for (const order of ["reading", "story"] as const) {
+      expect(compareWriteMoments(early, late, order), order).toBeLessThan(0);
+      expect(compareWriteMoments(late, early, order), order).toBeGreaterThan(0);
+      expect(compareWriteMoments(late, late, order), order).toBe(0);
+    }
+    // Across chapters, only reading order ignores the story date.
+    const laterRead = { date: "2166-02", sourceChapter: "1.5" };
+    expect(compareWriteMoments(late, laterRead, "reading")).toBeLessThan(0);
+    expect(compareWriteMoments(late, laterRead, "story")).toBeGreaterThan(0);
   });
 
   it("applies the same write order to locations in both views", () => {
