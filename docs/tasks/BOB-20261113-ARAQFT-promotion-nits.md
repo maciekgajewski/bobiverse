@@ -77,4 +77,13 @@ git diff --check
   - `test` passed (31 files, 315 tests); `data:test` passed (85 tests);
   - `data:validate` passed (277 systems); `build` passed;
   - `prettier --check` on the changed Markdown and `git diff --check` passed.
+- Rebased onto origin/master `f06ecec` (PR #13; 1.43 is canonical) with no conflicts.
+- Ride-along: CS63EM is marked Done (PR #14, `3b87545`). The executable bit on
+  `scripts/extraction_preflight.py`, dropped by #14, is restored (`100755`).
+- Check on master: preflight for 1.44 without `--pending-predecessor` (synthetic
+  source, `/tmp` only) passes items 7 and 8 on the canonical chain.
+- Kept on the parent's direction: the hard-link and symlinked-approval refusals, as
+  deliberate safety additions. A symlinked parent above the workspace is accepted.
+- `chapter-extraction.md` §Approved alternative now opens with "per run or standing
+  (D1)" instead of "for the run".
 - Done only after merge.
