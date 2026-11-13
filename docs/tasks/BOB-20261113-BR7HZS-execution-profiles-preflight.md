@@ -147,8 +147,9 @@ of scope.
       root only. The command never runs `data:refresh` or any other networked
       command (`data:validate` is offline).
 
-      The diagnostic `Narrative anchors require a GCNS acquisition plan not covered
-by the pinned sources` is reported as its own failure class, pointing to
+      The diagnostic
+      `Narrative anchors require a GCNS acquisition plan not covered by the pinned sources`
+      is reported as its own failure class, pointing to
       §Astronomy preflight and isolated acquisition. Any other astronomy failure is
       a baseline failure.
 5. **Report.** JSON plus a short human summary. It covers each item with pass or
@@ -387,5 +388,6 @@ reports are written outside the repository and never committed.
     canonical (for example `1.44` with only `1.42` present) and at a book boundary,
     where `books.json` has no chapter counts. Leftover staged files alone do not
     cause a refusal. An acceptance criterion and fixture tests were added.
-  - Nits: the out-of-scope line now cites K7, and the uncovered-anchor diagnostic
-    line's indent is restored.
+  - Nits: the out-of-scope line now cites K7. The uncovered-anchor diagnostic line's
+    indent is restored by keeping its code span on one line: Prettier dedents a
+    wrapped code span's continuation line.
