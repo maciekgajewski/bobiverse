@@ -396,7 +396,7 @@ knowledge and integrate the newly revealed information rather than emitting only
 latest chapter fact. When updating an existing description, start from the complete
 prior reviewed entry and integrate the newly supported information; never erase
 useful reader-visible knowledge by emitting only the new chapter fact. §Reading order
-and story dates records an open decision about this rule; the rule stays in force.
+and story dates records Captain decision D2, which keeps this rule.
 
 ### Summaries
 
@@ -431,17 +431,29 @@ day and never appears in reader-facing text. The reviewed 2158 sequence uses rea
 month precision: Chapter `1.31` is `2158-01`, Chapter `1.33` is `2158-03`, Chapters
 `1.34` and `1.36` are `2158-09`, and Chapter `1.32` is `2158-10`.
 
-**Open Captain decision D2.** When reading order and story dates diverge, the
+**Captain decision D2 (closed).** When reading order and story dates diverge, the
 full-field update rule in §Descriptions can carry a fact into an update dated earlier
-than the chapter that first established it. Under ADR-0002, an existing later-dated
-write can also hide newly revealed knowledge at later story dates. The current rule
-in §Descriptions stays in force until the Captain decides D2; no other baseline
-applies. As reporting only, the review package lists every update whose prior entry
-contains a fact first established at a later story date than the target chapter's.
-This list is not a promotion gate, and it must not be used to rewrite a candidate
-while D2 is open.
+than the chapter that first established it, and an existing later-dated write could
+hide newly revealed knowledge. The Captain decided (2026-11-13, relayed by the
+manager; ADR-0028):
 
-The options are recorded in BOB-20261112-1TWD9T.
+- 19:59 CET: "Gap: (c) chapter view uses last chapter read, date view keeps story
+  date". In chapter view the latest-read chapter's write wins, so a later-dated write
+  no longer hides it; Date view keeps story-date order.
+- 20:01 CET: "Merge: (a) keep full merged texts". The full-field update rule in
+  §Descriptions applies unchanged: start from the complete prior reviewed entry and
+  integrate the new information, even when the update is dated earlier than some of
+  the facts it carries.
+
+Because merged writes carry full texts, Date view may show such a fact before the
+story date it belongs to. This is a known, accepted limitation. As reporting only,
+the review package lists every update whose prior entry contains a fact first
+established at a later story date than the target chapter's, so the Captain can see
+where this happens. The list is not a promotion gate and is not a reason to drop
+merged facts from a candidate.
+
+BOB-20261112-1TWD9T records the options that were considered; ADR-0028 records the
+decision.
 
 ## Candidate assembly and temporary corpus
 
@@ -589,8 +601,8 @@ Resolve human-review questions one at a time, then present:
 - evidence IDs with bounded excerpts rendered by `source_evidence.py review`; these
   stay on the extraction host;
 - unresolved or low-confidence items and applied exceptions;
-- the D2 list from §Reading order and story dates. It is not a promotion gate and
-  must not be used to rewrite a candidate while D2 is open;
+- the D2 list from §Reading order and story dates. It is reporting only and not a
+  promotion gate;
 - narrative and astronomy preflight output, including any automatically resolved
   mapped-anchor bootstrap;
 - the exact canonical diff that approval would create, or the exact combined

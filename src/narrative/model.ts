@@ -1811,19 +1811,43 @@ export function preparedNarrativeChapters(
   return indexesFor(corpus).chapters;
 }
 
+/**
+ * Write order for one property. Date mode (and every story-time projection)
+ * keeps story-date order, then chapter. Chapter mode lets the write from the
+ * latest-read chapter win, keeping story-date order only within one chapter
+ * (ADR-0028, decision (c)).
+ */
+type WriteOrder = "story" | "reading";
+
+export function compareWriteMoments(
+  left: NarrativeMoment,
+  right: NarrativeMoment,
+  order: WriteOrder,
+): number | null {
+  if (order === "reading") {
+    const chapterOrdering = compareChapter(
+      left.sourceChapter,
+      right.sourceChapter,
+    );
+    if (chapterOrdering !== 0) return chapterOrdering;
+  }
+  return compareNarrativeMoments(left, right);
+}
+
 function applyProperties(
   entity: NarrativeEntity,
   write: NarrativeRecord,
   moment: NarrativeMoment,
   latestMoments: Map<string, NarrativeMoment>,
   excludes: readonly string[],
+  order: WriteOrder = "story",
 ): void {
   for (const property of sourceProperties(write, excludes)) {
     const key = `${entity.id}\u0000${property}`;
     const priorMoment = latestMoments.get(key);
     if (
       !priorMoment ||
-      (compareNarrativeMoments(priorMoment, moment) ?? -1) < 0
+      (compareWriteMoments(priorMoment, moment, order) ?? -1) < 0
     ) {
       entity[property] = structuredClone(write[property]);
       latestMoments.set(key, moment);
@@ -1863,6 +1887,7 @@ function assertProjectedLocationConstraints(
       ...locationProjectionDates(readerVisible, chapterDate(selectedChapter)),
     ]) {
       const displayDate = cutoff ?? chapterDate(selectedChapter);
+      const writeOrder: WriteOrder = cutoff === null ? "reading" : "story";
       const locations = new Map(
         zeroStateEntities
           .filter((entity) => entity.entity_type === "location")
@@ -1902,6 +1927,7 @@ function assertProjectedLocationConstraints(
             { date, sourceChapter },
             latestMoments,
             ["id"],
+            writeOrder,
           );
           locations.set(id, location);
           orbitalWrites.push({
@@ -1926,6 +1952,7 @@ function assertProjectedLocationConstraints(
             { date, sourceChapter },
             latestMoments,
             ["entity_id"],
+            writeOrder,
           );
           orbitalWrites.push({
             id,
@@ -2401,6 +2428,8 @@ export function generateNarrativeWorld(
     : null;
   // Chapter mode has no story-time cutoff; only Date mode filters by date.
   const cutoff = requestedDisplayDate ?? null;
+  // Chapter mode: the latest-read chapter's write wins (ADR-0028, decision (c)).
+  const writeOrder: WriteOrder = cutoff === null ? "reading" : "story";
   const entities = assertZeroStateSemantics(
     corpus.zeroState,
     corpus.knownAstronomyObjectIds,
@@ -2452,6 +2481,7 @@ export function generateNarrativeWorld(
         { date: effectiveDate, sourceChapter },
         latestMoments,
         ["id"],
+        writeOrder,
       );
       byId.set(id, entity);
       entities.push(entity);
@@ -2495,6 +2525,7 @@ export function generateNarrativeWorld(
         { date: effectiveDate, sourceChapter },
         latestMoments,
         ["entity_id", "effective_date"],
+        writeOrder,
       );
       if (target.entity_type === "location") {
         orbitalWrites.push({
