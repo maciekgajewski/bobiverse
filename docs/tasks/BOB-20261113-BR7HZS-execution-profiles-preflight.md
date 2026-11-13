@@ -115,20 +115,32 @@ of scope.
    6. **Tooling.** `node --version` reports 22.23.1. The check is the Node version,
       not the nvm mechanism. `node_modules` and `.venv` are present, and
       `npm run narrative:validate` passes.
-   7. **Prior chain.** The command builds the prior root with `prepare-corpus`,
-      using the last canonical chapter before the target as the stand-in candidate.
-      For target `1.43`, the helper runs for `1.42` with
-      `data/narrative/chapters/1/42.json` as the candidate. The last chapter of the
-      previous book is used across a book boundary.
+   7. **Prior chain.** The target's immediate predecessor must be canonical. For
+      chapter `b.n` with `n > 1`, that is `b.(n-1)`: if
+      `data/narrative/chapters/<b>/<n-1>.json` is absent, item 7 fails closed. For
+      example, target `1.44` fails while only `1.42` is in the tree. Leftover staged
+      files under `/tmp` or elsewhere are ignored; only the canonical tree decides.
+
+      At a book boundary (`b.1` with `b > 1`), `books.json` records no chapter
+      counts, so the predecessor cannot be established and item 7 fails closed.
+      Adding chapter counts is out of scope.
+
+      The command then builds the prior root with `prepare-corpus`, using that
+      predecessor as the stand-in candidate. For target `1.43`, the helper runs for
+      `1.42` with `data/narrative/chapters/1/42.json` as the candidate.
 
       Provenance must show `inputs_clean: true`. This is not a duplicate of item 5:
       provenance inspects only `data/narrative` and `data/presentation`.
 
-      **First-chapter case.** When the target has no prior chapter, the prior chain
-      is the zero state alone. The helper requires a candidate, so items 7 and 8
-      report "not applicable: zero-state target" rather than inventing a root, and
-      item 6's `narrative:validate` is the zero-state evidence. Extending the helper
-      for this case is out of scope.
+      **Zero-state target (`1.1`).** Items 7 and 8 fail closed: the command reports
+      "cannot certify a zero-state prior chain" and exits non-zero. There is never a
+      passing "not applicable". The preferred alternative, building and validating
+      a disposable zero-state root, is not feasible with the existing tooling (see
+      K8):
+      - `prepare-corpus` requires a candidate, and changing `source_evidence.py` is
+        out of scope (K6);
+      - a hand-built zero-state root fails both validators against current canonical
+        data.
 
    8. **Validators.** Narrative validation and
       `npm run data:validate -- --narrative-root <prior-root>` run on that exact
@@ -139,8 +151,8 @@ of scope.
 by the pinned sources` is reported as its own failure class, pointing to
       §Astronomy preflight and isolated acquisition. Any other astronomy failure is
       a baseline failure.
-5. **Report.** JSON plus a short human summary. It covers each item with pass, fail
-   or not applicable, its evidence, its governing §Heading, and its stated limits
+5. **Report.** JSON plus a short human summary. It covers each item with pass or
+   fail (there is no not-applicable result), its evidence, its governing §Heading, and its stated limits
    (K1, K5). It also records the base revision, the profile-record SHA-256 and the
    overall verdict. Any failure exits non-zero.
 6. **Docs.** These are pointers plus agreed wording clarifications, not rule
@@ -156,7 +168,11 @@ by the pinned sources` is reported as its own failure class, pointing to
    - a fake launcher on `PATH`;
    - temporary git repositories with and without a remote, and a dirty worktree;
    - a missing `.venv` and a wrong Node version;
-   - a stand-in prior root and a zero-state target;
+   - a stand-in prior root;
+   - a zero-state target (`1.1`), which must exit non-zero;
+   - a missing immediate predecessor (fixture tree up to `1.1`, target `1.3`), which
+     must fail item 7;
+   - an unrelated staged file under `/tmp`, which must not cause a failure;
    - an uncovered-anchor validator fixture;
    - an approval file that passes item 1 but must not waive a failing item 2–8;
    - a check that the report contains no source bytes.
@@ -171,7 +187,7 @@ by the pinned sources` is reported as its own failure class, pointing to
 - Running any extraction, reading `source-text/`, or sending book text anywhere.
 - Automating Pass 1 or Pass 2 spawning, review packages, promotion or the
   approved-chapters repository (later queued tasks).
-- A preflight for staged, not-yet-canonical prior chains (K6); those stay manual
+- A preflight for staged, not-yet-canonical prior chains (K7); those stay manual
   under the astronomy staging order.
 - Changing validators, the astronomy pipeline, acquisition staging, ADR-0016/0023
   authority or `source_evidence.py`.
@@ -217,8 +233,28 @@ by the pinned sources` is reported as its own failure class, pointing to
 - **K7. Staged prior chains.** The astronomy staging order allows the exact prior
   chain to include earlier staged chapters that are not yet canonical. Item 7 builds
   only the canonical prior chain.
-  - Resolution: report the canonical-chain assumption in the report. Staged chains
-    stay a manual check (out of scope).
+  - Resolution: staged chains stay a manual check (out of scope). Item 7 never
+    passes on a canonical-only chain when the target's immediate predecessor is not
+    canonical: it fails closed. Leftover staged files alone are not a reason to
+    refuse.
+- **K8. Existing tooling cannot validate a zero-state or strict-prefix root against
+  current canonical data.** On 2026-11-13, a disposable zero-state root was built in
+  `/tmp` from the same four inputs `prepare-corpus` copies (`baseline/`,
+  `assets.json`, `books.json`, `presentation/species.json`), validated, and deleted.
+  No book text was involved.
+  - Narrative validation failed: the canonical species presentation registry
+    references species that chapters introduce.
+  - `data:validate` failed with `CNS5 acquisition queries differ from the exact
+plan`, because the pinned plan covers anchors from all 42 chapters.
+
+  The same exact-plan guard means that any strict canonical prefix fails item 8, as
+  the astronomy staging order already says ("extra queries also fail exact-plan
+  validation"). The preflight therefore certifies only a target whose predecessor
+  is the current canonical tip, such as `1.43`. Re-extracting an earlier chapter
+  fails closed.
+  - Resolution: fail closed, as designed. Changing validators, the presentation
+    registry or the pinned sources is out of scope.
+
 - **No conflict:** the astronomy staging order already requires exact prior-root
   validation before extraction and says it is not a refresh. The command runs exactly
   that.
@@ -254,16 +290,21 @@ None of these changes a model, provider or privacy choice.
 2. `scripts/extraction_preflight.py` implements `--help` and checks items 1–8 as
    specified in scope item 4. It keeps to the write boundary: no repository or
    canonical writes, no network, no model call, no `data:refresh`, and no skip
-   flag. It exits non-zero on any failure.
+   flag. It exits non-zero on any failure. No item can pass as not applicable.
 3. A NON-CONFORMING approval file affects item 1 only. Its required fields are
    format-checked, and the report states that authenticity is not checked.
 4. Stdout, stderr and the report contain only fingerprint fields for the source,
    never source bytes or excerpts.
-5. Each item has fixture tests for pass and fail, covering every case listed in
+5. A zero-state target (`1.1`) exits non-zero with "cannot certify a zero-state
+   prior chain".
+6. Item 7 fails closed when the target's immediate predecessor is not canonical
+   (fixture: tree up to `1.1`, target `1.3`) and at a book boundary. Unrelated
+   staged files outside the canonical tree do not cause a failure.
+7. Each item has fixture tests for pass and fail, covering every case listed in
    scope item 7.
-6. The doc edits in scope item 6 are made. The approved-chapters default and every
+8. The doc edits in scope item 6 are made. The approved-chapters default and every
    rule are unchanged, and `source_evidence.py` is unchanged.
-7. All validation commands pass.
+9. All validation commands pass.
 
 ## Validation
 
@@ -294,7 +335,7 @@ reports are written outside the repository and never committed.
 
 - **False assurance.** A green preflight can be read as proof of a conforming run.
   Mitigation: the report states what item 1 and the approval file do not prove (K1,
-  K5) and the canonical-chain assumption (K7).
+  K5). Zero-state and non-canonical-predecessor targets fail closed (K7, K8).
 - **Book-text exposure.** Mitigation: fingerprint-only output, no model call, and
   synthetic test files only.
 - **Drift between profile statements.** Mitigation: Q2(b) and a single test.
@@ -332,3 +373,19 @@ reports are written outside the repository and never committed.
   in-design delegation. None changes a model, provider or privacy choice. Status
   stays Draft until the re-review approves; then the task goes to Ready on the
   manager's authorisation.
+- Re-review of `575284b` requested changes. B1–B3, N1–N8, the merge and the
+  decisions were accepted.
+  - B4: the zero-state "not applicable" path was unsafe, because item 6 validates
+    the full worktree, not a zero-state root, and never runs `data:validate`. I
+    tried the preferred fix, a disposable zero-state root in `/tmp`, and found it
+    infeasible with the existing tooling: both validators fail against current
+    canonical data (K8). The helper also needs a candidate, and changing it is out
+    of scope (K6). So I chose to fail closed: a zero-state target exits non-zero,
+    and no item can pass as not applicable. The acceptance criteria and tests are
+    updated to match.
+  - B5: item 7 now fails closed when the target's immediate predecessor is not
+    canonical (for example `1.44` with only `1.42` present) and at a book boundary,
+    where `books.json` has no chapter counts. Leftover staged files alone do not
+    cause a refusal. An acceptance criterion and fixture tests were added.
+  - Nits: the out-of-scope line now cites K7, and the uncovered-anchor diagnostic
+    line's indent is restored.
