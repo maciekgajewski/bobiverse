@@ -2,7 +2,7 @@
 
 Status: Done
 Phase: 1 (verification infrastructure; supports Phase 2 interactions)
-Last updated: 2026-11-12
+Last updated: 2026-11-13
 
 ## Objective and user-visible outcome
 
@@ -52,8 +52,8 @@ npm run test
 npm run data:test
 npm run data:validate
 npm run build
-CI=1 LIBGL_ALWAYS_SOFTWARE=1 npm run test:e2e -- --config /home/grok-developer/bobiverse-flakes-artifacts/playwright.config.mts --workers=1 --retries=0 --grep 'phone browser opens|system-mode dollies' --repeat-each=20
-CI=1 LIBGL_ALWAYS_SOFTWARE=1 npm run test:e2e -- --config /home/grok-developer/bobiverse-flakes-artifacts/playwright.config.mts --workers=1 --retries=0
+CI=1 LIBGL_ALWAYS_SOFTWARE=1 npm run test:e2e -- --config playwright.config.ts --workers=1 --retries=0 --grep 'phone browser opens|system-mode dollies' --repeat-each=20
+CI=1 LIBGL_ALWAYS_SOFTWARE=1 npm run test:e2e -- --config playwright.config.ts --workers=1 --retries=0
  git diff --check
 ```
 
@@ -180,3 +180,9 @@ No new ADR is required. Local software rendering is not identical to hosted runn
 - PR #4 was squash-merged to master as `3053e95` on Tuesday 2026-11-10. The
   independently reviewed head was `3196b24`. Status is now **Done**, recorded
   after that merge.
+
+### 2026-11-13 (Europe/Amsterdam)
+
+- Made the validation commands repo-relative: they now use the in-repo
+  `playwright.config.ts` instead of an out-of-repo wrapper config under the
+  developer's home directory. Status stays Done.

@@ -20,6 +20,10 @@ setting DISPLAY while retaining `headless: true` does not select its display-bac
 rendering path. Do not bypass the real canvas assertions when WebGL fails.
 `npx playwright install --with-deps` supplies that system dependency on supported Linux runners.
 
+Because the Firefox project is `headless: false`, a bare `npx playwright test` needs a
+display. On a headless host, use `npm run test:e2e`, or run
+`npm run narrative:manifest` and then `xvfb-run -a npx playwright test`.
+
 ## GitHub Actions CI
 
 The `CI` workflow in `.github/workflows/ci.yml` runs on pull requests, pushes to
