@@ -61,8 +61,9 @@ The same PR makes `scripts/chapter_promotion.py` stop writing promotion-log rows
 - **Fields and policy.** `description` and `visual_description` are always checked
   (§Descriptions full-field update rule). `state` and `current_state` are checked
   only when the new write's story date (`effective_date ?? chapter date`) is not
-  later than the earlier write's: earlier, or an overlapping date of different
-  precision. That is the ADR-0028 case, where a later-read but earlier-dated write
+  later than the earlier write's: earlier, the same date, or an overlapping date
+  of different precision. That is the ADR-0028 case, where a later-read but
+  earlier-dated write
   would otherwise hide what is known; the 1.56 EE-2 write is one. A later-dated
   `state` or `current_state` write is the new latest condition, which §Descriptions
   says replaces the old one. Checking those always would flag 116 more `current_state` and 10 `state` writes on master, plus 20 `current_state` writes in the 1.54–1.58 candidates alone. The policy is one constant, `sentencePreservationPolicy`, if the Captain wants it
@@ -124,3 +125,13 @@ Markdown, `git diff --check`. No UI code changes, so no e2e.
   the check fails 1.56 `location:ee-2.state` (sentences 1 and 2 of 1.51's three),
   1.58 `technology:vr.description` (sentences 1 and 5 of 1.42's seven) and 1.55
   `species:delta-eridani-natives.description` (sentence 9 of 1.53's 14).
+- Review nits after approval of `7a74b46`: equal same-precision `state` /
+  `current_state` dates are now checked (skip only when the new write is strictly
+  later); added equal-date and `visual_description` tests. Status stays In progress
+  until merge: a Done task's Log must cite the merge commit SHA. The tighter date
+  rule newly flags 13 missing sentences in 9 pre-existing `current_state` writes,
+  all equal-date (comparison 0), added to the exceptions file as "pre-existing,
+  predates check": 1.13 `character:bob-replicant`, 1.16 `character:bob-replicant`,
+  1.26 `character:riker`, 1.26 `character:homer`, 1.30 `character:bob-replicant`,
+  1.51 `character:milo`, 1.53 `character:bob-replicant`, 1.53 `character:marvin`,
+  1.53 `character:archimedes`.

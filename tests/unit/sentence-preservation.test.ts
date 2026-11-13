@@ -193,6 +193,49 @@ describe("findSentencePreservationViolations", () => {
     ).toEqual(["1.2 state Seeded.", "1.2 state Promised transport."]);
   });
 
+  it("checks state when the write has the same story date as the earlier one", () => {
+    const violations = findSentencePreservationViolations([
+      chapter("1.1", "2170", [
+        { entity_id: "location:moon", state: "Seeded. Promised transport." },
+      ]),
+      chapter("1.2", "2170", [
+        { entity_id: "location:moon", state: "Surveyed." },
+      ]),
+    ]);
+    expect(
+      violations.map(
+        (violation) =>
+          `${violation.chapter} ${violation.field} ${violation.sentence}`,
+      ),
+    ).toEqual(["1.2 state Seeded.", "1.2 state Promised transport."]);
+  });
+
+  it("reports a dropped visual_description sentence", () => {
+    const violations = findSentencePreservationViolations([
+      chapter("1.1", "2100", [
+        {
+          entity_id: "location:base",
+          visual_description: "A red dome. Two hangars.",
+        },
+      ]),
+      chapter("1.2", "2101", [
+        { entity_id: "location:base", visual_description: "A red dome." },
+      ]),
+    ]);
+    expect(violations).toEqual([
+      {
+        entityId: "location:base",
+        field: "visual_description",
+        chapter: "1.2",
+        pointer: "/updates/0/visual_description",
+        earlierChapter: "1.1",
+        sentenceIndex: 1,
+        sentenceCount: 2,
+        sentence: "Two hangars.",
+      },
+    ]);
+  });
+
   it("ignores fields outside the checked prose fields", () => {
     expect(
       findSentencePreservationViolations([

@@ -25,10 +25,11 @@ import {
  *   full-field update rule for `description` in docs/chapter-extraction.md
  *   §Descriptions.
  * - `when-not-later`: only a write whose story date is not later than the earlier
- *   write's (earlier, or an overlapping coarser date) must keep them. That is the
- *   ADR-0028 case, where the write is read later but dated earlier and would
- *   otherwise hide what is known. A later-dated `state` or `current_state` write is
- *   the new latest condition, which §Descriptions says replaces the old one.
+ *   write's (earlier, the same date, or an overlapping date of different
+ *   precision) must keep them. That is the ADR-0028 case, where the write is read
+ *   later but dated earlier and would otherwise hide what is known. A later-dated
+ *   `state` or `current_state` write is the new latest condition, which
+ *   §Descriptions says replaces the old one.
  */
 export const sentencePreservationPolicy = {
   description: "always",
@@ -186,10 +187,11 @@ export function findSentencePreservationViolations(
       for (const [field, write] of fields) {
         const earlier = visible.get(`${entityId}\u0000${field}`);
         if (!earlier) continue;
+        const dateOrder = compareNarrativeDates(write.date, earlier.date);
         if (
           sentencePreservationPolicy[field] === "when-not-later" &&
-          compareNarrativeDates(write.date, earlier.date) !== null &&
-          compareNarrativeDates(write.date, earlier.date)! >= 0
+          dateOrder !== null &&
+          dateOrder > 0
         ) {
           continue;
         }
