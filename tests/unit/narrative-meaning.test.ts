@@ -2,7 +2,11 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import {
+  compareNarrativeChapters,
   generateNarrativeWorld,
+  prepareNarrativeCorpus,
+  preparedNarrativeChapters,
+  type NarrativeRecord,
   type NarrativeWorld,
 } from "../../src/narrative/model";
 import { narrativeCorpus } from "../../src/narrative/runtime";
@@ -121,15 +125,20 @@ function earlyVisibility(
   });
 }
 
-function canonicalIntroductions() {
-  if (!narrativeCorpus)
-    throw new Error("Canonical narrative preparation failed.");
-  return narrativeCorpus.chapters.map((chapter) => ({
+// Reader order comes from the prepared index, not from the manifest's order.
+function introductions(chapters: readonly NarrativeRecord[]) {
+  return chapters.map((chapter) => ({
     chapter: String(chapter.chapter),
     introduced: ((chapter.introducing as { id?: unknown }[] | undefined) ?? [])
       .map((record) => record.id)
       .filter((id): id is string => typeof id === "string"),
   }));
+}
+
+function canonicalIntroductions() {
+  if (!narrativeCorpus)
+    throw new Error("Canonical narrative preparation failed.");
+  return introductions(preparedNarrativeChapters(narrativeCorpus));
 }
 
 const fixture: unknown = JSON.parse(
@@ -152,6 +161,7 @@ describe("meaning-level expectations on the canonical narrative", () => {
   it(
     "holds every pinned fact",
     () => {
+      expect((fixture as Expectation[]).length).toBeGreaterThan(0);
       const failures = (fixture as Expectation[])
         .map((entry) => evaluate(entry, worldAt))
         .filter((failure) => failure !== null);
@@ -168,6 +178,29 @@ describe("meaning-level expectations on the canonical narrative", () => {
         true,
       );
       expect(earlyVisibility(chapters, worldAt)).toEqual([]);
+    },
+    SLOW,
+  );
+});
+
+describe("introduction order", () => {
+  it(
+    "follows reader order even when the input chapters are shuffled",
+    () => {
+      if (!narrativeCorpus)
+        throw new Error("Canonical narrative preparation failed.");
+      const reversed = prepareNarrativeCorpus({
+        ...narrativeCorpus,
+        chapters: [...narrativeCorpus.chapters].reverse(),
+      });
+      const order = introductions(preparedNarrativeChapters(reversed)).map(
+        ({ chapter }) => chapter,
+      );
+      expect(order).toEqual(
+        canonicalIntroductions().map(({ chapter }) => chapter),
+      );
+      expect(order).toEqual([...order].sort(compareNarrativeChapters));
+      expect(order[0]).toBe("1.1");
     },
     SLOW,
   );

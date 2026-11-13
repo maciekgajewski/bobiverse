@@ -1,6 +1,6 @@
 # BOB-20261113-GTFZA1: process-metadata lint
 
-Status: In progress
+Status: Done
 Phase: 4 (LLM-assisted editorial pipeline; process hardening)
 Last updated: 2026-11-13
 
@@ -106,3 +106,5 @@ Manager decision under its delegation, 2026-11-13 17:13:
 - Merged origin/master `f4177fd` (PR #16) into this branch with no conflicts. The
   lint passes on the merged tree, #16's files included. Ride-along: 97Z771 is marked
   Done (PR #16, `f4177fd`), and so is RG3XYR (PR #12, `ef01c2e`).
+- PR #17 was squash-merged to master as `d6742a6` on Friday 2026-11-13. Status is now
+  **Done**, recorded after that merge (in BOB-20261113-YRMT4T).

@@ -295,13 +295,50 @@ describe("chapter_promotion.py record refuses links and special files", () => {
     expectApprovedUntouched(start);
   });
 
-  it("refuses a symlinked workspace directory", () => {
+  it.each(["", "/", "/."])(
+    "refuses a symlinked workspace directory (suffix %j)",
+    (suffix) => {
+      const start = git(approved, "rev-parse", "HEAD");
+      const link = path.join(fixture, "workspace-link");
+      symlinkSync(workspace, link);
+      const result = record([], undefined, `${link}${suffix}`);
+      expect(result.status).toBe(1);
+      expect(result.stderr).toContain("must not be a symlink");
+      expectApprovedUntouched(start);
+    },
+  );
+
+  it.each([
+    ["symlinked", symlinkSync],
+    ["hard-linked", linkSync],
+  ])("refuses a %s approval file", (_case, makeLink) => {
+    fillWorkspace(workspace);
+    const real = path.join(fixture, "approval-real.json");
+    write(
+      real,
+      JSON.stringify({
+        chapter: "1.2",
+        date: "2026-11-13",
+        captain_approval_quote: "Synthetic approval.",
+        relaying_role: "manager",
+      }),
+    );
+    const approval = path.join(fixture, "approval-link.json");
+    makeLink(real, approval);
     const start = git(approved, "rev-parse", "HEAD");
-    const link = path.join(fixture, "workspace-link");
-    symlinkSync(workspace, link);
-    const result = record([], undefined, link);
+    const result = run([
+      "record",
+      "--chapter",
+      "1.2",
+      "--workspace",
+      workspace,
+      "--approval",
+      approval,
+      "--repo",
+      approved,
+    ]);
     expect(result.status).toBe(1);
-    expect(result.stderr).toContain("must not be a symlink");
+    expect(result.stderr).toContain("approval-link.json is not a regular");
     expectApprovedUntouched(start);
   });
 });
@@ -372,6 +409,10 @@ describe("chapter_promotion.py promote and verify", () => {
     [
       "without a table",
       () => write(log(), "# Chapter promotion log\n\nNo table.\n"),
+    ],
+    [
+      "that is not valid UTF-8",
+      () => writeFileSync(log(), Buffer.from([0xff, 0xfe, 0x7c, 0x0a])),
     ],
   ])(
     "refuses a promotion log %s before writing the chapter",

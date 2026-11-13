@@ -215,9 +215,12 @@ def header_fields(lines: Sequence[str]) -> list[str]:
     return fields
 
 
-def check_adrs(adr_directory: Path, display_base: Path) -> tuple[set[str], set[str], list[str]]:
-    """Validate ADR filenames, headings, statuses and numbering.
+def check_adrs(
+    adr_directory: Path, display_base: Path, task_filenames: set[str] | None = None
+) -> tuple[set[str], set[str], list[str]]:
+    """Validate ADR filenames, headings, statuses, numbering and references.
 
+    Task-file references inside ADRs are checked when task_filenames is given.
     Returns the ADR numbers, the ADR filenames and the errors found.
     """
     if not adr_directory.is_dir():
@@ -281,10 +284,13 @@ def check_adrs(adr_directory: Path, display_base: Path) -> tuple[set[str], set[s
         if len(paths) > 1 and number not in KNOWN_DUPLICATE_ADR_NUMBERS:
             errors.append(f"duplicate ADR number {number}: {', '.join(paths)}")
     for number in sorted(KNOWN_DUPLICATE_ADR_NUMBERS):
-        if numbers and len(numbers.get(number, [])) != 2:
+        paths = numbers.get(number, [])
+        if numbers and len(paths) != 2:
+            noun = "file" if len(paths) == 1 else "files"
             errors.append(
-                f"ADR number {number} is listed as a known duplicate but has "
-                f"{len(numbers.get(number, []))} files; update KNOWN_DUPLICATE_ADR_NUMBERS"
+                f"ADR number {number} is allow-listed for exactly two files but has "
+                f"{len(paths)} {noun}: {', '.join(paths) or 'none'}; only the two "
+                "grandfathered files are exempt"
             )
 
     if numbers:
@@ -298,7 +304,9 @@ def check_adrs(adr_directory: Path, display_base: Path) -> tuple[set[str], set[s
             errors.append(f"{relative_path}: superseded by missing ADR-{successor}")
 
     for relative_path, document in documents:
-        errors.extend(reference_errors(relative_path, document, set(numbers), filenames, None))
+        errors.extend(
+            reference_errors(relative_path, document, set(numbers), filenames, task_filenames)
+        )
 
     return set(numbers), filenames, errors
 
@@ -336,8 +344,8 @@ def list_adrs(adr_directory: Path) -> list[Path]:
 
 def check_process_metadata(tasks: Sequence[Task], adr_directory: Path, display_base: Path) -> list[str]:
     """Check ADR metadata, cross-references and Done-task merge evidence."""
-    adr_numbers, adr_filenames, errors = check_adrs(adr_directory, display_base)
     task_filenames = {task.path.name for task in tasks}
+    adr_numbers, adr_filenames, errors = check_adrs(adr_directory, display_base, task_filenames)
 
     for task in tasks:
         document = task.path.read_text(encoding="utf-8")
