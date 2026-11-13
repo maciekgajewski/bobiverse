@@ -61,18 +61,31 @@ available.
 
 Since 2026-11-13 (the Captain's decision of 21:43 CET, relayed by the manager), the
 Extractor submits each Captain-approved chapter, or a short run of them, as its own
-data-only PR, and the manager reviews and merges it. Such a PR needs no task file,
-no manual browser checklist, no per-chapter facts in
-`tests/fixtures/narrative-meaning.json` and no row in
-[`chapter-promotion-log.md`](chapter-promotion-log.md). Existing fixture facts stay.
+data-only PR, and the manager reviews and merges it. Such a PR needs no task file
+and no manual browser checklist. Per-chapter facts in
+`tests/fixtures/narrative-meaning.json` and a row in
+[`chapter-promotion-log.md`](chapter-promotion-log.md) are not required. Existing
+fixture facts stay; changing an existing one is a disputed book fact and needs the
+Captain's recorded decision.
+
+A data-only PR may change only this path:
+
+- `data/narrative/chapters/` — the canonical chapter JSON that
+  `scripts/chapter_promotion.py promote` writes, at
+  `data/narrative/chapters/<book>/<number>.json`.
+
+`npm run narrative:manifest`, which `promote` runs in post-write validation, also
+rewrites `generated/narrative/chapter-manifest.json`. That file is gitignored and
+must not be committed. Touching anything outside this list makes the change a
+normal code PR, which needs a task file and follows the developer lifecycle above.
 
 Its gate is the merge gate below, with item 4 met by the PR body. The body quotes
 the Captain's approval of each chapter with its date and time, and the relay path when
 relayed. The independent review checks that the data is exactly the approved
-candidate, and that the required safety nets in
-[`chapter-extraction.md`](chapter-extraction.md) pass: the generic validators and the
-merged-text sentence-preservation check. A chapter that needs code or
-content-specific UI goes to the developer as a separate task.
+candidate, that the PR stays within the path allowlist, and that the required
+safety nets in [`chapter-extraction.md`](chapter-extraction.md) pass: the generic
+validators and the merged-text sentence-preservation check. A chapter that needs
+code or content-specific UI goes to the developer as a separate task.
 
 ## Merge gate checklist
 

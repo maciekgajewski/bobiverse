@@ -6,19 +6,19 @@ through data-only PRs, and the PR body carries the approval and provenance
 `scripts/chapter_promotion.py promote` still appends a row until a follow-up changes
 it; drop that row from the data PR.
 
-This append-only log records routine promotion of explicitly approved chapter
-candidates. The shared workflow and validation commands live in
-[chapter extraction](chapter-extraction.md); do not create a per-chapter task for
-these promotions.
+This append-only log recorded routine promotion of explicitly approved chapter
+candidates. The shared workflow and validation commands lived in
+[chapter extraction](chapter-extraction.md); these promotions did not use a
+per-chapter task.
 
 The `Canonical SHA-256` column is the file SHA-256 of the exact canonical chapter
 bytes as written. When standard formatting changed the approved bytes, the decision
-cell also records the approved-candidate file SHA-256, together with the
+cell also recorded the approved-candidate file SHA-256, together with the
 approved-chapters repository commit and tag and any NON-CONFORMING label. Historical
 rows are not rewritten. See the extraction contract, §Checksum provenance.
 
 Earlier chapter-authoring history remains in the existing completed tasks. This log
-starts with chapter `1.3` and does not duplicate those records.
+started with chapter `1.3` and did not duplicate those records.
 
 | Applied date | Chapter | Canonical SHA-256                                                  | Validation | Material editorial decisions                                                                                                                                                                                                                                                                             |
 | ------------ | ------- | ------------------------------------------------------------------ | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

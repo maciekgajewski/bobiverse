@@ -62,7 +62,7 @@ spawning for both passes; the run's own records attest those settings.
 ## C. Promotion and post-write
 
 `scripts/chapter_promotion.py promote` runs items 2–5. Items 3–5 form one fail-closed
-transaction: any failure restores the chapter and the log. Isolated acquisition
+transaction: any failure restores the chapter. Isolated acquisition
 (§Promotion step 3) stays manual. The Extractor runs this section on its own data
 branch.
 
@@ -76,6 +76,8 @@ branch.
 5. Run the post-write validation (§Post-write validation); if it fails, restore the
    chapter. Check merged-text sentence preservation (§Post-write validation).
 6. Open a data-only PR whose body quotes the Captain's approval with date and time,
-   plus the provenance from §Checksum provenance. Per-chapter facts in
-   `tests/fixtures/narrative-meaning.json` are optional. Changing an existing one is
-   a disputed book fact and needs the Captain's recorded decision.
+   plus the provenance from §Checksum provenance, limited to the path allowlist in
+   [§Data-only chapter PRs](development-process.md#data-only-chapter-prs).
+   Per-chapter facts in `tests/fixtures/narrative-meaning.json` are not required.
+   Existing facts stay; changing an existing one is a disputed book fact and needs
+   the Captain's recorded decision.

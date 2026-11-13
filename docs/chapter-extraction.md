@@ -655,8 +655,10 @@ the candidate is approved for quality.
 7. Open a data-only PR under
    [§Data-only chapter PRs](development-process.md#data-only-chapter-prs). Its body
    quotes the Captain's approval with date and time and lists the material editorial
-   decisions and §Checksum provenance. No promotion-log row and no per-chapter
-   regression facts are required.
+   decisions and §Checksum provenance. The PR may change only the path allowlist in
+   that section (`data/narrative/chapters/`). A promotion-log row and per-chapter
+   regression facts are not required; existing fixture facts stay. Changing an
+   existing fact is a disputed book fact.
 
 ### Post-write validation
 
