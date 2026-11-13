@@ -1,6 +1,6 @@
 # BOB-20261113-BR7HZS: versioned execution profiles and automated extraction preflight
 
-Status: Draft
+Status: Ready
 Phase: 4 (LLM-assisted editorial pipeline; process hardening before Chapter 1.43)
 Last updated: 2026-11-13
 
@@ -45,11 +45,11 @@ provider, and does not decide D1.
 
 ## Authorisation
 
-Not yet authorised; status Draft until the task-doc re-review approves. The manager
-answered Q1–Q6 on 2026-11-13 under its delegation for routine, in-design work (see
-Decisions). None of them changes a model, provider or privacy choice. After the
-re-review approves, the task goes to Ready, and the manager may authorise the tooling
-without a separate Captain sign-off (Q6). A Captain decision is needed only if a
+Authorised. The task-doc re-review approved PR #10 at `7c9c3da`, and the manager
+authorised implementation on 2026-11-13 under its delegation for routine, in-design
+work (Q6). The manager answered Q1–Q6 under the same delegation (see Decisions). None
+of them changes a model, provider or privacy choice, so no separate Captain sign-off
+is needed. A Captain decision is needed only if a
 profile value changes, a probe spawn is proposed, or D1 is decided; all three are out
 of scope.
 
@@ -412,3 +412,5 @@ reports are written outside the repository and never committed.
     item 8 runs the existing validators with no position gate. The B4 and B5
     fail-closed rules are unchanged.
   - N11: K8's exact-plan code span is on its own line, keeping its indent.
+- The task-doc re-review approved `7c9c3da`. Status Ready; the manager authorised
+  implementation under its delegation (Q6).
