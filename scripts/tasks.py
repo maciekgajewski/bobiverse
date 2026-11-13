@@ -14,6 +14,7 @@ from typing import Callable, Sequence
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_TASKS_DIR = REPOSITORY_ROOT / "docs" / "tasks"
+DEFAULT_ADRS_DIR = REPOSITORY_ROOT / "docs" / "adrs"
 STATUSES = ("Draft", "Ready", "In progress", "Blocked", "Done")
 CROCKFORD_BASE32 = "0123456789ABCDEFGHJKMNPQRSTVWXYZ"
 
@@ -30,6 +31,22 @@ TASK_FILENAME_RE = re.compile(
 HEADING_RE = re.compile(r"^# (?P<task_id>BOB-[^:]+): (?P<title>.+)$")
 STATUS_RE = re.compile(r"^Status: (?P<status>.*)$")
 FENCE_OPEN_RE = re.compile(r"^ {0,3}(?P<fence>`{3,}|~{3,})(?P<info>.*)$")
+
+ADR_FILENAME_RE = re.compile(r"^(?P<number>[0-9]{4})-[a-z0-9]+(?:-[a-z0-9]+)*\.md$")
+ADR_HEADING_RE = re.compile(r"^# ADR-(?P<number>[0-9]{4}): \S.*$")
+ADR_STATUS_RE = re.compile(
+    r"^(?:Proposed|Accepted|Rejected|Superseded by ADR-(?P<successor>[0-9]{4}))$"
+)
+ADR_DATE_RE = re.compile(r"^Date: (?P<date>.*)$")
+ADR_NUMBER_REFERENCE_RE = re.compile(r"\bADR-(?P<number>[0-9]{4})\b")
+ADR_PATH_REFERENCE_RE = re.compile(r"\badrs/(?P<filename>[0-9]{4}-[a-z0-9-]+\.md)")
+TASK_PATH_REFERENCE_RE = re.compile(
+    rf"(?:(?P<directory>[A-Za-z0-9_.-]+)/)?\b(?P<filename>(?:{LEGACY_ID_PATTERN}|{DATED_ID_PATTERN})-[a-z0-9]+(?:-[a-z0-9]+)*\.md)"
+)
+COMMIT_REFERENCE_RE = re.compile(r"`[0-9a-f]{7,40}`")
+# Accepted ADRs are never rewritten, and these numbers were each used twice before
+# the lint existed. Cite them by filename. Any other duplicate is an error.
+KNOWN_DUPLICATE_ADR_NUMBERS = frozenset({"0018", "0026"})
 
 
 @dataclass(frozen=True)
@@ -188,6 +205,154 @@ def discover_tasks(task_directory: Path, display_base: Path) -> list[Task]:
     return sorted(tasks, key=lambda task: task.task_id)
 
 
+def header_fields(lines: Sequence[str]) -> list[str]:
+    """Lines between the heading and the first level-two section."""
+    fields: list[str] = []
+    for line in lines[1:]:
+        if line.startswith("## "):
+            break
+        fields.append(line)
+    return fields
+
+
+def check_adrs(adr_directory: Path, display_base: Path) -> tuple[set[str], set[str], list[str]]:
+    """Validate ADR filenames, headings, statuses and numbering.
+
+    Returns the ADR numbers, the ADR filenames and the errors found.
+    """
+    if not adr_directory.is_dir():
+        return set(), set(), [f"{adr_directory}: ADR directory does not exist"]
+
+    errors: list[str] = []
+    numbers: dict[str, list[str]] = {}
+    filenames: set[str] = set()
+    successors: list[tuple[str, str]] = []
+    documents: list[tuple[str, str]] = []
+
+    for path in sorted(adr_directory.glob("*.md")):
+        if path.name == "README.md":
+            continue
+        relative_path = path.relative_to(display_base).as_posix()
+        filename_match = ADR_FILENAME_RE.fullmatch(path.name)
+        if filename_match is None:
+            errors.append(f"{relative_path}: ADR filename must be NNNN-<lowercase-hyphenated-slug>.md")
+            continue
+        number = filename_match.group("number")
+        numbers.setdefault(number, []).append(relative_path)
+        filenames.add(path.name)
+
+        lines = path.read_text(encoding="utf-8").splitlines()
+        documents.append((relative_path, "\n".join(lines)))
+        heading_match = ADR_HEADING_RE.fullmatch(lines[0]) if lines else None
+        if heading_match is None:
+            errors.append(f"{relative_path}: first line must be '# ADR-NNNN: <title>'")
+        elif heading_match.group("number") != number:
+            errors.append(
+                f"{relative_path}: heading number ADR-{heading_match.group('number')} does not "
+                f"match filename number {number}"
+            )
+
+        fields = header_fields(lines)
+        statuses = [line.removeprefix("Status: ") for line in fields if line.startswith("Status: ")]
+        if len(statuses) != 1:
+            errors.append(f"{relative_path}: expected exactly one Status field, found {len(statuses)}")
+        else:
+            status_match = ADR_STATUS_RE.fullmatch(statuses[0])
+            if status_match is None:
+                errors.append(
+                    f"{relative_path}: unsupported ADR status {statuses[0]!r}; expected Proposed, "
+                    "Accepted, Rejected or Superseded by ADR-NNNN"
+                )
+            elif status_match.group("successor") is not None:
+                successors.append((relative_path, status_match.group("successor")))
+
+        dates = [match.group("date") for line in fields if (match := ADR_DATE_RE.fullmatch(line))]
+        if len(dates) != 1:
+            errors.append(f"{relative_path}: expected exactly one Date field, found {len(dates)}")
+        else:
+            try:
+                valid_date = dt.date.fromisoformat(dates[0]).isoformat() == dates[0]
+            except ValueError:
+                valid_date = False
+            if not valid_date:
+                errors.append(f"{relative_path}: Date must be YYYY-MM-DD, got {dates[0]!r}")
+
+    for number, paths in sorted(numbers.items()):
+        if len(paths) > 1 and number not in KNOWN_DUPLICATE_ADR_NUMBERS:
+            errors.append(f"duplicate ADR number {number}: {', '.join(paths)}")
+    for number in sorted(KNOWN_DUPLICATE_ADR_NUMBERS):
+        if numbers and len(numbers.get(number, [])) != 2:
+            errors.append(
+                f"ADR number {number} is listed as a known duplicate but has "
+                f"{len(numbers.get(number, []))} files; update KNOWN_DUPLICATE_ADR_NUMBERS"
+            )
+
+    if numbers:
+        highest = max(int(number) for number in numbers)
+        missing = [f"{value:04d}" for value in range(1, highest + 1) if f"{value:04d}" not in numbers]
+        if missing:
+            errors.append(f"ADR numbers are not contiguous from 0001; missing {', '.join(missing)}")
+
+    for relative_path, successor in successors:
+        if successor not in numbers:
+            errors.append(f"{relative_path}: superseded by missing ADR-{successor}")
+
+    for relative_path, document in documents:
+        errors.extend(reference_errors(relative_path, document, set(numbers), filenames, None))
+
+    return set(numbers), filenames, errors
+
+
+def reference_errors(
+    relative_path: str,
+    document: str,
+    adr_numbers: set[str],
+    adr_filenames: set[str],
+    task_filenames: set[str] | None,
+) -> list[str]:
+    errors: list[str] = []
+    for number in sorted({match.group("number") for match in ADR_NUMBER_REFERENCE_RE.finditer(document)}):
+        if number not in adr_numbers:
+            errors.append(f"{relative_path}: references missing ADR-{number}")
+    for filename in sorted({match.group("filename") for match in ADR_PATH_REFERENCE_RE.finditer(document)}):
+        if filename not in adr_filenames:
+            errors.append(f"{relative_path}: references missing ADR file adrs/{filename}")
+    if task_filenames is not None:
+        for filename in sorted(
+            {
+                match.group("filename")
+                for match in TASK_PATH_REFERENCE_RE.finditer(document)
+                if match.group("directory") in (None, "tasks")
+            }
+        ):
+            if filename not in task_filenames:
+                errors.append(f"{relative_path}: references missing task file {filename}")
+    return errors
+
+
+def list_adrs(adr_directory: Path) -> list[Path]:
+    return [path for path in adr_directory.glob("*.md") if path.name != "README.md"]
+
+
+def check_process_metadata(tasks: Sequence[Task], adr_directory: Path, display_base: Path) -> list[str]:
+    """Check ADR metadata, cross-references and Done-task merge evidence."""
+    adr_numbers, adr_filenames, errors = check_adrs(adr_directory, display_base)
+    task_filenames = {task.path.name for task in tasks}
+
+    for task in tasks:
+        document = task.path.read_text(encoding="utf-8")
+        errors.extend(
+            reference_errors(task.display_path, document, adr_numbers, adr_filenames, task_filenames)
+        )
+        sections = re.split(r"^## Log[ \t]*$", document, maxsplit=1, flags=re.MULTILINE)
+        if task.status == "Done" and len(sections) == 2 and not COMMIT_REFERENCE_RE.search(sections[1]):
+            errors.append(
+                f"{task.display_path}: Done task's Log must cite the merge commit as a backticked SHA"
+            )
+
+    return errors
+
+
 def escape_markdown_cell(value: str) -> str:
     return value.replace("\\", "\\\\").replace("|", "\\|")
 
@@ -256,6 +421,14 @@ def build_parser() -> argparse.ArgumentParser:
         metavar="PATH",
         help="task directory (default: repository docs/tasks)",
     )
+    parser.add_argument(
+        "--adrs-dir",
+        metavar="PATH",
+        help=(
+            "ADR directory for check (default: repository docs/adrs, or none when "
+            "--tasks-dir is given)"
+        ),
+    )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     list_parser = subparsers.add_parser("list", help="print a generated task index")
@@ -271,7 +444,9 @@ def build_parser() -> argparse.ArgumentParser:
         help='include only one status, such as Ready or "In progress"',
     )
 
-    subparsers.add_parser("check", help="validate all task filenames and metadata")
+    subparsers.add_parser(
+        "check", help="validate task and ADR metadata, cross-references and Done evidence"
+    )
 
     new_id_parser = subparsers.add_parser(
         "new-id", help="print one available collision-resistant task ID"
@@ -298,6 +473,22 @@ def run(arguments: Sequence[str] | None = None) -> int:
         return 1
 
     if args.command == "check":
+        adr_directory = (
+            Path(args.adrs_dir).expanduser().resolve()
+            if args.adrs_dir is not None
+            else DEFAULT_ADRS_DIR.resolve()
+            if args.tasks_dir is None
+            else None
+        )
+        if adr_directory is not None:
+            adr_base = display_base if args.adrs_dir is None else adr_directory
+            errors = check_process_metadata(tasks, adr_directory, adr_base)
+            if errors:
+                for message in errors:
+                    print(f"error: {message}", file=sys.stderr)
+                return 1
+            print(f"Validated {len(tasks)} task files and {len(list_adrs(adr_directory))} ADRs.")
+            return 0
         print(f"Validated {len(tasks)} task files.")
         return 0
 

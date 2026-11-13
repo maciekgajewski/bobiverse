@@ -1,6 +1,6 @@
 # BOB-20261113-RG3XYR: recoverable chapter promotion via the approved-chapters repository
 
-Status: In progress
+Status: Done
 Phase: 4 (LLM-assisted editorial pipeline; process hardening before Chapter 1.43)
 Last updated: 2026-11-13
 
@@ -247,3 +247,5 @@ No e2e: no application code changes.
   extract with its own model, NON-CONFORMING), relayed by the manager on
   2026-11-13, in `chapter-extraction.md` §Approved alternative. Checklist A item 1
   no longer says "D1 open".
+- PR #12 was squash-merged to master as `ef01c2e` on Friday 2026-11-13. Status is now
+  **Done**, recorded after that merge (in BOB-20261113-GTFZA1).

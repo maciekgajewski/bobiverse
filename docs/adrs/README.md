@@ -20,6 +20,12 @@ technical design.
 
 Use `NNNN-short-title.md`, beginning with `0001`.
 
+Numbers are contiguous and unique, and the heading number matches the filename;
+`python3 scripts/tasks.py check` enforces this. Numbers 0018 and 0026 were each
+used twice before that check existed. They are frozen as they are, not renumbered,
+so cite those ADRs by filename. New ADRs are numbered from 0028, and any other
+duplicate fails the check.
+
 ## Statuses
 
 - `Proposed`
@@ -59,4 +65,3 @@ Which tasks and integrated documents must change if this ADR is accepted?
 Once an ADR is accepted, update the technical design when practical so agents do not
 need to reconstruct the integrated architecture from a long ADR chain. Never rewrite
 an accepted ADR to change history; supersede it.
-

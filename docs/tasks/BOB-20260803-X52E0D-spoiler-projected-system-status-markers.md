@@ -37,10 +37,10 @@ Ready status still does not authorize implementation.
 - `../implementation-plan.md`, Phase 2
 - `../design/phase-2-desktop-ui.md`, Sections 8.2 and 8.3
 - `../design/reference/system-status-icons-concept-v3.png`
-- `../adrs/0002-reader-knowledge-visibility.md`
-- `../adrs/0004-narrative-zero-state.md`
-- `../adrs/0005-generalized-narrative-entity-model.md`
-- `../adrs/0017-narrative-extraction-mention-completeness.md`
+- `../adrs/0002-reader-order-visibility-and-story-time-projection.md`
+- `../adrs/0006-generalized-narrative-zero-state.md`
+- `../adrs/0007-additional-narrative-entity-types.md`
+- `../adrs/0017-supplemental-mention-completeness.md`
 - `../adrs/0024-species-presentation-registry.md`
 - `../adrs/0025-spoiler-projected-location-status-and-system-markers.md`
 - `../adrs/0027-final-production-system-marker-visual-vocabulary.md`
