@@ -1744,6 +1744,13 @@ function indexesFor(corpus: PreparedNarrativeCorpus): PreparedNarrativeIndexes {
   return indexes;
 }
 
+/** Prepared chapters in reader order (book, then chapter), whatever the input order. */
+export function preparedNarrativeChapters(
+  corpus: PreparedNarrativeCorpus,
+): readonly NarrativeRecord[] {
+  return indexesFor(corpus).chapters;
+}
+
 function applyProperties(
   entity: NarrativeEntity,
   write: NarrativeRecord,

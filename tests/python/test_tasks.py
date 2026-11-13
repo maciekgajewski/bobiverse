@@ -216,6 +216,13 @@ def write_known_duplicates(adr_directory: Path) -> None:
         write_adr(adr_directory, f"{number}-second-decision.md")
 
 
+def write_raw_adr(adr_directory: Path, filename: str, *fields: str) -> Path:
+    path = adr_directory / filename
+    lines = [f"# ADR-{filename[:4]}: example", "", *fields, "", "## Context", "", "Example."]
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return path
+
+
 class ProcessMetadataTest(unittest.TestCase):
     def adr_errors(self, prepare) -> list[str]:
         with tempfile.TemporaryDirectory() as temporary_directory:
@@ -242,12 +249,44 @@ class ProcessMetadataTest(unittest.TestCase):
             ),
             (lambda d: write_adr(d, "0005-collision.md"), "duplicate ADR number 0005"),
             (lambda d: write_adr(d, "0028-gap.md"), "missing 0027"),
-            (lambda d: (d / "0018-second-decision.md").unlink(), "known duplicate but has 1 files"),
+            (lambda d: (d / "0018-second-decision.md").unlink(), "but has 1 file: "),
+            (lambda d: write_adr(d, "0018-third-decision.md"), "0018-third-decision.md"),
+            (lambda d: write_raw_adr(d, "0027-new.md", "Date: 2026-11-13"), "exactly one Status field, found 0"),
+            (
+                lambda d: write_raw_adr(
+                    d, "0027-new.md", "Status: Accepted", "Status: Accepted", "Date: 2026-11-13"
+                ),
+                "exactly one Status field, found 2",
+            ),
+            (lambda d: write_raw_adr(d, "0027-new.md", "Status: Accepted"), "Date field, found 0"),
+            (
+                lambda d: write_raw_adr(
+                    d, "0027-new.md", "Status: Accepted", "Date: 2026-11-13", "Date: 2026-11-14"
+                ),
+                "exactly one Date field, found 2",
+            ),
         )
         for index, (prepare, expected) in enumerate(cases):
             with self.subTest(case=index):
                 errors = self.adr_errors(prepare)
                 self.assertTrue(any(expected in error for error in errors), errors)
+
+    def test_checks_task_file_references_inside_adrs(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            adr_directory = Path(temporary_directory)
+            write_known_duplicates(adr_directory)
+            write_adr(
+                adr_directory,
+                "0027-new.md",
+                body="See `BOB-001-present.md`, `BOB-002-missing.md` and "
+                "`docs/reviews/BOB-003-review-results.md`.",
+            )
+
+            errors = check_adrs(adr_directory, adr_directory, {"BOB-001-present.md"})[2]
+
+            self.assertEqual(
+                errors, ["0027-new.md: references missing task file BOB-002-missing.md"]
+            )
 
     def test_checks_task_references_and_done_merge_evidence(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
