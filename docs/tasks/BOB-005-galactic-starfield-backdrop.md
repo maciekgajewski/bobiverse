@@ -2,7 +2,7 @@
 
 Status: Done
 Phase: 1B (map enhancement)
-Last updated: 2026-07-23
+Last updated: 2026-11-13
 
 ## Objective
 
@@ -50,15 +50,16 @@ appears in the same direction as the map's `+Xg` axis, and Galactic north is `+Z
   longitude and latitude `(l, b) = (0°, 0°)`, and longitude increases to the image's
   left. Align it to the existing render mapping:
 
-  ~~~text
+  ```text
   scene.x =  Xg
   scene.y =  Zg
   scene.z = -Yg
-  ~~~
+  ```
 
   Therefore the Galactic centre maps to `+scene.x`, Galactic north to `+scene.y`, and
   `l = 90°`, `b = 0°` to `-scene.z`. Account explicitly for the source image's
   left-increasing longitude; do not correct alignment by visual approximation.
+
 - The backdrop is decorative only. It cannot change canonical coordinates, render
   positions, unit conversion, measurements, labels, camera-focus targets, scale,
   selection, hover behavior, or the visible Galactic plane/orientation aids.
@@ -67,9 +68,9 @@ appears in the same direction as the map's `+Xg` axis, and Galactic north is `+Z
   selected-system frames, orientation references, and warm stellar markers lose
   clarity. Do not recolour the source into a magenta/purple nebula treatment.
 - Display this concise, visible UI credit in the existing astronomy/source-notice
-  area: `Astronomy backdrop: NASA/Goddard Space Flight Center Scientific
-  Visualization Studio, Deep Star Maps 2020; Gaia DR2: ESA/Gaia/DPAC.` It must link
-  to the source page without causing a runtime asset fetch.
+  area:
+  `Astronomy backdrop: NASA/Goddard Space Flight Center Scientific Visualization Studio, Deep Star Maps 2020; Gaia DR2: ESA/Gaia/DPAC.`
+  It must link to the source page without causing a runtime asset fetch.
 - Add a repository documentation record at
   `docs/data/galactic-starfield-backdrop.md`. It must give the source title, exact
   source asset and URL, retrieval date, checksum, conversion information, output
@@ -86,10 +87,10 @@ appears in the same direction as the map's `+Xg` axis, and Galactic north is `+Z
   Link the official Gaia DR2 credit-and-citation instructions and include these
   requested citations:
 
-  1. Gaia Collaboration, Prusti et al. (2016), *The Gaia mission*, *Astronomy &
-     Astrophysics* 595, A1, <https://doi.org/10.1051/0004-6361/201629272>.
-  2. Gaia Collaboration et al. (2018), *Gaia Data Release 2: Summary of the contents
-     and survey properties*, *Astronomy & Astrophysics* 616, A1,
+  1. Gaia Collaboration, Prusti et al. (2016), _The Gaia mission_, _Astronomy &
+     Astrophysics_ 595, A1, <https://doi.org/10.1051/0004-6361/201629272>.
+  2. Gaia Collaboration et al. (2018), _Gaia Data Release 2: Summary of the contents
+     and survey properties_, _Astronomy & Astrophysics_ 616, A1,
      <https://doi.org/10.1051/0004-6361/201833051>.
 
   Do not use NASA, ESA, or Gaia logos.
@@ -160,7 +161,9 @@ appears in the same direction as the map's `+Xg` axis, and Galactic north is `+Z
 8. The UI source notice exposes the prescribed visible credit and source-page link
    without logos or an implication of NASA, ESA, or Gaia endorsement. It remains
    readable and available to keyboard and screen-reader users at every responsive
-   layout.
+   layout. (Since BOB-20261113-3VCGFP the notice is a map-corner chip. The collapsed
+   chip always shows the short credit `NASA/GSFC SVS · ESA/Gaia/DPAC`, and one tap or
+   Enter reveals this prescribed credit and its source-page link.)
 9. Automated tests cover texture/provenance loading, cardinal Galactic orientation,
    camera-following/non-rotating ownership, no backdrop raycasting, and preservation
    of existing selection, reset, and unit behavior. Playwright covers backdrop
@@ -178,7 +181,7 @@ appears in the same direction as the map's `+Xg` axis, and Galactic north is `+Z
 
 ## Validation commands
 
-~~~bash
+```bash
 npm run format:check
 npm run lint
 npm run typecheck
@@ -187,7 +190,7 @@ npm run test:e2e
 npm run build
 npm run validate
 git diff --check
-~~~
+```
 
 For manual review, run `npm run dev`; inspect the backdrop at desktop, compact, and
 phone widths, then orbit, pan, zoom, select, focus, reset, and use both display units.

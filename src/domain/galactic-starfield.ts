@@ -26,6 +26,13 @@ export const GALACTIC_STARFIELD_SOURCE_URL =
   "https://svs.gsfc.nasa.gov/4851/" as const;
 export const GALACTIC_STARFIELD_UI_CREDIT =
   "Astronomy backdrop: NASA/Goddard Space Flight Center Scientific Visualization Studio, Deep Star Maps 2020; Gaia DR2: ESA/Gaia/DPAC." as const;
+/**
+ * Always-visible short form of the backdrop credit for the collapsed map credits
+ * chip. The chip expands to GALACTIC_STARFIELD_UI_CREDIT and its source link.
+ * The no-break space keeps "SVS ·" together when the chip wraps on phones.
+ */
+export const GALACTIC_STARFIELD_SHORT_CREDIT =
+  "NASA/GSFC SVS\u00a0· ESA/Gaia/DPAC" as const;
 
 /** Converts canonical Galactic longitude and latitude to a scene direction. */
 export function sceneDirectionForGalacticSky(

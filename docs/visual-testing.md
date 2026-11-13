@@ -210,7 +210,8 @@ result and spatial legibility.
 On 2026-07-23, the Captain accepted the visual-system and application-shell review.
 The review covered the desktop framed shell, responsive map visibility, compact
 browser and inspector panels, selected-system details, and the visible VizieR
-attribution footer. Chrome, Firefox, and WebKit automated coverage also passed; the
+attribution footer (since BOB-20261113-3VCGFP, the map credits chip). Chrome,
+Firefox, and WebKit automated coverage also passed; the
 existing Safari real-browser publication gap remains unchanged.
 
 ## BOB-011 reader progress and temporal navigation
@@ -256,9 +257,9 @@ chapter's story year. At 200% browser zoom, verify the command bar exposes **Tim
 progress** after the CSS viewport falls below the simultaneous-layout breakpoint.
 Open it and confirm the same **Read through**, mode, chapter/date, and timeline values
 appear in a non-animated modal panel. Tab and Shift+Tab must remain inside it; Escape
-and the visible close control must return focus to the invoking command. The page must
-not gain horizontal scrolling, and the attribution footer must remain reachable after
-the panel closes.
+and the visible close control must return focus to the invoking command (the menu
+button since BOB-20261113-3VCGFP). The page must not gain horizontal scrolling, and the
+attribution notice must remain reachable after the panel closes.
 
 The dock remains one compact desktop row in ordinary Chapter and Date views; a dense
 same-coordinate Date-mode dot stack may increase its height so every compact plot point
@@ -439,7 +440,7 @@ frame and label, and the camera focused Sol.
 ## BOB-015 Phase 2 desktop integration
 
 At 1200-by-700 and 1440-by-1000 CSS pixels, confirm the object browser, true-scale
-map, object inspector, timeline dock, and attribution footer are simultaneously
+map, object inspector, timeline dock, and attribution notice chip are simultaneously
 visible. The map must remain wider than either rail, no horizontal page scrollbar may
 appear, and the context badge must remain wholly inside the map.
 
@@ -555,6 +556,29 @@ interstellar distances, Galactic coordinate components, hover separations, and m
 scale remain in light-years. This does not alter the project-wide Safari
 pre-publication gap.
 
+## BOB-20261113-3VCGFP mobile map chrome (Variant A)
+
+On a phone in portrait (about 390×844) and landscape (about 844×390), and on desktop
+(about 1440×900):
+
+- The top bar is one slim row: "Star Map", **Read through**, and on phones a menu
+  button. The map fills everything below it, edge to edge on phones.
+- **Read through** in the bar asks for confirmation before revealing a chapter, the
+  same as the dock and the Timeline and progress panel.
+- The menu opens a right-hand drawer with **Knowledge through**, Chapter/Date mode,
+  **Browse objects**, **Inspect selection** (when something is selected),
+  **Timeline and progress** and **Reset view**. Close, Escape and tapping outside
+  close it and the panels it opens, and focus returns to the menu button.
+- The astronomy notice is a chip in the map's bottom-right corner, collapsed by
+  default, that shows "NASA/GSFC SVS · ESA/Gaia/DPAC" in full. Tapping it shows the
+  catalogue line, acknowledgements and the backdrop credit link; tapping again or
+  Escape collapses it.
+- **Reset view** is a round house icon in the map's top-right corner. It resets the
+  camera, shows a "Reset view" tooltip on desktop hover or keyboard focus, and is
+  dimmed and inactive in system view.
+- On desktop, both rails and the timeline dock remain, and the map is larger than
+  before.
+
 ## Default and reset camera
 
 The repeatable default camera pose preserves the documented Three.js viewing
@@ -569,6 +593,6 @@ canvas aspect ratio:
 
 Reset cancels any in-progress automatic focus motion and restores both the fitted
 camera position and controls target to this pose. It does not change the selected
-system. During manual acceptance, move and rotate the camera, press Reset view, and
+system. During manual acceptance, move and rotate the camera, press the Reset view map control (the house icon in the map's top-right corner), and
 confirm that Sol is targeted from this same repeatable orientation with every known
 system visible.
