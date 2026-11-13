@@ -1006,7 +1006,7 @@ describe("atlas shell", () => {
     const user = userEvent.setup();
     render(<App />);
     const chip = screen.getByRole("button", {
-      name: /^Astronomy data credits:\s*GCNS/,
+      name: /^Astronomy data credits:\s*NASA\/GSFC SVS\s·\sESA\/Gaia\/DPAC$/,
     });
     expect(chip).toHaveAttribute("aria-expanded", "false");
     await user.click(chip);
@@ -1206,6 +1206,27 @@ describe("atlas shell", () => {
     await waitFor(() => expect(menu).toHaveFocus());
 
     await user.click(menu);
+    await user.click(screen.getByRole("button", { name: "Browse objects" }));
+    await user.click(document.querySelector(".compact-panel-backdrop")!);
+    expect(
+      screen.queryByRole("dialog", { name: "Object browser" }),
+    ).not.toBeInTheDocument();
+    await waitFor(() => expect(menu).toHaveFocus());
+
+    await user.click(menu);
+    await user.click(
+      screen.getByRole("button", { name: "Timeline and progress" }),
+    );
+    expect(
+      screen.getByRole("dialog", { name: "Timeline and progress" }),
+    ).toBeInTheDocument();
+    await user.click(document.querySelector(".compact-panel-backdrop")!);
+    expect(
+      screen.queryByRole("dialog", { name: "Timeline and progress" }),
+    ).not.toBeInTheDocument();
+    await waitFor(() => expect(menu).toHaveFocus());
+
+    await user.click(menu);
     await user.click(
       within(screen.getByRole("dialog", { name: "Menu" })).getByRole("button", {
         name: "Reset view",
@@ -1215,6 +1236,41 @@ describe("atlas shell", () => {
       screen.queryByRole("dialog", { name: "Menu" }),
     ).not.toBeInTheDocument();
     await waitFor(() => expect(menu).toHaveFocus());
+  });
+
+  it("keeps Knowledge through in the compact menu in Date mode", async () => {
+    window.localStorage.setItem(
+      "bobiverse.app-state.v2",
+      JSON.stringify({
+        furthestChapterRead: "1.2",
+        viewChapter: "1.2",
+        displayDate: "2133",
+        mode: "chapter",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+    vi.stubGlobal("matchMedia", compactMatchMedia);
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: "Menu" }));
+    let drawer = screen.getByRole("dialog", { name: "Menu" });
+    await user.click(within(drawer).getByRole("button", { name: "Date mode" }));
+    if (!screen.queryByRole("dialog", { name: "Menu" })) {
+      await user.click(screen.getByRole("button", { name: "Menu" }));
+    }
+    drawer = screen.getByRole("dialog", { name: "Menu" });
+    expect(
+      within(drawer).getByRole("button", { name: "Date mode" }),
+    ).toHaveAttribute("aria-pressed", "true");
+    const knowledge = within(drawer).getByLabelText("Knowledge through");
+    expect(knowledge).toBeEnabled();
+    expect(knowledge).toHaveValue("1.2");
+    await user.selectOptions(knowledge, "1.1");
+    expect(knowledge).toHaveValue("1.1");
+    expect(
+      within(drawer).getByRole("button", { name: "Chapter mode" }),
+    ).toHaveAttribute("aria-pressed", "true");
   });
 
   it("puts Reset view on the map as one labelled icon control", async () => {
@@ -1249,8 +1305,9 @@ describe("atlas shell", () => {
     const user = userEvent.setup();
     render(<App />);
     const chip = screen.getByRole("button", {
-      name: /^Astronomy data credits:\s*GCNS/,
+      name: /^Astronomy data credits:\s*NASA\/GSFC SVS\s·\sESA\/Gaia\/DPAC$/,
     });
+    expect(chip).not.toHaveAttribute("aria-controls");
     await user.click(chip);
     const card = screen.getByRole("region", { name: "Astronomy data credits" });
     expect(chip).toHaveAttribute("aria-controls", card.id);

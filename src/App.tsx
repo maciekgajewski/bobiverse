@@ -13,6 +13,7 @@ import { nearbySystems, nearbySystemsResult } from "./domain/data";
 import { mapDisplayConfig } from "./domain/config";
 import {
   GALACTIC_STARFIELD_SOURCE_URL,
+  GALACTIC_STARFIELD_SHORT_CREDIT,
   GALACTIC_STARFIELD_UI_CREDIT,
 } from "./domain/galactic-starfield";
 import type { SelectionIdentity } from "./domain/selection";
@@ -1052,7 +1053,9 @@ export default function App() {
               type="button"
               className="astronomy-notice-chip"
               aria-expanded={astronomyNoticeOpen}
-              aria-controls="astronomy-notice-card"
+              aria-controls={
+                astronomyNoticeOpen ? "astronomy-notice-card" : undefined
+              }
               onClick={() => setAstronomyNoticeOpen((open) => !open)}
             >
               <span className="astronomy-notice-icon" aria-hidden="true">
@@ -1060,7 +1063,7 @@ export default function App() {
               </span>
               <span className="visually-hidden">Astronomy data credits:</span>{" "}
               <span className="astronomy-notice-summary">
-                {ASTRONOMY_CATALOGUE_LINE}
+                {GALACTIC_STARFIELD_SHORT_CREDIT}
               </span>
             </button>
           </footer>
@@ -1144,7 +1147,7 @@ export default function App() {
           <div
             className="compact-panel-backdrop"
             aria-hidden="true"
-            onClick={mobilePanel === "menu" ? closeMobilePanel : undefined}
+            onClick={closeMobilePanel}
           />
           <div
             className={`mobile-panel ${mobilePanel}`}
@@ -1187,15 +1190,13 @@ export default function App() {
                   <p className="eyebrow">Bobiverse · astronomy atlas</p>
                   <h2>Star Map</h2>
                 </div>
-                {progress.mode === "chapter" && (
-                  <KnowledgeThroughSelect
-                    id="menu-knowledge-through"
-                    chapters={narrativeChapters}
-                    progress={progress}
-                    onKnowledgeChapter={selectKnowledge}
-                    onReturnToZeroState={returnToZeroKnowledge}
-                  />
-                )}
+                <KnowledgeThroughSelect
+                  id="menu-knowledge-through"
+                  chapters={narrativeChapters}
+                  progress={progress}
+                  onKnowledgeChapter={selectKnowledge}
+                  onReturnToZeroState={returnToZeroKnowledge}
+                />
                 <TimelineModeToggle
                   progress={progress}
                   meaningfulDates={meaningfulDates}

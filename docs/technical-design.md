@@ -596,8 +596,10 @@ identity, the **Read through** select and a menu button; the menu drawer opens t
 browser, **Timeline and progress**, **Knowledge through**, Chapter/Date mode and a
 secondary **Reset view**; and a selected item's inspector opens as a non-animated
 bottom panel. Map tools such as **Reset view** are icon controls inside the map, and
-source attribution is a notice chip in the map's corner that expands to the full
-credits (`tasks/BOB-20261113-3VCGFP-mobile-map-chrome.md`).
+source attribution is a notice chip in the map's corner. The collapsed chip always
+shows the short backdrop credit `NASA/GSFC SVS · ESA/Gaia/DPAC`; one tap or Enter
+expands it to the catalogue line, the source acknowledgements and the prescribed
+linked backdrop credit (`tasks/BOB-20261113-3VCGFP-mobile-map-chrome.md`).
 
 Phase 1 is desktop-first and targets current Chrome, Firefox, Safari, and Edge.
 Automated browser projects cover the Chromium, Firefox, and WebKit engines; manual
@@ -631,9 +633,9 @@ Phase 2's approved desktop workspace is specified in
 object browser, true-scale map, selected-object inspector, and chapter/date timeline
 dock together. Search lives at the top of the browser. The map remains the largest
 surface, and the attribution notice remains visible as a map-corner chip that
-expands to the full credits. The shared application state and
-components are later recomposed for mobile by BOB-016; desktop implementation must not
-create a parallel domain or spoiler model.
+shows the short backdrop credit and expands to the full credits. The shared
+application state and components are later recomposed for mobile by BOB-016;
+desktop implementation must not create a parallel domain or spoiler model.
 
 Below the simultaneous-layout breakpoint, including when 200% desktop zoom reduces
 the CSS viewport, the BOB-003 map-first browser and inspector panels remain in use.

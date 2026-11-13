@@ -17,7 +17,8 @@ one slim bar, without changing any behaviour, data or spoiler rule.
 - The menu drawer holds **Knowledge through**, Chapter/Date mode, **Browse objects**,
   **Inspect selection** (when something is selected), **Timeline and progress** and a
   secondary **Reset view** row.
-- The attribution footer becomes a collapsed chip in the map's bottom-right corner.
+- The attribution footer becomes a collapsed chip in the map's bottom-right corner
+  that always shows the short backdrop credit "NASA/GSFC SVS · ESA/Gaia/DPAC".
   Tapping it expands a card with the same three blocks (catalogue line,
   acknowledgements, backdrop credit link).
 - **Reset view** becomes a 44px round icon button in the map's top-right corner at
@@ -62,12 +63,14 @@ one slim bar, without changing any behaviour, data or spoiler rule.
    1200px. Choices, confirmation and cancellation use the existing handlers and
    `pendingReadThrough` state.
 3. Menu drawer: a new `menu` compact panel built on the existing `.mobile-panel`
-   pattern (labelled Close, Escape, Tab containment). The backdrop click also closes
-   it. All compact panels now return focus to the menu button, since their commands
-   live in the drawer.
+   pattern (labelled Close, Escape, Tab containment). A backdrop click closes it and
+   every panel it opens. All compact panels now return focus to the menu button,
+   since their commands live in the drawer.
 4. Astronomy notice chip inside `#map-stage`: collapsed by default at every
-   breakpoint, `aria-expanded`/`aria-controls`, second tap or Escape closes and
-   returns focus to the chip. The expanded card has a max height and scrolls.
+   breakpoint, showing the short backdrop credit `GALACTIC_STARFIELD_SHORT_CREDIT`
+   (wrapping to two lines on narrow chips). `aria-expanded`, plus `aria-controls`
+   while the card is mounted; second tap or Escape closes and returns focus to the
+   chip. The expanded card has a max height and scrolls.
 5. Reset view: a 44×44 icon button with the approved house glyph in a
    `.map-controls` stack at the map's top-right (inset 0.6rem, 0.45rem on short
    landscape). It keeps the accessible name "Reset view", the same handler, and is
@@ -100,8 +103,9 @@ one slim bar, without changing any behaviour, data or spoiler rule.
 3. The drawer opens from the menu, holds Knowledge through, Chapter/Date mode,
    Browse objects, Timeline and progress and Reset view, contains focus, and closes
    on Close, Escape and backdrop click with focus back on the menu button.
-4. The chip is collapsed by default, expands to the full credits including the
-   backdrop credit link, and collapses on second tap or Escape.
+4. The chip is collapsed by default and shows "NASA/GSFC SVS · ESA/Gaia/DPAC" in full
+   at every viewport. It expands to the full credits including the backdrop credit
+   link, and collapses on second tap or Escape.
 5. Reset view is a labelled icon button inside the map's top-right corner at all
    three viewports, resets the camera, is disabled in system mode, and no text
    Reset view button remains in the bar.
@@ -136,9 +140,12 @@ Manual: the Captain's visual acceptance on a phone and on desktop after deployme
 - **Attribution visibility.** BOB-005 and Section 10 of the technical design required
   the backdrop credit and the attribution footer to stay visible, and BOB-016 asks
   not to regress attribution behaviour while it is Draft. Variant A, as approved,
-  collapses the credits into an always-visible chip that expands on one tap. This
-  task updates Section 10 and Section 5 accordingly. The Captain should confirm that
-  one-tap credits satisfy the NASA/Gaia credit requirements in
+  collapses the credits into an always-visible chip that expands on one tap. After
+  review, the collapsed chip itself carries the short backdrop credit
+  "NASA/GSFC SVS · ESA/Gaia/DPAC", so NASA and ESA/Gaia/DPAC are credited without a
+  tap; the prescribed full sentence and its source link stay one tap away. This task
+  updates Section 10, Section 5 and a note on BOB-005 acceptance criterion 8. The
+  Captain should confirm this satisfies the NASA/Gaia credit requirements in
   `../data/galactic-starfield-backdrop.md`.
 - **Two Read through controls on desktop.** The bar and the dock both show it, as in
   the approved mockup. Both are labelled "Read through"; tests address the dock by its

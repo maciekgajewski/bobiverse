@@ -210,7 +210,8 @@ result and spatial legibility.
 On 2026-07-23, the Captain accepted the visual-system and application-shell review.
 The review covered the desktop framed shell, responsive map visibility, compact
 browser and inspector panels, selected-system details, and the visible VizieR
-attribution footer. Chrome, Firefox, and WebKit automated coverage also passed; the
+attribution footer (since BOB-20261113-3VCGFP, the map credits chip). Chrome,
+Firefox, and WebKit automated coverage also passed; the
 existing Safari real-browser publication gap remains unchanged.
 
 ## BOB-011 reader progress and temporal navigation
@@ -439,7 +440,7 @@ frame and label, and the camera focused Sol.
 ## BOB-015 Phase 2 desktop integration
 
 At 1200-by-700 and 1440-by-1000 CSS pixels, confirm the object browser, true-scale
-map, object inspector, timeline dock, and attribution footer are simultaneously
+map, object inspector, timeline dock, and attribution notice chip are simultaneously
 visible. The map must remain wider than either rail, no horizontal page scrollbar may
 appear, and the context badge must remain wholly inside the map.
 
@@ -567,10 +568,11 @@ On a phone in portrait (about 390×844) and landscape (about 844×390), and on d
 - The menu opens a right-hand drawer with **Knowledge through**, Chapter/Date mode,
   **Browse objects**, **Inspect selection** (when something is selected),
   **Timeline and progress** and **Reset view**. Close, Escape and tapping outside
-  close it, and focus returns to the menu button.
+  close it and the panels it opens, and focus returns to the menu button.
 - The astronomy notice is a chip in the map's bottom-right corner, collapsed by
-  default. Tapping it shows the catalogue line, acknowledgements and the backdrop
-  credit link; tapping again or Escape collapses it.
+  default, that shows "NASA/GSFC SVS · ESA/Gaia/DPAC" in full. Tapping it shows the
+  catalogue line, acknowledgements and the backdrop credit link; tapping again or
+  Escape collapses it.
 - **Reset view** is a round house icon in the map's top-right corner. It resets the
   camera, shows a "Reset view" tooltip on desktop hover or keyboard focus, and is
   dimmed and inactive in system view.

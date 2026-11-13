@@ -729,10 +729,14 @@ h2 {
   line-height: 1;
 }
 .astronomy-notice-summary {
+  display: -webkit-box;
   min-width: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  line-height: 1.25;
+  text-align: left;
 }
 .astronomy-notice-card {
   box-sizing: border-box;

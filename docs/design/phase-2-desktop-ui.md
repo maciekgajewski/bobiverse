@@ -93,7 +93,8 @@ At desktop width (`>= 1200px`), the application uses one viewport-height workspa
 The left and right rails use fluid bounded widths. The map consumes all remaining
 space and keeps a definite height so the React Three Fiber canvas cannot collapse.
 The bottom timeline dock spans the browser, map, and inspector columns. Source
-attribution is a notice chip in the map's bottom-right corner that expands to the full
+attribution is a notice chip in the map's bottom-right corner that always shows the
+short backdrop credit `NASA/GSFC SVS · ESA/Gaia/DPAC` and expands to the full
 credits; **Reset view** is a 44px icon control in the map's top-right corner
 (`../tasks/BOB-20261113-3VCGFP-mobile-map-chrome.md`).
 

@@ -2,7 +2,7 @@
 
 Status: Done
 Phase: 1B (map enhancement)
-Last updated: 2026-07-23
+Last updated: 2026-11-13
 
 ## Objective
 
@@ -160,7 +160,9 @@ appears in the same direction as the map's `+Xg` axis, and Galactic north is `+Z
 8. The UI source notice exposes the prescribed visible credit and source-page link
    without logos or an implication of NASA, ESA, or Gaia endorsement. It remains
    readable and available to keyboard and screen-reader users at every responsive
-   layout.
+   layout. (Since BOB-20261113-3VCGFP the notice is a map-corner chip. The collapsed
+   chip always shows the short credit `NASA/GSFC SVS · ESA/Gaia/DPAC`, and one tap or
+   Enter reveals this prescribed credit and its source-page link.)
 9. Automated tests cover texture/provenance loading, cardinal Galactic orientation,
    camera-following/non-rotating ownership, no backdrop raycasting, and preservation
    of existing selection, reset, and unit behavior. Playwright covers backdrop
