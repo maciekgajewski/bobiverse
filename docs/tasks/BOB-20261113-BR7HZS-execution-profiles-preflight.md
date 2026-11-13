@@ -1,6 +1,6 @@
 # BOB-20261113-BR7HZS: versioned execution profiles and automated extraction preflight
 
-Status: In progress
+Status: Done
 Phase: 4 (LLM-assisted editorial pipeline; process hardening before Chapter 1.43)
 Last updated: 2026-11-13
 
@@ -463,3 +463,9 @@ reports are written outside the repository and never committed.
     chain".
   - Follow-up: the human summary now names the item 8 failure class; the
     uncovered-anchor test asserts it.
+
+### 2026-11-13 (Europe/Amsterdam; merge)
+
+- PR #10 was squash-merged to master as `9651689` on Friday 2026-11-13, after review
+  approval at `360ed5c`. Status is now **Done**, recorded after that merge. Review
+  nits are folded into BOB-20261113-9C9QV9.

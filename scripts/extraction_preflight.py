@@ -53,6 +53,7 @@ FINGERPRINT_FIELDS = (
     "byte_length",
 )
 VALIDATOR_TIMEOUT_SECONDS = 900
+HELPER_ERROR_MAX_CHARACTERS = 300
 OUTPUT_TAIL_LINES = 20
 
 K1_CAVEAT = (
@@ -88,10 +89,12 @@ ITEM_HEADINGS = {
 HELP_EPILOG = f"""
 Checks Checklist A items 1-8 of docs/chapter-extraction-checklists.md and reports
 each as pass or fail. There is no not-applicable result and no skip flag; any
-failure exits 1. Item 9 (the isolation plan) stays manual. Run from the repository
-root.
+failure exits 1. Item 9 (the isolation plan) stays manual. Run from inside the
+checkout that contains this script; any other checkout is refused.
 
-Item 1 passes when the "codex" launcher is on PATH and reports a version, or, for a
+Item 1 runs "codex --version". It passes when the launcher is on PATH and reports a
+version; that proves presence only, not that it can set the model, reasoning level
+and fork_turns: none (K1). Alternatively, for a
 NON-CONFORMING run, when --approval-file names a JSON object with the string fields
 {", ".join(APPROVAL_FIELDS)}. "label" must be "NON-CONFORMING", "chapter" must be the
 target and "date" must be YYYY-MM-DD. The approval covers item 1 only.
@@ -144,6 +147,14 @@ def git(cwd: Path, *arguments: str) -> subprocess.CompletedProcess[str]:
 def tail(text: str) -> list[str]:
     lines = [line for line in text.splitlines() if line.strip()]
     return lines[-OUTPUT_TAIL_LINES:]
+
+
+def helper_error(stderr: str, fallback: str) -> str:
+    """Relay only the last line of helper error output, bounded in length."""
+    lines = tail(stderr)
+    if not lines:
+        return fallback
+    return lines[-1].strip().removeprefix("error: ")[:HELPER_ERROR_MAX_CHARACTERS]
 
 
 def item(
@@ -256,17 +267,15 @@ def check_source(source: Path, chapter: str, repository: Path) -> dict[str, Any]
         repository,
     )
     if result.returncode != 0:
-        # The helper's messages name the rule that failed; they never quote the source.
-        evidence["problem"] = (
-            result.stderr.strip().removeprefix("error: ") or "metadata failed"
-        )
+        # The helper's messages name the rule that failed; relay only their tail.
+        evidence["problem"] = helper_error(result.stderr, "metadata failed")
         return item(2, False, evidence)
     metadata = json.loads(result.stdout)
     fingerprint = {field: metadata.get(field) for field in FINGERPRINT_FIELDS}
     return item(2, True, fingerprint)
 
 
-def check_workspace(workspace: Path) -> dict[str, Any]:
+def check_workspace(workspace: Path, repository: Path) -> dict[str, Any]:
     evidence: dict[str, Any] = {"workspace": str(workspace)}
     problems = []
     resolved = workspace.expanduser().resolve()
@@ -280,6 +289,8 @@ def check_workspace(workspace: Path) -> dict[str, Any]:
             problems.append("is not writable")
         if any(resolved.iterdir()):
             problems.append("is not empty")
+    if is_within(resolved, repository):
+        problems.append("is inside the repository")
     parent = WORKSPACE_PARENT.resolve()
     if resolved == parent or not is_within(resolved, parent):
         problems.append(f"does not resolve under {WORKSPACE_PARENT}")
@@ -453,9 +464,7 @@ def check_prior_chain(
         repository,
     )
     if result.returncode != 0:
-        evidence["problem"] = (
-            result.stderr.strip().removeprefix("error: ") or "prepare-corpus failed"
-        )
+        evidence["problem"] = helper_error(result.stderr, "prepare-corpus failed")
         return item(7, False, evidence), None
     corpus = json.loads(result.stdout)
     provenance = corpus.get("provenance", {})
@@ -564,8 +573,17 @@ def build_parser() -> argparse.ArgumentParser:
 def repository_root() -> Path:
     result = git(Path.cwd(), "rev-parse", "--show-toplevel")
     if result.returncode != 0:
-        raise UsageError("run from the repository root (not inside a git worktree)")
-    return Path(result.stdout.strip()).resolve()
+        raise UsageError(
+            "the working directory is not inside a git checkout; run from the "
+            "repository root"
+        )
+    repository = Path(result.stdout.strip()).resolve()
+    if repository != SCRIPT_REPOSITORY:
+        raise UsageError(
+            f"the working directory's checkout ({repository}) is not this script's "
+            f"checkout ({SCRIPT_REPOSITORY}); run the script from its own checkout"
+        )
+    return repository
 
 
 def main() -> int:
@@ -585,13 +603,15 @@ def main() -> int:
                 raise UsageError("--report must be outside the repository")
             if report_path.exists():
                 raise UsageError("--report already exists; choose a new path")
+            if not report_path.parent.is_dir():
+                raise UsageError("--report parent directory does not exist")
     except UsageError as error:
         parser.exit(2, f"error: {error}\n")
 
     profile = json.loads(PROFILE_RECORD.read_text(encoding="utf-8"))
     items = [check_profile(arguments.chapter, arguments.approval_file, profile)]
     items.append(check_source(arguments.source, arguments.chapter, repository))
-    workspace_item = check_workspace(arguments.workspace)
+    workspace_item = check_workspace(arguments.workspace, repository)
     items.append(workspace_item)
     items.append(check_approved_chapters(arguments.approved_chapters))
     repository_item, base = check_repository(repository)
@@ -628,7 +648,7 @@ def main() -> int:
                 "note": "Manual; not checked by this command.",
             }
         ],
-        "limits": [K1_CAVEAT, K5_CAVEAT],
+        "limits": [K1_CAVEAT, *([K5_CAVEAT] if arguments.approval_file else [])],
     }
     serialized = json.dumps(report, indent=2, ensure_ascii=False) + "\n"
     if report_path is None:
