@@ -489,6 +489,11 @@ describe("temporary corpus preparation", () => {
       path.join(fixtureRepository, "data/narrative/naïve note.txt"),
       "",
     );
+    // Linux permits a newline in a file name; only NUL-separated output keeps it.
+    await writeFile(
+      path.join(fixtureRepository, "data/narrative/line\nbreak.txt"),
+      "",
+    );
 
     const result = prepare(path.join(temporaryRoot, "corpus"));
 
@@ -498,6 +503,7 @@ describe("temporary corpus preparation", () => {
     expect(provenance.dirty_paths).toEqual([
       "data/narrative/chapters/1/3 later.json",
       "data/narrative/chapters/1/3.json",
+      "data/narrative/line\nbreak.txt",
       "data/narrative/naïve note.txt",
     ]);
   });

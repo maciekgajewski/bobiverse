@@ -1,6 +1,6 @@
 # BOB-20261113-3HBNVF: follow-up nits from PRs #4–#6
 
-Status: In progress
+Status: Done
 Phase: 1 (verification infrastructure and process hygiene)
 Last updated: 2026-11-13
 
@@ -80,3 +80,8 @@ No e2e run is required: no application code or test configuration changes.
 - 1TWD9T's mapping-count nit had no target: no file in the repository, the PR #6
   body or the squash commit states a row count; the table has 62 rows. Left
   unchanged and reported.
+
+### 2026-11-13 (Europe/Amsterdam; merge)
+
+- PR #7 was squash-merged to master as `a20985f` on Friday 2026-11-13. Status is now
+  **Done**, recorded after that merge.
