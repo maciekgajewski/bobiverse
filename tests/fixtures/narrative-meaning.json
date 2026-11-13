@@ -1834,79 +1834,79 @@
     "kind": "field",
     "subject": "technology:guppi-interface",
     "field": "description",
-    "expected": "sha256:bfd1a2695744f2b2",
-    "basis": "Captain approval 2026-11-13 (1.55) pre-(c)"
+    "expected": "sha256:85dd2c5c3eb704f2",
+    "basis": "Captain approval 2026-11-13 (1.55)"
   },
   {
     "chapter": "1.55",
     "kind": "visible_write",
     "subject": "technology:guppi-interface",
     "field": "description",
-    "expected": "1.51",
-    "basis": "Captain approval 2026-11-13 (1.55) pre-(c)"
+    "expected": "1.55",
+    "basis": "Captain approval 2026-11-13 (1.55)"
   },
   {
     "chapter": "1.56",
     "kind": "field",
     "subject": "character:bill",
     "field": "current_state",
-    "expected": "sha256:990e3e36eb3449f4",
-    "basis": "Captain approval 2026-11-13 (1.56) pre-(c)"
+    "expected": "sha256:2fd71c4ec2479780",
+    "basis": "Captain approval 2026-11-13 (1.56)"
   },
   {
     "chapter": "1.56",
     "kind": "visible_write",
     "subject": "character:bill",
     "field": "current_state",
-    "expected": "1.51",
-    "basis": "Captain approval 2026-11-13 (1.56) pre-(c)"
+    "expected": "1.56",
+    "basis": "Captain approval 2026-11-13 (1.56)"
   },
   {
     "chapter": "1.56",
     "kind": "field",
     "subject": "location:ee-2",
     "field": "state",
-    "expected": "sha256:e585768ab8a4bc60",
-    "basis": "Captain approval 2026-11-13 (1.56) pre-(c)"
+    "expected": "sha256:61ceff69ee6b9261",
+    "basis": "Captain approval 2026-11-13 (1.56)"
   },
   {
     "chapter": "1.56",
     "kind": "visible_write",
     "subject": "location:ee-2",
     "field": "state",
-    "expected": "1.51",
-    "basis": "Captain approval 2026-11-13 (1.56) pre-(c)"
+    "expected": "1.56",
+    "basis": "Captain approval 2026-11-13 (1.56)"
   },
   {
     "chapter": "1.56",
     "kind": "field",
     "subject": "technology:guppi-interface",
     "field": "description",
-    "expected": "sha256:bfd1a2695744f2b2",
-    "basis": "Captain approval 2026-11-13 (1.56) pre-(c)"
+    "expected": "sha256:1b937693fd985170",
+    "basis": "Captain approval 2026-11-13 (1.56)"
   },
   {
     "chapter": "1.56",
     "kind": "visible_write",
     "subject": "technology:guppi-interface",
     "field": "description",
-    "expected": "1.51",
-    "basis": "Captain approval 2026-11-13 (1.56) pre-(c)"
+    "expected": "1.56",
+    "basis": "Captain approval 2026-11-13 (1.56)"
   },
   {
     "chapter": "1.57",
     "kind": "field",
     "subject": "technology:guppi-interface",
     "field": "description",
-    "expected": "sha256:bfd1a2695744f2b2",
-    "basis": "Captain approval 2026-11-13 (1.57) pre-(c)"
+    "expected": "sha256:bf2943a952164af8",
+    "basis": "Captain approval 2026-11-13 (1.57)"
   },
   {
     "chapter": "1.57",
     "kind": "visible_write",
     "subject": "technology:guppi-interface",
     "field": "description",
-    "expected": "1.51",
-    "basis": "Captain approval 2026-11-13 (1.57) pre-(c)"
+    "expected": "1.57",
+    "basis": "Captain approval 2026-11-13 (1.57)"
   }
 ]
