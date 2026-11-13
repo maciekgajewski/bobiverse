@@ -2,10 +2,12 @@ import { spawnSync } from "node:child_process";
 import {
   chmodSync,
   existsSync,
+  linkSync,
   mkdirSync,
   mkdtempSync,
   readFileSync,
   rmSync,
+  symlinkSync,
   writeFileSync,
 } from "node:fs";
 import path from "node:path";
@@ -77,8 +79,13 @@ function fillWorkspace(dir: string, extra: string[] = []) {
   for (const name of extra) write(path.join(dir, name), "synthetic\n");
 }
 
-function record(extra: string[] = []) {
+function record(
+  extra: string[] = [],
+  tamper?: () => void,
+  dir: string = workspace,
+) {
   fillWorkspace(workspace, extra);
+  tamper?.();
   const approval = path.join(fixture, "approval.json");
   write(
     approval,
@@ -94,7 +101,7 @@ function record(extra: string[] = []) {
     "--chapter",
     "1.2",
     "--workspace",
-    workspace,
+    dir,
     "--approval",
     approval,
     "--repo",
@@ -141,7 +148,7 @@ beforeEach(() => {
     [
       "#!/bin/sh",
       'echo "npm $*" >> "$FAKE_NPM_LOG"',
-      'if [ -n "$FAKE_NPM_FAIL" ]; then case "npm $*" in *"$FAKE_NPM_FAIL"*) exit 1;; esac; fi',
+      'if [ -n "$FAKE_NPM_FAIL" ]; then case "npm $*" in *"$FAKE_NPM_FAIL"*) [ -n "$FAKE_NPM_ON_FAIL" ] && sh -c "$FAKE_NPM_ON_FAIL"; exit 1;; esac; fi',
       "",
     ].join("\n"),
     0o755,
@@ -245,6 +252,60 @@ describe("chapter_promotion.py record", () => {
   });
 });
 
+describe("chapter_promotion.py record refuses links and special files", () => {
+  // A stand-in for a file that must never enter the record (synthetic bytes).
+  const outside = () => {
+    const file = path.join(fixture, "outside.json");
+    write(file, '{ "chapter": "1.2", "synthetic": "outside" }\n');
+    return file;
+  };
+  const replaceWithSymlink = (name: string) => () => {
+    rmSync(path.join(workspace, name));
+    symlinkSync(outside(), path.join(workspace, name));
+  };
+
+  it.each([
+    ["a symlinked candidate.json", replaceWithSymlink("candidate.json")],
+    ["a symlinked .log", replaceWithSymlink("narrative-validation.log")],
+    [
+      "a hard-linked candidate.json",
+      () => {
+        rmSync(path.join(workspace, "candidate.json"));
+        linkSync(outside(), path.join(workspace, "candidate.json"));
+      },
+    ],
+    [
+      "a FIFO under an allowed name",
+      () => {
+        const made = spawnSync("mkfifo", [
+          path.join(workspace, "projection.log"),
+        ]);
+        expect(made.status).toBe(0);
+      },
+    ],
+    [
+      "a directory under an allowed name",
+      () => mkdirSync(path.join(workspace, "canonical.diff")),
+    ],
+  ])("refuses %s", (_case, tamper) => {
+    const start = git(approved, "rev-parse", "HEAD");
+    const result = record([], tamper);
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain("regular");
+    expectApprovedUntouched(start);
+  });
+
+  it("refuses a symlinked workspace directory", () => {
+    const start = git(approved, "rev-parse", "HEAD");
+    const link = path.join(fixture, "workspace-link");
+    symlinkSync(workspace, link);
+    const result = record([], undefined, link);
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain("must not be a symlink");
+    expectApprovedUntouched(start);
+  });
+});
+
 describe("chapter_promotion.py promote and verify", () => {
   const chapter = () =>
     path.join(bobiverse, "data/narrative/chapters/1/2.json");
@@ -302,6 +363,44 @@ describe("chapter_promotion.py promote and verify", () => {
         expect(readFileSync(log(), "utf8")).toBe(logHeader);
       } finally {
         chmodSync(log(), 0o644);
+      }
+    },
+  );
+
+  it.each([
+    ["missing", () => rmSync(log())],
+    [
+      "without a table",
+      () => write(log(), "# Chapter promotion log\n\nNo table.\n"),
+    ],
+  ])(
+    "refuses a promotion log %s before writing the chapter",
+    (_case, damage) => {
+      damage();
+      git(bobiverse, "add", "-A");
+      git(bobiverse, "commit", "-q", "-m", "damage the log");
+      const result = promote();
+      expect(result.status).toBe(1);
+      expect(result.stderr).toContain("chapter-promotion-log.md");
+      expect(existsSync(chapter())).toBe(false);
+      expect(readFileSync(npmLog, "utf8")).not.toContain("prettier");
+    },
+  );
+
+  it.skipIf(process.getuid?.() === 0)(
+    "exits 3 and names the saved copies when the restore cannot be confirmed",
+    () => {
+      const directory = path.dirname(chapter());
+      try {
+        const result = promote({
+          FAKE_NPM_FAIL: "npm run -s lint",
+          FAKE_NPM_ON_FAIL: `chmod 555 '${directory}'`,
+        });
+        expect(result.status).toBe(3);
+        expect(result.stderr).toContain("restore unconfirmed");
+        expect(result.stderr).toMatch(/previous bytes are in \S+saved/);
+      } finally {
+        chmodSync(directory, 0o755);
       }
     },
   );

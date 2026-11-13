@@ -15,10 +15,10 @@ source bytes. For item 1 it runs `codex --version`, which shows only that the
 launcher is present, not that it can set the model, reasoning level, and non-forked
 spawning for both passes; the run's own records attest those settings.
 
-1. Profile: the conforming Codex profile can be requested for both passes, or the
-   Captain's explicit approval of provider, model, and workflow for this run is
-   recorded, labelled NON-CONFORMING (§Prerequisite check to §Approved alternative;
-   D1 standing approval, 2026-11-13).
+1. Profile: the conforming Codex profile can be requested for both passes, or a
+   recorded Captain approval covers the provider, model, and workflow (such as the D1
+   standing approval of 2026-11-13), labelled NON-CONFORMING (§Prerequisite check to
+   §Approved alternative).
 2. Source: one readable UTF-8 file outside the repository, named
    `<book>.<chapter>.txt` or `<book>.<chapter> - <title>.txt`;
    `source_evidence.py metadata` passes and its SHA-256 is recorded (§Inputs).
@@ -61,15 +61,17 @@ spawning for both passes; the run's own records attest those settings.
 
 ## C. Promotion and post-write
 
-`scripts/chapter_promotion.py promote` runs items 2–5 and restores the chapter and
-log on any failure; isolated acquisition (§Promotion step 3) stays manual.
+`scripts/chapter_promotion.py promote` runs items 2–5. Items 3–5 form one fail-closed
+transaction: any failure restores the chapter and the log. Isolated acquisition
+(§Promotion step 3) stays manual.
 
 1. The Captain's approval names this exact candidate (§Approval).
 2. Rebuild a fresh root from current canonical inputs plus the approved candidate,
    and rerun both validators (§Promotion).
 3. Write canonically; confirm value identity and record both SHA-256 values if
    formatting changed bytes (§Checksum provenance and §Promotion).
-4. Run the post-write validation (§Post-write validation).
-5. Append one promotion-log row; the decision cell carries the approved SHA-256 when
+4. Append one promotion-log row; the decision cell carries the approved SHA-256 when
    it differs, the approved-chapters commit and tag, and any NON-CONFORMING label
    (§Checksum provenance).
+5. Run the post-write validation (§Post-write validation); if it fails, restore the
+   chapter and the log.
