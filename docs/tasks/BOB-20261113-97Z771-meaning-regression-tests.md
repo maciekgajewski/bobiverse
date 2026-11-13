@@ -1,6 +1,6 @@
 # BOB-20261113-97Z771: meaning-level regression tests for the canonical narrative
 
-Status: Ready
+Status: In progress
 Phase: 4 (LLM-assisted editorial pipeline; process hardening)
 Last updated: 2026-11-13
 
@@ -28,7 +28,8 @@ becomes a visible, reviewed decision instead of a silent side effect.
 ## Scope
 
 1. **Expectations file**: `tests/fixtures/narrative-meaning.json`, a list of
-   entries `{ chapter, kind, subject, expected, basis }`. It holds IDs, chapter
+   entries `{ chapter, kind, subject, field?, expected?, basis }` (`field` names the
+   field for `field` checks; `visible` and `not_visible` take no `expected`). It holds IDs, chapter
    refs, dates and enum values only, never prose or quotes. Four kinds:
    - `location`: at `chapter`, `subject` (a character) has
      `last_known_location.location_id` equal to `expected`;
@@ -122,3 +123,16 @@ Manager decisions under its delegation, 2026-11-13 15:50:
   `bob-20261113-97z771-meaning-regression-tests`, from origin/master `279b626`.
 - The manager approved the scope at 15:50 and decided Q1 and Q2 under its
   delegation (above). Status Ready; the implementation follows in the same PR (#16).
+- Implemented:
+  - `tests/fixtures/narrative-meaning.json`, 17 entries: 7 `location`, 7 `visible`
+    or `not_visible`, 3 `field`;
+  - `tests/unit/narrative-meaning.test.ts`, 14 tests, among them 4 deliberately
+    wrong synthetic entries, a synthetic leak for the invariant and 6 malformed or
+    prose entries, all caught;
+  - the Checklist C line.
+- Finding: an introduced ID need not be visible at its own chapter. One example is
+  `event:four-asteroid-diversion` in 1.24, presumably because of its story date.
+  Only the scoped "not visible before N" invariant is asserted.
+- Cost: projecting late chapters takes about 2 s each, so this test file takes
+  about 21 s on piotr. One shared cache serves all tests, and the world-using tests
+  have a 120 s timeout.
