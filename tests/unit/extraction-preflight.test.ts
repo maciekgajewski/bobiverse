@@ -91,6 +91,17 @@ function buildRepository(chapters: string[]) {
     species: [],
   });
   write(path.join(repository, ".gitignore"), "node_modules/\n.venv/\n");
+  // The preflight refuses any checkout but its own, so the fixture carries a copy.
+  for (const file of [
+    "scripts/extraction_preflight.py",
+    ".codex/skills/extract-bobiverse-chapter/scripts/source_evidence.py",
+    ".codex/skills/extract-bobiverse-chapter/profile.json",
+  ]) {
+    write(
+      path.join(repository, file),
+      readFileSync(path.join(repositoryRoot, file), "utf8"),
+    );
+  }
   write(
     path.join(repository, "node_modules/.bin/tsx"),
     [
@@ -151,11 +162,13 @@ function runPreflight(
     approved?: string | null;
     extra?: string[];
     env?: Record<string, string>;
+    cwd?: string;
+    script?: string;
   } = {},
 ) {
   const chapter = options.chapter ?? "1.3";
   const args = [
-    preflight,
+    options.script ?? path.join(repository, "scripts/extraction_preflight.py"),
     "--chapter",
     chapter,
     "--source",
@@ -168,7 +181,7 @@ function runPreflight(
   }
   args.push(...(options.extra ?? []));
   const result = spawnSync(python, args, {
-    cwd: repository,
+    cwd: options.cwd ?? repository,
     encoding: "utf8",
     env: {
       PATH: [fakeBin, path.dirname(python), "/usr/bin", "/bin"].join(":"),
@@ -681,6 +694,172 @@ describe("extraction preflight", () => {
       );
       expect(existsSync(path.join(repository, "report.json"))).toBe(false);
       expect(readFileSync(validatorLog, "utf8")).toBe("");
+    });
+  });
+
+  describe("checkout and arguments", () => {
+    it("refuses a working directory in another checkout", () => {
+      const result = runPreflight({ script: preflight });
+
+      expect(result.status).toBe(2);
+      expect(result.stderr).toContain("is not this script's checkout");
+      expect(readFileSync(validatorLog, "utf8")).toBe("");
+    });
+
+    it("refuses a working directory outside any git checkout", () => {
+      const plain = path.join(fixture, "plain-cwd");
+      mkdirSync(plain);
+
+      const result = runPreflight({ cwd: plain });
+
+      expect(result.status).toBe(2);
+      expect(result.stderr).toContain(
+        "the working directory is not inside a git checkout",
+      );
+    });
+
+    it("refuses an existing report path before any check runs", () => {
+      const report = path.join(fixture, "existing-report.json");
+      write(report, "{}\n");
+
+      const result = runPreflight({ extra: ["--report", report] });
+
+      expect(result.status).toBe(2);
+      expect(result.stderr).toContain("--report already exists");
+      expect(readFileSync(report, "utf8")).toBe("{}\n");
+      expect(readFileSync(validatorLog, "utf8")).toBe("");
+    });
+
+    it("refuses a report path whose parent directory is missing", () => {
+      const result = runPreflight({
+        extra: ["--report", path.join(fixture, "missing-dir", "report.json")],
+      });
+
+      expect(result.status).toBe(2);
+      expect(result.stderr).toContain(
+        "--report parent directory does not exist",
+      );
+      expect(readFileSync(validatorLog, "utf8")).toBe("");
+      expect(readdirSync(workspace)).toEqual([]);
+    });
+
+    it("documents that item 1 runs codex --version", () => {
+      const result = spawnSync(
+        python,
+        [path.join(repository, "scripts/extraction_preflight.py"), "--help"],
+        { cwd: repository, encoding: "utf8" },
+      );
+
+      expect(result.status).toBe(0);
+      expect(result.stdout).toContain('Item 1 runs "codex --version".');
+      expect(result.stdout).toContain("(K1)");
+    });
+  });
+
+  describe("follow-up item checks", () => {
+    it("fails item 3 for a workspace inside the repository", () => {
+      const inside = path.join(repository, "workspace");
+      mkdirSync(inside);
+
+      const result = runPreflight({ workspace: inside });
+
+      expect(failedItems(result.report)).toEqual([3, 7, 8]);
+      expect(itemOf(result.report, 3).evidence.problems).toEqual([
+        "is inside the repository",
+      ]);
+    });
+
+    it.skipIf(process.getuid?.() === 0)(
+      "fails item 3 for a non-writable workspace",
+      () => {
+        chmodSync(workspace, 0o555);
+
+        const result = runPreflight();
+
+        chmodSync(workspace, 0o755);
+        expect(failedItems(result.report)).toEqual([3, 7, 8]);
+        expect(itemOf(result.report, 3).evidence.problems).toEqual([
+          "is not writable",
+        ]);
+      },
+    );
+
+    it("fails item 6 when node_modules is missing", () => {
+      rmSync(path.join(repository, "node_modules"), { recursive: true });
+
+      const result = runPreflight();
+
+      expect(failedItems(result.report)).toContain(6);
+      expect(itemOf(result.report, 6).evidence.problems).toContain(
+        "node_modules is missing",
+      );
+    });
+
+    it("relays only the bounded last line of helper error output", () => {
+      write(
+        path.join(
+          repository,
+          ".codex/skills/extract-bobiverse-chapter/scripts/source_evidence.py",
+        ),
+        [
+          "import sys",
+          `sys.stderr.write("${syntheticMarker} early line\\n" + "x" * 50 + "\\n")`,
+          `sys.stderr.write("error: final " + "y" * 400 + "\\n")`,
+          "sys.exit(2)",
+          "",
+        ].join("\n"),
+      );
+      git(repository, "commit", "-q", "-am", "fixture helper stand-in");
+
+      const result = runPreflight();
+
+      const problem = String(itemOf(result.report, 2).evidence.problem);
+      expect(problem.startsWith("final yyy")).toBe(true);
+      expect(problem).toHaveLength(300);
+      expect(result.stdout + result.stderr).not.toContain(syntheticMarker);
+    });
+
+    it("never leaks source bytes on item 2's failure paths", () => {
+      const nonUtf8 = path.join(fixture, "sources", "1.3.txt");
+      mkdirSync(path.dirname(nonUtf8), { recursive: true });
+      writeFileSync(
+        nonUtf8,
+        Buffer.concat([
+          Buffer.from(syntheticMarker),
+          Buffer.from([0xff, 0xfe]),
+        ]),
+      );
+      const inside = path.join(repository, "1.3.txt");
+      write(inside, `${syntheticMarker}\n`);
+      git(repository, "add", "1.3.txt");
+      git(repository, "commit", "-q", "-m", "fixture source");
+
+      for (const source of [writeSource("1.4.txt"), nonUtf8, inside]) {
+        const result = runPreflight({ source });
+
+        expect(itemOf(result.report, 2).result).toBe("fail");
+        expect(result.stdout + result.stderr).not.toContain(syntheticMarker);
+        expect(result.stdout + result.stderr).not.toContain(
+          "Synthetic fixture line",
+        );
+      }
+    });
+
+    it("shows the K5 caveat only when an approval file is passed", () => {
+      const conforming = runPreflight();
+      rmSync(workspace, { recursive: true, force: true });
+      mkdirSync(workspace);
+      const withApproval = runPreflight({
+        extra: ["--approval-file", approvalFile()],
+      });
+
+      expect(conforming.report?.limits.join(" ")).not.toContain("(K5)");
+      expect(conforming.stderr).not.toContain("(K5)");
+      expect(itemOf(conforming.report, 1).limits.join(" ")).not.toContain(
+        "(K5)",
+      );
+      expect(withApproval.report?.limits.join(" ")).toContain("(K5)");
+      expect(withApproval.stderr).toContain("(K5)");
     });
   });
 });

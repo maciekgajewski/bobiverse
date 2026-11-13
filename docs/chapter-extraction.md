@@ -78,8 +78,9 @@ explicitly set the model, reasoning level, and non-forked spawning for both pass
 [`scripts/extraction_preflight.py`](../scripts/extraction_preflight.py) automates
 Checklist A items 1–8, using the derived profile record
 [`profile.json`](../.codex/skills/extract-bobiverse-chapter/profile.json); the
-adapter's sentences stay the source of truth. For this check it confirms only that the
-launcher is present and reports a version, not that it can set these values.
+adapter's sentences stay the source of truth. For this check it runs
+`codex --version`, which confirms only that the launcher is present and reports a
+version, not that it can set these values.
 
 ### No silent substitution
 
