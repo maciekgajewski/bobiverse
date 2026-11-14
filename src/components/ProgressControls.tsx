@@ -1,38 +1,19 @@
-import { useRef, type RefObject } from "react";
+import { useCallback, useRef, useState, type RefObject } from "react";
 import { useReadThroughConfirmationFocus } from "./useReadThroughConfirmationFocus";
-import type {
-  NarrativeChapterSummary,
-  ReaderProgress,
+import {
+  PRE_BOOK_LABEL,
+  chapterBook,
+  chapterNumber,
+  compactReadThroughLabel,
+  readThroughLabel,
+  type NarrativeChapterSummary,
+  type ReaderProgress,
 } from "../narrative/progress";
 import { compareNarrativeChapters } from "../narrative/model";
+import { ChapterPicker } from "./ChapterPicker";
+import { BookGlyph, ChevronIcon, ShieldIcon } from "./icons";
 
-export function ShieldIcon() {
-  return (
-    <svg className="shield-icon" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 2.5 20 6v5.6c0 4.7-3.2 8.7-8 9.9-4.8-1.2-8-5.2-8-9.9V6l8-3.5Z" />
-      <path d="m8.5 12 2.1 2.1 4.9-4.9" />
-    </svg>
-  );
-}
-
-export function ResetViewIcon() {
-  return (
-    <svg className="reset-view-icon" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M4.5 11.2 12 4.8l7.5 6.4" />
-      <path d="M7 10.4V19h10v-8.6" />
-      <path d="M10 19v-5h4v5" />
-    </svg>
-  );
-}
-
-export function CloseIcon() {
-  return (
-    <svg className="close-icon" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M6 6l12 12" />
-      <path d="M18 6 6 18" />
-    </svg>
-  );
-}
+export { CloseIcon, ResetViewIcon, ShieldIcon } from "./icons";
 
 export function ReadThroughOptions({
   chapters,
@@ -41,11 +22,10 @@ export function ReadThroughOptions({
 }) {
   return (
     <>
-      <option value="">Pre-book zero state</option>
+      <option value="">{PRE_BOOK_LABEL}</option>
       {chapters.map((chapter) => (
         <option key={chapter.chapter} value={chapter.chapter}>
-          Book {chapter.chapter.split(".")[0]} · Chapter{" "}
-          {chapter.chapter.split(".")[1]}
+          {readThroughLabel(chapter.chapter)}
         </option>
       ))}
     </>
@@ -225,9 +205,15 @@ interface TopbarReadThroughProps {
   onReadThroughChoice: (chapter: string) => void;
   onConfirmReadThrough: () => void;
   onCancelReadThrough: () => void;
+  /** Reports whether the chapter picker is open, so the shell can go inert. */
+  onPickerOpenChange?: (open: boolean) => void;
 }
 
-/** Compact Read through control for the top bar (Variant A). */
+/**
+ * Compact Read through chip for the top bar (compact chapter selector,
+ * Variant A). It opens the chapter picker; a different choice goes through
+ * the shared confirmation before the spoiler ceiling changes.
+ */
 export function TopbarReadThrough({
   chapters,
   progress,
@@ -236,33 +222,78 @@ export function TopbarReadThrough({
   onReadThroughChoice,
   onConfirmReadThrough,
   onCancelReadThrough,
+  onPickerOpenChange,
 }: TopbarReadThroughProps) {
-  const select = useRef<HTMLSelectElement>(null);
+  const chip = useRef<HTMLButtonElement>(null);
   const confirmButton = useRef<HTMLButtonElement>(null);
+  const [pickerOpen, setPickerOpen] = useState(false);
   useReadThroughConfirmationFocus(
     ownsConfirmation,
     ownsConfirmation ? pendingReadThrough : null,
     confirmButton,
-    select,
+    chip,
   );
+  const value = progress.furthestChapterRead ?? "";
+  const setOpen = useCallback(
+    (open: boolean) => {
+      setPickerOpen(open);
+      onPickerOpenChange?.(open);
+    },
+    [onPickerOpenChange],
+  );
+  const closePicker = useCallback(() => {
+    setOpen(false);
+    // The shell may be inert until the next render; return focus after it.
+    window.setTimeout(() => chip.current?.focus(), 0);
+  }, [setOpen]);
   return (
     <div className="topbar-read-through">
-      <label htmlFor="topbar-read-through">
+      <span className="topbar-read-through-caption" aria-hidden="true">
         <ShieldIcon />
         <span className="topbar-read-through-label">Read through</span>
-      </label>
-      <select
-        ref={select}
+      </span>
+      <button
+        ref={chip}
         id="topbar-read-through"
-        value={
-          (ownsConfirmation ? pendingReadThrough : null) ??
-          progress.furthestChapterRead ??
-          ""
-        }
-        onChange={(event) => onReadThroughChoice(event.target.value)}
+        type="button"
+        className="read-through-chip"
+        aria-haspopup="dialog"
+        aria-expanded={pickerOpen}
+        aria-label={`Read through, ${readThroughLabel(value).replace(" · ", " ")}`}
+        onClick={() => setOpen(true)}
       >
-        <ReadThroughOptions chapters={chapters} />
-      </select>
+        <span className="read-through-chip-pill">
+          <BookGlyph />
+          <span className="read-through-chip-value">
+            {value ? (
+              <>
+                {chapterBook(value)}
+                <span className="read-through-chip-separator"> · </span>
+                Ch {chapterNumber(value)}
+              </>
+            ) : (
+              compactReadThroughLabel(value)
+            )}
+          </span>
+          <ChevronIcon />
+        </span>
+      </button>
+      {pickerOpen && (
+        <ChapterPicker
+          chapters={chapters}
+          value={value}
+          anchor={chip}
+          onClose={closePicker}
+          onChoose={(chapter) => {
+            setOpen(false);
+            if (chapter === value) {
+              window.setTimeout(() => chip.current?.focus(), 0);
+              return;
+            }
+            onReadThroughChoice(chapter);
+          }}
+        />
+      )}
       {ownsConfirmation && pendingReadThrough !== null && (
         <ReadThroughConfirmation
           headingId="topbar-read-through-confirmation"

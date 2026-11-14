@@ -1,14 +1,15 @@
 import { useEffect, useRef, type RefObject } from "react";
 
 /**
- * Moves focus into an open confirmation and back to its Read through select
- * once it closes. Shared by the timeline dock and the top-bar control.
+ * Moves focus into an open confirmation and back to its Read through control
+ * (the dock select or the top-bar chip) once it closes. Shared by the timeline
+ * dock and the top-bar control.
  */
 export function useReadThroughConfirmationFocus(
   active: boolean,
   pendingReadThrough: string | null,
   confirmButton: RefObject<HTMLButtonElement | null>,
-  readThroughSelect: RefObject<HTMLSelectElement | null>,
+  readThroughControl: RefObject<HTMLElement | null>,
 ): void {
   const confirmationWasOpen = useRef(false);
   useEffect(() => {
@@ -20,7 +21,7 @@ export function useReadThroughConfirmationFocus(
     }
     if (confirmationWasOpen.current) {
       confirmationWasOpen.current = false;
-      readThroughSelect.current?.focus();
+      readThroughControl.current?.focus();
     }
-  }, [active, confirmButton, pendingReadThrough, readThroughSelect]);
+  }, [active, confirmButton, pendingReadThrough, readThroughControl]);
 }
