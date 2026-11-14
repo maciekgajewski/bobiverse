@@ -57,10 +57,13 @@ Admiral Ackbar illustration.
    rules, plus the compact bottom sheet and the short-landscape layout, using the
    existing Variant A tokens.
 4. `public/assets/ackbar.webp`: the source illustration cropped to the head and upper
-   body (3:4), resized to 150×200 and encoded as WebP (about 8 KB), alt text
-   "Admiral Ackbar". Caption, verbatim: "Admiral Ackbar illustration by Michael
-   Sutfin, from The New Essential Guide to Characters. Star Wars © Lucasfilm Ltd.
-   Used under fair use."
+   body (3:4), resized to 150×200 and encoded as WebP (about 8 KB). Visible caption,
+   verbatim: "Guppy, or Admiral Ackbar", with "Admiral Ackbar" linking to
+   <https://starwars.fandom.com/wiki/File:Ackbar-NEGTC.png> (`target="_blank"`,
+   `rel="noopener noreferrer"`). Image alt text, verbatim: "Admiral Ackbar
+   illustration by Michael Sutfin, from The New Essential Guide to Characters.
+   Star Wars © Lucasfilm Ltd. Used under fair use." (`public/assets/CREDITS.md`
+   stays unchanged and still holds the same credit.)
 5. `public/assets/CREDITS.md`: the same credit, the source URL
    <https://starwars.fandom.com/wiki/File:Ackbar-NEGTC.png> and a note that the asset
    is a cropped, resized derivative.
@@ -85,7 +88,9 @@ Admiral Ackbar illustration.
    "maciek@bobiverse.space" (`mailto:`) and "github.com/maciekgajewski/bobiverse"
    (`https://github.com/maciekgajewski/bobiverse`, new tab). No placeholder text
    remains.
-3. The picture loads with alt text "Admiral Ackbar" and the exact caption above.
+3. The picture loads with the exact credit as its alt text. The visible caption is
+   exactly "Guppy, or Admiral Ackbar", and "Admiral Ackbar" is a new-tab link to
+   the source illustration. `public/assets/CREDITS.md` is unchanged.
 4. Close, Escape and a backdrop click each close it; focus starts on Close, is
    contained while open and returns to the trigger (the Menu button on compact).
 5. Layout: centred 520px modal on desktop, full-width bottom sheet on phone portrait,
@@ -149,3 +154,30 @@ Manual: the Captain's visual check on desktop and a phone after deployment.
   review outside the repository.
 - Remains In progress until review, merge and the Captain's visual check after
   deployment.
+
+### 2026-11-14 (Europe/Warsaw), caption follow-up
+
+- The Captain asked (17:38, relayed by Piotr Developer Manager) for a caption
+  change: the visible caption becomes "Guppy, or Admiral Ackbar", with "Admiral
+  Ackbar" linking to the source illustration; the full credit moves into the
+  image alt text; `public/assets/CREDITS.md` stays unchanged. This follow-up
+  reuses this task rather than opening a new one.
+- Implemented on a local branch `bob-20261114-about-caption` from origin/master
+  `3c3d368`, in the `~/src/bobiverse-aboutcap` worktree. Scope item 4,
+  acceptance criterion 3, and technical-design §11 were revised to match; §10
+  and phase-2-desktop-ui §5 did not quote the caption, so they were left alone.
+  The focus trap and its component and e2e tests now include the new caption
+  link.
+- Validation, all passed: `python3 scripts/tasks.py check`, `npm run format:check`,
+  `npm run lint`, `npm run typecheck`, `npm run test` (419 passed),
+  `npm run data:test` (90 passed), `npm run data:validate`,
+  `npm run narrative:validate`, `npm run build`, `npx prettier --check` on the
+  changed Markdown, and `git diff --check`. No icon-specimen PNG was rewritten;
+  `public/assets/CREDITS.md` is unchanged.
+- E2E on a spare dev-server port 5188, one worker, no retries, throwaway untracked
+  config `playwright.alt5188.config.ts`. Ran only the About-related specs
+  (`-g "About dialog"`: desktop 1280x800 plus compact 390x844 and 844x390).
+  Chromium, Firefox and WebKit each passed 3/3.
+- Screenshots of the open dialog at 1280x800 and 390x844 were taken for review
+  outside the repository. Remains In progress until review, merge and the
+  Captain's visual check after deployment.

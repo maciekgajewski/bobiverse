@@ -1802,6 +1802,18 @@ h2 {
   font-size: 0.64rem;
   line-height: 1.35;
 }
+.about-figure figcaption a {
+  color: #8edbf4;
+  text-underline-offset: 0.15em;
+}
+.about-figure figcaption a:hover {
+  color: var(--accent-cyan);
+}
+.about-figure figcaption a:focus-visible {
+  outline: 3px solid var(--accent-cyan);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
 .about-copy {
   min-width: 0;
   color: #c9d8ef;
