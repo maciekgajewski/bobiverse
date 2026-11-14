@@ -99,9 +99,12 @@ credits; **Reset view** is a 44px icon control in the map's top-right corner
 (`../tasks/BOB-20261113-3VCGFP-mobile-map-chrome.md`).
 
 The one-row command bar retains only the identity, a muted **What is this?** link to
-the About dialog and a compact **Read through** select; below the breakpoint the link
-moves to the last row of the menu and the bar adds the menu button
-(`../tasks/BOB-20261114-KA0X30-about-dialog.md`). Displayed
+the About dialog and the compact **Read through** chip, which opens the chapter
+picker as a popover under it; below the breakpoint the link moves to the last row of
+the menu and the bar adds the menu button
+(`../tasks/BOB-20261114-KA0X30-about-dialog.md`,
+`../tasks/BOB-20261114-MXBDTM-compact-chapter-selector.md`). The dock keeps its
+own **Read through** select. Displayed
 interstellar distances, Galactic coordinate components, and map scale use light-years
 without a unit selector. Search belongs at the top of the object browser. The map
 contains a compact read-only context badge such as:

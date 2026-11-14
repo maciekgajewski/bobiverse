@@ -61,8 +61,9 @@ import * as narrativeModel from "../../src/narrative/model";
 import { narrativeRuntimePreparationCount } from "../../src/narrative/runtime";
 import * as systemView from "../../src/system-view";
 
-// The desktop timeline dock and the top bar both expose a "Read through"
-// select; these tests drive the dock's control unless they say otherwise.
+// The desktop timeline dock exposes a "Read through" select and the top bar a
+// Read through chip; these tests drive the dock's control unless they say
+// otherwise.
 const dockReadThrough = () =>
   screen.getByLabelText("Read through", { selector: "#desktop-read-through" });
 const compactMatchMedia = (query: string) => ({
@@ -1182,10 +1183,21 @@ describe("atlas shell", () => {
   it("confirms a top-bar Read through choice before revealing and keeps the dock in step", async () => {
     const user = userEvent.setup();
     render(<App />);
-    const topbar = screen.getByLabelText("Read through", {
-      selector: "#topbar-read-through",
-    });
-    await user.selectOptions(topbar, "1.1");
+    const topbar = () => document.getElementById("topbar-read-through")!;
+    expect(topbar()).toHaveAccessibleName("Read through, Pre-book zero state");
+    await user.click(topbar());
+    const shell = document.querySelector("main.app-shell")!;
+    expect(shell).toHaveAttribute("inert");
+    await user.click(
+      within(screen.getByRole("dialog", { name: "Read through" })).getByRole(
+        "radio",
+        { name: "Book 1 · Chapter 1" },
+      ),
+    );
+    expect(
+      screen.queryByRole("dialog", { name: "Read through" }),
+    ).not.toBeInTheDocument();
+    expect(shell).not.toHaveAttribute("inert");
     const confirmation = screen.getByRole("dialog", {
       name: "Confirm read progress",
     });
@@ -1195,21 +1207,42 @@ describe("atlas shell", () => {
       }),
     ).toHaveFocus();
     expect(dockReadThrough()).toHaveValue("");
+    expect(topbar()).toHaveAccessibleName("Read through, Pre-book zero state");
     await user.click(
       within(confirmation).getByRole("button", { name: "Cancel" }),
     );
-    expect(topbar).toHaveValue("");
-    await waitFor(() => expect(topbar).toHaveFocus());
+    expect(topbar()).toHaveAccessibleName("Read through, Pre-book zero state");
+    expect(dockReadThrough()).toHaveValue("");
+    await waitFor(() => expect(topbar()).toHaveFocus());
 
-    await user.selectOptions(topbar, "1.1");
+    await user.click(topbar());
+    await user.click(screen.getByRole("radio", { name: "Book 1 · Chapter 1" }));
     await user.click(
       screen.getByRole("button", { name: "Confirm read through" }),
     );
-    expect(topbar).toHaveValue("1.1");
+    expect(topbar()).toHaveAccessibleName("Read through, Book 1 Chapter 1");
+    expect(topbar()).toHaveTextContent("1 · Ch 1");
     expect(dockReadThrough()).toHaveValue("1.1");
     expect(
       screen.queryByRole("dialog", { name: "Confirm read progress" }),
     ).not.toBeInTheDocument();
+    await waitFor(() => expect(topbar()).toHaveFocus());
+
+    // Returning to the pre-book zero state is confirmed the same way.
+    await user.click(topbar());
+    await user.click(
+      screen.getByRole("radio", { name: "Pre-book zero state" }),
+    );
+    expect(
+      screen.getByText(
+        "Return to the pre-book zero state? This hides every chapter-derived fact.",
+      ),
+    ).toBeInTheDocument();
+    await user.click(
+      screen.getByRole("button", { name: "Confirm read through" }),
+    );
+    expect(topbar()).toHaveAccessibleName("Read through, Pre-book zero state");
+    expect(dockReadThrough()).toHaveValue("");
   });
 
   it("opens compact commands from the menu drawer and returns focus to the menu", async () => {

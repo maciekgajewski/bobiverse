@@ -613,6 +613,26 @@ On a phone in landscape (about 844×390) the detail view is a right-hand drawer 
 320px wide below the top bar, with no grabber, and the map to its left stays usable.
 On desktop nothing changes.
 
+## BOB-20261114-MXBDTM compact chapter selector
+
+On a phone in portrait (about 390×844) and landscape (about 844×390), and on desktop
+(about 1280×800):
+
+- The top bar shows the gold shield and a cyan-outlined pill with a book icon, the
+  compact value (`1 · Ch 43`, or `Pre-book` before any chapter) and a chevron. On
+  desktop the gold **READ THROUGH** caption stays before it.
+- Tapping the pill opens **Read through**: a bottom sheet on a portrait phone, a
+  right-hand drawer on a landscape phone, and a popover under the pill on desktop. It
+  has a **Pre-book zero state** row, a **Book 1 · 61 chapters** tab and a five-column
+  grid of chapter numbers with the current one highlighted and scrolled into view.
+- Close, Escape and tapping outside close it without changing anything. Choosing
+  the current chapter just closes it.
+- Choosing another chapter, or **Pre-book zero state**, asks **Confirm read
+  progress** first; after Confirm the pill, the dock and the map badge all show the
+  new chapter, and after Cancel nothing changes.
+- With a keyboard, the arrow keys move around the grid and up to Pre-book, Home and
+  End jump to the first and last chapter, and Enter or Space chooses.
+
 ## Default and reset camera
 
 The repeatable default camera pose preserves the documented Three.js viewing

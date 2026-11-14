@@ -17,7 +17,8 @@ async function openMenuCommand(page: Page, name: string): Promise<void> {
     .click();
 }
 
-// The desktop dock and the top bar both label a select "Read through".
+// The desktop dock labels a select "Read through"; the top bar has the compact
+// Read through chip (#topbar-read-through).
 function dockReadThrough(page: Page) {
   return page.locator("#desktop-read-through");
 }
@@ -2081,13 +2082,14 @@ for (const viewport of [
       })),
     ).toEqual({ height: viewport.height, width: viewport.width });
 
-    // Read through stays in the bar; the Knowledge/mode/command set moves to
-    // the menu drawer.
+    // Read through stays in the bar as the compact chip; the Knowledge/mode/
+    // command set moves to the menu drawer.
     const readThrough = page.locator("#topbar-read-through");
     await expect(readThrough).toBeVisible();
-    expect((await readThrough.boundingBox())!.width).toBeGreaterThanOrEqual(
-      150,
-    );
+    await expect(readThrough).toHaveText("Pre-book");
+    const readThroughBox = (await readThrough.boundingBox())!;
+    expect(readThroughBox.height).toBeGreaterThanOrEqual(43.5);
+    expect(readThroughBox.width).toBeLessThan(150);
     await expect(
       page.getByRole("button", { name: "Browse objects" }),
     ).toHaveCount(0);
@@ -2207,9 +2209,11 @@ test("desktop chrome keeps the workspace with a slimmer bar and a larger map", a
   expect(map!.x + map!.width - (resetBox!.x + resetBox!.width)).toBeLessThan(
     12,
   );
-  // The only desktop top-bar button is the "What is this?" About link.
+  // The only desktop top-bar buttons are the "What is this?" About link and
+  // the compact Read through chip (no text Reset view).
   await expect(page.locator(".topbar").getByRole("button")).toHaveText([
     "What is this?",
+    "Pre-book",
   ]);
   await reset.hover();
   await expect(page.getByRole("tooltip")).toHaveText("Reset view");
@@ -2362,5 +2366,173 @@ for (const viewport of [
     await dialog.getByRole("button", { name: "Close" }).click();
     await expect(dialog).toHaveCount(0);
     await expect(menuButton).toBeFocused();
+  });
+}
+
+// Compact chapter selector (Variant A): top-bar chip and chapter picker.
+async function chooseTopbarChapter(page: Page, name: string): Promise<void> {
+  await page.locator("#topbar-read-through").click();
+  await page
+    .getByRole("dialog", { name: "Read through" })
+    .getByRole("radio", { name, exact: true })
+    .click();
+  await expect(page.getByRole("dialog", { name: "Read through" })).toHaveCount(
+    0,
+  );
+  await page
+    .getByRole("dialog", { name: "Confirm read progress" })
+    .getByRole("button", { name: "Confirm read through" })
+    .click();
+}
+
+async function expectTapSizedCells(page: Page): Promise<void> {
+  const picker = page.getByRole("dialog", { name: "Read through" });
+  // 44px targets; allow sub-pixel layout rounding (Firefox reports 43.99998).
+  for (const control of [
+    picker.getByRole("button", { name: "Close" }),
+    picker.getByRole("radio", { name: "Pre-book zero state" }),
+    picker.getByRole("tab", { name: /^Book 1,/ }),
+  ]) {
+    const box = (await control.boundingBox())!;
+    expect(box.height).toBeGreaterThanOrEqual(43.5);
+    expect(box.width).toBeGreaterThanOrEqual(43.5);
+  }
+  const cells = await picker
+    .locator(".chapter-picker-cell")
+    .evaluateAll((elements) =>
+      elements.map((element) => {
+        const rect = element.getBoundingClientRect();
+        return { top: rect.top, width: rect.width, height: rect.height };
+      }),
+    );
+  expect(cells.length).toBeGreaterThan(0);
+  for (const cell of cells) {
+    expect(cell.width).toBeGreaterThanOrEqual(43.5);
+    expect(cell.height).toBeGreaterThanOrEqual(43.5);
+  }
+  // Five columns: the first five cells share a row and the sixth wraps.
+  const firstRow = cells.slice(0, 5).map(({ top }) => top);
+  expect(Math.max(...firstRow) - Math.min(...firstRow)).toBeLessThan(1);
+  if (cells.length > 5) expect(cells[5]!.top).toBeGreaterThan(cells[0]!.top);
+}
+
+test("desktop Read through chip opens a popover and confirms a chapter", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/");
+  const chip = page.locator("#topbar-read-through");
+  await expect(chip).toHaveAccessibleName("Read through, Pre-book zero state");
+  await expect(chip).toHaveText("Pre-book");
+  await expect(chip).toHaveAttribute("aria-haspopup", "dialog");
+  const chipBox = (await chip.boundingBox())!;
+  expect(chipBox.height).toBeGreaterThanOrEqual(43.5);
+  await expect(page.locator(".read-through-chip-pill")).toHaveCSS(
+    "height",
+    "34px",
+  );
+
+  await chip.click();
+  await expect(chip).toHaveAttribute("aria-expanded", "true");
+  const picker = page.getByRole("dialog", { name: "Read through" });
+  await expect(picker).toBeVisible();
+  await expect(picker).toHaveAttribute("aria-modal", "true");
+  await expect(
+    picker.getByRole("radio", { name: "Pre-book zero state" }),
+  ).toBeFocused();
+  // A right-anchored popover just under the chip, not a full-width sheet.
+  const pickerBox = (await picker.boundingBox())!;
+  expect(pickerBox.y).toBeGreaterThanOrEqual(chipBox.y + chipBox.height - 1);
+  expect(pickerBox.y).toBeLessThan(chipBox.y + chipBox.height + 16);
+  expect(
+    Math.abs(pickerBox.x + pickerBox.width - (chipBox.x + chipBox.width)),
+  ).toBeLessThan(2);
+  expect(pickerBox.width).toBeGreaterThan(340);
+  expect(pickerBox.width).toBeLessThan(380);
+  expect(pickerBox.y + pickerBox.height).toBeLessThanOrEqual(800);
+  await expect(page.locator("main.app-shell")).toHaveAttribute("inert", "");
+  await expectTapSizedCells(page);
+
+  await page.keyboard.press("Escape");
+  await expect(picker).toHaveCount(0);
+  await expect(chip).toBeFocused();
+  await expect(dockReadThrough(page)).toHaveValue("");
+
+  await chooseTopbarChapter(page, "Book 1 · Chapter 2");
+  await expect(chip).toHaveText("1 · Ch 2");
+  await expect(chip).toHaveAccessibleName("Read through, Book 1 Chapter 2");
+  await expect(chip).toBeFocused();
+  await expect(dockReadThrough(page)).toHaveValue("1.2");
+  await expect(page.locator(".map-narrative-badge")).toContainText(
+    "Latest known · Knowledge through Chapter 1.2",
+  );
+  // Reopening highlights the confirmed chapter.
+  await chip.click();
+  const current = page
+    .getByRole("dialog", { name: "Read through" })
+    .getByRole("radio", { name: "Book 1 · Chapter 2", exact: true });
+  await expect(current).toHaveAttribute("aria-checked", "true");
+  await expect(current).toBeFocused();
+  await page.keyboard.press("ArrowRight");
+  await expect(
+    page.getByRole("radio", { name: "Book 1 · Chapter 3", exact: true }),
+  ).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(dockReadThrough(page)).toHaveValue("1.2");
+});
+
+for (const viewport of [
+  { width: 390, height: 844 },
+  { width: 844, height: 390 },
+]) {
+  test(`compact Read through picker is a tap-sized sheet at ${viewport.width}x${viewport.height}`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+    const chip = page.locator("#topbar-read-through");
+    const chipBox = (await chip.boundingBox())!;
+    expect(chipBox.height).toBeGreaterThanOrEqual(43.5);
+    await expect(page.locator(".read-through-chip-pill")).toHaveCSS(
+      "height",
+      "36px",
+    );
+    await chip.click();
+    const picker = page.getByRole("dialog", { name: "Read through" });
+    await expect(picker).toBeVisible();
+    await expect(
+      picker.getByRole("heading", { name: "Read through" }),
+    ).toBeVisible();
+    const box = (await picker.boundingBox())!;
+    // Portrait: a full-width bottom sheet. Short landscape: a right drawer.
+    expect(box.x + box.width).toBeGreaterThanOrEqual(viewport.width - 1);
+    expect(box.y + box.height).toBeGreaterThanOrEqual(viewport.height - 1);
+    expect(box.y).toBeGreaterThanOrEqual(-1);
+    if (viewport.height > viewport.width) {
+      expect(box.x).toBeLessThanOrEqual(1);
+    }
+    await expectTapSizedCells(page);
+    expect(
+      await page.evaluate(() => ({
+        height: document.documentElement.scrollHeight,
+        width: document.documentElement.scrollWidth,
+      })),
+    ).toEqual({ height: viewport.height, width: viewport.width });
+
+    await picker.getByRole("button", { name: "Close" }).click();
+    await expect(picker).toHaveCount(0);
+    await expect(chip).toBeFocused();
+
+    await chooseTopbarChapter(page, "Book 1 · Chapter 2");
+    await expect(chip).toHaveText("1 · Ch 2");
+    await expect(page.locator(".map-narrative-badge")).toContainText(
+      "Latest known · Knowledge through Chapter 1.2",
+    );
+    await openMenuCommand(page, "Timeline and progress");
+    await expect(
+      page
+        .getByRole("dialog", { name: "Timeline and progress" })
+        .getByLabel("Read through"),
+    ).toHaveValue("1.2");
   });
 }

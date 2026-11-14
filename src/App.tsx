@@ -278,6 +278,7 @@ export default function App() {
   const [readThroughOrigin, setReadThroughOrigin] = useState<"topbar" | "dock">(
     "dock",
   );
+  const [chapterPickerOpen, setChapterPickerOpen] = useState(false);
   const [dateContext, setDateContext] = useState<string | null>(null);
   const [mapScale, setMapScale] = useState<MapScale>({
     label: `1 ${DISPLAY_DISTANCE_UNIT}`,
@@ -558,7 +559,7 @@ export default function App() {
               : panel === "menu"
                 ? document.getElementById("topbar-read-through")
                 : document.querySelector<HTMLElement>(
-                    ".right-rail button, .right-rail a, .topbar select",
+                    ".right-rail button, .right-rail a, #topbar-read-through",
                   );
         destination?.focus();
       }, 0);
@@ -899,7 +900,10 @@ export default function App() {
     throw new Error("Narrative corpus is unavailable after preparation.");
 
   return (
-    <main className="app-shell" inert={aboutOrigin !== null}>
+    <main
+      className="app-shell"
+      inert={aboutOrigin !== null || chapterPickerOpen}
+    >
       <a className="skip-link" href="#map-stage">
         Skip to star map
       </a>
@@ -952,6 +956,7 @@ export default function App() {
             }}
             onConfirmReadThrough={confirmPendingReadThrough}
             onCancelReadThrough={() => setPendingReadThrough(null)}
+            onPickerOpenChange={setChapterPickerOpen}
           />
           {systemMode && (
             <button

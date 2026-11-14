@@ -595,7 +595,7 @@ those surfaces at once. Layout composition changes by viewport: it selects an
 appropriate focused arrangement of the same domain state and UI components rather
 than creating a separate mobile application or a parallel feature stack. The
 application shell uses a map-first phone composition: one slim command bar holds the
-identity, the **Read through** select and a menu button; the menu drawer opens the
+identity, the compact **Read through** chip and a menu button; the menu drawer opens the
 browser, **Timeline and progress**, **Knowledge through**, Chapter/Date mode and a
 secondary **Reset view**; and a selected item's inspector opens as a non-animated,
 non-modal bottom sheet over the live map, with peek, half and full snaps, a 44px
@@ -612,7 +612,13 @@ phone menu) opens the About dialog: a centred modal on desktop, a bottom sheet o
 phones and a side-by-side dialog on short landscape screens. It closes on Close,
 Escape and a backdrop click, contains focus while open, makes the page behind it
 inert and returns focus to the desktop link or the menu button
-(`tasks/BOB-20261114-KA0X30-about-dialog.md`).
+(`tasks/BOB-20261114-KA0X30-about-dialog.md`). The top-bar **Read through** chip
+shows the confirmed ceiling compactly (`1 · Ch 43`, or `Pre-book`) with a verbose
+accessible name and opens the chapter picker: a bottom sheet on phones, a right
+drawer on short landscape screens and a popover under the chip on desktop. Its
+**Pre-book zero state** row and 44px chapter cells form one radio group, book tabs
+are a tablist, and any different choice still opens the shared **Confirm read
+progress** dialog (`tasks/BOB-20261114-MXBDTM-compact-chapter-selector.md`).
 
 Phase 1 is desktop-first and targets current Chrome, Firefox, Safari, and Edge.
 Automated browser projects cover the Chromium, Firefox, and WebKit engines; manual
