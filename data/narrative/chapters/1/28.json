@@ -75,7 +75,7 @@
     },
     {
       "entity_id": "technology:exploration-scouts",
-      "description": "Small craft intended to investigate planets directly, filling a gap in a mission design that made no allowance for such investigation. Available libraries contain information on environmental sensors. In reconnaissance, scouts can activate at staggered distances and random vectors to prevent an observer from backtracking the launching vessel's trajectory; modified SUDDAR arrays equip them for longer-range surveying."
+      "description": "Small craft that investigate planets directly, filling a gap in the original mission design. In reconnaissance they activate at staggered distances on random vectors so an observer cannot trace the launching vessel, and modified SUDDAR arrays extend their survey range."
     },
     {
       "entity_id": "technology:suddar",

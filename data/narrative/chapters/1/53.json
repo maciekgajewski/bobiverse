@@ -15,11 +15,11 @@
   "updates": [
     {
       "entity_id": "character:bob-replicant",
-      "current_state": "At Delta Eridani, guarding the Deltan migration, which has resumed its march and reached the flint site after three smaller gorilloid attacks. He means to help the Deltans for about a generation and then fade into legend, and will judge at the site whether to thin out the local gorilloids."
+      "current_state": "At Delta Eridani, guarding the Deltan migration, which has reached the flint site after three smaller gorilloid attacks. He means to help the Deltans for about a generation and then fade into legend."
     },
     {
       "entity_id": "character:marvin",
-      "current_state": "At Delta Eridani with Bob, with a batch of new Bobs under way at the autofactory, he argues for killing only gorilloids that attack the Deltans rather than hunting them out around the flint site. He expects to leave in about a generation to explore and meet other species."
+      "current_state": "At Delta Eridani with Bob while new Bobs are built at the autofactory, he argues for killing only gorilloids that attack the Deltans. He expects to leave in about a generation to explore and meet other species."
     },
     {
       "entity_id": "character:archimedes",

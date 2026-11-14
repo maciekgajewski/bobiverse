@@ -8,7 +8,7 @@
     {
       "id": "character:howard",
       "name": "Howard",
-      "current_state": "The newest Bob, he is travelling with Exodus-1 and Exodus-2 as their escort and, by a private understanding with Riker, is to make sure the colonists behave at the other end. Riker has loaded his cargo hold with a few of Bill's recent inventions, just in case."
+      "current_state": "The newest Bob, escorting Exodus-1 and Exodus-2 and privately charged by Riker with keeping the colonists in line; his hold carries a few of Bill's recent inventions."
     },
     {
       "id": "event:first-colony-ships-departure",
@@ -20,17 +20,17 @@
         "character:homer",
         "character:howard"
       ],
-      "description": "The launch from Sol of the first two USE colony ships, Exodus-1 and Exodus-2, after more than a decade of work. Ten ground-to-orbit shuttles made forty trips, carrying up to five hundred people each, to move the USE colonists to the ships in low Earth orbit, where they were sedated and locked into stasis pods; a share of the Svalbard Vaults' contents was loaded aboard and the shuttles were docked in the cargo holds. A long ceremony of speeches followed, by USE leaders and by groups from the other side of the planet. Crewed by Riker clones and ROAMers and escorted by the newest Bob, Howard, the ships set out on a voyage of a little over eighteen years, about six of them aboard, and passed the orbit of Mars as Riker and Homer watched."
+      "description": "The launch from Sol of the first two USE colony ships, Exodus-1 and Exodus-2, after more than a decade of work. Shuttles carried the USE colonists to the ships in low Earth orbit, where they were put into stasis, and a share of the Svalbard Vaults' contents was loaded aboard. After a long ceremony, the ships, crewed by Riker clones and ROAMers and escorted by the newest Bob, Howard, set out on a voyage of a little over eighteen years."
     }
   ],
   "updates": [
     {
       "entity_id": "character:riker",
-      "current_state": "At Sol, he has seen the first two colony ships, Exodus-1 and Exodus-2, launched after more than a decade of work, having installed their replicant matrices as one of the last tasks so that no one had time to tamper with them; there were no hacking attempts, so whoever might have tried may have given up. He hopes that new builds and returning ships will sustain a steady stream of emigrants for as long as people want to leave, and that more colonizable worlds are found before people start shooting at each other again. He keeps in regular video contact with the Hendricks household, his sister's descendants, which makes him feel real and is a satisfying next-best to being a parent or grandparent."
+      "current_state": "At Sol after the launch of Exodus-1 and Exodus-2, he hopes new and returning ships can carry emigrants for as long as people want to leave. Regular video calls with the Hendricks household, his sister's descendants, make him feel real."
     },
     {
       "entity_id": "character:gudmund-valter",
-      "current_state": "Leading the Spitsbergen refuge, which is to leave with FAITH's enclave aboard the third colony ship and found the first settlement on whichever planet the USE contingent does not choose. He is philosophical about the price of going first, building infrastructure for later settlers, and says in a speech that second prize is still a magnificent gift."
+      "current_state": "Leading the Spitsbergen refuge, which is to sail with FAITH's enclave on the third colony ship and found the first settlement on whichever planet the USE contingent does not choose; he accepts the price of going first."
     },
     {
       "entity_id": "vessel:exodus-1",
@@ -42,24 +42,24 @@
     },
     {
       "entity_id": "vessel:exodus-3",
-      "current_state": "Designated for the Spitsbergen refuge and FAITH's enclave, it is due to leave Sol four months after Exodus-1 and Exodus-2 departed in April 2171. It is also to carry Julia Hendricks's family, a placement Riker secured from Minister Cranston before agreeing to his proposal, with FAITH's enclave taking the balance of its allocation. Its colonists are to found the first settlement on whichever planet the USE contingent does not pick, building enough infrastructure for later groups to settle without undue hardship. About three hundred people who cannot fit aboard will be the first onto the fourth ship instead."
+      "current_state": "Due to leave Sol four months after the first two ships, carrying the Spitsbergen refuge, FAITH's enclave and Julia Hendricks's family to found the first settlement on whichever planet the USE contingent does not pick."
     },
     {
       "entity_id": "vessel:use-colony-ship",
-      "description": "A USE colony-ship design created by refugee scientists as an off-world refuge. Its plans require a space-based construction yard and a viable destination. It can carry ten thousand people at a time in stasis pods. Each ship has two drive rings and a massive reactor cooling section to move its huge central cargo section, and shielding for the stasis cargo makes up a significant share of its mass. Riker likens its appearance to an unarmed science-fiction warship. Its maximum sustained acceleration is 1 g, so a voyage takes slightly longer than it would for a version-1 Bob. The ships carry no human crew; they are crewed by a couple of Riker clones and large numbers of ROAMers, with replicant matrices installed aboard. Colonists ride up in ground-to-orbit shuttles holding five hundred people each, then are sedated, hooked up and locked into coffin-sized stasis pods, in which no time passes for them during the voyage; the shuttles travel docked in the cargo holds.",
-      "current_state": "Exodus-1 and Exodus-2 left Sol in April 2171 after end-to-end checkout, a USE inspection and a shakedown cruise to Jupiter and back, carrying USE colonists and a share of the Svalbard Vaults' contents on a voyage of a little over eighteen years, about six of them aboard, escorted by Howard. Exodus-3, for the Spitsbergen refuge and FAITH's enclave, is due to leave four months later, and three more ships are already under construction; about three hundred people who cannot fit on Exodus-3 will be the first onto a fourth ship, with established homes guaranteed at Omicron2 Eridani. Between new builds and returning colony ships, Riker hopes to keep up a steady stream of emigrants for as long as people want to leave. Diverting scavenged materials to farming space stations reduces the number of future colony ships."
+      "description": "A USE colony-ship design created by refugee scientists as an off-world refuge, carrying ten thousand people in stasis pods. Two drive rings and a massive reactor cooling section move its huge central cargo section, much of whose mass is stasis shielding; Riker likens it to an unarmed science-fiction warship. With no human crew, it is run by a couple of Riker clones and many ROAMers, accelerates at up to 1 g, and takes colonists up in 500-person shuttles that travel docked in its holds.",
+      "current_state": "Exodus-1 and Exodus-2 left Sol in April 2171, escorted by Howard, on a voyage of a little over eighteen years; Exodus-3 follows four months later, and three more ships are under construction."
     },
     {
       "entity_id": "organization:united-states-of-eurasia",
-      "current_state": "Its colonists left Earth first, aboard Exodus-1 and Exodus-2 in April 2171, after a USE delegation inspected the ships; the arrangement, granted because USE supplied the colony-ship plans, had been opposed by many other survivor groups. The USE contingent gets first choice of planet at the destination, and the settlers on the third ship will take the other. The Spitsbergen refuge is technically part of USE but does not recognize Colonel Butterworth's authority."
+      "current_state": "Its colonists left Earth first aboard Exodus-1 and Exodus-2 in April 2171 and will get first choice of planet. The Spitsbergen refuge is technically part of USE but rejects Colonel Butterworth's authority."
     },
     {
       "entity_id": "organization:spitsbergen-refuge",
-      "current_state": "It is to leave aboard Exodus-3 with FAITH's enclave four months after the first colony ships departed in April 2171, and to found the first settlement on whichever planet the USE contingent does not pick; that settlement must build enough infrastructure for later groups to settle without undue hardship."
+      "current_state": "It is to leave on Exodus-3 with FAITH's enclave four months after the first colony ships and found the first settlement on the planet the USE contingent does not pick, building infrastructure for later groups."
     },
     {
       "entity_id": "organization:free-american-independent-theocratic-hegemony",
-      "current_state": "Its enclave, which agreed to give up its food surplus in exchange for the balance of ship three's allocation, is to leave aboard Exodus-3 with the Spits four months after the first colony ships departed in April 2171, to help found the first settlement on whichever planet the USE contingent does not pick."
+      "current_state": "Its enclave, having traded its food surplus for the rest of ship three's places, is to leave on Exodus-3 with the Spits four months after the first colony ships, to help found the settlement on the planet the USE contingent does not pick."
     },
     {
       "entity_id": "organization:svalbard-global-trust",

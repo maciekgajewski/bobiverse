@@ -95,7 +95,7 @@
       "chapter": "1.28",
       "entity_id": "technology:exploration-scouts",
       "field": "description",
-      "reason": "pre-existing, predates check"
+      "reason": "pre-existing, predates check; then Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
     },
     {
       "chapter": "1.30",
@@ -131,7 +131,7 @@
       "chapter": "1.41",
       "entity_id": "technology:subspace-communications",
       "field": "description",
-      "reason": "pre-existing, predates check"
+      "reason": "pre-existing, predates check; then Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
     },
     {
       "chapter": "1.42",
@@ -155,7 +155,7 @@
       "chapter": "1.43",
       "entity_id": "vessel:use-colony-ship",
       "field": "description",
-      "reason": "pre-existing, predates check"
+      "reason": "pre-existing, predates check; then Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
     },
     {
       "chapter": "1.44",
@@ -197,13 +197,13 @@
       "chapter": "1.53",
       "entity_id": "character:bob-replicant",
       "field": "current_state",
-      "reason": "pre-existing, predates check"
+      "reason": "pre-existing, predates check; then Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
     },
     {
       "chapter": "1.53",
       "entity_id": "character:marvin",
       "field": "current_state",
-      "reason": "pre-existing, predates check"
+      "reason": "pre-existing, predates check; then Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
     },
     {
       "chapter": "1.53",
@@ -364,6 +364,84 @@
     {
       "chapter": "1.57",
       "entity_id": "technology:guppi-interface",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.17",
+      "entity_id": "location:ee-2",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.22",
+      "entity_id": "technology:von-neumann-probe",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.23",
+      "entity_id": "technology:3d-printers",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.24",
+      "entity_id": "technology:ship-busters",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.26",
+      "entity_id": "location:earth",
+      "field": "state",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.42",
+      "entity_id": "location:ee-2",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.49",
+      "entity_id": "organization:free-american-independent-theocratic-hegemony",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.5",
+      "entity_id": "organization:free-american-independent-theocratic-hegemony",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.56",
+      "entity_id": "character:bill",
+      "field": "current_state",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.56",
+      "entity_id": "location:ee-2",
+      "field": "state",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.60",
+      "entity_id": "technology:ship-busters",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.60",
+      "entity_id": "technology:subspace-communications",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.7",
+      "entity_id": "organization:free-american-independent-theocratic-hegemony",
       "field": "description",
       "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
     }
