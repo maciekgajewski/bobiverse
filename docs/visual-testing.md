@@ -98,16 +98,21 @@ The command builds the current source, serves that exact production bundle at st
 with reduced motion. It needs no external service or network access. Do not run a
 concurrent repository build, test, benchmark, DevTools recording, or CPU throttling.
 
-The benchmark seeds reading progress through Chapter 1.11 with Chapter 1.10 selected,
-performs two excluded 1.10/1.11 warm-up cycles, then measures ten alternating
-transitions beginning with 1.11 through the actual chapter buttons. Before every
-excluded warm-up and measured transition, the first scenario clears inspection and
-the second selects **Solar System**; each subsequent chapter click must replace that
-prepared source state with the matching chapter inspector. Source-state preparation
-is outside the timing window. Each sample begins at the capture-phase chapter-button
-click and ends after the target button, shared map badge, and two animation frames
-have completed. Each scenario must have a median at or below 100 ms and no sample
-above 150 ms.
+The benchmark measures two chapter pairs. The early pair seeds reading progress
+through Chapter 1.11 with Chapter 1.10 selected and switches 1.10/1.11. The late pair
+(BOB-20261114-JD5VFR) seeds reading progress through Chapter 1.61 with Chapter 1.50
+selected and switches 1.50/1.61, where the projection carries the most activity. For
+each pair the benchmark performs two excluded warm-up cycles, then measures ten
+alternating transitions beginning with the later chapter through the actual chapter
+buttons. Before every excluded warm-up and measured transition, the first scenario
+clears inspection and the second selects **Solar System**; each subsequent chapter
+click must replace that prepared source state with the matching chapter inspector.
+Source-state preparation is outside the timing window. Each sample begins at the
+capture-phase chapter-button click and ends after the target button, shared map
+badge, and two animation frames have completed. Each early scenario must have a
+median at or below 100 ms and no sample above 150 ms. Each late scenario must have a
+median at or below 250 ms and no sample above 400 ms; the repeated-scan activity sort
+that BOB-20261114-JD5VFR replaced took about 3.3 s per late switch.
 
 BOB-036 deliberately supersedes BOB-029's selected-object retention assertion for
 chapter-button clicks because those buttons now select the chapter for inspection.
