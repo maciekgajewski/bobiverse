@@ -1,38 +1,15 @@
 import { useRef, type RefObject } from "react";
 import { useReadThroughConfirmationFocus } from "./useReadThroughConfirmationFocus";
-import type {
-  NarrativeChapterSummary,
-  ReaderProgress,
+import {
+  PRE_BOOK_LABEL,
+  readThroughLabel,
+  type NarrativeChapterSummary,
+  type ReaderProgress,
 } from "../narrative/progress";
 import { compareNarrativeChapters } from "../narrative/model";
+import { ShieldIcon } from "./icons";
 
-export function ShieldIcon() {
-  return (
-    <svg className="shield-icon" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 2.5 20 6v5.6c0 4.7-3.2 8.7-8 9.9-4.8-1.2-8-5.2-8-9.9V6l8-3.5Z" />
-      <path d="m8.5 12 2.1 2.1 4.9-4.9" />
-    </svg>
-  );
-}
-
-export function ResetViewIcon() {
-  return (
-    <svg className="reset-view-icon" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M4.5 11.2 12 4.8l7.5 6.4" />
-      <path d="M7 10.4V19h10v-8.6" />
-      <path d="M10 19v-5h4v5" />
-    </svg>
-  );
-}
-
-export function CloseIcon() {
-  return (
-    <svg className="close-icon" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M6 6l12 12" />
-      <path d="M18 6 6 18" />
-    </svg>
-  );
-}
+export { CloseIcon, ResetViewIcon, ShieldIcon } from "./icons";
 
 export function ReadThroughOptions({
   chapters,
@@ -41,11 +18,10 @@ export function ReadThroughOptions({
 }) {
   return (
     <>
-      <option value="">Pre-book zero state</option>
+      <option value="">{PRE_BOOK_LABEL}</option>
       {chapters.map((chapter) => (
         <option key={chapter.chapter} value={chapter.chapter}>
-          Book {chapter.chapter.split(".")[0]} · Chapter{" "}
-          {chapter.chapter.split(".")[1]}
+          {readThroughLabel(chapter.chapter)}
         </option>
       ))}
     </>

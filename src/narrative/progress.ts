@@ -14,6 +14,35 @@ export interface NarrativeChapterSummary {
   bookTitle: string;
 }
 
+export const PRE_BOOK_LABEL = "Pre-book zero state";
+
+/** Book number of a canonical chapter ID such as "1.43". */
+export function chapterBook(chapter: string): string {
+  return chapter.split(".")[0]!;
+}
+
+/** Chapter number within its book of a canonical chapter ID such as "1.43". */
+export function chapterNumber(chapter: string): string {
+  return chapter.split(".")[1]!;
+}
+
+/**
+ * Full Read through label, e.g. "Book 1 · Chapter 43", or the pre-book zero
+ * state for "".
+ */
+export function readThroughLabel(chapter: string): string {
+  return chapter
+    ? `Book ${chapterBook(chapter)} · Chapter ${chapterNumber(chapter)}`
+    : PRE_BOOK_LABEL;
+}
+
+/** Compact chip label, e.g. "1 · Ch 43", or "Pre-book" for "". */
+export function compactReadThroughLabel(chapter: string): string {
+  return chapter
+    ? `${chapterBook(chapter)} · Ch ${chapterNumber(chapter)}`
+    : "Pre-book";
+}
+
 export function chapterTimelineLabel(
   chapter: Pick<NarrativeChapterSummary, "chapter" | "title">,
 ): string {
