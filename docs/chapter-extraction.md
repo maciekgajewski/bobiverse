@@ -393,10 +393,37 @@ this applies even when the same agent also prepares the chapter summary.
 
 Description updates replace the complete field. Preserve useful prior reviewed
 knowledge and integrate the newly revealed information rather than emitting only the
-latest chapter fact. When updating an existing description, start from the complete
-prior reviewed entry and integrate the newly supported information; never erase
-useful reader-visible knowledge by emitting only the new chapter fact. §Reading order
-and story dates records Captain decision D2, which keeps this rule.
+latest chapter fact. Each update is a condensed summary: start from the complete prior
+reviewed entry, integrate the newly supported information, and condense rather than
+appending a sentence per chapter.
+
+**Length guideline and delegated condensation** (Captain, 2026-11-14 22:54 CET):
+
+- Aim for about 300 characters and three sentences per `description`. This is a
+  guideline, not a gate: main characters and major entities may run longer when that
+  is justified, and nothing fails on length. Keep `current_state` and `state` to one
+  or two sentences, about 250 characters at most.
+- What goes where: `description` holds stable identity (what or who the entity is),
+  its role, and its few defining capabilities or limits, grouped rather than listed
+  chapter by chapter. Dated happenings go in an `event:` entity or the chapter
+  `summary`; changing condition goes in `current_state` or `state`; detail of one
+  capability goes in that capability's own entity; minor trivia is dropped.
+- A condensed write never uses a fact first recorded in a later chapter, keeps core
+  identity facts, adds no new facts, dates, or entities, and drops a fact only when it
+  survives in an event, the chapter summary, or another entity, or is trivia. When a
+  dropped fact has no other home, flag it in the review package; do not add it
+  elsewhere.
+- The review package includes a dropped-sentence table for every condensed write:
+  dropped fact, reason, and where it lives (or the flag).
+- A condensed write that drops sentences of the earlier visible value needs one entry
+  for that chapter, entity, and field in
+  `data/narrative/sentence-preservation-exceptions.json`, with a reason citing
+  "Maciej 2026-11-14 22:54, delegated condensation".
+- Entity links inside descriptions will be added in a separate later branch once
+  their code lands.
+
+This replaces "keep full merged texts" (D2, §Reading order and story dates) for
+descriptions.
 
 ### Summaries
 
@@ -443,7 +470,8 @@ manager; ADR-0028):
 - 20:01 CET: "Merge: (a) keep full merged texts". The full-field update rule in
   §Descriptions applies unchanged: start from the complete prior reviewed entry and
   integrate the new information, even when the update is dated earlier than some of
-  the facts it carries.
+  the facts it carries. For descriptions, condensed summaries replace full merged
+  texts from 2026-11-14 22:54 CET (§Descriptions).
 
 Because merged writes carry full texts, Date view may show such a fact before the
 story date it belongs to. This is a known, accepted limitation. As reporting only,
@@ -603,6 +631,7 @@ Resolve human-review questions one at a time, then present:
 - unresolved or low-confidence items and applied exceptions;
 - the D2 list from §Reading order and story dates. It is reporting only and not a
   promotion gate;
+- the dropped-sentence table for every condensed description write (§Descriptions);
 - narrative and astronomy preflight output, including any automatically resolved
   mapped-anchor bootstrap;
 - the exact canonical diff that approval would create, or the exact combined
@@ -679,4 +708,5 @@ These generic validators are required safety nets for every chapter, as is the
 merged-text sentence-preservation check: when a chapter writes a merged text for a
 field, the write keeps every sentence of the earlier canonical value that is visible
 for that field. That check runs in `narrative:validate`. A reviewed exception in
-`data/narrative/sentence-preservation-exceptions.json` can excuse one write.
+`data/narrative/sentence-preservation-exceptions.json` can excuse one write; a
+condensed description write (§Descriptions) is excused this way.
