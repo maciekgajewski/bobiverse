@@ -122,3 +122,14 @@ Manual: the Captain's check on desktop and a phone after deployment (checklist i
 - Created on origin/master `5c2d9d7` under the authorization above, on local branch
   `bob-20261114-anzfk6-guppi-about-caption` in the `~/src/bobiverse-guppicap`
   worktree.
+- Implemented scope items 1 to 5 in `0050ae1`. Validation, all passed:
+  `python3 scripts/tasks.py check`, `npm run format:check`, `npm run lint`,
+  `npm run typecheck`, `npm run test` (465 passed), `npm run data:test` (90 passed),
+  `npm run data:validate`, `npm run narrative:validate`, `npm run build`,
+  `git diff --check` and `npx prettier --check` on the changed Markdown.
+- Full e2e on a spare dev-server port 5196 (untracked throwaway config, deleted
+  afterwards), one worker, no retries: chromium, firefox and webkit each 48 passed and
+  3 skipped (the Enter system tests behind `ENABLE_ENTER_SYSTEM`). No icon-specimen
+  PNG was rewritten.
+- Screenshots of the About dialog at 1280×800 and 390×844, at Chapter 1.2 and in zero
+  state, were taken for review outside the repository.
