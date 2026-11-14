@@ -2060,8 +2060,160 @@ test("desktop chrome keeps the workspace with a slimmer bar and a larger map", a
   expect(map!.x + map!.width - (resetBox!.x + resetBox!.width)).toBeLessThan(
     12,
   );
-  await expect(page.locator(".topbar").getByRole("button")).toHaveCount(0);
+  // The only desktop top-bar button is the "What is this?" About link.
+  await expect(page.locator(".topbar").getByRole("button")).toHaveText([
+    "What is this?",
+  ]);
   await reset.hover();
   await expect(page.getByRole("tooltip")).toHaveText("Reset view");
   await expect(page.getByRole("tooltip")).toBeVisible();
 });
+
+async function expectAboutDialogContent(page: Page) {
+  const dialog = page.getByRole("dialog", { name: "What is this?" });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole("button", { name: "Close" })).toBeFocused();
+  const box = await dialog.boundingBox();
+  const viewport = page.viewportSize()!;
+  expect(box!.x).toBeGreaterThanOrEqual(0);
+  expect(box!.y).toBeGreaterThanOrEqual(0);
+  expect(box!.x + box!.width).toBeLessThanOrEqual(viewport.width + 0.5);
+  expect(box!.y + box!.height).toBeLessThanOrEqual(viewport.height + 0.5);
+  const image = dialog.getByRole("img", { name: "Admiral Ackbar" });
+  await expect(image).toBeVisible();
+  await expect
+    .poll(() =>
+      image.evaluate((element: HTMLImageElement) => element.naturalWidth),
+    )
+    .toBe(150);
+  await expect(dialog.locator("figcaption")).toHaveText(
+    "Admiral Ackbar illustration by Michael Sutfin, from The New Essential Guide to Characters. Star Wars © Lucasfilm Ltd. Used under fair use.",
+  );
+  await expect(dialog.getByRole("listitem")).toHaveCount(4);
+  for (const [name, href] of [
+    ["Dennis E. Taylor", "http://dennisetaylor.org/status-of-things/"],
+    ["maciek@bobiverse.space", "mailto:maciek@bobiverse.space"],
+    [
+      "github.com/maciekgajewski/bobiverse",
+      "https://github.com/maciekgajewski/bobiverse",
+    ],
+  ] as const) {
+    await expect(dialog.getByRole("link", { name })).toHaveAttribute(
+      "href",
+      href,
+    );
+  }
+  await expect(
+    dialog.getByRole("link", { name: "Dennis E. Taylor" }),
+  ).toHaveAttribute("rel", "noopener noreferrer");
+  const closeBox = await dialog
+    .getByRole("button", { name: "Close" })
+    .boundingBox();
+  expect(closeBox!.width).toBeGreaterThanOrEqual(43.5);
+  expect(closeBox!.height).toBeGreaterThanOrEqual(43.5);
+  return dialog;
+}
+
+test("desktop About dialog opens from the title link and closes three ways", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/");
+  const link = page
+    .locator(".topbar-title")
+    .getByRole("button", { name: "What is this?" });
+  await expect(link).toBeVisible();
+
+  await link.click();
+  let dialog = await expectAboutDialogContent(page);
+  const box = await dialog.boundingBox();
+  // Centred, 520px wide.
+  expect(box!.width).toBeCloseTo(520, 0);
+  expect(Math.abs(box!.x + box!.width / 2 - 640)).toBeLessThan(2);
+  // Focus stays inside: Close, the three links, then back to Close.
+  for (const name of [
+    "Dennis E. Taylor",
+    "maciek@bobiverse.space",
+    "github.com/maciekgajewski/bobiverse",
+  ]) {
+    await page.keyboard.press("Tab");
+    await expect(dialog.getByRole("link", { name })).toBeFocused();
+  }
+  await page.keyboard.press("Tab");
+  await expect(dialog.getByRole("button", { name: "Close" })).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(dialog).toHaveCount(0);
+  await expect(link).toBeFocused();
+
+  await link.click();
+  dialog = await expectAboutDialogContent(page);
+  await page.mouse.click(20, 400);
+  await expect(dialog).toHaveCount(0);
+  await expect(link).toBeFocused();
+
+  await link.click();
+  dialog = await expectAboutDialogContent(page);
+  await dialog.getByRole("button", { name: "Close" }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect(link).toBeFocused();
+});
+
+for (const viewport of [
+  { width: 390, height: 844 },
+  { width: 844, height: 390 },
+]) {
+  test(`compact About dialog opens from the menu at ${viewport.width}x${viewport.height}`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+    await expect(
+      page.locator(".topbar").getByRole("button", { name: "What is this?" }),
+    ).toHaveCount(0);
+    const menuButton = page.getByRole("button", { name: "Menu" });
+    await menuButton.click();
+    const drawer = page.getByRole("dialog", { name: "Menu" });
+    const row = drawer.getByRole("button", { name: "What is this?" });
+    await expect(drawer.getByRole("button").last()).toHaveText("What is this?");
+    await row.scrollIntoViewIfNeeded();
+    expect((await row.boundingBox())!.height).toBeGreaterThanOrEqual(43.5);
+    await row.click();
+    await expect(drawer).toHaveCount(0);
+    let dialog = await expectAboutDialogContent(page);
+    const box = await dialog.boundingBox();
+    const image = await dialog
+      .getByRole("img", { name: "Admiral Ackbar" })
+      .boundingBox();
+    if (viewport.height > 500) {
+      // Bottom sheet with the picture above the text.
+      expect(box!.width).toBeCloseTo(viewport.width, 0);
+      expect(box!.y + box!.height).toBeCloseTo(viewport.height, 0);
+      expect(image!.width).toBeCloseTo(150, 0);
+      const copy = await dialog.locator(".about-copy").boundingBox();
+      expect(copy!.y).toBeGreaterThan(image!.y + image!.height);
+    } else {
+      // Short landscape: picture beside the text, inside 390px of height.
+      expect(image!.width).toBeCloseTo(108, 0);
+      expect(image!.height).toBeCloseTo(144, 0);
+      const copy = await dialog.locator(".about-copy").boundingBox();
+      expect(copy!.x).toBeGreaterThan(image!.x + image!.width);
+    }
+
+    // Outside the sheet (portrait) and the 0.5rem-inset dialog (landscape).
+    await page.mouse.click(3, 3);
+    await expect(dialog).toHaveCount(0);
+    await expect(menuButton).toBeFocused();
+
+    await openMenuCommand(page, "What is this?");
+    dialog = await expectAboutDialogContent(page);
+    await page.keyboard.press("Escape");
+    await expect(dialog).toHaveCount(0);
+    await expect(menuButton).toBeFocused();
+
+    await openMenuCommand(page, "What is this?");
+    dialog = await expectAboutDialogContent(page);
+    await dialog.getByRole("button", { name: "Close" }).click();
+    await expect(dialog).toHaveCount(0);
+    await expect(menuButton).toBeFocused();
+  });
+}

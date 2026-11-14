@@ -98,8 +98,10 @@ short backdrop credit `NASA/GSFC SVS · ESA/Gaia/DPAC` and expands to the full
 credits; **Reset view** is a 44px icon control in the map's top-right corner
 (`../tasks/BOB-20261113-3VCGFP-mobile-map-chrome.md`).
 
-The one-row command bar retains only the identity and a compact **Read through**
-select; below the breakpoint it adds the menu button. Displayed
+The one-row command bar retains only the identity, a muted **What is this?** link to
+the About dialog and a compact **Read through** select; below the breakpoint the link
+moves to the last row of the menu and the bar adds the menu button
+(`../tasks/BOB-20261114-KA0X30-about-dialog.md`). Displayed
 interstellar distances, Galactic coordinate components, and map scale use light-years
 without a unit selector. Search belongs at the top of the object browser. The map
 contains a compact read-only context badge such as:

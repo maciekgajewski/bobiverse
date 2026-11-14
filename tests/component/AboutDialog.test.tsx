@@ -1,0 +1,178 @@
+import { cleanup, render, screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+
+import {
+  ABOUT_IMAGE_CREDIT,
+  ABOUT_IMAGE_SRC,
+  AboutDialog,
+} from "../../src/components/AboutDialog";
+
+const CREDIT =
+  "Admiral Ackbar illustration by Michael Sutfin, from The New Essential Guide to Characters. Star Wars © Lucasfilm Ltd. Used under fair use.";
+
+describe("AboutDialog", () => {
+  afterEach(() => cleanup());
+
+  it("is a labelled modal dialog with Close focused on open", () => {
+    render(<AboutDialog onClose={() => undefined} />);
+    const dialog = screen.getByRole("dialog", { name: "What is this?" });
+    expect(dialog).toHaveAttribute("aria-modal", "true");
+    expect(dialog).toHaveAttribute("aria-labelledby", "about-title");
+    expect(dialog).not.toHaveAttribute("aria-label");
+    expect(
+      within(dialog).getByRole("heading", { level: 2, name: "What is this?" }),
+    ).toHaveAttribute("id", "about-title");
+    expect(within(dialog).getByRole("button", { name: "Close" })).toHaveFocus();
+  });
+
+  it("renders Maciej's text verbatim with a numbered list", () => {
+    render(<AboutDialog onClose={() => undefined} />);
+    const dialog = screen.getByRole("dialog", { name: "What is this?" });
+    const copy = dialog.querySelector(".about-copy")!;
+    const paragraphs = [...copy.querySelectorAll("p")].map((p) =>
+      p.textContent?.replace(/\s+/g, " ").trim(),
+    );
+    expect(paragraphs).toEqual([
+      "This is a Bobiverse star map and timeline visualiser. It is meant as an interactive, spoiler-free companion to the Bobiverse books by Dennis E. Taylor.",
+      "How to use:",
+      "Contact: maciek@bobiverse.space",
+      "Source: github.com/maciekgajewski/bobiverse",
+    ]);
+    const list = within(dialog).getByRole("list");
+    expect(list.tagName).toBe("OL");
+    expect(
+      within(list)
+        .getAllByRole("listitem")
+        .map((item) => item.textContent?.replace(/\s+/g, " ").trim()),
+    ).toEqual([
+      "Select a book chapter you have already read. This prevents the app from displaying any information that has not yet been mentioned in the books.",
+      "Use the 3D map to get a feel for where the stars are in relation to each other in space.",
+      "Use the search box and object browser to get detailed information about stars, planets, characters and events, all spoiler-free.",
+      "The timeline mode displays events in chronological order. This helps untangle the non-linear parts of the narrative.",
+    ]);
+    expect(dialog.textContent).not.toMatch(/placeholder/i);
+  });
+
+  it("links the author, contact address and source repository", () => {
+    render(<AboutDialog onClose={() => undefined} />);
+    const dialog = screen.getByRole("dialog", { name: "What is this?" });
+    const author = within(dialog).getByRole("link", {
+      name: "Dennis E. Taylor",
+    });
+    expect(author).toHaveAttribute(
+      "href",
+      "http://dennisetaylor.org/status-of-things/",
+    );
+    const source = within(dialog).getByRole("link", {
+      name: "github.com/maciekgajewski/bobiverse",
+    });
+    expect(source).toHaveAttribute(
+      "href",
+      "https://github.com/maciekgajewski/bobiverse",
+    );
+    for (const external of [author, source]) {
+      expect(external).toHaveAttribute("target", "_blank");
+      expect(external).toHaveAttribute("rel", "noopener noreferrer");
+    }
+    const contact = within(dialog).getByRole("link", {
+      name: "maciek@bobiverse.space",
+    });
+    expect(contact).toHaveAttribute("href", "mailto:maciek@bobiverse.space");
+    expect(contact).not.toHaveAttribute("target");
+    expect(within(dialog).getAllByRole("link")).toHaveLength(3);
+  });
+
+  it("shows the Ackbar image with its alt text and exact credit caption", () => {
+    render(<AboutDialog onClose={() => undefined} />);
+    const dialog = screen.getByRole("dialog", { name: "What is this?" });
+    const image = within(dialog).getByRole("img", { name: "Admiral Ackbar" });
+    expect(image).toHaveAttribute("src", "/assets/ackbar.webp");
+    expect(image).toHaveAttribute("width", "150");
+    expect(image).toHaveAttribute("height", "200");
+    const caption = dialog.querySelector("figure figcaption");
+    expect(caption).toHaveTextContent(CREDIT, { normalizeWhitespace: false });
+    expect(caption?.textContent).toBe(CREDIT);
+    expect(ABOUT_IMAGE_CREDIT).toBe(CREDIT);
+  });
+
+  it("ships the image asset and a matching credits file", () => {
+    const asset = readFileSync(resolve("public", ABOUT_IMAGE_SRC.slice(1)));
+    expect(asset.subarray(0, 4).toString("latin1")).toBe("RIFF");
+    expect(asset.subarray(8, 12).toString("latin1")).toBe("WEBP");
+    expect(asset.byteLength).toBeLessThan(20_000);
+    const credits = readFileSync(resolve("public/assets/CREDITS.md"), "utf8");
+    expect(credits.replace(/\s+/g, " ")).toContain(CREDIT);
+    expect(credits).toContain(
+      "https://starwars.fandom.com/wiki/File:Ackbar-NEGTC.png",
+    );
+    expect(credits).toMatch(/cropped/i);
+    expect(credits).toMatch(/resized/i);
+  });
+
+  it("closes on the Close button", async () => {
+    const user = userEvent.setup();
+    const onClose = vi.fn();
+    render(<AboutDialog onClose={onClose} />);
+    await user.click(screen.getByRole("button", { name: "Close" }));
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("closes on Escape", async () => {
+    const user = userEvent.setup();
+    const onClose = vi.fn();
+    render(<AboutDialog onClose={onClose} />);
+    await user.keyboard("{Escape}");
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("closes on a backdrop click but not on a click inside the dialog", async () => {
+    const user = userEvent.setup();
+    const onClose = vi.fn();
+    render(<AboutDialog onClose={onClose} />);
+    await user.click(screen.getByText("How to use:"));
+    expect(onClose).not.toHaveBeenCalled();
+    await user.click(document.querySelector(".about-backdrop")!);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("traps Tab and Shift+Tab inside the dialog", async () => {
+    const user = userEvent.setup();
+    render(
+      <>
+        <button type="button">Outside</button>
+        <AboutDialog onClose={() => undefined} />
+      </>,
+    );
+    const dialog = screen.getByRole("dialog", { name: "What is this?" });
+    const close = within(dialog).getByRole("button", { name: "Close" });
+    const author = within(dialog).getByRole("link", {
+      name: "Dennis E. Taylor",
+    });
+    const contact = within(dialog).getByRole("link", {
+      name: "maciek@bobiverse.space",
+    });
+    const source = within(dialog).getByRole("link", {
+      name: "github.com/maciekgajewski/bobiverse",
+    });
+    expect(close).toHaveFocus();
+    await user.tab();
+    expect(author).toHaveFocus();
+    await user.tab();
+    expect(contact).toHaveFocus();
+    await user.tab();
+    expect(source).toHaveFocus();
+    await user.tab();
+    expect(close).toHaveFocus();
+    await user.tab({ shift: true });
+    expect(source).toHaveFocus();
+    // Focus that lands on the dialog itself (a click on its text) re-enters
+    // the cycle instead of escaping it.
+    dialog.focus();
+    await user.tab();
+    expect(close).toHaveFocus();
+    expect(screen.getByRole("button", { name: "Outside" })).not.toHaveFocus();
+  });
+});

@@ -1316,6 +1316,92 @@ describe("atlas shell", () => {
     await waitFor(() => expect(menu).toHaveFocus());
   });
 
+  it("opens About from the desktop title link and returns focus to it", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    const link = within(document.querySelector(".topbar-title")!).getByRole(
+      "button",
+      { name: "What is this?" },
+    );
+    expect(link).toHaveAttribute("aria-haspopup", "dialog");
+    await user.click(link);
+    const dialog = screen.getByRole("dialog", { name: "What is this?" });
+    expect(within(dialog).getByRole("button", { name: "Close" })).toHaveFocus();
+    expect(document.querySelector("main.app-shell")).toHaveAttribute("inert");
+    expect(dialog.closest("main")).toBeNull();
+
+    await user.keyboard("{Escape}");
+    expect(
+      screen.queryByRole("dialog", { name: "What is this?" }),
+    ).not.toBeInTheDocument();
+    expect(document.querySelector("main.app-shell")).not.toHaveAttribute(
+      "inert",
+    );
+    await waitFor(() => expect(link).toHaveFocus());
+
+    await user.click(link);
+    await user.click(
+      within(screen.getByRole("dialog", { name: "What is this?" })).getByRole(
+        "button",
+        { name: "Close" },
+      ),
+    );
+    expect(
+      screen.queryByRole("dialog", { name: "What is this?" }),
+    ).not.toBeInTheDocument();
+    await waitFor(() => expect(link).toHaveFocus());
+
+    await user.click(link);
+    await user.click(document.querySelector(".about-backdrop")!);
+    expect(
+      screen.queryByRole("dialog", { name: "What is this?" }),
+    ).not.toBeInTheDocument();
+    await waitFor(() => expect(link).toHaveFocus());
+  });
+
+  it("opens About as the last compact menu row and returns focus to the menu", async () => {
+    vi.stubGlobal("matchMedia", compactMatchMedia);
+    const user = userEvent.setup();
+    render(<App />);
+    const menu = screen.getByRole("button", { name: "Menu" });
+    await user.click(menu);
+    const drawer = screen.getByRole("dialog", { name: "Menu" });
+    const rows = within(drawer).getAllByRole("button");
+    const about = rows[rows.length - 1]!;
+    expect(about).toHaveAccessibleName("What is this?");
+    expect(about).toHaveClass("menu-about");
+    await user.click(about);
+    expect(
+      screen.queryByRole("dialog", { name: "Menu" }),
+    ).not.toBeInTheDocument();
+    const dialog = screen.getByRole("dialog", { name: "What is this?" });
+    await waitFor(() =>
+      expect(
+        within(dialog).getByRole("button", { name: "Close" }),
+      ).toHaveFocus(),
+    );
+    await user.click(document.querySelector(".about-backdrop")!);
+    expect(
+      screen.queryByRole("dialog", { name: "What is this?" }),
+    ).not.toBeInTheDocument();
+    await waitFor(() => expect(menu).toHaveFocus());
+
+    await user.click(menu);
+    await user.click(
+      within(screen.getByRole("dialog", { name: "Menu" })).getByRole("button", {
+        name: "What is this?",
+      }),
+    );
+    await user.keyboard("{Escape}");
+    expect(
+      screen.queryByRole("dialog", { name: "What is this?" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("dialog", { name: "Menu" }),
+    ).not.toBeInTheDocument();
+    await waitFor(() => expect(menu).toHaveFocus());
+  });
+
   it("keeps Knowledge through in the compact menu in Date mode", async () => {
     window.localStorage.setItem(
       "bobiverse.app-state.v2",
