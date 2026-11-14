@@ -1272,6 +1272,50 @@ describe("atlas shell", () => {
     await waitFor(() => expect(menu).toHaveFocus());
   });
 
+  it("closes the compact detail window with an X icon beside its history controls", async () => {
+    vi.stubGlobal("matchMedia", compactMatchMedia);
+    const user = userEvent.setup();
+    render(<App />);
+    const menu = screen.getByRole("button", { name: "Menu" });
+    await user.click(menu);
+    await user.click(screen.getByRole("button", { name: "Browse objects" }));
+    await user.click(
+      within(screen.getByRole("dialog", { name: "Object browser" })).getByRole(
+        "button",
+        { name: /^Solar System(?:Active)?$/ },
+      ),
+    );
+    const dialog = await screen.findByRole("dialog", {
+      name: "Selected object",
+    });
+    const close = within(dialog).getByRole("button", { name: "Close" });
+    await waitFor(() => expect(close).toHaveFocus());
+    // An icon, not the old text button.
+    expect(close).not.toHaveTextContent("Close");
+    expect(close.querySelector("svg.close-icon")).toBeInTheDocument();
+    // One history control, in the header row with the close icon.
+    const header = dialog.querySelector<HTMLElement>(".compact-panel-header")!;
+    expect(header).toContainElement(close);
+    expect(
+      within(dialog).getAllByRole("navigation", { name: "Inspector history" }),
+    ).toHaveLength(1);
+    expect(
+      within(header).getByRole("button", { name: "Back" }),
+    ).toBeInTheDocument();
+    expect(
+      within(header).getByRole("button", { name: "Forward" }),
+    ).toBeInTheDocument();
+    expect(
+      within(dialog).queryByRole("button", { name: "Enter system" }),
+    ).not.toBeInTheDocument();
+
+    await user.click(close);
+    expect(
+      screen.queryByRole("dialog", { name: "Selected object" }),
+    ).not.toBeInTheDocument();
+    await waitFor(() => expect(menu).toHaveFocus());
+  });
+
   it("keeps Knowledge through in the compact menu in Date mode", async () => {
     window.localStorage.setItem(
       "bobiverse.app-state.v2",

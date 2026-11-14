@@ -681,6 +681,54 @@ test("system-mode dollies preserve direction and restore the exact camera pose",
   ).toBeGreaterThan(0.01);
 });
 
+test("mobile detail window has an X close icon and tap-sized history in one header row", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await openMenuCommand(page, "Browse objects");
+  await page.getByRole("button", { name: "Solar System" }).click();
+  const inspector = page.getByRole("dialog", { name: "Selected object" });
+  await expect(
+    inspector.getByRole("heading", { name: "Solar System" }),
+  ).toBeVisible();
+  const close = inspector.getByRole("button", { name: "Close" });
+  await expect(close).toBeFocused();
+  await expect(close).not.toContainText("Close");
+  await expect(
+    inspector.getByRole("button", { name: "Enter system" }),
+  ).toHaveCount(0);
+
+  const panelBox = (await inspector.boundingBox())!;
+  const closeBox = (await close.boundingBox())!;
+  // 44px tap targets; allow sub-pixel layout rounding.
+  expect(closeBox.width).toBeGreaterThanOrEqual(43.5);
+  expect(closeBox.height).toBeGreaterThanOrEqual(43.5);
+  // Top-right corner of the panel.
+  expect(
+    panelBox.x + panelBox.width - (closeBox.x + closeBox.width),
+  ).toBeLessThan(16);
+  expect(closeBox.y - panelBox.y).toBeLessThan(16);
+
+  const closeCentre = closeBox.y + closeBox.height / 2;
+  for (const name of ["Back", "Forward"]) {
+    const box = (await inspector.getByRole("button", { name }).boundingBox())!;
+    expect(box.width).toBeGreaterThanOrEqual(43.5);
+    expect(box.height).toBeGreaterThanOrEqual(43.5);
+    // Same header row as the close icon, left of it.
+    expect(Math.abs(box.y + box.height / 2 - closeCentre)).toBeLessThan(1);
+    expect(box.x + box.width).toBeLessThanOrEqual(closeBox.x);
+  }
+  const heading = (await inspector
+    .getByRole("heading", { name: "Solar System" })
+    .boundingBox())!;
+  expect(heading.y).toBeGreaterThanOrEqual(closeBox.y + closeBox.height);
+
+  await close.click();
+  await expect(inspector).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Menu" })).toBeFocused();
+});
+
 test("desktop inspector hides Enter system and keeps its small history controls", async ({
   page,
 }) => {

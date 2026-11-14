@@ -766,7 +766,7 @@ function ChapterDetails({
   );
 }
 
-function InspectorHistoryControls({
+export function InspectorHistoryControls({
   canGoBack,
   canGoForward,
   onBack,
@@ -826,6 +826,7 @@ export function ObjectInspector({
   enteredSystem = null,
   onEnterSystem = () => undefined,
   onComponentSelect = () => undefined,
+  showHistoryControls = true,
 }: {
   selection: SelectionIdentity | null;
   narrativeItem: NarrativeBrowserItem | null;
@@ -849,6 +850,11 @@ export function ObjectInspector({
   enteredSystem?: StellarSystem | null;
   onEnterSystem?: (entry: SystemViewEntry) => void;
   onComponentSelect?: (componentId: string) => void;
+  /**
+   * The compact panel renders the history controls in its header row, next
+   * to the close icon, so it turns the in-body copy off.
+   */
+  showHistoryControls?: boolean;
 }) {
   if (dateContext)
     return (
@@ -873,12 +879,14 @@ export function ObjectInspector({
     );
   const withHistory = (details: ReactNode) => (
     <div className="inspector-detail-stack">
-      <InspectorHistoryControls
-        canGoBack={canGoBack}
-        canGoForward={canGoForward}
-        onBack={onBack}
-        onForward={onForward}
-      />
+      {showHistoryControls && (
+        <InspectorHistoryControls
+          canGoBack={canGoBack}
+          canGoForward={canGoForward}
+          onBack={onBack}
+          onForward={onForward}
+        />
+      )}
       {details}
     </div>
   );

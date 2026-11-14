@@ -88,6 +88,29 @@ describe("object inspector", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("omits the in-body history controls when the host renders them", () => {
+    const entity = sparseEntities[0]!;
+    const props = {
+      selection: { kind: "narrative", id: entity.id } as const,
+      narrativeItem: item(entity),
+      world,
+      systems: [],
+      assets: { assets: [] },
+      onSelect: vi.fn(),
+    };
+    const { rerender } = render(<ObjectInspector {...props} />);
+    expect(
+      screen.getByRole("navigation", { name: "Inspector history" }),
+    ).toBeInTheDocument();
+    rerender(<ObjectInspector {...props} showHistoryControls={false} />);
+    expect(
+      screen.queryByRole("navigation", { name: "Inspector history" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: entity.name as string }),
+    ).toBeInTheDocument();
+  });
+
   it("renders every supported narrative type safely with sparse fields", () => {
     const onSelect = vi.fn();
     const { rerender } = render(
