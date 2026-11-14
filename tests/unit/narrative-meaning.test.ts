@@ -346,10 +346,32 @@ describe("merged-text restorations (BOB-20261113-FSHPA9)", () => {
   const written = (chapter: string, subject: string, name: string) =>
     chapterWrites(chapter, subject).find((write) => name in write)?.[name];
 
-  it.each([
-    ["technology:vr", "description", "1.40", "1.42", "2162-04"],
-    ["location:ee-2", "state", "1.42", "1.51", "2174-01"],
-  ])(
+  // technology:vr 1.40 -> 1.42 used to pin 1.40's exact last sentence here.
+  // Maciej delegated description condensation to the Extractor on 2026-11-14
+  // 22:54 (Europe/Warsaw), superseding the verbatim-merge rule for descriptions,
+  // so the 1.42 text now only has to keep the fact: Linus gives Henry a sailing
+  // life in VR. Only these key words are asserted, not the combined sentence.
+  it(
+    "technology:vr description keeps the Linus/Henry sailing fact from 1.42 on",
+    () => {
+      if (!narrativeCorpus)
+        throw new Error("Canonical narrative preparation failed.");
+      const keepsFact = (text: unknown) => {
+        expect(String(text)).toMatch(/\bLinus\b/);
+        expect(String(text)).toMatch(/\bHenry\b/);
+        expect(String(text)).toMatch(/\bsailing\b/);
+      };
+      const read = field("technology:vr", "description");
+      keepsFact(written("1.42", "technology:vr", "description"));
+      keepsFact(read(worldAt("1.42")));
+      keepsFact(
+        read(generateNarrativeWorld(narrativeCorpus, "1.42", "2162-04")),
+      );
+    },
+    SLOW,
+  );
+
+  it.each([["location:ee-2", "state", "1.42", "1.51", "2174-01"]])(
     "%s %s keeps %s's last sentence from %s on",
     (subject, name, source, target, date) => {
       if (!narrativeCorpus)

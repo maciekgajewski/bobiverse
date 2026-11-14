@@ -316,7 +316,7 @@
     "kind": "field",
     "subject": "technology:ship-busters",
     "field": "description",
-    "expected": "sha256:f2c23693ec31af95",
+    "expected": "sha256:447c7d3f788cf349",
     "basis": "Captain approval 2026-11-13 (1.46)"
   },
   {
@@ -360,7 +360,7 @@
     "kind": "field",
     "subject": "organization:united-states-of-eurasia",
     "field": "current_state",
-    "expected": "sha256:da26cd50d961debb",
+    "expected": "sha256:eeeab862e24e623a",
     "basis": "Captain approval 2026-11-13 (1.47)"
   },
   {
@@ -412,7 +412,7 @@
     "kind": "field",
     "subject": "technology:buster-drone",
     "field": "description",
-    "expected": "sha256:c766d80aad02e90b",
+    "expected": "sha256:93a3cf53db233a43",
     "basis": "Captain approval 2026-11-13 (1.48)"
   },
   {
@@ -474,7 +474,7 @@
     "kind": "field",
     "subject": "technology:guppi-interface",
     "field": "description",
-    "expected": "sha256:771de51ec0c18e60",
+    "expected": "sha256:54a008b2c534b42c",
     "basis": "Captain approval 2026-11-13 (1.49)"
   },
   {
@@ -623,7 +623,7 @@
     "kind": "field",
     "subject": "species:delta-eridani-natives",
     "field": "description",
-    "expected": "sha256:a24e930eaafedc3d",
+    "expected": "sha256:94fe7a331de6365d",
     "basis": "Captain approval 2026-11-13 (1.50)"
   },
   {
@@ -631,7 +631,7 @@
     "kind": "field",
     "subject": "technology:buster-drone",
     "field": "description",
-    "expected": "sha256:9673298809c1e5a2",
+    "expected": "sha256:7766e915c8a0c05e",
     "basis": "Captain approval 2026-11-13 (1.50)"
   },
   {
@@ -639,7 +639,7 @@
     "kind": "field",
     "subject": "technology:guppi-interface",
     "field": "description",
-    "expected": "sha256:4df6c41b8f093744",
+    "expected": "sha256:a00a858b55666b80",
     "basis": "Captain approval 2026-11-13 (1.50)"
   },
   {
@@ -655,7 +655,7 @@
     "kind": "field",
     "subject": "character:bob-replicant",
     "field": "current_state",
-    "expected": "sha256:ceed8fc194cc686f",
+    "expected": "sha256:a4c67f32fb2a09e7",
     "basis": "Captain approval 2026-11-13 (1.50)"
   },
   {
@@ -687,7 +687,7 @@
     "kind": "field",
     "subject": "technology:kudzu-gardens",
     "field": "description",
-    "expected": "sha256:8a236b8ad3a43dc2",
+    "expected": "sha256:f711f736a899004a",
     "basis": "Captain approval 2026-11-13 (1.49)"
   },
   {
@@ -702,7 +702,7 @@
     "kind": "field",
     "subject": "technology:kudzu-gardens",
     "field": "description",
-    "expected": "sha256:8a236b8ad3a43dc2",
+    "expected": "sha256:f711f736a899004a",
     "basis": "Captain approval 2026-11-13 (1.50)"
   },
   {
@@ -710,7 +710,7 @@
     "kind": "field",
     "subject": "character:bill",
     "field": "current_state",
-    "expected": "sha256:990e3e36eb3449f4",
+    "expected": "sha256:f96138ab66d5414d",
     "basis": "Captain approval 2026-11-13 (1.51)"
   },
   {
@@ -765,7 +765,7 @@
     "kind": "field",
     "subject": "location:ee-2",
     "field": "state",
-    "expected": "sha256:c41c0fcebdcdfbab",
+    "expected": "sha256:0c4edce1c3f276ef",
     "basis": "task BOB-20261113-FSHPA9"
   },
   {
@@ -773,7 +773,7 @@
     "kind": "field",
     "subject": "technology:guppi-interface",
     "field": "description",
-    "expected": "sha256:bfd1a2695744f2b2",
+    "expected": "sha256:8bfd66c14bd196f8",
     "basis": "Captain approval 2026-11-13 (1.51)"
   },
   {
@@ -781,7 +781,7 @@
     "kind": "field",
     "subject": "technology:kudzu-gardens",
     "field": "description",
-    "expected": "sha256:8a236b8ad3a43dc2",
+    "expected": "sha256:f711f736a899004a",
     "basis": "Captain approval 2026-11-13 (1.51)"
   },
   {
@@ -796,7 +796,7 @@
     "kind": "field",
     "subject": "character:riker",
     "field": "current_state",
-    "expected": "sha256:ed01a3c497f53d40",
+    "expected": "sha256:cf67a9b9d73cfad7",
     "basis": "Captain approval 2026-11-13 (1.52)"
   },
   {
@@ -820,7 +820,7 @@
     "kind": "field",
     "subject": "technology:kudzu-gardens",
     "field": "description",
-    "expected": "sha256:f99ce4fd2db0e4c3",
+    "expected": "sha256:c0fe60b5e5ab6b8b",
     "basis": "Captain approval 2026-11-13 (1.52)"
   },
   {
@@ -872,7 +872,7 @@
     "kind": "field",
     "subject": "character:bob-replicant",
     "field": "current_state",
-    "expected": "sha256:6bd4ced312db5f8e",
+    "expected": "sha256:fc902344272aef44",
     "basis": "Captain approval 2026-11-13 (1.53)"
   },
   {
@@ -880,7 +880,7 @@
     "kind": "field",
     "subject": "character:marvin",
     "field": "current_state",
-    "expected": "sha256:65ca4f407995a216",
+    "expected": "sha256:8aa10bd9e0105c96",
     "basis": "Captain approval 2026-11-13 (1.53)"
   },
   {
@@ -896,7 +896,7 @@
     "kind": "field",
     "subject": "species:delta-eridani-natives",
     "field": "description",
-    "expected": "sha256:f42db2255fa9b1e5",
+    "expected": "sha256:cf499014fecd79ae",
     "basis": "Captain approval 2026-11-13 (1.53)"
   },
   {
@@ -904,7 +904,7 @@
     "kind": "field",
     "subject": "location:delta-eridani-4",
     "field": "description",
-    "expected": "sha256:63ad7a937a7b0da3",
+    "expected": "sha256:524f8b78be2d0d42",
     "basis": "Captain approval 2026-11-13 (1.53)"
   },
   {
@@ -934,7 +934,7 @@
     "kind": "field",
     "subject": "technology:kudzu-gardens",
     "field": "description",
-    "expected": "sha256:f99ce4fd2db0e4c3",
+    "expected": "sha256:c0fe60b5e5ab6b8b",
     "basis": "Captain approval 2026-11-13 (1.53)"
   },
   {

@@ -47,7 +47,7 @@
     },
     {
       "entity_id": "technology:roamers",
-      "description": "Remote observation and manipulation devices directed through GUPPI. They come in varied sizes, can coordinate across scales, and need minimal supervision once their tasks, dependencies, and interruption conditions are defined. Without active intervention, they can work up to ten times faster. They can travel along floors, walls, and ceilings, carry video cameras for remote observation, and pick up vibrations transmitted through a wall when pressed against it. Reusable scripts automate many routine activities, leaving assembly work largely self-directed."
+      "description": "Remote observation and manipulation devices directed through GUPPI. They come in varied sizes, coordinate across scales and, once their tasks are defined, need little supervision. They can climb floors, walls and ceilings, carry video cameras and pick up vibrations through a wall. Reusable scripts automate routine work, leaving assembly largely self-directed."
     }
   ],
   "mentions": ["organization:ministry-of-proper-thought"]

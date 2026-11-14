@@ -59,7 +59,7 @@
     },
     {
       "entity_id": "technology:planetary-exploration-drone",
-      "description": "A practical drone design for planetary exploration, with variants for surveillance and biological analysis. The football-sized surveillance variant has remote cameras, microphones, extendable gripping limbs, and small shielded reactors that can detect incoming craft before detection. It can relay live video, record speech, and provide footage for a virtual-reality reconstruction of observed inhabitants. The roughly meter-long biological-analysis variant has visual and auditory input optimized for close work and many extendable appendages for varied tasks; it also carries systems for examining local life and mechanical stomachs that process organics as a human stomach would, with sample-output analysis taking about a day. The drones can change color with limited pattern mimicry. Bob modifies one design with a speaker system for possible communication with the Deltans."
+      "description": "A practical drone design for planetary exploration. The football-sized surveillance variant carries cameras, microphones, gripping limbs and small reactors; the meter-long biological-analysis variant has many appendages and mechanical stomachs that analyze local organics in about a day. Both can change color with limited pattern mimicry. Surveillance drones can relay live video and record speech. One design has been fitted with a speaker for possible communication with the Deltans."
     }
   ],
   "mentions": [
