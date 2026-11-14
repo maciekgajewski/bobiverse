@@ -515,10 +515,35 @@ function entityType(id: string): NarrativeEntity["entity_type"] {
   return prefix;
 }
 
+type ParsedNarrativeChapter = readonly [book: number, chapter: number];
+
+// Chapter IDs and date strings come from a small, fixed vocabulary, so their
+// parsed forms are memoized; hot orderings compare them hundreds of thousands
+// of times per projection.
+const parsedNarrativeChapters = new Map<string, ParsedNarrativeChapter>();
+
+function parsedNarrativeChapter(value: string): ParsedNarrativeChapter {
+  let parsed = parsedNarrativeChapters.get(value);
+  if (!parsed) {
+    const [book, chapter] = value.split(".").map(Number);
+    parsed = [book!, chapter!];
+    parsedNarrativeChapters.set(value, parsed);
+  }
+  return parsed;
+}
+
+function compareParsedNarrativeChapters(
+  left: ParsedNarrativeChapter,
+  right: ParsedNarrativeChapter,
+): number {
+  return left[0] - right[0] || left[1] - right[1];
+}
+
 export function compareNarrativeChapters(left: string, right: string): number {
-  const [leftBook, leftChapter] = left.split(".").map(Number);
-  const [rightBook, rightChapter] = right.split(".").map(Number);
-  return leftBook - rightBook || leftChapter - rightChapter;
+  return compareParsedNarrativeChapters(
+    parsedNarrativeChapter(left),
+    parsedNarrativeChapter(right),
+  );
 }
 
 function compareChapter(left: string, right: string): number {
@@ -610,24 +635,52 @@ function rangeFor(date: ParsedNarrativeDate): [number, number] {
   return [start, Date.UTC(date.year, 11, 31) / 86400000];
 }
 
+interface NarrativeDateRange {
+  readonly start: number;
+  readonly end: number;
+  readonly precision: ParsedNarrativeDate["precision"];
+  readonly suffix: bigint;
+}
+
+const narrativeDateRanges = new Map<string, NarrativeDateRange>();
+
+/** Parses once per distinct date string; invalid dates throw and are not cached. */
+function narrativeDateRange(value: string): NarrativeDateRange {
+  let range = narrativeDateRanges.get(value);
+  if (!range) {
+    const date = parseNarrativeDate(value);
+    const [start, end] = rangeFor(date);
+    range = Object.freeze({
+      start,
+      end,
+      precision: date.precision,
+      suffix: date.suffix,
+    });
+    narrativeDateRanges.set(value, range);
+  }
+  return range;
+}
+
+function compareNarrativeDateRanges(
+  left: NarrativeDateRange,
+  right: NarrativeDateRange,
+): number | null {
+  if (left.end < right.start) return -1;
+  if (right.end < left.start) return 1;
+  if (left.precision !== right.precision || left.start !== right.start)
+    return null;
+  return left.suffix < right.suffix ? -1 : left.suffix > right.suffix ? 1 : 0;
+}
+
 /** Returns null for overlapping unequal-precision calendar ranges. */
 export function compareNarrativeDates(
   left: string,
   right: string,
 ): number | null {
-  const leftDate = parseNarrativeDate(left);
-  const rightDate = parseNarrativeDate(right);
-  const [leftStart, leftEnd] = rangeFor(leftDate);
-  const [rightStart, rightEnd] = rangeFor(rightDate);
-  if (leftEnd < rightStart) return -1;
-  if (rightEnd < leftStart) return 1;
-  if (leftDate.precision !== rightDate.precision || leftStart !== rightStart)
-    return null;
-  return leftDate.suffix < rightDate.suffix
-    ? -1
-    : leftDate.suffix > rightDate.suffix
-      ? 1
-      : 0;
+  return compareNarrativeDateRanges(
+    narrativeDateRange(left),
+    narrativeDateRange(right),
+  );
 }
 
 export function isNarrativeDateEligible(
@@ -650,14 +703,36 @@ export interface NarrativeMoment {
   sourceChapter: string;
 }
 
+interface ParsedNarrativeMoment {
+  readonly date: NarrativeDateRange;
+  readonly sourceChapter: ParsedNarrativeChapter;
+}
+
+function parsedNarrativeMoment(moment: NarrativeMoment): ParsedNarrativeMoment {
+  return {
+    date: narrativeDateRange(moment.date),
+    sourceChapter: parsedNarrativeChapter(moment.sourceChapter),
+  };
+}
+
+function compareParsedNarrativeMoments(
+  left: ParsedNarrativeMoment,
+  right: ParsedNarrativeMoment,
+): number | null {
+  const dateOrdering = compareNarrativeDateRanges(left.date, right.date);
+  return dateOrdering !== null && dateOrdering !== 0
+    ? dateOrdering
+    : compareParsedNarrativeChapters(left.sourceChapter, right.sourceChapter);
+}
+
 export function compareNarrativeMoments(
   left: NarrativeMoment,
   right: NarrativeMoment,
 ): number | null {
-  const dateOrdering = compareNarrativeDates(left.date, right.date);
-  return dateOrdering !== null && dateOrdering !== 0
-    ? dateOrdering
-    : compareChapter(left.sourceChapter, right.sourceChapter);
+  return compareParsedNarrativeMoments(
+    parsedNarrativeMoment(left),
+    parsedNarrativeMoment(right),
+  );
 }
 
 function flattenZeroStateLocation(
@@ -1639,6 +1714,8 @@ interface PreparedNarrativeIndexes {
   chapterById: ReadonlyMap<string, NarrativeRecord>;
   chapterDetailSourceById: ReadonlyMap<string, PreparedChapterDetailSource>;
   meaningfulDateOptions: Map<string, readonly MeaningfulNarrativeDate[]>;
+  /** Ordered activity per reader-visible chapter ("" is the zero state). */
+  activityByChapter: Map<string, readonly NarrativeActivity[]>;
 }
 
 interface PreparedChapterDetailSource {
@@ -1793,6 +1870,7 @@ export function prepareNarrativeCorpus(
       ]),
     ),
     meaningfulDateOptions: new Map(),
+    activityByChapter: new Map(),
   });
   narrativePreparationCounts.set(
     rawCorpus,
@@ -2184,48 +2262,127 @@ function activityStableTieOrder(
   );
 }
 
+function activityMoment(
+  activity: NarrativeActivity,
+): ParsedNarrativeMoment | null {
+  return activity.effective_date
+    ? parsedNarrativeMoment({
+        date: activity.effective_date,
+        sourceChapter: activity.source_chapter,
+      })
+    : null;
+}
+
 function activityDefinitivelyPrecedes(
-  left: NarrativeActivity,
-  right: NarrativeActivity,
+  left: ParsedNarrativeMoment | null,
+  right: ParsedNarrativeMoment | null,
 ): boolean {
-  if (!left.effective_date || !right.effective_date) return false;
-  const ordering = compareNarrativeMoments(
-    {
-      date: left.effective_date,
-      sourceChapter: left.source_chapter,
-    },
-    {
-      date: right.effective_date,
-      sourceChapter: right.source_chapter,
-    },
-  );
+  if (!left || !right) return false;
+  const ordering = compareParsedNarrativeMoments(left, right);
   return ordering !== null && ordering < 0;
 }
 
-function orderNarrativeActivity(
-  records: NarrativeActivity[],
+/**
+ * Orders activity so that no record follows one it definitively precedes,
+ * choosing among the unblocked records by activityStableTieOrder (input order
+ * breaks exact ties). This is Kahn's topological sort with a priority queue:
+ * a record becomes ready once every record that precedes it has been emitted.
+ * It needs no transitivity from the precedence relation, so it emits exactly
+ * the order of repeatedly taking the tie-order minimum of the records that no
+ * remaining record precedes. Exported for the equivalence test.
+ */
+export function orderNarrativeActivity(
+  records: readonly NarrativeActivity[],
 ): NarrativeActivity[] {
-  const remaining = [...records];
+  const count = records.length;
+  const moments = records.map(activityMoment);
+  const blockers = new Array<number>(count).fill(0);
+  const successors = Array.from({ length: count }, () => [] as number[]);
+  for (let left = 0; left < count; left += 1) {
+    for (let right = left + 1; right < count; right += 1) {
+      if (
+        activityDefinitivelyPrecedes(
+          moments[left] ?? null,
+          moments[right] ?? null,
+        )
+      ) {
+        successors[left]!.push(right);
+        blockers[right]! += 1;
+      }
+      if (
+        activityDefinitivelyPrecedes(
+          moments[right] ?? null,
+          moments[left] ?? null,
+        )
+      ) {
+        successors[right]!.push(left);
+        blockers[left]! += 1;
+      }
+    }
+  }
+  const before = (left: number, right: number) => {
+    const ordering = activityStableTieOrder(records[left]!, records[right]!);
+    return ordering < 0 || (ordering === 0 && left < right);
+  };
+  const ready = new ReadyHeap(before);
+  for (let index = 0; index < count; index += 1) {
+    if (blockers[index] === 0) ready.push(index);
+  }
   const ordered: NarrativeActivity[] = [];
-  while (remaining.length > 0) {
-    const available = remaining
-      .filter(
-        (candidate) =>
-          !remaining.some(
-            (other) =>
-              other !== candidate &&
-              activityDefinitivelyPrecedes(other, candidate),
-          ),
-      )
-      .sort(activityStableTieOrder);
-    const next = available[0];
-    if (!next) {
+  while (ordered.length < count) {
+    const next = ready.pop();
+    if (next === undefined) {
       throw new Error("Narrative activity ordering contains a cycle.");
     }
-    ordered.push(next);
-    remaining.splice(remaining.indexOf(next), 1);
+    ordered.push(records[next]!);
+    for (const successor of successors[next]!) {
+      blockers[successor]! -= 1;
+      if (blockers[successor] === 0) ready.push(successor);
+    }
   }
   return ordered;
+}
+
+/** Binary min-heap of record indexes under a strict "before" order. */
+class ReadyHeap {
+  private readonly items: number[] = [];
+
+  constructor(
+    private readonly before: (left: number, right: number) => boolean,
+  ) {}
+
+  push(item: number): void {
+    const items = this.items;
+    let index = items.push(item) - 1;
+    while (index > 0) {
+      const parent = (index - 1) >> 1;
+      if (!this.before(items[index]!, items[parent]!)) break;
+      [items[index], items[parent]] = [items[parent]!, items[index]!];
+      index = parent;
+    }
+  }
+
+  pop(): number | undefined {
+    const items = this.items;
+    const top = items[0];
+    const last = items.pop();
+    if (top === undefined || last === undefined || items.length === 0)
+      return top;
+    items[0] = last;
+    let index = 0;
+    for (;;) {
+      const left = index * 2 + 1;
+      const right = left + 1;
+      let smallest = index;
+      if (left < items.length && this.before(items[left]!, items[smallest]!))
+        smallest = left;
+      if (right < items.length && this.before(items[right]!, items[smallest]!))
+        smallest = right;
+      if (smallest === index) return top;
+      [items[index], items[smallest]] = [items[smallest]!, items[index]!];
+      index = smallest;
+    }
+  }
 }
 
 function mappedSystemForLocation(
@@ -2249,7 +2406,12 @@ function mappedSystemForLocation(
   return null;
 }
 
-function generateNarrativeActivity(
+/**
+ * Collects the reader-visible activity records for the given chapters in
+ * collection order, before orderNarrativeActivity. Exported for the
+ * equivalence test.
+ */
+export function collectNarrativeActivity(
   zeroState: NarrativeRecord,
   chapters: readonly NarrativeRecord[],
   knownAstronomyObjectIds: readonly string[],
@@ -2402,14 +2564,45 @@ function generateNarrativeActivity(
         addEventActivity(event, sourceChapter);
     }
   }
-  return orderNarrativeActivity(
-    [...activityByKey.values()].map((activity) => ({
-      ...activity,
-      reasons: [...activity.reasons].sort(
-        (left, right) => reasonOrder.get(left)! - reasonOrder.get(right)!,
+  return [...activityByKey.values()].map((activity) => ({
+    ...activity,
+    reasons: [...activity.reasons].sort(
+      (left, right) => reasonOrder.get(left)! - reasonOrder.get(right)!,
+    ),
+  }));
+}
+
+/**
+ * Ordered activity through one knowledge chapter (null: the zero state),
+ * computed once per prepared corpus and shared by world generation and the
+ * meaningful date options. The cached records are frozen; callers that hand
+ * them out must copy them.
+ */
+function narrativeActivityThrough(
+  corpus: PreparedNarrativeCorpus,
+  knowledgeChapterId: string | null,
+): readonly NarrativeActivity[] {
+  const indexes = indexesFor(corpus);
+  const key = knowledgeChapterId ?? "";
+  const cached = indexes.activityByChapter.get(key);
+  if (cached) return cached;
+  const chapters = knowledgeChapterId
+    ? indexes.chapters.filter(
+        (chapter) =>
+          compareChapter(chapterId(chapter), knowledgeChapterId) <= 0,
+      )
+    : [];
+  const activity = deepFreeze(
+    orderNarrativeActivity(
+      collectNarrativeActivity(
+        corpus.zeroState,
+        chapters,
+        corpus.knownAstronomyObjectIds,
       ),
-    })),
+    ),
   );
+  indexes.activityByChapter.set(key, activity);
+  return activity;
 }
 
 /** Builds the reader-safe world state for a selected chapter, or the pre-book zero state. */
@@ -2580,11 +2773,9 @@ export function generateNarrativeWorld(
   deriveLastKnownLocations(entities, readerVisible, cutoff);
   const world: NarrativeWorld = {
     entities,
-    activity: generateNarrativeActivity(
-      corpus.zeroState,
-      readerVisible,
-      corpus.knownAstronomyObjectIds,
-    ),
+    activity: structuredClone(
+      narrativeActivityThrough(corpus, selectedChapterId),
+    ) as NarrativeActivity[],
     view: {
       chapter: selectedChapterId,
       display_date: displayDate,
@@ -2703,11 +2894,7 @@ export function meaningfulNarrativeDateOptions(
   for (const chapter of chapters) {
     addCandidate(chapterDate(chapter), chapterId(chapter));
   }
-  for (const activity of generateNarrativeActivity(
-    corpus.zeroState,
-    chapters,
-    corpus.knownAstronomyObjectIds,
-  )) {
+  for (const activity of narrativeActivityThrough(corpus, knowledgeChapterId)) {
     if (activity.effective_date) {
       addCandidate(activity.effective_date, activity.source_chapter);
     }

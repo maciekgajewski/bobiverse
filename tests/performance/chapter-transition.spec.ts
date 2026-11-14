@@ -1,9 +1,39 @@
 import os from "node:os";
 import { expect, test, type Page } from "@playwright/test";
 
+interface ChapterPair {
+  name: string;
+  furthestChapterRead: string;
+  from: string;
+  to: string;
+  maximumMedianMs: number;
+  maximumSampleMs: number;
+}
+
+const chapterPairs: readonly ChapterPair[] = [
+  // BOB-029's original pair and budget.
+  {
+    name: "early",
+    furthestChapterRead: "1.11",
+    from: "1.10",
+    to: "1.11",
+    maximumMedianMs: 100,
+    maximumSampleMs: 150,
+  },
+  // Late chapters carry the most activity (about 740 records at 1.50 and 950
+  // at 1.61), so switching between them exercises the projection at its
+  // heaviest. The repeated-scan activity sort took about 3.3 s per switch here
+  // on piotr; the topological sort takes about 110 ms (BOB-20261114-JD5VFR).
+  {
+    name: "late",
+    furthestChapterRead: "1.61",
+    from: "1.50",
+    to: "1.61",
+    maximumMedianMs: 250,
+    maximumSampleMs: 400,
+  },
+];
 const samplesPerScenario = 10;
-const maximumMedianMs = 100;
-const maximumSampleMs = 150;
 const chapterStatus = (chapter: string) =>
   `Knowledge through Chapter ${chapter}`;
 
@@ -51,7 +81,9 @@ async function prepareSourceSelection(
 ): Promise<void> {
   if (selectedObjectExpected) {
     await page
-      .getByRole("button", { name: /^Solar System(?: Active)?$/ })
+      .getByRole("button", {
+        name: /^Solar System(?: Active| Last active · Chapter [0-9.]+)?$/,
+      })
       .first()
       .click();
     await assertSelectionRetained(page);
@@ -115,31 +147,46 @@ async function transition(
   return page.evaluate(() => window.__bob029Duration!);
 }
 
-async function loadPreparedState(page: Page): Promise<void> {
-  await page.addInitScript(() => {
-    window.localStorage.setItem(
-      "bobiverse.app-state.v2",
-      JSON.stringify({
-        furthestChapterRead: "1.11",
-        viewChapter: "1.10",
+const seedKey = "bobiverse.performance-seed";
+
+/** Seeds reader progress before the app reads it, even if the app saves on unload. */
+async function installSeeding(page: Page): Promise<void> {
+  await page.addInitScript((key) => {
+    const seed = window.sessionStorage.getItem(key);
+    if (seed === null) return;
+    window.sessionStorage.removeItem(key);
+    window.localStorage.setItem("bobiverse.app-state.v2", seed);
+  }, seedKey);
+  await page.goto("/");
+}
+
+async function loadPreparedState(page: Page, pair: ChapterPair): Promise<void> {
+  await page.evaluate(
+    ({ key, seed }) => window.sessionStorage.setItem(key, seed),
+    {
+      key: seedKey,
+      seed: JSON.stringify({
+        furthestChapterRead: pair.furthestChapterRead,
+        viewChapter: pair.from,
         displayDate: "2133",
         mode: "chapter",
         timelineZoom: 1,
         timelinePan: 0,
       }),
-    );
-  });
-  await page.goto("/");
-  await assertRendered(page, "1.10");
+    },
+  );
+  await page.reload();
+  await assertRendered(page, pair.from);
 }
 
 async function warm(
   page: Page,
+  pair: ChapterPair,
   selectedObjectExpected: boolean,
 ): Promise<void> {
   for (let cycle = 0; cycle < 2; cycle += 1) {
-    await transition(page, "1.11", selectedObjectExpected);
-    await transition(page, "1.10", selectedObjectExpected);
+    await transition(page, pair.to, selectedObjectExpected);
+    await transition(page, pair.from, selectedObjectExpected);
   }
 }
 
@@ -152,61 +199,66 @@ test("warmed production chapter transitions stay within budget", async ({
   browser,
   page,
 }) => {
-  test.setTimeout(60_000);
+  test.setTimeout(300_000);
   const cpu = os.cpus()[0]?.model ?? "unknown";
   const browserIdentity = `${browser.browserType().name()} ${browser.version()}`;
   const results: Array<{
     scenario: string;
+    pair: ChapterPair;
     median: number;
     maximum: number;
   }> = [];
 
-  for (const selectedObjectExpected of [false, true]) {
-    await loadPreparedState(page);
-    const bundleIdentity = await page.evaluate(() =>
-      performance
-        .getEntriesByType("resource")
-        .map((entry) => new URL(entry.name).pathname)
-        .filter((path) => path.startsWith("/assets/"))
-        .sort()
-        .join(","),
-    );
-    await warm(page, selectedObjectExpected);
-    const samples: number[] = [];
-    for (let index = 0; index < samplesPerScenario; index += 1) {
-      const chapter = index % 2 === 0 ? "1.11" : "1.10";
-      samples.push(await transition(page, chapter, selectedObjectExpected));
-    }
-    const scenario = selectedObjectExpected
-      ? "selected-object-replacement"
-      : "unselected";
-    const scenarioMedian = median(samples);
-    const scenarioMaximum = Math.max(...samples);
-    console.log(
-      JSON.stringify({
+  await installSeeding(page);
+  for (const pair of chapterPairs) {
+    for (const selectedObjectExpected of [false, true]) {
+      await loadPreparedState(page, pair);
+      const bundleIdentity = await page.evaluate(() =>
+        performance
+          .getEntriesByType("resource")
+          .map((entry) => new URL(entry.name).pathname)
+          .filter((path) => path.startsWith("/assets/"))
+          .sort()
+          .join(","),
+      );
+      await warm(page, pair, selectedObjectExpected);
+      const samples: number[] = [];
+      for (let index = 0; index < samplesPerScenario; index += 1) {
+        const chapter = index % 2 === 0 ? pair.to : pair.from;
+        samples.push(await transition(page, chapter, selectedObjectExpected));
+      }
+      const scenario = `${pair.name} ${pair.from}/${pair.to} ${
+        selectedObjectExpected ? "selected-object-replacement" : "unselected"
+      }`;
+      const scenarioMedian = median(samples);
+      const scenarioMaximum = Math.max(...samples);
+      console.log(
+        JSON.stringify({
+          scenario,
+          samples_ms: samples.map((sample) => Number(sample.toFixed(2))),
+          median_ms: Number(scenarioMedian.toFixed(2)),
+          maximum_ms: Number(scenarioMaximum.toFixed(2)),
+          bundle: bundleIdentity,
+          browser: browserIdentity,
+          node: process.version,
+          platform: `${os.hostname()} ${os.platform()} ${os.release()} ${os.arch()}`,
+          cpu,
+        }),
+      );
+      results.push({
         scenario,
-        samples_ms: samples.map((sample) => Number(sample.toFixed(2))),
-        median_ms: Number(scenarioMedian.toFixed(2)),
-        maximum_ms: Number(scenarioMaximum.toFixed(2)),
-        bundle: bundleIdentity,
-        browser: browserIdentity,
-        node: process.version,
-        platform: `${os.hostname()} ${os.platform()} ${os.release()} ${os.arch()}`,
-        cpu,
-      }),
-    );
-    results.push({
-      scenario,
-      median: scenarioMedian,
-      maximum: scenarioMaximum,
-    });
+        pair,
+        median: scenarioMedian,
+        maximum: scenarioMaximum,
+      });
+    }
   }
   for (const result of results) {
     expect(result.median, `${result.scenario} median`).toBeLessThanOrEqual(
-      maximumMedianMs,
+      result.pair.maximumMedianMs,
     );
     expect(result.maximum, `${result.scenario} maximum`).toBeLessThanOrEqual(
-      maximumSampleMs,
+      result.pair.maximumSampleMs,
     );
   }
 });
