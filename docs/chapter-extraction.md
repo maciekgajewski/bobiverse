@@ -411,8 +411,15 @@ appending a sentence per chapter.
 - A condensed write never uses a fact first recorded in a later chapter, keeps core
   identity facts, adds no new facts, dates, or entities, and drops a fact only when it
   survives in an event, the chapter summary, or another entity, or is trivia. When a
-  dropped fact has no other home, flag it in the review package; do not add it
-  elsewhere.
+  dropped fact has no other home, keep it if it is identity-level; otherwise flag it
+  in the review package. Do not add it elsewhere.
+- `current_state` and `state` hold only the entity's latest condition as of that
+  chapter. Earlier steps, completed plans, and scene detail belong in the chapter
+  `summary` or an event. When a chain of writes runs well over the guideline, condense
+  every over-long write in the chain, not only the latest one.
+- Use US spelling (color, defense, center, meter), which is the majority convention in
+  the existing data. Avoid plurals of capitalized names such as "HEAVENs"; write
+  "HEAVEN vessels" instead.
 - The review package includes a dropped-sentence table for every condensed write:
   dropped fact, reason, and where it lives (or the flag).
 - A condensed write that drops sentences of the earlier visible value needs one entry
