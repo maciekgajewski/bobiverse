@@ -25,7 +25,7 @@
       "name": "Vulcan",
       "kind": "planet",
       "possible_colony_target": true,
-      "description": "The larger member of a double planet at 0.81 AU from Omicron Eridani A, also designated OE-1A. It has about 0.9 Earth masses and orbits Romulus every 20 days at about 364,000 km. It is on the cool side of the habitable zone, with an atmosphere, extensive oceans, atmospheric oxygen, and large green land areas. Its thicker, more carbon-dioxide-rich atmosphere gives it a higher mean surface temperature than Romulus. Its diverse life includes animals nearly as large as dinosaurs, and cellular analysis indicates that its life is probably related to Romulus's.",
+      "description": "The larger member of a double planet at 0.81 AU from Omicron Eridani A, also designated OE-1A, with about 0.9 Earth masses, orbiting Romulus every 20 days. On the cool side of the habitable zone but warmed by a thicker, carbon-dioxide-rich atmosphere, it has oceans, oxygen and large green land areas, with animals nearly as large as dinosaurs and life probably related to Romulus's.",
       "visual_description": "Clouds, extensive oceans, atmospheric oxygen, and large green land areas are visible.",
       "parent_location_id": "location:omicron-eridani-a",
       "parent_relation": "orbits",
