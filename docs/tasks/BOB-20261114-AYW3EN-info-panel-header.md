@@ -153,3 +153,18 @@ Manual: the Captain's check on desktop and a phone after deployment (checklist i
 - Created on origin/master `5c2d9d7` under the authorization above, on local branch
   `bob-20261114-ayw3en-info-panel-header` in the `~/src/bobiverse-infopanel`
   worktree.
+- Implemented scope items 1 to 6 in `e32520a`. Validation, all passed:
+  `python3 scripts/tasks.py check`, `npm run format:check`, `npm run lint`,
+  `npm run typecheck`, `npm run test` (465 passed), `npm run data:test` (90 passed),
+  `npm run data:validate`, `npm run narrative:validate`, `npm run build`,
+  `git diff --check` and `npx prettier --check` on the changed Markdown.
+- Full e2e on a spare dev-server port 5194 (untracked throwaway config, deleted
+  afterwards), one worker, no retries, with other e2e runs loading the host: firefox
+  and webkit each 47 passed and 3 skipped (the Enter system tests behind
+  `ENABLE_ENTER_SYSTEM`). Chromium 46 passed, 3 skipped and 1 failed: the existing
+  "compact About dialog opens from the menu at 390x844" test, whose menu row detached
+  during a scroll; this branch does not touch the menu or About dialog. Rerun alone
+  with `--repeat-each=3` it passed 3/3. No icon-specimen PNG was rewritten.
+- Screenshots at 1280×800 and 390×844 (Human, GUPPI, and Earth with the kind under
+  its name and Map context at the bottom) were taken for review outside the
+  repository.
