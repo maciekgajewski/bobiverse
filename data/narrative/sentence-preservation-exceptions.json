@@ -17,13 +17,13 @@
       "chapter": "1.9",
       "entity_id": "technology:roamers",
       "field": "description",
-      "reason": "pre-existing, predates check"
+      "reason": "pre-existing, predates check; then Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
     },
     {
       "chapter": "1.13",
       "entity_id": "technology:roamers",
       "field": "description",
-      "reason": "pre-existing, predates check"
+      "reason": "pre-existing, predates check; then Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
     },
     {
       "chapter": "1.13",
@@ -41,7 +41,7 @@
       "chapter": "1.14",
       "entity_id": "vessel:heaven-1",
       "field": "description",
-      "reason": "pre-existing, predates check"
+      "reason": "pre-existing, predates check; then Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
     },
     {
       "chapter": "1.16",
@@ -65,7 +65,7 @@
       "chapter": "1.26",
       "entity_id": "technology:vr",
       "field": "description",
-      "reason": "pre-existing, predates check"
+      "reason": "pre-existing, predates check; then Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
     },
     {
       "chapter": "1.26",
@@ -89,13 +89,7 @@
       "chapter": "1.27",
       "entity_id": "technology:planetary-exploration-drone",
       "field": "description",
-      "reason": "pre-existing, predates check"
-    },
-    {
-      "chapter": "1.27",
-      "entity_id": "technology:roamers",
-      "field": "description",
-      "reason": "pre-existing, predates check"
+      "reason": "pre-existing, predates check; then Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
     },
     {
       "chapter": "1.28",
@@ -107,13 +101,13 @@
       "chapter": "1.30",
       "entity_id": "species:delta-eridani-natives",
       "field": "description",
-      "reason": "pre-existing, predates check"
+      "reason": "pre-existing, predates check; then Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
     },
     {
       "chapter": "1.30",
       "entity_id": "location:delta-eridani-4",
       "field": "description",
-      "reason": "pre-existing, predates check"
+      "reason": "pre-existing, predates check; then Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
     },
     {
       "chapter": "1.30",
@@ -131,7 +125,7 @@
       "chapter": "1.39",
       "entity_id": "technology:planetary-exploration-drone",
       "field": "description",
-      "reason": "pre-existing, predates check"
+      "reason": "pre-existing, predates check; then Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
     },
     {
       "chapter": "1.41",
@@ -149,13 +143,13 @@
       "chapter": "1.42",
       "entity_id": "technology:surge-drive",
       "field": "description",
-      "reason": "pre-existing, predates check"
+      "reason": "pre-existing, predates check; then Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
     },
     {
       "chapter": "1.42",
       "entity_id": "technology:vr",
       "field": "description",
-      "reason": "pre-existing, predates check"
+      "reason": "pre-existing, predates check; then Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
     },
     {
       "chapter": "1.43",
@@ -167,13 +161,13 @@
       "chapter": "1.44",
       "entity_id": "species:delta-eridani-natives",
       "field": "description",
-      "reason": "pre-existing, predates check"
+      "reason": "pre-existing, predates check; then Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
     },
     {
       "chapter": "1.44",
       "entity_id": "technology:planetary-exploration-drone",
       "field": "description",
-      "reason": "pre-existing, predates check"
+      "reason": "pre-existing, predates check; then Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
     },
     {
       "chapter": "1.44",
@@ -191,13 +185,7 @@
       "chapter": "1.48",
       "entity_id": "species:delta-eridani-natives",
       "field": "description",
-      "reason": "pre-existing, predates check"
-    },
-    {
-      "chapter": "1.50",
-      "entity_id": "species:delta-eridani-natives",
-      "field": "description",
-      "reason": "pre-existing, predates check"
+      "reason": "pre-existing, predates check; then Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
     },
     {
       "chapter": "1.51",
@@ -222,6 +210,162 @@
       "entity_id": "character:archimedes",
       "field": "current_state",
       "reason": "pre-existing, predates check"
+    },
+    {
+      "chapter": "1.52",
+      "entity_id": "technology:kudzu-gardens",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.35",
+      "entity_id": "species:delta-eridani-natives",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.55",
+      "entity_id": "species:delta-eridani-natives",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.53",
+      "entity_id": "location:delta-eridani-4",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.13",
+      "entity_id": "technology:surge-drive",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.56",
+      "entity_id": "technology:surge-drive",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.40",
+      "entity_id": "technology:vr",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.58",
+      "entity_id": "technology:vr",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.17",
+      "entity_id": "technology:roamers",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.24",
+      "entity_id": "technology:roamers",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.57",
+      "entity_id": "technology:roamers",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.17",
+      "entity_id": "technology:suddar",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.28",
+      "entity_id": "technology:suddar",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.57",
+      "entity_id": "technology:suddar",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.37",
+      "entity_id": "technology:planetary-exploration-drone",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.48",
+      "entity_id": "technology:buster-drone",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.55",
+      "entity_id": "technology:buster-drone",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.21",
+      "entity_id": "vessel:heaven-1",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.17",
+      "entity_id": "technology:guppi-interface",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.37",
+      "entity_id": "technology:guppi-interface",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.49",
+      "entity_id": "technology:guppi-interface",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.50",
+      "entity_id": "technology:guppi-interface",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.51",
+      "entity_id": "technology:guppi-interface",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.55",
+      "entity_id": "technology:guppi-interface",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.56",
+      "entity_id": "technology:guppi-interface",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.57",
+      "entity_id": "technology:guppi-interface",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
     }
   ]
 }

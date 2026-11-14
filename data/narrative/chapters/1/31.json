@@ -33,7 +33,7 @@
     },
     {
       "entity_id": "vessel:heaven-1",
-      "description": "A converted interplanetary freighter equipped as a Von Neumann probe. It is a small, light, resilient design intended to build copies of itself. It has a SURGE drive ring, fusion reactor, ramscoop generator, fabrication equipment including three large 3D printers, communications and sensor systems, and ROAMer and nanite systems; its autonomous cargo carriers move miners and materials; it has no weapons and little spare room. The version-2 HEAVEN design adds a larger reactor and drive, a rail-gun, ship-buster storage and launch facilities, higher-capacity replicant systems, room for ROAMers and mining drones, and greater cargo capacity. The HEAVEN project's communications are designed to send information from its vessels to Earth, not to support conversations across interstellar light-time delays. Version-2 HEAVEN vessels have better reactor shielding, and Riker's and Homer's versions are further strengthened. HEAVEN vessels are not designed to land or enter an atmosphere."
+      "description": "A converted interplanetary freighter equipped as a Von Neumann probe: a small, light, resilient design built to copy itself. It carries a SURGE drive ring, fusion reactor, ramscoop, three large 3D printers, ROAMers, nanites and mining cargo carriers, but no weapons. Version-2 HEAVENs add a larger reactor and drive, better reactor shielding, a rail-gun, ship-busters, bigger replicant systems and more cargo room. Its communications report to Earth and were not built for interstellar conversation. HEAVEN vessels are not designed to land or enter an atmosphere."
     },
     {
       "entity_id": "vessel:use-colony-ship",
