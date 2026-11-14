@@ -599,7 +599,13 @@ bottom panel. Map tools such as **Reset view** are icon controls inside the map,
 source attribution is a notice chip in the map's corner. The collapsed chip always
 shows the short backdrop credit `NASA/GSFC SVS · ESA/Gaia/DPAC`; one tap or Enter
 expands it to the catalogue line, the source acknowledgements and the prescribed
-linked backdrop credit (`tasks/BOB-20261113-3VCGFP-mobile-map-chrome.md`).
+linked backdrop credit (`tasks/BOB-20261113-3VCGFP-mobile-map-chrome.md`). A
+**What is this?** control (a muted link after the desktop title, the last row of the
+phone menu) opens the About dialog: a centred modal on desktop, a bottom sheet on
+phones and a side-by-side dialog on short landscape screens. It closes on Close,
+Escape and a backdrop click, contains focus while open, makes the page behind it
+inert and returns focus to the desktop link or the menu button
+(`tasks/BOB-20261114-KA0X30-about-dialog.md`).
 
 Phase 1 is desktop-first and targets current Chrome, Firefox, Safari, and Edge.
 Automated browser projects cover the Chromium, Firefox, and WebKit engines; manual
@@ -703,7 +709,11 @@ layouts, character likenesses, fonts, audio, and copied visual treatments are ou
 the design.
 
 Assistant characters are deferred. Any public implementation must use original
-visual designs rather than an Admiral Ackbar or John Cleese likeness.
+visual designs rather than an Admiral Ackbar or John Cleese likeness. The About
+dialog's small, credited Admiral Ackbar illustration is a separate, Captain-approved
+exception (fair use, 2026-11-13): it is a decorative reference, not an assistant
+character, and its credit lives in the dialog caption and `public/assets/CREDITS.md`
+(`tasks/BOB-20261114-KA0X30-about-dialog.md`).
 
 ## 12. Narrative data and spoiler model
 

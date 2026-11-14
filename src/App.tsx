@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { AboutDialog } from "./components/AboutDialog";
 import { StarMap, type MapScale } from "./components/MapScene";
 import { ObjectBrowser } from "./components/ObjectBrowser";
 import { ObjectInspector } from "./components/ObjectInspector";
@@ -237,6 +238,10 @@ export default function App() {
   const mobilePanelElement = useRef<HTMLDivElement>(null);
   const [astronomyNoticeOpen, setAstronomyNoticeOpen] = useState(false);
   const astronomyNoticeButton = useRef<HTMLButtonElement>(null);
+  const aboutLink = useRef<HTMLButtonElement>(null);
+  const [aboutOrigin, setAboutOrigin] = useState<"topbar" | "menu" | null>(
+    null,
+  );
   const [webgl, setWebgl] = useState<"checking" | "ready" | "unsupported">(
     "checking",
   );
@@ -475,6 +480,21 @@ export default function App() {
     window.setTimeout(() => astronomyNoticeButton.current?.focus(), 0);
   }, []);
   const resetView = () => setResetToken((value) => value + 1);
+  // The compact menu closes when About opens, so focus returns to the Menu
+  // button (as for every compact panel); on desktop it returns to the
+  // "What is this?" link. If the layout crossed the breakpoint while the
+  // dialog was open, focus goes to whichever of the two is visible.
+  const closeAbout = useCallback(() => {
+    const origin = aboutOrigin;
+    setAboutOrigin(null);
+    window.setTimeout(() => {
+      const compact =
+        typeof window.matchMedia === "function"
+          ? window.matchMedia("(max-width: 1199px)").matches
+          : origin === "menu";
+      (compact ? menuButton.current : aboutLink.current)?.focus();
+    }, 0);
+  }, [aboutOrigin]);
 
   useEffect(() => {
     if (!mobilePanel) return;
@@ -824,7 +844,7 @@ export default function App() {
     throw new Error("Narrative corpus is unavailable after preparation.");
 
   return (
-    <main className="app-shell">
+    <main className="app-shell" inert={aboutOrigin !== null}>
       <a className="skip-link" href="#map-stage">
         Skip to star map
       </a>
@@ -852,6 +872,15 @@ export default function App() {
               <span aria-current="page">/ {enteredSystem.name}</span>
             )}
           </nav>
+          <button
+            ref={aboutLink}
+            type="button"
+            className="about-link"
+            aria-haspopup="dialog"
+            onClick={() => setAboutOrigin("topbar")}
+          >
+            What is this?
+          </button>
         </div>
         <div className="topbar-actions">
           <p className="view-status" aria-live="polite">
@@ -1238,6 +1267,17 @@ export default function App() {
                   <ResetViewIcon />
                   Reset view
                 </button>
+                <button
+                  type="button"
+                  className="button menu-row menu-about"
+                  aria-haspopup="dialog"
+                  onClick={() => {
+                    setMobilePanel(null);
+                    setAboutOrigin("menu");
+                  }}
+                >
+                  What is this?
+                </button>
               </nav>
             ) : mobilePanel === "browser" ? (
               <ObjectBrowser
@@ -1334,6 +1374,7 @@ export default function App() {
           </div>
         </>
       )}
+      {aboutOrigin && <AboutDialog onClose={closeAbout} />}
     </main>
   );
 }
