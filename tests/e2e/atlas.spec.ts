@@ -2083,16 +2083,26 @@ async function expectAboutDialogContent(page: Page) {
   expect(box!.y).toBeGreaterThanOrEqual(0);
   expect(box!.x + box!.width).toBeLessThanOrEqual(viewport.width + 0.5);
   expect(box!.y + box!.height).toBeLessThanOrEqual(viewport.height + 0.5);
-  const image = dialog.getByRole("img", { name: "Admiral Ackbar" });
+  const credit =
+    "Admiral Ackbar illustration by Michael Sutfin, from The New Essential Guide to Characters. Star Wars © Lucasfilm Ltd. Used under fair use.";
+  const image = dialog.getByRole("img", { name: credit });
   await expect(image).toBeVisible();
+  await expect(image).toHaveAttribute("alt", credit);
   await expect
     .poll(() =>
       image.evaluate((element: HTMLImageElement) => element.naturalWidth),
     )
     .toBe(150);
   await expect(dialog.locator("figcaption")).toHaveText(
-    "Admiral Ackbar illustration by Michael Sutfin, from The New Essential Guide to Characters. Star Wars © Lucasfilm Ltd. Used under fair use.",
+    "Guppy, or Admiral Ackbar",
   );
+  const captionLink = dialog.getByRole("link", { name: "Admiral Ackbar" });
+  await expect(captionLink).toHaveAttribute(
+    "href",
+    "https://starwars.fandom.com/wiki/File:Ackbar-NEGTC.png",
+  );
+  await expect(captionLink).toHaveAttribute("target", "_blank");
+  await expect(captionLink).toHaveAttribute("rel", "noopener noreferrer");
   await expect(dialog.getByRole("listitem")).toHaveCount(4);
   for (const [name, href] of [
     ["Dennis E. Taylor", "http://dennisetaylor.org/status-of-things/"],
@@ -2134,8 +2144,9 @@ test("desktop About dialog opens from the title link and closes three ways", asy
   // Centred, 520px wide.
   expect(box!.width).toBeCloseTo(520, 0);
   expect(Math.abs(box!.x + box!.width / 2 - 640)).toBeLessThan(2);
-  // Focus stays inside: Close, the three links, then back to Close.
+  // Focus stays inside: Close, the caption link, the three body links, then back to Close.
   for (const name of [
+    "Admiral Ackbar",
     "Dennis E. Taylor",
     "maciek@bobiverse.space",
     "github.com/maciekgajewski/bobiverse",
@@ -2186,7 +2197,9 @@ for (const viewport of [
     let dialog = await expectAboutDialogContent(page);
     const box = await dialog.boundingBox();
     const image = await dialog
-      .getByRole("img", { name: "Admiral Ackbar" })
+      .getByRole("img", {
+        name: "Admiral Ackbar illustration by Michael Sutfin, from The New Essential Guide to Characters. Star Wars © Lucasfilm Ltd. Used under fair use.",
+      })
       .boundingBox();
     if (viewport.height > 500) {
       // Bottom sheet with the picture above the text.

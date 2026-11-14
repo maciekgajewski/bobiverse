@@ -5,13 +5,17 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 import {
-  ABOUT_IMAGE_CREDIT,
+  ABOUT_IMAGE_ALT,
+  ABOUT_IMAGE_CAPTION,
+  ABOUT_IMAGE_SOURCE,
   ABOUT_IMAGE_SRC,
   AboutDialog,
 } from "../../src/components/AboutDialog";
 
 const CREDIT =
   "Admiral Ackbar illustration by Michael Sutfin, from The New Essential Guide to Characters. Star Wars © Lucasfilm Ltd. Used under fair use.";
+const CAPTION = "Guppy, or Admiral Ackbar";
+const SOURCE = "https://starwars.fandom.com/wiki/File:Ackbar-NEGTC.png";
 
 describe("AboutDialog", () => {
   afterEach(() => cleanup());
@@ -82,20 +86,30 @@ describe("AboutDialog", () => {
     });
     expect(contact).toHaveAttribute("href", "mailto:maciek@bobiverse.space");
     expect(contact).not.toHaveAttribute("target");
-    expect(within(dialog).getAllByRole("link")).toHaveLength(3);
+    expect(within(dialog).getAllByRole("link")).toHaveLength(4);
   });
 
-  it("shows the Ackbar image with its alt text and exact credit caption", () => {
+  it("shows the Ackbar image with the credit as alt text and a short caption link", () => {
     render(<AboutDialog onClose={() => undefined} />);
     const dialog = screen.getByRole("dialog", { name: "What is this?" });
-    const image = within(dialog).getByRole("img", { name: "Admiral Ackbar" });
+    const image = within(dialog).getByRole("img", { name: CREDIT });
+    expect(image).toHaveAttribute("alt", CREDIT);
     expect(image).toHaveAttribute("src", "/assets/ackbar.webp");
     expect(image).toHaveAttribute("width", "150");
     expect(image).toHaveAttribute("height", "200");
     const caption = dialog.querySelector("figure figcaption");
-    expect(caption).toHaveTextContent(CREDIT, { normalizeWhitespace: false });
-    expect(caption?.textContent).toBe(CREDIT);
-    expect(ABOUT_IMAGE_CREDIT).toBe(CREDIT);
+    expect(caption).toHaveTextContent(CAPTION, { normalizeWhitespace: false });
+    expect(caption?.textContent).toBe(CAPTION);
+    const captionLink = within(dialog).getByRole("link", {
+      name: "Admiral Ackbar",
+    });
+    expect(captionLink).toHaveAttribute("href", SOURCE);
+    expect(captionLink).toHaveAttribute("target", "_blank");
+    expect(captionLink).toHaveAttribute("rel", "noopener noreferrer");
+    expect(caption?.contains(captionLink)).toBe(true);
+    expect(ABOUT_IMAGE_ALT).toBe(CREDIT);
+    expect(ABOUT_IMAGE_CAPTION).toBe(CAPTION);
+    expect(ABOUT_IMAGE_SOURCE).toBe(SOURCE);
   });
 
   it("ships the image asset and a matching credits file", () => {
@@ -105,9 +119,7 @@ describe("AboutDialog", () => {
     expect(asset.byteLength).toBeLessThan(20_000);
     const credits = readFileSync(resolve("public/assets/CREDITS.md"), "utf8");
     expect(credits.replace(/\s+/g, " ")).toContain(CREDIT);
-    expect(credits).toContain(
-      "https://starwars.fandom.com/wiki/File:Ackbar-NEGTC.png",
-    );
+    expect(credits).toContain(SOURCE);
     expect(credits).toMatch(/cropped/i);
     expect(credits).toMatch(/resized/i);
   });
@@ -148,6 +160,9 @@ describe("AboutDialog", () => {
     );
     const dialog = screen.getByRole("dialog", { name: "What is this?" });
     const close = within(dialog).getByRole("button", { name: "Close" });
+    const captionLink = within(dialog).getByRole("link", {
+      name: "Admiral Ackbar",
+    });
     const author = within(dialog).getByRole("link", {
       name: "Dennis E. Taylor",
     });
@@ -158,6 +173,8 @@ describe("AboutDialog", () => {
       name: "github.com/maciekgajewski/bobiverse",
     });
     expect(close).toHaveFocus();
+    await user.tab();
+    expect(captionLink).toHaveFocus();
     await user.tab();
     expect(author).toHaveFocus();
     await user.tab();
