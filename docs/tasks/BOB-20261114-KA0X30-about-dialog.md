@@ -135,3 +135,17 @@ Manual: the Captain's visual check on desktop and a phone after deployment.
 
 - Created on master `c825272` under the approvals above; moved straight to In
   progress.
+- Implemented scope items 1 to 6 on a local branch (no PR, per the local review
+  flow). The focus trap filters focusable elements in document order, because
+  jsdom's selector engine returns a selector list grouped by selector.
+- Validation: `python3 scripts/tasks.py check`, `npm run format:check`,
+  `npm run lint`, `npm run typecheck`, `npm run test` (415 passed),
+  `npm run data:test`, `npm run data:validate`, `npm run narrative:validate` and
+  `npm run build` all passed, as did `git diff --check` and `npx prettier --check`
+  on the changed Markdown.
+- E2E on a spare dev-server port, one worker, no retries: chromium, firefox and
+  webkit each passed 38/38. No icon-specimen PNG was rewritten.
+- Screenshots of the open dialog at 1280×800, 390×844 and 844×390 were taken for
+  review outside the repository.
+- Remains In progress until review, merge and the Captain's visual check after
+  deployment.
