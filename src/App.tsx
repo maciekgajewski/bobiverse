@@ -17,7 +17,6 @@ import {
 } from "./components/ObjectInspector";
 import {
   CloseIcon,
-  KnowledgeThroughSelect,
   ResetViewIcon,
   TimelineModeToggle,
   TopbarReadThrough,
@@ -826,6 +825,7 @@ export default function App() {
     }));
   const confirmPendingReadThrough = () => {
     if (pendingReadThrough === null) return;
+    setDateContext(null);
     updateProgress(
       pendingReadThrough === ""
         ? returnToZeroState(progress)
@@ -1370,13 +1370,6 @@ export default function App() {
                   <p className="eyebrow">Bobiverse · astronomy atlas</p>
                   <h2>Star Map</h2>
                 </div>
-                <KnowledgeThroughSelect
-                  id="menu-knowledge-through"
-                  chapters={narrativeChapters}
-                  progress={progress}
-                  onKnowledgeChapter={selectKnowledge}
-                  onReturnToZeroState={returnToZeroKnowledge}
-                />
                 <TimelineModeToggle
                   progress={progress}
                   meaningfulDates={meaningfulDates}

@@ -51,7 +51,7 @@
       "parent_relation": "orbits",
       "orbital_order": 4,
       "body_class": "rocky",
-      "description": "The fourth inner rocky planet in the Delta Eridani system, also called DE-4. It is slightly larger than Earth, with lower surface gravity, a somewhat denser atmosphere, and conditions that support soaring flyers and tall tree analogues. Its observed temperate-to-subtropical landscape has meadows, rocky bluffs, and forest-like expanses of exceptionally large brownish trees with wide horizontal branches and thick leaf canopies. Documented wildlife includes six-legged exoskeletal insect analogues, small furry six-legged mammal analogues, larger four-limbed mammal analogues, feather-like bird analogues, and a three-segment mammalian snake equivalent. One four-legged winged variant, provisionally called a hippogriff by Bob, shows limited color-change camouflage.",
+      "description": "The fourth inner rocky planet in the Delta Eridani system, also called DE-4. It is slightly larger than Earth, with lower gravity and a somewhat denser atmosphere. Its temperate-to-subtropical landscape mixes meadows, rocky bluffs and forests of huge brownish trees, and its varied wildlife includes six-legged insect and mammal analogues, bird analogues and a colour-changing winged creature Bob calls a hippogriff.",
       "state": "Bob has ruled it out as a colonization target after his concealed drones observed fire-using native inhabitants."
     },
     {
@@ -159,11 +159,11 @@
     },
     {
       "entity_id": "technology:planetary-exploration-drone",
-      "description": "A practical drone design for planetary exploration, with variants for surveillance and biological analysis. The football-sized surveillance variant has remote cameras, microphones, extendable gripping limbs, and small shielded reactors that can detect incoming craft before detection. The roughly meter-long biological-analysis variant has visual and auditory input optimized for close work and many extendable appendages for varied tasks; it also carries systems for examining local life and mechanical stomachs that process organics as a human stomach would, with sample-output analysis taking about a day. The drones can change color with limited pattern mimicry."
+      "description": "A practical drone design for planetary exploration. The football-sized surveillance variant carries cameras, microphones, gripping limbs and small reactors; the meter-long biological-analysis variant has many appendages and mechanical stomachs that analyze local organics in about a day. Both can change color with limited pattern mimicry."
     },
     {
       "entity_id": "technology:roamers",
-      "description": "Remote observation and manipulation devices directed through GUPPI. They come in varied sizes, can coordinate across scales, and need minimal supervision once their tasks, dependencies, and interruption conditions are defined. Without active intervention, they can work up to ten times faster. They can inspect ship circuitry with gnat-sized units, carry video cameras for remote observation, and pick up vibrations transmitted through a wall when pressed against it. Reusable scripts automate many routine activities, leaving assembly work largely self-directed. In manufacturing, they feed raw ore into manufacturing systems, gather parts, assemble ships, repair and maintain HEAVEN vessels, and refine battle scraps into rail-gun ammunition; smaller printer operations can make additional ROAMers and ship-buster components. They can perform planetary-surface exploration, though their close-in cameras, rudimentary hearing, lack of infrared and flight capability, and inability to camouflage themselves make them inefficient for it."
+      "description": "Remote observation and manipulation devices directed through GUPPI. They come in varied sizes, coordinate across scales and, once their tasks are defined, need little supervision. They can inspect ship circuitry with gnat-sized units, carry video cameras and pick up vibrations through a wall. Running on reusable scripts, they feed ore to manufacturing systems, assemble and repair ships, and refine battle scrap into rail-gun ammunition; printers can make more of them. They can explore planetary surfaces, but without infrared, flight or camouflage they do it inefficiently."
     }
   ],
   "appearances": [

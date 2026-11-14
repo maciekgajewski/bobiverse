@@ -605,8 +605,10 @@ appropriate focused arrangement of the same domain state and UI components rathe
 than creating a separate mobile application or a parallel feature stack. The
 application shell uses a map-first phone composition: one slim command bar holds the
 identity, the compact **Read through** chip and a menu button; the menu drawer opens the
-browser, **Timeline and progress**, **Knowledge through**, Chapter/Date mode and a
-secondary **Reset view**; and a selected item's inspector opens as a non-animated,
+browser, **Timeline and progress**, Chapter/Date mode and a secondary **Reset
+view** (it has no separate **Knowledge through** select, because confirming
+**Read through** already shows that chapter;
+`tasks/BOB-20261114-CTS3FN-read-through-drives-view.md`); and a selected item's inspector opens as a non-animated,
 non-modal bottom sheet over the live map, with peek, half and full snaps, a 44px
 grabber alternative to dragging, and an object trail of real parent links in its
 header; landscape phones get a right-hand drawer instead
@@ -810,11 +812,17 @@ to state writes, appearances, dated events, generated activity, sightings, and t
 history. Display-date eligibility remains chapter-free and uses range containment.
 Chronologically unplaced event activity remains Chapter-mode context only.
 
-The first confirmed **Read through** choice initializes `viewChapter` to that same
-chapter and uses its story date, so onboarding moves from zero state to one complete
-chapter view in one deliberate action. Later increases to `furthestChapterRead` do not
-change an already valid `viewChapter`; lowering the ceiling below it clamps
-`viewChapter` to the new ceiling and recomputes the projection.
+Every confirmed **Read through** choice also sets `viewChapter` to that same chapter,
+in Chapter mode at its story date, so picking a read-through chapter always shows
+that chapter's universe in one deliberate action. This applies to the first choice,
+to later increases and to lowering the ceiling, and from Date mode or the zero-state
+knowledge view alike (`tasks/BOB-20261114-CTS3FN-read-through-drives-view.md`, a
+Captain decision of 2026-11-14 that replaces the earlier rule that later increases
+left `viewChapter` unchanged). Lowering the ceiling still lowers it, and no later
+fact is retained. **Knowledge through** and the chapter track can afterwards move
+`viewChapter` back to an earlier chapter or the zero state without changing
+`furthestChapterRead`. Returning **Read through** to the pre-book zero state clears
+both.
 
 Phase 2 Date mode may use a meaningful requested story date as a cutoff for the
 second stage, which a chapter view does not apply. It retains the first stage's reader-visible chapter

@@ -186,10 +186,115 @@ describe("reader progress", () => {
       mode: "chapter",
     });
     expect(normalizeReaderProgress(zeroView, chapters, [])).toEqual(zeroView);
+    // Confirming a read-through always shows that chapter (BOB-20261114-CTS3FN).
     expect(confirmReadThrough(zeroView, "1.1", chapters)).toMatchObject({
       furthestChapterRead: "1.1",
-      viewChapter: null,
-      displayDate: null,
+      viewChapter: "1.1",
+      displayDate: "2200.0",
+      mode: "chapter",
+    });
+  });
+
+  describe("read-through drives the view (BOB-20261114-CTS3FN)", () => {
+    const at = (
+      furthestChapterRead: string,
+      viewChapter: string | null,
+      mode: "chapter" | "date" = "chapter",
+      displayDate: string | null = viewChapter
+        ? chapters.find((chapter) => chapter.chapter === viewChapter)!.date
+        : null,
+    ): ReaderProgress => ({
+      ...empty,
+      furthestChapterRead,
+      viewChapter,
+      displayDate,
+      mode,
+      timelineZoom: 4,
+      timelinePan: 0.5,
+    });
+    const chapterView = (chapter: string, date: string) => ({
+      furthestChapterRead: chapter,
+      viewChapter: chapter,
+      displayDate: date,
+      mode: "chapter",
+    });
+
+    it("shows the first confirmed chapter", () => {
+      expect(confirmReadThrough(empty, "1.3", chapters)).toMatchObject(
+        chapterView("1.3", "2200.1"),
+      );
+    });
+
+    it("moves the view forward with the ceiling, even from an earlier view", () => {
+      expect(
+        confirmReadThrough(at("1.2", "1.2"), "1.3", chapters),
+      ).toMatchObject(chapterView("1.3", "2200.1"));
+      expect(
+        confirmReadThrough(at("1.2", "1.1"), "1.3", chapters),
+      ).toMatchObject(chapterView("1.3", "2200.1"));
+    });
+
+    it("moves the view back with a lowered ceiling, even from an earlier view", () => {
+      expect(
+        confirmReadThrough(at("1.3", "1.3"), "1.2", chapters),
+      ).toMatchObject(chapterView("1.2", "2200.2"));
+      // A view earlier than the new ceiling still moves to the confirmed chapter.
+      expect(
+        confirmReadThrough(at("1.3", "1.1"), "1.2", chapters),
+      ).toMatchObject(chapterView("1.2", "2200.2"));
+    });
+
+    it("re-shows an equal chapter after the reader looked back", () => {
+      expect(
+        confirmReadThrough(at("1.2", "1.1"), "1.2", chapters),
+      ).toMatchObject(chapterView("1.2", "2200.2"));
+    });
+
+    it("leaves Date mode and the zero-state view for the confirmed chapter", () => {
+      expect(
+        confirmReadThrough(at("1.2", "1.2", "date", "2200.0"), "1.3", chapters),
+      ).toMatchObject(chapterView("1.3", "2200.1"));
+      expect(
+        confirmReadThrough(at("1.3", "1.3", "date", "2200.2"), "1.1", chapters),
+      ).toMatchObject(chapterView("1.1", "2200.0"));
+      expect(
+        confirmReadThrough(at("1.3", null), "1.2", chapters),
+      ).toMatchObject(chapterView("1.2", "2200.2"));
+    });
+
+    it("keeps unrelated preferences and rejects an unknown chapter", () => {
+      const current = at("1.1", "1.1");
+      const next = confirmReadThrough(current, "1.3", chapters);
+      expect(next.timelineZoom).toBe(4);
+      expect(next.timelinePan).toBe(0.5);
+      expect(next.browserGroups).toEqual(current.browserGroups);
+      expect(next.characterInspectorSections).toEqual(
+        current.characterInspectorSections,
+      );
+      expect(() => confirmReadThrough(current, "1.9", chapters)).toThrow(
+        "Unknown chapter: 1.9.",
+      );
+    });
+
+    it("keeps the confirmed ceiling as the only bound on navigation", () => {
+      const lowered = confirmReadThrough(at("1.3", "1.3"), "1.1", chapters);
+      expect(lowered.furthestChapterRead).toBe("1.1");
+      expect(selectKnowledgeChapter(lowered, "1.2", chapters)).toBe(lowered);
+      expect(selectKnowledgeChapter(lowered, "1.3", chapters)).toBe(lowered);
+      const raised = confirmReadThrough(lowered, "1.2", chapters);
+      const lookedBack = selectKnowledgeChapter(raised, "1.1", chapters);
+      expect(lookedBack).toMatchObject({
+        furthestChapterRead: "1.2",
+        viewChapter: "1.1",
+      });
+      expect(selectKnowledgeChapter(lookedBack, "1.3", chapters)).toBe(
+        lookedBack,
+      );
+      expect(selectZeroKnowledgeView(raised).furthestChapterRead).toBe("1.2");
+      expect(
+        normalizeReaderProgress({ ...raised, viewChapter: "1.3" }, chapters, [])
+          .viewChapter,
+      ).toBe("1.2");
     });
   });
 
