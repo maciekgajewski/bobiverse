@@ -79,7 +79,7 @@
     },
     {
       "entity_id": "technology:suddar",
-      "description": "A subspace technology enabled by the same theoretical breakthrough as the SURGE drive and associated with the new possibility of interstellar probes and colonization. It can be used to monitor distance, scan for threats, and detect dense objects within a light-hour radius. An emitter flaw can produce a much weaker ping with poor close-range sensitivity; Bill hypothesizes that weaker signals may instead reach farther because attenuation changes with signal strength. It can detect objects at range but cannot provide fine detail at the distance encountered near Jupiter. A modified array can adjust its range to three light-hours, with much reduced resolution."
+      "description": "A subspace detection technology enabled by the same breakthrough as the SURGE drive. It can monitor distance, scan for threats and detect dense objects within a light-hour. An emitter flaw can give a much weaker ping with poor close-range sensitivity, which Bill suspects may reach farther. It gives little fine detail at long range, and a modified array can reach three light-hours at much lower resolution."
     },
     {
       "entity_id": "vessel:heaven-9",

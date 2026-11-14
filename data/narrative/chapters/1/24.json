@@ -34,7 +34,7 @@
     },
     {
       "entity_id": "technology:roamers",
-      "description": "Remote observation and manipulation devices directed through GUPPI. They come in varied sizes, can coordinate across scales, and need minimal supervision once their tasks, dependencies, and interruption conditions are defined. Without active intervention, they can work up to ten times faster. They can inspect ship circuitry with gnat-sized units, carry video cameras for remote observation, and pick up vibrations transmitted through a wall when pressed against it. Reusable scripts automate many routine activities, leaving assembly work largely self-directed. In manufacturing, they feed raw ore into manufacturing systems, gather parts, and assemble ships; smaller printer operations can make additional ROAMers and ship-buster components. They can repair and maintain HEAVEN vessels and refine battle scraps into rail-gun ammunition."
+      "description": "Remote observation and manipulation devices directed through GUPPI. They come in varied sizes, coordinate across scales and, once their tasks are defined, need little supervision. They can inspect ship circuitry with gnat-sized units, carry video cameras and pick up vibrations through a wall. Running on reusable scripts, they feed ore to manufacturing systems, assemble and repair ships, and refine battle scrap into rail-gun ammunition; printers can make more of them."
     },
     {
       "entity_id": "technology:ship-busters",
@@ -42,7 +42,7 @@
     },
     {
       "entity_id": "technology:surge-drive",
-      "description": "A recently developed drive technology enabled by a breakthrough in subspace theory and used to equip spacecraft for interstellar operations. Beyond prototypes, only a small number of SURGE-equipped vessels are in active service. On Heaven-1, it provides reactionless propulsion rather than using gathered hydrogen as reaction mass. It can also accelerate a projectile through an axial launch tube, requiring the vessel to rotate to aim and to stop its drive before firing. Bob believes it may push against the fabric of space. A low-intensity, wide-field configuration can accelerate an asteroid as a unit without tidal forces or field drop-off tearing it apart."
+      "description": "A recently developed reactionless drive enabled by a breakthrough in subspace theory, used to equip spacecraft such as Heaven-1 for interstellar travel; Bob believes it may push against the fabric of space. Beyond prototypes, few SURGE-equipped vessels are in service. It can also fire a projectile through an axial launch tube, but the vessel must rotate to aim and stop its drive first. A low-intensity, wide-field configuration can move a whole asteroid without tearing it apart."
     }
   ],
   "appearances": [
