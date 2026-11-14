@@ -412,7 +412,10 @@ branch. A map, browser, or timeline selection begins a new path. Progress transi
 remove ineligible entries; the controls never mutate reader progress, browser
 history, or URLs. The same controls and disabled states appear in the wide and compact
 inspectors. In the compact inspector they are 44px tap targets in the panel's header
-row, left of the close icon (BOB-20261114-DA3Y3B).
+row, left of the close icon (BOB-20261114-DA3Y3B). Since BOB-20261114-H960PW that row
+is the header of the phone detail sheet, and an object trail built from projected
+parent links (for example `Solar System › Sol › Earth`) sits between the history and
+the close icon. Its ancestors are selection controls that append to the same path.
 
 ## 10. Bottom progress and timeline dock
 

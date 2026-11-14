@@ -2259,17 +2259,17 @@ h2 {
   .mobile-panel.timeline .date-navigation {
     min-height: 5rem;
   }
-  /* One header row: the close icon top-right and, in the inspector, the
-     Back/Forward history top-left, both 44px tap targets on one line. It
-     sticks so the close icon stays reachable in a scrolled panel. */
+  /* One header row: the close icon top-right and, in the detail sheet, the
+     Back/Forward history top-left with the object trail between them, all
+     on one line. DOM order matches this visual order. It sticks so the
+     close icon stays reachable in a scrolled panel. */
   .compact-panel-header {
     position: sticky;
     z-index: 1;
     top: 0;
     display: flex;
-    flex-direction: row-reverse;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 0.5rem;
     min-height: var(--tap);
     margin: 0 -1rem 0.75rem;
@@ -2279,6 +2279,7 @@ h2 {
   .close-panel {
     display: grid;
     flex: 0 0 auto;
+    margin-left: auto;
     place-items: center;
     width: var(--tap);
     height: var(--tap);
@@ -2398,6 +2399,139 @@ h2 {
   .about-copy {
     width: auto;
     font-size: 0.78rem;
+  }
+}
+/* Compact detail sheet (BOB-20261114-H960PW): a non-animated, non-modal
+   bottom sheet over the live map with peek, half and full snaps. The surface
+   is opaque so the map chrome under it does not ghost through. */
+@media (max-width: 1199px) {
+  :root {
+    --sheet-peek: 9.5rem;
+    --sheet-half: 50svh;
+    --sheet-full: calc(100svh - var(--topbar-h));
+  }
+  .mobile-panel.detail-sheet {
+    display: flex;
+    flex-direction: column;
+    height: var(--sheet-half);
+    max-height: var(--sheet-full);
+    overflow: hidden;
+    padding: 0;
+    background: #0a1220;
+  }
+  .mobile-panel.detail-sheet[data-snap="peek"] {
+    height: var(--sheet-peek);
+  }
+  .mobile-panel.detail-sheet[data-snap="full"] {
+    height: var(--sheet-full);
+  }
+  .sheet-drag-zone {
+    flex: 0 0 auto;
+    touch-action: none;
+  }
+  .sheet-grabber {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 1.5rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: grab;
+  }
+  .sheet-grabber-bar {
+    width: 2.75rem;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--line-accent);
+  }
+  .sheet-grabber:hover .sheet-grabber-bar,
+  .sheet-grabber:focus-visible .sheet-grabber-bar {
+    background: var(--accent-cyan);
+  }
+  .sheet-grabber:focus-visible {
+    outline-offset: -2px;
+  }
+  .detail-sheet .sheet-header {
+    position: static;
+    margin: 0;
+    padding: 0 0.5rem 0.5rem 0.75rem;
+    background: transparent;
+  }
+  .sheet-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+    overscroll-behavior: contain;
+    padding: 0 1rem 1rem;
+  }
+  .inspector-breadcrumb {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .inspector-breadcrumb ol {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    list-style: none;
+    white-space: nowrap;
+  }
+  .inspector-breadcrumb li {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+  }
+  /* Only the furthest ancestors shorten; the parent and the current object
+     keep their full names. */
+  .inspector-breadcrumb li:nth-last-child(-n + 2),
+  .inspector-breadcrumb li:nth-last-child(-n + 2) > * {
+    flex: 0 0 auto;
+  }
+  .crumb-separator {
+    padding: 0 0.3rem;
+  }
+  .inspector-breadcrumb .crumb-link {
+    min-height: var(--tap);
+    overflow: hidden;
+    padding: 0 0.15rem;
+    color: var(--text-muted);
+    font-size: inherit;
+    text-overflow: ellipsis;
+  }
+  .crumb-current {
+    overflow: hidden;
+    color: var(--text-primary);
+    font-weight: 700;
+    text-overflow: ellipsis;
+  }
+}
+/* Landscape phones: a right-hand drawer so the map stays a usable pane. The
+   snaps and the grabber do not apply. */
+@media (max-width: 1199px) and (max-height: 500px) {
+  .mobile-panel.detail-sheet,
+  .mobile-panel.detail-sheet[data-snap] {
+    top: calc(var(--topbar-h) + 0.4rem);
+    right: 0.4rem;
+    bottom: 0.4rem;
+    left: auto;
+    width: min(20rem, 48vw);
+    height: auto;
+    max-height: none;
+    border: 1px solid var(--line-accent);
+    border-radius: 0.75rem;
+  }
+  .sheet-grabber {
+    display: none;
+  }
+  .sheet-drag-zone {
+    padding-top: 0.5rem;
+    touch-action: auto;
   }
 }
 @media (max-width: 1199px) {

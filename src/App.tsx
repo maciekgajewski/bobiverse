@@ -1,5 +1,14 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type KeyboardEvent as ReactKeyboardEvent,
+} from "react";
 import { AboutDialog } from "./components/AboutDialog";
+import { DetailSheet } from "./components/DetailSheet";
+import { InspectorBreadcrumb } from "./components/InspectorBreadcrumb";
 import { StarMap, type MapScale } from "./components/MapScene";
 import { ObjectBrowser } from "./components/ObjectBrowser";
 import {
@@ -22,8 +31,10 @@ import {
   GALACTIC_STARFIELD_UI_CREDIT,
 } from "./domain/galactic-starfield";
 import type { SelectionIdentity } from "./domain/selection";
+import type { SheetSnap } from "./domain/sheet-snap";
 import type { StellarSystem } from "./domain/types";
 import { DISPLAY_DISTANCE_UNIT } from "./domain/units";
+import { inspectorBreadcrumbTrail } from "./narrative/breadcrumb";
 import { buildNarrativeBrowserGroups } from "./narrative/browser";
 import {
   focusSystemIdForSelection,
@@ -239,6 +250,9 @@ export default function App() {
   const [browserQuery, setBrowserQuery] = useState("");
   const [selectionStatus, setSelectionStatus] = useState("");
   const [mobilePanel, setMobilePanel] = useState<MobilePanel | null>(null);
+  // Compact detail sheet height. Map taps open it at peek so the map stays
+  // in view; the browser, timeline and menu open it at half.
+  const [sheetSnap, setSheetSnap] = useState<SheetSnap>("half");
   const menuButton = useRef<HTMLButtonElement>(null);
   const mobilePanelElement = useRef<HTMLDivElement>(null);
   const [astronomyNoticeOpen, setAstronomyNoticeOpen] = useState(false);
@@ -504,10 +518,14 @@ export default function App() {
 
   useEffect(() => {
     if (!mobilePanel) return;
+    // The X takes initial focus in every compact panel, wherever it sits in
+    // the header row.
     const focus = window.setTimeout(() => {
-      mobilePanelElement.current
-        ?.querySelector<HTMLElement>(FOCUSABLE_PANEL_ELEMENTS)
-        ?.focus();
+      const panel = mobilePanelElement.current;
+      (
+        panel?.querySelector<HTMLElement>(".close-panel") ??
+        panel?.querySelector<HTMLElement>(FOCUSABLE_PANEL_ELEMENTS)
+      )?.focus();
     }, 0);
     return () => window.clearTimeout(focus);
   }, [mobilePanel]);
@@ -549,6 +567,24 @@ export default function App() {
     compactLayout.addEventListener("change", closeAtDesktop);
     return () => compactLayout.removeEventListener("change", closeAtDesktop);
   }, [mobilePanel]);
+  // Every compact panel, the non-modal detail sheet included, keeps Tab and
+  // Shift+Tab inside itself so focus never disappears behind it.
+  const containPanelFocus = (event: ReactKeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== "Tab") return;
+    const focusable = mobilePanelElement.current?.querySelectorAll<HTMLElement>(
+      FOCUSABLE_PANEL_ELEMENTS,
+    );
+    if (!focusable?.length) return;
+    const first = focusable[0]!;
+    const last = focusable[focusable.length - 1]!;
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
   const selectionName = (nextSelection: SelectionIdentity): string => {
     const name =
       nextSelection.kind === "astronomy"
@@ -602,7 +638,16 @@ export default function App() {
       `${system.components.find((item) => item.id === componentId)?.designation ?? "Component"} selected.`,
     );
   };
-  const showSelection = (nextSelection: SelectionIdentity) => {
+  // Opens the compact detail sheet at the given snap; a sheet that is
+  // already open keeps the height the reader chose.
+  const openInspectorSheet = (snap: SheetSnap) => {
+    if (mobilePanel !== "inspector") setSheetSnap(snap);
+    setMobilePanel("inspector");
+  };
+  const showSelection = (
+    nextSelection: SelectionIdentity,
+    openSnap: SheetSnap = "half",
+  ) => {
     setDateContext(null);
     setSelection(nextSelection);
     setSelectionStatus(`${selectionName(nextSelection) || "Object"} selected.`);
@@ -610,11 +655,14 @@ export default function App() {
       typeof window.matchMedia === "function" &&
       window.matchMedia("(max-width: 1199px)").matches
     )
-      setMobilePanel("inspector");
+      openInspectorSheet(openSnap);
   };
-  const selectExternalObject = (nextSelection: SelectionIdentity) => {
+  const selectExternalObject = (
+    nextSelection: SelectionIdentity,
+    openSnap: SheetSnap = "half",
+  ) => {
     setInspectorHistory(rootInspectorHistory(nextSelection));
-    showSelection(nextSelection);
+    showSelection(nextSelection, openSnap);
   };
   const selectInspectorRelationship = (nextSelection: SelectionIdentity) => {
     setInspectorHistory((current) => {
@@ -751,7 +799,7 @@ export default function App() {
       typeof window.matchMedia === "function" &&
       window.matchMedia("(max-width: 1199px)").matches
     ) {
-      setMobilePanel("inspector");
+      openInspectorSheet("half");
     }
   };
   const selectDate = (date: string, showContext = false) => {
@@ -762,7 +810,7 @@ export default function App() {
       typeof window.matchMedia === "function" &&
       window.matchMedia("(max-width: 1199px)").matches
     ) {
-      setMobilePanel("inspector");
+      openInspectorSheet("half");
     }
   };
   const toggleBrowserGroup = (group: keyof ReaderProgress["browserGroups"]) =>
@@ -1005,6 +1053,7 @@ export default function App() {
                       narrativeId
                         ? { kind: "narrative", id: narrativeId }
                         : { kind: "astronomy", id },
+                      "peek",
                     );
                   }}
                   onDeselect={() => {
@@ -1013,6 +1062,9 @@ export default function App() {
                     setSelection(null);
                     setInspectorHistory(EMPTY_INSPECTOR_HISTORY);
                     setSelectionStatus("Selection cleared.");
+                    // The detail sheet leaves the map tappable; an empty
+                    // tap clears the selection and closes the sheet.
+                    if (mobilePanel === "inspector") setMobilePanel(null);
                   }}
                   onReady={() => undefined}
                   onScaleChange={updateMapScale}
@@ -1183,7 +1235,104 @@ export default function App() {
         onZoom={zoomTimeline}
         onPan={panTimeline}
       />
-      {mobilePanel && (
+      {mobilePanel === "inspector" && (
+        <DetailSheet
+          sheetRef={mobilePanelElement}
+          label="Selected object"
+          snap={sheetSnap}
+          onSnapChange={setSheetSnap}
+          onKeyDown={containPanelFocus}
+          header={
+            <>
+              {/* Matches ObjectInspector: history shows for a selection,
+                  never for a Date context. DOM order follows the visual
+                  order (history, trail, X); the X still takes initial
+                  focus. */}
+              {selection && !activeDateContext && (
+                <>
+                  <InspectorHistoryControls
+                    canGoBack={inspectorHistory.index > 0}
+                    canGoForward={
+                      inspectorHistory.index >= 0 &&
+                      inspectorHistory.index <
+                        inspectorHistory.entries.length - 1
+                    }
+                    onBack={() => navigateInspectorHistory(-1)}
+                    onForward={() => navigateInspectorHistory(1)}
+                  />
+                  <InspectorBreadcrumb
+                    trail={inspectorBreadcrumbTrail(
+                      selection,
+                      narrativeWorld,
+                      mapProjection.contextSystems,
+                    )}
+                    onSelect={selectInspectorRelationship}
+                  />
+                </>
+              )}
+              <button
+                type="button"
+                className="button quiet close-panel"
+                aria-label="Close"
+                title="Close"
+                onClick={closeMobilePanel}
+              >
+                <CloseIcon />
+              </button>
+            </>
+          }
+        >
+          <ObjectInspector
+            selection={selection}
+            narrativeItem={selectedNarrativeItem}
+            chapterDetail={selectedChapterDetail}
+            dateContext={
+              activeDateContext
+                ? {
+                    date: activeDateContext,
+                    sourceChapters:
+                      meaningfulDateSources.get(activeDateContext) ?? [],
+                  }
+                : null
+            }
+            world={narrativeWorld}
+            systems={mapProjection.contextSystems}
+            knownAstronomySystemIds={mapProjection.knownSystemIds}
+            assets={narrativeCorpus.assets}
+            headingId="compact-object-details-heading"
+            showHistoryControls={false}
+            canGoBack={inspectorHistory.index > 0}
+            canGoForward={
+              inspectorHistory.index >= 0 &&
+              inspectorHistory.index < inspectorHistory.entries.length - 1
+            }
+            onBack={() => navigateInspectorHistory(-1)}
+            onForward={() => navigateInspectorHistory(1)}
+            onSelect={selectInspectorRelationship}
+            onChapterSelect={selectTimelineChapter}
+            travelStops={selectedCharacterTravel.stops}
+            sectionState={progress.characterInspectorSections}
+            onToggleSection={(section) =>
+              setApplicationProjection((current) => ({
+                ...current,
+                progress: {
+                  ...current.progress,
+                  characterInspectorSections: {
+                    ...current.progress.characterInspectorSections,
+                    [section]:
+                      !current.progress.characterInspectorSections[section],
+                  },
+                },
+              }))
+            }
+            systemEntry={selectedSystemEntry}
+            enteredSystem={enteredSystem}
+            onEnterSystem={enterSystemMode}
+            onComponentSelect={selectSystemComponent}
+          />
+        </DetailSheet>
+      )}
+      {mobilePanel && mobilePanel !== "inspector" && (
         <>
           <div
             className="compact-panel-backdrop"
@@ -1200,31 +1349,10 @@ export default function App() {
                 ? "Menu"
                 : mobilePanel === "browser"
                   ? "Object browser"
-                  : mobilePanel === "inspector"
-                    ? "Selected object"
-                    : "Timeline and progress"
+                  : "Timeline and progress"
             }
-            onKeyDown={(event) => {
-              if (event.key !== "Tab") return;
-              const focusable =
-                mobilePanelElement.current?.querySelectorAll<HTMLElement>(
-                  FOCUSABLE_PANEL_ELEMENTS,
-                );
-              if (!focusable?.length) return;
-              const first = focusable[0]!;
-              const last = focusable[focusable.length - 1]!;
-              if (event.shiftKey && document.activeElement === first) {
-                event.preventDefault();
-                last.focus();
-              } else if (!event.shiftKey && document.activeElement === last) {
-                event.preventDefault();
-                first.focus();
-              }
-            }}
+            onKeyDown={containPanelFocus}
           >
-            {/* The close icon comes first in the DOM so it takes initial
-                focus; the header row is row-reverse, so it sits top-right
-                and the inspector history sits top-left on the same row. */}
             <div className="compact-panel-header">
               <button
                 type="button"
@@ -1235,22 +1363,6 @@ export default function App() {
               >
                 <CloseIcon />
               </button>
-              {/* Matches ObjectInspector: history shows for a selection,
-                  never for a Date context. */}
-              {mobilePanel === "inspector" &&
-                selection &&
-                !activeDateContext && (
-                  <InspectorHistoryControls
-                    canGoBack={inspectorHistory.index > 0}
-                    canGoForward={
-                      inspectorHistory.index >= 0 &&
-                      inspectorHistory.index <
-                        inspectorHistory.entries.length - 1
-                    }
-                    onBack={() => navigateInspectorHistory(-1)}
-                    onForward={() => navigateInspectorHistory(1)}
-                  />
-                )}
             </div>
             {mobilePanel === "menu" ? (
               <nav className="compact-menu" aria-label="Atlas menu">
@@ -1282,7 +1394,7 @@ export default function App() {
                   <button
                     type="button"
                     className="button menu-row inspect-command"
-                    onClick={() => setMobilePanel("inspector")}
+                    onClick={() => openInspectorSheet("half")}
                   >
                     Inspect selection
                   </button>
@@ -1330,55 +1442,6 @@ export default function App() {
                 onQuery={setBrowserQuery}
                 onToggle={toggleBrowserGroup}
                 onSelect={selectExternalObject}
-              />
-            ) : mobilePanel === "inspector" ? (
-              <ObjectInspector
-                selection={selection}
-                narrativeItem={selectedNarrativeItem}
-                chapterDetail={selectedChapterDetail}
-                dateContext={
-                  activeDateContext
-                    ? {
-                        date: activeDateContext,
-                        sourceChapters:
-                          meaningfulDateSources.get(activeDateContext) ?? [],
-                      }
-                    : null
-                }
-                world={narrativeWorld}
-                systems={mapProjection.contextSystems}
-                knownAstronomySystemIds={mapProjection.knownSystemIds}
-                assets={narrativeCorpus.assets}
-                headingId="compact-object-details-heading"
-                showHistoryControls={false}
-                canGoBack={inspectorHistory.index > 0}
-                canGoForward={
-                  inspectorHistory.index >= 0 &&
-                  inspectorHistory.index < inspectorHistory.entries.length - 1
-                }
-                onBack={() => navigateInspectorHistory(-1)}
-                onForward={() => navigateInspectorHistory(1)}
-                onSelect={selectInspectorRelationship}
-                onChapterSelect={selectTimelineChapter}
-                travelStops={selectedCharacterTravel.stops}
-                sectionState={progress.characterInspectorSections}
-                onToggleSection={(section) =>
-                  setApplicationProjection((current) => ({
-                    ...current,
-                    progress: {
-                      ...current.progress,
-                      characterInspectorSections: {
-                        ...current.progress.characterInspectorSections,
-                        [section]:
-                          !current.progress.characterInspectorSections[section],
-                      },
-                    },
-                  }))
-                }
-                systemEntry={selectedSystemEntry}
-                enteredSystem={enteredSystem}
-                onEnterSystem={enterSystemMode}
-                onComponentSelect={selectSystemComponent}
               />
             ) : (
               <>

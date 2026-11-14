@@ -705,11 +705,11 @@ test("mobile detail window has an X close icon and tap-sized history in one head
   // 44px tap targets; allow sub-pixel layout rounding.
   expect(closeBox.width).toBeGreaterThanOrEqual(43.5);
   expect(closeBox.height).toBeGreaterThanOrEqual(43.5);
-  // Top-right corner of the panel.
+  // Top-right corner of the sheet, on the header row under the 24px grabber.
   expect(
     panelBox.x + panelBox.width - (closeBox.x + closeBox.width),
   ).toBeLessThan(16);
-  expect(closeBox.y - panelBox.y).toBeLessThan(16);
+  expect(closeBox.y - panelBox.y).toBeLessThan(40);
 
   const closeCentre = closeBox.y + closeBox.height / 2;
   for (const name of ["Back", "Forward"]) {
@@ -728,6 +728,153 @@ test("mobile detail window has an X close icon and tap-sized history in one head
   await close.click();
   await expect(inspector).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Menu" })).toBeFocused();
+});
+
+// BOB-20261114-H960PW: the phone detail view is a snap sheet over a live map.
+test("phone detail sheet snaps over an interactive map and its trail follows links", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.waitForFunction(() => window.__bob034MapPerformance !== undefined);
+  await openMenuCommand(page, "Browse objects");
+  const browser = page.getByRole("dialog", { name: "Object browser" });
+  await browser
+    .getByRole("searchbox", { name: "Search visible objects" })
+    .fill("Earth");
+  await browser.getByRole("button", { name: /^Earth/ }).click();
+
+  const sheet = page.getByRole("dialog", { name: "Selected object" });
+  await expect(sheet.getByRole("heading", { name: "Earth" })).toBeVisible();
+  await expect(sheet).toHaveAttribute("data-snap", "half");
+  await expect(sheet).toHaveAttribute("aria-modal", "false");
+  await expect(page.locator(".compact-panel-backdrop")).toHaveCount(0);
+  const trail = sheet.getByRole("navigation", { name: "Object trail" });
+  await expect(trail).toHaveText(/Solar System\s*›\s*Sol\s*›\s*Earth/);
+
+  // Half: the map fills the space above the sheet and receives taps there.
+  let box = (await sheet.boundingBox())!;
+  expect(box.y).toBeGreaterThan(844 * 0.4);
+  expect(box.y).toBeLessThan(844 * 0.6);
+  expect(
+    await page.evaluate(
+      () => document.elementFromPoint(195, 200)?.closest("#map-stage") !== null,
+    ),
+  ).toBe(true);
+
+  // Drag the grabber down: the sheet settles at peek (about 150px).
+  const grabber = sheet.locator(".sheet-grabber");
+  const grab = (await grabber.boundingBox())!;
+  await page.mouse.move(grab.x + grab.width / 2, grab.y + grab.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(grab.x + grab.width / 2, grab.y + 150, { steps: 6 });
+  await page.mouse.move(grab.x + grab.width / 2, grab.y + 300, { steps: 6 });
+  await page.mouse.up();
+  await expect(sheet).toHaveAttribute("data-snap", "peek");
+  await expect
+    .poll(async () => (await sheet.boundingBox())!.y)
+    .toBeGreaterThan(844 - 190);
+  box = (await sheet.boundingBox())!;
+  expect(box.height).toBeGreaterThanOrEqual(130);
+  await expect(sheet.getByRole("heading", { name: "Earth" })).toBeVisible();
+
+  // A map tap above the open sheet still selects; the sheet keeps its snap.
+  // The Sol caption is a touch target on the map and nothing covers it. A
+  // real click must not also reach the canvas as a missed pointer, which
+  // would clear the selection and close the sheet again.
+  await settleMapCamera(page);
+  const caption = page.locator('.narrative-map-label[data-system-id="sol"]');
+  const captionBox = (await caption.boundingBox())!;
+  expect(captionBox.y + captionBox.height).toBeLessThan(
+    (await sheet.boundingBox())!.y,
+  );
+  expect(
+    await page.evaluate(
+      ({ x, y }) =>
+        document.elementFromPoint(x, y)?.closest("#map-stage") !== null,
+      {
+        x: captionBox.x + captionBox.width / 2,
+        y: captionBox.y + captionBox.height / 2,
+      },
+    ),
+  ).toBe(true);
+  await caption.click();
+  await expect(
+    sheet.getByRole("heading", { name: "Solar System" }),
+  ).toBeVisible();
+  await expect(sheet).toHaveAttribute("data-snap", "peek");
+  await expect(trail).toHaveText("Solar System");
+
+  // The grabber also cycles the snaps without a drag: peek, half, full.
+  await sheet.getByRole("button", { name: "Expand details" }).click();
+  await expect(sheet).toHaveAttribute("data-snap", "half");
+  await sheet.getByRole("button", { name: "Expand details" }).click();
+  await expect(sheet).toHaveAttribute("data-snap", "full");
+  const topbar = (await page.locator(".topbar").boundingBox())!;
+  await expect
+    .poll(async () => (await sheet.boundingBox())!.y)
+    .toBeLessThan(topbar.y + topbar.height + 2);
+  expect((await sheet.boundingBox())!.y).toBeGreaterThanOrEqual(
+    topbar.y + topbar.height - 1,
+  );
+
+  // Following a relationship link updates the trail.
+  await sheet
+    .locator(".sheet-body")
+    .getByRole("button", { name: "Sol", exact: true })
+    .click();
+  await expect(sheet.getByRole("heading", { name: "Sol" })).toBeVisible();
+  await expect(trail).toHaveText(/^Solar System\s*›\s*Sol$/);
+  await trail.getByRole("button", { name: "Solar System" }).click();
+  await expect(
+    sheet.getByRole("heading", { name: "Solar System" }),
+  ).toBeVisible();
+  await expect(sheet.getByRole("button", { name: "Back" })).toBeEnabled();
+
+  await sheet.getByRole("button", { name: "Close" }).click();
+  await expect(sheet).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Menu" })).toBeFocused();
+});
+
+test("landscape phone shows the detail as a right-hand drawer beside the map", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.setViewportSize({ width: 844, height: 390 });
+  await page.goto("/");
+  await openMenuCommand(page, "Browse objects");
+  const browser = page.getByRole("dialog", { name: "Object browser" });
+  await browser
+    .getByRole("searchbox", { name: "Search visible objects" })
+    .fill("Earth");
+  await browser.getByRole("button", { name: /^Earth/ }).click();
+  const drawer = page.getByRole("dialog", { name: "Selected object" });
+  await expect(drawer.getByRole("heading", { name: "Earth" })).toBeVisible();
+  const box = (await drawer.boundingBox())!;
+  const topbar = (await page.locator(".topbar").boundingBox())!;
+  expect(box.x).toBeGreaterThan(844 / 2);
+  expect(box.width).toBeLessThanOrEqual(330);
+  expect(844 - (box.x + box.width)).toBeLessThan(16);
+  expect(box.y).toBeGreaterThanOrEqual(topbar.y + topbar.height);
+  expect(box.y + box.height).toBeLessThanOrEqual(390);
+  await expect(drawer.locator(".sheet-grabber")).toBeHidden();
+  await expect(
+    drawer.getByRole("navigation", { name: "Object trail" }),
+  ).toContainText("Earth");
+  for (const name of ["Back", "Forward", "Close"]) {
+    const control = (await drawer.getByRole("button", { name }).boundingBox())!;
+    expect(control.width).toBeGreaterThanOrEqual(43.5);
+    expect(control.height).toBeGreaterThanOrEqual(43.5);
+  }
+  // The map left of the drawer stays uncovered.
+  expect(
+    await page.evaluate(
+      () => document.elementFromPoint(200, 200)?.closest("#map-stage") !== null,
+    ),
+  ).toBe(true);
+  await page.keyboard.press("Escape");
+  await expect(drawer).toHaveCount(0);
 });
 
 test("desktop inspector hides Enter system and keeps its small history controls", async ({
@@ -2400,5 +2547,96 @@ for (const viewport of [
         .getByRole("dialog", { name: "Timeline and progress" })
         .getByLabel("Read through"),
     ).toHaveValue("1.2");
+  });
+}
+
+// After merging the compact chapter selector, the picker must stack above an
+// open detail sheet, take focus, and be the only layer Escape dismisses.
+for (const viewport of [
+  { width: 390, height: 844 },
+  { width: 844, height: 390 },
+]) {
+  test(`chapter picker stacks over the open detail sheet at ${viewport.width}x${viewport.height}`, async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+    await page.waitForFunction(
+      () => window.__bob034MapPerformance !== undefined,
+    );
+    await openMenuCommand(page, "Browse objects");
+    const browser = page.getByRole("dialog", { name: "Object browser" });
+    await browser
+      .getByRole("searchbox", { name: "Search visible objects" })
+      .fill("Earth");
+    await browser.getByRole("button", { name: /^Earth/ }).click();
+
+    const sheet = page.getByRole("dialog", { name: "Selected object" });
+    await expect(sheet.getByRole("heading", { name: "Earth" })).toBeVisible();
+
+    const chip = page.locator("#topbar-read-through");
+    await chip.click();
+    const picker = page.getByRole("dialog", { name: "Read through" });
+    await expect(picker).toBeVisible();
+    await expect(picker).toHaveAttribute("aria-modal", "true");
+    await expect(sheet).toBeVisible();
+
+    const box = (await picker.boundingBox())!;
+    const hit = await page.evaluate(
+      ({ x, y }) => {
+        const el = document.elementFromPoint(x, y);
+        return {
+          picker: el?.closest(".chapter-picker") != null,
+          sheet: el?.closest(".detail-sheet") != null,
+        };
+      },
+      { x: box.x + box.width / 2, y: box.y + Math.min(48, box.height / 2) },
+    );
+    expect(hit).toEqual({ picker: true, sheet: false });
+    await expect(
+      picker.getByRole("radio", { name: "Pre-book zero state" }),
+    ).toBeFocused();
+    await expect(picker.getByRole("button", { name: "Close" })).toBeVisible();
+    await expect(
+      picker.getByRole("radio", { name: "Book 1 · Chapter 1", exact: true }),
+    ).toBeVisible();
+
+    await page.keyboard.press("Escape");
+    await expect(picker).toHaveCount(0);
+    await expect(sheet.getByRole("heading", { name: "Earth" })).toBeVisible();
+    await expect(chip).toBeFocused();
+
+    await chip.click();
+    await expect(picker).toBeVisible();
+    await picker.getByRole("button", { name: "Close" }).click();
+    await expect(picker).toHaveCount(0);
+    await expect(sheet).toBeVisible();
+    await expect(chip).toBeFocused();
+
+    await chip.click();
+    await expect(picker).toBeVisible();
+    // Portrait: the sheet sits under the top of the viewport. Landscape: the
+    // left half is free. Either point is the picker's backdrop, not the sheet.
+    const backdropPoint =
+      viewport.height > viewport.width
+        ? { x: 20, y: 80 }
+        : { x: 20, y: Math.round(viewport.height / 2) };
+    expect(
+      await page.evaluate(
+        ({ x, y }) =>
+          document
+            .elementFromPoint(x, y)
+            ?.closest(".chapter-picker-backdrop") != null,
+        backdropPoint,
+      ),
+    ).toBe(true);
+    await page.mouse.click(backdropPoint.x, backdropPoint.y);
+    await expect(picker).toHaveCount(0);
+    await expect(sheet).toBeVisible();
+    await expect(chip).toBeFocused();
+
+    await page.keyboard.press("Escape");
+    await expect(sheet).toHaveCount(0);
   });
 }
