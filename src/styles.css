@@ -2291,8 +2291,10 @@ h2 {
     align-items: center;
     min-width: 0;
   }
-  /* Ancestors shorten first; the current object keeps its full name. */
-  .inspector-breadcrumb li:last-child {
+  /* Only the furthest ancestors shorten; the parent and the current object
+     keep their full names. */
+  .inspector-breadcrumb li:nth-last-child(-n + 2),
+  .inspector-breadcrumb li:nth-last-child(-n + 2) > * {
     flex: 0 0 auto;
   }
   .crumb-separator {
