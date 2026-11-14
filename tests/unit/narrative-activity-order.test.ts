@@ -9,9 +9,10 @@ import {
 } from "../../src/narrative/model";
 import { narrativeCorpus } from "../../src/narrative/runtime";
 
-// Reference implementation: the pre-BOB-20261114-JD5VFR activity ordering,
-// copied verbatim (repeated scan, dates re-parsed on every comparison) so the
-// topological sort can be checked against it on the real corpus.
+// Reference implementation: a faithful reimplementation of the
+// pre-BOB-20261114-JD5VFR activity ordering at c8ce3cc, with helpers renamed
+// (repeated scan, dates re-parsed on every comparison), so the topological
+// sort can be checked against it on the real corpus. Not a literal copy.
 const referenceDatePattern =
   /^(?<year>[1-9][0-9]{3})(?:-(?<month>0[1-9]|1[0-2])(?:-(?<day>0[1-9]|[12][0-9]|3[01]))?)?(?:\.(?<suffix>0|[1-9][0-9]*))?$/;
 
