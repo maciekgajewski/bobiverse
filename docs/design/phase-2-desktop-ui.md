@@ -408,7 +408,8 @@ inspector relationship appends to that transient path and truncates its forward
 branch. A map, browser, or timeline selection begins a new path. Progress transitions
 remove ineligible entries; the controls never mutate reader progress, browser
 history, or URLs. The same controls and disabled states appear in the wide and compact
-inspectors.
+inspectors. In the compact inspector they are 44px tap targets in the panel's header
+row, left of the close icon (BOB-20261114-DA3Y3B).
 
 ## 10. Bottom progress and timeline dock
 

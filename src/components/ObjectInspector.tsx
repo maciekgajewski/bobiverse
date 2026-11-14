@@ -17,6 +17,7 @@ import { defaultCharacterInspectorSectionState } from "../narrative/progress";
 import { SystemDetails } from "./SystemDetails";
 import { ObjectItemBullet } from "./ObjectBrowserIcons";
 import type { SystemViewEntry } from "../system-view";
+import { ENABLE_ENTER_SYSTEM } from "../features";
 
 const typeLabels: Record<NarrativeEntity["entity_type"], string> = {
   character: "Character",
@@ -259,7 +260,7 @@ function NarrativeDetails({
     >
       <p className="eyebrow">{typeLabels[entity.entity_type]}</p>
       <h2 id={headingId}>{name}</h2>
-      {systemEntry?.narrativeSystemId === entity.id && (
+      {ENABLE_ENTER_SYSTEM && systemEntry?.narrativeSystemId === entity.id && (
         <button
           className="button enter-system"
           type="button"
@@ -765,7 +766,7 @@ function ChapterDetails({
   );
 }
 
-function InspectorHistoryControls({
+export function InspectorHistoryControls({
   canGoBack,
   canGoForward,
   onBack,
@@ -825,6 +826,7 @@ export function ObjectInspector({
   enteredSystem = null,
   onEnterSystem = () => undefined,
   onComponentSelect = () => undefined,
+  showHistoryControls = true,
 }: {
   selection: SelectionIdentity | null;
   narrativeItem: NarrativeBrowserItem | null;
@@ -848,6 +850,11 @@ export function ObjectInspector({
   enteredSystem?: StellarSystem | null;
   onEnterSystem?: (entry: SystemViewEntry) => void;
   onComponentSelect?: (componentId: string) => void;
+  /**
+   * The compact panel renders the history controls in its header row, next
+   * to the close icon, so it turns the in-body copy off.
+   */
+  showHistoryControls?: boolean;
 }) {
   if (dateContext)
     return (
@@ -872,12 +879,14 @@ export function ObjectInspector({
     );
   const withHistory = (details: ReactNode) => (
     <div className="inspector-detail-stack">
-      <InspectorHistoryControls
-        canGoBack={canGoBack}
-        canGoForward={canGoForward}
-        onBack={onBack}
-        onForward={onForward}
-      />
+      {showHistoryControls && (
+        <InspectorHistoryControls
+          canGoBack={canGoBack}
+          canGoForward={canGoForward}
+          onBack={onBack}
+          onForward={onForward}
+        />
+      )}
       {details}
     </div>
   );

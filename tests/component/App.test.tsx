@@ -12,6 +12,17 @@ const dateContextMapHarness = vi.hoisted(() => ({
   stubStarMap: false,
 }));
 
+// Enter system is off in the app (src/features.ts). The tests that cover the
+// system-view flow turn it back on through this mock, so the disabled flow
+// stays tested and can be re-enabled without rewriting them.
+const featureFlags = vi.hoisted(() => ({ enterSystem: false }));
+
+vi.mock("../../src/features", () => ({
+  get ENABLE_ENTER_SYSTEM() {
+    return featureFlags.enterSystem;
+  },
+}));
+
 vi.mock("../../src/components/MapScene", async (importOriginal) => {
   const actual =
     await importOriginal<typeof import("../../src/components/MapScene")>();
@@ -58,6 +69,7 @@ const compactMatchMedia = (query: string) => ({
 describe("atlas shell", () => {
   afterEach(() => {
     dateContextMapHarness.stubStarMap = false;
+    featureFlags.enterSystem = false;
     cleanup();
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
@@ -110,7 +122,28 @@ describe("atlas shell", () => {
     ).toBeInTheDocument();
   });
 
+  it("hides Enter system while its feature flag is off", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(
+      screen.getByRole("button", { name: /^Solar System(?:Active)?$/ }),
+    );
+    const inspector = screen.getByRole("complementary", {
+      name: "Object inspector",
+    });
+    expect(
+      within(inspector).getByRole("heading", { name: "Solar System" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Enter system" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Return to map" }),
+    ).not.toBeInTheDocument();
+  });
+
   it("offers the canonical Solar System view through DOM controls", async () => {
+    featureFlags.enterSystem = true;
     const user = userEvent.setup();
     render(<App />);
 
@@ -151,6 +184,7 @@ describe("atlas shell", () => {
   });
 
   it("announces why a system view closes after its projection becomes ineligible", async () => {
+    featureFlags.enterSystem = true;
     const originalEntryResolver =
       systemView.systemViewEntryForNarrativeSelection;
     const entryResolver = vi
@@ -1238,6 +1272,50 @@ describe("atlas shell", () => {
     await waitFor(() => expect(menu).toHaveFocus());
   });
 
+  it("closes the compact detail window with an X icon beside its history controls", async () => {
+    vi.stubGlobal("matchMedia", compactMatchMedia);
+    const user = userEvent.setup();
+    render(<App />);
+    const menu = screen.getByRole("button", { name: "Menu" });
+    await user.click(menu);
+    await user.click(screen.getByRole("button", { name: "Browse objects" }));
+    await user.click(
+      within(screen.getByRole("dialog", { name: "Object browser" })).getByRole(
+        "button",
+        { name: /^Solar System(?:Active)?$/ },
+      ),
+    );
+    const dialog = await screen.findByRole("dialog", {
+      name: "Selected object",
+    });
+    const close = within(dialog).getByRole("button", { name: "Close" });
+    await waitFor(() => expect(close).toHaveFocus());
+    // An icon, not the old text button.
+    expect(close).not.toHaveTextContent("Close");
+    expect(close.querySelector("svg.close-icon")).toBeInTheDocument();
+    // One history control, in the header row with the close icon.
+    const header = dialog.querySelector<HTMLElement>(".compact-panel-header")!;
+    expect(header).toContainElement(close);
+    expect(
+      within(dialog).getAllByRole("navigation", { name: "Inspector history" }),
+    ).toHaveLength(1);
+    expect(
+      within(header).getByRole("button", { name: "Back" }),
+    ).toBeInTheDocument();
+    expect(
+      within(header).getByRole("button", { name: "Forward" }),
+    ).toBeInTheDocument();
+    expect(
+      within(dialog).queryByRole("button", { name: "Enter system" }),
+    ).not.toBeInTheDocument();
+
+    await user.click(close);
+    expect(
+      screen.queryByRole("dialog", { name: "Selected object" }),
+    ).not.toBeInTheDocument();
+    await waitFor(() => expect(menu).toHaveFocus());
+  });
+
   it("opens About from the desktop title link and returns focus to it", async () => {
     const user = userEvent.setup();
     render(<App />);
@@ -1360,6 +1438,7 @@ describe("atlas shell", () => {
   });
 
   it("puts Reset view on the map as one labelled icon control", async () => {
+    featureFlags.enterSystem = true;
     const user = userEvent.setup();
     render(<App />);
     const map = screen.getByRole("region", {

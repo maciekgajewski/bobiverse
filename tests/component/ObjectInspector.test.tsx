@@ -60,6 +60,57 @@ function item(entity: NarrativeEntity): NarrativeBrowserItem {
 describe("object inspector", () => {
   afterEach(cleanup);
 
+  it("hides Enter system while ENABLE_ENTER_SYSTEM is off", () => {
+    // The real flag module, not a mock: this fails once the flag is turned
+    // back on, as a reminder to restore the Enter system tests' coverage.
+    const system = sparseEntities.find(
+      (entity) => entity.id === "location:sparse-system",
+    )!;
+    render(
+      <ObjectInspector
+        selection={{ kind: "narrative", id: system.id }}
+        narrativeItem={item(system)}
+        world={world}
+        systems={[]}
+        assets={{ assets: [] }}
+        onSelect={vi.fn()}
+        systemEntry={{
+          astronomySystemId: "stellar-system-000001",
+          narrativeSystemId: system.id,
+        }}
+      />,
+    );
+    expect(
+      screen.getByRole("heading", { name: "Sparse system" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Enter system" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("omits the in-body history controls when the host renders them", () => {
+    const entity = sparseEntities[0]!;
+    const props = {
+      selection: { kind: "narrative", id: entity.id } as const,
+      narrativeItem: item(entity),
+      world,
+      systems: [],
+      assets: { assets: [] },
+      onSelect: vi.fn(),
+    };
+    const { rerender } = render(<ObjectInspector {...props} />);
+    expect(
+      screen.getByRole("navigation", { name: "Inspector history" }),
+    ).toBeInTheDocument();
+    rerender(<ObjectInspector {...props} showHistoryControls={false} />);
+    expect(
+      screen.queryByRole("navigation", { name: "Inspector history" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: entity.name as string }),
+    ).toBeInTheDocument();
+  });
+
   it("renders every supported narrative type safely with sparse fields", () => {
     const onSelect = vi.fn();
     const { rerender } = render(

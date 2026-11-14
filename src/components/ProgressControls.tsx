@@ -25,6 +25,15 @@ export function ResetViewIcon() {
   );
 }
 
+export function CloseIcon() {
+  return (
+    <svg className="close-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M6 6l12 12" />
+      <path d="M18 6 6 18" />
+    </svg>
+  );
+}
+
 export function ReadThroughOptions({
   chapters,
 }: {

@@ -2,8 +2,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AboutDialog } from "./components/AboutDialog";
 import { StarMap, type MapScale } from "./components/MapScene";
 import { ObjectBrowser } from "./components/ObjectBrowser";
-import { ObjectInspector } from "./components/ObjectInspector";
 import {
+  InspectorHistoryControls,
+  ObjectInspector,
+} from "./components/ObjectInspector";
+import {
+  CloseIcon,
   KnowledgeThroughSelect,
   ResetViewIcon,
   TimelineModeToggle,
@@ -59,6 +63,7 @@ import {
   narrativePreparationError,
 } from "./narrative/runtime";
 import { resolveSpeciesPresentations } from "./narrative/species-presentation";
+import { ENABLE_ENTER_SYSTEM } from "./features";
 import "./styles.css";
 
 const EMPTY_SYSTEMS: StellarSystem[] = [];
@@ -561,7 +566,9 @@ export default function App() {
     return String(name ?? "Object");
   };
   const enterSystemMode = (entry: SystemViewEntry) => {
-    if (systemMode) return;
+    // The flag hides the inspector entry point; this guard keeps any other
+    // caller from starting the disabled flow.
+    if (!ENABLE_ENTER_SYSTEM || systemMode) return;
     window.history.pushState(
       {
         ...(window.history.state ?? {}),
@@ -1210,9 +1217,36 @@ export default function App() {
               }
             }}
           >
-            <button className="button close-panel" onClick={closeMobilePanel}>
-              Close
-            </button>
+            {/* The close icon comes first in the DOM so it takes initial
+                focus; the header row is row-reverse, so it sits top-right
+                and the inspector history sits top-left on the same row. */}
+            <div className="compact-panel-header">
+              <button
+                type="button"
+                className="button quiet close-panel"
+                aria-label="Close"
+                title="Close"
+                onClick={closeMobilePanel}
+              >
+                <CloseIcon />
+              </button>
+              {/* Matches ObjectInspector: history shows for a selection,
+                  never for a Date context. */}
+              {mobilePanel === "inspector" &&
+                selection &&
+                !activeDateContext && (
+                  <InspectorHistoryControls
+                    canGoBack={inspectorHistory.index > 0}
+                    canGoForward={
+                      inspectorHistory.index >= 0 &&
+                      inspectorHistory.index <
+                        inspectorHistory.entries.length - 1
+                    }
+                    onBack={() => navigateInspectorHistory(-1)}
+                    onForward={() => navigateInspectorHistory(1)}
+                  />
+                )}
+            </div>
             {mobilePanel === "menu" ? (
               <nav className="compact-menu" aria-label="Atlas menu">
                 <div className="compact-menu-heading">
@@ -1311,6 +1345,7 @@ export default function App() {
                 knownAstronomySystemIds={mapProjection.knownSystemIds}
                 assets={narrativeCorpus.assets}
                 headingId="compact-object-details-heading"
+                showHistoryControls={false}
                 canGoBack={inspectorHistory.index > 0}
                 canGoForward={
                   inspectorHistory.index >= 0 &&

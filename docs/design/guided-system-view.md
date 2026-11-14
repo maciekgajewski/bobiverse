@@ -134,6 +134,10 @@ if one exists.
 The ordinary interstellar map keeps its current single-selection behavior. Selecting
 a system does not enter local view.
 
+> **Disabled for now.** Since 2026-11-14 the **Enter system** action is hidden behind
+> `ENABLE_ENTER_SYSTEM = false` in `src/features.ts` (BOB-20261114-DA3Y3B). This section
+> describes the flow as it returns when the flag is turned back on.
+
 The selected system's inspector exposes an explicit **Enter system** action only
 when the projected hierarchy has meaningful composition:
 
