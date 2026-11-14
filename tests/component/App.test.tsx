@@ -33,13 +33,23 @@ vi.mock("../../src/components/MapScene", async (importOriginal) => {
         return <actual.StarMap {...props} />;
       }
       return (
-        <button
-          type="button"
-          data-testid="star-map-deselect"
-          onClick={() => props.onDeselect()}
-        >
-          Deselect map
-        </button>
+        <>
+          <button
+            type="button"
+            data-testid="star-map-deselect"
+            onClick={() => props.onDeselect()}
+          >
+            Deselect map
+          </button>
+          {/* A map tap on the Sol system marker. */}
+          <button
+            type="button"
+            data-testid="star-map-select-sol"
+            onClick={() => props.onSelect("sol")}
+          >
+            Select Sol on the map
+          </button>
+        </>
       );
     },
   };
@@ -1309,11 +1319,152 @@ describe("atlas shell", () => {
       within(dialog).queryByRole("button", { name: "Enter system" }),
     ).not.toBeInTheDocument();
 
+    // DOM order matches the visual order (history, trail, X), so Tab and
+    // Shift+Tab follow the row; the X still takes initial focus.
+    expect(header.lastElementChild).toBe(close);
+
     await user.click(close);
     expect(
       screen.queryByRole("dialog", { name: "Selected object" }),
     ).not.toBeInTheDocument();
     await waitFor(() => expect(menu).toHaveFocus());
+  });
+
+  it("shows the compact detail as a non-modal snap sheet with grabber controls", async () => {
+    vi.stubGlobal("matchMedia", compactMatchMedia);
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: "Menu" }));
+    await user.click(screen.getByRole("button", { name: "Browse objects" }));
+    await user.click(
+      within(screen.getByRole("dialog", { name: "Object browser" })).getByRole(
+        "button",
+        { name: /^Solar System(?:Active)?$/ },
+      ),
+    );
+    const sheet = await screen.findByRole("dialog", {
+      name: "Selected object",
+    });
+    // Opened from the browser: half height, map still usable (no backdrop,
+    // not modal).
+    expect(sheet).toHaveAttribute("data-snap", "half");
+    expect(sheet).toHaveAttribute("aria-modal", "false");
+    expect(sheet).toHaveClass("detail-sheet");
+    expect(document.querySelector(".compact-panel-backdrop")).toBeNull();
+
+    await user.click(
+      within(sheet).getByRole("button", { name: "Expand details" }),
+    );
+    expect(sheet).toHaveAttribute("data-snap", "full");
+    await user.click(
+      within(sheet).getByRole("button", { name: "Collapse details" }),
+    );
+    expect(sheet).toHaveAttribute("data-snap", "peek");
+    within(sheet).getByRole("button", { name: "Expand details" }).focus();
+    await user.keyboard("{ArrowUp}");
+    expect(sheet).toHaveAttribute("data-snap", "half");
+    // The grabber is the sheet's first control; Shift+Tab wraps inside the
+    // sheet, so focus never disappears behind it.
+    await user.keyboard("{Shift>}{Tab}{/Shift}");
+    expect(sheet).toContainElement(document.activeElement as HTMLElement);
+    expect(document.activeElement).not.toBe(
+      within(sheet).getByRole("button", { name: "Expand details" }),
+    );
+
+    // Following a relationship keeps the chosen height.
+    await user.click(
+      within(sheet).getByRole("button", { name: "Expand details" }),
+    );
+    expect(sheet).toHaveAttribute("data-snap", "full");
+    await user.click(
+      within(sheet.querySelector<HTMLElement>(".sheet-body")!).getByRole(
+        "button",
+        { name: "Sol" },
+      ),
+    );
+    expect(
+      within(sheet).getByRole("heading", { name: "Sol" }),
+    ).toBeInTheDocument();
+    expect(sheet).toHaveAttribute("data-snap", "full");
+  });
+
+  it("opens the sheet at peek for a map tap and closes it on an empty map tap", async () => {
+    dateContextMapHarness.stubStarMap = true;
+    vi.stubGlobal("matchMedia", compactMatchMedia);
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(
+      {} as RenderingContext,
+    );
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(await screen.findByTestId("star-map-select-sol"));
+    const sheet = await screen.findByRole("dialog", {
+      name: "Selected object",
+    });
+    expect(sheet).toHaveAttribute("data-snap", "peek");
+    expect(
+      within(sheet).getByRole("heading", { name: "Solar System" }),
+    ).toBeInTheDocument();
+    // The map stays interactive while the sheet is open.
+    await user.click(screen.getByTestId("star-map-deselect"));
+    expect(
+      screen.queryByRole("dialog", { name: "Selected object" }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("Selection cleared.");
+  });
+
+  it("shows a real parent breadcrumb in the sheet header that navigates and updates", async () => {
+    vi.stubGlobal("matchMedia", compactMatchMedia);
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: "Menu" }));
+    await user.click(screen.getByRole("button", { name: "Browse objects" }));
+    const browser = screen.getByRole("dialog", { name: "Object browser" });
+    await user.type(
+      within(browser).getByRole("searchbox", {
+        name: "Search visible objects",
+      }),
+      "Earth",
+    );
+    await user.click(within(browser).getByRole("button", { name: /^Earth/ }));
+    const sheet = await screen.findByRole("dialog", {
+      name: "Selected object",
+    });
+    const header = sheet.querySelector<HTMLElement>(".compact-panel-header")!;
+    let trail = within(header).getByRole("navigation", {
+      name: "Object trail",
+    });
+    expect(trail).toHaveTextContent("Solar System›Sol›Earth");
+    expect(within(trail).getByText("Earth")).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+    expect(
+      within(trail).queryByRole("button", { name: "Earth" }),
+    ).not.toBeInTheDocument();
+
+    // A crumb navigates like a relationship link and joins the history.
+    await user.click(within(trail).getByRole("button", { name: "Sol" }));
+    expect(
+      within(sheet).getByRole("heading", { name: "Sol" }),
+    ).toBeInTheDocument();
+    trail = within(header).getByRole("navigation", { name: "Object trail" });
+    expect(trail).toHaveTextContent("Solar System›Sol");
+    expect(within(trail).getByText("Sol")).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+    const back = within(header).getByRole("button", { name: "Back" });
+    expect(back).toBeEnabled();
+    await user.click(back);
+    expect(
+      within(sheet).getByRole("heading", { name: "Earth" }),
+    ).toBeInTheDocument();
+    expect(
+      within(header).getByRole("navigation", { name: "Object trail" }),
+    ).toHaveTextContent("Solar System›Sol›Earth");
+    expect(
+      within(header).getByRole("button", { name: "Forward" }),
+    ).toBeEnabled();
   });
 
   it("opens About from the desktop title link and returns focus to it", async () => {
