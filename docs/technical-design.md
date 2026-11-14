@@ -694,8 +694,13 @@ exception: after the centralized reader-safe world projection, they join to the
 separately validated species-presentation registry for one original monochrome SVG
 and accent colour. The registry owns all accepted styles, explicit assignments from
 existing canonical species IDs, and one generic default; it does not add fields to
-narrative species records or predeclare future narrative IDs. The legacy astronomy
-directory is removed; catalogue selection
+narrative species records or predeclare future narrative IDs. The inspector header
+(BOB-20261114-AYW3EN) shows the type, the name, a location's kind in a smaller line
+directly under it, and an optional illustration resolved only for an entity present
+in the projected world: its own `picture_id` illustration, else a code-side decorative
+presentation illustration (currently only GUPPI, see Section 11), else a species'
+presentation icon. A location's map-context status is the panel's last section.
+The legacy astronomy directory is removed; catalogue selection
 is map-driven until BOB-014 supplies the final query-only contextual astronomy DOM
 path. Neither the browser nor inspector owns map markers, astronomy context coverage,
 narrative schema facts, or a second spoiler filter.
@@ -721,6 +726,15 @@ restrained luminous accents, readable overlays, depth, and clear selection state
 “Stellaris-like” describes mood and information density only. Third-party game assets,
 layouts, character likenesses, fonts, audio, and copied visual treatments are outside
 the design.
+
+GUPPI's inspector-header illustration is covered by the About dialog's Admiral Ackbar
+exception below: it is a head crop of that picture
+(`public/assets/guppi-ackbar-head.webp`) with the same credit as its alternative text
+and in `public/assets/CREDITS.md`. Because technology records cannot carry
+`picture_id`, it is registered in code by entity ID
+(`src/narrative/header-illustration.ts`) and joined only after reader-safe
+projection, so it is shown only while GUPPI is reader-visible
+(`tasks/BOB-20261114-AYW3EN-info-panel-header.md`).
 
 Assistant characters are deferred. Any public implementation must use original
 visual designs rather than an Admiral Ackbar or John Cleese likeness. The About
