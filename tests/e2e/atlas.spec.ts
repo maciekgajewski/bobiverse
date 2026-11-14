@@ -1,5 +1,12 @@
 import { expect, test, type Page } from "@playwright/test";
 import path from "node:path";
+import { ENABLE_ENTER_SYSTEM } from "../../src/features";
+
+// Enter system is disabled behind ENABLE_ENTER_SYSTEM (src/features.ts) at the
+// Captain's request of 2026-11-14. Its e2e coverage is kept and runs again as
+// soon as the flag is turned back on.
+const ENTER_SYSTEM_DISABLED =
+  "Enter system is disabled by ENABLE_ENTER_SYSTEM in src/features.ts";
 
 // Variant A puts compact commands in a top-bar menu drawer.
 async function openMenuCommand(page: Page, name: string): Promise<void> {
@@ -397,6 +404,7 @@ test("canvas picking selects a known map system after framing settles", async ({
 test("Solar System enters and exits the fixed system mode", async ({
   page,
 }) => {
+  test.skip(!ENABLE_ENTER_SYSTEM, ENTER_SYSTEM_DISABLED);
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   await page.getByRole("button", { name: "Solar System" }).click();
@@ -467,6 +475,7 @@ test("Solar System enters and exits the fixed system mode", async ({
 test("immediate system entry completes ordinary focus before pose capture", async ({
   page,
 }) => {
+  test.skip(!ENABLE_ENTER_SYSTEM, ENTER_SYSTEM_DISABLED);
   await page.goto("/");
   await page.waitForFunction(() => window.__bob034MapPerformance !== undefined);
   await page.getByRole("button", { name: "Solar System" }).click();
@@ -518,6 +527,7 @@ test("ordinary map reframes after a canvas resize", async ({ page }) => {
 test("system-mode dollies preserve direction and restore the exact camera pose", async ({
   page,
 }) => {
+  test.skip(!ENABLE_ENTER_SYSTEM, ENTER_SYSTEM_DISABLED);
   // A fixed, future pause boundary cannot become stale between protocol calls.
   // Keep natural loading timers until the map is ready, as Playwright recommends.
   await page.clock.install({ time: new Date("2026-01-01T00:00:00Z") });
@@ -669,6 +679,31 @@ test("system-mode dollies preserve direction and restore the exact camera pose",
       afterRotation.camera[2] - beforeRotation.camera[2],
     ),
   ).toBeGreaterThan(0.01);
+});
+
+test("desktop inspector hides Enter system and keeps its small history controls", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Solar System" }).click();
+  const inspector = page.getByRole("complementary", {
+    name: "Object inspector",
+  });
+  await expect(
+    inspector.getByRole("heading", { name: "Solar System" }),
+  ).toBeVisible();
+  await expect(
+    inspector.getByRole("button", { name: "Enter system" }),
+  ).toHaveCount(0);
+  await expect(
+    inspector.getByRole("navigation", { name: "Inspector history" }),
+  ).toHaveCount(1);
+  for (const name of ["Back", "Forward"]) {
+    const box = (await inspector.getByRole("button", { name }).boundingBox())!;
+    // The mouse-sized desktop controls are unchanged by the mobile fix.
+    expect(box.height).toBeLessThan(30);
+  }
 });
 
 test("compact inspector stays inside the viewport", async ({ page }) => {

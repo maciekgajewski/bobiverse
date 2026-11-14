@@ -17,6 +17,7 @@ import { defaultCharacterInspectorSectionState } from "../narrative/progress";
 import { SystemDetails } from "./SystemDetails";
 import { ObjectItemBullet } from "./ObjectBrowserIcons";
 import type { SystemViewEntry } from "../system-view";
+import { ENABLE_ENTER_SYSTEM } from "../features";
 
 const typeLabels: Record<NarrativeEntity["entity_type"], string> = {
   character: "Character",
@@ -259,7 +260,7 @@ function NarrativeDetails({
     >
       <p className="eyebrow">{typeLabels[entity.entity_type]}</p>
       <h2 id={headingId}>{name}</h2>
-      {systemEntry?.narrativeSystemId === entity.id && (
+      {ENABLE_ENTER_SYSTEM && systemEntry?.narrativeSystemId === entity.id && (
         <button
           className="button enter-system"
           type="button"

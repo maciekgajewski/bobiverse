@@ -12,6 +12,17 @@ const dateContextMapHarness = vi.hoisted(() => ({
   stubStarMap: false,
 }));
 
+// Enter system is off in the app (src/features.ts). The tests that cover the
+// system-view flow turn it back on through this mock, so the disabled flow
+// stays tested and can be re-enabled without rewriting them.
+const featureFlags = vi.hoisted(() => ({ enterSystem: false }));
+
+vi.mock("../../src/features", () => ({
+  get ENABLE_ENTER_SYSTEM() {
+    return featureFlags.enterSystem;
+  },
+}));
+
 vi.mock("../../src/components/MapScene", async (importOriginal) => {
   const actual =
     await importOriginal<typeof import("../../src/components/MapScene")>();
@@ -58,6 +69,7 @@ const compactMatchMedia = (query: string) => ({
 describe("atlas shell", () => {
   afterEach(() => {
     dateContextMapHarness.stubStarMap = false;
+    featureFlags.enterSystem = false;
     cleanup();
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
@@ -110,7 +122,28 @@ describe("atlas shell", () => {
     ).toBeInTheDocument();
   });
 
+  it("hides Enter system while its feature flag is off", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(
+      screen.getByRole("button", { name: /^Solar System(?:Active)?$/ }),
+    );
+    const inspector = screen.getByRole("complementary", {
+      name: "Object inspector",
+    });
+    expect(
+      within(inspector).getByRole("heading", { name: "Solar System" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Enter system" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Return to map" }),
+    ).not.toBeInTheDocument();
+  });
+
   it("offers the canonical Solar System view through DOM controls", async () => {
+    featureFlags.enterSystem = true;
     const user = userEvent.setup();
     render(<App />);
 
@@ -151,6 +184,7 @@ describe("atlas shell", () => {
   });
 
   it("announces why a system view closes after its projection becomes ineligible", async () => {
+    featureFlags.enterSystem = true;
     const originalEntryResolver =
       systemView.systemViewEntryForNarrativeSelection;
     const entryResolver = vi
@@ -1274,6 +1308,7 @@ describe("atlas shell", () => {
   });
 
   it("puts Reset view on the map as one labelled icon control", async () => {
+    featureFlags.enterSystem = true;
     const user = userEvent.setup();
     render(<App />);
     const map = screen.getByRole("region", {

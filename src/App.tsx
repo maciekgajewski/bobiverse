@@ -58,6 +58,7 @@ import {
   narrativePreparationError,
 } from "./narrative/runtime";
 import { resolveSpeciesPresentations } from "./narrative/species-presentation";
+import { ENABLE_ENTER_SYSTEM } from "./features";
 import "./styles.css";
 
 const EMPTY_SYSTEMS: StellarSystem[] = [];
@@ -541,7 +542,9 @@ export default function App() {
     return String(name ?? "Object");
   };
   const enterSystemMode = (entry: SystemViewEntry) => {
-    if (systemMode) return;
+    // The flag hides the inspector entry point; this guard keeps any other
+    // caller from starting the disabled flow.
+    if (!ENABLE_ENTER_SYSTEM || systemMode) return;
     window.history.pushState(
       {
         ...(window.history.state ?? {}),
