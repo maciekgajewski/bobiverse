@@ -904,7 +904,13 @@ the cross-record semantic pass, clones the accepted data away from its mutable i
 deeply freezes it, and builds private chapter-order, chapter-lookup, meaningful-date,
 and immutable chapter-detail source indexes. Projection APIs accept only this
 prepared corpus. Prepared indexes are implementation state and never appear in a
-public `NarrativeWorld`.
+public `NarrativeWorld`. The projected-location constraint pass (survey properties
+on an effective kind, transit system-status fields, colony_of combined with
+possible_colony_target, and the four-moon cap) is part of that semantic pass in
+development, tests, and `npm run narrative:validate`. Production browser builds
+skip that one pass at startup because `npm run build` already ran
+`narrative:validate` over the same corpus; every other structural and semantic
+check still runs during preparation.
 
 One Draft 2020-12 Ajv registry lives for the application or CLI module lifetime. Each
 named schema validator is resolved and cached once, including the generated-world
