@@ -323,6 +323,15 @@ including the selected one, does. Canvas picking explicitly resolves the closest
 marker hit to the camera; this preserves selected-star tooltips and re-selection while
 ensuring an overlapping closer system is selected instead of the decorative frame.
 
+Each component's larger click target is a never-drawn (`visible={false}`) quad;
+three.js raycasting ignores visibility, so picking is unaffected. Its material is
+also `forceSinglePass`: three.js otherwise draws a transparent double-sided
+material in back and front passes, flagging `needsUpdate` before each, which
+re-derived program parameters for every star component on every frame
+(BOB-20261114-WT522P). The `renderStats()` map bridge and an e2e guard require an
+idle map to show no material-version growth, a stable program count and no
+two-pass materials.
+
 Every rendered catalogue component retains every applicable GCNS/Gaia, CNS5, WDS,
 and accepted 20-pc-census identifier plus the fact and provenance used for
 presentation. Sol is an explicit generated origin using the same marker pipeline.

@@ -402,6 +402,124 @@ test("canvas picking selects a known map system after framing settles", async ({
   ).toHaveCount(1);
 });
 
+async function seedChapter(page: Page, chapter: string): Promise<void> {
+  await page.addInitScript((viewChapter) => {
+    window.localStorage.setItem(
+      "bobiverse.app-state.v2",
+      JSON.stringify({
+        furthestChapterRead: viewChapter,
+        viewChapter,
+        displayDate: null,
+        mode: "chapter",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+  }, chapter);
+}
+
+test("canvas picking uses the invisible click target outside the visible star", async ({
+  page,
+}) => {
+  test.setTimeout(45_000);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await seedChapter(page, "1.61");
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/");
+  await page.waitForFunction(() => window.__bob034MapPerformance !== undefined);
+  await settleMapCamera(page);
+  const inspector = page.getByRole("complementary", {
+    name: "Object inspector",
+  });
+  // WISE 0855-0714 is astronomy-only with a 0.05 visible quad inside a 0.09
+  // click target, so a click between the two radii can only hit the target.
+  await page
+    .getByRole("searchbox", { name: "Search visible objects" })
+    .fill("WISE 0855-0714");
+  await page.getByRole("button", { name: /WISE 0855-0714/ }).click();
+  await expect(
+    inspector.getByRole("heading", { name: "WISE 0855-0714" }),
+  ).toBeVisible();
+  await settleMapCamera(page);
+  const canvas = page.getByTestId("star-map-canvas");
+  await canvas.hover({ position: { x: 100, y: 40 } });
+  for (let step = 0; step < 80; step += 1) {
+    await page.mouse.wheel(0, -120);
+  }
+  await settleMapCamera(page);
+  await canvas.click({ position: { x: 100, y: 40 } });
+  await expect(
+    page.getByText(
+      "Select a map marker or browser item to inspect its reader-safe details.",
+    ),
+  ).toBeVisible();
+  await page.mouse.move(1, 1);
+  await settleMapCamera(page);
+  const probe = await page.evaluate(() =>
+    window.__bob034MapPerformance!.componentScreenRadii(
+      "stellar-component-000138",
+    ),
+  );
+  expect(probe.pickRadiusPx - probe.visibleRadiusPx).toBeGreaterThan(8);
+  const ring = {
+    x: probe.x + (probe.visibleRadiusPx + probe.pickRadiusPx) / 2,
+    y: probe.y,
+  };
+  expect(
+    await page.evaluate(
+      ({ x, y }) => document.elementFromPoint(x, y)?.tagName,
+      ring,
+    ),
+  ).toBe("CANVAS");
+  await page.mouse.click(ring.x, ring.y);
+  await page.mouse.move(1, 1);
+  await expect(
+    inspector.getByRole("heading", { name: "WISE 0855-0714" }),
+  ).toBeVisible();
+});
+
+test("an idle map has no per-frame material or shader-program churn", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await seedChapter(page, "1.61");
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/");
+  await expect(
+    page
+      .locator(".map-narrative-badge")
+      .filter({ hasText: "Knowledge through Chapter 1.61" }),
+  ).toBeVisible();
+  await page.waitForFunction(() => window.__bob034MapPerformance !== undefined);
+  await settleMapCamera(page);
+  await page.mouse.move(1, 1);
+  // Count rendered animation frames rather than wall time, so a slow software
+  // renderer measures the same 60 frames as a GPU.
+  const { before, after } = await page.evaluate(
+    () =>
+      new Promise<{
+        before: ReturnType<Bob034MapPerformanceBridge["renderStats"]>;
+        after: ReturnType<Bob034MapPerformanceBridge["renderStats"]>;
+      }>((resolve) => {
+        const bridge = window.__bob034MapPerformance!;
+        const start = bridge.renderStats();
+        let frames = 0;
+        const step = () => {
+          frames += 1;
+          if (frames < 60) requestAnimationFrame(step);
+          else resolve({ before: start, after: bridge.renderStats() });
+        };
+        requestAnimationFrame(step);
+      }),
+  );
+  expect(after.materials).toBeGreaterThan(300);
+  // A transparent double-sided material without forceSinglePass is drawn in
+  // two passes, each flagging needsUpdate, so its version climbs every frame.
+  expect(after.twoPassMaterials).toBe(0);
+  expect(after.materialVersionSum - before.materialVersionSum).toBe(0);
+  expect(after.programs).toBe(before.programs);
+});
+
 test("Solar System enters and exits the fixed system mode", async ({
   page,
 }) => {

@@ -20,6 +20,21 @@ interface Bob034MapPerformanceBridge {
     knownSystemIds: string[];
     activeSystemIds: string[];
   };
+  /** Screen centre and radii (px) of one component's visible and click quads. */
+  componentScreenRadii: (componentId: string) => {
+    x: number;
+    y: number;
+    visibleRadiusPx: number;
+    pickRadiusPx: number;
+  };
+  /** Renderer and scene-material counters for render-churn regression tests. */
+  renderStats: () => {
+    programs: number;
+    drawCalls: number;
+    materials: number;
+    materialVersionSum: number;
+    twoPassMaterials: number;
+  };
   renderer: () => string;
 }
 
