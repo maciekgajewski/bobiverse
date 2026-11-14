@@ -506,7 +506,10 @@ inspector action begins a pseudo-continuous transition. The existing aligned Gal
 backdrop remains visible, other interstellar systems become dim non-interactive
 context, and the selected system unfolds into a separate schematic coordinate space.
 Exit restores the exact interstellar camera and selection state that existed at
-entry.
+entry. Since 2026-11-14 the flow is disabled behind `ENABLE_ENTER_SYSTEM` in
+`src/features.ts` (BOB-20261114-DA3Y3B): the **Enter system** action is hidden on every
+layout and system mode cannot start. Its code and tests remain and return when the
+flag is set to `true`.
 
 The projected location hierarchy is the sole system-composition authority. Component
 stars are direct `member_of_system` children. Each star owns only its existing
@@ -641,8 +644,9 @@ Below the simultaneous-layout breakpoint, including when 200% desktop zoom reduc
 the CSS viewport, the BOB-003 map-first browser and inspector panels remain in use.
 The command-bar menu additionally opens **Timeline and progress** as a non-animated
 modal panel containing the same `TimelineDock` component and shared projection state as the
-desktop dock. The compact panel provides a visible close control, Escape dismissal,
-focus containment, and focus return. This is the BOB-015 desktop-zoom contract;
+desktop dock. The compact panel provides a visible close control (a 44px X icon
+named **Close** in the panel's top-right corner), Escape dismissal, focus
+containment, and focus return. This is the BOB-015 desktop-zoom contract;
 BOB-016 may later recompose the same components for a first-class phone and tablet
 design without replacing their state or projection authority.
 

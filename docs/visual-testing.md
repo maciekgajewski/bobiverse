@@ -579,6 +579,18 @@ On a phone in portrait (about 390×844) and landscape (about 844×390), and on d
 - On desktop, both rails and the timeline dock remain, and the map is larger than
   before.
 
+## BOB-20261114-DA3Y3B mobile detail window
+
+On a phone in portrait (about 390×844), with an object open in the detail window:
+
+- The window has no text **Close** button. A 44px X icon named **Close** sits in its
+  top-right corner. It, Escape and tapping outside close the window, and focus returns
+  to the menu button.
+- The **Back** and **Forward** history arrows are 44px tap targets on the same header
+  row as the X, to its left, with visibly distinct disabled states.
+- There is no **Enter system** button on phones or desktop while `ENABLE_ENTER_SYSTEM`
+  is off. The desktop inspector's history arrows keep their small framed size.
+
 ## Default and reset camera
 
 The repeatable default camera pose preserves the documented Three.js viewing
