@@ -1223,7 +1223,10 @@ function validateNarrativeCorpusStructure(
     throw new NarrativeStructureValidationError(diagnostics);
 }
 
-function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
+function validateNarrativeCorpusSemantics(
+  corpus: NarrativeCorpus,
+  options: { skipProjectedLocationConstraints?: boolean } = {},
+): void {
   const assertGregorianDates = (value: unknown, pointer: string): void => {
     if (Array.isArray(value)) {
       value.forEach((entry, index) =>
@@ -1625,7 +1628,9 @@ function validateNarrativeCorpusSemantics(corpus: NarrativeCorpus): void {
     }
   }
   assertTemporalWrites(chapters);
-  assertProjectedLocationConstraints(zeroStateEntities, chapters);
+  if (!options.skipProjectedLocationConstraints) {
+    assertProjectedLocationConstraints(zeroStateEntities, chapters);
+  }
 
   const presentation = corpus.speciesPresentation;
   const styles = Array.isArray(presentation.styles) ? presentation.styles : [];
@@ -1815,6 +1820,18 @@ export interface PrepareNarrativeCorpusOptions {
 }
 
 /**
+ * Production Vite bundles expose `import.meta.env.PROD === true`. tsx and
+ * Node have no `import.meta.env`, so this is false for `narrative:validate`.
+ * Vitest keeps `PROD` false, so tests still run the check.
+ */
+function isViteProductionBuild(): boolean {
+  const env = (
+    import.meta as ImportMeta & { readonly env?: { readonly PROD?: boolean } }
+  ).env;
+  return env?.PROD === true;
+}
+
+/**
  * Validates and isolates authored input once, then returns the immutable corpus
  * accepted by reader-safe projection APIs.
  */
@@ -1823,7 +1840,11 @@ export function prepareNarrativeCorpus(
   options: PrepareNarrativeCorpusOptions = {},
 ): PreparedNarrativeCorpus {
   validateNarrativeCorpusStructure(rawCorpus, options.formatStructureErrors);
-  validateNarrativeCorpusSemantics(rawCorpus);
+  // Production browser builds skip the projected-location constraint pass;
+  // `npm run build` already ran it via `narrative:validate` over this corpus.
+  validateNarrativeCorpusSemantics(rawCorpus, {
+    skipProjectedLocationConstraints: isViteProductionBuild(),
+  });
   const prepared = deepFreeze(
     structuredClone(rawCorpus),
   ) as PreparedNarrativeCorpus;

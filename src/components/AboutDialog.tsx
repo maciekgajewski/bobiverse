@@ -5,10 +5,12 @@ import { createPortal } from "react-dom";
 // kept verbatim in AboutCopy so it can be edited in one place.
 export const ABOUT_TITLE = "What is this?";
 export const ABOUT_IMAGE_SRC = "/assets/ackbar.webp";
-export const ABOUT_IMAGE_ALT = "Admiral Ackbar";
-// Must match public/assets/CREDITS.md.
-export const ABOUT_IMAGE_CREDIT =
+// Full credit; also matches the credit block in public/assets/CREDITS.md.
+export const ABOUT_IMAGE_ALT =
   "Admiral Ackbar illustration by Michael Sutfin, from The New Essential Guide to Characters. Star Wars © Lucasfilm Ltd. Used under fair use.";
+export const ABOUT_IMAGE_SOURCE =
+  "https://starwars.fandom.com/wiki/File:Ackbar-NEGTC.png";
+export const ABOUT_IMAGE_CAPTION = "Guppy, or Admiral Ackbar";
 
 const FOCUSABLE_DIALOG_ELEMENTS =
   'a[href], button:not(:disabled), [tabindex]:not([tabindex="-1"])';
@@ -147,7 +149,12 @@ export function AboutDialog({ onClose }: { onClose: () => void }) {
               height={200}
               decoding="async"
             />
-            <figcaption>{ABOUT_IMAGE_CREDIT}</figcaption>
+            <figcaption>
+              Guppy, or{" "}
+              <ExternalLink href={ABOUT_IMAGE_SOURCE}>
+                Admiral Ackbar
+              </ExternalLink>
+            </figcaption>
           </figure>
           <div className="about-copy">
             <AboutCopy />

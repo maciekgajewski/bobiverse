@@ -722,7 +722,9 @@ Assistant characters are deferred. Any public implementation must use original
 visual designs rather than an Admiral Ackbar or John Cleese likeness. The About
 dialog's small, credited Admiral Ackbar illustration is a separate, Captain-approved
 exception (fair use, 2026-11-13): it is a decorative reference, not an assistant
-character, and its credit lives in the dialog caption and `public/assets/CREDITS.md`
+character. The visible caption is "Guppy, or Admiral Ackbar", with "Admiral Ackbar"
+linking to the source illustration; the full credit lives in the image's alternative
+text and in `public/assets/CREDITS.md`
 (`tasks/BOB-20261114-KA0X30-about-dialog.md`).
 
 ## 12. Narrative data and spoiler model
@@ -902,7 +904,13 @@ the cross-record semantic pass, clones the accepted data away from its mutable i
 deeply freezes it, and builds private chapter-order, chapter-lookup, meaningful-date,
 and immutable chapter-detail source indexes. Projection APIs accept only this
 prepared corpus. Prepared indexes are implementation state and never appear in a
-public `NarrativeWorld`.
+public `NarrativeWorld`. The projected-location constraint pass (survey properties
+on an effective kind, transit system-status fields, colony_of combined with
+possible_colony_target, and the four-moon cap) is part of that semantic pass in
+development, tests, and `npm run narrative:validate`. Production browser builds
+skip that one pass at startup because `npm run build` already ran
+`narrative:validate` over the same corpus; every other structural and semantic
+check still runs during preparation.
 
 One Draft 2020-12 Ajv registry lives for the application or CLI module lifetime. Each
 named schema validator is resolved and cached once, including the generated-world

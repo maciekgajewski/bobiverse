@@ -1391,6 +1391,20 @@ describe("narrative corpus validation and projection", () => {
     );
   });
 
+  it("prepareNarrativeCorpus, the build-time validator entry, rejects a constraint violation", () => {
+    const ineligibleUpdate = createNarrativeFixtureCorpus();
+    ineligibleUpdate.chapters[1]!.updates = [
+      {
+        entity_id: "location:mars",
+        kind: "locale",
+        color: "rust red",
+      },
+    ];
+    expect(() => prepareNarrativeCorpus(ineligibleUpdate)).toThrow(
+      "projection at 2200.2 leaves survey properties color on effective location kind locale for location:mars",
+    );
+  });
+
   it("projects deterministic non-metric orbital ordering across introductions and updates", () => {
     const corpus = createNarrativeFixtureCorpus();
     corpus.knownAstronomyObjectIds = ["sol", "fixture-system"];
