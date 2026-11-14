@@ -14,7 +14,7 @@
   "updates": [
     {
       "entity_id": "character:riker",
-      "current_state": "At Sol, defending a plan for unpopulated kudzu-farming space stations against outrage in the UN assembly while Homer's printers build Arthur's replacement. He has agreed to give FAITH's enclave the balance of ship three's allocation in exchange for its food surplus, and is monitoring a hack attempt traced to New Zealand."
+      "current_state": "At Sol, defending the kudzu-farm plan against outrage in the UN assembly while Homer's printers build Arthur's replacement; he has traded FAITH's enclave the rest of ship three's places for its food surplus."
     },
     {
       "entity_id": "character:homer",
@@ -38,7 +38,7 @@
     },
     {
       "entity_id": "organization:free-american-independent-theocratic-hegemony",
-      "description": "The Free American Independent Theocratic Hegemony, a theocratic U.S. government that makes criticism a felony and permits the deactivation of machine persons for it. It restricts information by default; the domestic internet no longer exists, and genealogy records are unavailable to the public. It is divided into factions and power blocs, including factions that regard artificial intelligence and replicants as abominations or advocate abandoning technology from steam power onward. It finances the replicant project and owns Bob. It controls most of North America, while several internal factions oppose Project HEAVEN, the Habitable Earths Abiogenic Vessel Exploration Network, and seek to stop it. Security personnel believe internal factions leaked the project's progress to provoke competing nations into reacting. According to Minister Cranston, its probe technology may not have been entirely original research: one of its agents may have borrowed ideas from Australia's probe work.",
+      "description": "The Free American Independent Theocratic Hegemony, a theocratic U.S. government that makes criticism a felony and permits the deactivation of machine persons for it. It controls most of North America, restricts information by default, and finances the replicant project, owning Bob. Some of its factions regard AI and replicants as abominations or reject all technology since steam power, and several seek to stop Project HEAVEN, the Habitable Earths Abiogenic Vessel Exploration Network. According to Minister Cranston, its probe technology may partly derive from Australian probe work.",
       "current_state": "Its enclave, not the richest but holding some food surplus, has agreed to give up that surplus in exchange for the balance of ship three's allocation alongside the Spits."
     },
     {
@@ -65,7 +65,7 @@
     },
     {
       "entity_id": "vessel:use-colony-ship",
-      "current_state": "Construction continues on schedule, with the Spitsbergen refuge assigned to ship three and FAITH's enclave to receive the balance of that ship's allocation. Diverting scavenged materials to farming space stations will reduce the number of future colony ships without affecting the current schedule."
+      "current_state": "Construction is on schedule, with ship three assigned to the Spitsbergen refuge and FAITH's enclave; diverting scavenged materials to farm stations will mean fewer future colony ships."
     }
   ],
   "appearances": [

@@ -8,19 +8,19 @@
     {
       "entity_id": "character:bob-replicant",
       "aliases": ["Bob-1", "bawbe"],
-      "current_state": "At Delta Eridani, he has brought the Deltan migration to the flint site and settled the tribe in its former camp. Rejecting a mass culling, he keeps buster AMIs on sentry duty to kill any gorilloid that comes too close, with a standing order to Guppy covering a hundred meters around the Deltans, so that the gorilloids learn to avoid the area and teach their young to do the same. Having neglected biological study since finding the Deltans, he now traces the dense local gorilloid population to its seedpod diet and attraction to protein, though something about its numbers still puzzles him, and he means to question an elder who seemed uneasy about why the camp was abandoned. He means to help the Deltans for about a generation and then fade into legend."
+      "current_state": "At Delta Eridani, he has settled the Deltans at the flint site and, rejecting a mass culling, has buster AMIs and Guppy kill any gorilloid that comes too close. He means to help the Deltans for about a generation and then fade into legend."
     },
     {
       "entity_id": "character:marvin",
-      "current_state": "At Delta Eridani with Bob, with a batch of new Bobs under way at the autofactory. He opposed a mass culling of the gorilloids around the flint site and warns, with an edge to his humour, that the tribe will learn to expect the bawbe's protection; he has shown Bob drone video of Deltans who built an altar of buster pieces and torches to the bawbe. He expects to leave in about a generation to explore and meet other species."
+      "current_state": "At Delta Eridani with Bob, having opposed a mass culling, he warns that the tribe will come to expect the bawbe's protection and has shown Bob their buster-piece altar. He expects to leave in about a generation to explore and meet other species."
     },
     {
       "entity_id": "character:moses",
-      "current_state": "At the flint site with the resettled tribe. He remembers only that his parents were very frightened when the former camp was abandoned, and believes gorilloids overran it. As soon as the tribe arrived he went off with Archimedes to a spot he had picked to start making axes and spearheads."
+      "current_state": "At the flint site with the resettled tribe, he believes gorilloids overran the old camp, and has gone off with Archimedes to make axes and spearheads."
     },
     {
       "entity_id": "character:archimedes",
-      "current_state": "Effectively a member of the tribal council and recently attached to Diana. At the flint site, he and Moses have set off to start making axes and spearheads, shadowed by a drone and a couple of busters. He trusts Bob's ideas but will not confront the tribe's medicine woman, and has agreed to introduce Bob to her."
+      "current_state": "Effectively a member of the tribal council and attached to Diana, he has set off with Moses at the flint site to make axes and spearheads, shadowed by a drone and a couple of busters."
     },
     {
       "entity_id": "character:arnold",

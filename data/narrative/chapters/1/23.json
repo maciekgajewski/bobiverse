@@ -20,7 +20,7 @@
     },
     {
       "entity_id": "technology:3d-printers",
-      "description": "Manufacturing equipment that gives Bob virtually unlimited flexibility for building things. The technology has become increasingly common but remains in its infancy; companies have demonstrated arranging individual atoms on a substrate. It can build more printers, robotic workers, miners, and Von Neumann machines. Some observers regard it as an early step toward practical self-assembling manufacturing systems."
+      "description": "Manufacturing equipment that gives Bob virtually unlimited flexibility for building things, including more printers, robotic workers, miners and Von Neumann machines. Increasingly common but still in its infancy, the technology has been shown to place individual atoms on a substrate."
     }
   ],
   "appearances": [

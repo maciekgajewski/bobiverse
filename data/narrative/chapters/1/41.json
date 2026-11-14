@@ -15,7 +15,7 @@
     {
       "entity_id": "technology:subspace-communications",
       "name": "SCUT",
-      "description": "SCUT, short for Subspace Communications Universal Transceiver, is a communications technology that carries signals through subspace. A finished unit uses a different transport layer while retaining the same object and virtual-reality interfaces. Its notes describe instantaneous communication across interstellar distances; earlier tests predicted dropouts at roughly twenty-five light-years, requiring stations to route longer links. The finished product is unadorned, without chrome or a logo."
+      "description": "SCUT, the Subspace Communications Universal Transceiver, carries signals through subspace; its notes describe instantaneous communication across interstellar distances, using the same object and VR interfaces as earlier tests. Those tests predicted dropouts at about twenty-five light-years, so longer links must be relayed."
     },
     {
       "entity_id": "character:riker",

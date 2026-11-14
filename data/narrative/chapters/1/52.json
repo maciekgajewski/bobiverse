@@ -7,7 +7,7 @@
   "updates": [
     {
       "entity_id": "character:riker",
-      "current_state": "At Sol, overseeing kudzu deliveries from Farm-1 to Earth's survivors and shifting supply schedules to offset further attacks on food supplies. He expects the second space farm, entering production within a week, to give a comfortable food surplus for about three years."
+      "current_state": "At Sol, overseeing Farm-1's kudzu deliveries around attacks on food supplies; he expects the second space farm to give a comfortable surplus for about three years."
     },
     {
       "entity_id": "character:homer",

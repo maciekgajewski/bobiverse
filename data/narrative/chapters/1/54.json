@@ -33,25 +33,25 @@
       "id": "vessel:exodus-3",
       "name": "Exodus-3",
       "description": "The third USE colony ship, known earlier as ship three, following Exodus-1 and Exodus-2.",
-      "current_state": "Still to follow the first two ships. It is to carry Julia Hendricks's family and the Spitsbergen group, a placement Riker secured from Minister Cranston before agreeing to his proposal, with FAITH's enclave taking the balance of its allocation. About three hundred people who cannot fit aboard will be the first onto the fourth ship instead."
+      "current_state": "Still to follow the first two ships, carrying the Spitsbergen group, Julia Hendricks's family and FAITH's enclave; about three hundred people who cannot fit aboard will go first on the fourth ship."
     }
   ],
   "updates": [
     {
       "entity_id": "character:riker",
-      "current_state": "At Sol, he has seen the first two colony ships, Exodus-1 and Exodus-2, completed and plans their system, integration and stress tests and a shakedown cruise. He keeps in regular video contact with the Hendricks household, his sister's descendants, which makes him feel real and is a satisfying next-best to being a parent or grandparent."
+      "current_state": "At Sol, he has seen Exodus-1 and Exodus-2 completed and plans their tests and shakedown cruise. Regular video calls with the Hendricks household, his sister's descendants, make him feel real."
     },
     {
       "entity_id": "character:julia-hendricks",
-      "current_state": "Treating Riker readily as a relative, she now talks with him by video regularly, often surrounded by family at the Hendricks household, and calls him Will. She and her family are to travel on Exodus-3, and her young son Justin sits on her lap during the calls. She is glad that the earlier fear of being humanity's last generation did not come true."
+      "current_state": "Treating Riker as a relative, she talks with him by video regularly and calls him Will, often with her family and young son Justin around her. Her family is to travel on Exodus-3."
     },
     {
       "entity_id": "character:cranston",
-      "current_state": "His deal with Riker, trading FAITH's food surplus for the balance of ship three's allocation, came with Riker's condition that Julia Hendricks's family and the Spits travel on Exodus-3, and Riker sees no reason for him to renege. He asked for volunteers among the people who cannot fit on Exodus-3 to go first onto the fourth ship, with established homes guaranteed at Omicron2 Eridani, and got them. He has admitted that FAITH's probe technology may have been partly borrowed from Australian research."
+      "current_state": "His deal trading FAITH's food surplus for the rest of ship three's places stands, on Riker's condition that the Hendricks family and the Spits ride Exodus-3. He has found volunteers to go first on the fourth ship, with homes guaranteed at Omicron2 Eridani."
     },
     {
       "entity_id": "vessel:use-colony-ship",
-      "current_state": "The first two ships, officially Exodus-1 and Exodus-2, are complete after their drive rings were connected to the hull, construction having been balanced so both finished together; system, integration and stress tests and a shakedown cruise remain. Ship three, Exodus-3, is assigned to the Spitsbergen refuge and Julia Hendricks's family, with FAITH's enclave taking the balance of its allocation, and about three hundred people who cannot fit aboard will be the first onto a fourth ship, with established homes guaranteed at Omicron2 Eridani. Diverting scavenged materials to farming space stations reduces the number of future colony ships."
+      "current_state": "Exodus-1 and Exodus-2 are complete and await tests and a shakedown cruise. Exodus-3 is assigned to the Spitsbergen refuge, the Hendricks family and FAITH's enclave, and its overflow will go first on a fourth ship."
     },
     {
       "entity_id": "organization:united-nations",
