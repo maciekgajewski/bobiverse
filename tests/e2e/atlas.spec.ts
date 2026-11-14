@@ -2536,3 +2536,94 @@ for (const viewport of [
     ).toHaveValue("1.2");
   });
 }
+
+// After merging the compact chapter selector, the picker must stack above an
+// open detail sheet, take focus, and be the only layer Escape dismisses.
+for (const viewport of [
+  { width: 390, height: 844 },
+  { width: 844, height: 390 },
+]) {
+  test(`chapter picker stacks over the open detail sheet at ${viewport.width}x${viewport.height}`, async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+    await page.waitForFunction(
+      () => window.__bob034MapPerformance !== undefined,
+    );
+    await openMenuCommand(page, "Browse objects");
+    const browser = page.getByRole("dialog", { name: "Object browser" });
+    await browser
+      .getByRole("searchbox", { name: "Search visible objects" })
+      .fill("Earth");
+    await browser.getByRole("button", { name: /^Earth/ }).click();
+
+    const sheet = page.getByRole("dialog", { name: "Selected object" });
+    await expect(sheet.getByRole("heading", { name: "Earth" })).toBeVisible();
+
+    const chip = page.locator("#topbar-read-through");
+    await chip.click();
+    const picker = page.getByRole("dialog", { name: "Read through" });
+    await expect(picker).toBeVisible();
+    await expect(picker).toHaveAttribute("aria-modal", "true");
+    await expect(sheet).toBeVisible();
+
+    const box = (await picker.boundingBox())!;
+    const hit = await page.evaluate(
+      ({ x, y }) => {
+        const el = document.elementFromPoint(x, y);
+        return {
+          picker: el?.closest(".chapter-picker") != null,
+          sheet: el?.closest(".detail-sheet") != null,
+        };
+      },
+      { x: box.x + box.width / 2, y: box.y + Math.min(48, box.height / 2) },
+    );
+    expect(hit).toEqual({ picker: true, sheet: false });
+    await expect(
+      picker.getByRole("radio", { name: "Pre-book zero state" }),
+    ).toBeFocused();
+    await expect(picker.getByRole("button", { name: "Close" })).toBeVisible();
+    await expect(
+      picker.getByRole("radio", { name: "Book 1 · Chapter 1", exact: true }),
+    ).toBeVisible();
+
+    await page.keyboard.press("Escape");
+    await expect(picker).toHaveCount(0);
+    await expect(sheet.getByRole("heading", { name: "Earth" })).toBeVisible();
+    await expect(chip).toBeFocused();
+
+    await chip.click();
+    await expect(picker).toBeVisible();
+    await picker.getByRole("button", { name: "Close" }).click();
+    await expect(picker).toHaveCount(0);
+    await expect(sheet).toBeVisible();
+    await expect(chip).toBeFocused();
+
+    await chip.click();
+    await expect(picker).toBeVisible();
+    // Portrait: the sheet sits under the top of the viewport. Landscape: the
+    // left half is free. Either point is the picker's backdrop, not the sheet.
+    const backdropPoint =
+      viewport.height > viewport.width
+        ? { x: 20, y: 80 }
+        : { x: 20, y: Math.round(viewport.height / 2) };
+    expect(
+      await page.evaluate(
+        ({ x, y }) =>
+          document
+            .elementFromPoint(x, y)
+            ?.closest(".chapter-picker-backdrop") != null,
+        backdropPoint,
+      ),
+    ).toBe(true);
+    await page.mouse.click(backdropPoint.x, backdropPoint.y);
+    await expect(picker).toHaveCount(0);
+    await expect(sheet).toBeVisible();
+    await expect(chip).toBeFocused();
+
+    await page.keyboard.press("Escape");
+    await expect(sheet).toHaveCount(0);
+  });
+}
