@@ -720,7 +720,14 @@ const StarMarker = memo(function StarMarker({
                 data-system-id={system.id}
                 data-caption-opacity={captionOpacity ?? 1}
                 style={{ opacity: captionOpacity ?? 1 }}
-                onClick={selectCaption}
+                onClick={(event) => {
+                  // The caption is a DOM overlay inside the canvas wrapper.
+                  // Without this the same click also reaches R3F as a missed
+                  // pointer, and onPointerMissed clears the selection the
+                  // caption just made.
+                  event.stopPropagation();
+                  selectCaption();
+                }}
               >
                 <span
                   className="narrative-map-label-name"

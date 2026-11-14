@@ -779,12 +779,11 @@ test("phone detail sheet snaps over an interactive map and its trail follows lin
   await expect(sheet.getByRole("heading", { name: "Earth" })).toBeVisible();
 
   // A map tap above the open sheet still selects; the sheet keeps its snap.
-  // The Sol caption is a touch target on the map: nothing covers it, and a
-  // tap (a click without a hover, as on a phone) selects the system.
+  // The Sol caption is a touch target on the map and nothing covers it. A
+  // real click must not also reach the canvas as a missed pointer, which
+  // would clear the selection and close the sheet again.
   await settleMapCamera(page);
-  const caption = page.locator(
-    '.narrative-map-label[data-system-id="sol"] .narrative-map-label-name',
-  );
+  const caption = page.locator('.narrative-map-label[data-system-id="sol"]');
   const captionBox = (await caption.boundingBox())!;
   expect(captionBox.y + captionBox.height).toBeLessThan(
     (await sheet.boundingBox())!.y,
@@ -799,7 +798,7 @@ test("phone detail sheet snaps over an interactive map and its trail follows lin
       },
     ),
   ).toBe(true);
-  await caption.dispatchEvent("click");
+  await caption.click();
   await expect(
     sheet.getByRole("heading", { name: "Solar System" }),
   ).toBeVisible();
