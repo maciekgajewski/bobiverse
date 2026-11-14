@@ -112,6 +112,7 @@ keep their current behaviour.
 - The chapter selector (a separate task) and any desktop change.
 - Turning **Enter system** back on: `ENABLE_ENTER_SYSTEM` stays `false`.
 - Any data, schema, projection or spoiler change.
+- Other map-picking changes beyond the caption-click fix recorded in the log.
 
 ## Acceptance criteria
 
@@ -184,3 +185,12 @@ Manual: the Captain checks the sheet and drawer in a phone browser after deploym
 
 - Created on origin/master `3c3d368` from the Captain's design approval of 16:00,
   relayed by Piotr Developer Manager. Moved straight to In progress.
+- Found while running the e2e suite: a real click on a map caption selected the system
+  and then also reached R3F as a missed pointer, so `onPointerMissed` cleared the
+  selection again (the old compact inspector opened empty; the new sheet closed). The
+  caption click now stops propagation (`src/components/MapScene.tsx`). This also
+  applies on desktop, where the same click no longer clears the selection it just
+  made. The phone sheet e2e taps the caption with a real click as the regression test.
+- Screenshots: `docs/design/artifacts/BOB-20261114-H960PW-mobile-snap-sheet/` holds
+  `phone-390x844-peek.png`, `phone-390x844-half.png`, `phone-390x844-full.png`,
+  `landscape-844x390-drawer.png` and `desktop-1280x800.png` (unchanged layout).

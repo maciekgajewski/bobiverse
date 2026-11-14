@@ -591,6 +591,28 @@ On a phone in portrait (about 390×844), with an object open in the detail windo
 - There is no **Enter system** button on phones or desktop while `ENABLE_ENTER_SYSTEM`
   is off. The desktop inspector's history arrows keep their small framed size.
 
+## BOB-20261114-H960PW mobile snap sheet
+
+On a phone in portrait (about 390×844):
+
+- Tap a star or caption on the map. The detail sheet opens at peek (about 150px) with
+  the type and name visible, and the map above it stays visible, pannable and
+  tappable. Tap another object above the sheet: the sheet's content changes and its
+  height stays. Tap empty map space: the selection clears and the sheet closes.
+- Open an object from **Browse objects**: the sheet opens at half. Drag the grabber or
+  the header row up and down; the sheet follows the finger and settles at peek, half
+  or full. Tap the grabber to cycle peek, half and full; at full the sheet starts
+  right under the top bar and its body scrolls. The sheet never slides or animates.
+- The header shows 44px **Back** and **Forward**, the object trail (for example
+  `Solar System › Sol › Earth`, current object in bold) and the 44px X. Following a
+  relationship or a trail link updates the trail and history and keeps the height.
+- The X and Escape close the sheet with focus on the menu button. There is no
+  backdrop; tapping the map no longer closes the sheet unless it clears the selection.
+
+On a phone in landscape (about 844×390) the detail view is a right-hand drawer about
+320px wide below the top bar, with no grabber, and the map to its left stays usable.
+On desktop nothing changes.
+
 ## Default and reset camera
 
 The repeatable default camera pose preserves the documented Three.js viewing

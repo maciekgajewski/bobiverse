@@ -597,8 +597,12 @@ than creating a separate mobile application or a parallel feature stack. The
 application shell uses a map-first phone composition: one slim command bar holds the
 identity, the **Read through** select and a menu button; the menu drawer opens the
 browser, **Timeline and progress**, **Knowledge through**, Chapter/Date mode and a
-secondary **Reset view**; and a selected item's inspector opens as a non-animated
-bottom panel. Map tools such as **Reset view** are icon controls inside the map, and
+secondary **Reset view**; and a selected item's inspector opens as a non-animated,
+non-modal bottom sheet over the live map, with peek, half and full snaps, a 44px
+grabber alternative to dragging, and an object trail of real parent links in its
+header; landscape phones get a right-hand drawer instead
+(`tasks/BOB-20261114-H960PW-mobile-snap-sheet.md`). The map above the sheet stays
+pannable and tappable, while Tab stays inside the sheet. Map tools such as **Reset view** are icon controls inside the map, and
 source attribution is a notice chip in the map's corner. The collapsed chip always
 shows the short backdrop credit `NASA/GSFC SVS · ESA/Gaia/DPAC`; one tap or Enter
 expands it to the catalogue line, the source acknowledgements and the prescribed
