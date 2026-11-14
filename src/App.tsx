@@ -6,7 +6,7 @@ import {
   useState,
   type KeyboardEvent as ReactKeyboardEvent,
 } from "react";
-import { AboutDialog } from "./components/AboutDialog";
+import { ABOUT_CAPTION_ENTITY_ID, AboutDialog } from "./components/AboutDialog";
 import { DetailSheet } from "./components/DetailSheet";
 import { InspectorBreadcrumb } from "./components/InspectorBreadcrumb";
 import { StarMap, type MapScale } from "./components/MapScene";
@@ -516,6 +516,17 @@ export default function App() {
     }, 0);
   }, [aboutOrigin]);
 
+  // The About caption names GUPPI. It opens GUPPI's card only while GUPPI is
+  // a reader-visible entity at the knowledge chapter, and never in the
+  // pre-book zero state, so the caption cannot reveal or open a hidden card.
+  const aboutCaptionEntityKnown =
+    progress.viewChapter !== null &&
+    isSelectionEligibleForMap(
+      { kind: "narrative", id: ABOUT_CAPTION_ENTITY_ID },
+      narrativeWorld,
+      contextSystemIds,
+    );
+
   useEffect(() => {
     if (!mobilePanel) return;
     // The X takes initial focus in every compact panel, wherever it sits in
@@ -682,6 +693,18 @@ export default function App() {
       };
     });
     showSelection(nextSelection);
+  };
+  // Closes About and selects GUPPI as a fresh inspector root, as a browser
+  // pick does. The compact detail sheet then focuses its X; on desktop focus
+  // returns to the "What is this?" link and the inspector updates in place.
+  const openAboutCaptionEntity = () => {
+    if (!aboutCaptionEntityKnown) return;
+    setAboutOrigin(null);
+    selectExternalObject({ kind: "narrative", id: ABOUT_CAPTION_ENTITY_ID });
+    const compact =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(max-width: 1199px)").matches;
+    if (!compact) window.setTimeout(() => aboutLink.current?.focus(), 0);
   };
   const navigateInspectorHistory = (offset: -1 | 1) => {
     const nextIndex = inspectorHistory.index + offset;
@@ -1477,7 +1500,12 @@ export default function App() {
           </div>
         </>
       )}
-      {aboutOrigin && <AboutDialog onClose={closeAbout} />}
+      {aboutOrigin && (
+        <AboutDialog
+          onClose={closeAbout}
+          onOpenGuppi={aboutCaptionEntityKnown ? openAboutCaptionEntity : null}
+        />
+      )}
     </main>
   );
 }

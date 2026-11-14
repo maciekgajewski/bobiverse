@@ -1586,6 +1586,119 @@ describe("atlas shell", () => {
     await waitFor(() => expect(menu).toHaveFocus());
   });
 
+  const storeChapter = (chapter: string) =>
+    window.localStorage.setItem(
+      "bobiverse.app-state.v2",
+      JSON.stringify({
+        furthestChapterRead: chapter,
+        viewChapter: chapter,
+        displayDate: "2133",
+        mode: "chapter",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+  const openDesktopAbout = async (user: ReturnType<typeof userEvent.setup>) => {
+    await user.click(
+      within(document.querySelector(".topbar-title")!).getByRole("button", {
+        name: "What is this?",
+      }),
+    );
+    return screen.getByRole("dialog", { name: "What is this?" });
+  };
+
+  it("keeps the About caption's GUPPI as plain text in zero state", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    const dialog = await openDesktopAbout(user);
+    expect(dialog.querySelector("figcaption")?.textContent).toBe(
+      "GUPPI, or Admiral Ackbar",
+    );
+    expect(
+      within(dialog).queryByRole("button", { name: "GUPPI" }),
+    ).not.toBeInTheDocument();
+    expect(
+      within(dialog).queryByRole("link", { name: "GUPPI" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("keeps the About caption's GUPPI as plain text before GUPPI is known", async () => {
+    // GUPPI is introduced in Chapter 1.2.
+    storeChapter("1.1");
+    const user = userEvent.setup();
+    render(<App />);
+    expect(
+      screen.queryByRole("heading", { name: "GUPPI interface" }),
+    ).not.toBeInTheDocument();
+    const dialog = await openDesktopAbout(user);
+    expect(dialog.querySelector("figcaption")?.textContent).toBe(
+      "GUPPI, or Admiral Ackbar",
+    );
+    expect(
+      within(dialog).queryByRole("button", { name: "GUPPI" }),
+    ).not.toBeInTheDocument();
+    await user.click(within(dialog).getByText(/^GUPPI/));
+    expect(
+      screen.getByRole("dialog", { name: "What is this?" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: "GUPPI interface" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("opens GUPPI's card from the About caption once GUPPI is known", async () => {
+    storeChapter("1.2");
+    const user = userEvent.setup();
+    render(<App />);
+    const dialog = await openDesktopAbout(user);
+    await user.click(within(dialog).getByRole("button", { name: "GUPPI" }));
+    expect(
+      screen.queryByRole("dialog", { name: "What is this?" }),
+    ).not.toBeInTheDocument();
+    expect(
+      await screen.findByRole("heading", { level: 2, name: "GUPPI interface" }),
+    ).toHaveAttribute("id", "desktop-object-details-heading");
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "GUPPI interface selected.",
+    );
+    await waitFor(() =>
+      expect(
+        within(document.querySelector(".topbar-title")!).getByRole("button", {
+          name: "What is this?",
+        }),
+      ).toHaveFocus(),
+    );
+  });
+
+  it("opens GUPPI's card in the compact detail sheet from the About caption", async () => {
+    vi.stubGlobal("matchMedia", compactMatchMedia);
+    storeChapter("1.2");
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: "Menu" }));
+    await user.click(
+      within(screen.getByRole("dialog", { name: "Menu" })).getByRole("button", {
+        name: "What is this?",
+      }),
+    );
+    const about = screen.getByRole("dialog", { name: "What is this?" });
+    await user.click(within(about).getByRole("button", { name: "GUPPI" }));
+    expect(
+      screen.queryByRole("dialog", { name: "What is this?" }),
+    ).not.toBeInTheDocument();
+    const sheet = await screen.findByRole("dialog", {
+      name: "Selected object",
+    });
+    expect(
+      within(sheet).getByRole("heading", { level: 2, name: "GUPPI interface" }),
+    ).toBeInTheDocument();
+    await waitFor(() =>
+      expect(
+        within(sheet).getByRole("button", { name: "Close" }),
+      ).toHaveFocus(),
+    );
+  });
+
   it("keeps Knowledge through in the compact menu in Date mode", async () => {
     window.localStorage.setItem(
       "bobiverse.app-state.v2",

@@ -655,3 +655,15 @@ camera position and controls target to this pose. It does not change the selecte
 system. During manual acceptance, move and rotate the camera, press the Reset view map control (the house icon in the map's top-right corner), and
 confirm that Sol is targeted from this same repeatable orientation with every known
 system visible.
+
+## BOB-20261114-ANZFK6 GUPPI link in the About caption
+
+On desktop (about 1280×800) and a phone in portrait (about 390×844):
+
+- Before choosing any chapter (Pre-book), open **What is this?**. The caption under
+  the picture reads "GUPPI, or Admiral Ackbar"; "GUPPI" is plain text and tapping it
+  does nothing. "Admiral Ackbar" opens the source picture in a new tab.
+- Read through Chapter 1.1 and repeat: "GUPPI" is still plain text.
+- Read through Chapter 1.2 or later and repeat: "GUPPI" is underlined like a link.
+  Tapping it closes About and opens GUPPI's card (the desktop inspector, or the
+  detail sheet on a phone).
