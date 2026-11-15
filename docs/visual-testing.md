@@ -570,7 +570,7 @@ On a phone in portrait (about 390×844) and landscape (about 844×390), and on d
   button. The map fills everything below it, edge to edge on phones.
 - **Read through** in the bar asks for confirmation before revealing a chapter, the
   same as the dock and the Timeline and progress panel.
-- The menu opens a right-hand drawer with Chapter/Date mode, **Browse objects**, **Inspect selection** (when something is selected),
+- The menu opens a right-hand drawer with Chapter/Date mode, **Search**, **Inspect selection** (when something is selected),
   **Timeline and progress** and **Reset view**. Close, Escape and tapping outside
   close it and the panels it opens, and focus returns to the menu button.
 - The astronomy notice is a chip in the map's bottom-right corner, collapsed by
@@ -603,7 +603,7 @@ On a phone in portrait (about 390×844):
   the type and name visible, and the map above it stays visible, pannable and
   tappable. Tap another object above the sheet: the sheet's content changes and its
   height stays. Tap empty map space: the selection clears and the sheet closes.
-- Open an object from **Browse objects**: the sheet opens at half. Drag the grabber or
+- Open an object from **Search**: the sheet opens at half. Drag the grabber or
   the header row up and down; the sheet follows the finger and settles at peek, half
   or full. Tap the grabber to cycle peek, half and full; at full the sheet starts
   right under the top bar and its body scrolls. The sheet never slides or animates.
@@ -622,7 +622,7 @@ On desktop nothing changes.
 On desktop (about 1280×800) and a phone in portrait (about 390×844), after reading
 through Chapter 1.2 or later:
 
-- Open **Earth** from **Browse objects**. Under the name "Earth" a smaller grey line
+- Open **Earth** from **Search**. Under the name "Earth" a smaller grey line
   reads "planet". There is no **Location kind** row. Scroll to the bottom: the last
   section is **Map context** ("Mapped"), below **Mapped astronomy**.
 - Open **Human**: a cyan Human species icon sits to the right of the type and name.
@@ -657,7 +657,7 @@ On a phone in portrait (about 390×844) and landscape (about 844×390), and on d
 On a phone in portrait (about 390×844) and on desktop (about 1280×800):
 
 - The phone menu has no **Knowledge through** select. It still has Chapter/Date
-  mode, **Browse objects**, **Inspect selection** (when something is selected),
+  mode, **Search**, **Inspect selection** (when something is selected),
   **Timeline and progress**, **Reset view** and **What is this?**.
 - Pick a later chapter in the **Read through** pill and confirm it: the pill, the map
   badge (`Latest known · Knowledge through Chapter N`), the map and the object
@@ -670,7 +670,24 @@ On a phone in portrait (about 390×844) and on desktop (about 1280×800):
   through** and the chapter track can still look back at an earlier chapter without
   changing the pill.
 
+## BOB-20261115-7FQJCG Search rename and floating Search pill
+
+On a phone in portrait (about 390×844):
+
+- A glass **Search** pill (magnifying-glass icon and the word Search, 44px tall)
+  sits at the top of the map, to the right of the chapter badge and left of
+  **Reset view**, with a clear gap between the pill and Reset view. It is not
+  attached to the detail sheet.
+- Tapping the pill opens **Search** (the former Browse objects panel). Escape,
+  Close and tapping the backdrop close it and return focus to the pill.
+- The menu still has a **Search** row. That row opens the same panel; closing
+  it returns focus to the Menu button.
+
+On desktop (about 1280×800) there is no Search pill on the map. Search stays
+in the left-hand **Object browser**.
+
 ## Default and reset camera
+
 
 The repeatable default camera pose preserves the documented Three.js viewing
 direction while calculating its distance from the current static system catalogue and

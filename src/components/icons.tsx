@@ -28,6 +28,15 @@ export function CloseIcon() {
   );
 }
 
+export function SearchIcon() {
+  return (
+    <svg className="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="11" cy="11" r="6.2" />
+      <path d="M16.2 16.2 21 21" />
+    </svg>
+  );
+}
+
 /** Original book mark from the approved design note (24×24, cyan on deep blue). */
 export function BookGlyph() {
   return (

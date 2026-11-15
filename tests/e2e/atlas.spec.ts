@@ -218,7 +218,7 @@ test("phone browser opens, selection opens inspector, and light-years remain fix
       () => window.__bob034MapPerformance !== undefined,
     );
     record("map", "renderer bridge available");
-    await openMenuCommand(page, "Browse objects");
+    await openMenuCommand(page, "Search");
     await page.getByRole("button", { name: "Solar System" }).click();
     await expect(
       page.getByRole("heading", { name: "Solar System" }),
@@ -805,7 +805,7 @@ test("mobile detail window has an X close icon and tap-sized history in one head
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
-  await openMenuCommand(page, "Browse objects");
+  await openMenuCommand(page, "Search");
   await page.getByRole("button", { name: "Solar System" }).click();
   const inspector = page.getByRole("dialog", { name: "Selected object" });
   await expect(
@@ -856,8 +856,8 @@ test("phone detail sheet snaps over an interactive map and its trail follows lin
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
   await page.waitForFunction(() => window.__bob034MapPerformance !== undefined);
-  await openMenuCommand(page, "Browse objects");
-  const browser = page.getByRole("dialog", { name: "Object browser" });
+  await openMenuCommand(page, "Search");
+  const browser = page.getByRole("dialog", { name: "Search" });
   await browser
     .getByRole("searchbox", { name: "Search visible objects" })
     .fill("Earth");
@@ -961,8 +961,8 @@ test("landscape phone shows the detail as a right-hand drawer beside the map", a
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.setViewportSize({ width: 844, height: 390 });
   await page.goto("/");
-  await openMenuCommand(page, "Browse objects");
-  const browser = page.getByRole("dialog", { name: "Object browser" });
+  await openMenuCommand(page, "Search");
+  const browser = page.getByRole("dialog", { name: "Search" });
   await browser
     .getByRole("searchbox", { name: "Search visible objects" })
     .fill("Earth");
@@ -1023,7 +1023,7 @@ test("desktop inspector hides Enter system and keeps its small history controls"
 test("compact inspector stays inside the viewport", async ({ page }) => {
   await page.setViewportSize({ width: 900, height: 700 });
   await page.goto("/");
-  await openMenuCommand(page, "Browse objects");
+  await openMenuCommand(page, "Search");
   await page.getByRole("button", { name: "Solar System" }).click();
   await expect(page.locator(".mobile-panel.inspector")).toBeVisible();
   const bounds = await page
@@ -1058,11 +1058,11 @@ for (const viewport of [
     await page.setViewportSize(viewport);
     await page.goto("/");
     if (viewport.width < 1200) {
-      await openMenuCommand(page, "Browse objects");
+      await openMenuCommand(page, "Search");
     }
     const browser =
       viewport.width < 1200
-        ? page.getByRole("dialog", { name: "Object browser" })
+        ? page.getByRole("dialog", { name: "Search" })
         : page.getByRole("complementary", { name: "Object browser" });
     await browser
       .getByRole("searchbox", { name: "Search visible objects" })
@@ -1494,7 +1494,7 @@ test("the permanent local backdrop preserves responsive map interaction", async 
     resourceOrigins.every((origin) => origin === new URL(page.url()).origin),
   ).toBe(true);
   expect(attemptedCrossOriginRequests).toEqual([]);
-  await openMenuCommand(page, "Browse objects");
+  await openMenuCommand(page, "Search");
   await page.getByRole("button", { name: "Solar System" }).click();
   await expect(
     page.getByRole("heading", { name: "Solar System" }),
@@ -1530,7 +1530,7 @@ for (const viewport of [
     );
     const compact = viewport.width < 1200;
     if (compact) {
-      await openMenuCommand(page, "Browse objects");
+      await openMenuCommand(page, "Search");
     }
     await expect(
       page.getByRole("button", { name: "Epsilon Eridani Active" }),
@@ -1542,7 +1542,7 @@ for (const viewport of [
     ).toBeVisible();
     if (compact) {
       await page
-        .getByRole("dialog", { name: "Object browser" })
+        .getByRole("dialog", { name: "Search" })
         .getByRole("button", { name: "Close" })
         .click();
     }
@@ -1630,7 +1630,7 @@ for (const viewport of [
         .click();
     }
     if (compact) {
-      await openMenuCommand(page, "Browse objects");
+      await openMenuCommand(page, "Search");
     }
     const search = page.getByRole("searchbox", {
       name: "Search visible objects",
@@ -2210,7 +2210,10 @@ for (const viewport of [
     expect(readThroughBox.height).toBeGreaterThanOrEqual(43.5);
     expect(readThroughBox.width).toBeLessThan(150);
     await expect(
-      page.getByRole("button", { name: "Browse objects" }),
+      page.locator("#map-stage").getByRole("button", { name: "Search" }),
+    ).toBeVisible();
+    await expect(
+      page.locator(".topbar").getByRole("button", { name: "Search" }),
     ).toHaveCount(0);
     const menuButton = page.getByRole("button", { name: "Menu" });
     const menuBox = await menuButton.boundingBox();
@@ -2225,7 +2228,7 @@ for (const viewport of [
     for (const name of [
       "Close",
       "Chapter mode",
-      "Browse objects",
+      "Search",
       "Timeline and progress",
       "Reset view",
     ]) {
@@ -2300,6 +2303,62 @@ for (const viewport of [
     );
   });
 }
+
+test("compact Search pill does not overlap the badge or Reset view and opens search", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.waitForFunction(
+    () => window.__bob034MapPerformance !== undefined,
+  );
+  const map = page.locator("#map-stage");
+  const pill = map.getByRole("button", { name: "Search" });
+  const reset = map.getByRole("button", { name: "Reset view" });
+  const badge = page.locator(".map-narrative-badge");
+  await expect(pill).toBeVisible();
+  const pillBox = (await pill.boundingBox())!;
+  const resetBox = (await reset.boundingBox())!;
+  const badgeBox = (await badge.boundingBox())!;
+  expect(pillBox.height).toBeCloseTo(44, 0);
+  expect(badgeBox.x + badgeBox.width).toBeLessThanOrEqual(pillBox.x + 0.5);
+  expect(pillBox.x + pillBox.width).toBeLessThanOrEqual(resetBox.x + 0.5);
+  expect(resetBox.x - (pillBox.x + pillBox.width)).toBeGreaterThan(70);
+  const overlaps = (
+    a: { x: number; y: number; width: number; height: number },
+    b: { x: number; y: number; width: number; height: number },
+  ) =>
+    a.x < b.x + b.width &&
+    a.x + a.width > b.x &&
+    a.y < b.y + b.height &&
+    a.y + a.height > b.y;
+  expect(overlaps(pillBox, badgeBox)).toBe(false);
+  expect(overlaps(pillBox, resetBox)).toBe(false);
+  await pill.click();
+  const search = page.getByRole("dialog", { name: "Search" });
+  await expect(search).toBeVisible();
+  await expect(
+    search.getByRole("searchbox", { name: "Search visible objects" }),
+  ).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(search).toHaveCount(0);
+  await expect(pill).toBeFocused();
+});
+
+test("desktop search stays in the object browser and the map has no Search pill", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/");
+  await expect(
+    page.locator("#map-stage").getByRole("button", { name: "Search" }),
+  ).toHaveCount(0);
+  const browser = page.getByRole("complementary", { name: "Object browser" });
+  await expect(browser).toBeVisible();
+  await expect(
+    browser.getByRole("searchbox", { name: "Search visible objects" }),
+  ).toBeVisible();
+});
 
 test("desktop chrome keeps the workspace with a slimmer bar and a larger map", async ({
   page,
@@ -2889,8 +2948,8 @@ for (const viewport of [
     await page.waitForFunction(
       () => window.__bob034MapPerformance !== undefined,
     );
-    await openMenuCommand(page, "Browse objects");
-    const browser = page.getByRole("dialog", { name: "Object browser" });
+    await openMenuCommand(page, "Search");
+    const browser = page.getByRole("dialog", { name: "Search" });
     await browser
       .getByRole("searchbox", { name: "Search visible objects" })
       .fill("Earth");
@@ -2973,9 +3032,9 @@ const ACKBAR_CREDIT =
 
 async function inspectFromBrowser(page: Page, query: string, name: RegExp) {
   const compact = page.viewportSize()!.width < 1200;
-  if (compact) await openMenuCommand(page, "Browse objects");
+  if (compact) await openMenuCommand(page, "Search");
   const browser = compact
-    ? page.getByRole("dialog", { name: "Object browser" })
+    ? page.getByRole("dialog", { name: "Search" })
     : page.getByRole("complementary", { name: "Object browser" });
   await browser
     .getByRole("searchbox", { name: "Search visible objects" })

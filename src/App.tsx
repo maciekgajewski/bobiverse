@@ -18,6 +18,7 @@ import {
 import {
   CloseIcon,
   ResetViewIcon,
+  SearchIcon,
   TimelineModeToggle,
   TopbarReadThrough,
 } from "./components/ProgressControls";
@@ -253,6 +254,8 @@ export default function App() {
   // in view; the browser, timeline and menu open it at half.
   const [sheetSnap, setSheetSnap] = useState<SheetSnap>("half");
   const menuButton = useRef<HTMLButtonElement>(null);
+  const searchButton = useRef<HTMLButtonElement>(null);
+  const searchOrigin = useRef<"pill" | "menu" | null>(null);
   const mobilePanelElement = useRef<HTMLDivElement>(null);
   const [astronomyNoticeOpen, setAstronomyNoticeOpen] = useState(false);
   const astronomyNoticeButton = useRef<HTMLButtonElement>(null);
@@ -487,13 +490,26 @@ export default function App() {
     systemMode,
   ]);
 
-  // Every compact panel is reached from the top-bar menu, so focus returns
-  // to the menu button when any of them closes.
+  // Menu, timeline and Search-from-menu return focus to the Menu button.
+  // Search opened from the map pill returns focus to the pill.
   const closeMobilePanel = useCallback(() => {
     if (!mobilePanel) return;
+    const panel = mobilePanel;
+    const origin = searchOrigin.current;
+    searchOrigin.current = null;
     setMobilePanel(null);
-    window.setTimeout(() => menuButton.current?.focus(), 0);
+    window.setTimeout(() => {
+      if (panel === "browser" && origin === "pill") {
+        searchButton.current?.focus();
+      } else {
+        menuButton.current?.focus();
+      }
+    }, 0);
   }, [mobilePanel]);
+  const openSearch = (origin: "pill" | "menu") => {
+    searchOrigin.current = origin;
+    setMobilePanel("browser");
+  };
   const closeAstronomyNotice = useCallback(() => {
     setAstronomyNoticeOpen(false);
     window.setTimeout(() => astronomyNoticeButton.current?.focus(), 0);
@@ -1096,22 +1112,37 @@ export default function App() {
               )}
             </>
           )}
-          <span className="map-narrative-badge" aria-live="polite">
-            {viewStatus}
-          </span>
-          <div className="map-controls">
-            <button
-              type="button"
-              className="reset-view"
-              aria-label="Reset view"
-              onClick={resetView}
-              disabled={Boolean(systemMode)}
-            >
-              <ResetViewIcon />
-            </button>
-            <span className="reset-view-tooltip" role="tooltip">
-              Reset view
+          <div className="map-top-chrome">
+            <span className="map-narrative-badge" aria-live="polite">
+              {viewStatus}
             </span>
+            <button
+              ref={searchButton}
+              type="button"
+              className="search-pill"
+              aria-label="Search"
+              aria-haspopup="dialog"
+              aria-expanded={mobilePanel === "browser"}
+              hidden={Boolean(mobilePanel && mobilePanel !== "inspector")}
+              onClick={() => openSearch("pill")}
+            >
+              <SearchIcon />
+              Search
+            </button>
+            <div className="map-controls">
+              <button
+                type="button"
+                className="reset-view"
+                aria-label="Reset view"
+                onClick={resetView}
+                disabled={Boolean(systemMode)}
+              >
+                <ResetViewIcon />
+              </button>
+              <span className="reset-view-tooltip" role="tooltip">
+                Reset view
+              </span>
+            </div>
           </div>
           <div className="map-overlay">
             <span
@@ -1371,7 +1402,7 @@ export default function App() {
               mobilePanel === "menu"
                 ? "Menu"
                 : mobilePanel === "browser"
-                  ? "Object browser"
+                  ? "Search"
                   : "Timeline and progress"
             }
             onKeyDown={containPanelFocus}
@@ -1401,10 +1432,11 @@ export default function App() {
                 />
                 <button
                   type="button"
-                  className="button menu-row"
-                  onClick={() => setMobilePanel("browser")}
+                  className="button menu-row menu-search"
+                  onClick={() => openSearch("menu")}
                 >
-                  Browse objects
+                  <SearchIcon />
+                  Search
                 </button>
                 {(selection || activeDateContext) && (
                   <button
