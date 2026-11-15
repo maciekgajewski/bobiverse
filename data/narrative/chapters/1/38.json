@@ -13,11 +13,13 @@
     },
     {
       "id": "character:julia-hendricks",
-      "name": "Julia Hendricks"
+      "name": "Julia Hendricks",
+      "description": "A young woman whom [[character:cranston]] brings before [[character:riker]] as a three-times-great-granddaughter of [[character:andrea-johansson]], the sister of [[character:robert-johansson]]. She has only just learned of the relation herself."
     },
     {
       "id": "character:andrea-johansson",
-      "name": "Andrea Johansson"
+      "name": "Andrea Johansson",
+      "description": "The sister of [[character:robert-johansson]] in his original lifetime. Her descendants include [[character:julia-hendricks]], her three-times-great-granddaughter, who knows of more than twenty living collateral descendants of Bob."
     }
   ],
   "updates": [

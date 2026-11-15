@@ -809,6 +809,12 @@ reader-facing descriptions.
 Every authored `current_state` is one or two concise sentences describing only the
 latest known condition, not identity, history, a chapter synopsis, or an accumulated
 adventure log. Every authored description is an entity-centered encyclopedia entry.
+Character records may carry an optional `description` on the introduction and on
+updates: a stable identity blurb of who they are (about 300 characters as a
+guideline, not a hard limit). `current_state` remains the latest condition. Inline
+`[[kind:slug]]` links are allowed in both fields. The latest `description` in
+effect at the viewed chapter wins, with the same reader-order and story-time
+projection and spoiler gating as `current_state`.
 Capabilities use general language such as “It can” or “It is used to”; named-character
 relationships remain only when defining or when a source-supported assessment needs
 attribution. Descriptions omit statements whose purpose is to announce unrevealed,

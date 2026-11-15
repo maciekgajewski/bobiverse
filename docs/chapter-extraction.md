@@ -375,6 +375,10 @@ been explained`, or `full specifications are unavailable`; when a sentence mixes
 
 Type checklists:
 
+- `character`: who the person is (stable identity, role, and a few defining
+  facts), not their latest condition; `current_state` owns that condition. A
+  `description` may appear on the introduction and on later updates; the latest
+  description in effect at the viewed chapter wins;
 - `species`: source-supported sentience and civilization-creating capacity, what
   kind of beings they are, distinguishing known traits, and reader-visible home or
   social context. Only populations meeting both gates are modeled; animals,

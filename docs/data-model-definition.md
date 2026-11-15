@@ -206,6 +206,10 @@ the identical listing below documents its shared definitions.
         "gender": { "type": "string", "minLength": 1 },
         "species_id": { "$ref": "#/$defs/species_id" },
         "parent_id": { "$ref": "#/$defs/character_id" },
+        "description": {
+          "$ref": "#/$defs/description",
+          "description": "Who this character is: a stable identity blurb (about 300 characters as a guideline, not a hard limit). Distinct from current_state, which is the latest condition. Optional inline entity links (ADR-0029) are allowed."
+        },
         "current_state": { "$ref": "#/$defs/state" },
         "picture_id": { "$ref": "#/$defs/asset_id" },
         "aliases": {
@@ -233,6 +237,10 @@ the identical listing below documents its shared definitions.
         },
         "parent_id": {
           "anyOf": [{ "$ref": "#/$defs/character_id" }, { "type": "null" }]
+        },
+        "description": {
+          "anyOf": [{ "$ref": "#/$defs/description" }, { "type": "null" }],
+          "description": "Who this character is: a stable identity blurb (about 300 characters as a guideline, not a hard limit). Distinct from current_state, which is the latest condition. Null clears the prior value. Optional inline entity links (ADR-0029) are allowed."
         },
         "current_state": {
           "anyOf": [{ "$ref": "#/$defs/state" }, { "type": "null" }]
@@ -263,6 +271,7 @@ the identical listing below documents its shared definitions.
         { "required": ["gender"] },
         { "required": ["species_id"] },
         { "required": ["parent_id"] },
+        { "required": ["description"] },
         { "required": ["current_state"] },
         { "required": ["picture_id"] },
         { "required": ["aliases"] },
@@ -1635,11 +1644,11 @@ links, `\[[`, `\]]`, and `\\` write a literal `[[`, `]]`, and `\` (doubled again
 JSON source); a `\` before any other character is an error. Lone `[`, `]`, and `|`
 are ordinary text.
 
-| Links allowed                                                             | Links and escapes rejected                                            |
-| ------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| `description`: species, technology, organization, vessel, event, location | every other string, including `name`, `aliases`, chapter `title`      |
-| `state`: location; `current_state`: character, organization, vessel       | survey `visual_description` and `color`, asset `source`, book `title` |
-| chapter `summary`                                                         | the `reason` of a sentence-preservation exception                     |
+| Links allowed                                                                        | Links and escapes rejected                                            |
+| ------------------------------------------------------------------------------------ | --------------------------------------------------------------------- |
+| `description`: character, species, technology, organization, vessel, event, location | every other string, including `name`, `aliases`, chapter `title`      |
+| `state`: location; `current_state`: character, organization, vessel                  | survey `visual_description` and `color`, asset `source`, book `title` |
+| chapter `summary`                                                                    | the `reason` of a sentence-preservation exception                     |
 
 The rules apply to introductions, updates, and zero-state records alike. A target
 must be seeded in the zero state or introduced by the write's own chapter or an
@@ -1838,24 +1847,28 @@ identity, and colour is reinforced by a shape-distinct silhouette.
 A character introduction uses the `character` schema above. Its only required fields
 are a canonical `character:` ID and a nonempty reader-visible `name`.
 
-| Field            | Type                                      | Meaning                                                                                 |
-| ---------------- | ----------------------------------------- | --------------------------------------------------------------------------------------- |
-| `id`             | `character_id`                            | Immutable stable identifier.                                                            |
-| `name`           | nonempty string                           | Reader-visible display name.                                                            |
-| `gender`         | optional nonempty string                  | Reader-visible free text; no global gender vocabulary is imposed.                       |
-| `species_id`     | optional `species_id`                     | Reference to an introduced species entity.                                              |
-| `parent_id`      | optional `character_id`                   | One source-supported direct parent character.                                           |
-| `current_state`  | optional nonempty string                  | One or two concise sentences describing only the character's latest known condition.    |
-| `picture_id`     | optional `asset_id`                       | Chapter-controlled assignment of a manually curated image asset.                        |
-| `aliases`        | optional array of unique nonempty strings | Additional reader-visible names that become searchable only when introduced or updated. |
-| `birth_date`     | optional `date`                           | Known birth date at the available story-time precision.                                 |
-| `birth_chapter`  | optional `chapter`                        | Chapter that explicitly depicts or establishes the character's birth or cloning.        |
-| `death_date`     | optional `date`                           | Known death date at the available story-time precision.                                 |
-| `death_event_id` | optional `event_id`                       | Reference to the event that records the death.                                          |
+| Field            | Type                                      | Meaning                                                                                                                                                                                  |
+| ---------------- | ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`             | `character_id`                            | Immutable stable identifier.                                                                                                                                                             |
+| `name`           | nonempty string                           | Reader-visible display name.                                                                                                                                                             |
+| `gender`         | optional nonempty string                  | Reader-visible free text; no global gender vocabulary is imposed.                                                                                                                        |
+| `species_id`     | optional `species_id`                     | Reference to an introduced species entity.                                                                                                                                               |
+| `parent_id`      | optional `character_id`                   | One source-supported direct parent character.                                                                                                                                            |
+| `description`    | optional nonempty string                  | Who the character is: a stable identity blurb (about 300 characters as a guideline, not a hard limit). Optional inline `[[kind:slug]]` links are allowed. Distinct from `current_state`. |
+| `current_state`  | optional nonempty string                  | One or two concise sentences describing only the character's latest known condition.                                                                                                     |
+| `picture_id`     | optional `asset_id`                       | Chapter-controlled assignment of a manually curated image asset.                                                                                                                         |
+| `aliases`        | optional array of unique nonempty strings | Additional reader-visible names that become searchable only when introduced or updated.                                                                                                  |
+| `birth_date`     | optional `date`                           | Known birth date at the available story-time precision.                                                                                                                                  |
+| `birth_chapter`  | optional `chapter`                        | Chapter that explicitly depicts or establishes the character's birth or cloning.                                                                                                         |
+| `death_date`     | optional `date`                           | Known death date at the available story-time precision.                                                                                                                                  |
+| `death_event_id` | optional `event_id`                       | Reference to the event that records the death.                                                                                                                                           |
 
 The `character_update` schema permits every character field except `id`. `name` must
-remain a nonempty string; every optional field may be supplied with `null` to clear its
-prior value. A list supplied for `aliases` replaces the complete previous list. A
+remain a nonempty string; every optional field, including `description`, may be
+supplied with `null` to clear its prior value. A later `description` replaces the
+previous one; the latest value in effect at the viewed chapter wins, under the same
+reader-order and story-time rules as `current_state`. A list supplied for `aliases`
+replaces the complete previous list. A
 character introduction or update must not use a reference until its target entity has
 been seeded or introduced. When both `death_date` and the referenced event's own
 `date` are present, their canonical values must be identical. No ordering comparison is

@@ -21,7 +21,8 @@
     },
     {
       "id": "character:dr-landers",
-      "name": "Dr. Landers"
+      "name": "Dr. Landers",
+      "description": "A doctor at [[organization:applied-synergetics]] in [[location:new-handeltown]] who greets the newly activated [[character:bob-replicant]], a replicant of [[character:robert-johansson]], in 2133 and briefs him on his status and on [[organization:free-american-independent-theocratic-hegemony]]. He runs Bob's sessions as one of five candidates for a project that needs only one replicant."
     },
     {
       "id": "organization:free-american-independent-theocratic-hegemony",
