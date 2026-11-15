@@ -280,8 +280,16 @@ scale. Ordinary stellar components use base presentation radius `0.09` and inten
 allows narrative-known components to render a `2×` visible plane from that base
 radius while astronomy-only components remain at `1×`. These values are not physical
 radius or luminosity and never affect positions or measurements. Visible glyph
-radius and pointer hit radius are independent; every component retains a minimum
-`0.09` hit target and narrative scaling does not enlarge it.
+radius and pointer hit radius are independent. Picking is a screen-space test
+against each pickable component's projected centre: the nearest centre wins, with
+camera depth as the tie-break. The hit radius is 22 CSS pixels for a coarse
+pointer (`(pointer: coarse)`), 10 CSS pixels for a fine pointer, and never
+smaller than the projected `0.09` map-unit pick quad. Narrative `2×` visible
+scaling does not enlarge that pick radius. A map caption is only a fallback when
+no star centre is within the radius of the pointer, so a nearby unmarked star
+beats a caption that happens to cover it. A pick is committed on pointerup only
+when the pointer moved less than 10 CSS pixels, so an orbit drag does not select
+a star.
 
 Markers are camera-facing shader sprites from one expressive analytic family. Each
 uses a sharp luminous core, compact colour-family halo, and deterministic, restrained
@@ -318,19 +326,16 @@ and ray lengths use `1.0`. This does not change colour family or collapse relati
 component differences. Neither treatment affects marker position, labels, picking,
 canonical coordinates, or measurement.
 
-Selection frames do not participate in raycasting, but every star-marker glyph,
-including the selected one, does. Canvas picking explicitly resolves the closest
-marker hit to the camera; this preserves selected-star tooltips and re-selection while
-ensuring an overlapping closer system is selected instead of the decorative frame.
+Selection frames, travel routes, the grid, the starfield, axis labels and the
+star-marker glyphs themselves do not participate in mesh raycasting. System and
+component selection, and desktop hover, use the screen-space centre test above.
+When a system is opened in zoomed cluster mode, only that system's components
+are pickable, still by nearest projected centre.
 
-Each component's larger click target is a never-drawn (`visible={false}`) quad;
-three.js raycasting ignores visibility, so picking is unaffected. Its material is
-also `forceSinglePass`: three.js otherwise draws a transparent double-sided
-material in back and front passes, flagging `needsUpdate` before each, which
-re-derived program parameters for every star component on every frame
-(BOB-20261114-WT522P). The `renderStats()` map bridge and an e2e guard require an
-idle map to show no material-version growth, a stable program count and no
-two-pass materials.
+The earlier never-drawn click-target quad was removed once picking moved to
+screen space (BOB-20261115-YM65RA). Marker materials stay single-pass. The
+`renderStats()` map bridge and an e2e guard require an idle map to show no
+material-version growth, a stable program count and no two-pass materials.
 
 Every rendered catalogue component retains every applicable GCNS/Gaia, CNS5, WDS,
 and accepted 20-pc-census identifier plus the fact and provenance used for

@@ -13,10 +13,8 @@ import {
   AdditiveBlending,
   Color,
   DoubleSide,
-  Mesh,
   PerspectiveCamera,
   Quaternion,
-  Vector2,
   Vector3,
   Vector4,
 } from "three";
@@ -43,7 +41,12 @@ import {
   perspectiveWorldWidthAtTarget,
 } from "../domain/camera-motion";
 import { collectRenderMaterialStats } from "../domain/render-stats";
-import { closestMarkerSystemId } from "../domain/star-picking";
+import {
+  nearestScreenPick,
+  pointerMovedBeyondPickThreshold,
+  pointerPickRadiusPx,
+  type ScreenPickCandidate,
+} from "../domain/star-picking";
 import {
   advanceTravelPulseOffset,
   travelRouteOpacity,
@@ -84,7 +87,7 @@ interface MapSceneProps {
   onScaleChange: (scale: MapScale) => void;
 }
 
-type SceneProps = Omit<MapSceneProps, "onDeselect"> & {
+type SceneProps = MapSceneProps & {
   interactionsLocked: boolean;
   isInteractionLocked: () => boolean;
   onCameraRestoringChange: (restoring: boolean) => void;
@@ -100,6 +103,90 @@ const MAP_CAMERA_FOV_DEGREES = 47;
 export const MAP_CAMERA_DAMPING_FACTOR = 0.09;
 
 const ignoreRaycast = () => undefined;
+
+function isCoarsePointer(): boolean {
+  return window.matchMedia("(pointer: coarse)").matches;
+}
+
+function isMapPointerTarget(
+  target: EventTarget | null,
+  canvas: HTMLElement,
+): boolean {
+  if (!(target instanceof Element)) return false;
+  if (target.closest(".narrative-map-label")) return true;
+  return target === canvas || canvas.contains(target);
+}
+
+function captionSystemIdAt(clientX: number, clientY: number): string | null {
+  const under = document.elementFromPoint(clientX, clientY);
+  const direct =
+    under instanceof Element
+      ? under.closest<HTMLElement>(".narrative-map-label")
+      : null;
+  if (direct?.dataset.systemId) return direct.dataset.systemId;
+  for (const candidate of document.querySelectorAll<HTMLElement>(
+    ".narrative-map-label",
+  )) {
+    const rect = candidate.getBoundingClientRect();
+    if (
+      clientX >= rect.left &&
+      clientX <= rect.right &&
+      clientY >= rect.top &&
+      clientY <= rect.bottom &&
+      candidate.dataset.systemId
+    ) {
+      return candidate.dataset.systemId;
+    }
+  }
+  return null;
+}
+
+function mapPickCandidates(
+  systems: readonly StellarSystem[],
+  camera: PerspectiveCamera,
+  bounds: DOMRect,
+  options: { locked: boolean; zoomedSystemId: string | null },
+): ScreenPickCandidate[] {
+  if (options.locked) return [];
+  const zoomed = options.zoomedSystemId !== null;
+  const right = new Vector3().setFromMatrixColumn(camera.matrixWorld, 0);
+  const toScreen = (point: Vector3) => {
+    const projected = point.clone().project(camera);
+    return {
+      x: bounds.left + (projected.x * 0.5 + 0.5) * bounds.width,
+      y: bounds.top + (-projected.y * 0.5 + 0.5) * bounds.height,
+    };
+  };
+  const candidates: ScreenPickCandidate[] = [];
+  for (const system of systems) {
+    if (zoomed && system.id !== options.zoomedSystemId) continue;
+    system.components.forEach((component, index) => {
+      const offset = componentOffset(
+        component,
+        index,
+        system.components.length,
+      );
+      const centre = new Vector3(
+        system.render_position.x + offset[0],
+        system.render_position.y + offset[1],
+        system.render_position.z + offset[2],
+      );
+      const screen = toScreen(centre);
+      const edge = toScreen(
+        centre.clone().addScaledVector(right, componentPickRadius(component)),
+      );
+      candidates.push({
+        systemId: system.id,
+        componentId: component.id,
+        x: screen.x,
+        y: screen.y,
+        pickRadiusPx: Math.hypot(edge.x - screen.x, edge.y - screen.y),
+        depth: camera.position.distanceTo(centre),
+      });
+    });
+  }
+  return candidates;
+}
 
 function TravelRoutes({
   systems,
@@ -482,6 +569,17 @@ function CameraController({
           pickRadiusPx: radiusPx(componentPickRadius(component)),
         };
       },
+      setCameraDistance: (distance) => {
+        const control = controls.current;
+        if (!control) throw new Error("Map controls are not ready.");
+        const direction = camera.position.clone().sub(control.target);
+        if (direction.lengthSq() === 0) direction.set(0, 0, 1);
+        direction.normalize();
+        camera.position
+          .copy(control.target)
+          .addScaledVector(direction, distance);
+        control.update();
+      },
       renderStats: () => ({
         programs: gl.info.programs?.length ?? 0,
         drawCalls: gl.info.render.calls,
@@ -643,8 +741,7 @@ const StarMarker = memo(function StarMarker({
   captionOpacity,
   zoomed,
   entered,
-  interactionLocked,
-  onCaptionSelect,
+  onCaptionActivate,
 }: {
   system: StellarSystem;
   selected: boolean;
@@ -657,8 +754,7 @@ const StarMarker = memo(function StarMarker({
   captionOpacity: number | undefined;
   zoomed: boolean;
   entered: boolean;
-  interactionLocked: boolean;
-  onCaptionSelect: (id: string) => void;
+  onCaptionActivate: (event: { clientX: number; clientY: number }) => void;
 }) {
   const position = system.render_position;
   const selectedDistance = selectedSystem
@@ -668,9 +764,6 @@ const StarMarker = memo(function StarMarker({
         system.position_pc.zg - selectedSystem.position_pc.zg,
       )
     : null;
-  const selectCaption = () => {
-    if (!interactionLocked) onCaptionSelect(system.id);
-  };
   return (
     <group position={[position.x, position.y, position.z]}>
       {system.components.map((component, index) => {
@@ -684,36 +777,13 @@ const StarMarker = memo(function StarMarker({
           index,
           system.components.length,
         );
-        const pickable = !interactionLocked && (!zoomed || entered);
         return (
           <Billboard key={component.id} position={offset} follow>
-            {/* Click target only: never drawn (raycasting ignores visible), and
-                single-pass so three.js does not split a transparent
-                double-sided material into back and front passes, which flags
-                needsUpdate and re-derives program parameters every frame. */}
-            <mesh
-              visible={false}
-              userData={{ systemId: system.id, componentId: component.id }}
-              raycast={pickable ? Mesh.prototype.raycast : ignoreRaycast}
-            >
-              <planeGeometry
-                args={[
-                  componentPickRadius(component) * 2,
-                  componentPickRadius(component) * 2,
-                ]}
-              />
-              <meshBasicMaterial
-                transparent
-                forceSinglePass
-                opacity={0}
-                depthWrite={false}
-                colorWrite={false}
-                side={DoubleSide}
-              />
-            </mesh>
+            {/* Picking is screen-space against the component centre, so this
+                visible glyph does not participate in mesh raycasts. */}
             <mesh
               userData={{ systemId: system.id, componentId: component.id }}
-              raycast={pickable ? Mesh.prototype.raycast : ignoreRaycast}
+              raycast={ignoreRaycast}
             >
               <planeGeometry args={[radius * 2, radius * 2]} />
               <shaderMaterial
@@ -778,12 +848,14 @@ const StarMarker = memo(function StarMarker({
                 data-caption-opacity={captionOpacity ?? 1}
                 style={{ opacity: captionOpacity ?? 1 }}
                 onClick={(event) => {
-                  // The caption is a DOM overlay inside the canvas wrapper.
-                  // Without this the same click also reaches R3F as a missed
-                  // pointer, and onPointerMissed clears the selection the
-                  // caption just made.
+                  // Synthetic clicks (tests) may not emit pointerup. Real
+                  // taps also arrive here after pointerup; the same
+                  // screen-space rule is idempotent for the same point.
                   event.stopPropagation();
-                  selectCaption();
+                  onCaptionActivate({
+                    clientX: event.clientX,
+                    clientY: event.clientY,
+                  });
                 }}
               >
                 <span
@@ -1206,6 +1278,7 @@ function Scene({
   zoomedSystemId,
   onSelect,
   onComponentSelect,
+  onDeselect,
   onReady,
   onScaleChange,
   interactionsLocked,
@@ -1213,64 +1286,36 @@ function Scene({
   onCameraRestoringChange,
 }: SceneProps) {
   useEffect(onReady, [onReady]);
-  const { camera, gl, raycaster, scene } = useThree();
+  const { camera, gl } = useThree();
   const selected = systems.find((system) => system.id === selectedId);
   const zoomed = zoomedSystemId !== null;
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   useEffect(() => {
+    const canvas = gl.domElement;
+    const pickOptions = () => ({
+      locked: interactionsLocked,
+      zoomedSystemId,
+    });
+    const candidatesAt = () =>
+      mapPickCandidates(
+        systems,
+        camera as PerspectiveCamera,
+        canvas.getBoundingClientRect(),
+        pickOptions(),
+      );
     const updateHover = (event: PointerEvent) => {
       if (zoomed || interactionsLocked) {
         setHoveredId(null);
         return;
       }
-      const bounds = gl.domElement.getBoundingClientRect();
+      const bounds = canvas.getBoundingClientRect();
       const insideCanvas =
         event.clientX >= bounds.left &&
         event.clientX <= bounds.right &&
         event.clientY >= bounds.top &&
         event.clientY <= bounds.bottom;
-      const target = event.target;
-      const caption =
-        target instanceof Element
-          ? target.closest<HTMLElement>(".narrative-map-label")
-          : null;
-      if (
-        target instanceof Element &&
-        target.closest(".system-status-rail.expanded") &&
-        caption?.dataset.systemId
-      ) {
-        setHoveredId(caption.dataset.systemId);
-        return;
-      }
-      if (insideCanvas) {
-        raycaster.setFromCamera(
-          new Vector2(
-            ((event.clientX - bounds.left) / bounds.width) * 2 - 1,
-            -((event.clientY - bounds.top) / bounds.height) * 2 + 1,
-          ),
-          camera,
-        );
-        const starId = closestMarkerSystemId(
-          raycaster.intersectObjects(scene.children, true),
-        );
-        if (starId) {
-          setHoveredId(starId);
-          return;
-        }
-      }
-      if (
-        target instanceof Element &&
-        target.closest(".narrative-map-label-name") &&
-        caption?.dataset.systemId
-      ) {
-        setHoveredId(caption.dataset.systemId);
-        return;
-      }
-      if (caption?.dataset.systemId) {
-        setHoveredId(caption.dataset.systemId);
-        return;
-      }
-      const retainedCaption = [
+      const captionId = captionSystemIdAt(event.clientX, event.clientY);
+      const expandedId = [
         ...document.querySelectorAll<HTMLElement>(
           ".narrative-map-label.hovered",
         ),
@@ -1282,9 +1327,25 @@ function Scene({
           event.clientY >= rect.top &&
           event.clientY <= rect.bottom
         );
-      });
-      if (retainedCaption?.dataset.systemId) {
-        setHoveredId(retainedCaption.dataset.systemId);
+      })?.dataset.systemId;
+      // Keep an open tooltip under the pointer so it stays usable, even if
+      // another star's centre is within pick range. Picks still prefer the
+      // nearest centre (see pointerup / caption click).
+      if (expandedId) {
+        setHoveredId(expandedId);
+        return;
+      }
+      const star = nearestScreenPick(
+        candidatesAt(),
+        { x: event.clientX, y: event.clientY },
+        pointerPickRadiusPx(isCoarsePointer()),
+      );
+      if (star) {
+        setHoveredId(star.systemId);
+        return;
+      }
+      if (captionId) {
+        setHoveredId(captionId);
         return;
       }
       if (!insideCanvas) {
@@ -1292,6 +1353,60 @@ function Scene({
         return;
       }
       setHoveredId(null);
+    };
+    const gesture = {
+      current: null as { id: number; x: number; y: number } | null,
+    };
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.pointerType === "mouse" && event.button !== 0) return;
+      if (!isMapPointerTarget(event.target, canvas)) return;
+      gesture.current = {
+        id: event.pointerId,
+        x: event.clientX,
+        y: event.clientY,
+      };
+    };
+    const onPointerUp = (event: PointerEvent) => {
+      const start = gesture.current;
+      if (!start || start.id !== event.pointerId) return;
+      gesture.current = null;
+      if (isInteractionLocked()) return;
+      if (
+        pointerMovedBeyondPickThreshold(
+          { x: start.x, y: start.y },
+          { x: event.clientX, y: event.clientY },
+        )
+      ) {
+        return;
+      }
+      const star = nearestScreenPick(
+        candidatesAt(),
+        { x: event.clientX, y: event.clientY },
+        pointerPickRadiusPx(isCoarsePointer()),
+      );
+      if (zoomed) {
+        if (star) onComponentSelect(star.componentId);
+        return;
+      }
+      if (star) {
+        onSelect(star.systemId);
+        return;
+      }
+      const captionId = captionSystemIdAt(event.clientX, event.clientY);
+      if (captionId) {
+        onSelect(captionId);
+        return;
+      }
+      const bounds = canvas.getBoundingClientRect();
+      const insideCanvas =
+        event.clientX >= bounds.left &&
+        event.clientX <= bounds.right &&
+        event.clientY >= bounds.top &&
+        event.clientY <= bounds.bottom;
+      if (insideCanvas) onDeselect();
+    };
+    const onPointerCancel = (event: PointerEvent) => {
+      if (gesture.current?.id === event.pointerId) gesture.current = null;
     };
     const clearHover = () => setHoveredId(null);
     const clearHoverOnWindowExit = (event: PointerEvent) => {
@@ -1301,14 +1416,31 @@ function Scene({
       capture: true,
       passive: true,
     });
+    window.addEventListener("pointerdown", onPointerDown, true);
+    window.addEventListener("pointerup", onPointerUp, true);
+    window.addEventListener("pointercancel", onPointerCancel, true);
     window.addEventListener("pointerout", clearHoverOnWindowExit, true);
     window.addEventListener("blur", clearHover);
     return () => {
       window.removeEventListener("pointermove", updateHover, { capture: true });
+      window.removeEventListener("pointerdown", onPointerDown, true);
+      window.removeEventListener("pointerup", onPointerUp, true);
+      window.removeEventListener("pointercancel", onPointerCancel, true);
       window.removeEventListener("pointerout", clearHoverOnWindowExit, true);
       window.removeEventListener("blur", clearHover);
     };
-  }, [camera, gl, interactionsLocked, raycaster, scene, zoomed]);
+  }, [
+    camera,
+    gl,
+    interactionsLocked,
+    isInteractionLocked,
+    onComponentSelect,
+    onDeselect,
+    onSelect,
+    systems,
+    zoomed,
+    zoomedSystemId,
+  ]);
   const [captionOpacities, setCaptionOpacities] = useState<
     ReadonlyMap<string, number>
   >(new Map());
@@ -1343,22 +1475,7 @@ function Scene({
           Galactic north · +Zg
         </Text>
       )}
-      <group
-        onClick={(event) => {
-          if (isInteractionLocked()) return;
-          if (zoomed) {
-            const componentId = event.intersections.find(
-              (intersection) =>
-                typeof intersection.object.userData.componentId === "string" &&
-                intersection.object.userData.systemId === zoomedSystemId,
-            )?.object.userData.componentId as string | undefined;
-            if (componentId) onComponentSelect(componentId);
-            return;
-          }
-          const systemId = closestMarkerSystemId(event.intersections);
-          if (systemId) onSelect(systemId);
-        }}
-      >
+      <group>
         {systems.map((system) => (
           <StarMarker
             key={system.id}
@@ -1373,8 +1490,21 @@ function Scene({
             captionOpacity={captionOpacities.get(system.id)}
             zoomed={zoomed}
             entered={system.id === zoomedSystemId}
-            interactionLocked={interactionsLocked}
-            onCaptionSelect={onSelect}
+            onCaptionActivate={({ clientX, clientY }) => {
+              if (isInteractionLocked()) return;
+              const star = nearestScreenPick(
+                mapPickCandidates(
+                  systems,
+                  camera as PerspectiveCamera,
+                  gl.domElement.getBoundingClientRect(),
+                  { locked: false, zoomedSystemId },
+                ),
+                { x: clientX, y: clientY },
+                pointerPickRadiusPx(isCoarsePointer()),
+              );
+              if (star) onSelect(star.systemId);
+              else onSelect(system.id);
+            }}
           />
         ))}
       </group>
@@ -1419,13 +1549,10 @@ export function StarMap({ onDeselect, ...props }: MapSceneProps) {
         fov: MAP_CAMERA_FOV_DEGREES,
       }}
       dpr={[1, 1.8]}
-      onPointerMissed={() => {
-        if (!cameraRestoringRef.current) onDeselect();
-      }}
       data-testid="star-map-canvas"
       data-galactic-starfield="permanent"
       data-star-sprite="expressive-hybrid"
-      data-component-render-calls="2"
+      data-component-render-calls="1"
       data-context-emphasis={ASTRONOMY_CONTEXT_EMPHASIS}
       data-known-core-halo-scale={NARRATIVE_CORE_HALO_SCALE}
       data-known-visible-footprint-scale={NARRATIVE_VISIBLE_FOOTPRINT_SCALE}
@@ -1436,6 +1563,7 @@ export function StarMap({ onDeselect, ...props }: MapSceneProps) {
     >
       <Scene
         {...props}
+        onDeselect={onDeselect}
         interactionsLocked={cameraRestoring}
         isInteractionLocked={isInteractionLocked}
         onCameraRestoringChange={onCameraRestoringChange}
