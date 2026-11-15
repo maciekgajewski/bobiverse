@@ -620,6 +620,100 @@ describe("atlas shell", () => {
     ).toBeInTheDocument();
   });
 
+  describe("chapter links (BOB-20261115-446D62)", () => {
+    const store = (viewChapter: string) =>
+      window.localStorage.setItem(
+        "bobiverse.app-state.v2",
+        JSON.stringify({
+          furthestChapterRead: "1.20",
+          viewChapter,
+          displayDate: "2145",
+          mode: "chapter",
+          timelineZoom: 1,
+          timelinePan: 0,
+        }),
+      );
+    const saved = () =>
+      JSON.parse(window.localStorage.getItem("bobiverse.app-state.v2")!) as {
+        furthestChapterRead: string;
+        viewChapter: string;
+      };
+    const inspector = () =>
+      screen.getByRole("complementary", { name: "Object inspector" });
+
+    it("opens the knowledge chapter's card from the map badge", async () => {
+      store("1.18");
+      const user = userEvent.setup();
+      render(<App />);
+      const badge = document.querySelector<HTMLElement>(
+        ".map-narrative-badge",
+      )!;
+      expect(badge).toHaveTextContent(
+        "Latest known · Knowledge through Chapter 1.18",
+      );
+      await user.click(
+        within(badge).getByRole("button", { name: "Chapter 1.18" }),
+      );
+      expect(
+        within(inspector()).getByText("Chapter", {
+          selector: ".chapter-title-label",
+        }),
+      ).toBeInTheDocument();
+      expect(saved()).toMatchObject({
+        furthestChapterRead: "1.20",
+        viewChapter: "1.18",
+      });
+    });
+
+    it("has no badge link in the pre-book zero state", () => {
+      window.localStorage.setItem(
+        "bobiverse.app-state.v2",
+        JSON.stringify({
+          furthestChapterRead: null,
+          viewChapter: null,
+          displayDate: null,
+          mode: "chapter",
+          timelineZoom: 1,
+          timelinePan: 0,
+        }),
+      );
+      render(<App />);
+      const badge = document.querySelector<HTMLElement>(
+        ".map-narrative-badge",
+      )!;
+      expect(badge).toHaveTextContent("Pre-book zero state");
+      expect(within(badge).queryByRole("button")).not.toBeInTheDocument();
+    });
+
+    it("opens the recency chapter's card from an info card, never moving Read through", async () => {
+      store("1.20");
+      const user = userEvent.setup();
+      render(<App />);
+      await user.type(
+        screen.getByRole("searchbox", { name: "Search visible objects" }),
+        "Garfield",
+      );
+      await user.click(
+        screen.getByRole("button", { name: /^Garfield(?:Active)?$/ }),
+      );
+      const recency =
+        inspector().querySelector<HTMLElement>(".recency-context")!;
+      expect(recency).toHaveTextContent(/^(Last active|Active) in Chapter /);
+      const link = within(recency).getByRole("button", { name: /^Chapter / });
+      const chapter = link.textContent!.replace("Chapter ", "");
+      await user.click(link);
+      expect(
+        within(inspector()).getByText("Chapter", {
+          selector: ".chapter-title-label",
+        }),
+      ).toBeInTheDocument();
+      expect(saved()).toMatchObject({
+        furthestChapterRead: "1.20",
+        viewChapter: chapter,
+      });
+    });
+  });
+
   it("cannot retain chapter detail after the spoiler ceiling is lowered past it", async () => {
     window.localStorage.setItem(
       "bobiverse.app-state.v2",

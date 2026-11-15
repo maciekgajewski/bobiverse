@@ -11,7 +11,11 @@ import type {
   NarrativeRecord,
   NarrativeWorld,
 } from "../narrative/model";
-import { characterAncestors, formatNarrativeDate } from "../narrative/model";
+import {
+  characterAncestors,
+  compareNarrativeChapters,
+  formatNarrativeDate,
+} from "../narrative/model";
 import {
   resolveHeaderIllustration,
   type HeaderIllustration,
@@ -161,6 +165,38 @@ function EntityLink({
   );
 }
 
+/**
+ * "Chapter 1.18" as a link to that chapter's info card, in the inline entity
+ * link style. It links only up to the reader's Read through chapter; a later
+ * chapter (which the projection should never surface) stays plain text, so a
+ * link can never open or reveal a chapter the reader has not reached.
+ */
+export function ChapterLink({
+  chapter,
+  readThroughChapter,
+  onChapterSelect,
+}: {
+  chapter: string;
+  readThroughChapter: string | null;
+  onChapterSelect: (chapter: string) => void;
+}) {
+  const label = `Chapter ${chapter}`;
+  if (
+    !readThroughChapter ||
+    compareNarrativeChapters(chapter, readThroughChapter) > 0
+  )
+    return <>{label}</>;
+  return (
+    <button
+      type="button"
+      className="link-button inline-entity-link chapter-link"
+      onClick={() => onChapterSelect(chapter)}
+    >
+      {label}
+    </button>
+  );
+}
+
 function mappedAstronomyId(
   entity: NarrativeEntity,
   entities: ReadonlyMap<string, NarrativeEntity>,
@@ -239,6 +275,7 @@ function NarrativeDetails({
   headingId,
   onSelect,
   onChapterSelect,
+  readThroughChapter,
   travelStops,
   sectionState,
   onToggleSection,
@@ -253,6 +290,7 @@ function NarrativeDetails({
   headingId: string;
   onSelect: (selection: SelectionIdentity) => void;
   onChapterSelect: (chapter: string) => void;
+  readThroughChapter: string | null;
   travelStops: readonly CharacterTravelStop[];
   sectionState: CharacterInspectorSectionState;
   onToggleSection: (section: keyof CharacterInspectorSectionState) => void;
@@ -280,20 +318,19 @@ function NarrativeDetails({
       : null;
   const astronomySystem =
     systems.find((system) => system.id === mappedId) ?? null;
-  const status = [
-    "Narrative-known",
-    item.active ? "Active" : null,
-    entity.map_status === "unmapped" ? "Unmapped" : null,
-  ].filter(Boolean);
-  const recency = item.lastActivity
-    ? `${item.active ? "Active" : "Last active"} in Chapter ${
-        item.lastActivity.source_chapter
-      }${
-        item.lastActivity.effective_date
-          ? ` · ${displayDate(item.lastActivity.effective_date)}`
-          : " · chronologically unplaced"
-      }`
-    : null;
+  const recency = item.lastActivity ? (
+    <>
+      {item.active ? "Active" : "Last active"} in{" "}
+      <ChapterLink
+        chapter={item.lastActivity.source_chapter}
+        readThroughChapter={readThroughChapter}
+        onChapterSelect={onChapterSelect}
+      />
+      {item.lastActivity.effective_date
+        ? ` · ${displayDate(item.lastActivity.effective_date)}`
+        : " · chronologically unplaced"}
+    </>
+  ) : null;
   const relationship = (id: unknown) =>
     typeof id === "string" ? (
       <EntityLink
@@ -343,7 +380,9 @@ function NarrativeDetails({
         </button>
       )}
       {aliases.length > 0 && <p className="aliases">{aliases.join(" · ")}</p>}
-      <p className="object-status">{status.join(" · ")}</p>
+      {/* No status tag row (Maciej, 2026-11-15): the recency line says Active
+          or Last active, and a location's Map context says whether it is
+          explicitly unmapped. */}
       {recency && <p className="recency-context">{recency}</p>}
       {entity.entity_type === "character" ? (
         <CharacterSection
@@ -907,6 +946,7 @@ export function ObjectInspector({
   onForward = () => undefined,
   onSelect,
   onChapterSelect = () => undefined,
+  readThroughChapter = null,
   travelStops = [],
   sectionState = defaultCharacterInspectorSectionState(),
   onToggleSection = () => undefined,
@@ -932,6 +972,11 @@ export function ObjectInspector({
   onForward?: () => void;
   onSelect: (selection: SelectionIdentity) => void;
   onChapterSelect?: (chapter: string) => void;
+  /**
+   * The reader's Read through chapter: chapter links go no further. Without
+   * it chapters in the recency line are plain text.
+   */
+  readThroughChapter?: string | null;
   travelStops?: readonly CharacterTravelStop[];
   sectionState?: CharacterInspectorSectionState;
   onToggleSection?: (section: keyof CharacterInspectorSectionState) => void;
@@ -1006,6 +1051,7 @@ export function ObjectInspector({
           headingId={headingId}
           onSelect={onSelect}
           onChapterSelect={onChapterSelect}
+          readThroughChapter={readThroughChapter}
           travelStops={travelStops}
           sectionState={sectionState}
           onToggleSection={onToggleSection}

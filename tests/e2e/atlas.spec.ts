@@ -1966,7 +1966,9 @@ test("progressive browser search preserves collapse state and inspects unmapped 
     name: "Object inspector",
   });
   await expect(inspector.getByText("Explicitly unmapped")).toBeVisible();
-  await expect(inspector.getByText("Narrative-known")).toBeVisible();
+  // No status tag row: Map context alone says the location is unmapped.
+  await expect(inspector.getByText("Narrative-known")).toHaveCount(0);
+  await expect(inspector.getByText("Unmapped", { exact: true })).toHaveCount(0);
 });
 
 test("browser species rows use assigned icons while ordinary rows retain shared bullets", async ({

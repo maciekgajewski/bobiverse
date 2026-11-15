@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ObjectInspector } from "../../src/components/ObjectInspector";
@@ -926,5 +926,105 @@ describe("object inspector", () => {
     expect(
       screen.queryByRole("button", { name: "Sol (star)" }),
     ).not.toBeInTheDocument();
+  });
+
+  describe("chapter link in the recency line", () => {
+    const vessel = sparseEntities.find(
+      (entity) => entity.id === "vessel:sparse",
+    )!;
+    const withActivity = (chapter: string, active: boolean) => ({
+      ...item(vessel),
+      active,
+      lastActivity: {
+        entity_id: vessel.id,
+        source_chapter: chapter,
+        effective_date: "2133",
+        reasons: [],
+      } as NarrativeBrowserItem["lastActivity"],
+    });
+    const view = (
+      narrativeItem: NarrativeBrowserItem,
+      readThroughChapter: string | null,
+      onChapterSelect = vi.fn(),
+    ) => (
+      <ObjectInspector
+        selection={{ kind: "narrative", id: vessel.id }}
+        narrativeItem={narrativeItem}
+        world={world}
+        systems={[]}
+        assets={{ assets: [] }}
+        onSelect={vi.fn()}
+        onChapterSelect={onChapterSelect}
+        readThroughChapter={readThroughChapter}
+      />
+    );
+    const recency = () => document.querySelector(".recency-context")!;
+
+    it("links Last active in Chapter 1.18 to that chapter's card", async () => {
+      const user = userEvent.setup();
+      const onChapterSelect = vi.fn();
+      render(view(withActivity("1.18", false), "1.61", onChapterSelect));
+      expect(recency()).toHaveTextContent("Last active in Chapter 1.18 · 2133");
+      const link = within(recency() as HTMLElement).getByRole("button", {
+        name: "Chapter 1.18",
+      });
+      expect(link).toHaveClass("link-button", "inline-entity-link");
+      await user.click(link);
+      expect(onChapterSelect).toHaveBeenCalledExactlyOnceWith("1.18");
+    });
+
+    it("links Active in Chapter X up to and including Read through", () => {
+      render(view(withActivity("1.61", true), "1.61"));
+      expect(recency()).toHaveTextContent("Active in Chapter 1.61 · 2133");
+      expect(
+        within(recency() as HTMLElement).getByRole("button", {
+          name: "Chapter 1.61",
+        }),
+      ).toBeInTheDocument();
+    });
+
+    it("shows no status tags, only the recency line", () => {
+      const unmapped = sparseEntities.find(
+        (entity) => entity.id === "location:sparse-system",
+      )!;
+      const { rerender } = render(view(withActivity("1.18", true), "1.61"));
+      const inspector = document.querySelector(".narrative-details")!;
+      expect(inspector.querySelector(".object-status")).toBeNull();
+      expect(inspector).not.toHaveTextContent("Narrative-known");
+      expect(recency()).toHaveTextContent(/^Active in Chapter 1\.18/);
+      rerender(
+        <ObjectInspector
+          selection={{ kind: "narrative", id: unmapped.id }}
+          narrativeItem={{ ...withActivity("1.18", true), entity: unmapped }}
+          world={world}
+          systems={[]}
+          assets={{ assets: [] }}
+          onSelect={vi.fn()}
+          readThroughChapter="1.61"
+        />,
+      );
+      const details = document.querySelector(".narrative-details")!;
+      expect(details.querySelector(".object-status")).toBeNull();
+      expect(details).not.toHaveTextContent(/\bUnmapped\b/);
+      // The location's Map context still says so.
+      expect(details).toHaveTextContent("Explicitly unmapped");
+    });
+
+    it("never links a chapter beyond Read through, or without one", () => {
+      const { rerender } = render(view(withActivity("2.3", false), "1.61"));
+      expect(recency()).toHaveTextContent("Last active in Chapter 2.3");
+      expect(
+        within(recency() as HTMLElement).queryByRole("button"),
+      ).not.toBeInTheDocument();
+      // Chapter order is numeric, not lexical: 1.100 comes after 1.61.
+      rerender(view(withActivity("1.100", false), "1.61"));
+      expect(
+        within(recency() as HTMLElement).queryByRole("button"),
+      ).not.toBeInTheDocument();
+      rerender(view(withActivity("1.18", false), null));
+      expect(
+        within(recency() as HTMLElement).queryByRole("button"),
+      ).not.toBeInTheDocument();
+    });
   });
 });
