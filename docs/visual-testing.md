@@ -686,6 +686,17 @@ On a phone in portrait (about 390×844):
 On desktop (about 1280×800) there is no Search pill on the map. Search stays
 in the left-hand **Object browser**.
 
+## BOB-20261115-MKP51F same-named Contains children
+
+On a phone in portrait (about 390×844) or desktop, after reading through Chapter 1.16
+or later:
+
+- Open the star system **Epsilon Eridani**. Under **Contains**, the first link reads
+  **Epsilon Eridani (star)**, not a second bare **Epsilon Eridani**, and
+  **Bill's skunkworks** is still listed. The heading is still **Epsilon Eridani**
+  with kind **star system**.
+- Open **Solar System**: **Contains** still lists **Sol** with no kind suffix.
+
 ## Default and reset camera
 
 The repeatable default camera pose preserves the documented Three.js viewing
