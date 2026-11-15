@@ -23,6 +23,14 @@ Last updated: 2026-11-15
   baseline, so they show from the pre-book state with no chapter activity:
   Earth "Mostly harmless.", Moon "Is a harsh mistress." and Human "Homo sapiens
   non urinat in ventum."
+- **Earth and Moon illustrations.** Their info-card headers show the UI
+  Designer's approved 66x66 lossless WebP crops, wired like GUPPI's and
+  Jeeves's (the same 3.5rem header frame, the credit as alt text):
+  `earth-head.webp` (Apollo 17 Blue Marble, AS17-148-22727) and
+  `moon-head.webp` (NASA/GSFC/ASU LRO nearside colour mosaic), both public
+  domain, credited in `public/assets/CREDITS.md` and About > Credits. Earth and
+  the Moon are known in the zero state, so their pictures show from the start.
+  The Human species icon is unchanged.
 
 ## Spoiler gating
 
@@ -58,6 +66,10 @@ Date mode it switches to Chapter mode.
   ring.
 - `data/narrative/baseline/zero-state.json` and the narrative-equivalence
   snapshot (only the three descriptions).
+- `src/about-image.ts`, `src/narrative/header-illustration.ts`,
+  `src/components/AboutDialog.tsx`, `public/assets/earth-head.webp`,
+  `public/assets/moon-head.webp`, `public/assets/CREDITS.md`: the Earth and
+  Moon illustrations and their credits.
 - Tests: component tests for the links, their gating and the missing tags;
   `tests/e2e/chapter-links.spec.ts` for both links on desktop and at 360x800,
   390x844 and 412x915.
@@ -98,7 +110,7 @@ npm run test:e2e:csp
 4. Tab to the badge's chapter link: the badge shows a cyan focus ring.
 5. In the pre-book state, open Earth, the Moon and Human: their descriptions are
    "Mostly harmless.", "Is a harsh mistress." and "Homo sapiens non urinat in
-   ventum.".
+   ventum.". Earth and the Moon show their NASA photographs in the header.
 
 ## Risks and decisions
 
@@ -111,3 +123,5 @@ npm run test:e2e:csp
 ### 2026-11-15 (Europe/Warsaw)
 
 - Implemented on `bob-20261115-chapter-links` from `f794a35`.
+- Added the Earth and Moon header illustrations (manager-approved assets from
+  the UI Designer, byte-identical to the supplied files).

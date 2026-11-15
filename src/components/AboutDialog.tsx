@@ -2,8 +2,12 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import {
   ABOUT_IMAGE_ALT,
+  EARTH_IMAGE_ALT,
+  EARTH_IMAGE_SOURCE,
   JEEVES_IMAGE_ALT,
   JEEVES_IMAGE_REFERENCES,
+  MOON_IMAGE_ALT,
+  MOON_IMAGE_SOURCE,
 } from "../about-image";
 import { APP_VERSION_LABEL } from "../app-version";
 import { catalogueAcknowledgements } from "../domain/catalogue-acknowledgements";
@@ -170,6 +174,22 @@ export function AboutCredits() {
               </ExternalLink>
             </span>
           ))}
+          .
+        </li>
+        <li>
+          {EARTH_IMAGE_ALT} Used as Earth&rsquo;s inspector illustration.
+          Source:{" "}
+          <ExternalLink href={EARTH_IMAGE_SOURCE}>
+            Wikimedia Commons
+          </ExternalLink>
+          .
+        </li>
+        <li>
+          {MOON_IMAGE_ALT} Used as the Moon&rsquo;s inspector illustration.
+          Source:{" "}
+          <ExternalLink href={MOON_IMAGE_SOURCE}>
+            Wikimedia Commons
+          </ExternalLink>
           .
         </li>
       </ul>

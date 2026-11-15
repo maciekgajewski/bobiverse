@@ -45,3 +45,36 @@ Same credit as `jeeves.webp`.
   66×66 pixel square on transparency and saved as lossless WebP. It is Jeeves's
   illustration in the inspector header, with the credit above as its
   alternative text.
+
+## `earth-head.webp`
+
+The Blue Marble photograph of Earth, taken on 7 December 1972 by the crew of
+Apollo 17 (photo ID AS17-148-22727) during trans-lunar coast, about 29,400
+kilometres from Earth. Taken by either Harrison Schmitt or Ron Evans.
+NASA / Johnson Space Center. Public domain (work of employees of the United
+States federal government).
+
+- Source: <https://images-assets.nasa.gov/image/as17-148-22727/as17-148-22727~orig.jpg>
+- Also published on Wikimedia Commons as File:The Earth seen from Apollo 17.jpg:
+  <https://commons.wikimedia.org/wiki/File:The_Earth_seen_from_Apollo_17.jpg>
+- This asset is a derivative: the planetary disc was cut out onto transparency
+  with a circular mask and a soft 1-pixel edge, tightly framed, resized to 66×66
+  pixels with Lanczos resampling and saved as lossless WebP. It is Earth's
+  illustration in the inspector header, with the credit above as its
+  alternative text.
+
+## `moon-head.webp`
+
+Nearside of the Moon: a color mosaic of images from the Wide Angle Camera (WAC)
+on NASA's Lunar Reconnaissance Orbiter, in orthographic projection centred at
+0° longitude, 0° latitude. NASA / Goddard Space Flight Center / Arizona State
+University. Source images obtained between November 2009 and February 2011.
+Public domain (work of employees of the United States federal government).
+
+- Source: <https://commons.wikimedia.org/wiki/File:Moon_nearside_LRO_color_mosaic.png>
+- LROC WMS / original mosaic: <http://wms.lroc.asu.edu/lroc?projection=ORTHO&c_lon=0&c_lat=0>
+- This asset is a derivative: the planetary disc was cut out onto transparency
+  with a circular mask and a soft 1-pixel edge, tightly framed, resized to 66×66
+  pixels with Lanczos resampling and saved as lossless WebP. It is the Moon's
+  illustration in the inspector header, with the credit above as its
+  alternative text.

@@ -4,7 +4,11 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-import { JEEVES_IMAGE_ALT } from "../../src/about-image";
+import {
+  EARTH_IMAGE_ALT,
+  JEEVES_IMAGE_ALT,
+  MOON_IMAGE_ALT,
+} from "../../src/about-image";
 import { APP_VERSION_LABEL } from "../../src/app-version";
 import {
   ABOUT_CAPTION_ENTITY_ID,
@@ -253,9 +257,9 @@ describe("AboutDialog", () => {
       }),
     ).toHaveFocus();
     // Credits and Privacy add more focusable links; wrap from the last one.
-    const last = within(dialog).getByRole("link", {
-      name: "Bruce Baker (2014)",
-    });
+    const last = within(dialog)
+      .getAllByRole("link", { name: "Wikimedia Commons" })
+      .at(-1)!;
     last.focus();
     await user.tab();
     expect(close).toHaveFocus();
@@ -318,6 +322,24 @@ describe("AboutDialog", () => {
       "href",
       "https://commons.wikimedia.org/wiki/File:John_Cleese_(cropped).jpg",
     );
+  });
+
+  it("credits the Earth and Moon photographs with their sources", () => {
+    render(<AboutDialog onClose={() => undefined} />);
+    const dialog = screen.getByRole("dialog", { name: "What is this?" });
+    const section = within(dialog)
+      .getByRole("heading", { name: "Credits" })
+      .closest("section")!;
+    expect(section.textContent).toContain(EARTH_IMAGE_ALT);
+    expect(section.textContent).toContain(MOON_IMAGE_ALT);
+    expect(
+      within(section)
+        .getAllByRole("link", { name: "Wikimedia Commons" })
+        .map((link) => link.getAttribute("href")),
+    ).toEqual([
+      "https://commons.wikimedia.org/wiki/File:The_Earth_seen_from_Apollo_17.jpg",
+      "https://commons.wikimedia.org/wiki/File:Moon_nearside_LRO_color_mosaic.png",
+    ]);
   });
 
   it("shows the app version unobtrusively at the end", () => {
