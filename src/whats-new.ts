@@ -31,7 +31,7 @@ function hasOtherAppState(storage: Storage): boolean {
 
 /**
  * Whether What's new should open by itself at start-up. Call it before the
- * app writes any state of its own.
+ * app writes any state of its own. Without usable storage it never shows.
  *
  * - First visit (no app-owned keys at all): do not show; record the newest
  *   version so this release's notes never pop up later.
@@ -40,10 +40,13 @@ function hasOtherAppState(storage: Storage): boolean {
  * - Same or newer version recorded: do not show.
  */
 export function shouldAutoShowWhatsNew(
-  storage: Storage = window.localStorage,
+  storage?: Storage,
   newest: string = NEWEST_RELEASE_NOTES_VERSION,
 ): boolean {
+  // Reading window.localStorage itself can throw (Firefox with cookies
+  // blocked, some WebViews), so it is resolved inside the try.
   try {
+    storage ??= window.localStorage;
     const seen = storage.getItem(WHATS_NEW_STORAGE_KEY);
     if (seen === null) {
       if (hasOtherAppState(storage)) return true;
@@ -58,12 +61,12 @@ export function shouldAutoShowWhatsNew(
 
 /** Records that the newest release notes were seen (on closing the dialog). */
 export function markWhatsNewSeen(
-  storage: Storage = window.localStorage,
+  storage?: Storage,
   newest: string = NEWEST_RELEASE_NOTES_VERSION,
 ): void {
   try {
-    storage.setItem(WHATS_NEW_STORAGE_KEY, newest);
+    (storage ?? window.localStorage).setItem(WHATS_NEW_STORAGE_KEY, newest);
   } catch {
-    // Storage can be unavailable (private mode quotas); the dialog still closes.
+    // Storage can be blocked or full; the dialog still closes.
   }
 }

@@ -102,12 +102,19 @@ const storageKey = `${APP_STORAGE_PREFIX}app-state.v2`;
 const legacyStorageKey = `${APP_STORAGE_PREFIX}app-state.v1`;
 
 function clearAppOwnedStorage(): void {
-  const keys: string[] = [];
-  for (let i = 0; i < window.localStorage.length; i += 1) {
-    const key = window.localStorage.key(i);
-    if (key?.startsWith(APP_STORAGE_PREFIX)) keys.push(key);
+  // Storage can be blocked (even reading window.localStorage can throw);
+  // forgetting then only resets the in-memory state.
+  try {
+    const storage = window.localStorage;
+    const keys: string[] = [];
+    for (let i = 0; i < storage.length; i += 1) {
+      const key = storage.key(i);
+      if (key?.startsWith(APP_STORAGE_PREFIX)) keys.push(key);
+    }
+    for (const key of keys) storage.removeItem(key);
+  } catch {
+    // Nothing stored that can be cleared.
   }
-  for (const key of keys) window.localStorage.removeItem(key);
 }
 
 export function emptyReaderProgress(): ReaderProgress {
@@ -239,12 +246,17 @@ export function loadReaderProgress(
 }
 
 export function persistReaderProgress(progress: ReaderProgress): void {
-  if (isDefaultReaderProgress(progress)) {
-    window.localStorage.removeItem(storageKey);
-    window.localStorage.removeItem(legacyStorageKey);
-    return;
+  // Blocked or full storage keeps progress in memory for this visit only.
+  try {
+    if (isDefaultReaderProgress(progress)) {
+      window.localStorage.removeItem(storageKey);
+      window.localStorage.removeItem(legacyStorageKey);
+      return;
+    }
+    window.localStorage.setItem(storageKey, JSON.stringify(progress));
+  } catch {
+    // Nothing to do; the app keeps working without saving.
   }
-  window.localStorage.setItem(storageKey, JSON.stringify(progress));
 }
 
 /** Remove every app-owned localStorage key and return a fresh default state. */

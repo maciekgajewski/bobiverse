@@ -1,5 +1,9 @@
-import { beforeEach, describe, expect, it } from "vitest";
-import { forgetReaderProgress } from "../../src/narrative/progress";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import {
+  emptyReaderProgress,
+  forgetReaderProgress,
+  persistReaderProgress,
+} from "../../src/narrative/progress";
 import {
   NEWEST_RELEASE_NOTES_VERSION,
   RELEASE_NOTES,
@@ -10,6 +14,7 @@ import {
   shouldAutoShowWhatsNew,
   WHATS_NEW_STORAGE_KEY,
 } from "../../src/whats-new";
+import { blockLocalStorage } from "../fixtures/blocked-storage";
 
 const APP_STATE = "bobiverse.app-state.v2";
 
@@ -102,5 +107,42 @@ describe("release notes", () => {
 
   it("has notes for the first public release", () => {
     expect(RELEASE_NOTES.at(-1)!.version).toBe("0.9.0");
+  });
+});
+
+describe("blocked localStorage", () => {
+  let restore: (() => void) | null = null;
+  beforeEach(() => {
+    window.localStorage.clear();
+    restore = blockLocalStorage();
+  });
+  afterEach(() => {
+    restore?.();
+    restore = null;
+  });
+
+  it("really throws on reading window.localStorage", () => {
+    expect(() => window.localStorage).toThrow();
+  });
+
+  it("never auto-shows and never throws on the read path", () => {
+    expect(() => shouldAutoShowWhatsNew()).not.toThrow();
+    expect(shouldAutoShowWhatsNew()).toBe(false);
+  });
+
+  it("closes without throwing on the write path", () => {
+    expect(() => markWhatsNewSeen()).not.toThrow();
+  });
+
+  it("forgets and saves progress without throwing", () => {
+    expect(forgetReaderProgress()).toEqual(emptyReaderProgress());
+    expect(() =>
+      persistReaderProgress({
+        ...emptyReaderProgress(),
+        furthestChapterRead: "1.1",
+        viewChapter: "1.1",
+      }),
+    ).not.toThrow();
+    expect(() => persistReaderProgress(emptyReaderProgress())).not.toThrow();
   });
 });

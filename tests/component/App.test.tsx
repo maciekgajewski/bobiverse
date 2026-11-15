@@ -62,6 +62,7 @@ import { narrativeRuntimePreparationCount } from "../../src/narrative/runtime";
 import * as systemView from "../../src/system-view";
 import { NEWEST_RELEASE_NOTES_VERSION } from "../../src/release-notes";
 import { WHATS_NEW_STORAGE_KEY } from "../../src/whats-new";
+import { blockLocalStorage } from "../fixtures/blocked-storage";
 
 // The desktop timeline dock exposes a "Read through" select and the top bar a
 // Read through chip; these tests drive the dock's control unless they say
@@ -2175,6 +2176,25 @@ describe("atlas shell", () => {
       expect(
         screen.getAllByRole("heading", { level: 2, name: "Jeeves" }).length,
       ).toBeGreaterThan(0);
+    });
+
+    it("renders and opens What's new when localStorage is blocked", async () => {
+      const restore = blockLocalStorage();
+      try {
+        const user = userEvent.setup();
+        render(<App />);
+        expect(whatsNew()).not.toBeInTheDocument();
+        await user.click(
+          within(document.querySelector(".topbar-title")!).getByRole("button", {
+            name: "What\u2019s new",
+          }),
+        );
+        const dialog = whatsNew()!;
+        await user.click(within(dialog).getByRole("button", { name: "Close" }));
+        expect(whatsNew()).not.toBeInTheDocument();
+      } finally {
+        restore();
+      }
     });
 
     it("is forgotten with the reader's progress", async () => {
