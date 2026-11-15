@@ -1,6 +1,11 @@
-import { JEEVES_IMAGE_ALT, JEEVES_IMAGE_REFERENCES } from "../about-image";
-import { RELEASE_NOTES, type ReleaseNote } from "../release-notes";
-import { ExternalLink, InfoDialogFrame } from "./AboutDialog";
+import { JEEVES_IMAGE_ALT } from "../about-image";
+import {
+  RELEASE_NOTES,
+  releaseHighlightText,
+  type ReleaseHighlight,
+  type ReleaseNote,
+} from "../release-notes";
+import { InfoDialogFrame } from "./AboutDialog";
 
 // What's new: the release notes from src/release-notes.ts in the About
 // dialog's frame and layout, with the Jeeves illustration where About has
@@ -15,6 +20,7 @@ const WHATS_NEW_CAPTION_ENTITY_LABEL = "Jeeves";
 export function WhatsNewDialog({
   onClose,
   onOpenJeeves = null,
+  onOpenAbout = null,
   notes = RELEASE_NOTES,
 }: {
   onClose: () => void;
@@ -24,6 +30,11 @@ export function WhatsNewDialog({
    * the caption never opens a card the reader has not reached.
    */
   onOpenJeeves?: (() => void) | null;
+  /**
+   * Opens About ("What is this?") in place of this dialog. Without it the
+   * notes' "What is this?" is plain text.
+   */
+  onOpenAbout?: (() => void) | null;
   notes?: readonly ReleaseNote[];
 }) {
   return (
@@ -54,18 +65,6 @@ export function WhatsNewDialog({
             ) : (
               WHATS_NEW_CAPTION_ENTITY_LABEL
             )}
-            <span className="whats-new-credit">
-              Original painting; likeness references:{" "}
-              {JEEVES_IMAGE_REFERENCES.map((reference, index) => (
-                <span key={reference.href}>
-                  {index > 0 && ", "}
-                  <ExternalLink href={reference.href}>
-                    {reference.label}
-                  </ExternalLink>
-                </span>
-              ))}{" "}
-              (CC BY 2.0)
-            </span>
           </figcaption>
         </figure>
         <div className="about-copy whats-new-notes">
@@ -79,7 +78,12 @@ export function WhatsNewDialog({
               <p>{note.summary}</p>
               <ul>
                 {note.highlights.map((highlight) => (
-                  <li key={highlight}>{highlight}</li>
+                  <li key={releaseHighlightText(highlight)}>
+                    <HighlightText
+                      highlight={highlight}
+                      onOpenAbout={onOpenAbout}
+                    />
+                  </li>
                 ))}
               </ul>
             </section>
@@ -87,5 +91,32 @@ export function WhatsNewDialog({
         </div>
       </div>
     </InfoDialogFrame>
+  );
+}
+
+function HighlightText({
+  highlight,
+  onOpenAbout,
+}: {
+  highlight: ReleaseHighlight;
+  onOpenAbout: (() => void) | null;
+}) {
+  if (typeof highlight === "string") return highlight;
+  return highlight.map((part, index) =>
+    typeof part === "string" ? (
+      <span key={index}>{part}</span>
+    ) : onOpenAbout ? (
+      <button
+        key={index}
+        type="button"
+        className="link-button whats-new-about-link"
+        aria-haspopup="dialog"
+        onClick={onOpenAbout}
+      >
+        {part.label}
+      </button>
+    ) : (
+      <span key={index}>{part.label}</span>
+    ),
   );
 }

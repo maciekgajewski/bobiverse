@@ -439,6 +439,17 @@ export default function App() {
     );
     return () => window.clearTimeout(check);
   }, []);
+  // The atlas is a fixed full-screen app and the document never scrolls
+  // (styles.css clips the root). If something still scrolls it vertically,
+  // such as a browser scrolling a focused element into view, snap back so
+  // the top bar stays on screen (BOB-20261115-HT8509).
+  useEffect(() => {
+    const keepTopBarOnScreen = () => {
+      if (window.scrollY !== 0) window.scrollTo(window.scrollX, 0);
+    };
+    window.addEventListener("scroll", keepTopBarOnScreen, { passive: true });
+    return () => window.removeEventListener("scroll", keepTopBarOnScreen);
+  }, []);
   useEffect(() => {
     persistReaderProgress(progress);
   }, [progress]);
@@ -792,6 +803,16 @@ export default function App() {
       typeof window.matchMedia === "function" &&
       window.matchMedia("(max-width: 1199px)").matches;
     if (!compact) window.setTimeout(() => whatsNewLink.current?.focus(), 0);
+  };
+  // The notes' "What is this?" swaps What's new for About; About's close then
+  // returns focus to the Menu button or the title link as usual.
+  const openAboutFromWhatsNew = () => {
+    markWhatsNewSeen();
+    const compact =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(max-width: 1199px)").matches;
+    setWhatsNewOrigin(null);
+    setAboutOrigin(compact ? "menu" : "topbar");
   };
   const navigateInspectorHistory = (offset: -1 | 1) => {
     const nextIndex = inspectorHistory.index + offset;
@@ -1635,6 +1656,7 @@ export default function App() {
           onOpenJeeves={
             whatsNewCaptionEntityKnown ? openWhatsNewCaptionEntity : null
           }
+          onOpenAbout={openAboutFromWhatsNew}
         />
       )}
     </main>
