@@ -2,7 +2,7 @@
 
 Status: In progress
 Phase: 2 (narrative foundation and chapter timeline; responsive shell)
-Last updated: 2026-11-14
+Last updated: 2026-11-15
 
 ## Objective and user-visible outcome
 
@@ -181,3 +181,6 @@ Manual: the Captain's visual check on desktop and a phone after deployment.
 - Screenshots of the open dialog at 1280x800 and 390x844 were taken for review
   outside the repository. Remains In progress until review, merge and the
   Captain's visual check after deployment.
+
+- 2026-11-15: Landed at `e135760` and live; awaiting Maciej's visual
+  acceptance.

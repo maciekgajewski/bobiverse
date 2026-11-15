@@ -1,8 +1,8 @@
 # BOB-20261114-WT522P: single-pass, never-drawn star click targets
 
-Status: In progress
+Status: Done
 Phase: 2 (narrative foundation and chapter timeline)
-Last updated: 2026-11-14
+Last updated: 2026-11-15
 
 ## Objective and user-visible outcome
 
@@ -133,3 +133,6 @@ never drawn, and names the guard. No generated artifacts.
   r1 and r3: 4x-throttled phone 15.4/15.0 fps -> 58.8/57.4 fps; desktop
   main-thread busy 71.1/84.9% -> 24.7/28.8%; per-frame getProgram time 0 on
   the branch. A third pair (r2) was disturbed by other jobs on the branch run.
+
+- 2026-11-15: Landed on master as merge `4bed4e6`. No user-visible UI change
+  needs visual acceptance, so the task is Done.
