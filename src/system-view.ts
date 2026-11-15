@@ -68,14 +68,18 @@ export function systemViewEntryForNarrativeSelection(
       child.kind === "star" &&
       child.parent_relation === "member_of_system",
   );
-  const hasRenderableOrbitalChild = stars.some((star) =>
-    directChildren(entities, star.id).some(
+  const hasRecognizedOrbitalChild = (parentId: string): boolean =>
+    directChildren(entities, parentId).some(
       (child) =>
         child.entity_type === "location" &&
         child.parent_relation === "orbits" &&
         RECOGNIZED_ORBITAL_KINDS.has(String(child.kind)),
-    ),
-  );
+    );
+  // Multi-star systems, a star with orbital children, or a single-star
+  // system whose planets/belts orbit the system directly are enterable.
+  const hasRenderableOrbitalChild =
+    hasRecognizedOrbitalChild(system.id) ||
+    stars.some((star) => hasRecognizedOrbitalChild(star.id));
   return stars.length > 1 || hasRenderableOrbitalChild
     ? { astronomySystemId, narrativeSystemId: system.id }
     : null;

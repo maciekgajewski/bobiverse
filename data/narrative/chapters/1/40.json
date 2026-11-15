@@ -13,18 +13,10 @@
       "description": "A stellar system centered on a cooler, smaller K-type star than [[location:sol]]. Potentially livable worlds would orbit close to the star and would be likely to be tidally locked."
     },
     {
-      "id": "location:epsilon-indi-star",
-      "name": "Epsilon Indi",
-      "kind": "star",
-      "parent_location_id": "location:epsilon-indi",
-      "parent_relation": "member_of_system",
-      "description": "The cooler, smaller K-type star at the center of the [[location:epsilon-indi]] system."
-    },
-    {
       "id": "location:epsilon-indi-1",
       "name": "Epsilon Indi 1",
       "kind": "planet",
-      "parent_location_id": "location:epsilon-indi-star",
+      "parent_location_id": "location:epsilon-indi",
       "parent_relation": "orbits",
       "orbital_order": 1,
       "body_class": "gas_giant",

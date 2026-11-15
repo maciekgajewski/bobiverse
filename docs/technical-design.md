@@ -521,9 +521,11 @@ layout and system mode cannot start. Its code and tests remain and return when t
 flag is set to `true`.
 
 The projected location hierarchy is the sole system-composition authority. Component
-stars are direct `member_of_system` children. Each star owns only its existing
-`orbits` descendants; the renderer neither invents shared bodies nor maintains a
-parallel planet list. Every `orbits` sibling sequence is inner-to-outer. Nested
+stars, when present, are direct `member_of_system` children. Each star owns only its
+existing `orbits` descendants. In a single-star system those `orbits` descendants may
+hang directly off the `star_system` instead of a separate star entity; the renderer
+neither invents shared bodies nor maintains a parallel planet list. Every `orbits`
+sibling sequence is inner-to-outer. Nested
 zero-state array order supplies implicit safe-integer keys `1024`, `2048`, and so on.
 Later introductions and updates may carry a positive safe-integer non-metric
 `orbital_order`. Omission on introduction or reparenting appends after the effective
@@ -540,8 +542,9 @@ The schema, semantic validation, effective-key projection, source diagnostics, a
 ordered `child_ids` are implemented as the shared narrative foundation. Phase 3's
 guided renderer consumes that projection and does not reimplement ordering.
 
-Local geometry recognizes the entered `star_system`, its direct
-`member_of_system` star children, and `orbits` descendants whose kind is `planet`,
+Local geometry recognizes the entered `star_system`, any direct
+`member_of_system` star children, direct `orbits` children of the system, and
+`orbits` descendants whose kind is `planet`,
 `dwarf_planet`, `moon`, `asteroid_belt`, `kuiper_belt`, or `oort_cloud`. Locales,
 megastructures, transit locations, and other relations remain DOM-inspectable but
 receive no local geometry, preview, breadcrumb level, or entry eligibility. Their
