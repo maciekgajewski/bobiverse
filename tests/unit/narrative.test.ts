@@ -47,7 +47,13 @@ function collectDescriptions(value: unknown): string[] {
 }
 
 const canonicalMoons = [
-  { id: "location:moon", name: "Moon", parent_location_id: "location:earth" },
+  {
+    id: "location:moon",
+    name: "Moon",
+    // Maciej's own zero-state text (BOB-20261115-446D62).
+    description: "Is a harsh mistress.",
+    parent_location_id: "location:earth",
+  },
   {
     id: "location:phobos",
     name: "Phobos",
@@ -389,6 +395,13 @@ describe("narrative corpus validation and projection", () => {
         id: "species:human",
         entity_type: "species",
         homeworld_id: "location:earth",
+        description: "Homo sapiens non urinat in ventum.",
+      }),
+    );
+    expect(world.entities).toContainEqual(
+      expect.objectContaining({
+        id: "location:earth",
+        description: "Mostly harmless.",
       }),
     );
     expect(world.entities).toContainEqual({
