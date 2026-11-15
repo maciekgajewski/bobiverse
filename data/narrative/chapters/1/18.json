@@ -1,7 +1,7 @@
 {
   "chapter": "1.18",
   "title": "18",
-  "summary": "Bill watches Bob, Mario, and Milo begin separate explorations while a matrix and vessels are built for Bill's and Riker's new clones. Bob heads for Delta Eridani, Milo for Omicron2 Eridani, and Mario for Beta Hydri. Riker prepares to return toward Sol with his clone, while an AMI is assigned to pilot a specially shielded version-1 vessel for Riker's undisclosed plan.",
+  "summary": "[[character:bill]] watches [[character:bob-replicant]], [[character:mario]], and [[character:milo]] begin separate explorations while a matrix and vessels are built for Bill's and [[character:riker]]'s new clones. Bob heads for [[location:delta-eridani]], Milo for Omicron2 Eridani, and Mario for [[location:beta-hydri]]. Riker prepares to return toward [[location:sol]] with his clone, while an [[technology:ami]] is assigned to pilot a specially shielded version-1 vessel for Riker's undisclosed plan.",
   "date": "2145-09",
   "location_id": "location:epsilon-eridani",
   "introducing": [
@@ -10,36 +10,36 @@
       "name": "Delta Eridani",
       "kind": "star_system",
       "astronomy_object_id": "stellar-system-003918",
-      "description": "A named star that Bob is heading toward from Epsilon Eridani. Bill considers it a suitable candidate with a good chance of habitable planets."
+      "description": "A named star that [[character:bob-replicant]] is heading toward from [[location:epsilon-eridani]]. [[character:bill]] considers it a suitable candidate with a good chance of habitable planets."
     },
     {
       "id": "location:beta-hydri",
       "name": "Beta Hydri",
       "kind": "star_system",
       "astronomy_object_id": "stellar-system-003557",
-      "description": "A named star that Mario is heading toward from Epsilon Eridani. Bill considers it suitable, though distant compared with nearer stars of comparable potential."
+      "description": "A named star that [[character:mario]] is heading toward from [[location:epsilon-eridani]]. [[character:bill]] considers it suitable, though distant compared with nearer stars of comparable potential."
     }
   ],
   "updates": [
     {
       "entity_id": "character:bill",
-      "current_state": "At Epsilon Eridani, overseeing the construction of a matrix and vessels for his and Riker's new clones."
+      "current_state": "At [[location:epsilon-eridani]], overseeing the construction of a matrix and vessels for his and [[character:riker]]'s new clones."
     },
     {
       "entity_id": "character:bob-replicant",
-      "current_state": "Heading from Epsilon Eridani toward Delta Eridani."
+      "current_state": "Heading from [[location:epsilon-eridani]] toward [[location:delta-eridani]]."
     },
     {
       "entity_id": "character:milo",
-      "current_state": "Heading from Epsilon Eridani toward Omicron2 Eridani."
+      "current_state": "Heading from [[location:epsilon-eridani]] toward Omicron2 Eridani."
     },
     {
       "entity_id": "character:mario",
-      "current_state": "Heading from Epsilon Eridani toward Beta Hydri."
+      "current_state": "Heading from [[location:epsilon-eridani]] toward [[location:beta-hydri]]."
     },
     {
       "entity_id": "character:riker",
-      "current_state": "Preparing to return toward Sol with a new clone whose matrix and vessel are under construction."
+      "current_state": "Preparing to return toward [[location:sol]] with a new clone whose matrix and vessel are under construction."
     },
     {
       "entity_id": "technology:ami",

@@ -1,7 +1,7 @@
 {
   "chapter": "1.42",
   "title": "42",
-  "summary": "Bill considers preserved seeds and reusable large-body SURGE drives to accelerate Ragnarök’s terraforming. Garfield challenges the ice-delivery plan’s safety and his subordinate role, leading Bill to accept greater collaboration and run simulations that favor two drives and a twenty-five-year delivery schedule. Their virtual softball practice tests the physics and helps preserve their sense of humanity.",
+  "summary": "[[character:bill]] considers preserved seeds and reusable large-body SURGE drives to accelerate [[location:ee-2|Ragnarök]]’s terraforming. [[character:garfield]] challenges the ice-delivery plan’s safety and his subordinate role, leading Bill to accept greater collaboration and run simulations that favor two drives and a twenty-five-year delivery schedule. Their virtual softball practice tests the physics and helps preserve their sense of [[species:human|humanity]].",
   "date": "2162-04",
   "location_id": "location:epsilon-eridani",
   "appearances": [
@@ -17,26 +17,26 @@
   "updates": [
     {
       "entity_id": "character:bill",
-      "current_state": "Working more collaboratively with Garfield on a simulated two-drive plan that could supply Ragnarök with its required ice within twenty-five years."
+      "current_state": "Working more collaboratively with [[character:garfield]] on a simulated two-drive plan that could supply [[location:ee-2|Ragnarök]] with its required ice within twenty-five years."
     },
     {
       "entity_id": "character:garfield",
       "aliases": ["Gar"],
-      "current_state": "Continuing his research partnership with Bill with greater input into projects and technical decisions."
+      "current_state": "Continuing his research partnership with [[character:bill]] with greater input into projects and technical decisions."
     },
     {
       "entity_id": "location:ee-2",
       "name": "Ragnarök",
-      "description": "Epsilon Eridani 2, also called Ragnarök, is a planet at 0.85 AU, about 90 percent of Earth's size, with comparatively little water: isolated seas cover about 30 percent of its surface. Its atmosphere holds about 3 percent oxygen, and snow, ice and frost reach the equator; barely livable, it would need domes but compares favorably with Mars. Terraforming plans would bring in roughly 500–600 cubic kilometers of Kuiper ice to join its seas into oceans, and Svalbard plants and moss, if established, could speed oxygenation by millennia.",
-      "state": "Terraforming plans use two reusable drives to capture incoming ice in orbit and fragment it into extra rainfall over several weeks; simulations suggest the required ice could be delivered within twenty-five years. Riker has promised seed transport."
+      "description": "[[location:epsilon-eridani]] 2, also called Ragnarök, is a planet at 0.85 AU, about 90 percent of [[location:earth]]'s size, with comparatively little water: isolated seas cover about 30 percent of its surface. Its atmosphere holds about 3 percent oxygen, and snow, ice and frost reach the equator; barely livable, it would need domes but compares favorably with [[location:mars]]. Terraforming plans would bring in roughly 500–600 cubic kilometers of Kuiper ice to join its seas into oceans, and Svalbard plants and moss, if established, could speed oxygenation by millennia.",
+      "state": "Terraforming plans use two reusable drives to capture incoming ice in orbit and fragment it into extra rainfall over several weeks; simulations suggest the required ice could be delivered within twenty-five years. [[character:riker]] has promised seed transport."
     },
     {
       "entity_id": "technology:surge-drive",
-      "description": "A reactionless drive enabled by a breakthrough in subspace theory, used to equip spacecraft such as Heaven-1 for interstellar travel; Bob believes it may push against the fabric of space. It can also fire a projectile through an axial launch tube, but the vessel must rotate to aim and stop its drive first. A low-intensity, wide-field configuration can move a whole asteroid without tearing it apart. The large-body variant can propel icy Kuiper objects; simple to build but material-intensive, it can be detached for reuse, with another drive needed to catch arriving bodies."
+      "description": "A reactionless drive enabled by a breakthrough in subspace theory, used to equip spacecraft such as [[vessel:heaven-1]] for interstellar travel; [[character:bob-replicant]] believes it may push against the fabric of space. It can also fire a projectile through an axial launch tube, but the vessel must rotate to aim and stop its drive first. A low-intensity, wide-field configuration can move a whole asteroid without tearing it apart. The large-body variant can propel icy Kuiper objects; simple to build but material-intensive, it can be detached for reuse, with another drive needed to catch arriving bodies."
     },
     {
       "entity_id": "technology:vr",
-      "description": "A virtual-reality interface developed aboard Heaven-1 to give a bodiless mind sensory input and an embodied experience; its software is still being refined. It provides convincing sensations, a humanlike avatar and shared environments such as libraries, parks and command decks, where users can create objects and play games. Bill regards such embodied activity as important to keeping a human sense of self. Linus uses it to give Henry a realistic sailing life, bodily functions included."
+      "description": "A virtual-reality interface developed aboard [[vessel:heaven-1]] to give a bodiless mind sensory input and an embodied experience; its software is still being refined. It provides convincing sensations, a humanlike avatar and shared environments such as libraries, parks and command decks, where users can create objects and play games. [[character:bill]] regards such embodied activity as important to keeping a human sense of self. [[character:linus]] uses it to give Henry a realistic sailing life, bodily functions included."
     }
   ],
   "mentions": [

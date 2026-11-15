@@ -1,7 +1,7 @@
 {
   "chapter": "1.39",
   "title": "39",
-  "summary": "Bob watches Luke and Bender depart for different systems, then considers why replicants diverge from one another. After a gorilloid attack kills many Deltans, Bob and Marvin improve their ability to communicate with the Deltans and prepare modified exploration drones for a possible direct intervention.",
+  "summary": "[[character:bob-replicant]] watches [[character:luke]] and [[character:bender]] depart for different systems, then considers why replicants diverge from one another. After a gorilloid attack kills many [[species:delta-eridani-natives|Deltans]], Bob and [[character:marvin]] improve their ability to communicate with the Deltans and prepare modified exploration drones for a possible direct intervention.",
   "date": "2165-10",
   "location_id": "location:delta-eridani",
   "introducing": [
@@ -10,19 +10,19 @@
       "name": "Kappa Ceti",
       "kind": "star_system",
       "astronomy_object_id": "stellar-system-002480",
-      "description": "Kappa Ceti is a named destination star described as a G5eV star slightly smaller than Sol. Luke leaves Delta Eridani intending to travel there."
+      "description": "Kappa Ceti is a named destination star described as a G5eV star slightly smaller than [[location:sol]]. [[character:luke]] leaves [[location:delta-eridani]] intending to travel there."
     },
     {
       "id": "location:gamma-leporis-a",
       "name": "Gamma Leporis A",
       "kind": "star_system",
       "map_status": "unmapped",
-      "description": "Gamma Leporis A is a named destination star described as an F6V star bigger and brighter than Sol. Bender chooses it as his destination, more than sixteen light-years away."
+      "description": "Gamma Leporis A is a named destination star described as an F6V star bigger and brighter than [[location:sol]]. [[character:bender]] chooses it as his destination, more than sixteen light-years away."
     },
     {
       "id": "event:gorilloid-attack-on-deltan-colony",
       "name": "Gorilloid attack on the Deltan colony",
-      "description": "A gorilloid attack kills more than forty Deltans and permanently maims several others. The losses leave the Deltan community mourning and lead Bob to consider more direct intervention."
+      "description": "A gorilloid attack kills more than forty [[species:delta-eridani-natives|Deltans]] and permanently maims several others. The losses leave the Deltan community mourning and lead [[character:bob-replicant]] to consider more direct intervention."
     }
   ],
   "appearances": [
@@ -47,19 +47,19 @@
   "updates": [
     {
       "entity_id": "character:bob-replicant",
-      "current_state": "At Delta Eridani, continuing to guide the Deltans while preparing modified exploration drones for possible direct intervention."
+      "current_state": "At [[location:delta-eridani]], continuing to guide the [[species:delta-eridani-natives|Deltans]] while preparing modified exploration drones for possible direct intervention."
     },
     {
       "entity_id": "character:luke",
-      "current_state": "Leaving Delta Eridani for Kappa Ceti."
+      "current_state": "Leaving [[location:delta-eridani]] for [[location:kappa-ceti]]."
     },
     {
       "entity_id": "character:bender",
-      "current_state": "Leaving Delta Eridani for Gamma Leporis A."
+      "current_state": "Leaving [[location:delta-eridani]] for [[location:gamma-leporis-a]]."
     },
     {
       "entity_id": "technology:planetary-exploration-drone",
-      "description": "A practical drone design for planetary exploration. The football-sized surveillance variant carries cameras, microphones, gripping limbs and small reactors; the meter-long biological-analysis variant has many appendages and mechanical stomachs that analyze local organics in about a day. Both can change color with limited pattern mimicry. Surveillance drones can relay live video and record speech. One design has been fitted with a speaker for possible communication with the Deltans."
+      "description": "A practical drone design for planetary exploration. The football-sized surveillance variant carries cameras, microphones, gripping limbs and small reactors; the meter-long biological-analysis variant has many appendages and mechanical stomachs that analyze local organics in about a day. Both can change color with limited pattern mimicry. Surveillance drones can relay live video and record speech. One design has been fitted with a speaker for possible communication with the [[species:delta-eridani-natives|Deltans]]."
     }
   ],
   "mentions": [

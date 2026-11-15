@@ -1,7 +1,7 @@
 {
   "chapter": "1.48",
   "title": "48",
-  "summary": "Bob spends almost a month preparing the Deltan tribe for a long trek to the abandoned village that Moses remembers as having the best flint, while Marvin surveys a route across the mountainous spine of their continent. Bob teaches the Deltans to preserve meat, the tribe waits out its annual births, and Bob and Marvin build more busters as gorilloids watch from a distance. Archimedes, now showing signs of puberty, has effectively joined the tribal council. On the rainy first night of the trek, Marvin cautions against introducing too many new ideas, notes the Deltans' simple animism, and reveals that he has started a batch of new Bobs at the autofactory, though he does not plan to leave yet; his planetary survey shows that Deltans live only on this continent. Later, a daytime gorilloid raid carries off two juveniles, and one is killed before the Deltans drive the attackers off and bury him. To widen the small gene pool, Bob and Marvin locate isolated Deltan groups and persuade them to join, swelling the migration to well over five hundred. The Deltans cross the mountain pass faster than planned and feast at the edge of the forest beyond, but two days later disaster strikes.",
+  "summary": "[[character:bob-replicant]] spends almost a month preparing the Deltan tribe for a long trek to the abandoned village that [[character:moses]] remembers as having the best flint, while [[character:marvin]] surveys a route across the mountainous spine of their continent. Bob teaches the [[species:delta-eridani-natives|Deltans]] to preserve meat, the tribe waits out its annual births, and Bob and Marvin build more busters as gorilloids watch from a distance. [[character:archimedes]], now showing signs of puberty, has effectively joined the tribal council. On the rainy first night of the trek, Marvin cautions against introducing too many new ideas, notes the Deltans' simple animism, and reveals that he has started a batch of new Bobs at the [[technology:autofactory]], though he does not plan to leave yet; his planetary survey shows that Deltans live only on this continent. Later, a daytime gorilloid raid carries off two juveniles, and one is killed before the Deltans drive the attackers off and bury him. To widen the small gene pool, Bob and Marvin locate isolated Deltan groups and persuade them to join, swelling the migration to well over five hundred. The Deltans cross the mountain pass faster than planned and feast at the edge of the forest beyond, but two days later disaster strikes.",
   "date": "2166-05",
   "location_id": "location:delta-eridani",
   "introducing": [
@@ -10,7 +10,7 @@
       "name": "Deltan migration",
       "date": "2166-05",
       "location_id": "location:delta-eridani-4",
-      "description": "A mass relocation of the Deltan tribe from its home territory toward the abandoned village with the best flint supply, prepared and guarded by Bob and Marvin. Isolated Deltan groups recruited along the way widen the small population's gene pool and swell the migration to well over five hundred individuals, most of them females and juveniles. It crosses a high pass through the mountainous spine of the Deltans' continent ahead of schedule, despite losing a juvenile to a gorilloid raid.",
+      "description": "A mass relocation of the Deltan tribe from its home territory toward the abandoned village with the best flint supply, prepared and guarded by [[character:bob-replicant]] and [[character:marvin]]. Isolated Deltan groups recruited along the way widen the small population's gene pool and swell the migration to well over five hundred individuals, most of them females and juveniles. It crosses a high pass through the mountainous spine of the [[species:delta-eridani-natives|Deltans]]' continent ahead of schedule, despite losing a juvenile to a gorilloid raid.",
       "participant_ids": [
         "character:bob-replicant",
         "character:marvin",
@@ -23,11 +23,11 @@
   "updates": [
     {
       "entity_id": "character:bob-replicant",
-      "current_state": "At Delta Eridani, guiding and guarding the Deltan migration toward the tribe's old flint village. Disaster strikes two days after the migration crosses the mountain pass and reaches the forest beyond."
+      "current_state": "At [[location:delta-eridani]], guiding and guarding the [[event:deltan-migration]] toward the tribe's old flint village. Disaster strikes two days after the migration crosses the mountain pass and reaches the forest beyond."
     },
     {
       "entity_id": "character:marvin",
-      "current_state": "At Delta Eridani, helping Bob guard and enlarge the Deltan migration. He has started a batch of new Bobs at the autofactory but does not plan to leave immediately."
+      "current_state": "At [[location:delta-eridani]], helping [[character:bob-replicant]] guard and enlarge the [[event:deltan-migration]]. He has started a batch of new Bobs at the [[technology:autofactory]] but does not plan to leave immediately."
     },
     {
       "entity_id": "character:archimedes",
@@ -39,19 +39,19 @@
     },
     {
       "entity_id": "character:arnold",
-      "current_state": "Travelling with the migration, where Bob credits his large axe and the flint-tipped spears with keeping disputes among merging Deltan groups to harsh words."
+      "current_state": "Travelling with the migration, where [[character:bob-replicant]] credits his large axe and the flint-tipped spears with keeping disputes among merging Deltan groups to harsh words."
     },
     {
       "entity_id": "species:delta-eridani-natives",
-      "description": "An intelligent, fire-using native people of Delta Eridani 4, named Deltans by Bob, found on only one continent of Eden, where no related species uses fire or tools. They have bat- and pig-like faces, long spiderish limbs, brownish-gray to orangey-tan fur, patterned heads, mobile expressive ears and a guttural language. Their tribes have two genders, loose pairings, an annual breeding cycle and a council of elders, and their beliefs are basic animism. Once driven from older, better villages and now under pressure from gorilloid predators, the small tribe, with a small gene pool, is regaining flintworking, meat preservation and better defences with help from Bob's group, and now has axes and spears."
+      "description": "An intelligent, fire-using native people of [[location:delta-eridani-4|Delta Eridani 4]], named Deltans by [[character:bob-replicant]], found on only one continent of Eden, where no related species uses fire or tools. They have bat- and pig-like faces, long spiderish limbs, brownish-gray to orangey-tan fur, patterned heads, mobile expressive ears and a guttural language. Their tribes have two genders, loose pairings, an annual breeding cycle and a council of elders, and their beliefs are basic animism. Once driven from older, better villages and now under pressure from gorilloid predators, the small tribe, with a small gene pool, is regaining flintworking, meat preservation and better defences with help from Bob's group, and now has axes and spears."
     },
     {
       "entity_id": "location:delta-eridani-4",
-      "description": "The fourth inner rocky planet in the Delta Eridani system, also called Delta Eridani 4 and DE-4, and named Eden by Bob's group as the Deltans' birthplace. It is slightly larger than Earth, with lower gravity and a somewhat denser atmosphere. Its temperate-to-subtropical landscape mixes meadows, rocky bluffs and forests of huge brownish trees, and its varied wildlife includes six-legged insect and mammal analogues, bird analogues and a colour-changing winged creature Bob calls a hippogriff. A mountainous spine runs down the Deltans' home continent, crossed by only a couple of useful passes."
+      "description": "The fourth inner rocky planet in the [[location:delta-eridani]] system, also called Delta Eridani 4 and DE-4, and named Eden by [[character:bob-replicant]]'s group as the [[species:delta-eridani-natives|Deltans]]' birthplace. It is slightly larger than [[location:earth]], with lower gravity and a somewhat denser atmosphere. Its temperate-to-subtropical landscape mixes meadows, rocky bluffs and forests of huge brownish trees, and its varied wildlife includes six-legged insect and mammal analogues, bird analogues and a colour-changing winged creature Bob calls a hippogriff. A mountainous spine runs down the Deltans' home continent, crossed by only a couple of useful passes."
     },
     {
       "entity_id": "technology:buster-drone",
-      "description": "An observation drone reinforced internally and fitted with steel impact caps. It strikes with forty pounds of high-tensile steel at twice rifle-bullet speed, a lethal blow with a sonic boom against a gorilloid, but needs about ten minutes of controlled descent to reach a surface target. Bob sees it as an imprecise, theatrical weapon that endangers anyone near the target."
+      "description": "An observation drone reinforced internally and fitted with steel impact caps. It strikes with forty pounds of high-tensile steel at twice rifle-bullet speed, a lethal blow with a sonic boom against a gorilloid, but needs about ten minutes of controlled descent to reach a surface target. [[character:bob-replicant]] sees it as an imprecise, theatrical weapon that endangers anyone near the target."
     }
   ],
   "appearances": [

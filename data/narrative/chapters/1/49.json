@@ -1,28 +1,28 @@
 {
   "chapter": "1.49",
   "title": "49",
-  "summary": "A breach attempt on Riker's systems, exploiting a back door in the encryption of the original HEAVEN design, runs into Bob-1's firewall; Riker suspects the FAITH enclave, but Guppy traces the packets to New Zealand. Homer proposes unpopulated farming space stations growing gene-engineered kudzu, built with the printers that are producing Arthur's replacement and supplied with water and soil by the asteroid movers. Colonel Butterworth and most of the UN assembly react with outrage, but Riker argues that people will starve within six months to a year and that he will trade future colony ships for current lives, calling the stations kudzu gardens. Minister Cranston then offers FAITH's food surplus in exchange for the rest of ship three's allocation alongside the Spits, and admits that FAITH may have borrowed probe ideas from Australia, whose survivors largely fled to New Zealand after Brazil's bombardment. Charles and Homer agree, and the deal is struck.",
+  "summary": "A breach attempt on [[character:riker]]'s systems, exploiting a back door in the encryption of the original HEAVEN design, runs into [[character:bob-replicant|Bob-1]]'s firewall; Riker suspects the [[organization:free-american-independent-theocratic-hegemony]] enclave, but Guppy traces the packets to New Zealand. [[character:homer]] proposes unpopulated farming space stations growing gene-engineered kudzu, built with the printers that are producing [[character:arthur]]'s replacement and supplied with water and soil by the asteroid movers. [[character:george-butterworth|Colonel Butterworth]] and most of the [[organization:united-nations|UN]] assembly react with outrage, but Riker argues that people will starve within six months to a year and that he will trade future colony ships for current lives, calling the stations [[technology:kudzu-gardens]]. [[character:cranston]] then offers FAITH's food surplus in exchange for the rest of ship three's allocation alongside the Spits, and admits that FAITH may have borrowed probe ideas from [[organization:australia]], whose survivors largely fled to New Zealand after Brazil's bombardment. [[character:charles]] and Homer agree, and the deal is struck.",
   "date": "2166-05",
   "location_id": "location:sol",
   "introducing": [
     {
       "id": "technology:kudzu-gardens",
       "name": "kudzu gardens",
-      "description": "Kudzu gardens are unpopulated farming space stations, proposed by Homer to feed Earth's starving survivors. Housing no people, they need only enough spin to establish up and down, one sunlit interior cavern, and air and temperature control. They grow a gene-engineered, human-digestible kudzu bred for maximum calories, with water and soil supplied by the asteroid movers. Built with Homer's printers from scavenged materials, they cost the colony program future ships but not schedule."
+      "description": "Kudzu gardens are unpopulated farming space stations, proposed by [[character:homer]] to feed [[location:earth]]'s starving survivors. Housing no people, they need only enough spin to establish up and down, one sunlit interior cavern, and air and temperature control. They grow a gene-engineered, human-digestible kudzu bred for maximum calories, with water and soil supplied by the asteroid movers. Built with Homer's printers from scavenged materials, they cost the colony program future ships but not schedule."
     }
   ],
   "updates": [
     {
       "entity_id": "character:riker",
-      "current_state": "At Sol, defending the kudzu-farm plan against outrage in the UN assembly while Homer's printers build Arthur's replacement; he has traded FAITH's enclave the rest of ship three's places for its food surplus."
+      "current_state": "At [[location:sol]], defending the kudzu-farm plan against outrage in the [[organization:united-nations|UN]] assembly while [[character:homer]]'s printers build [[character:arthur]]'s replacement; he has traded [[organization:free-american-independent-theocratic-hegemony]]'s enclave the rest of ship three's places for its food surplus."
     },
     {
       "entity_id": "character:homer",
-      "current_state": "Proposing unpopulated farming space stations growing gene-engineered kudzu, to be built with his printers, which are currently building Arthur's replacement. He agrees to the FAITH deal."
+      "current_state": "Proposing unpopulated farming space stations growing gene-engineered kudzu, to be built with his printers, which are currently building [[character:arthur]]'s replacement. He agrees to the [[organization:free-american-independent-theocratic-hegemony]] deal."
     },
     {
       "entity_id": "character:charles",
-      "current_state": "Has agreed to the FAITH proposal, noting that it also saves relatives of the Bobs."
+      "current_state": "Has agreed to the [[organization:free-american-independent-theocratic-hegemony]] proposal, noting that it also saves relatives of the Bobs."
     },
     {
       "entity_id": "character:george-butterworth",
@@ -30,30 +30,30 @@
     },
     {
       "entity_id": "character:cranston",
-      "current_state": "Has offered FAITH's food surplus in exchange for the balance of ship three's allocation, a deal Riker accepts, and has admitted that FAITH's probe technology may have been partly borrowed from Australian research."
+      "current_state": "Has offered [[organization:free-american-independent-theocratic-hegemony]]'s food surplus in exchange for the balance of ship three's allocation, a deal [[character:riker]] accepts, and has admitted that FAITH's probe technology may have been partly borrowed from Australian research."
     },
     {
       "entity_id": "character:julia-hendricks",
-      "current_state": "Has sent Riker a long message about family history, readily treating him as a relative."
+      "current_state": "Has sent [[character:riker]] a long message about family history, readily treating him as a relative."
     },
     {
       "entity_id": "organization:free-american-independent-theocratic-hegemony",
-      "description": "The Free American Independent Theocratic Hegemony, a theocratic U.S. government that makes criticism a felony and permits the deactivation of machine persons for it. It controls most of North America, restricts information by default, and finances the replicant project, owning Bob. Some of its factions regard AI and replicants as abominations or reject all technology since steam power, and several seek to stop Project HEAVEN, the Habitable Earths Abiogenic Vessel Exploration Network. According to Minister Cranston, its probe technology may partly derive from Australian probe work.",
+      "description": "The Free American Independent Theocratic Hegemony, a theocratic U.S. government that makes criticism a felony and permits the deactivation of machine persons for it. It controls most of North America, restricts information by default, and finances the replicant project, owning [[character:bob-replicant]]. Some of its factions regard AI and replicants as abominations or reject all technology since steam power, and several seek to stop Project HEAVEN, the Habitable Earths Abiogenic Vessel Exploration Network. According to [[character:cranston]], its probe technology may partly derive from [[vessel:australian-probe]] work.",
       "current_state": "Its enclave, not the richest but holding some food surplus, has agreed to give up that surplus in exchange for the balance of ship three's allocation alongside the Spits."
     },
     {
       "entity_id": "organization:united-nations",
-      "current_state": "Its assembly reacted with outrage to the plan for farming space stations, except for the groups facing starvation, and after Riker defended the plan its speaker was inundated with requests to speak."
+      "current_state": "Its assembly reacted with outrage to the plan for farming space stations, except for the groups facing starvation, and after [[character:riker]] defended the plan its speaker was inundated with requests to speak."
     },
     {
       "entity_id": "organization:australia",
-      "description": "A suspected participant in the international interstellar-probe race, referred to as Australia. Dr. Landers's organization suspects it of operating a probe project. Also called the Australian Federation, it was working on the probe concept that FAITH's agents may have partly borrowed, so Minister Cranston considers it likely to have good insight into Riker's original design.",
-      "current_state": "Most of its survivors likely ended up in New Zealand after Brazil's bombardment, and Minister Cranston implies that they are the source of the hack attempt on Riker's systems."
+      "description": "A suspected participant in the international interstellar-probe race, referred to as Australia. [[character:dr-landers]]'s organization suspects it of operating a probe project. Also called the Australian Federation, it was working on the probe concept that [[organization:free-american-independent-theocratic-hegemony]]'s agents may have partly borrowed, so [[character:cranston]] considers it likely to have good insight into [[character:riker]]'s original design.",
+      "current_state": "Most of its survivors likely ended up in New Zealand after Brazil's bombardment, and [[character:cranston]] implies that they are the source of the hack attempt on [[character:riker]]'s systems."
     },
     {
       "entity_id": "organization:svalbard-global-trust",
       "description": "The Svalbard Global Trust is an organization associated with vaults that prospective colonists regard as valuable. Its vaults hold plant cultivars, including kudzu cultivars suited to different growing environments.",
-      "current_state": "Riker's team now has access to its vaults."
+      "current_state": "[[character:riker]]'s team now has access to its vaults."
     },
     {
       "entity_id": "technology:guppi-interface",
@@ -61,11 +61,11 @@
     },
     {
       "entity_id": "vessel:heaven-1",
-      "description": "A converted interplanetary freighter equipped as a Von Neumann probe: a small, light, resilient design built to copy itself. It carries a SURGE drive ring, fusion reactor, ramscoop, three large 3D printers, ROAMers, nanites and mining cargo carriers, but no weapons. Version-2 HEAVENs add a larger reactor and drive, better reactor shielding, a rail-gun, ship-busters, bigger replicant systems and more cargo room. Its communications report to Earth and were not built for interstellar conversation. HEAVEN vessels are not designed to land or enter an atmosphere. The original design had no firewalls and relied on encryption with an apparent back door; Bob-1's firewall blocks packets injected through it."
+      "description": "A converted interplanetary freighter equipped as a [[technology:von-neumann-probe]]: a small, light, resilient design built to copy itself. It carries a [[technology:surge-drive]] ring, fusion reactor, ramscoop, three large [[technology:3d-printers]], [[technology:roamers]], [[technology:nanites]] and mining cargo carriers, but no weapons. Version-2 HEAVENs add a larger reactor and drive, better reactor shielding, a rail-gun, [[technology:ship-busters]], bigger replicant systems and more cargo room. Its communications report to [[location:earth]] and were not built for interstellar conversation. HEAVEN vessels are not designed to land or enter an atmosphere. The original design had no firewalls and relied on encryption with an apparent back door; [[character:bob-replicant|Bob-1]]'s firewall blocks packets injected through it."
     },
     {
       "entity_id": "vessel:use-colony-ship",
-      "current_state": "Construction is on schedule, with ship three assigned to the Spitsbergen refuge and FAITH's enclave; diverting scavenged materials to farm stations will mean fewer future colony ships."
+      "current_state": "Construction is on schedule, with ship three assigned to the [[organization:spitsbergen-refuge]] and [[organization:free-american-independent-theocratic-hegemony]]'s enclave; diverting scavenged materials to farm stations will mean fewer future colony ships."
     }
   ],
   "appearances": [

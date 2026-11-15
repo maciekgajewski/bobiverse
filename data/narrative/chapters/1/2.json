@@ -1,7 +1,7 @@
 {
   "chapter": "1.2",
   "title": "2 - Bob Version 2.0",
-  "summary": "Bob awakens without a body in a future laboratory and learns that he is a computer simulation made by destructively scanning Robert Johansson's frozen brain. Dr. Landers explains the theocratic society that now claims cryonics patients as property, the competing replicant program, and Bob's place among five candidates for a one-replicant project. Realizing that failure could mean insanity, storage, menial service, or deactivation, Bob resolves to compete while Landers limits his simulated panic and ends the first session.",
+  "summary": "[[character:bob-replicant]] awakens without a body in a future laboratory and learns that he is a computer simulation made by destructively scanning [[character:robert-johansson]]'s frozen brain. [[character:dr-landers]] explains the theocratic society that now claims cryonics patients as property, the competing replicant program, and Bob's place among five candidates for a one-replicant project. Realizing that failure could mean insanity, storage, menial service, or deactivation, Bob resolves to compete while Landers limits his simulated panic and ends the first session.",
   "date": "2133-06-24",
   "location_id": "location:new-handeltown",
   "introducing": [
@@ -31,7 +31,7 @@
     {
       "id": "organization:applied-synergetics",
       "name": "Applied Synergetics Inc.",
-      "description": "A company that owns Bob as property and develops replicant-controlled machinery."
+      "description": "A company that owns [[character:bob-replicant]] as property and develops replicant-controlled machinery."
     },
     {
       "id": "technology:guppi-interface",

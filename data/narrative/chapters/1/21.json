@@ -1,29 +1,29 @@
 {
   "chapter": "1.21",
   "title": "21",
-  "summary": "Riker and Homer covertly survey Sol and find high radiation at several locations and Earth looking badly damaged from afar. Brazilian probes strike their decoy near Jupiter and its signal cuts off, revealing a larger force and an impending asteroid operation against Earth. Riker concludes the attackers are probably directed by Medeiros clones, but their identities and control remain uncertain.",
+  "summary": "[[character:riker]] and [[character:homer]] covertly survey [[location:sol]] and find high radiation at several locations and [[location:earth]] looking badly damaged from afar. Brazilian probes strike their decoy near [[location:jupiter]] and its signal cuts off, revealing a larger force and an impending asteroid operation against Earth. Riker concludes the attackers are probably directed by Medeiros clones, but their identities and control remain uncertain.",
   "date": "2157-01",
   "location_id": "location:sol",
   "updates": [
     {
       "entity_id": "character:riker",
-      "current_state": "At Sol with Homer, covertly surveying the system and investigating an impending asteroid operation against Earth."
+      "current_state": "At [[location:sol]] with [[character:homer]], covertly surveying the system and investigating an impending asteroid operation against [[location:earth]]."
     },
     {
       "entity_id": "character:homer",
-      "current_state": "At Sol with Riker, covertly surveying the system and helping investigate an impending asteroid operation against Earth."
+      "current_state": "At [[location:sol]] with [[character:riker]], covertly surveying the system and helping investigate an impending asteroid operation against [[location:earth]]."
     },
     {
       "entity_id": "location:earth",
-      "state": "High radiation has been detected at several locations, and long-range imagery looks bad. Homer suspects nuclear detonations."
+      "state": "High radiation has been detected at several locations, and long-range imagery looks bad. [[character:homer]] suspects nuclear detonations."
     },
     {
       "entity_id": "vessel:heaven-1",
-      "description": "A converted interplanetary freighter equipped as a Von Neumann probe: a small, light, resilient design built to copy itself. It carries a SURGE drive ring, fusion reactor, ramscoop, three large 3D printers, ROAMers, nanites and mining cargo carriers, but no weapons. Version-2 HEAVENs add a larger reactor and drive, better reactor shielding, a rail-gun, ship-busters, bigger replicant systems and more cargo room. Its communications report to Earth and were not built for interstellar conversation."
+      "description": "A converted interplanetary freighter equipped as a [[technology:von-neumann-probe]]: a small, light, resilient design built to copy itself. It carries a [[technology:surge-drive]] ring, fusion reactor, ramscoop, three large [[technology:3d-printers]], [[technology:roamers]], [[technology:nanites]] and mining cargo carriers, but no weapons. Version-2 HEAVENs add a larger reactor and drive, better reactor shielding, a rail-gun, [[technology:ship-busters]], bigger replicant systems and more cargo room. Its communications report to [[location:earth]] and were not built for interstellar conversation."
     },
     {
       "entity_id": "technology:suddar",
-      "description": "A subspace detection technology enabled by the same breakthrough as the SURGE drive. It can monitor distance, scan for threats and detect dense objects within a light-hour. An emitter flaw can give a much weaker ping with poor close-range sensitivity, which Bill suspects may reach farther. It gives little fine detail at long range."
+      "description": "A subspace detection technology enabled by the same breakthrough as the [[technology:surge-drive]]. It can monitor distance, scan for threats and detect dense objects within a light-hour. An emitter flaw can give a much weaker ping with poor close-range sensitivity, which [[character:bill]] suspects may reach farther. It gives little fine detail at long range."
     }
   ],
   "appearances": [

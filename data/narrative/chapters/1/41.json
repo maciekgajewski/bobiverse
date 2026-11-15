@@ -3,31 +3,31 @@
   "title": "41",
   "date": "2162-05",
   "location_id": "location:sol",
-  "summary": "Riker and Homer test SCUT, allowing Riker to speak with Bill across interstellar distance and share the worsening news from Earth. Riker tells survivor groups that Romulus and Vulcan are the two available destinations and proposes sending each ready group there, with priority for any later worlds based on departure order. The announcement brings both relief and renewed disputes over sharing planets.",
+  "summary": "[[character:riker]] and [[character:homer]] test [[technology:subspace-communications|SCUT]], allowing Riker to speak with [[character:bill]] across interstellar distance and share the worsening news from [[location:earth]]. Riker tells survivor groups that [[location:romulus]] and [[location:vulcan]] are the two available destinations and proposes sending each ready group there, with priority for any later worlds based on departure order. The announcement brings both relief and renewed disputes over sharing planets.",
   "introducing": [
     {
       "id": "character:ambassador-gerrold",
       "name": "Ambassador Gerrold",
-      "current_state": "New Zealand's delegate, challenging Riker during a community discussion about the emigration plan."
+      "current_state": "New Zealand's delegate, challenging [[character:riker]] during a community discussion about the emigration plan."
     }
   ],
   "updates": [
     {
       "entity_id": "technology:subspace-communications",
       "name": "SCUT",
-      "description": "SCUT, the Subspace Communications Universal Transceiver, carries signals through subspace; its notes describe instantaneous communication across interstellar distances, using the same object and VR interfaces as earlier tests. Those tests predicted dropouts at about twenty-five light-years, so longer links must be relayed."
+      "description": "SCUT, the Subspace Communications Universal Transceiver, carries signals through subspace; its notes describe instantaneous communication across interstellar distances, using the same object and [[technology:vr]] interfaces as earlier tests. Those tests predicted dropouts at about twenty-five light-years, so longer links must be relayed."
     },
     {
       "entity_id": "character:riker",
-      "current_state": "At Sol, coordinating an emigration plan that assigns ready groups to Romulus or Vulcan, with first refusal on later destinations ordered by departure."
+      "current_state": "At [[location:sol]], coordinating an emigration plan that assigns ready groups to [[location:romulus]] or [[location:vulcan]], with first refusal on later destinations ordered by departure."
     },
     {
       "entity_id": "character:bill",
-      "current_state": "At Epsilon Eridani, communicating with Riker through SCUT after seventeen years pass from his perspective and offering software, VR, and hardware upgrades."
+      "current_state": "At [[location:epsilon-eridani]], communicating with [[character:riker]] through [[technology:subspace-communications|SCUT]] after seventeen years pass from his perspective and offering software, [[technology:vr]], and hardware upgrades."
     },
     {
       "entity_id": "location:earth",
-      "state": "Bill reports that 99.9 percent of humanity is dead, and the planet is becoming uninhabitable, making the planned emigration urgent."
+      "state": "[[character:bill]] reports that 99.9 percent of [[species:human|humanity]] is dead, and the planet is becoming uninhabitable, making the planned emigration urgent."
     }
   ],
   "appearances": [

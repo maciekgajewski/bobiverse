@@ -1,29 +1,29 @@
 {
   "chapter": "1.15",
   "title": "15",
-  "summary": "Bob prepares a deceptive defence when Major Ernesto Medeiros's Brazilian Empire vessel arrives ahead of schedule. His decoys and improvised ship-busters destroy the Serra do Mar, but damage to Heaven-1's radiator cuts its reactor output. Reviewing the wreck, Bob concludes that further hostile replicants may exist and decides to accelerate the creation and arming of Bobs.",
+  "summary": "[[character:bob-replicant]] prepares a deceptive defence when [[character:ernesto-medeiros]]'s [[organization:brazilian-empire]] vessel arrives ahead of schedule. His decoys and improvised [[technology:ship-busters]] destroy the [[vessel:serra-do-mar]], but damage to [[vessel:heaven-1]]'s radiator cuts its reactor output. Reviewing the wreck, Bob concludes that further hostile replicants may exist and decides to accelerate the creation and arming of Bobs.",
   "date": "2144-09",
   "location_id": "location:epsilon-eridani",
   "introducing": [
     {
       "id": "technology:endocrine-control-system",
       "name": "endocrine control system",
-      "description": "A control system Bob can activate to shift his emotional state toward calm purpose."
+      "description": "A control system [[character:bob-replicant]] can activate to shift his emotional state toward calm purpose."
     },
     {
       "id": "technology:ship-busters",
       "name": "ship-busters",
-      "description": "Improvised attack units carrying small reactors, oversized SURGE drives, AMI pilots, and dense metal projectiles instead of explosive warheads. They can intercept missiles or strike vessels at very high acceleration."
+      "description": "Improvised attack units carrying small reactors, oversized SURGE drives, [[technology:ami]] pilots, and dense metal projectiles instead of explosive warheads. They can intercept missiles or strike vessels at very high acceleration."
     },
     {
       "id": "character:ernesto-medeiros",
       "name": "Major Ernesto Medeiros",
-      "current_state": "Bob concludes that he is gone after the destruction of the Serra do Mar."
+      "current_state": "[[character:bob-replicant]] concludes that he is gone after the destruction of the [[vessel:serra-do-mar]]."
     },
     {
       "id": "vessel:serra-do-mar",
       "name": "Serra do Mar",
-      "description": "A Brazilian Empire vessel represented by Major Ernesto Medeiros.",
+      "description": "A [[organization:brazilian-empire]] vessel represented by [[character:ernesto-medeiros]].",
       "current_state": "Disabled and tumbling after its reactor containment is destroyed."
     }
   ],
@@ -37,11 +37,11 @@
   "updates": [
     {
       "entity_id": "character:bob-replicant",
-      "current_state": "At Epsilon Eridani after destroying the Serra do Mar, Bob assesses its wreck and plans to accelerate the creation and arming of Bobs."
+      "current_state": "At [[location:epsilon-eridani]] after destroying the [[vessel:serra-do-mar]], Bob assesses its wreck and plans to accelerate the creation and arming of Bobs."
     },
     {
       "entity_id": "vessel:heaven-1",
-      "current_state": "At Epsilon Eridani, a damaged radiator has cut reactor output by half while ROAMers work on a patch."
+      "current_state": "At [[location:epsilon-eridani]], a damaged radiator has cut reactor output by half while [[technology:roamers]] work on a patch."
     }
   ],
   "mentions": [

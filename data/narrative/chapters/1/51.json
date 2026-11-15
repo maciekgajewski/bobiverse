@@ -1,33 +1,33 @@
 {
   "chapter": "1.51",
   "title": "51",
-  "summary": "A message from Milo reaches Bill at Epsilon Eridani while he is raising mosses, lichens and grasses in a farm donut as base stock for seeding Ragnarök. Milo's report from 82 Eridani describes a highly promising colonization prospect, then the approach of missiles, and it carries a record of his vessel's destruction. The differential backup he attached was cut off before completion; judging that forcing a restoration would probably yield a deranged or non-functional copy, Bill has it archived as a memorial. He orders four more version-3 Bobs on top of the four already under construction, all with extra busters, and resolves to make Medeiros, whom he blames for earlier trouble at Epsilon Eridani and Alpha Centauri as well as Milo's loss, pay for it.",
+  "summary": "A message from [[character:milo]] reaches [[character:bill]] at [[location:epsilon-eridani]] while he is raising mosses, lichens and grasses in a farm donut as base stock for seeding [[location:ee-2|Ragnarök]]. Milo's report from [[location:82-eridani]] describes a highly promising colonization prospect, then the approach of missiles, and it carries a record of his vessel's destruction. The differential backup he attached was cut off before completion; judging that forcing a restoration would probably yield a deranged or non-functional copy, Bill has it archived as a memorial. He orders four more version-3 Bobs on top of the four already under construction, all with extra busters, and resolves to make [[character:ernesto-medeiros|Medeiros]], whom he blames for earlier trouble at Epsilon Eridani and [[location:alpha-centauri]] as well as Milo's loss, pay for it.",
   "date": "2174-01",
   "location_id": "location:epsilon-eridani",
   "updates": [
     {
       "entity_id": "character:bill",
-      "current_state": "At Epsilon Eridani, growing plant stock to seed Ragnarök and mourning Milo, he has ordered four more version-3 Bobs beyond the four being built, all with extra busters, to make Medeiros pay. He archived Milo's incomplete backup as a memorial."
+      "current_state": "At [[location:epsilon-eridani]], growing plant stock to seed [[location:ee-2|Ragnarök]] and mourning [[character:milo]], he has ordered four more version-3 Bobs beyond the four being built, all with extra busters, to make [[character:ernesto-medeiros|Medeiros]] pay. He archived Milo's incomplete backup as a memorial."
     },
     {
       "entity_id": "character:milo",
       "effective_date": "2165-08",
-      "current_state": "Lost at 82 Eridani when hostile missiles destroyed his vessel.",
+      "current_state": "Lost at [[location:82-eridani]] when hostile missiles destroyed his vessel.",
       "death_date": "2165-08"
     },
     {
       "entity_id": "location:82-eridani",
-      "description": "A stellar system centered on a G5V star that is smaller and less luminous than Sol but within the range of yellow suns humans would prefer. Astronomical data marked it as a very good candidate for a habitable planet, and Milo selected it as his next destination from Omicron2 Eridani. Its survey finds two planets in the comfort zone, one at the inside edge and one almost at the outside edge; the outer planet has large bodies of water and two moons. Milo's early survey report describes the system as a very promising potential colonization destination.",
-      "state": "Milo's vessel was destroyed there by the hostile missiles that ambushed him; Bill blames Medeiros.",
+      "description": "A stellar system centered on a G5V star that is smaller and less luminous than [[location:sol]] but within the range of yellow suns [[species:human|humans]] would prefer. Astronomical data marked it as a very good candidate for a habitable planet, and [[character:milo]] selected it as his next destination from [[location:omicron2-eridani]]. Its survey finds two planets in the comfort zone, one at the inside edge and one almost at the outside edge; the outer planet has large bodies of water and two moons. Milo's early survey report describes the system as a very promising potential colonization destination.",
+      "state": "[[character:milo]]'s vessel was destroyed there by the hostile missiles that ambushed him; [[character:bill]] blames [[character:ernesto-medeiros|Medeiros]].",
       "possible_colony_target": true
     },
     {
       "entity_id": "location:ee-2",
-      "state": "Terraforming plans use two reusable drives to break incoming ice into rainfall, with the required ice expected within about twenty-five years. Bill is growing mosses, lichens and grasses in a farm donut to seed it, and Riker has promised seed transport."
+      "state": "Terraforming plans use two reusable drives to break incoming ice into rainfall, with the required ice expected within about twenty-five years. [[character:bill]] is growing mosses, lichens and grasses in a farm donut to seed it, and [[character:riker]] has promised seed transport."
     },
     {
       "entity_id": "technology:guppi-interface",
-      "description": "GUPPI, the General Unit Primary Peripheral Interface, offloads tasks for replicants, who keep human limits on multitasking. Its operating system is firmware, and version 2 has enough memory that a personality matrix is contemplated. It handles messages and backups, drones, tracking, autofactory orders and network defence."
+      "description": "GUPPI, the General Unit Primary Peripheral Interface, offloads tasks for replicants, who keep human limits on multitasking. Its operating system is firmware, and version 2 has enough memory that a personality matrix is contemplated. It handles messages and backups, drones, tracking, [[technology:autofactory]] orders and network defence."
     }
   ],
   "appearances": [

@@ -1,21 +1,21 @@
 {
   "chapter": "1.32",
   "title": "32",
-  "summary": "Bill receives Milo's report that Vulcan and Romulus in Omicron2 Eridani can support habitation. He forwards it toward Earth while fearing that no one may remain there, continues broadcasting SCUT plans to nearby systems, and reflects on feeling responsible for humanity. Bill is also pursuing realistic artificial bodies. In VR, Garfield reports mapping the Kuiper Belt for large ice chunks and marking two promising ones for eventual transport to Ragnarök.",
+  "summary": "[[character:bill]] receives [[character:milo]]'s report that [[location:vulcan]] and [[location:romulus]] in [[location:omicron2-eridani]] can support habitation. He forwards it toward [[location:earth]] while fearing that no one may remain there, continues broadcasting SCUT plans to nearby systems, and reflects on feeling responsible for [[species:human|humanity]]. Bill is also pursuing realistic artificial bodies. In [[technology:vr]], [[character:garfield]] reports mapping the [[location:kuiper-belt]] for large ice chunks and marking two promising ones for eventual transport to Ragnarök.",
   "date": "2158-10",
   "location_id": "location:epsilon-eridani",
   "updates": [
     {
       "entity_id": "character:bill",
-      "current_state": "At Epsilon Eridani, forwarding Milo's report of habitable planets toward Earth while pursuing artificial bodies and feeling responsible for humanity."
+      "current_state": "At [[location:epsilon-eridani]], forwarding [[character:milo]]'s report of habitable planets toward [[location:earth]] while pursuing artificial bodies and feeling responsible for [[species:human|humanity]]."
     },
     {
       "entity_id": "character:garfield",
-      "current_state": "Mapping the Kuiper Belt for large ice chunks to transport to Ragnarök; he has marked two promising chunks with beacons."
+      "current_state": "Mapping the [[location:kuiper-belt]] for large ice chunks to transport to Ragnarök; he has marked two promising chunks with beacons."
     },
     {
       "entity_id": "technology:artificial-muscle-fiber-analogues",
-      "description": "Artificial muscle-fiber analogues are under development for constructing realistic robots or androids. Bill judges that a workable android needs muscles that resemble natural muscle in operation and appearance, rather than gears, pistons, or cables."
+      "description": "Artificial muscle-fiber analogues are under development for constructing realistic robots or androids. [[character:bill]] judges that a workable android needs muscles that resemble natural muscle in operation and appearance, rather than gears, pistons, or cables."
     }
   ],
   "appearances": [

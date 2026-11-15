@@ -1,28 +1,28 @@
 {
   "chapter": "1.56",
   "title": "56",
-  "summary": "At Epsilon Eridani, one of the largest Kuiper Belt icebergs yet found comes in toward Ragnarök slightly off course, and Bill has to run his asteroid drive at full power until the last moment while Guppy, appearing as Admiral Ackbar, applies course corrections. Bill and Garfield are shepherding ice inward about a week apart, Garfield sending chunks from the outer system and Bill catching them, and Bill expects about ten more years of drops to join Ragnarök's seas into oceans as a step toward a world fit for human colonists. With only 650 seconds instead of the twelve minutes a clean retrieval needs, AMI-controlled drones pull the drive segments off the ice; Bill writes off the anchors, then detonates explosives so the berg breaks into fragments that will melt high in the atmosphere and fall as rain over days to weeks. A set of anchors and two drive segments are lost to the surface, and with no drive ready, the next chunk, due in a week, will hit the planet. Garfield, watching from the outer system through Bill's VR, agrees to fly over a couple of segments so Bill can catch the chunks after that one and then build spares, and Bill outlines a longer-term method that would hold the segments in orbit around each chunk instead of anchoring them, using two drive channels. Claiming he needs a break from his Android Project, Bill nonetheless opens it as soon as the surviving segments are parked and reviews his moose-sized quadruped prototype, Bullwinkle, on one of the orbiting labs. Its skeleton, memory-plastic muscles and mechanics work, but its senses, reflexes and communications still fall short of the immersive remote body he wants, partly because he cannot yet make a SCUT small enough to fit inside it. Judging the project ninety percent done, he returns to the asteroid-mover work.",
+  "summary": "At [[location:epsilon-eridani]], one of the largest [[location:kuiper-belt]] icebergs yet found comes in toward [[location:ee-2|Ragnarök]] slightly off course, and [[character:bill]] has to run his asteroid drive at full power until the last moment while Guppy, appearing as Admiral Ackbar, applies course corrections. Bill and [[character:garfield]] are shepherding ice inward about a week apart, Garfield sending chunks from the outer system and Bill catching them, and Bill expects about ten more years of drops to join Ragnarök's seas into oceans as a step toward a world fit for human colonists. With only 650 seconds instead of the twelve minutes a clean retrieval needs, AMI-controlled drones pull the drive segments off the ice; Bill writes off the anchors, then detonates explosives so the berg breaks into fragments that will melt high in the atmosphere and fall as rain over days to weeks. A set of anchors and two drive segments are lost to the surface, and with no drive ready, the next chunk, due in a week, will hit the planet. Garfield, watching from the outer system through Bill's [[technology:vr]], agrees to fly over a couple of segments so Bill can catch the chunks after that one and then build spares, and Bill outlines a longer-term method that would hold the segments in orbit around each chunk instead of anchoring them, using two drive channels. Claiming he needs a break from his Android Project, Bill nonetheless opens it as soon as the surviving segments are parked and reviews his moose-sized quadruped prototype, [[technology:bullwinkle]], on one of the orbiting labs. Its skeleton, memory-plastic muscles and mechanics work, but its senses, reflexes and communications still fall short of the immersive remote body he wants, partly because he cannot yet make a [[technology:subspace-communications|SCUT]] small enough to fit inside it. Judging the project ninety percent done, he returns to the asteroid-mover work.",
   "date": "2167-03",
   "location_id": "location:epsilon-eridani",
   "introducing": [
     {
       "id": "technology:bullwinkle",
       "name": "Bullwinkle",
-      "description": "Bullwinkle is the current prototype of Bill's Android Project: a moose-sized quadruped android kept on an orbiting lab at Epsilon Eridani, with a carbon-fiber skeleton, memory-plastic muscles and an antler-like comms array. It is meant to let a replicant feel it as his own body rather than as a remote drone. It works mechanically, but its senses, reflexes and communications are unsolved, partly because no SCUT is yet small enough to fit inside; Bill judges it about ninety percent finished."
+      "description": "Bullwinkle is the current prototype of [[character:bill]]'s Android Project: a moose-sized quadruped android kept on an orbiting lab at [[location:epsilon-eridani]], with a carbon-fiber skeleton, memory-plastic muscles and an antler-like comms array. It is meant to let a replicant feel it as his own body rather than as a remote drone. It works mechanically, but its senses, reflexes and communications are unsolved, partly because no [[technology:subspace-communications|SCUT]] is yet small enough to fit inside; Bill judges it about ninety percent finished."
     }
   ],
   "updates": [
     {
       "entity_id": "character:bill",
-      "current_state": "At Epsilon Eridani, he catches Garfield's ice chunks for Ragnarök, expecting about ten more years of drops, and is redesigning drive anchoring after losing segments. He is also building Bullwinkle, a moose-sized android body."
+      "current_state": "At [[location:epsilon-eridani]], he catches [[character:garfield]]'s ice chunks for [[location:ee-2|Ragnarök]], expecting about ten more years of drops, and is redesigning drive anchoring after losing segments. He is also building [[technology:bullwinkle]], a moose-sized android body."
     },
     {
       "entity_id": "character:garfield",
-      "current_state": "From Epsilon Eridani's outer system he sends Kuiper Belt ice chunks toward Ragnarök about a week apart with his own asteroid drive, and has agreed to fly Bill a couple of replacement drive segments."
+      "current_state": "From [[location:epsilon-eridani]]'s outer system he sends [[location:kuiper-belt]] ice chunks toward [[location:ee-2|Ragnarök]] about a week apart with his own asteroid drive, and has agreed to fly [[character:bill]] a couple of replacement drive segments."
     },
     {
       "entity_id": "location:ee-2",
-      "state": "Ice chunks arrive about a week apart, and Bill expects about ten more years of drops to join its seas into oceans, though lost drive parts mean the next chunk is expected to strike uncontrolled. Bill is growing mosses, lichens and grasses in a farm donut to seed it, and Riker has promised seed transport."
+      "state": "Ice chunks arrive about a week apart, and [[character:bill]] expects about ten more years of drops to join its seas into oceans, though lost drive parts mean the next chunk is expected to strike uncontrolled. Bill is growing mosses, lichens and grasses in a farm donut to seed it, and [[character:riker]] has promised seed transport."
     },
     {
       "entity_id": "technology:guppi-interface",
@@ -30,19 +30,19 @@
     },
     {
       "entity_id": "technology:surge-drive",
-      "description": "A reactionless drive enabled by a breakthrough in subspace theory, used to equip spacecraft such as Heaven-1 for interstellar travel; Bob believes it may push against the fabric of space. It can also fire a projectile through an axial launch tube, but the vessel must rotate to aim and stop its drive first. A low-intensity, wide-field configuration can move a whole asteroid without tearing it apart. Its large-body form, the asteroid drive, is simple to build but material-intensive; at Epsilon Eridani one asteroid drive sends ice inward and a segmented one catches it."
+      "description": "A reactionless drive enabled by a breakthrough in subspace theory, used to equip spacecraft such as [[vessel:heaven-1]] for interstellar travel; [[character:bob-replicant]] believes it may push against the fabric of space. It can also fire a projectile through an axial launch tube, but the vessel must rotate to aim and stop its drive first. A low-intensity, wide-field configuration can move a whole asteroid without tearing it apart. Its large-body form, the asteroid drive, is simple to build but material-intensive; at [[location:epsilon-eridani]] one asteroid drive sends ice inward and a segmented one catches it."
     },
     {
       "entity_id": "technology:subspace-communications",
-      "description": "SCUT, the Subspace Communications Universal Transceiver, carries signals through subspace; its notes describe instantaneous communication across interstellar distances, using the same object and VR interfaces as earlier tests. Those tests predicted dropouts at about twenty-five light-years, so longer links must be relayed. No unit is yet small enough to fit inside Bill's moose-sized android prototype."
+      "description": "SCUT, the Subspace Communications Universal Transceiver, carries signals through subspace; its notes describe instantaneous communication across interstellar distances, using the same object and [[technology:vr]] interfaces as earlier tests. Those tests predicted dropouts at about twenty-five light-years, so longer links must be relayed. No unit is yet small enough to fit inside [[character:bill]]'s moose-sized android prototype."
     },
     {
       "entity_id": "technology:artificial-muscle-fiber-analogues",
-      "description": "Artificial muscle-fiber analogues are under development for constructing realistic robots or androids. Bill judges that a workable android needs muscles that resemble natural muscle in operation and appearance, rather than gears, pistons, or cables. Bill's android prototype uses muscles made of memory plastics that contract when an electric current is applied."
+      "description": "Artificial muscle-fiber analogues are under development for constructing realistic robots or androids. [[character:bill]] judges that a workable android needs muscles that resemble natural muscle in operation and appearance, rather than gears, pistons, or cables. Bill's android prototype uses muscles made of memory plastics that contract when an electric current is applied."
     },
     {
       "entity_id": "technology:3d-printers",
-      "description": "Manufacturing equipment that gives Bob virtually unlimited flexibility for building things, including more printers, robotic workers, miners and Von Neumann machines. Increasingly common but still in its infancy, the technology has been shown to place individual atoms on a substrate. It does not end scarcity but moves the bottleneck: capacity spent on more printers or haulers is not spent on end products such as colony ships. It only partly handles the micro-precision wiring an android needs for touch, heat and cold sensing."
+      "description": "Manufacturing equipment that gives [[character:bob-replicant]] virtually unlimited flexibility for building things, including more printers, robotic workers, miners and Von Neumann machines. Increasingly common but still in its infancy, the technology has been shown to place individual atoms on a substrate. It does not end scarcity but moves the bottleneck: capacity spent on more printers or haulers is not spent on end products such as colony ships. It only partly handles the micro-precision wiring an android needs for touch, heat and cold sensing."
     }
   ],
   "appearances": [

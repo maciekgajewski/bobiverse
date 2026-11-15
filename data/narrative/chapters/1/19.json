@@ -1,7 +1,7 @@
 {
   "chapter": "1.19",
   "title": "19",
-  "summary": "Milo surveys Omicron2 Eridani and finds the oxygen-bearing double planets he names Vulcan and Romulus. Uneasy about how he left Epsilon Eridani, he promises Bill reports while developing local resources and sending biological exploration drones to investigate whether their related life can support humans. Bill's requests include a future space station and AMI, while Riker is traveling toward Sol with a newly made copy that has not turned out as expected.",
+  "summary": "[[character:milo]] surveys [[location:omicron2-eridani]] and finds the oxygen-bearing double planets he names [[location:vulcan]] and [[location:romulus]]. Uneasy about how he left [[location:epsilon-eridani]], he promises [[character:bill]] reports while developing local resources and sending biological exploration drones to investigate whether their related life can support [[species:human|humans]]. Bill's requests include a future space station and [[technology:ami]], while [[character:riker]] is traveling toward [[location:sol]] with a newly made copy that has not turned out as expected.",
   "date": "2152-07",
   "location_id": "location:omicron2-eridani",
   "introducing": [
@@ -9,14 +9,14 @@
       "id": "location:omicron2-eridani",
       "name": "Omicron2 Eridani",
       "kind": "star_system",
-      "description": "A triple-star system whose B and C stars orbit each other and whose pair orbits Omicron Eridani A at about 470 AU. Its survey identifies several outer Jovian planets, a probable asteroid belt, and the double planets Vulcan and Romulus.",
+      "description": "A triple-star system whose B and C stars orbit each other and whose pair orbits [[location:omicron-eridani-a]] at about 470 AU. Its survey identifies several outer Jovian planets, a probable asteroid belt, and the double planets [[location:vulcan]] and [[location:romulus]].",
       "astronomy_object_id": "stellar-system-002424"
     },
     {
       "id": "location:omicron-eridani-a",
       "name": "Omicron Eridani A",
       "kind": "star",
-      "description": "The somewhat smaller primary star of Omicron2 Eridani. It is a possible, though nonideal, host for habitable planets.",
+      "description": "The somewhat smaller primary star of [[location:omicron2-eridani]]. It is a possible, though nonideal, host for habitable planets.",
       "parent_location_id": "location:omicron2-eridani",
       "parent_relation": "member_of_system"
     },
@@ -25,7 +25,7 @@
       "name": "Vulcan",
       "kind": "planet",
       "possible_colony_target": true,
-      "description": "The larger member of a double planet at 0.81 AU from Omicron Eridani A, also designated OE-1A, with about 0.9 Earth masses, orbiting Romulus every 20 days. On the cool side of the habitable zone but warmed by a thicker, carbon-dioxide-rich atmosphere, it has oceans, oxygen and large green land areas, with animals nearly as large as dinosaurs and life probably related to Romulus's.",
+      "description": "The larger member of a double planet at 0.81 AU from [[location:omicron-eridani-a]], also designated OE-1A, with about 0.9 [[location:earth]] masses, orbiting [[location:romulus]] every 20 days. On the cool side of the habitable zone but warmed by a thicker, carbon-dioxide-rich atmosphere, it has oceans, oxygen and large green land areas, with animals nearly as large as dinosaurs and life probably related to Romulus's.",
       "visual_description": "Clouds, extensive oceans, atmospheric oxygen, and large green land areas are visible.",
       "parent_location_id": "location:omicron-eridani-a",
       "parent_relation": "orbits",
@@ -36,7 +36,7 @@
       "name": "Romulus",
       "kind": "planet",
       "possible_colony_target": true,
-      "description": "The smaller member of the double planet with Vulcan at 0.81 AU from Omicron Eridani A. It has about 0.7 Earth masses and orbits Vulcan every 20 days at about 364,000 km. It is on the cool side of the habitable zone, with an atmosphere, extensive oceans, atmospheric oxygen, and large green land areas. Its ice caps may be seasonal; its northern hemisphere is in mid-spring and its year lasts 285 Earth days. No animal life larger than a wolf has been found, and its ecosystems appear sparse. Cellular analysis indicates that its life is probably related to Vulcan's.",
+      "description": "The smaller member of the double planet with [[location:vulcan]] at 0.81 AU from [[location:omicron-eridani-a]]. It has about 0.7 [[location:earth]] masses and orbits Vulcan every 20 days at about 364,000 km. It is on the cool side of the habitable zone, with an atmosphere, extensive oceans, atmospheric oxygen, and large green land areas. Its ice caps may be seasonal; its northern hemisphere is in mid-spring and its year lasts 285 Earth days. No animal life larger than a wolf has been found, and its ecosystems appear sparse. Cellular analysis indicates that its life is probably related to Vulcan's.",
       "visual_description": "Clouds, extensive oceans, atmospheric oxygen, large green land areas, and ice caps are visible.",
       "parent_location_id": "location:omicron-eridani-a",
       "parent_relation": "orbits",
@@ -46,7 +46,7 @@
       "id": "location:omicron2-asteroid-belt",
       "name": "asteroid belt",
       "kind": "asteroid_belt",
-      "description": "A probable asteroid belt just inside OE-2. It is surprisingly diffuse and takes two full revolutions around Omicron Eridani A to map with SUDDAR.",
+      "description": "A probable asteroid belt just inside [[location:oe-2]]. It is surprisingly diffuse and takes two full revolutions around [[location:omicron-eridani-a]] to map with [[technology:suddar]].",
       "parent_location_id": "location:omicron-eridani-a",
       "parent_relation": "orbits",
       "orbital_order": 3072
@@ -55,7 +55,7 @@
       "id": "location:oe-2",
       "name": "OE-2",
       "kind": "planet",
-      "description": "The inner Jovian of Omicron2 Eridani, with almost three Jupiter masses and a twenty-hour rotation. Huge horizontal weather bands form perhaps a dozen cells. It has several hundred satellites, at least 60 spherical and about half of those with significant atmospheres; a couple of dozen smaller satellites have deposits of metallic and heavy elements.",
+      "description": "The inner Jovian of [[location:omicron2-eridani]], with almost three [[location:jupiter]] masses and a twenty-hour rotation. Huge horizontal weather bands form perhaps a dozen cells. It has several hundred satellites, at least 60 spherical and about half of those with significant atmospheres; a couple of dozen smaller satellites have deposits of metallic and heavy elements.",
       "body_class": "gas_giant",
       "visual_description": "Huge horizontal weather bands form perhaps a dozen cells.",
       "parent_location_id": "location:omicron-eridani-a",
@@ -94,7 +94,7 @@
       "id": "location:omicron2-outer-jovian-01",
       "name": "Outer Jovian 1",
       "kind": "planet",
-      "description": "One of several outer Jovian planets observed in the Omicron2 Eridani system.",
+      "description": "One of several outer Jovian planets observed in the [[location:omicron2-eridani]] system.",
       "body_class": "gas_giant",
       "parent_location_id": "location:omicron-eridani-a",
       "parent_relation": "orbits",
@@ -104,7 +104,7 @@
       "id": "location:omicron2-outer-jovian-02",
       "name": "Outer Jovian 2",
       "kind": "planet",
-      "description": "One of several outer Jovian planets observed in the Omicron2 Eridani system.",
+      "description": "One of several outer Jovian planets observed in the [[location:omicron2-eridani]] system.",
       "body_class": "gas_giant",
       "parent_location_id": "location:omicron-eridani-a",
       "parent_relation": "orbits",
@@ -114,7 +114,7 @@
       "id": "location:omicron2-outer-jovian-03",
       "name": "Outer Jovian 3",
       "kind": "planet",
-      "description": "One of several outer Jovian planets observed in the Omicron2 Eridani system.",
+      "description": "One of several outer Jovian planets observed in the [[location:omicron2-eridani]] system.",
       "body_class": "gas_giant",
       "parent_location_id": "location:omicron-eridani-a",
       "parent_relation": "orbits",
@@ -139,11 +139,11 @@
   "updates": [
     {
       "entity_id": "character:milo",
-      "current_state": "At Omicron2 Eridani, surveying Vulcan and Romulus while testing their biological compatibility for humans."
+      "current_state": "At [[location:omicron2-eridani]], surveying [[location:vulcan]] and [[location:romulus]] while testing their biological compatibility for [[species:human|humans]]."
     },
     {
       "entity_id": "character:riker",
-      "current_state": "Traveling toward Sol with a newly made copy that has not turned out as expected."
+      "current_state": "Traveling toward [[location:sol]] with a newly made copy that has not turned out as expected."
     }
   ],
   "appearances": [

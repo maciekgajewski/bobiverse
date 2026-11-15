@@ -1,7 +1,7 @@
 {
   "chapter": "1.50",
   "title": "50",
-  "summary": "At first light a large gorilloid pack ambushes the Deltan migration beyond the pass, attacking on several fronts while the drones' infrared is useless and seizing about a dozen females and juveniles. Bob and Marvin's busters break the assault and the spear-armed Deltans rally; with busters running short, Marvin has them strike at low speed to stun gorilloids for the defenders, and Bob orders more from the autofactory. They rescue perhaps a third of the abductees, Arnold organizes retrieval parties, and almost twenty Deltans die. Facing an overwhelming list of tasks, Bob raises his buster target, sets one printer group to building more printers, and considers making explosive warheads in a chemistry lab worked by ROAMers, while Marvin foresees a long war to exterminate the gorilloids. Speaking through a drone, Bob persuades a sceptical tribal circle, which Arnold has now joined, to halt for five days while he rebuilds his busters and counts the gorilloids, and the tribe sets up a longer-term camp. Archimedes judges Bob's tent idea impractical for a travelling tribe, but he and Arnold eagerly take up straightening spear shafts with steam and bending jigs.",
+  "summary": "At first light a large gorilloid pack ambushes the [[event:deltan-migration]] beyond the pass, attacking on several fronts while the drones' infrared is useless and seizing about a dozen females and juveniles. [[character:bob-replicant]] and [[character:marvin]]'s busters break the assault and the spear-armed [[species:delta-eridani-natives|Deltans]] rally; with busters running short, Marvin has them strike at low speed to stun gorilloids for the defenders, and Bob orders more from the [[technology:autofactory]]. They rescue perhaps a third of the abductees, [[character:arnold]] organizes retrieval parties, and almost twenty Deltans die. Facing an overwhelming list of tasks, Bob raises his buster target, sets one printer group to building more printers, and considers making explosive warheads in a chemistry lab worked by [[technology:roamers]], while Marvin foresees a long war to exterminate the gorilloids. Speaking through a drone, Bob persuades a sceptical tribal circle, which Arnold has now joined, to halt for five days while he rebuilds his busters and counts the gorilloids, and the tribe sets up a longer-term camp. [[character:archimedes]] judges Bob's tent idea impractical for a travelling tribe, but he and Arnold eagerly take up straightening spear shafts with steam and bending jigs.",
   "date": "2166-06",
   "location_id": "location:delta-eridani",
   "introducing": [
@@ -10,7 +10,7 @@
       "name": "Gorilloid raid on the Deltan migration",
       "date": "2166-06",
       "location_id": "location:delta-eridani-4",
-      "description": "A dawn assault by a large gorilloid pack on the Deltan migration shortly after it crossed the pass into what Bob judges to be gorilloid heartland. Striking on several fronts while drone infrared was ineffective, the gorilloids seized about a dozen females and juveniles and killed almost twenty Deltans. Buster-drone strikes and defenders with flint-tipped spears broke the assault, and about a third of the abductees were rescued. The losses halt the migration in a longer-term camp while Bob rebuilds his buster supply, and Bob and Marvin expect a prolonged war against the gorilloids.",
+      "description": "A dawn assault by a large gorilloid pack on the [[event:deltan-migration]] shortly after it crossed the pass into what [[character:bob-replicant]] judges to be gorilloid heartland. Striking on several fronts while drone infrared was ineffective, the gorilloids seized about a dozen females and juveniles and killed almost twenty [[species:delta-eridani-natives|Deltans]]. Buster-drone strikes and defenders with flint-tipped spears broke the assault, and about a third of the abductees were rescued. The losses halt the migration in a longer-term camp while Bob rebuilds his buster supply, and Bob and [[character:marvin]] expect a prolonged war against the gorilloids.",
       "participant_ids": [
         "character:bob-replicant",
         "character:marvin",
@@ -21,15 +21,15 @@
   "updates": [
     {
       "entity_id": "character:bob-replicant",
-      "current_state": "At Delta Eridani, protecting the Deltan migration, halted in a camp beyond the pass after a costly gorilloid raid, while he rebuilds his busters and counts the gorilloids."
+      "current_state": "At [[location:delta-eridani]], protecting the [[event:deltan-migration]], halted in a camp beyond the pass after a costly gorilloid raid, while he rebuilds his busters and counts the gorilloids."
     },
     {
       "entity_id": "character:marvin",
-      "current_state": "At Delta Eridani, helping Bob defend the halted Deltan migration and expecting a long war to exterminate the gorilloids. He has started a batch of new Bobs at the autofactory."
+      "current_state": "At [[location:delta-eridani]], helping [[character:bob-replicant]] defend the halted [[event:deltan-migration]] and expecting a long war to exterminate the gorilloids. He has started a batch of new Bobs at the [[technology:autofactory]]."
     },
     {
       "entity_id": "character:archimedes",
-      "current_state": "Effectively a member of the tribal council, he is at the migration's longer-term camp, where he judged Bob's tent idea impractical for a travelling tribe and is gathering materials to straighten spear shafts."
+      "current_state": "Effectively a member of the tribal council, he is at the migration's longer-term camp, where he judged [[character:bob-replicant]]'s tent idea impractical for a travelling tribe and is gathering materials to straighten spear shafts."
     },
     {
       "entity_id": "character:arnold",
@@ -37,19 +37,19 @@
     },
     {
       "entity_id": "species:delta-eridani-natives",
-      "description": "An intelligent, fire-using native people of Delta Eridani 4, named Deltans by Bob, found on only one continent of Eden, where no related species uses fire or tools. They have bat- and pig-like faces, long spiderish limbs, brownish-gray to orangey-tan fur, patterned heads, mobile expressive ears and a guttural language. Their tribes have two genders, loose pairings, an annual breeding cycle and a council of elders, and their beliefs are basic animism. Once driven from older, better villages and now under pressure from gorilloid predators, the small tribe, with a small gene pool, is regaining flintworking, meat preservation and better defences with help from Bob's group, and now has axes and spears."
+      "description": "An intelligent, fire-using native people of [[location:delta-eridani-4|Delta Eridani 4]], named Deltans by [[character:bob-replicant]], found on only one continent of Eden, where no related species uses fire or tools. They have bat- and pig-like faces, long spiderish limbs, brownish-gray to orangey-tan fur, patterned heads, mobile expressive ears and a guttural language. Their tribes have two genders, loose pairings, an annual breeding cycle and a council of elders, and their beliefs are basic animism. Once driven from older, better villages and now under pressure from gorilloid predators, the small tribe, with a small gene pool, is regaining flintworking, meat preservation and better defences with help from Bob's group, and now has axes and spears."
     },
     {
       "entity_id": "technology:buster-drone",
-      "description": "An observation drone reinforced internally and fitted with steel impact caps. It strikes with forty pounds of high-tensile steel at twice rifle-bullet speed, a lethal blow with a sonic boom against a gorilloid, but needs about ten minutes of controlled descent to reach a surface target. Standby units strike within seconds, while autofactory reserves can need almost a day to arrive. A slow strike only stuns a gorilloid, and a unit survives about a dozen strikes before needing repair. Bob sees it as an imprecise, theatrical weapon that endangers anyone near the target."
+      "description": "An observation drone reinforced internally and fitted with steel impact caps. It strikes with forty pounds of high-tensile steel at twice rifle-bullet speed, a lethal blow with a sonic boom against a gorilloid, but needs about ten minutes of controlled descent to reach a surface target. Standby units strike within seconds, while [[technology:autofactory]] reserves can need almost a day to arrive. A slow strike only stuns a gorilloid, and a unit survives about a dozen strikes before needing repair. [[character:bob-replicant]] sees it as an imprecise, theatrical weapon that endangers anyone near the target."
     },
     {
       "entity_id": "technology:guppi-interface",
-      "description": "GUPPI, the General Unit Primary Peripheral Interface, offloads tasks for replicants, who keep human limits on multitasking. Its operating system is firmware, and version 2 has enough memory that a personality matrix is contemplated. It handles messages, drones, tracking, autofactory orders and network defence."
+      "description": "GUPPI, the General Unit Primary Peripheral Interface, offloads tasks for replicants, who keep human limits on multitasking. Its operating system is firmware, and version 2 has enough memory that a personality matrix is contemplated. It handles messages, drones, tracking, [[technology:autofactory]] orders and network defence."
     },
     {
       "entity_id": "technology:pointy-sticks",
-      "description": "Pointy sticks are Deltan wooden weapons, improved by Archimedes with straighter shafts and later flint points. They let defenders brace against charging gorilloids and can be thrown as spears when weighted at the point. Flint-tipped spears give Deltan defenders the upper hand against gorilloids in close fighting. Bob has introduced a way to straighten almost any shaft by steaming crooked wood and shaping it in bending jigs."
+      "description": "Pointy sticks are Deltan wooden weapons, improved by [[character:archimedes]] with straighter shafts and later flint points. They let defenders brace against charging gorilloids and can be thrown as spears when weighted at the point. Flint-tipped spears give Deltan defenders the upper hand against gorilloids in close fighting. [[character:bob-replicant]] has introduced a way to straighten almost any shaft by steaming crooked wood and shaping it in bending jigs."
     }
   ],
   "appearances": [

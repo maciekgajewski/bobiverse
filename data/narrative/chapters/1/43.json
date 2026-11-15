@@ -1,7 +1,7 @@
 {
   "chapter": "1.43",
   "title": "43",
-  "summary": "Riker inspects the two half-built colony ships by drone and finds construction running smoothly, with a third ship due four months after the first two. Homer's crew, bootstrapped with borrowed printers, is lifting refined metal from Earth faster than expected, but 3D printing has only moved the bottleneck, forcing a trade-off between hauling drones, colony ships, and more printers, while evacuation negotiations continue and Earth's climate worsens. When Homer and Charles take a break from outer-system patrols, Riker, Homer, Charles, and Arthur hold a rare all-Bobs meeting on keeping Earth's fifteen million survivors alive. Proposals including triage with relocation toward the equator, space mirrors, space stations, and moon colonies all founder on missing infrastructure, engineering limits, or delays to ship-building. The Bobs conclude that they can only press on, knowing that even the current plan probably cannot save everyone.",
+  "summary": "[[character:riker]] inspects the two half-built colony ships by drone and finds construction running smoothly, with a third ship due four months after the first two. [[character:homer]]'s crew, bootstrapped with borrowed printers, is lifting refined metal from [[location:earth]] faster than expected, but 3D printing has only moved the bottleneck, forcing a trade-off between hauling drones, colony ships, and more printers, while evacuation negotiations continue and Earth's climate worsens. When Homer and [[character:charles]] take a break from outer-system patrols, Riker, Homer, Charles, and [[character:arthur]] hold a rare all-Bobs meeting on keeping Earth's fifteen million survivors alive. Proposals including triage with relocation toward the equator, space mirrors, space stations, and moon colonies all founder on missing infrastructure, engineering limits, or delays to ship-building. The Bobs conclude that they can only press on, knowing that even the current plan probably cannot save everyone.",
   "date": "2164-09",
   "location_id": "location:sol",
   "appearances": [
@@ -29,15 +29,15 @@
   "updates": [
     {
       "entity_id": "character:riker",
-      "current_state": "At Sol, overseeing colony-ship construction while evacuation negotiations continue. He and the other Bobs have found no way to improve the survivors' prospects on Earth without delaying ship-building."
+      "current_state": "At [[location:sol]], overseeing colony-ship construction while evacuation negotiations continue. He and the other Bobs have found no way to improve the survivors' prospects on [[location:earth]] without delaying ship-building."
     },
     {
       "entity_id": "character:homer",
-      "current_state": "Leading a supply crew that scours the system for resources and lifts refined metal from Earth for ship construction, with better results than expected. He is on a break in Earth orbit from outer-system patrols with Charles."
+      "current_state": "Leading a supply crew that scours the system for resources and lifts refined metal from [[location:earth]] for ship construction, with better results than expected. He is on a break in Earth orbit from outer-system patrols with [[character:charles]]."
     },
     {
       "entity_id": "character:charles",
-      "current_state": "On a break in Earth orbit from outer-system patrols with Homer."
+      "current_state": "On a break in [[location:earth]] orbit from outer-system patrols with [[character:homer]]."
     },
     {
       "entity_id": "location:earth",
@@ -45,7 +45,7 @@
     },
     {
       "entity_id": "vessel:use-colony-ship",
-      "description": "A USE colony-ship design created by refugee scientists as an off-world refuge, carrying ten thousand people in stasis pods. Two drive rings and a massive reactor cooling section move its huge central cargo section, much of whose mass is stasis shielding; Riker likens it to an unarmed science-fiction warship.",
+      "description": "A [[organization:united-states-of-eurasia]] colony-ship design created by refugee scientists as an off-world refuge, carrying ten thousand people in stasis pods. Two drive rings and a massive reactor cooling section move its huge central cargo section, much of whose mass is stasis shielding; [[character:riker]] likens it to an unarmed science-fiction warship.",
       "current_state": "Two ships are half-built and balanced to finish together, with a third due four months later; construction runs around the clock without current issues."
     },
     {
@@ -58,7 +58,7 @@
     },
     {
       "entity_id": "technology:3d-printers",
-      "description": "Manufacturing equipment that gives Bob virtually unlimited flexibility for building things, including more printers, robotic workers, miners and Von Neumann machines. Increasingly common but still in its infancy, the technology has been shown to place individual atoms on a substrate. It does not end scarcity but moves the bottleneck: capacity spent on more printers or haulers is not spent on end products such as colony ships."
+      "description": "Manufacturing equipment that gives [[character:bob-replicant]] virtually unlimited flexibility for building things, including more printers, robotic workers, miners and Von Neumann machines. Increasingly common but still in its infancy, the technology has been shown to place individual atoms on a substrate. It does not end scarcity but moves the bottleneck: capacity spent on more printers or haulers is not spent on end products such as colony ships."
     }
   ],
   "mentions": [

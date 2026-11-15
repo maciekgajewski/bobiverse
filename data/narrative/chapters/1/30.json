@@ -3,47 +3,47 @@
   "title": "30",
   "date": "2165-04",
   "location_id": "location:delta-eridani-4",
-  "summary": "Bob expands his drone observation of the native Deltans and studies their society through a virtual-reality reconstruction. He focuses on a young Deltan he calls Archimedes, whose solitary experiments produce handled stone tools and twine. New Bobs Marvin, Luke, and Bender come online to help; Marvin searches for flint while the group agrees to call the Deltans' world Eden.",
+  "summary": "[[character:bob-replicant]] expands his drone observation of the native [[species:delta-eridani-natives|Deltans]] and studies their society through a virtual-reality reconstruction. He focuses on a young Deltan he calls [[character:archimedes]], whose solitary experiments produce handled stone tools and twine. New Bobs [[character:marvin]], [[character:luke]], and [[character:bender]] come online to help; Marvin searches for flint while the group agrees to call the Deltans' world [[location:delta-eridani-4|Eden]].",
   "introducing": [
     {
       "id": "character:archimedes",
       "name": "Archimedes",
       "species_id": "species:delta-eridani-natives",
-      "current_state": "Under continuous drone observation as Bob studies his inventive and solitary toolmaking."
+      "current_state": "Under continuous drone observation as [[character:bob-replicant]] studies his inventive and solitary toolmaking."
     },
     {
       "id": "character:marvin",
       "name": "Marvin",
       "parent_id": "character:bob-replicant",
-      "current_state": "Newly activated at Delta Eridani and searching for exposed flint deposits."
+      "current_state": "Newly activated at [[location:delta-eridani]] and searching for exposed flint deposits."
     },
     {
       "id": "character:luke",
       "name": "Luke",
       "parent_id": "character:bob-replicant",
-      "current_state": "Newly activated and helping with Bob's Deltan-observation project."
+      "current_state": "Newly activated and helping with [[character:bob-replicant]]'s Deltan-observation project."
     },
     {
       "id": "character:bender",
       "name": "Bender",
       "parent_id": "character:bob-replicant",
-      "current_state": "Newly activated and helping with Bob's Deltan-observation project."
+      "current_state": "Newly activated and helping with [[character:bob-replicant]]'s Deltan-observation project."
     }
   ],
   "updates": [
     {
       "entity_id": "character:bob-replicant",
-      "current_state": "At Delta Eridani, overseeing expanding drone surveillance of the Deltans and assigning newly activated Bobs to support the work."
+      "current_state": "At [[location:delta-eridani]], overseeing expanding drone surveillance of the [[species:delta-eridani-natives|Deltans]] and assigning newly activated Bobs to support the work."
     },
     {
       "entity_id": "species:delta-eridani-natives",
       "name": "Deltans",
-      "description": "An intelligent, fire-using native people of Delta Eridani 4, named Deltans by Bob. They have bat- and pig-like faces, long spiderish limbs, brownish-gray to orangey-tan fur, patterned heads and mobile, expressive ears. They live in friendly tribes with two genders and loose pairings, and use clubs, rocks and pointed sticks as weapons."
+      "description": "An intelligent, fire-using native people of [[location:delta-eridani-4|Delta Eridani 4]], named Deltans by [[character:bob-replicant]]. They have bat- and pig-like faces, long spiderish limbs, brownish-gray to orangey-tan fur, patterned heads and mobile, expressive ears. They live in friendly tribes with two genders and loose pairings, and use clubs, rocks and pointed sticks as weapons."
     },
     {
       "entity_id": "location:delta-eridani-4",
       "name": "Eden",
-      "description": "The fourth inner rocky planet in the Delta Eridani system, also called Delta Eridani 4 and DE-4, and named Eden by Bob's group as the Deltans' birthplace. It is slightly larger than Earth, with lower gravity and a somewhat denser atmosphere. Its temperate-to-subtropical landscape mixes meadows, rocky bluffs and forests of huge brownish trees, and its varied wildlife includes six-legged insect and mammal analogues, bird analogues and a colour-changing winged creature Bob calls a hippogriff."
+      "description": "The fourth inner rocky planet in the [[location:delta-eridani]] system, also called Delta Eridani 4 and DE-4, and named Eden by [[character:bob-replicant]]'s group as the [[species:delta-eridani-natives|Deltans]]' birthplace. It is slightly larger than [[location:earth]], with lower gravity and a somewhat denser atmosphere. Its temperate-to-subtropical landscape mixes meadows, rocky bluffs and forests of huge brownish trees, and its varied wildlife includes six-legged insect and mammal analogues, bird analogues and a colour-changing winged creature Bob calls a hippogriff."
     },
     {
       "entity_id": "technology:planetary-exploration-drone",
@@ -51,7 +51,7 @@
     },
     {
       "entity_id": "technology:autofactory",
-      "description": "An automated factory used to gather and refine resources and to produce drones. It accepts designs made in virtual space and builds them with 3D printers, ROAMers, and nanites. Smaller units at material sites can make a few cargo drones at a time; larger units at Earth-Moon L4 and L5 are being set up to produce Bobs and drones and bootstrap industrial-scale equipment for colony ships. Its production priorities can be shifted from vessel assembly to computer cores. Standard templates include cradles that hold disembodied cores."
+      "description": "An automated factory used to gather and refine resources and to produce drones. It accepts designs made in virtual space and builds them with [[technology:3d-printers]], [[technology:roamers]], and [[technology:nanites]]. Smaller units at material sites can make a few cargo drones at a time; larger units at Earth-Moon L4 and L5 are being set up to produce Bobs and drones and bootstrap industrial-scale equipment for colony ships. Its production priorities can be shifted from vessel assembly to computer cores. Standard templates include cradles that hold disembodied cores."
     }
   ],
   "appearances": [

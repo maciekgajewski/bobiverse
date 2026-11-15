@@ -1,7 +1,7 @@
 {
   "chapter": "1.44",
   "title": "44",
-  "summary": "Bob and Marvin decide to open contact with the Deltans through a speaker-equipped drone, choosing the curious juvenile Archimedes rather than an elder. Speaking from a drone camouflaged as part of a tree trunk, Bob tells Archimedes that he killed the gorilloid that attacked him and supplied the flint, and urges the tribe to return to one of the old villages they were driven from, some of which offer flint, better water, more food, and better defenses. When the elders scoff at Archimedes, Bob floats the probe above his head and the gathering falls silent; its resemblance to the buster drone's fragments convinces the Deltans. Moses gloats that his stories of other villages were true, an elder Bob calls Hoffa asks whether the bawbe, as Archimedes calls the probe, will protect them, and Arnold backs the move because the current camp is too open to defend. The debate drags on for hours as some Deltans resist change, leaving Bob and Marvin to conclude that politics is universal.",
+  "summary": "[[character:bob-replicant]] and [[character:marvin]] decide to open contact with the [[species:delta-eridani-natives|Deltans]] through a speaker-equipped drone, choosing the curious juvenile [[character:archimedes]] rather than an elder. Speaking from a drone camouflaged as part of a tree trunk, Bob tells Archimedes that he killed the gorilloid that attacked him and supplied the flint, and urges the tribe to return to one of the old villages they were driven from, some of which offer flint, better water, more food, and better defenses. When the elders scoff at Archimedes, Bob floats the probe above his head and the gathering falls silent; its resemblance to the [[technology:buster-drone]]'s fragments convinces the Deltans. [[character:moses]] gloats that his stories of other villages were true, an elder Bob calls [[character:hoffa]] asks whether the bawbe, as Archimedes calls the probe, will protect them, and [[character:arnold]] backs the move because the current camp is too open to defend. The debate drags on for hours as some Deltans resist change, leaving Bob and Marvin to conclude that politics is universal.",
   "date": "2166-01",
   "location_id": "location:delta-eridani",
   "introducing": [
@@ -9,14 +9,14 @@
       "id": "character:hoffa",
       "name": "Hoffa",
       "species_id": "species:delta-eridani-natives",
-      "current_state": "An elder Deltan whom Bob calls Hoffa, asking whether the bawbe will protect the tribe from gorilloids."
+      "current_state": "An elder Deltan whom [[character:bob-replicant]] calls Hoffa, asking whether the bawbe will protect the tribe from gorilloids."
     },
     {
       "id": "event:first-contact-with-the-deltans",
       "name": "First contact with the Deltans",
       "date": "2166-01",
       "location_id": "location:delta-eridani-4",
-      "description": "Bob opens direct communication with the Deltans by speaking to Archimedes through a camouflaged, speaker-equipped drone, then reveals the drone to the village during a council of elders. The Deltans learn that the bawbe destroyed a gorilloid and brought them flint, and that it offers guidance and limited help while they fight their own battles, and the tribe begins debating a move to a better-defended old village.",
+      "description": "[[character:bob-replicant]] opens direct communication with the [[species:delta-eridani-natives|Deltans]] by speaking to [[character:archimedes]] through a camouflaged, speaker-equipped drone, then reveals the drone to the village during a council of elders. The Deltans learn that the bawbe destroyed a gorilloid and brought them flint, and that it offers guidance and limited help while they fight their own battles, and the tribe begins debating a move to a better-defended old village.",
       "participant_ids": [
         "character:bob-replicant",
         "character:archimedes",
@@ -29,19 +29,19 @@
   "updates": [
     {
       "entity_id": "character:bob-replicant",
-      "current_state": "At Delta Eridani, in direct contact with the Deltans through a speaker-equipped drone and urging them to move to a better-defended old village."
+      "current_state": "At [[location:delta-eridani]], in direct contact with the [[species:delta-eridani-natives|Deltans]] through a speaker-equipped drone and urging them to move to a better-defended old village."
     },
     {
       "entity_id": "character:marvin",
-      "current_state": "At Delta Eridani, assisting Bob as he opens direct contact with the Deltans."
+      "current_state": "At [[location:delta-eridani]], assisting [[character:bob-replicant]] as he opens direct contact with the [[species:delta-eridani-natives|Deltans]]."
     },
     {
       "entity_id": "character:archimedes",
-      "current_state": "Still a juvenile despite his rising status, he has become the Deltans' go-between with Bob and has put Bob's proposal to move to an old village before the elders."
+      "current_state": "Still a juvenile despite his rising status, he has become the [[species:delta-eridani-natives|Deltans]]' go-between with [[character:bob-replicant]] and has put Bob's proposal to move to an old village before the elders."
     },
     {
       "entity_id": "character:moses",
-      "current_state": "Vindicated after years of dismissal, since Bob's message confirms his stories of other villages."
+      "current_state": "Vindicated after years of dismissal, since [[character:bob-replicant]]'s message confirms his stories of other villages."
     },
     {
       "entity_id": "character:arnold",
@@ -49,15 +49,15 @@
     },
     {
       "entity_id": "species:delta-eridani-natives",
-      "description": "An intelligent, fire-using native people of Delta Eridani 4, named Deltans by Bob. They have bat- and pig-like faces, long spiderish limbs, brownish-gray to orangey-tan fur, patterned heads, mobile expressive ears and a guttural language. Their tribes have two genders, loose pairings and a council of elders. Once driven from older, better villages and now under pressure from gorilloid predators, the small tribe is regaining flintworking and better defences with help from Bob's group, and now has axes and spears."
+      "description": "An intelligent, fire-using native people of [[location:delta-eridani-4|Delta Eridani 4]], named Deltans by [[character:bob-replicant]]. They have bat- and pig-like faces, long spiderish limbs, brownish-gray to orangey-tan fur, patterned heads, mobile expressive ears and a guttural language. Their tribes have two genders, loose pairings and a council of elders. Once driven from older, better villages and now under pressure from gorilloid predators, the small tribe is regaining flintworking and better defences with help from Bob's group, and now has axes and spears."
     },
     {
       "entity_id": "technology:planetary-exploration-drone",
-      "description": "A practical drone design for planetary exploration. The football-sized surveillance variant carries cameras, microphones, gripping limbs and small reactors; the meter-long biological-analysis variant has many appendages and mechanical stomachs that analyze local organics in about a day. They can hover and camouflage themselves well enough to pass as part of a tree trunk. Surveillance drones can relay live video and record speech, and some carry speakers for talking with the Deltans."
+      "description": "A practical drone design for planetary exploration. The football-sized surveillance variant carries cameras, microphones, gripping limbs and small reactors; the meter-long biological-analysis variant has many appendages and mechanical stomachs that analyze local organics in about a day. They can hover and camouflage themselves well enough to pass as part of a tree trunk. Surveillance drones can relay live video and record speech, and some carry speakers for talking with the [[species:delta-eridani-natives|Deltans]]."
     },
     {
       "entity_id": "technology:translation-routine",
-      "description": "A software routine for interpreting speech. One version interprets the standard twenty-second-century accent so smoothly that differing speech patterns become effectively transparent to its user. Another lets its user converse in English with the Deltans, whose language is far more guttural than human speech."
+      "description": "A software routine for interpreting speech. One version interprets the standard twenty-second-century accent so smoothly that differing speech patterns become effectively transparent to its user. Another lets its user converse in English with the [[species:delta-eridani-natives|Deltans]], whose language is far more guttural than human speech."
     }
   ],
   "appearances": [
