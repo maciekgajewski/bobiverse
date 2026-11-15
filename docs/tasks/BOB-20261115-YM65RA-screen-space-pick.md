@@ -133,3 +133,13 @@ npm run test:e2e:csp
   click, hover expanded the tooltip, and the name became `aria-hidden`.
   The test now taps the name by coordinates, matching a real pointer.
   A focused Firefox re-run of that test passed (15.3s).
+- Full validation after the review fix, the merge of `67bdf44`, and the
+  snap-sheet e2e fix: `tasks.py check` (100 task files, 31 ADRs),
+  format:check, lint (existing AboutDialog fast-refresh warning only),
+  typecheck, 653 tests, 90 data tests, data:validate, narrative:validate,
+  build, `git diff --check`, and Prettier on the changed Markdown.
+- e2e on chromium, firefox and webkit, one worker, no retries, temporary
+  untracked config on port 5208: 238 passed, 11 skipped (36.6m). Port
+  5173 was left untouched.
+- CSP e2e on port 4208: 3 passed (15.2s) across chromium, firefox and
+  webkit. Both alt configs were deleted afterwards.
