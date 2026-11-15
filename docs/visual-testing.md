@@ -670,6 +670,17 @@ On a phone in portrait (about 390×844) and on desktop (about 1280×800):
   through** and the chapter track can still look back at an earlier chapter without
   changing the pill.
 
+## BOB-20261115-MKP51F same-named Contains children
+
+On a phone in portrait (about 390×844) or desktop, after reading through Chapter 1.16
+or later:
+
+- Open the star system **Epsilon Eridani**. Under **Contains**, the first link reads
+  **Epsilon Eridani (star)**, not a second bare **Epsilon Eridani**, and
+  **Bill's skunkworks** is still listed. The heading is still **Epsilon Eridani**
+  with kind **star system**.
+- Open **Solar System**: **Contains** still lists **Sol** with no kind suffix.
+
 ## Default and reset camera
 
 The repeatable default camera pose preserves the documented Three.js viewing
