@@ -427,6 +427,77 @@ describe("object inspector", () => {
     });
   });
 
+  it("shows a character Overview Description when present and keeps Current state", async () => {
+    const user = userEvent.setup();
+    const onSelect = vi.fn();
+    const town: NarrativeEntity = {
+      id: "location:fixture-town",
+      entity_type: "location",
+      name: "Fixture Town",
+    };
+    const character: NarrativeEntity = {
+      id: "character:fixture-pat",
+      entity_type: "character",
+      name: "Fixture Pat",
+      description: "A surveyor based at [[location:fixture-town]].",
+      current_state: "Preparing to depart.",
+    };
+    render(
+      <ObjectInspector
+        selection={{ kind: "narrative", id: character.id }}
+        narrativeItem={item(character)}
+        world={{
+          entities: [character, town],
+          activity: [],
+          view: { chapter: "1.2", display_date: "2200" },
+        }}
+        systems={[]}
+        assets={{ assets: [] }}
+        onSelect={onSelect}
+      />,
+    );
+    expect(
+      screen.getByRole("heading", { name: "Description" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Current state")).toBeInTheDocument();
+    expect(screen.getByText("Preparing to depart.")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Fixture Town" }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/\[\[/)).not.toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Fixture Town" }));
+    expect(onSelect).toHaveBeenLastCalledWith({
+      kind: "narrative",
+      id: "location:fixture-town",
+    });
+  });
+
+  it("omits the character Overview Description when the projected entity has none", () => {
+    const character: NarrativeEntity = {
+      id: "character:fixture-pat",
+      entity_type: "character",
+      name: "Fixture Pat",
+      current_state: "Preparing to depart.",
+    };
+    render(
+      <ObjectInspector
+        selection={{ kind: "narrative", id: character.id }}
+        narrativeItem={item(character)}
+        world={{
+          entities: [character],
+          activity: [],
+          view: { chapter: "1.2", display_date: "2200" },
+        }}
+        systems={[]}
+        assets={{ assets: [] }}
+        onSelect={vi.fn()}
+      />,
+    );
+    expect(screen.queryByRole("heading", { name: "Description" })).toBeNull();
+    expect(screen.getByText("Current state")).toBeInTheDocument();
+    expect(screen.getByText("Preparing to depart.")).toBeInTheDocument();
+  });
+
   it("renders one sparse-safe chapter detail surface and selects relationships", async () => {
     const user = userEvent.setup();
     const onSelect = vi.fn();
