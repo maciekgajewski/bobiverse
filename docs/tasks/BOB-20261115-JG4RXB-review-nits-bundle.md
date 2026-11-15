@@ -34,8 +34,8 @@ the breadcrumb tooltip for an ellipsized parent crumb.
 
 1. `NarrativeText` never shows a raw target ID.
 2. Memoise the chapter synopsis entity map.
-3. Zero-state prose allows links only in the ADR-0029 field table for its record's
-   entity type.
+3. ~~Zero-state prose allows links only in the ADR-0029 field table for its
+   record's entity type.~~ Not needed; see the log.
 4. The chapter summary opening-date check runs on display text.
 5. Breadcrumb crumbs carry their full label as a tooltip, for an ellipsized parent.
 6. The "permanent local backdrop" e2e test gets a 60 s timeout.
@@ -70,7 +70,12 @@ git diff --check
 
 ## Risks and decisions
 
-- Recorded as the items land.
+- A hidden bare link with no fallback label (text that did not come from the
+  prepared corpus) shows the target's slug as words (`location:new-town` becomes
+  "new town"). Prepared text always has a fallback, so readers never see this;
+  it only stops a raw ID from ever reaching the page.
+- The About credit moves to `src/about-image.ts`, and `AboutDialog` re-exports it,
+  so existing imports keep working.
 
 ## Log
 
@@ -79,3 +84,17 @@ git diff --check
 - Created on origin/master `824e7ca` under the authorization above, on local
   branch `bob-20261115-nits-bundle` in the `~/src/bobiverse-nitsbundle` worktree
   (`~/src/bobiverse-nits` already holds an older branch).
+- Landed the items in one commit each: `f7dd364` (no raw target ID), `0b7d9ec`
+  (memoised entity map), `c10c98d` (opening-date check on display text), `150f622`
+  (crumb tooltips), `4c41a50` (60 s backdrop test), `1c3bcc3` (FSHPA9 comment),
+  `7b9e258` (caption from constants), `7bf9f05` (neutral credit module), `87b7029`
+  (BOB-011 criterion 3), `8e669f9` (**What is this?** in the 3VCGFP drawer bullet
+  of `docs/visual-testing.md`) and `fbddb9d` (ring test component ID).
+- Skipped scope item 3. The JSON Schema already allows exactly the ADR-0029 field
+  table per entity type in the zero state: a zero-state location with
+  `current_state` fails schema validation before the semantic layer runs, and
+  characters have no `description`. A per-kind check in `collectInlineLinkWrites`
+  could not be reached or tested.
+- Skipped the review note that link buttons are `inline-block`: no task or design
+  note in the repo says so (it was only in a review report), and the CSS already
+  sets `display: inline`.
