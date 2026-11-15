@@ -90,8 +90,9 @@ Exit criteria:
 
 Completion note: Windows Chrome, Firefox, and Edge plus mobile Chrome passed the
 available manual review on 2026-07-22, and the Captain accepted the visual result.
-Safari was unavailable without an Apple test workstation and remains an explicit
-pre-publication acceptance gap.
+Safari was unavailable without an Apple test workstation and was recorded as an
+explicit pre-publication acceptance gap. Update 2026-11-15: iPhone Safari
+verified working by Maciej; desktop Safari still unverified.
 
 Rebaseline note: BOB-003 retires the two-system distance-measurement user interface
 after this completed slice. BOB-001 remains the historical record of its former
@@ -259,7 +260,7 @@ Planned work:
   `orbital_order`, with `1024`-interval implicit keys and deterministic append
   behavior when it is absent.
 - Apply ADR-0021 only to its fingerprinted Chapter `1.19` phrase `several outer
-  Jovians`: author three distinct anonymous gas giants as the guaranteed lower bound,
+Jovians`: author three distinct anonymous gas giants as the guaranteed lower bound,
   preserve `several` in the system description, and place their stable schematic
   ordinals after OE-2. Do not treat this as a general qualitative-count conversion or
   assert an exact total or unsupported properties.
@@ -372,6 +373,9 @@ Exit criteria:
 - The production bundle contains no secrets, source text, or unlicensed assets.
 - Deployment is reproducible from a clean checkout.
 - Publication risks and remaining limitations are explicitly accepted.
+
+Browser verification: iPhone Safari verified working by Maciej, 2026-11-15;
+desktop Safari still unverified.
 
 ## 10. Cross-cutting risks
 

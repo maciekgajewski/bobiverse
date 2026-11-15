@@ -1,6 +1,6 @@
 # BOB-20261115-7FQJCG: Search rename and floating Search pill
 
-Status: In progress
+Status: Done
 Phase: 2 (narrative foundation and chapter timeline; responsive shell)
 Last updated: 2026-11-15
 
@@ -136,3 +136,4 @@ in `../visual-testing.md`).
 
 - 2026-11-15: Landed at `01f1281` and live; awaiting Maciej's visual
   acceptance.
+- Visually accepted by Maciej 2026-11-15 (relayed by the manager); landed `01f1281`.
