@@ -8,21 +8,25 @@
     {
       "id": "character:kenneth-martins",
       "name": "Kenneth Martins",
+      "description": "One of the five replicant candidates for the project [[character:bob-replicant]] is training for. During a covert [[technology:roamers|roamer]] search, Bob finds Kenneth's name on a candidate cube in an isolated computer room and decides not to switch him off or sabotage him.",
       "current_state": "Represented by one of the two candidate cubes that remain powered on."
     },
     {
       "id": "character:jiro-tanaka",
       "name": "Jiro Tanaka",
+      "description": "One of the five replicant candidates for the project [[character:bob-replicant]] is training for. Bob sees this name on a candidate cube during a covert [[technology:roamers|roamer]] search; nothing else about this candidate is known.",
       "current_state": "Represented by a candidate cube that is powered down."
     },
     {
       "id": "character:neves-reijnder",
       "name": "Neves Reijnder",
+      "description": "One of the five replicant candidates for the project [[character:bob-replicant]] is training for. Bob sees this name on a candidate cube during a covert [[technology:roamers|roamer]] search; nothing else about this candidate is known.",
       "current_state": "Represented by a candidate cube that is powered down."
     },
     {
       "id": "character:joana-almeida",
       "name": "Joana Almeida",
+      "description": "One of the five replicant candidates for the project [[character:bob-replicant]] is training for. Bob sees this name on a candidate cube during a covert [[technology:roamers|roamer]] search; nothing else about this candidate is known.",
       "current_state": "Represented by a candidate cube that is powered down."
     }
   ],
