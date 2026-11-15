@@ -444,6 +444,12 @@
       "entity_id": "organization:free-american-independent-theocratic-hegemony",
       "field": "description",
       "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.57",
+      "entity_id": "location:beta-hydri",
+      "field": "description",
+      "reason": "Merged the former Beta Hydri star entity into the system and condensed under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
     }
   ]
 }

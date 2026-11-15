@@ -6,18 +6,10 @@
   "location_id": "location:82-eridani",
   "introducing": [
     {
-      "id": "location:82-eridani-star",
-      "name": "82 Eridani",
-      "kind": "star",
-      "parent_location_id": "location:82-eridani",
-      "parent_relation": "member_of_system",
-      "description": "The G5V star at the center of the [[location:82-eridani]] system. It is smaller and less luminous than [[location:sol]] but within the range of yellow suns that [[species:human|humans]] would prefer."
-    },
-    {
       "id": "location:82-eridani-1",
       "name": "82 Eridani 1",
       "kind": "planet",
-      "parent_location_id": "location:82-eridani-star",
+      "parent_location_id": "location:82-eridani",
       "parent_relation": "orbits",
       "orbital_order": 1024,
       "description": "The inner of two planets in [[location:82-eridani]]'s comfort zone, lying at the zone's inside edge."
@@ -26,7 +18,7 @@
       "id": "location:82-eridani-2",
       "name": "82 Eridani 2",
       "kind": "planet",
-      "parent_location_id": "location:82-eridani-star",
+      "parent_location_id": "location:82-eridani",
       "parent_relation": "orbits",
       "orbital_order": 2048,
       "description": "The outer of two planets in [[location:82-eridani]]'s comfort zone, lying almost at the zone's outside edge. It has large bodies of water and two moons: a smaller one closer in and a larger, blue one farther out."
