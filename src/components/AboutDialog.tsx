@@ -31,8 +31,8 @@ export const NOTO_SANS_CREDIT =
 const FOCUSABLE_DIALOG_ELEMENTS =
   'a[href], button:not(:disabled), [tabindex]:not([tabindex="-1"])';
 
-const LINK_TOKEN =
-  /https?:\/\/[^\s)]+|DOI:\s*10\.\d{2,}\/\S+?(?=[,.;)]?(?:\s|$))/g;
+const LINK_TOKEN = /https?:\/\/[^\s]+|DOI:\s*10\.\d{2,}\/\S+/g;
+const TRAILING_LINK_PUNCTUATION = /[),.;:!?]+$/;
 
 function ExternalLink({
   href,
@@ -56,18 +56,22 @@ export function linkifyCreditText(text: string): ReactNode[] {
   const pattern = new RegExp(LINK_TOKEN.source, "g");
   while ((match = pattern.exec(text)) !== null) {
     if (match.index > last) parts.push(text.slice(last, match.index));
-    const token = match[0];
+    const rawToken = match[0];
+    const token = rawToken.replace(TRAILING_LINK_PUNCTUATION, "");
+    if (!token) {
+      last = match.index + rawToken.length;
+      parts.push(rawToken);
+      continue;
+    }
     const href = token.startsWith("DOI:")
-      ? `https://doi.org/${token.replace(/^DOI:\s*/, "").replace(/[),.;]+$/, "")}`
-      : token;
-    const label = token.startsWith("DOI:")
-      ? token.replace(/[),.;]+$/, "")
+      ? `https://doi.org/${token.replace(/^DOI:\s*/, "")}`
       : token;
     parts.push(
       <ExternalLink href={href} key={`${href}-${match.index}`}>
-        {label}
+        {token}
       </ExternalLink>,
     );
+    // Leave trailing punctuation in the source so it renders as plain text.
     last = match.index + token.length;
   }
   if (last < text.length) parts.push(text.slice(last));

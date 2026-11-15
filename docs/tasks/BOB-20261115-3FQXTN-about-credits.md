@@ -130,3 +130,13 @@ git diff --check
   so Credits and Privacy are visible, saved on piotr under
   `~/src/bobiverse-aboutcredits/artifacts/about-shots/` and copied to
   the box at `/workspace/about-shots/`.
+
+- Review fixes after approval of `8d6fe3b`: `linkifyCreditText` keeps
+  trailing punctuation (including the `)` after a DOI and a period after
+  a URL) as plain text after the link; the acknowledgements builder
+  keeps the generic VizieR line once and credits the IV/27A Kostjuk
+  extension separately. Full validation (11:06 Europe/Warsaw): tasks
+  check 95 files and 31 ADRs; format:check; lint 0 errors, 1
+  react-refresh warning; typecheck; `npm test` 49 files, 569 tests;
+  `data:test` 90; data:validate 277 systems; narrative:validate zero
+  state and 61 chapters; build OK; prettier; `git diff --check`.

@@ -281,6 +281,9 @@ describe("AboutDialog", () => {
     expect(section.textContent).toContain("ESA");
     expect(section.textContent).toContain("DPAC");
     expect(section.textContent).toContain("VizieR");
+    expect(section.textContent?.match(/VizieR/g)).toHaveLength(1);
+    expect(section.textContent).toContain("IV/27A");
+    expect(section.textContent).toContain("Kostjuk");
     expect(section.textContent).toContain("Golovin");
     expect(section.textContent).toContain("Washington Double Star");
     expect(section.textContent).toContain("Noto Sans");

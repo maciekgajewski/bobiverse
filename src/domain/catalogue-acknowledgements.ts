@@ -16,6 +16,34 @@ export function catalogueAcknowledgements(
   return uniqueAcknowledgements(acknowledgementsInData(rawNearbySystems));
 }
 
+const TRAILING_ACKNOWLEDGEMENT_PUNCTUATION = /[\s.,;:]+$/;
+
+/** Strip only ending sentence punctuation so a longer variant can be compared. */
+export function acknowledgementCore(text: string): string {
+  return text.replace(TRAILING_ACKNOWLEDGEMENT_PUNCTUATION, "").trim();
+}
+
+/**
+ * If `prefix` is a punctuation-tolerant prefix of `text`, return the leftover
+ * credit (an empty string when they are equivalent). Otherwise return null.
+ */
+export function acknowledgementExtension(
+  prefix: string,
+  text: string,
+): string | null {
+  const core = acknowledgementCore(prefix);
+  if (!core) return null;
+  const source = text.startsWith(core) ? text : acknowledgementCore(text);
+  if (!source.startsWith(core)) return null;
+  const rest = source
+    .slice(core.length)
+    .replace(/^[\s,;.:]+/, "")
+    .replace(/^and\s+/i, "")
+    .trim();
+  if (!rest) return "";
+  return rest[0].toUpperCase() + rest.slice(1);
+}
+
 function uniqueAcknowledgements(texts: readonly string[]): string[] {
   const unique: string[] = [];
   const seen = new Set<string>();
@@ -23,6 +51,27 @@ function uniqueAcknowledgements(texts: readonly string[]): string[] {
     const text = raw.trim();
     if (!text || seen.has(text)) continue;
     seen.add(text);
+
+    const prefixIndex = unique.findIndex(
+      (item) => acknowledgementExtension(item, text) !== null,
+    );
+    if (prefixIndex >= 0) {
+      const rest = acknowledgementExtension(unique[prefixIndex]!, text)!;
+      if (
+        rest &&
+        !unique.some(
+          (item) =>
+            item === rest || acknowledgementExtension(item, rest) === "",
+        )
+      ) {
+        unique.push(rest);
+        seen.add(rest);
+      }
+      continue;
+    }
+    if (unique.some((item) => acknowledgementExtension(text, item) !== null)) {
+      continue;
+    }
     unique.push(text);
   }
   return unique;
