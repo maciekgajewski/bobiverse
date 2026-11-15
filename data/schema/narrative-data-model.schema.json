@@ -185,6 +185,10 @@
         "gender": { "type": "string", "minLength": 1 },
         "species_id": { "$ref": "#/$defs/species_id" },
         "parent_id": { "$ref": "#/$defs/character_id" },
+        "description": {
+          "$ref": "#/$defs/description",
+          "description": "Who this character is: a stable identity blurb (about 300 characters as a guideline, not a hard limit). Distinct from current_state, which is the latest condition. Optional inline entity links (ADR-0029) are allowed."
+        },
         "current_state": { "$ref": "#/$defs/state" },
         "picture_id": { "$ref": "#/$defs/asset_id" },
         "aliases": {
@@ -212,6 +216,10 @@
         },
         "parent_id": {
           "anyOf": [{ "$ref": "#/$defs/character_id" }, { "type": "null" }]
+        },
+        "description": {
+          "anyOf": [{ "$ref": "#/$defs/description" }, { "type": "null" }],
+          "description": "Who this character is: a stable identity blurb (about 300 characters as a guideline, not a hard limit). Distinct from current_state, which is the latest condition. Null clears the prior value. Optional inline entity links (ADR-0029) are allowed."
         },
         "current_state": {
           "anyOf": [{ "$ref": "#/$defs/state" }, { "type": "null" }]
@@ -242,6 +250,7 @@
         { "required": ["gender"] },
         { "required": ["species_id"] },
         { "required": ["parent_id"] },
+        { "required": ["description"] },
         { "required": ["current_state"] },
         { "required": ["picture_id"] },
         { "required": ["aliases"] },
