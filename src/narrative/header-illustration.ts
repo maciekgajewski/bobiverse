@@ -1,4 +1,4 @@
-import { ABOUT_IMAGE_ALT } from "../components/AboutDialog";
+import { ABOUT_IMAGE_ALT } from "../about-image";
 import type { NarrativeRecord, NarrativeWorld } from "./model";
 import type { ResolvedSpeciesPresentation } from "./species-presentation";
 

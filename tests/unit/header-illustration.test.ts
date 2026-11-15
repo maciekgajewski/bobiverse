@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { ABOUT_IMAGE_ALT } from "../../src/components/AboutDialog";
+import { ABOUT_IMAGE_ALT } from "../../src/about-image";
 import {
   GUPPI_ENTITY_ID,
   PRESENTATION_ILLUSTRATIONS,
