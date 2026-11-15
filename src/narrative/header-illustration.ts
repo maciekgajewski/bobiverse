@@ -1,4 +1,9 @@
-import { ABOUT_IMAGE_ALT, JEEVES_IMAGE_ALT } from "../about-image";
+import {
+  ABOUT_IMAGE_ALT,
+  EARTH_IMAGE_ALT,
+  JEEVES_IMAGE_ALT,
+  MOON_IMAGE_ALT,
+} from "../about-image";
 import type { NarrativeRecord, NarrativeWorld } from "./model";
 import type { ResolvedSpeciesPresentation } from "./species-presentation";
 
@@ -33,6 +38,8 @@ export interface PresentationIllustration {
 
 export const GUPPI_ENTITY_ID = "technology:guppi-interface";
 export const JEEVES_ENTITY_ID = "technology:jeeves";
+export const EARTH_ENTITY_ID = "location:earth";
+export const MOON_ENTITY_ID = "location:moon";
 
 /**
  * Decorative entity illustrations that live outside the narrative data. Each
@@ -62,6 +69,26 @@ export const PRESENTATION_ILLUSTRATIONS: ReadonlyMap<
       // is its alternative text.
       src: "/assets/jeeves-head.webp",
       alt: JEEVES_IMAGE_ALT,
+      width: 66,
+      height: 66,
+    },
+  ],
+  [
+    EARTH_ENTITY_ID,
+    {
+      // Apollo 17's Blue Marble; Earth is known from the zero state.
+      src: "/assets/earth-head.webp",
+      alt: EARTH_IMAGE_ALT,
+      width: 66,
+      height: 66,
+    },
+  ],
+  [
+    MOON_ENTITY_ID,
+    {
+      // LRO's nearside colour mosaic; the Moon is known from the zero state.
+      src: "/assets/moon-head.webp",
+      alt: MOON_IMAGE_ALT,
       width: 66,
       height: 66,
     },

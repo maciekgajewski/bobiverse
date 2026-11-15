@@ -17,6 +17,7 @@ import { InspectorBreadcrumb } from "./components/InspectorBreadcrumb";
 import { StarMap, type MapScale } from "./components/MapScene";
 import { ObjectBrowser } from "./components/ObjectBrowser";
 import {
+  ChapterLink,
   InspectorHistoryControls,
   ObjectInspector,
 } from "./components/ObjectInspector";
@@ -1234,7 +1235,20 @@ export default function App() {
           )}
           <div className="map-top-chrome">
             <span className="map-narrative-badge" aria-live="polite">
-              {viewStatus}
+              {progress.viewChapter && progress.displayDate ? (
+                <>
+                  {progress.mode === "chapter"
+                    ? "Latest known · Knowledge through "
+                    : `Universe in ${formatNarrativeDate(progress.displayDate)} · Knowledge through `}
+                  <ChapterLink
+                    chapter={progress.viewChapter}
+                    readThroughChapter={progress.furthestChapterRead}
+                    onChapterSelect={selectTimelineChapter}
+                  />
+                </>
+              ) : (
+                viewStatus
+              )}
             </span>
             <button
               ref={searchButton}
@@ -1364,6 +1378,7 @@ export default function App() {
             onForward={() => navigateInspectorHistory(1)}
             onSelect={selectInspectorRelationship}
             onChapterSelect={selectTimelineChapter}
+            readThroughChapter={progress.furthestChapterRead}
             travelStops={selectedCharacterTravel.stops}
             sectionState={progress.characterInspectorSections}
             onToggleSection={(section) =>
@@ -1486,6 +1501,7 @@ export default function App() {
             onForward={() => navigateInspectorHistory(1)}
             onSelect={selectInspectorRelationship}
             onChapterSelect={selectTimelineChapter}
+            readThroughChapter={progress.furthestChapterRead}
             travelStops={selectedCharacterTravel.stops}
             sectionState={progress.characterInspectorSections}
             onToggleSection={(section) =>

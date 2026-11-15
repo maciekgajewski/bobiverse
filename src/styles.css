@@ -811,6 +811,22 @@ h2 {
   white-space: normal;
   pointer-events: none;
 }
+/* The knowledge chapter opens its info card (BOB-20261115-446D62). The badge
+   clips its overflow, so keyboard focus also rings the whole badge. */
+.map-narrative-badge .chapter-link {
+  pointer-events: auto;
+}
+.map-narrative-badge .chapter-link:focus-visible {
+  outline-width: 2px;
+  outline-offset: 0;
+}
+.map-narrative-badge:has(.chapter-link:focus-visible) {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 0 2px var(--accent-cyan);
+}
+.system-mode .map-narrative-badge .chapter-link {
+  visibility: hidden;
+}
 /* Narrow phones (320px): a little more room so the badge still fits two lines
    beside the full-size Search pill and Reset view. */
 @media (max-width: 359px) {

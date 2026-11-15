@@ -1,10 +1,17 @@
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { ABOUT_IMAGE_ALT, JEEVES_IMAGE_ALT } from "../../src/about-image";
 import {
+  ABOUT_IMAGE_ALT,
+  EARTH_IMAGE_ALT,
+  JEEVES_IMAGE_ALT,
+  MOON_IMAGE_ALT,
+} from "../../src/about-image";
+import {
+  EARTH_ENTITY_ID,
   GUPPI_ENTITY_ID,
   JEEVES_ENTITY_ID,
+  MOON_ENTITY_ID,
   PRESENTATION_ILLUSTRATIONS,
   resolveHeaderIllustration,
 } from "../../src/narrative/header-illustration";
@@ -103,6 +110,57 @@ describe("inspector header illustrations", () => {
         corpus.assets,
       ),
     ).toEqual({ kind: "image", origin: "presentation", ...jeeves });
+  });
+
+  it("shows Earth's and the Moon's credited photographs from the zero state", () => {
+    const credits = readFileSync(resolve("public/assets/CREDITS.md"), "utf8");
+    const corpus = narrativeCorpus!;
+    for (const [id, file, alt, source] of [
+      [
+        EARTH_ENTITY_ID,
+        "earth-head.webp",
+        EARTH_IMAGE_ALT,
+        "https://commons.wikimedia.org/wiki/File:The_Earth_seen_from_Apollo_17.jpg",
+      ],
+      [
+        MOON_ENTITY_ID,
+        "moon-head.webp",
+        MOON_IMAGE_ALT,
+        "https://commons.wikimedia.org/wiki/File:Moon_nearside_LRO_color_mosaic.png",
+      ],
+    ] as const) {
+      const illustration = PRESENTATION_ILLUSTRATIONS.get(id)!;
+      expect(illustration).toEqual({
+        src: `/assets/${file}`,
+        alt,
+        width: 66,
+        height: 66,
+      });
+      const asset = readFileSync(resolve("public/assets", file));
+      expect(asset.subarray(0, 4).toString("latin1")).toBe("RIFF");
+      expect(asset.subarray(8, 12).toString("latin1")).toBe("WEBP");
+      // Lossless (VP8L), like the GUPPI and Jeeves heads.
+      expect(asset.subarray(12, 16).toString("latin1")).toBe("VP8L");
+      expect(asset.byteLength).toBeLessThan(20_000);
+      const bits = asset.readUInt32LE(21);
+      expect([(bits & 0x3fff) + 1, ((bits >> 14) & 0x3fff) + 1]).toEqual([
+        66, 66,
+      ]);
+      const section = credits.split(`## \`${file}\``)[1]!.split("\n## ")[0]!;
+      expect(section.replace(/\s+/g, " ")).toContain(alt);
+      expect(section).toContain(source);
+      expect(section).toMatch(/Public domain/);
+      // Known in the pre-book zero state and in every chapter view.
+      for (const chapter of [null, "1.1", "1.20"]) {
+        expect(
+          resolveHeaderIllustration(
+            id,
+            generateNarrativeWorld(corpus, chapter),
+            corpus.assets,
+          ),
+        ).toEqual({ kind: "image", origin: "presentation", ...illustration });
+      }
+    }
   });
 
   it("uses each projected species' presentation icon", () => {
