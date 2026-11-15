@@ -174,7 +174,7 @@ test("production bundle makes no non-self requests and no CSP violations", async
 
   const inject = await injectMissingGlyph(page, MISSING_GLYPH_TEXT);
   expect(inject.updatedCount, JSON.stringify(inject)).toBeGreaterThan(0);
-  await page.waitForTimeout(2500);
+  await page.waitForLoadState("networkidle");
 
   const violations = await page.evaluate(
     () =>
@@ -195,10 +195,10 @@ test("production bundle makes no non-self requests and no CSP violations", async
 });
 
 async function injectMissingGlyph(page: Page, missingText: string) {
-  return page.evaluate((text) => {
+  return page.evaluate(async (text) => {
     type TroikaText = {
       text: string;
-      sync?: () => void;
+      sync?: (callback?: () => void) => void;
       children?: unknown[];
     };
     type Hook = { memoizedState?: unknown; next?: Hook };
@@ -326,10 +326,19 @@ async function injectMissingGlyph(page: Page, missingText: string) {
     }
 
     const unique = [...new Set(texts)];
-    for (const node of unique) {
-      node.text = text;
-      node.sync?.();
-    }
+    await Promise.all(
+      unique.map(
+        (node) =>
+          new Promise<void>((resolve) => {
+            node.text = text;
+            if (typeof node.sync === "function") {
+              node.sync(() => resolve());
+            } else {
+              resolve();
+            }
+          }),
+      ),
+    );
     return {
       found: unique.map((node) => node.text),
       updatedCount: unique.length,

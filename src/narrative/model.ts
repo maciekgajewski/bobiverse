@@ -436,11 +436,14 @@ function createAjv(): Ajv2020 {
  * Node have no `import.meta.env`, so this is false for `narrative:validate`.
  * Vitest keeps `PROD` false, so tests still run Ajv compilation.
  */
+type ViteImportMetaEnv = { readonly PROD?: boolean };
+
+function readViteImportMetaEnv(): ViteImportMetaEnv | undefined {
+  return (import.meta as ImportMeta & { readonly env?: ViteImportMetaEnv }).env;
+}
+
 function isViteProductionBuild(): boolean {
-  const env = (
-    import.meta as ImportMeta & { readonly env?: { readonly PROD?: boolean } }
-  ).env;
-  return env?.PROD === true;
+  return readViteImportMetaEnv()?.PROD === true;
 }
 
 /**
@@ -449,9 +452,15 @@ function isViteProductionBuild(): boolean {
  * skip that compilation: `npm run build` already ran `narrative:validate`
  * over the same authored corpus. Development, Vitest, and the CLI still
  * compile and run the validators, including the generated-world check.
+ *
+ * `env` is optional so unit tests can cover the production path.
+ * Vite inlines a fresh `import.meta.env` object per module, so assigning
+ * `import.meta.env.PROD` in a test file does not change this module.
  */
-export function shouldCompileNarrativeSchemas(): boolean {
-  return !isViteProductionBuild();
+export function shouldCompileNarrativeSchemas(
+  env: ViteImportMetaEnv | undefined = readViteImportMetaEnv(),
+): boolean {
+  return env?.PROD !== true;
 }
 
 let narrativeAjv: Ajv2020 | null = null;

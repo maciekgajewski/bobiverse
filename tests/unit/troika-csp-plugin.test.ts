@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import {
   disableTroikaUnicodeCdn,
   forceTroikaMainThread,
+  troikaCspPlugin,
   UNICODE_FONT_RESOLVER_CDN,
 } from "../../vite.troika-csp-plugin";
 
@@ -32,9 +33,7 @@ describe("disableTroikaUnicodeCdn", () => {
     for (const file of files) {
       const transformed = disableTroikaUnicodeCdn(readFileSync(file, "utf8"));
       expect(transformed, file).not.toContain(UNICODE_FONT_RESOLVER_CDN);
-      expect(transformed, file).not.toContain(
-        "cdn.jsdelivr.net/gh/lojjic/unicode-font-resolver",
-      );
+      expect(transformed, file).not.toContain("cdn.jsdelivr.net");
     }
   });
 
@@ -111,5 +110,102 @@ describe("forceTroikaMainThread", () => {
         /(?:var|let) supportsWorkers = (?:function \(\)|\(\) =>) \{\s*return false;/,
       );
     }
+  });
+});
+
+describe("troika CSP plugin failure modes", () => {
+  it("throws when a targeted troika-three-text file still contains the CDN URL after the transform", () => {
+    const plugin = troikaCspPlugin();
+    const transform = plugin.transform as (code: string, id: string) => unknown;
+    const id = "/node_modules/troika-three-text/dist/unexpected.js";
+    const code =
+      'const url = "https://cdn.jsdelivr.net/gh/other-package@1.0.0";';
+    expect(() => transform(code, id)).toThrow(/CDN URL|cdn\.jsdelivr\.net/i);
+  });
+
+  it("throws when a targeted file still contains the default-CDN retry after the transform", () => {
+    const plugin = troikaCspPlugin();
+    const transform = plugin.transform as (code: string, id: string) => unknown;
+    const id = "/node_modules/troika-three-text/dist/unexpected.js";
+    const code = 'console.error("trying default CDN");';
+    expect(() => transform(code, id)).toThrow(/trying default CDN/i);
+  });
+
+  it("throws when supportsWorkers is still unpatched after the transform", () => {
+    const plugin = troikaCspPlugin();
+    const transform = plugin.transform as (code: string, id: string) => unknown;
+    const id = "/node_modules/troika-worker-utils/dist/unexpected.js";
+    const code = "const supportsWorkers = function () { return true; };";
+    expect(() => transform(code, id)).toThrow(/unpatched supportsWorkers/i);
+  });
+
+  function applyTransform(
+    plugin: ReturnType<typeof troikaCspPlugin>,
+    code: string,
+    id: string,
+  ) {
+    const transform = plugin.transform as (code: string, id: string) => unknown;
+    return transform(code, id);
+  }
+
+  function fireExpectedPatches(plugin: ReturnType<typeof troikaCspPlugin>) {
+    const text = readFileSync(
+      path.join("node_modules/troika-three-text/dist/troika-three-text.esm.js"),
+      "utf8",
+    );
+    const workers = readFileSync(
+      path.join(
+        "node_modules/troika-worker-utils/dist/troika-worker-utils.esm.js",
+      ),
+      "utf8",
+    );
+    applyTransform(
+      plugin,
+      text,
+      "/node_modules/troika-three-text/dist/troika-three-text.esm.js",
+    );
+    applyTransform(
+      plugin,
+      workers,
+      "/node_modules/troika-worker-utils/dist/troika-worker-utils.esm.js",
+    );
+  }
+
+  it("fails the build if emitted JS contains cdn.jsdelivr.net", () => {
+    const plugin = troikaCspPlugin();
+    fireExpectedPatches(plugin);
+    const generateBundle = plugin.generateBundle as (
+      options: object,
+      bundle: object,
+    ) => void;
+    const bundle = {
+      "assets/index.js": {
+        type: "chunk",
+        fileName: "assets/index.js",
+        code: 'import "https://cdn.jsdelivr.net/npm/left-pad";',
+      },
+    };
+    expect(() => generateBundle({}, bundle)).toThrow(/cdn\.jsdelivr\.net/);
+  });
+
+  it("fails the build if an expected patch never fired", () => {
+    const plugin = troikaCspPlugin();
+    const generateBundle = plugin.generateBundle as (
+      options: object,
+      bundle: object,
+    ) => void;
+    const bundle = {
+      "assets/index.js": {
+        type: "chunk",
+        fileName: "assets/index.js",
+        code: "console.log('ok');",
+      },
+    };
+    expect(() => generateBundle({}, bundle)).toThrow(
+      /expected patch\(es\) did not fire/,
+    );
+    const plugin2 = troikaCspPlugin();
+    const close = plugin2.closeBundle as () => void;
+    expect(() => close()).toThrow(/expected patch\(es\) did not fire/);
   });
 });

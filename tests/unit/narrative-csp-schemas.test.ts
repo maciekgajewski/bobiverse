@@ -6,4 +6,8 @@ describe("shouldCompileNarrativeSchemas", () => {
     expect(import.meta.env.PROD).toBe(false);
     expect(shouldCompileNarrativeSchemas()).toBe(true);
   });
+
+  it("returns false in a production Vite build so Ajv never calls Function()", () => {
+    expect(shouldCompileNarrativeSchemas({ PROD: true })).toBe(false);
+  });
 });

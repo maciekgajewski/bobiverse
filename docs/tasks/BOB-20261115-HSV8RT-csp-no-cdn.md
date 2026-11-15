@@ -8,7 +8,7 @@ Last updated: 2026-11-15
 
 Public hosting at bobiverse.space will serve a strict Content-Security-Policy
 without `unsafe-eval` and without any third-party origin. The live bundle
-contained two problems that that policy would hit:
+contained two problems that this policy would hit:
 
 1. Ajv compiles narrative JSON Schema validators with `Function(...)`. Under
    `script-src 'self'` that throws `EvalError` during startup, so the app
@@ -99,6 +99,15 @@ generated-world check. This is recorded in `docs/technical-design.md` and
    transform) does not contain the unicode-font-resolver jsDelivr URL.
 6. No canonical data, book text, or generated chapter bytes change.
 
+## Residual risk
+
+This is a known, accepted residual risk: `assertSchema("narrative_world")`
+no-ops in production browser builds on runtime-projected worlds, because
+Ajv compilation is skipped there. `npm run build` already ran
+`narrative:validate` over the authored corpus, including the
+generated-world schema check. Development, Vitest, and the CLI still
+compile and run that check.
+
 ## Validation
 
 ```bash
@@ -112,9 +121,8 @@ npm run data:validate
 npm run narrative:validate
 npm run build
 git diff --check
-# e2e under CSP: untracked alt Playwright config, port 5202 or the next
-# free port if 5202 is occupied, 1 worker, no retries, then delete the
-# untracked config.
+# CSP e2e (production preview, not port 5173):
+npm run test:e2e:csp
 ```
 
 ## Manual browser checklist

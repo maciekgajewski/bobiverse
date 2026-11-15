@@ -11,7 +11,6 @@ export default tseslint.config(
       "node_modules",
       "playwright-report",
       "test-results",
-      ".csp-probe/**",
     ],
   },
   js.configs.recommended,

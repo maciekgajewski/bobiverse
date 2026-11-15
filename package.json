@@ -34,7 +34,8 @@
     "performance:map": "npm run build && playwright test --config playwright.map-performance.config.ts",
     "build": "npm run data:validate && npm run narrative:manifest && npm run narrative:validate && tsc -b && vite build",
     "preview": "vite preview --host 0.0.0.0 --port 4173 --strictPort",
-    "validate": "npm run format:check && npm run lint && npm run typecheck && npm run data:test && npm run data:validate && npm run test && npm run build"
+    "validate": "npm run format:check && npm run lint && npm run typecheck && npm run data:test && npm run data:validate && npm run test && npm run build",
+    "test:e2e:csp": "xvfb-run -a playwright test --config playwright.csp.config.ts --workers=1 --retries=0"
   },
   "dependencies": {
     "@react-three/drei": "10.7.7",
