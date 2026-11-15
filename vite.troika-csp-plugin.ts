@@ -46,9 +46,10 @@ const SUPPORTS_WORKERS_START =
 export function disableTroikaUnicodeCdn(code: string): string {
   let next = code;
   next = next.replace(
-    /\.catch\(\(?function\((\w+)\)\{if\([^)]+\)return[\s\S]{0,400}?trying default CDN[\s\S]{0,200}?throw \1;?\}\)?\)/g,
+    /\.catch\(\(?function\((\w+)\)\s*\{\s*if\s*\([^)]+\)\s*return[\s\S]{0,800}?trying default CDN[\s\S]{0,400}?throw \1;?\s*\}\)?\)/g,
     ".catch((function($1){throw $1}))",
   );
+
   next = next.replaceAll(UNICODE_FONT_RESOLVER_CDN, "");
   // Troika also embeds a Khronos WebGL debug loader on jsDelivr. The public
   // CSP forbids that origin, and generateBundle fails the build if any
@@ -217,6 +218,7 @@ export function assertEmittedJsHasNoJsdelivr(bundle: EmittedJsBundle): void {
 export function troikaCspPlugin(): Plugin {
   const fired = new Set<TroikaCspPatch>();
   let emitChecked = false;
+  let command: "build" | "serve" | undefined;
 
   const assertBuild = (bundle?: EmittedJsBundle) => {
     if (bundle) assertEmittedJsHasNoJsdelivr(bundle);
@@ -252,7 +254,13 @@ export function troikaCspPlugin(): Plugin {
       assertBuild(bundle);
       emitChecked = true;
     },
+    configResolved(config) {
+      command = config.command;
+    },
     closeBundle() {
+      // generateBundle does not run in `vite dev`. Do not fail server shutdown
+      // if a page never imported every troika entry.
+      if (command === "serve") return;
       if (!emitChecked) assertBuild();
     },
   };

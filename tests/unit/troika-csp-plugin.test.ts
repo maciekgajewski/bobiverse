@@ -37,6 +37,21 @@ describe("disableTroikaUnicodeCdn", () => {
     }
   });
 
+  it("strips the default-CDN retry from pretty-printed Vite prebundles", () => {
+    const prebundled = `
+      var v = "${UNICODE_FONT_RESOLVER_CDN}";
+      }).catch((function(n) {
+        if (l !== v) return j || (console.error("unicode-font-resolver: Failed loading from dataUrl \\"" + l + "\\", trying default CDN. " + n.message), j = !0), l = v, p.delete(t), M(t);
+        throw n;
+      })), p.set(t, n)), n;
+    `;
+    expect(prebundled).toContain("trying default CDN");
+    const transformed = disableTroikaUnicodeCdn(prebundled);
+    expect(transformed).not.toContain("trying default CDN");
+    expect(transformed).not.toContain("cdn.jsdelivr.net");
+    expect(transformed).toContain(".catch((function(n){throw n}))");
+  });
+
   it("does not retry a failed resolver lookup on the default CDN", () => {
     const esm = readFileSync(
       path.join(troikaRoot, "dist/troika-three-text.esm.js"),
