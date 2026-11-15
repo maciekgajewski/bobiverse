@@ -688,7 +688,6 @@ in the left-hand **Object browser**.
 
 ## Default and reset camera
 
-
 The repeatable default camera pose preserves the documented Three.js viewing
 direction while calculating its distance from the current static system catalogue and
 canvas aspect ratio:

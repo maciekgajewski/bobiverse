@@ -100,11 +100,11 @@ in `../visual-testing.md`).
 - **Compact-only pill.** Desktop already shows the object browser; a map pill
   there would be a fifth piece of chrome next to an always-visible search
   field. The 1280×800 check confirms the rail, not a desktop pill.
-- **Flex top chrome rather than a fixed `left: 130px`.** The design snapshot
-  measured 130px at the pre-book badge. `Latest known · Knowledge through
-  Chapter N` is much longer, so a fixed left edge would overlap it. A flex row
-  (badge, pill, Reset view) keeps the zero-state ~86px gap to Reset and
-  ellipsizes a long badge instead of overlapping.
+- **Flex top chrome rather than a fixed left edge.** The design snapshot
+  measured left: 130px at the pre-book badge. A longer "Latest known ·
+  Knowledge through Chapter N" badge would overlap that fixed left edge. A
+  flex row (badge, pill, Reset view) keeps the zero-state ~86px gap to Reset
+  and ellipsizes a long badge instead of overlapping.
 - **Result snap stays at half.** The design note said a Search result should
   open the sheet at peek, like a map tap. The current, tested behaviour (and
   H960PW) opens browser picks at half. This task opens the existing search UI
