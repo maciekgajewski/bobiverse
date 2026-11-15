@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { ABOUT_IMAGE_ALT } from "../about-image";
+import {
+  ABOUT_IMAGE_ALT,
+  JEEVES_IMAGE_ALT,
+  JEEVES_IMAGE_REFERENCES,
+} from "../about-image";
+import { APP_VERSION_LABEL } from "../app-version";
 import { catalogueAcknowledgements } from "../domain/catalogue-acknowledgements";
 import {
   GALACTIC_STARFIELD_SOURCE_URL,
@@ -34,7 +39,7 @@ const FOCUSABLE_DIALOG_ELEMENTS =
 const LINK_TOKEN = /https?:\/\/[^\s]+|DOI:\s*10\.\d{2,}\/\S+/g;
 const TRAILING_LINK_PUNCTUATION = /[),.;:!?]+$/;
 
-function ExternalLink({
+export function ExternalLink({
   href,
   children,
 }: {
@@ -154,6 +159,19 @@ export function AboutCredits() {
           </ExternalLink>
           .
         </li>
+        <li>
+          {JEEVES_IMAGE_ALT} Used in the What&rsquo;s new dialog and as
+          Jeeves&rsquo;s inspector illustration. References:{" "}
+          {JEEVES_IMAGE_REFERENCES.map((reference, index) => (
+            <span key={reference.href}>
+              {index > 0 && ", "}
+              <ExternalLink href={reference.href}>
+                {reference.label}
+              </ExternalLink>
+            </span>
+          ))}
+          .
+        </li>
       </ul>
     </section>
   );
@@ -216,20 +234,22 @@ export function AboutPrivacy({
   );
 }
 
-export function AboutDialog({
+/**
+ * The modal frame shared by About and What's new: backdrop, labelled dialog,
+ * header with the X, Escape and backdrop to close, and a Tab focus trap.
+ */
+export function InfoDialogFrame({
+  titleId,
+  title,
   onClose,
-  onOpenGuppi = null,
-  onForgetProgress,
+  className,
+  children,
 }: {
+  titleId: string;
+  title: string;
   onClose: () => void;
-  /**
-   * Opens GUPPI's info card. The caller passes it only while GUPPI is known
-   * at the reader's knowledge chapter; without it "GUPPI" is plain text, so
-   * the caption never leaks a spoiler or opens a hidden card.
-   */
-  onOpenGuppi?: (() => void) | null;
-  /** Clears every app-owned localStorage key and resets in-memory reader state. */
-  onForgetProgress?: () => void;
+  className?: string;
+  children: ReactNode;
 }) {
   const dialog = useRef<HTMLDivElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
@@ -276,14 +296,14 @@ export function AboutDialog({
       <div className="about-backdrop" aria-hidden="true" onClick={onClose} />
       <div
         ref={dialog}
-        className="about-dialog"
+        className={className ? `about-dialog ${className}` : "about-dialog"}
         role="dialog"
         aria-modal="true"
-        aria-labelledby="about-title"
+        aria-labelledby={titleId}
         tabIndex={-1}
       >
         <header className="about-header">
-          <h2 id="about-title">{ABOUT_TITLE}</h2>
+          <h2 id={titleId}>{title}</h2>
           <button
             ref={closeButton}
             type="button"
@@ -297,42 +317,69 @@ export function AboutDialog({
           </button>
         </header>
         <div className="about-body" tabIndex={-1}>
-          <div className="about-intro">
-            <figure className="about-figure">
-              <img
-                src={ABOUT_IMAGE_SRC}
-                alt={ABOUT_IMAGE_ALT}
-                width={150}
-                height={200}
-                decoding="async"
-              />
-              <figcaption>
-                {onOpenGuppi ? (
-                  <button
-                    type="button"
-                    className="link-button about-caption-entity"
-                    onClick={onOpenGuppi}
-                  >
-                    {ABOUT_CAPTION_ENTITY_LABEL}
-                  </button>
-                ) : (
-                  ABOUT_CAPTION_ENTITY_LABEL
-                )}
-                {ABOUT_CAPTION_JOIN}
-                <ExternalLink href={ABOUT_IMAGE_SOURCE}>
-                  {ABOUT_CAPTION_SOURCE_LABEL}
-                </ExternalLink>
-              </figcaption>
-            </figure>
-            <div className="about-copy">
-              <AboutCopy />
-            </div>
-          </div>
-          <AboutCredits />
-          <AboutPrivacy onForgetProgress={onForgetProgress} />
+          {children}
         </div>
       </div>
     </>,
     document.body,
+  );
+}
+
+export function AboutDialog({
+  onClose,
+  onOpenGuppi = null,
+  onForgetProgress,
+}: {
+  onClose: () => void;
+  /**
+   * Opens GUPPI's info card. The caller passes it only while GUPPI is known
+   * at the reader's knowledge chapter; without it "GUPPI" is plain text, so
+   * the caption never leaks a spoiler or opens a hidden card.
+   */
+  onOpenGuppi?: (() => void) | null;
+  /** Clears every app-owned localStorage key and resets in-memory reader state. */
+  onForgetProgress?: () => void;
+}) {
+  return (
+    <InfoDialogFrame
+      titleId="about-title"
+      title={ABOUT_TITLE}
+      onClose={onClose}
+    >
+      <div className="about-intro">
+        <figure className="about-figure">
+          <img
+            src={ABOUT_IMAGE_SRC}
+            alt={ABOUT_IMAGE_ALT}
+            width={150}
+            height={200}
+            decoding="async"
+          />
+          <figcaption>
+            {onOpenGuppi ? (
+              <button
+                type="button"
+                className="link-button about-caption-entity"
+                onClick={onOpenGuppi}
+              >
+                {ABOUT_CAPTION_ENTITY_LABEL}
+              </button>
+            ) : (
+              ABOUT_CAPTION_ENTITY_LABEL
+            )}
+            {ABOUT_CAPTION_JOIN}
+            <ExternalLink href={ABOUT_IMAGE_SOURCE}>
+              {ABOUT_CAPTION_SOURCE_LABEL}
+            </ExternalLink>
+          </figcaption>
+        </figure>
+        <div className="about-copy">
+          <AboutCopy />
+        </div>
+      </div>
+      <AboutCredits />
+      <AboutPrivacy onForgetProgress={onForgetProgress} />
+      <p className="about-version">{APP_VERSION_LABEL}</p>
+    </InfoDialogFrame>
   );
 }

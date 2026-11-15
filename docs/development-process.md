@@ -57,6 +57,9 @@ available.
    its own criteria require (for example the Captain's visual acceptance) is
    complete.
 
+Public releases (annotated tags, release notes, LAN check and the Sysadmin's
+release script) follow [`release-process.md`](release-process.md).
+
 ## Data-only chapter PRs
 
 Since 2026-11-13 (the Captain's decision of 21:43 CET, relayed by the manager), the

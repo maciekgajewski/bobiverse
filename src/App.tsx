@@ -7,6 +7,11 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
 } from "react";
 import { ABOUT_CAPTION_ENTITY_ID, AboutDialog } from "./components/AboutDialog";
+import {
+  WHATS_NEW_CAPTION_ENTITY_ID,
+  WhatsNewDialog,
+} from "./components/WhatsNewDialog";
+import { markWhatsNewSeen, shouldAutoShowWhatsNew } from "./whats-new";
 import { DetailSheet } from "./components/DetailSheet";
 import { InspectorBreadcrumb } from "./components/InspectorBreadcrumb";
 import { StarMap, type MapScale } from "./components/MapScene";
@@ -265,6 +270,12 @@ export default function App() {
   const [aboutOrigin, setAboutOrigin] = useState<"topbar" | "menu" | null>(
     null,
   );
+  const whatsNewLink = useRef<HTMLButtonElement>(null);
+  // Decided before any reader state is loaded or written, so a first visit is
+  // told apart from a returning reader (src/whats-new.ts).
+  const [whatsNewOrigin, setWhatsNewOrigin] = useState<
+    "auto" | "topbar" | "menu" | null
+  >(() => (shouldAutoShowWhatsNew() ? "auto" : null));
   const [webgl, setWebgl] = useState<"checking" | "ready" | "unsupported">(
     "checking",
   );
@@ -533,6 +544,22 @@ export default function App() {
     }, 0);
   }, [aboutOrigin]);
 
+  // What's new records the newest notes as seen when it closes. Focus returns
+  // to whatever opened it; after the start-up auto-show there is no opener.
+  const closeWhatsNew = useCallback(() => {
+    const origin = whatsNewOrigin;
+    markWhatsNewSeen();
+    setWhatsNewOrigin(null);
+    if (origin === "auto") return;
+    window.setTimeout(() => {
+      const compact =
+        typeof window.matchMedia === "function"
+          ? window.matchMedia("(max-width: 1199px)").matches
+          : origin === "menu";
+      (compact ? menuButton.current : whatsNewLink.current)?.focus();
+    }, 0);
+  }, [whatsNewOrigin]);
+
   // The About caption names GUPPI. It opens GUPPI's card only while GUPPI is
   // a reader-visible entity at the knowledge chapter, and never in the
   // pre-book zero state, so the caption cannot reveal or open a hidden card.
@@ -540,6 +567,15 @@ export default function App() {
     progress.viewChapter !== null &&
     isSelectionEligibleForMap(
       { kind: "narrative", id: ABOUT_CAPTION_ENTITY_ID },
+      narrativeWorld,
+      contextSystemIds,
+    );
+
+  // The What's new caption names Jeeves, with the same rule as GUPPI above.
+  const whatsNewCaptionEntityKnown =
+    progress.viewChapter !== null &&
+    isSelectionEligibleForMap(
+      { kind: "narrative", id: WHATS_NEW_CAPTION_ENTITY_ID },
       narrativeWorld,
       contextSystemIds,
     );
@@ -743,6 +779,19 @@ export default function App() {
       typeof window.matchMedia === "function" &&
       window.matchMedia("(max-width: 1199px)").matches;
     if (!compact) window.setTimeout(() => aboutLink.current?.focus(), 0);
+  };
+  const openWhatsNewCaptionEntity = () => {
+    if (!whatsNewCaptionEntityKnown) return;
+    markWhatsNewSeen();
+    setWhatsNewOrigin(null);
+    selectExternalObject({
+      kind: "narrative",
+      id: WHATS_NEW_CAPTION_ENTITY_ID,
+    });
+    const compact =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(max-width: 1199px)").matches;
+    if (!compact) window.setTimeout(() => whatsNewLink.current?.focus(), 0);
   };
   const navigateInspectorHistory = (offset: -1 | 1) => {
     const nextIndex = inspectorHistory.index + offset;
@@ -965,7 +1014,9 @@ export default function App() {
   return (
     <main
       className="app-shell"
-      inert={aboutOrigin !== null || chapterPickerOpen}
+      inert={
+        aboutOrigin !== null || whatsNewOrigin !== null || chapterPickerOpen
+      }
     >
       <a className="skip-link" href="#map-stage">
         Skip to star map
@@ -1002,6 +1053,15 @@ export default function App() {
             onClick={() => setAboutOrigin("topbar")}
           >
             What is this?
+          </button>
+          <button
+            ref={whatsNewLink}
+            type="button"
+            className="about-link whats-new-link"
+            aria-haspopup="dialog"
+            onClick={() => setWhatsNewOrigin("topbar")}
+          >
+            What&rsquo;s new
           </button>
         </div>
         <div className="topbar-actions">
@@ -1494,6 +1554,17 @@ export default function App() {
                 </button>
                 <button
                   type="button"
+                  className="button menu-row menu-about menu-whats-new"
+                  aria-haspopup="dialog"
+                  onClick={() => {
+                    setMobilePanel(null);
+                    setWhatsNewOrigin("menu");
+                  }}
+                >
+                  What&rsquo;s new
+                </button>
+                <button
+                  type="button"
                   className="button menu-row menu-about"
                   aria-haspopup="dialog"
                   onClick={() => {
@@ -1556,6 +1627,14 @@ export default function App() {
           onClose={closeAbout}
           onOpenGuppi={aboutCaptionEntityKnown ? openAboutCaptionEntity : null}
           onForgetProgress={forgetProgress}
+        />
+      )}
+      {whatsNewOrigin && !aboutOrigin && (
+        <WhatsNewDialog
+          onClose={closeWhatsNew}
+          onOpenJeeves={
+            whatsNewCaptionEntityKnown ? openWhatsNewCaptionEntity : null
+          }
         />
       )}
     </main>

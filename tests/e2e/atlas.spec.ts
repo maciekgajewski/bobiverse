@@ -2,6 +2,22 @@ import { expect, test, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { ENABLE_ENTER_SYSTEM } from "../../src/features";
+import { NEWEST_RELEASE_NOTES_VERSION } from "../../src/release-notes";
+
+const WHATS_NEW_KEY = "bobiverse.whats-new.last-seen";
+
+// Every test is a reader who has already seen the newest What's new notes, so
+// the dialog does not open by itself. A test's own init scripts run after this
+// one, so the What's new tests can still set an older version.
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(
+    ([key, version]) => {
+      if (window.localStorage.getItem(key) === null)
+        window.localStorage.setItem(key, version);
+    },
+    [WHATS_NEW_KEY, NEWEST_RELEASE_NOTES_VERSION] as const,
+  );
+});
 
 // Enter system is disabled behind ENABLE_ENTER_SYSTEM (src/features.ts) at the
 // Captain's request of 2026-11-14. Its e2e coverage is kept and runs again as
@@ -2467,10 +2483,11 @@ test("desktop chrome keeps the workspace with a slimmer bar and a larger map", a
   expect(map!.x + map!.width - (resetBox!.x + resetBox!.width)).toBeLessThan(
     12,
   );
-  // The only desktop top-bar buttons are the "What is this?" About link and
-  // the compact Read through chip (no text Reset view).
+  // The only desktop top-bar buttons are the "What is this?" About and
+  // "What's new" links and the compact Read through chip (no text Reset view).
   await expect(page.locator(".topbar").getByRole("button")).toHaveText([
     "What is this?",
+    "What\u2019s new",
     "Pre-book",
   ]);
   await reset.hover();
@@ -3376,4 +3393,94 @@ test("merged Epsilon Eridani Contains lists uniquely named children at chapter 1
     "aria-current",
     "page",
   );
+});
+
+async function expectWhatsNewDialog(page: Page) {
+  const dialog = page.getByRole("dialog", { name: "What\u2019s new" });
+  await expect(dialog).toBeVisible();
+  await expect(
+    dialog.getByRole("heading", {
+      name: `Version ${NEWEST_RELEASE_NOTES_VERSION}`,
+    }),
+  ).toBeVisible();
+  const image = dialog.getByRole("img", { name: /^Jeeves illustration/ });
+  await expect(image).toBeVisible();
+  await expect
+    .poll(() =>
+      image.evaluate((element: HTMLImageElement) => element.naturalWidth),
+    )
+    .toBe(150);
+  return dialog;
+}
+
+test("compact What's new opens from the menu and returns focus to it", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await expect(
+    page.getByRole("dialog", { name: "What\u2019s new" }),
+  ).toHaveCount(0);
+  const menuButton = page.getByRole("button", { name: "Menu" });
+  await menuButton.click();
+  const drawer = page.getByRole("dialog", { name: "Menu" });
+  const row = drawer.getByRole("button", { name: "What\u2019s new" });
+  await row.scrollIntoViewIfNeeded();
+  expect((await row.boundingBox())!.height).toBeGreaterThanOrEqual(43.5);
+  await row.click();
+  await expect(drawer).toHaveCount(0);
+  const dialog = await expectWhatsNewDialog(page);
+  await page.keyboard.press("Escape");
+  await expect(dialog).toHaveCount(0);
+  await expect(menuButton).toBeFocused();
+});
+
+test("desktop What's new opens from the title link", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  const link = page
+    .locator(".topbar-title")
+    .getByRole("button", { name: "What\u2019s new" });
+  await link.click();
+  const dialog = await expectWhatsNewDialog(page);
+  await dialog.getByRole("button", { name: "Close" }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect(link).toBeFocused();
+});
+
+test("What's new opens once by itself for a returning reader", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.addInitScript((key) => {
+    if (window.sessionStorage.getItem("whats-new-seeded")) return;
+    window.sessionStorage.setItem("whats-new-seeded", "1");
+    window.localStorage.setItem(key, "0.0.1");
+    window.localStorage.setItem(
+      "bobiverse.app-state.v2",
+      JSON.stringify({
+        furthestChapterRead: "1.1",
+        viewChapter: "1.1",
+        displayDate: null,
+        mode: "chapter",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+  }, WHATS_NEW_KEY);
+  await page.goto("/");
+  const dialog = await expectWhatsNewDialog(page);
+  await page.keyboard.press("Escape");
+  await expect(dialog).toHaveCount(0);
+  expect(
+    await page.evaluate(
+      (key) => window.localStorage.getItem(key),
+      WHATS_NEW_KEY,
+    ),
+  ).toBe(NEWEST_RELEASE_NOTES_VERSION);
+  await page.reload();
+  await expect(page.locator(".map-narrative-badge")).toBeVisible();
+  await expect(
+    page.getByRole("dialog", { name: "What\u2019s new" }),
+  ).toHaveCount(0);
 });
