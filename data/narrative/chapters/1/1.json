@@ -44,5 +44,19 @@
       "role": "lead",
       "location_id": "location:las-vegas"
     }
+  ],
+  "updates": [
+    {
+      "entity_id": "location:earth",
+      "description": "Mostly harmless."
+    },
+    {
+      "entity_id": "location:moon",
+      "description": "Is a harsh mistress."
+    },
+    {
+      "entity_id": "species:human",
+      "description": "Homo sapiens non urinat in ventum."
+    }
   ]
 }
