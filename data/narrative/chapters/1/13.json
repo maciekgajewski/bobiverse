@@ -9,6 +9,11 @@
       "id": "technology:vr",
       "name": "VR",
       "description": "A virtual-reality interface [[character:bob-replicant]] builds aboard [[vessel:heaven-1]] to provide sensory input and an embodied experience while he travels as a bodiless mind. It initially needs hardware modifications and remains an ongoing software project."
+    },
+    {
+      "id": "technology:jeeves",
+      "name": "Jeeves",
+      "description": "A butler figure that [[character:bob-replicant]] created in his [[technology:vr]] aboard [[vessel:heaven-1]], styled after John Cleese and dressed in a tuxedo with tails. It serves Bob coffee and clears away dishes."
     }
   ],
   "appearances": [
