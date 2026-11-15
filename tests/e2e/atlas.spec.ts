@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { readFileSync } from "node:fs";
 import path from "node:path";
 import { ENABLE_ENTER_SYSTEM } from "../../src/features";
 
@@ -418,6 +419,18 @@ async function seedChapter(page: Page, chapter: string): Promise<void> {
   }, chapter);
 }
 
+/** The single component ID of a named system in the generated nearby-systems data. */
+function nearbySystemComponentId(name: string): string {
+  const { systems } = JSON.parse(
+    readFileSync(path.resolve("src/data/nearby-systems.json"), "utf8"),
+  ) as { systems: Array<{ name: string; components: Array<{ id: string }> }> };
+  const [component, ...others] =
+    systems.find((system) => system.name === name)?.components ?? [];
+  if (!component || others.length)
+    throw new Error(`${name} must have exactly one component.`);
+  return component.id;
+}
+
 test("canvas picking uses the invisible click target outside the visible star", async ({
   page,
 }) => {
@@ -455,10 +468,10 @@ test("canvas picking uses the invisible click target outside the visible star", 
   ).toBeVisible();
   await page.mouse.move(1, 1);
   await settleMapCamera(page);
-  const probe = await page.evaluate(() =>
-    window.__bob034MapPerformance!.componentScreenRadii(
-      "stellar-component-000138",
-    ),
+  const probe = await page.evaluate(
+    (componentId) =>
+      window.__bob034MapPerformance!.componentScreenRadii(componentId),
+    nearbySystemComponentId("WISE 0855-0714"),
   );
   expect(probe.pickRadiusPx - probe.visibleRadiusPx).toBeGreaterThan(8);
   const ring = {
