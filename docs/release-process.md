@@ -3,6 +3,10 @@
 Public releases of the Bobiverse companion are annotated semver tags on
 `master`. The first public release is `v0.9.0`.
 
+**The first tag waits for Maciej.** `v0.9.0` is created only after Maciej has
+accepted the release visually on the LAN deploy (`bobiverse.local`) and given
+his explicit go. Until then there is no tag and no Sysadmin build.
+
 1. **Release notes first.** Add an entry for the new version at the top of
    `src/release-notes.ts` (newest first, short, friendly and spoiler-free), and
    set `version` in `package.json` to the same number. Land that through the
