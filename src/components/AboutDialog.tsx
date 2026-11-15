@@ -1,13 +1,13 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import { createPortal } from "react-dom";
+import { ABOUT_IMAGE_ALT } from "../about-image";
 
 // The About ("What is this?") dialog. The body copy is Maciej's own text,
 // kept verbatim in AboutCopy so it can be edited in one place.
 export const ABOUT_TITLE = "What is this?";
 export const ABOUT_IMAGE_SRC = "/assets/ackbar.webp";
-// Full credit; also matches the credit block in public/assets/CREDITS.md.
-export const ABOUT_IMAGE_ALT =
-  "Admiral Ackbar illustration by Michael Sutfin, from The New Essential Guide to Characters. Star Wars © Lucasfilm Ltd. Used under fair use.";
+// Full credit, kept in a neutral module; re-exported for the dialog's users.
+export { ABOUT_IMAGE_ALT };
 export const ABOUT_IMAGE_SOURCE =
   "https://starwars.fandom.com/wiki/File:Ackbar-NEGTC.png";
 // The caption is "<entity>, or <source>": the entity part opens GUPPI when it
