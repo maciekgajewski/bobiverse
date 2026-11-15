@@ -1,6 +1,6 @@
 # BOB-20261115-7FQJCG: Search rename and floating Search pill
 
-Status: In progress
+Status: Done
 Phase: 2 (narrative foundation and chapter timeline; responsive shell)
 Last updated: 2026-11-15
 
@@ -133,3 +133,5 @@ in `../visual-testing.md`).
   passed and 3 skipped (the Enter system tests behind `ENABLE_ENTER_SYSTEM`).
   No icon-specimen PNG was rewritten. Screenshots at 390×844 and 1280×800,
   with search closed and open, were taken for review outside the repository.
+
+- Visually accepted by Maciej 2026-11-15 (relayed by the manager); landed `01f1281`.
