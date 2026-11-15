@@ -147,3 +147,8 @@ env VITE_APP_VERSION=0.9.0 BOBIVERSE_COMMIT=<sha> npx vite build  # About shows 
   shows "Version 0.9.0 (3b81256)" at the end of About. Screenshots for visual
   acceptance (What's new at 1440×900 and 390×844, Jeeves's info header at both
   sizes, About with the version) were taken outside the repository.
+- The manager approved `016c4e5` with small fixes: `7ef71a2` (blocked
+  `localStorage` no longer crashes start-up; What's new, forget and save degrade
+  to in-memory state, with tests that make the getter throw), `8fb7220` (the
+  first tag waits for Maciej's LAN acceptance and explicit go) and `0fde810`
+  (the CSP e2e opens What's new once, still with zero violations).
