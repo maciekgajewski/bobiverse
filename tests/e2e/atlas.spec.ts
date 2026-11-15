@@ -2309,9 +2309,7 @@ test("compact Search pill does not overlap the badge or Reset view and opens sea
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
-  await page.waitForFunction(
-    () => window.__bob034MapPerformance !== undefined,
-  );
+  await page.waitForFunction(() => window.__bob034MapPerformance !== undefined);
   const map = page.locator("#map-stage");
   const pill = map.getByRole("button", { name: "Search" });
   const reset = map.getByRole("button", { name: "Reset view" });

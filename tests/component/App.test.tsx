@@ -1260,11 +1260,7 @@ describe("atlas shell", () => {
     expect(
       within(drawer).getByRole("button", { name: "Chapter mode" }),
     ).toHaveAttribute("aria-pressed", "true");
-    for (const name of [
-      "Search",
-      "Timeline and progress",
-      "Reset view",
-    ]) {
+    for (const name of ["Search", "Timeline and progress", "Reset view"]) {
       expect(within(drawer).getByRole("button", { name })).toBeEnabled();
     }
     await user.keyboard("{Escape}");
@@ -1275,9 +1271,7 @@ describe("atlas shell", () => {
 
     await user.click(menu);
     await user.click(screen.getByRole("button", { name: "Search" }));
-    expect(
-      screen.getByRole("dialog", { name: "Search" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("dialog", { name: "Search" })).toBeInTheDocument();
     expect(
       screen.queryByRole("dialog", { name: "Menu" }),
     ).not.toBeInTheDocument();
