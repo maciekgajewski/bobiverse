@@ -128,3 +128,8 @@ npm run test:e2e:csp
   `onClick` skips when a tracked pointerup just handled the same tap, so
   `onSelect` fires once. Unit tests cover the pinch, the still-finger
   release, and the single caption-tap `onSelect`.
+- After merging `67bdf44`, Firefox e2e timed out clicking Sol's caption
+  name in the phone snap-sheet test: the canvas intercepted the locator
+  click, hover expanded the tooltip, and the name became `aria-hidden`.
+  The test now taps the name by coordinates, matching a real pointer.
+  A focused Firefox re-run of that test passed (15.3s).

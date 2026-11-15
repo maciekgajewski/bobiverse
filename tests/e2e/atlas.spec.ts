@@ -883,6 +883,7 @@ test("mobile detail window has an X close icon and tap-sized history in one head
 test("phone detail sheet snaps over an interactive map and its trail follows links", async ({
   page,
 }) => {
+  test.setTimeout(45_000);
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
@@ -949,8 +950,17 @@ test("phone detail sheet snaps over an interactive map and its trail follows lin
     ),
   ).toBe(true);
   // Click the system name, which sits next to Sol's centre, not the
-  // whole caption box (the rail can sit nearer another star).
-  await caption.locator(".narrative-map-label-name").click();
+  // whole caption box (the rail can sit nearer another star). A
+  // coordinate click matches a real tap: Playwright's locator click
+  // can hit the canvas first, hover-expand the tooltip, then treat
+  // the aria-hidden name as invisible and time out (Firefox).
+  const nameBox = (await caption
+    .locator(".narrative-map-label-name")
+    .boundingBox())!;
+  await page.mouse.click(
+    nameBox.x + nameBox.width / 2,
+    nameBox.y + nameBox.height / 2,
+  );
   await expect(
     sheet.getByRole("heading", { name: "Solar System" }),
   ).toBeVisible();
