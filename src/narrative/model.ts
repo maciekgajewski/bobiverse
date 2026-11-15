@@ -1628,6 +1628,9 @@ function validateNarrativeCorpusSemantics(
       );
     }
   }
+  // The opening-date check reads summaries as displayed (ADR-0029 links shown
+  // by label or by the target's name in that chapter), not as raw markup.
+  const summaryNameHistory = buildNameHistory(zeroStateEntities, chapters);
   const chapterIds = new Set<string>();
   for (const chapter of chapters) {
     const id = chapterId(chapter);
@@ -1641,7 +1644,11 @@ function validateNarrativeCorpusSemantics(
     const date = parseNarrativeDate(
       asString(chapter.date, `Chapter ${id} date`),
     );
-    const openingSentence = openingSummarySentence(summary);
+    const openingSentence = openingSummarySentence(
+      inlineLinksToPlainText(summary, (target) =>
+        nameAsOf(summaryNameHistory, target, id),
+      ),
+    );
     const repeatedYear = new RegExp(`\\b${date.year}\\b`).test(openingSentence);
     const monthName =
       date.month === null
