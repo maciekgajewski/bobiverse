@@ -1,8 +1,8 @@
 # BOB-20261114-AYW3EN: Info panel header, kind and illustrations
 
-Status: Ready
+Status: In progress
 Phase: 2 (narrative foundation and chapter timeline; responsive shell)
-Last updated: 2026-11-14
+Last updated: 2026-11-15
 
 ## Objective and user-visible outcome
 
@@ -168,3 +168,6 @@ Manual: the Captain's check on desktop and a phone after deployment (checklist i
 - Screenshots at 1280×800 and 390×844 (Human, GUPPI, and Earth with the kind under
   its name and Map context at the bottom) were taken for review outside the
   repository.
+
+- 2026-11-15: Landed at `8cd0485` and live; awaiting Maciej's visual
+  acceptance.

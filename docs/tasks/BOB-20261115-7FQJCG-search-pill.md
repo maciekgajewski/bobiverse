@@ -133,3 +133,6 @@ in `../visual-testing.md`).
   passed and 3 skipped (the Enter system tests behind `ENABLE_ENTER_SYSTEM`).
   No icon-specimen PNG was rewritten. Screenshots at 390×844 and 1280×800,
   with search closed and open, were taken for review outside the repository.
+
+- 2026-11-15: Landed at `01f1281` and live; awaiting Maciej's visual
+  acceptance.

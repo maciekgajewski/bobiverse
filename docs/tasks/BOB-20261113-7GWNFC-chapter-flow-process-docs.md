@@ -1,8 +1,8 @@
 # BOB-20261113-7GWNFC: process docs for the data-only chapter PR flow
 
-Status: In progress
+Status: Done
 Phase: Cross-cutting (development process and governance)
-Last updated: 2026-11-13
+Last updated: 2026-11-15
 
 ## Objective and user-visible outcome
 
@@ -87,3 +87,6 @@ The documentation files listed in Scope and this task file. No generated artifac
 - Validation (Node 22.23.1, fresh `npm ci`): tasks check (74 task files, 30 ADRs),
   format:check, lint, prettier `--check` on the six other changed Markdown files and
   `git diff --check` all passed. Docs only, so no unit, e2e or build run.
+
+- 2026-11-15: Landed on master as squash commit `10e1871` (PR #27). No user-visible UI change
+  needs visual acceptance, so the task is Done.

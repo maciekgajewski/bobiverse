@@ -1,8 +1,8 @@
 # BOB-20261113-JRV53G: merged-text sentence-preservation check
 
-Status: In progress
+Status: Done
 Phase: 4 (LLM-assisted editorial pipeline; process hardening)
-Last updated: 2026-11-13
+Last updated: 2026-11-15
 
 ## Objective
 
@@ -143,3 +143,6 @@ Markdown, `git diff --check`. No UI code changes, so no e2e.
   Initials and abbreviations now count only when preceded by the start of the text
   or a non-letter that is not an apostrophe. `narrative:validate` still passes;
   the exceptions list is unchanged (no unused entries, no new unexcused writes).
+
+- 2026-11-15: Landed on master as merge `1f9a87c` (PR #28). No user-visible UI change
+  needs visual acceptance, so the task is Done.

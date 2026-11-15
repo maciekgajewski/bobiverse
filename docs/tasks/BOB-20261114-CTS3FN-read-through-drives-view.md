@@ -1,8 +1,8 @@
 # BOB-20261114-CTS3FN: read-through drives the view
 
-Status: Ready
+Status: In progress
 Phase: 2 (narrative foundation and chapter timeline; responsive shell)
-Last updated: 2026-11-14
+Last updated: 2026-11-15
 
 ## Objective and user-visible outcome
 
@@ -142,3 +142,6 @@ deployment and checks that the map, browser and status move to that chapter.
   known map system after framing settles", "the permanent local backdrop preserves
   responsive map interaction"); both then passed in isolation with
   `--repeat-each=3` (6/6). Neither test touches Read through or the menu.
+
+- 2026-11-15: Landed at `01223e0` and live; awaiting Maciej's visual
+  acceptance.

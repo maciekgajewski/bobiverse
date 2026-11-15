@@ -2,7 +2,7 @@
 
 Status: In progress
 Phase: 2 (narrative foundation and chapter timeline; responsive shell)
-Last updated: 2026-11-14
+Last updated: 2026-11-15
 
 ## Objective and user-visible outcome
 
@@ -133,3 +133,6 @@ Manual: the Captain checks the detail window in a phone browser after deployment
 - Screenshots: `docs/design/artifacts/BOB-20261114-DA3Y3B-mobile-detail-fixes/`
   holds `phone-390x844-before.png` (master), `phone-390x844-after.png`,
   `phone-390x844-after-history.png` (Back enabled) and `desktop-1280x800-after.png`.
+
+- 2026-11-15: Landed at `3c3d368` and live; awaiting Maciej's visual
+  acceptance.

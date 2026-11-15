@@ -1,8 +1,8 @@
 # BOB-20261114-ANZFK6: GUPPI link in the About caption
 
-Status: Ready
+Status: In progress
 Phase: 2 (narrative foundation and chapter timeline; responsive shell)
-Last updated: 2026-11-14
+Last updated: 2026-11-15
 
 ## Objective and user-visible outcome
 
@@ -133,3 +133,6 @@ Manual: the Captain's check on desktop and a phone after deployment (checklist i
   PNG was rewritten.
 - Screenshots of the About dialog at 1280×800 and 390×844, at Chapter 1.2 and in zero
   state, were taken for review outside the repository.
+
+- 2026-11-15: Landed at `839c9f5` and live; awaiting Maciej's visual
+  acceptance.

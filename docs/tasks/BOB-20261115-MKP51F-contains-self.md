@@ -1,6 +1,6 @@
 # BOB-20261115-MKP51F: Disambiguate same-named Contains children
 
-Status: Ready
+Status: In progress
 Phase: 2 (narrative foundation and chapter timeline; responsive shell)
 Last updated: 2026-11-15
 
@@ -127,3 +127,6 @@ Manual: the Captain's check after deployment (checklist in
   "Epsilon Eridani" child to "Epsilon Eridani (star)" beside "Bill's
   skunkworks".
 - Not pushed and not merged. This branch is for review only.
+
+- 2026-11-15: Landed at `4e1c8f4` and live; awaiting Maciej's visual
+  acceptance.
