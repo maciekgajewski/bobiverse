@@ -23,6 +23,7 @@
       "id": "character:robert-johansson",
       "name": "Robert Johansson",
       "species_id": "species:human",
+      "description": "A software engineer who founded [[organization:intergator-software]] and has just sold it, leaving him newly wealthy. A science-fiction fan with a minor in physics, he attends The Vortex convention in [[location:las-vegas]] and signs a cryonics contract with [[organization:cryoeterna]]. He is close to his family, including his father and his twin sisters, Andrea and Alaina.",
       "current_state": "Presumed dead after the road incident.",
       "aliases": ["Bob"]
     },

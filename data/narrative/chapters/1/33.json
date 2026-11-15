@@ -14,6 +14,7 @@
     {
       "id": "character:gudmund-valter",
       "name": "Gudmund Valter",
+      "description": "The ex-military leader of the Spitsbergen island refuge, whose food projections for the coming winter are poor. He presses [[character:riker]] to move his people up the emigration queue, using access to the Svalbard seed and genetic vaults as leverage.",
       "current_state": "Leading the Spitsbergen refuge while seeking survival and emigration assurances for its people."
     }
   ],
