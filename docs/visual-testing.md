@@ -697,6 +697,20 @@ or later:
   with kind **star system**.
 - Open **Solar System**: **Contains** still lists **Sol** with no kind suffix.
 
+## BOB-20261115-6C60VA same-named adjacent breadcrumbs
+
+On a phone in portrait (about 390×844), after reading through Chapter 1.16 or later:
+
+- Open the star system **Epsilon Eridani**. The object trail is a single current
+  crumb, **Epsilon Eridani**, with no kind suffix.
+- Open its primary star (from **Contains** or Search). The trail reads
+  **Epsilon Eridani (star system) › Epsilon Eridani (star)**, with the star
+  current and in bold. The heading is still **Epsilon Eridani** with kind
+  **star**. On a narrow phone the ancestor crumb may ellipsize so the current
+  name stays in full; the link still has the complete name.
+- Open **Earth**. The trail is still **Solar System › Sol › Earth**, with no
+  kind suffixes.
+
 ## Default and reset camera
 
 The repeatable default camera pose preserves the documented Three.js viewing
