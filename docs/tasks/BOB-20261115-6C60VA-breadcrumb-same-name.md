@@ -1,6 +1,6 @@
 # BOB-20261115-6C60VA: Disambiguate same-named adjacent breadcrumbs
 
-Status: In progress
+Status: Ready
 Phase: 2 (narrative foundation and chapter timeline; responsive shell)
 Last updated: 2026-11-15
 
@@ -105,3 +105,23 @@ Manual: the Captain's check after deployment (checklist in
   authorization above, on local branch
   `bob-20261115-6c60va-breadcrumb-same-name` in the
   `~/src/bobiverse-crumbs` worktree.
+
+- Implemented in `4435e6b` and `844461e`. Validation, all passed:
+  `python3 scripts/tasks.py check` (90 task files, 30 ADRs), `npm run format:check`,
+  `npm run lint`, `npm run typecheck`, `npm run test` (499 passed, 44 files),
+  `npm run data:test` (90 passed), `npm run data:validate`,
+  `npm run narrative:validate`, `npm run build`, `git diff --check` and
+  `npx prettier --check` on the changed Markdown.
+- Full e2e on spare port 5198 (untracked `playwright.alt5198.config.ts`, deleted
+  afterwards), one worker, no retries: Chromium, Firefox and WebKit each 60
+  passed and 3 skipped (the Enter system tests behind `ENABLE_ENTER_SYSTEM`),
+  including the extended Chapter 1.61 Contains and object-trail test. No
+  known-flake reruns were required. No icon-specimen PNG was rewritten.
+- Before/after screenshots at 390×844 (the Epsilon Eridani star at Chapter 1.61)
+  were taken for review outside the repository. The object trail changes from
+  two bare "Epsilon Eridani" crumbs to "Epsilon Eridani (star system) ›
+  Epsilon Eridani (star)". On that narrow width the ancestor crumb ellipsizes
+  so the current name stays in full; the link's accessible name remains
+  complete.
+- Not pushed and not merged. This branch is stacked on pending MKP51F
+  `8323ab7` and is for review only.
