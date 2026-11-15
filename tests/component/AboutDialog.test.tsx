@@ -31,6 +31,10 @@ describe("AboutDialog", () => {
       within(dialog).getByRole("heading", { level: 2, name: "What is this?" }),
     ).toHaveAttribute("id", "about-title");
     expect(within(dialog).getByRole("button", { name: "Close" })).toHaveFocus();
+    expect(dialog.querySelector(".about-body")).toHaveAttribute(
+      "tabindex",
+      "-1",
+    );
   });
 
   it("renders Maciej's text verbatim with a numbered list", () => {
@@ -46,7 +50,9 @@ describe("AboutDialog", () => {
       "Contact: maciek@bobiverse.space",
       "Source: github.com/maciekgajewski/bobiverse",
     ]);
-    const list = within(dialog).getByRole("list");
+    const list = within(
+      dialog.querySelector(".about-copy") as HTMLElement,
+    ).getByRole("list");
     expect(list.tagName).toBe("OL");
     expect(
       within(list)
@@ -87,7 +93,8 @@ describe("AboutDialog", () => {
     });
     expect(contact).toHaveAttribute("href", "mailto:maciek@bobiverse.space");
     expect(contact).not.toHaveAttribute("target");
-    expect(within(dialog).getAllByRole("link")).toHaveLength(4);
+    const intro = dialog.querySelector(".about-intro")!;
+    expect(within(intro as HTMLElement).getAllByRole("link")).toHaveLength(4);
   });
 
   it("shows the Ackbar image with the credit as alt text and a short caption link", () => {
@@ -238,14 +245,98 @@ describe("AboutDialog", () => {
     await user.tab();
     expect(source).toHaveFocus();
     await user.tab();
+    expect(
+      within(dialog).getByRole("link", {
+        name: "Astronomy backdrop: NASA/Goddard Space Flight Center Scientific Visualization Studio, Deep Star Maps 2020; Gaia DR2: ESA/Gaia/DPAC.",
+      }),
+    ).toHaveFocus();
+    // Credits and Privacy add more focusable links; wrap from the last one.
+    const last = within(dialog).getByRole("link", {
+      name: "starwars.fandom.com",
+    });
+    last.focus();
+    await user.tab();
     expect(close).toHaveFocus();
     await user.tab({ shift: true });
-    expect(source).toHaveFocus();
+    expect(last).toHaveFocus();
     // Focus that lands on the dialog itself (a click on its text) re-enters
     // the cycle instead of escaping it.
     dialog.focus();
     await user.tab();
     expect(close).toHaveFocus();
     expect(screen.getByRole("button", { name: "Outside" })).not.toHaveFocus();
+  });
+
+  it("lists Credits for the starfield, every catalogue acknowledgement, the font and Ackbar", () => {
+    render(<AboutDialog onClose={() => undefined} />);
+    const dialog = screen.getByRole("dialog", { name: "What is this?" });
+    const credits = within(dialog).getByRole("heading", { name: "Credits" });
+    expect(credits.tagName).toBe("H3");
+    const section = credits.closest("section")!;
+    expect(
+      within(section).getByRole("link", {
+        name: "Astronomy backdrop: NASA/Goddard Space Flight Center Scientific Visualization Studio, Deep Star Maps 2020; Gaia DR2: ESA/Gaia/DPAC.",
+      }),
+    ).toHaveAttribute("href", "https://svs.gsfc.nasa.gov/4851/");
+    expect(section.textContent).toContain("ESA");
+    expect(section.textContent).toContain("DPAC");
+    expect(section.textContent).toContain("VizieR");
+    expect(section.textContent?.match(/VizieR/g)).toHaveLength(1);
+    expect(section.textContent).toContain("IV/27A");
+    expect(section.textContent).toContain("Kostjuk");
+    expect(section.textContent).toContain("Golovin");
+    expect(section.textContent).toContain("Washington Double Star");
+    expect(section.textContent).toContain("Noto Sans");
+    expect(section.textContent).toContain("SIL Open Font License");
+    expect(
+      within(section).getByRole("link", { name: "openfontlicense.org" }),
+    ).toHaveAttribute("href", "https://openfontlicense.org");
+    expect(section.textContent).toContain(CREDIT);
+    expect(
+      within(section).getByRole("link", { name: "starwars.fandom.com" }),
+    ).toHaveAttribute("href", SOURCE);
+  });
+
+  it("states the verified privacy claims and forgets progress only after confirm", async () => {
+    const user = userEvent.setup();
+    const onForgetProgress = vi.fn();
+    render(
+      <AboutDialog
+        onClose={() => undefined}
+        onForgetProgress={onForgetProgress}
+      />,
+    );
+    const dialog = screen.getByRole("dialog", { name: "What is this?" });
+    const privacy = within(dialog)
+      .getByRole("heading", { name: "Privacy" })
+      .closest("section")!;
+    expect(privacy.textContent).toMatch(/no cookies or tracking/i);
+    expect(privacy.textContent).toMatch(
+      /reading progress and app preferences stay in this browser/i,
+    );
+    expect(privacy.textContent).not.toMatch(/third-party network requests/i);
+    expect(privacy.textContent).not.toMatch(/web-?server|IP address/i);
+    const forget = within(privacy).getByRole("button", {
+      name: "Forget my progress",
+    });
+    forget.focus();
+    await user.tab();
+    expect(within(dialog).getByRole("button", { name: "Close" })).toHaveFocus();
+    await user.tab({ shift: true });
+    expect(forget).toHaveFocus();
+    await user.click(forget);
+    expect(onForgetProgress).not.toHaveBeenCalled();
+    await user.click(within(privacy).getByRole("button", { name: "Cancel" }));
+    expect(onForgetProgress).not.toHaveBeenCalled();
+    expect(
+      within(privacy).getByRole("button", { name: "Forget my progress" }),
+    ).toBeInTheDocument();
+    await user.click(
+      within(privacy).getByRole("button", { name: "Forget my progress" }),
+    );
+    await user.click(
+      within(privacy).getByRole("button", { name: "Forget progress" }),
+    );
+    expect(onForgetProgress).toHaveBeenCalledTimes(1);
   });
 });

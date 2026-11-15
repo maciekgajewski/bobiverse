@@ -2057,11 +2057,16 @@ h2 {
 }
 .about-body {
   display: flex;
-  align-items: flex-start;
-  gap: 1.15rem;
+  flex-direction: column;
+  gap: 0;
   min-height: 0;
   overflow: auto;
   padding: 1rem;
+}
+.about-intro {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.15rem;
 }
 .about-figure {
   display: grid;
@@ -2139,6 +2144,87 @@ h2 {
   outline: 3px solid var(--accent-cyan);
   outline-offset: 2px;
   border-radius: 2px;
+}
+
+.about-intro {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.15rem;
+}
+.about-section {
+  min-width: 0;
+  margin: 0;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-subtle);
+  color: #c9d8ef;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+.about-section h3 {
+  margin: 0 0 0.45rem;
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.about-section p,
+.about-section ul {
+  margin: 0 0 0.55rem;
+}
+.about-section ul {
+  padding-left: 1.15rem;
+}
+.about-section li + li {
+  margin-top: 0.4rem;
+}
+.about-section a {
+  color: #8edbf4;
+  text-underline-offset: 0.15em;
+}
+.about-section a:hover {
+  color: var(--accent-cyan);
+}
+.about-section a:focus-visible {
+  outline: 3px solid var(--accent-cyan);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+.about-forget,
+.about-forget-confirm-button,
+.about-forget-cancel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap);
+  padding: 0 0.85rem;
+  border: 1px solid var(--line-accent);
+  border-radius: var(--radius-control);
+  color: #c9d8ef;
+  background: #13233a;
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.about-forget:hover,
+.about-forget-confirm-button:hover,
+.about-forget-cancel:hover {
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+.about-forget:focus-visible,
+.about-forget-confirm-button:focus-visible,
+.about-forget-cancel:focus-visible {
+  outline: 3px solid var(--accent-cyan);
+  outline-offset: 2px;
+}
+.about-forget-confirm p {
+  margin-bottom: 0.45rem;
+}
+.about-forget-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 @media (max-width: 900px) {
   .atlas-grid {
@@ -2498,7 +2584,7 @@ h2 {
     border-radius: 1rem 1rem 0 0;
     transform: none;
   }
-  .about-body {
+  .about-intro {
     flex-direction: column;
     align-items: center;
   }
@@ -2529,10 +2615,12 @@ h2 {
     padding-block: 0.3rem;
   }
   .about-body {
+    padding: 0.75rem 1rem;
+  }
+  .about-intro {
     flex-direction: row;
     align-items: flex-start;
     gap: 1rem;
-    padding: 0.75rem 1rem;
   }
   .about-figure {
     flex: 0 0 108px;

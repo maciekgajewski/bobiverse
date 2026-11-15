@@ -59,6 +59,7 @@ import {
 } from "./narrative/model";
 import {
   confirmReadThrough,
+  forgetReaderProgress,
   loadReaderProgress,
   normalizeReaderProgress,
   persistReaderProgress,
@@ -713,6 +714,27 @@ export default function App() {
   // Closes About and selects GUPPI as a fresh inspector root, as a browser
   // pick does. The compact detail sheet then focuses its X; on desktop focus
   // returns to the "What is this?" link and the inspector updates in place.
+  const forgetProgress = () => {
+    const next = forgetReaderProgress();
+    try {
+      setApplicationProjection(projectReaderProgress(next, systems));
+    } catch (error) {
+      setApplicationProjection({
+        progress: next,
+        dateOptions: [],
+        world: EMPTY_NARRATIVE_WORLD,
+        chapterDetail: null,
+        map: emptyMapProjection(),
+        error: projectionErrorMessage(error),
+      });
+    }
+    setSelection(null);
+    setSystemMode(null);
+    setInspectorHistory(EMPTY_INSPECTOR_HISTORY);
+    setPendingReadThrough(null);
+    setBrowserQuery("");
+  };
+
   const openAboutCaptionEntity = () => {
     if (!aboutCaptionEntityKnown) return;
     setAboutOrigin(null);
@@ -1533,6 +1555,7 @@ export default function App() {
         <AboutDialog
           onClose={closeAbout}
           onOpenGuppi={aboutCaptionEntityKnown ? openAboutCaptionEntity : null}
+          onForgetProgress={forgetProgress}
         />
       )}
     </main>

@@ -133,6 +133,7 @@ Verify reduced-motion behavior with the operating-system setting.
 
 The headless development environment cannot substitute for manual GPU/browser review.
 Record each unavailable browser explicitly as an acceptance gap before publication.
+iPhone Safari verified working by Maciej, 2026-11-15; desktop Safari still unverified.
 
 ## BOB-20260803-G3N1GQ species and system icon assets
 
@@ -757,3 +758,19 @@ On desktop (about 1280×800) and a phone in portrait (about 390×844):
 - Read through Chapter 1.2 or later and repeat: "GUPPI" is underlined like a link.
   Tapping it closes About and opens GUPPI's card (the desktop inspector, or the
   detail sheet on a phone).
+
+## BOB-20261115-3FQXTN About Credits and Privacy
+
+On desktop (about 1440×900) and a phone in portrait (about 390×844):
+
+- Open **What is this?**. Below Maciej's existing copy, a **Credits** section
+  lists the NASA SVS 4851 Milky Way backdrop (with its source link), every
+  distinct catalogue acknowledgement from the nearby-systems data, the bundled
+  Noto Sans font's SIL Open Font License, and the Admiral Ackbar / GUPPI
+  illustration already shown in the dialog.
+- A **Privacy** section states that there are no cookies or tracking, and that
+  reading progress and app preferences stay in this browser.
+- **Forget my progress** asks for confirmation. Confirming returns the app to
+  the pre-book zero state and removes every app-owned localStorage key
+  (`bobiverse.` prefix); Cancel leaves stored state unchanged. The original
+  About wording and the Ackbar caption are unchanged.

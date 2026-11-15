@@ -9,6 +9,7 @@ import {
   confirmReadThrough,
   loadReaderProgress,
   normalizeReaderProgress,
+  forgetReaderProgress,
   persistReaderProgress,
   selectKnowledgeChapter,
   selectZeroKnowledgeView,
@@ -149,6 +150,44 @@ describe("reader progress", () => {
     expect(window.localStorage.getItem("unrelated.preference")).toBe(
       "preserve-me",
     );
+  });
+
+  it("forgets every app-owned key by prefix and returns empty state", () => {
+    window.localStorage.clear();
+    persistReaderProgress({
+      ...empty,
+      furthestChapterRead: "1.3",
+      viewChapter: "1.3",
+      displayDate: "2158.0",
+    });
+    window.localStorage.setItem("unrelated.preference", "preserve-me");
+    window.localStorage.setItem("bobiverse.app-state.v1", "legacy");
+    window.localStorage.setItem("bobiverse.last-seen-version", "future");
+    expect(forgetReaderProgress()).toEqual(empty);
+    expect(window.localStorage.getItem("bobiverse.app-state.v2")).toBeNull();
+    expect(window.localStorage.getItem("bobiverse.app-state.v1")).toBeNull();
+    expect(
+      window.localStorage.getItem("bobiverse.last-seen-version"),
+    ).toBeNull();
+    expect(window.localStorage.getItem("unrelated.preference")).toBe(
+      "preserve-me",
+    );
+  });
+
+  it("does not clear other app-owned keys when persisting empty progress", () => {
+    window.localStorage.clear();
+    window.localStorage.setItem("bobiverse.last-seen-version", "future");
+    persistReaderProgress(empty);
+    expect(window.localStorage.getItem("bobiverse.app-state.v2")).toBeNull();
+    expect(window.localStorage.getItem("bobiverse.last-seen-version")).toBe(
+      "future",
+    );
+  });
+
+  it("does not leave a localStorage key when persisting empty progress", () => {
+    window.localStorage.clear();
+    persistReaderProgress(empty);
+    expect(window.localStorage.getItem("bobiverse.app-state.v2")).toBeNull();
   });
 
   it("normalizes malformed character-inspector disclosure preferences", () => {

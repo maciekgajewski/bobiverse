@@ -2508,7 +2508,14 @@ async function expectAboutDialogContent(page: Page) {
   );
   await expect(captionLink).toHaveAttribute("target", "_blank");
   await expect(captionLink).toHaveAttribute("rel", "noopener noreferrer");
-  await expect(dialog.getByRole("listitem")).toHaveCount(4);
+  await expect(dialog.locator(".about-copy").getByRole("listitem")).toHaveCount(
+    4,
+  );
+  await expect(dialog.getByRole("heading", { name: "Credits" })).toBeVisible();
+  await expect(dialog.getByRole("heading", { name: "Privacy" })).toBeVisible();
+  await expect(
+    dialog.getByRole("button", { name: "Forget my progress" }),
+  ).toBeVisible();
   for (const [name, href] of [
     ["Dennis E. Taylor", "http://dennisetaylor.org/status-of-things/"],
     ["maciek@bobiverse.space", "mailto:maciek@bobiverse.space"],
@@ -2549,7 +2556,8 @@ test("desktop About dialog opens from the title link and closes three ways", asy
   // Centred, 520px wide.
   expect(box!.width).toBeCloseTo(520, 0);
   expect(Math.abs(box!.x + box!.width / 2 - 640)).toBeLessThan(2);
-  // Focus stays inside: Close, the caption link, the three body links, then back to Close.
+  // Focus stays inside: Close, the caption link, the three body links,
+  // Credits links, Forget my progress, then back to Close.
   for (const name of [
     "Admiral Ackbar",
     "Dennis E. Taylor",
@@ -2559,6 +2567,13 @@ test("desktop About dialog opens from the title link and closes three ways", asy
     await page.keyboard.press("Tab");
     await expect(dialog.getByRole("link", { name })).toBeFocused();
   }
+  await page.keyboard.press("Tab");
+  await expect(
+    dialog.getByRole("link", {
+      name: "Astronomy backdrop: NASA/Goddard Space Flight Center Scientific Visualization Studio, Deep Star Maps 2020; Gaia DR2: ESA/Gaia/DPAC.",
+    }),
+  ).toBeFocused();
+  await dialog.getByRole("button", { name: "Forget my progress" }).focus();
   await page.keyboard.press("Tab");
   await expect(dialog.getByRole("button", { name: "Close" })).toBeFocused();
   await page.keyboard.press("Escape");

@@ -1,6 +1,11 @@
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { ABOUT_IMAGE_ALT } from "../about-image";
+import { catalogueAcknowledgements } from "../domain/catalogue-acknowledgements";
+import {
+  GALACTIC_STARFIELD_SOURCE_URL,
+  GALACTIC_STARFIELD_UI_CREDIT,
+} from "../domain/galactic-starfield";
 
 // The About ("What is this?") dialog. The body copy is Maciej's own text,
 // kept verbatim in AboutCopy so it can be edited in one place.
@@ -19,8 +24,15 @@ export const ABOUT_IMAGE_CAPTION = `${ABOUT_CAPTION_ENTITY_LABEL}${ABOUT_CAPTION
 // The narrative entity the caption's "GUPPI" opens when it is reader-known.
 export const ABOUT_CAPTION_ENTITY_ID = "technology:guppi-interface";
 
+export const NOTO_SANS_OFL_URL = "https://openfontlicense.org";
+export const NOTO_SANS_CREDIT =
+  "The interface uses the Noto Sans typeface, copyright Google LLC and contributors, licensed under the SIL Open Font License, Version 1.1.";
+
 const FOCUSABLE_DIALOG_ELEMENTS =
   'a[href], button:not(:disabled), [tabindex]:not([tabindex="-1"])';
+
+const LINK_TOKEN = /https?:\/\/[^\s]+|DOI:\s*10\.\d{2,}\/\S+/g;
+const TRAILING_LINK_PUNCTUATION = /[),.;:!?]+$/;
 
 function ExternalLink({
   href,
@@ -34,6 +46,36 @@ function ExternalLink({
       {children}
     </a>
   );
+}
+
+/** Turn bare URLs and DOI: prefixes in catalogue text into user-initiated links. */
+export function linkifyCreditText(text: string): ReactNode[] {
+  const parts: ReactNode[] = [];
+  let last = 0;
+  let match: RegExpExecArray | null;
+  const pattern = new RegExp(LINK_TOKEN.source, "g");
+  while ((match = pattern.exec(text)) !== null) {
+    if (match.index > last) parts.push(text.slice(last, match.index));
+    const rawToken = match[0];
+    const token = rawToken.replace(TRAILING_LINK_PUNCTUATION, "");
+    if (!token) {
+      last = match.index + rawToken.length;
+      parts.push(rawToken);
+      continue;
+    }
+    const href = token.startsWith("DOI:")
+      ? `https://doi.org/${token.replace(/^DOI:\s*/, "")}`
+      : token;
+    parts.push(
+      <ExternalLink href={href} key={`${href}-${match.index}`}>
+        {token}
+      </ExternalLink>,
+    );
+    // Leave trailing punctuation in the source so it renders as plain text.
+    last = match.index + token.length;
+  }
+  if (last < text.length) parts.push(text.slice(last));
+  return parts;
 }
 
 export function AboutCopy() {
@@ -81,9 +123,103 @@ export function AboutCopy() {
   );
 }
 
+export function AboutCredits() {
+  const catalogues = catalogueAcknowledgements();
+  return (
+    <section
+      className="about-section about-credits"
+      aria-labelledby="about-credits-heading"
+    >
+      <h3 id="about-credits-heading">Credits</h3>
+      <ul>
+        <li>
+          <ExternalLink href={GALACTIC_STARFIELD_SOURCE_URL}>
+            {GALACTIC_STARFIELD_UI_CREDIT}
+          </ExternalLink>
+        </li>
+        {catalogues.map((text) => (
+          <li key={text}>{linkifyCreditText(text)}</li>
+        ))}
+        <li>
+          {NOTO_SANS_CREDIT}{" "}
+          <ExternalLink href={NOTO_SANS_OFL_URL}>
+            openfontlicense.org
+          </ExternalLink>
+        </li>
+        <li>
+          {ABOUT_IMAGE_ALT} Used in this dialog and as GUPPI's inspector
+          illustration. Source:{" "}
+          <ExternalLink href={ABOUT_IMAGE_SOURCE}>
+            starwars.fandom.com
+          </ExternalLink>
+          .
+        </li>
+      </ul>
+    </section>
+  );
+}
+
+export function AboutPrivacy({
+  onForgetProgress,
+}: {
+  onForgetProgress?: () => void;
+}) {
+  const [confirming, setConfirming] = useState(false);
+  return (
+    <section
+      className="about-section about-privacy"
+      aria-labelledby="about-privacy-heading"
+    >
+      <h3 id="about-privacy-heading">Privacy</h3>
+      <p>
+        No cookies or tracking. Your reading progress and app preferences stay
+        in this browser.
+      </p>
+      {onForgetProgress ? (
+        confirming ? (
+          <div className="about-forget-confirm">
+            <p>
+              Forget your reading progress and app preferences in this browser?
+              This cannot be undone.
+            </p>
+            <div className="about-forget-actions">
+              <button
+                type="button"
+                className="about-forget-confirm-button"
+                onClick={() => {
+                  onForgetProgress();
+                  setConfirming(false);
+                }}
+              >
+                Forget progress
+              </button>
+              <button
+                type="button"
+                className="about-forget-cancel"
+                onClick={() => setConfirming(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button
+            type="button"
+            className="about-forget"
+            onClick={() => setConfirming(true)}
+          >
+            Forget my progress
+          </button>
+        )
+      ) : null}
+    </section>
+  );
+}
+
 export function AboutDialog({
   onClose,
   onOpenGuppi = null,
+  onForgetProgress,
 }: {
   onClose: () => void;
   /**
@@ -92,6 +228,8 @@ export function AboutDialog({
    * the caption never leaks a spoiler or opens a hidden card.
    */
   onOpenGuppi?: (() => void) | null;
+  /** Clears every app-owned localStorage key and resets in-memory reader state. */
+  onForgetProgress?: () => void;
 }) {
   const dialog = useRef<HTMLDivElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
@@ -158,36 +296,40 @@ export function AboutDialog({
             </svg>
           </button>
         </header>
-        <div className="about-body">
-          <figure className="about-figure">
-            <img
-              src={ABOUT_IMAGE_SRC}
-              alt={ABOUT_IMAGE_ALT}
-              width={150}
-              height={200}
-              decoding="async"
-            />
-            <figcaption>
-              {onOpenGuppi ? (
-                <button
-                  type="button"
-                  className="link-button about-caption-entity"
-                  onClick={onOpenGuppi}
-                >
-                  {ABOUT_CAPTION_ENTITY_LABEL}
-                </button>
-              ) : (
-                ABOUT_CAPTION_ENTITY_LABEL
-              )}
-              {ABOUT_CAPTION_JOIN}
-              <ExternalLink href={ABOUT_IMAGE_SOURCE}>
-                {ABOUT_CAPTION_SOURCE_LABEL}
-              </ExternalLink>
-            </figcaption>
-          </figure>
-          <div className="about-copy">
-            <AboutCopy />
+        <div className="about-body" tabIndex={-1}>
+          <div className="about-intro">
+            <figure className="about-figure">
+              <img
+                src={ABOUT_IMAGE_SRC}
+                alt={ABOUT_IMAGE_ALT}
+                width={150}
+                height={200}
+                decoding="async"
+              />
+              <figcaption>
+                {onOpenGuppi ? (
+                  <button
+                    type="button"
+                    className="link-button about-caption-entity"
+                    onClick={onOpenGuppi}
+                  >
+                    {ABOUT_CAPTION_ENTITY_LABEL}
+                  </button>
+                ) : (
+                  ABOUT_CAPTION_ENTITY_LABEL
+                )}
+                {ABOUT_CAPTION_JOIN}
+                <ExternalLink href={ABOUT_IMAGE_SOURCE}>
+                  {ABOUT_CAPTION_SOURCE_LABEL}
+                </ExternalLink>
+              </figcaption>
+            </figure>
+            <div className="about-copy">
+              <AboutCopy />
+            </div>
           </div>
+          <AboutCredits />
+          <AboutPrivacy onForgetProgress={onForgetProgress} />
         </div>
       </div>
     </>,

@@ -1378,9 +1378,11 @@ location also requires `parent_relation`. Leaves omit `children`; when supplied,
 | `planet`, `dwarf_planet`, `moon` | `locale`                                                               | `located_on`               |
 
 This zero-state Solar System seed keeps `star_system` → `star` with
-`member_of_system`; Sol is unchanged. In chapter data, a single-star system may
-instead have planets, dwarf planets and belts orbit the `star_system` directly
-(see the shared semantic parent table below).
+`member_of_system`. Sol is a permanent, valid exception: the Sun stays a
+separate star entity (`location:sol`). In chapter data, a single-star system
+is one `star_system` location with no separate `star` entity, so planets,
+dwarf planets and belts take `parent_relation` `orbits` on the system
+directly (see the shared semantic parent table below).
 
 The source preserves every authored child-array order. Among a parent's children whose
 relation is `orbits`, that order asserts inner-to-outer order; it contains no distances
@@ -1703,10 +1705,13 @@ semantic parent table is:
 | `megastructure`                                                                | `locale`, `megastructure`                                              | `contained_in`             |
 | `locale`                                                                       | `locale`                                                               | `contained_in`             |
 
-In a single-star system the narrative may omit a separate `star` child and attach
-`orbits` descendants directly to the `star_system`. Multi-star systems still
-introduce `member_of_system` star children. The zero-state Sol system remains
-`star_system` → `star`.
+A single-star system is one location entity: the `star_system`. It has no
+separate `star` entity. Planets, dwarf planets, and belts take
+`parent_relation` `orbits` on the system directly. Separate `star` entities
+exist only in multi-star systems, as `member_of_system` children of the
+system. Sol is a permanent, valid exception: the Sun stays a separate star
+entity (`location:sol`) in the Solar System, which the schema and validator
+require.
 
 Every effective location with `parent_relation: "orbits"` has an integer ordering key
 from `1` through `9007199254740991`. Nested zero-state child arrays assign implicit

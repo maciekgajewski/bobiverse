@@ -520,11 +520,12 @@ entry. Since 2026-11-14 the flow is disabled behind `ENABLE_ENTER_SYSTEM` in
 layout and system mode cannot start. Its code and tests remain and return when the
 flag is set to `true`.
 
-The projected location hierarchy is the sole system-composition authority. Component
-stars, when present, are direct `member_of_system` children. Each star owns only its
-existing `orbits` descendants. In a single-star system those `orbits` descendants may
-hang directly off the `star_system` instead of a separate star entity; the renderer
-neither invents shared bodies nor maintains a parallel planet list. Every `orbits`
+The projected location hierarchy is the sole system-composition authority. Separate
+`star` entities exist only in multi-star systems, and in the Sol exception, as
+direct `member_of_system` children. Each star owns only its existing `orbits`
+descendants. In a single-star system there is no separate star entity, so those
+`orbits` descendants hang directly off the `star_system`; the renderer neither
+invents shared bodies nor maintains a parallel planet list. Every `orbits`
 sibling sequence is inner-to-outer. Nested
 zero-state array order supplies implicit safe-integer keys `1024`, `2048`, and so on.
 Later introductions and updates may carry a positive safe-integer non-metric
