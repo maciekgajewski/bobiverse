@@ -375,6 +375,14 @@ Every inspector begins with:
   applicable;
 - the source chapter/date context for recency when available.
 
+The header (BOB-20261114-AYW3EN) shows the type and name, a location's kind in a
+smaller muted line directly under the name, and, beside them, an illustration when
+the entity has one: its own registered picture, GUPPI's credited head crop of the
+About picture, or a species' accent-coloured presentation icon. A location's map
+context (Mapped, Explicitly unmapped, or no mapped context) is the last section of
+the panel, after the description and any joined astronomy. The desktop inspector and
+the phone detail sheet share this layout.
+
 Type-specific sections render only fields and generated relationships supported by
 the current projection:
 
@@ -382,10 +390,10 @@ the current projection:
   appearance.
 - **Event:** story date or unplaced state, description, location, and named
   participants.
-- **Star system/location:** narrative hierarchy, mapped/unmapped state, and joined
-  astronomy facts for a mapped system.
-- **Species:** description, picture, and homeworld.
-- **Technology:** description.
+- **Star system/location:** kind (in the header), narrative hierarchy, joined
+  astronomy facts for a mapped system, and mapped/unmapped state last.
+- **Species:** header icon (or picture), description, and homeworld.
+- **Technology:** description (GUPPI also has a header illustration).
 - **Organization:** description and current state.
 - **Vessel:** description and current state.
 - **Astronomy-only system:** catalogue name, alternate designations, components,

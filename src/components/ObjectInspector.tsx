@@ -12,6 +12,10 @@ import type {
   NarrativeWorld,
 } from "../narrative/model";
 import { characterAncestors, formatNarrativeDate } from "../narrative/model";
+import {
+  resolveHeaderIllustration,
+  type HeaderIllustration,
+} from "../narrative/header-illustration";
 import type { CharacterInspectorSectionState } from "../narrative/progress";
 import { defaultCharacterInspectorSectionState } from "../narrative/progress";
 import { SystemDetails } from "./SystemDetails";
@@ -191,6 +195,38 @@ function Picture({
   return <img className="inspector-picture" src={`/${path}`} alt={alt} />;
 }
 
+function HeaderIllustrationView({
+  illustration,
+}: {
+  illustration: HeaderIllustration;
+}) {
+  if (illustration.kind === "species-icon")
+    return (
+      <span
+        className="inspector-header-illustration species-header-icon"
+        data-header-illustration="species-icon"
+        role="img"
+        aria-label={illustration.label}
+        style={{
+          backgroundColor: illustration.colour,
+          maskImage: `url("${illustration.iconPath}")`,
+          WebkitMaskImage: `url("${illustration.iconPath}")`,
+        }}
+      />
+    );
+  return (
+    <img
+      className="inspector-header-illustration"
+      data-header-illustration={illustration.origin}
+      src={illustration.src}
+      alt={illustration.alt}
+      width={illustration.width}
+      height={illustration.height}
+      decoding="async"
+    />
+  );
+}
+
 function NarrativeDetails({
   item,
   world,
@@ -252,14 +288,32 @@ function NarrativeDetails({
     entity.entity_type === "character"
       ? characterAncestors(world, entity.id)
       : [];
+  const illustration = resolveHeaderIllustration(
+    entity.id,
+    world,
+    assets,
+    item.speciesPresentation,
+  );
+  const locationKind =
+    entity.entity_type === "location" && stringValue(entity.kind)
+      ? String(entity.kind).replaceAll("_", " ")
+      : null;
   return (
     <section
       className="details narrative-details"
       aria-live="polite"
       aria-labelledby={headingId}
     >
-      <p className="eyebrow">{typeLabels[entity.entity_type]}</p>
-      <h2 id={headingId}>{name}</h2>
+      <header
+        className={`inspector-header${illustration ? " has-illustration" : ""}`}
+      >
+        <div className="inspector-header-text">
+          <p className="eyebrow">{typeLabels[entity.entity_type]}</p>
+          <h2 id={headingId}>{name}</h2>
+          {locationKind && <p className="entity-kind">{locationKind}</p>}
+        </div>
+        {illustration && <HeaderIllustrationView illustration={illustration} />}
+      </header>
       {ENABLE_ENTER_SYSTEM && systemEntry?.narrativeSystemId === entity.id && (
         <button
           className="button enter-system"
@@ -272,11 +326,6 @@ function NarrativeDetails({
       {aliases.length > 0 && <p className="aliases">{aliases.join(" · ")}</p>}
       <p className="object-status">{status.join(" · ")}</p>
       {recency && <p className="recency-context">{recency}</p>}
-      <Picture
-        pictureId={stringValue(entity.picture_id)}
-        assets={assets}
-        alt={name}
-      />
       {entity.entity_type === "character" ? (
         <CharacterSection
           title="Overview"
@@ -360,18 +409,6 @@ function NarrativeDetails({
           )}
           {entity.entity_type === "location" && (
             <>
-              <Detail label="Map context">
-                {entity.map_status === "unmapped"
-                  ? "Explicitly unmapped"
-                  : mappedId
-                    ? "Mapped"
-                    : "No mapped stellar-system context"}
-              </Detail>
-              {stringValue(entity.kind) && (
-                <Detail label="Location kind">
-                  {String(entity.kind).replaceAll("_", " ")}
-                </Detail>
-              )}
               {relationship(entity.parent_location_id) && (
                 <Detail label="Parent">
                   {relationship(entity.parent_location_id)}
@@ -546,6 +583,18 @@ function NarrativeDetails({
         <section className="joined-astronomy">
           <h3>Mapped astronomy</h3>
           <SystemDetails system={astronomySystem} embedded storyKnown />
+        </section>
+      )}
+      {entity.entity_type === "location" && (
+        <section className="inspector-section map-context-section">
+          <h3>Map context</h3>
+          <p>
+            {entity.map_status === "unmapped"
+              ? "Explicitly unmapped"
+              : mappedId
+                ? "Mapped"
+                : "No mapped stellar-system context"}
+          </p>
         </section>
       )}
     </section>

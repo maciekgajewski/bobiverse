@@ -2964,3 +2964,135 @@ for (const viewport of [
     await expect(sheet).toHaveCount(0);
   });
 }
+
+// Inspector header (BOB-20261114-AYW3EN): kind under the name, Map context
+// last, and a header illustration for species and GUPPI, on desktop and in
+// the compact detail sheet.
+const ACKBAR_CREDIT =
+  "Admiral Ackbar illustration by Michael Sutfin, from The New Essential Guide to Characters. Star Wars © Lucasfilm Ltd. Used under fair use.";
+
+async function inspectFromBrowser(page: Page, query: string, name: RegExp) {
+  const compact = page.viewportSize()!.width < 1200;
+  if (compact) await openMenuCommand(page, "Browse objects");
+  const browser = compact
+    ? page.getByRole("dialog", { name: "Object browser" })
+    : page.getByRole("complementary", { name: "Object browser" });
+  await browser
+    .getByRole("searchbox", { name: "Search visible objects" })
+    .fill(query);
+  await browser.getByRole("button", { name }).first().click();
+  return compact
+    ? page.getByRole("dialog", { name: "Selected object" })
+    : page.getByRole("complementary", { name: "Object inspector" });
+}
+
+for (const viewport of [
+  { width: 1280, height: 800 },
+  { width: 390, height: 844 },
+]) {
+  test(`inspector header shows kind, illustrations and Map context last at ${viewport.width}x${viewport.height}`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(viewport);
+    await page.addInitScript(() => {
+      window.localStorage.setItem(
+        "bobiverse.app-state.v2",
+        JSON.stringify({
+          furthestChapterRead: "1.2",
+          viewChapter: "1.2",
+          displayDate: "2133",
+          mode: "chapter",
+          timelineZoom: 1,
+          timelinePan: 0,
+        }),
+      );
+    });
+    await page.goto("/");
+
+    let inspector = await inspectFromBrowser(page, "Earth", /^Earth/);
+    const earth = inspector.getByRole("heading", { level: 2, name: "Earth" });
+    await expect(earth).toBeVisible();
+    const kind = inspector.locator(".inspector-header .entity-kind");
+    await expect(kind).toHaveText("planet");
+    const nameBox = (await earth.boundingBox())!;
+    const kindBox = (await kind.boundingBox())!;
+    expect(kindBox.y).toBeGreaterThanOrEqual(nameBox.y + nameBox.height - 1);
+    expect(
+      await kind.evaluate((el) => parseFloat(getComputedStyle(el).fontSize)),
+    ).toBeLessThan(
+      await earth.evaluate((el) => parseFloat(getComputedStyle(el).fontSize)),
+    );
+    await expect(inspector.getByText("Location kind")).toHaveCount(0);
+    const lastSection = inspector.locator(".narrative-details > :last-child");
+    await expect(lastSection).toHaveClass(/map-context-section/);
+    await expect(lastSection.getByRole("heading")).toHaveText("Map context");
+    await expect(lastSection).toContainText("Mapped");
+    await expect(inspector.locator(".joined-astronomy")).toHaveCount(1);
+    if (viewport.width < 1200)
+      await inspector.getByRole("button", { name: "Close" }).click();
+
+    inspector = await inspectFromBrowser(page, "Human", /^Human/);
+    await expect(
+      inspector.getByRole("heading", { level: 2, name: "Human" }),
+    ).toBeVisible();
+    const icon = inspector.getByRole("img", { name: "Human species icon" });
+    await expect(icon).toBeVisible();
+    await expect(icon).toHaveAttribute(
+      "data-header-illustration",
+      "species-icon",
+    );
+    if (viewport.width < 1200)
+      await inspector.getByRole("button", { name: "Close" }).click();
+
+    inspector = await inspectFromBrowser(page, "GUPPI", /^GUPPI interface/);
+    const guppiHeading = inspector.getByRole("heading", {
+      level: 2,
+      name: "GUPPI interface",
+    });
+    await expect(guppiHeading).toBeVisible();
+    const guppi = inspector.getByRole("img", { name: ACKBAR_CREDIT });
+    await expect(guppi).toBeVisible();
+    await expect(guppi).toHaveAttribute(
+      "src",
+      "/assets/guppi-ackbar-head.webp",
+    );
+    await expect
+      .poll(() =>
+        guppi.evaluate((element: HTMLImageElement) => element.naturalWidth),
+      )
+      .toBe(66);
+    const imageBox = (await guppi.boundingBox())!;
+    const headingBox = (await guppiHeading.boundingBox())!;
+    // Beside the name, inside the header row.
+    expect(imageBox.x).toBeGreaterThan(headingBox.x);
+    expect(imageBox.y).toBeLessThan(headingBox.y + headingBox.height);
+  });
+}
+
+test("GUPPI's header illustration never appears before GUPPI is known", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.addInitScript(() => {
+    window.localStorage.setItem(
+      "bobiverse.app-state.v2",
+      JSON.stringify({
+        furthestChapterRead: "1.1",
+        viewChapter: "1.1",
+        displayDate: "2133",
+        mode: "chapter",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+  });
+  await page.goto("/");
+  const browser = page.getByRole("complementary", { name: "Object browser" });
+  await browser
+    .getByRole("searchbox", { name: "Search visible objects" })
+    .fill("GUPPI");
+  await expect(browser.getByRole("button", { name: /GUPPI/ })).toHaveCount(0);
+  await expect(
+    page.locator('img[src="/assets/guppi-ackbar-head.webp"]'),
+  ).toHaveCount(0);
+});

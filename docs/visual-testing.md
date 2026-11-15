@@ -617,6 +617,21 @@ On a phone in landscape (about 844×390) the detail view is a right-hand drawer 
 320px wide below the top bar, with no grabber, and the map to its left stays usable.
 On desktop nothing changes.
 
+## BOB-20261114-AYW3EN info panel header
+
+On desktop (about 1280×800) and a phone in portrait (about 390×844), after reading
+through Chapter 1.2 or later:
+
+- Open **Earth** from **Browse objects**. Under the name "Earth" a smaller grey line
+  reads "planet". There is no **Location kind** row. Scroll to the bottom: the last
+  section is **Map context** ("Mapped"), below **Mapped astronomy**.
+- Open **Human**: a cyan Human species icon sits to the right of the type and name.
+- Open **GUPPI interface**: the head of Admiral Ackbar sits to the right of the name.
+  Its alternative text (hover or a screen reader) is the full Michael Sutfin credit.
+- On a phone, tap a star on the map: at peek the sheet still shows the type and name.
+- Read through Chapter 1.1 only: searching "GUPPI" finds nothing, and no Ackbar head
+  appears anywhere.
+
 ## BOB-20261114-MXBDTM compact chapter selector
 
 On a phone in portrait (about 390×844) and landscape (about 844×390), and on desktop

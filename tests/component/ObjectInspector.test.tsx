@@ -145,6 +145,144 @@ describe("object inspector", () => {
     }
   });
 
+  it("shows a location's kind under its name and Map context at the bottom", () => {
+    const system: NarrativeEntity = {
+      id: "location:kind-system",
+      entity_type: "location",
+      name: "Kind system",
+      kind: "star_system",
+      map_status: "unmapped",
+      description: "A fixture system.",
+    };
+    render(
+      <ObjectInspector
+        selection={{ kind: "narrative", id: system.id }}
+        narrativeItem={item(system)}
+        world={{ ...world, entities: [...sparseEntities, system] }}
+        systems={[]}
+        assets={{ assets: [] }}
+        onSelect={vi.fn()}
+      />,
+    );
+    const heading = screen.getByRole("heading", {
+      level: 2,
+      name: "Kind system",
+    });
+    const header = heading.closest("header")!;
+    expect(header).toHaveClass("inspector-header");
+    expect(header).not.toHaveClass("has-illustration");
+    const kind = heading.nextElementSibling!;
+    expect(kind).toHaveClass("entity-kind");
+    expect(kind).toHaveTextContent(/^star system$/);
+    expect(screen.queryByText("Location kind")).not.toBeInTheDocument();
+    expect(
+      [...document.querySelectorAll("dt")].map((dt) => dt.textContent),
+    ).not.toContain("Map context");
+    const details = heading.closest(".narrative-details")!;
+    const last = details.lastElementChild!;
+    expect(last).toHaveClass("map-context-section");
+    expect(last.querySelector("h3")).toHaveTextContent("Map context");
+    expect(last).toHaveTextContent("Explicitly unmapped");
+    expect(header.querySelector("[data-header-illustration]")).toBeNull();
+  });
+
+  it("puts a species icon, GUPPI's picture or an entity picture in the header", () => {
+    const species: NarrativeEntity = {
+      id: "species:human",
+      entity_type: "species",
+      name: "Human",
+    };
+    const guppi: NarrativeEntity = {
+      id: "technology:guppi-interface",
+      entity_type: "technology",
+      name: "GUPPI interface",
+    };
+    const portrait: NarrativeEntity = {
+      id: "character:portrait",
+      entity_type: "character",
+      name: "Portrait",
+      picture_id: "asset:fixture-portrait",
+    };
+    const fullWorld = {
+      ...world,
+      entities: [...sparseEntities, species, guppi, portrait],
+    };
+    const assets = {
+      assets: [
+        {
+          id: "asset:fixture-portrait",
+          path: "assets/fixture-portrait.webp",
+          role: "illustration",
+        },
+      ],
+    };
+    const view = (entity: NarrativeEntity, extra = {}) => (
+      <ObjectInspector
+        selection={{ kind: "narrative", id: entity.id }}
+        narrativeItem={{ ...item(entity), ...extra }}
+        world={fullWorld}
+        systems={[]}
+        assets={assets}
+        onSelect={vi.fn()}
+      />
+    );
+    const { rerender } = render(
+      view(species, {
+        speciesPresentation: {
+          styleId: "species-style:human",
+          iconPath: "/assets/species-icons/human.svg",
+          colour: "#4DD9FF",
+          displayName: "Human",
+        },
+      }),
+    );
+    const icon = screen.getByRole("img", { name: "Human species icon" });
+    expect(icon).toHaveAttribute("data-header-illustration", "species-icon");
+    expect(icon.closest("header")).toHaveClass("has-illustration");
+    expect(icon.getAttribute("style")).toContain("human.svg");
+
+    rerender(view(guppi));
+    const picture = screen.getByRole("img", {
+      name: "Admiral Ackbar illustration by Michael Sutfin, from The New Essential Guide to Characters. Star Wars © Lucasfilm Ltd. Used under fair use.",
+    });
+    expect(picture).toHaveAttribute("src", "/assets/guppi-ackbar-head.webp");
+    expect(picture).toHaveAttribute("data-header-illustration", "presentation");
+    expect(picture.closest("header")).toContainElement(
+      screen.getByRole("heading", { level: 2, name: "GUPPI interface" }),
+    );
+
+    rerender(view(portrait));
+    const own = screen.getByRole("img", { name: "Portrait" });
+    expect(own).toHaveAttribute("src", "/assets/fixture-portrait.webp");
+    expect(own).toHaveAttribute("data-header-illustration", "picture");
+    expect(own.closest("header")).not.toBeNull();
+    // The old in-body entity picture is gone.
+    expect(document.querySelector(".inspector-picture")).toBeNull();
+  });
+
+  it("never shows GUPPI's picture when GUPPI is not reader-visible", () => {
+    const guppi: NarrativeEntity = {
+      id: "technology:guppi-interface",
+      entity_type: "technology",
+      name: "GUPPI interface",
+    };
+    // A stale item for an entity outside the projected world.
+    render(
+      <ObjectInspector
+        selection={{ kind: "narrative", id: guppi.id }}
+        narrativeItem={item(guppi)}
+        world={world}
+        systems={[]}
+        assets={{ assets: [] }}
+        onSelect={vi.fn()}
+      />,
+    );
+    expect(document.querySelector("[data-header-illustration]")).toBeNull();
+    expect(
+      document.querySelector('img[src="/assets/guppi-ackbar-head.webp"]'),
+    ).toBeNull();
+  });
+
   it("labels vessels and displays optional current state", () => {
     const vessel: NarrativeEntity = {
       id: "vessel:heaven-fixture",

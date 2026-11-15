@@ -10,3 +10,14 @@ Characters. Star Wars © Lucasfilm Ltd. Used under fair use.
   and upper body (3:4), resized to 150×200 pixels and re-encoded as WebP. It is
   shown, with the credit above as its caption, in the About ("What is this?")
   dialog (`../../docs/tasks/BOB-20261114-KA0X30-about-dialog.md`).
+
+## `guppi-ackbar-head.webp`
+
+Admiral Ackbar illustration by Michael Sutfin, from The New Essential Guide to
+Characters. Star Wars © Lucasfilm Ltd. Used under fair use.
+
+- Source: <https://starwars.fandom.com/wiki/File:Ackbar-NEGTC.png>
+- This asset is a derivative of `ackbar.webp`: its 150×200 picture was cropped to
+  the head, a 66×66 pixel square, and saved as lossless WebP. It is GUPPI's
+  illustration in the inspector header, with the credit above as its alternative
+  text (`../../docs/tasks/BOB-20261114-AYW3EN-info-panel-header.md`).
