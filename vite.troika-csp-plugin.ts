@@ -1,5 +1,9 @@
-import type { OutputBundle } from "rollup";
 import type { Plugin } from "vite";
+
+type EmittedJsBundle = Record<
+  string,
+  { type: string; fileName?: string; code?: string }
+>;
 
 export const UNICODE_FONT_RESOLVER_CDN =
   "https://cdn.jsdelivr.net/gh/lojjic/unicode-font-resolver@v1.0.1/packages/data";
@@ -196,12 +200,12 @@ export function assertExpectedTroikaCspPatchesFired(
   );
 }
 
-export function assertEmittedJsHasNoJsdelivr(bundle: OutputBundle): void {
+export function assertEmittedJsHasNoJsdelivr(bundle: EmittedJsBundle): void {
   const hits: string[] = [];
   for (const output of Object.values(bundle)) {
-    if (output.type !== "chunk") continue;
+    if (output.type !== "chunk" || typeof output.code !== "string") continue;
     if (output.code.includes("cdn.jsdelivr.net")) {
-      hits.push(output.fileName);
+      hits.push(output.fileName ?? "unknown");
     }
   }
   if (hits.length === 0) return;
@@ -214,7 +218,7 @@ export function troikaCspPlugin(): Plugin {
   const fired = new Set<TroikaCspPatch>();
   let emitChecked = false;
 
-  const assertBuild = (bundle?: OutputBundle) => {
+  const assertBuild = (bundle?: EmittedJsBundle) => {
     if (bundle) assertEmittedJsHasNoJsdelivr(bundle);
     assertExpectedTroikaCspPatchesFired(fired);
   };
