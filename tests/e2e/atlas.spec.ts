@@ -2343,6 +2343,74 @@ test("compact Search pill does not overlap the badge or Reset view and opens sea
   await expect(pill).toBeFocused();
 });
 
+for (const viewport of [
+  { width: 390, height: 844 },
+  { width: 320, height: 640 },
+]) {
+  test(`compact 1.61 badge wraps without truncation or overlap at ${viewport.width}x${viewport.height}`, async ({
+    page,
+  }) => {
+    await seedChapter(page, "1.61");
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+    const map = page.locator("#map-stage");
+    const pill = map.getByRole("button", { name: "Search" });
+    const reset = map.getByRole("button", { name: "Reset view" });
+    const badge = page.locator(".map-narrative-badge");
+    await expect(badge).toHaveText(
+      "Latest known · Knowledge through Chapter 1.61",
+    );
+    await expect(pill).toBeVisible();
+    const [pillBox, resetBox, badgeBox] = (await Promise.all([
+      pill.boundingBox(),
+      reset.boundingBox(),
+      badge.boundingBox(),
+    ])) as { x: number; y: number; width: number; height: number }[];
+    const overlaps = (
+      a: { x: number; y: number; width: number; height: number },
+      b: { x: number; y: number; width: number; height: number },
+    ) =>
+      a.x < b.x + b.width &&
+      a.x + a.width > b.x &&
+      a.y < b.y + b.height &&
+      a.y + a.height > b.y;
+    expect(overlaps(badgeBox, pillBox)).toBe(false);
+    expect(overlaps(badgeBox, resetBox)).toBe(false);
+    expect(overlaps(pillBox, resetBox)).toBe(false);
+    // The pill and Reset view keep their full size.
+    expect(pillBox.height).toBeCloseTo(44, 0);
+    expect(resetBox.width).toBeCloseTo(44, 0);
+    expect(pillBox.x + pillBox.width).toBeLessThanOrEqual(viewport.width);
+    expect(resetBox.x + resetBox.width).toBeLessThanOrEqual(viewport.width);
+    // The whole text, including the chapter number, is shown: nothing is
+    // clipped horizontally or vertically, and it takes at most two lines.
+    const metrics = await badge.evaluate((element) => {
+      const style = getComputedStyle(element);
+      const range = document.createRange();
+      range.selectNodeContents(element);
+      const lineTops = new Set(
+        [...range.getClientRects()].map((rect) => Math.round(rect.top)),
+      );
+      return {
+        scrollWidth: element.scrollWidth,
+        clientWidth: element.clientWidth,
+        scrollHeight: element.scrollHeight,
+        clientHeight: element.clientHeight,
+        lineHeight: parseFloat(style.lineHeight),
+        paddingY:
+          parseFloat(style.paddingTop) + parseFloat(style.paddingBottom),
+        lines: lineTops.size,
+      };
+    });
+    expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.clientWidth);
+    expect(metrics.scrollHeight).toBeLessThanOrEqual(metrics.clientHeight);
+    expect(metrics.lines).toBeLessThanOrEqual(2);
+    expect(metrics.clientHeight).toBeLessThanOrEqual(
+      2 * metrics.lineHeight + metrics.paddingY + 1,
+    );
+  });
+}
+
 test("desktop search stays in the object browser and the map has no Search pill", async ({
   page,
 }) => {
