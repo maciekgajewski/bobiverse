@@ -121,3 +121,15 @@ in `../visual-testing.md`).
 - Created on origin/master `8cd0485` under the authorization above, on local
   branch `bob-20261115-7fqjcg-search-pill` in the `~/src/bobiverse-search`
   worktree.
+- Implemented the rename and the compact Search pill in `2df6d2e`, with prettier
+  follow-ups in `990bee1` and `800ac5b`. Validation, all passed:
+  `python3 scripts/tasks.py check`, `npm run format:check`, `npm run lint`,
+  `npm run typecheck`, `npm run test` (488 passed), `npm run data:test` (90
+  passed), `npm run data:validate`, `npm run narrative:validate`,
+  `npm run build`, `git diff --check` and `npx prettier --check` on the changed
+  Markdown.
+- Full e2e on a spare dev-server port 5197 (untracked throwaway config, deleted
+  afterwards), one worker, no retries: chromium, firefox and webkit each 57
+  passed and 3 skipped (the Enter system tests behind `ENABLE_ENTER_SYSTEM`).
+  No icon-specimen PNG was rewritten. Screenshots at 390×844 and 1280×800,
+  with search closed and open, were taken for review outside the repository.
