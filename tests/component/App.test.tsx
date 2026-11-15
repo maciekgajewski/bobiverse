@@ -60,6 +60,8 @@ import * as narrativeMap from "../../src/narrative/map";
 import * as narrativeModel from "../../src/narrative/model";
 import { narrativeRuntimePreparationCount } from "../../src/narrative/runtime";
 import * as systemView from "../../src/system-view";
+import { NEWEST_RELEASE_NOTES_VERSION } from "../../src/release-notes";
+import { WHATS_NEW_STORAGE_KEY } from "../../src/whats-new";
 
 // The desktop timeline dock exposes a "Read through" select and the top bar a
 // Read through chip; these tests drive the dock's control unless they say
@@ -88,6 +90,12 @@ describe("atlas shell", () => {
   });
   beforeEach(() => {
     window.localStorage.clear();
+    // Every test is a reader who has seen the newest What's new notes, so the
+    // dialog does not open by itself; the What's new tests below opt out.
+    window.localStorage.setItem(
+      WHATS_NEW_STORAGE_KEY,
+      NEWEST_RELEASE_NOTES_VERSION,
+    );
     vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(null);
   });
 
@@ -2017,5 +2025,176 @@ describe("atlas shell", () => {
     ).not.toBeInTheDocument();
     expect(chip).toHaveAttribute("aria-expanded", "false");
     await waitFor(() => expect(chip).toHaveFocus());
+  });
+  describe("What's new", () => {
+    const whatsNew = () =>
+      screen.queryByRole("dialog", { name: "What\u2019s new" });
+    const storeOldReader = () =>
+      window.localStorage.setItem(
+        "bobiverse.app-state.v2",
+        JSON.stringify({
+          furthestChapterRead: "1.1",
+          viewChapter: "1.1",
+          displayDate: "2133",
+          mode: "chapter",
+          timelineZoom: 1,
+          timelinePan: 0,
+        }),
+      );
+
+    it("does not open for a first visit and records the newest notes", () => {
+      window.localStorage.clear();
+      render(<App />);
+      expect(whatsNew()).not.toBeInTheDocument();
+      expect(window.localStorage.getItem(WHATS_NEW_STORAGE_KEY)).toBe(
+        NEWEST_RELEASE_NOTES_VERSION,
+      );
+    });
+
+    it("opens for a returning reader with older notes and records them on close", async () => {
+      window.localStorage.setItem(WHATS_NEW_STORAGE_KEY, "0.0.1");
+      storeOldReader();
+      const user = userEvent.setup();
+      render(<App />);
+      const dialog = whatsNew()!;
+      expect(dialog).toBeInTheDocument();
+      expect(window.localStorage.getItem(WHATS_NEW_STORAGE_KEY)).toBe("0.0.1");
+      expect(document.querySelector("main.app-shell")).toHaveAttribute("inert");
+      await user.click(within(dialog).getByRole("button", { name: "Close" }));
+      expect(whatsNew()).not.toBeInTheDocument();
+      expect(window.localStorage.getItem(WHATS_NEW_STORAGE_KEY)).toBe(
+        NEWEST_RELEASE_NOTES_VERSION,
+      );
+    });
+
+    it("opens for a returning reader from before What's new existed", () => {
+      window.localStorage.removeItem(WHATS_NEW_STORAGE_KEY);
+      storeOldReader();
+      render(<App />);
+      expect(whatsNew()).toBeInTheDocument();
+    });
+
+    it("does not open again once the newest notes were seen", () => {
+      storeOldReader();
+      render(<App />);
+      expect(whatsNew()).not.toBeInTheDocument();
+    });
+
+    it("opens from the desktop title link and returns focus to it", async () => {
+      const user = userEvent.setup();
+      render(<App />);
+      const link = within(document.querySelector(".topbar-title")!).getByRole(
+        "button",
+        { name: "What\u2019s new" },
+      );
+      expect(link).toHaveAttribute("aria-haspopup", "dialog");
+      await user.click(link);
+      const dialog = whatsNew()!;
+      expect(
+        within(dialog).getByRole("heading", { name: "Version 0.9.0" }),
+      ).toBeInTheDocument();
+      await user.keyboard("{Escape}");
+      expect(whatsNew()).not.toBeInTheDocument();
+      await waitFor(() => expect(link).toHaveFocus());
+    });
+
+    it("opens from the compact menu, next to About", async () => {
+      vi.stubGlobal("matchMedia", compactMatchMedia);
+      const user = userEvent.setup();
+      render(<App />);
+      const menu = screen.getByRole("button", { name: "Menu" });
+      await user.click(menu);
+      const drawer = screen.getByRole("dialog", { name: "Menu" });
+      const rows = within(drawer).getAllByRole("button");
+      expect(rows.at(-2)).toHaveAccessibleName("What\u2019s new");
+      expect(rows.at(-1)).toHaveAccessibleName("What is this?");
+      await user.click(rows.at(-2)!);
+      expect(
+        screen.queryByRole("dialog", { name: "Menu" }),
+      ).not.toBeInTheDocument();
+      const dialog = whatsNew()!;
+      await waitFor(() =>
+        expect(
+          within(dialog).getByRole("button", { name: "Close" }),
+        ).toHaveFocus(),
+      );
+      await user.click(document.querySelector(".about-backdrop")!);
+      expect(whatsNew()).not.toBeInTheDocument();
+      await waitFor(() => expect(menu).toHaveFocus());
+    });
+
+    it("keeps Jeeves as plain text until Jeeves is known, then opens his card", async () => {
+      // Jeeves is introduced in Chapter 1.13.
+      window.localStorage.setItem(
+        "bobiverse.app-state.v2",
+        JSON.stringify({
+          furthestChapterRead: "1.12",
+          viewChapter: "1.12",
+          displayDate: null,
+          mode: "chapter",
+          timelineZoom: 1,
+          timelinePan: 0,
+        }),
+      );
+      const user = userEvent.setup();
+      const { unmount } = render(<App />);
+      const link = within(document.querySelector(".topbar-title")!).getByRole(
+        "button",
+        { name: "What\u2019s new" },
+      );
+      await user.click(link);
+      let dialog = whatsNew()!;
+      expect(
+        within(dialog).queryByRole("button", { name: "Jeeves" }),
+      ).not.toBeInTheDocument();
+      expect(dialog.querySelector("figcaption")?.textContent).toMatch(
+        /^Jeeves/,
+      );
+      unmount();
+
+      window.localStorage.setItem(
+        "bobiverse.app-state.v2",
+        JSON.stringify({
+          furthestChapterRead: "1.13",
+          viewChapter: "1.13",
+          displayDate: null,
+          mode: "chapter",
+          timelineZoom: 1,
+          timelinePan: 0,
+        }),
+      );
+      render(<App />);
+      await user.click(
+        within(document.querySelector(".topbar-title")!).getByRole("button", {
+          name: "What\u2019s new",
+        }),
+      );
+      dialog = whatsNew()!;
+      await user.click(within(dialog).getByRole("button", { name: "Jeeves" }));
+      expect(whatsNew()).not.toBeInTheDocument();
+      expect(
+        screen.getAllByRole("heading", { level: 2, name: "Jeeves" }).length,
+      ).toBeGreaterThan(0);
+    });
+
+    it("is forgotten with the reader's progress", async () => {
+      storeOldReader();
+      const user = userEvent.setup();
+      render(<App />);
+      await user.click(
+        within(document.querySelector(".topbar-title")!).getByRole("button", {
+          name: "What is this?",
+        }),
+      );
+      const about = screen.getByRole("dialog", { name: "What is this?" });
+      await user.click(
+        within(about).getByRole("button", { name: "Forget my progress" }),
+      );
+      await user.click(
+        within(about).getByRole("button", { name: "Forget progress" }),
+      );
+      expect(window.localStorage.getItem(WHATS_NEW_STORAGE_KEY)).toBeNull();
+      expect(window.localStorage.getItem("bobiverse.app-state.v2")).toBeNull();
+    });
   });
 });

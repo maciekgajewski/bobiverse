@@ -1,9 +1,10 @@
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { ABOUT_IMAGE_ALT } from "../../src/about-image";
+import { ABOUT_IMAGE_ALT, JEEVES_IMAGE_ALT } from "../../src/about-image";
 import {
   GUPPI_ENTITY_ID,
+  JEEVES_ENTITY_ID,
   PRESENTATION_ILLUSTRATIONS,
   resolveHeaderIllustration,
 } from "../../src/narrative/header-illustration";
@@ -72,6 +73,36 @@ describe("inspector header illustrations", () => {
       width: 66,
       height: 66,
     });
+  });
+
+  it("shows Jeeves's head, credited, only once Jeeves is reader-visible", () => {
+    const jeeves = PRESENTATION_ILLUSTRATIONS.get(JEEVES_ENTITY_ID)!;
+    expect(JEEVES_ENTITY_ID).toBe("technology:jeeves");
+    expect(jeeves).toEqual({
+      src: "/assets/jeeves-head.webp",
+      alt: JEEVES_IMAGE_ALT,
+      width: 66,
+      height: 66,
+    });
+    const credits = readFileSync(resolve("public/assets/CREDITS.md"), "utf8");
+    expect(credits.split("## `jeeves-head.webp`")[1]).toMatch(
+      /Same credit as `jeeves\.webp`/,
+    );
+    const corpus = narrativeCorpus!;
+    // Jeeves is introduced in Chapter 1.13.
+    for (const chapter of [null, "1.12"]) {
+      const world = generateNarrativeWorld(corpus, chapter);
+      expect(
+        resolveHeaderIllustration(JEEVES_ENTITY_ID, world, corpus.assets),
+      ).toBeNull();
+    }
+    expect(
+      resolveHeaderIllustration(
+        JEEVES_ENTITY_ID,
+        generateNarrativeWorld(corpus, "1.13"),
+        corpus.assets,
+      ),
+    ).toEqual({ kind: "image", origin: "presentation", ...jeeves });
   });
 
   it("uses each projected species' presentation icon", () => {

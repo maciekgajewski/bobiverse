@@ -4,6 +4,8 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
+import { JEEVES_IMAGE_ALT } from "../../src/about-image";
+import { APP_VERSION_LABEL } from "../../src/app-version";
 import {
   ABOUT_CAPTION_ENTITY_ID,
   ABOUT_IMAGE_ALT,
@@ -252,7 +254,7 @@ describe("AboutDialog", () => {
     ).toHaveFocus();
     // Credits and Privacy add more focusable links; wrap from the last one.
     const last = within(dialog).getByRole("link", {
-      name: "starwars.fandom.com",
+      name: "Bruce Baker (2014)",
     });
     last.focus();
     await user.tab();
@@ -295,6 +297,36 @@ describe("AboutDialog", () => {
     expect(
       within(section).getByRole("link", { name: "starwars.fandom.com" }),
     ).toHaveAttribute("href", SOURCE);
+  });
+
+  it("credits the Jeeves illustration and its likeness references", () => {
+    render(<AboutDialog onClose={() => undefined} />);
+    const dialog = screen.getByRole("dialog", { name: "What is this?" });
+    const section = within(dialog)
+      .getByRole("heading", { name: "Credits" })
+      .closest("section")!;
+    expect(section.textContent).toContain(JEEVES_IMAGE_ALT);
+    expect(
+      within(section).getByRole("link", { name: "Alan Light (1989)" }),
+    ).toHaveAttribute(
+      "href",
+      "https://commons.wikimedia.org/wiki/File:John_Cleese_at_1989_Oscars.jpg",
+    );
+    expect(
+      within(section).getByRole("link", { name: "Bruce Baker (2014)" }),
+    ).toHaveAttribute(
+      "href",
+      "https://commons.wikimedia.org/wiki/File:John_Cleese_(cropped).jpg",
+    );
+  });
+
+  it("shows the app version unobtrusively at the end", () => {
+    render(<AboutDialog onClose={() => undefined} />);
+    const dialog = screen.getByRole("dialog", { name: "What is this?" });
+    const version = dialog.querySelector(".about-version")!;
+    expect(version.textContent).toBe(APP_VERSION_LABEL);
+    expect(version.textContent).toMatch(/^Version \S+/);
+    expect(dialog.querySelector(".about-body")!.lastElementChild).toBe(version);
   });
 
   it("states the verified privacy claims and forgets progress only after confirm", async () => {

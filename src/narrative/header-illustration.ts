@@ -1,4 +1,4 @@
-import { ABOUT_IMAGE_ALT } from "../about-image";
+import { ABOUT_IMAGE_ALT, JEEVES_IMAGE_ALT } from "../about-image";
 import type { NarrativeRecord, NarrativeWorld } from "./model";
 import type { ResolvedSpeciesPresentation } from "./species-presentation";
 
@@ -32,6 +32,7 @@ export interface PresentationIllustration {
 }
 
 export const GUPPI_ENTITY_ID = "technology:guppi-interface";
+export const JEEVES_ENTITY_ID = "technology:jeeves";
 
 /**
  * Decorative entity illustrations that live outside the narrative data. Each
@@ -50,6 +51,17 @@ export const PRESENTATION_ILLUSTRATIONS: ReadonlyMap<
       // is its alternative text.
       src: "/assets/guppi-ackbar-head.webp",
       alt: ABOUT_IMAGE_ALT,
+      width: 66,
+      height: 66,
+    },
+  ],
+  [
+    JEEVES_ENTITY_ID,
+    {
+      // The head of the What's new dialog's Jeeves picture; the same credit
+      // is its alternative text.
+      src: "/assets/jeeves-head.webp",
+      alt: JEEVES_IMAGE_ALT,
       width: 66,
       height: 66,
     },

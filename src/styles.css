@@ -2151,6 +2151,33 @@ h2 {
   align-items: flex-start;
   gap: 1.15rem;
 }
+/* What's new reuses the About frame and layout. */
+.about-figure figcaption .whats-new-credit {
+  display: block;
+  margin-top: 0.2rem;
+}
+.whats-new-notes h3 {
+  margin: 0 0 0.35rem;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-weight: 590;
+}
+.whats-new-notes ul {
+  margin: 0 0 0.6rem;
+  padding-left: 1.25rem;
+}
+.whats-new-notes li + li {
+  margin-top: 0.3rem;
+}
+.whats-new-release + .whats-new-release {
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--line-subtle);
+}
+.about-version {
+  margin: 0.75rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
 .about-section {
   min-width: 0;
   margin: 0;

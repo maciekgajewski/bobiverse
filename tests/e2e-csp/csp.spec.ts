@@ -75,6 +75,8 @@ test("production bundle makes no non-self requests and no CSP violations", async
     };
     document.addEventListener("securitypolicyviolation", store);
     window.addEventListener("securitypolicyviolation", store);
+    // A reader who has seen every What's new release so far (src/whats-new.ts).
+    window.localStorage.setItem("bobiverse.whats-new.last-seen", "999.0.0");
     window.localStorage.setItem(
       "bobiverse.app-state.v2",
       JSON.stringify({
