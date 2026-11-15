@@ -1,13 +1,13 @@
 {
   "chapter": "1.52",
   "title": "52",
-  "summary": "Riker visits Homer in his VR. Homer, now an industrial tycoon wholly absorbed in the space farms he proposed, is pressing his plan for a ranch donut: Farm-1 turned out heavily over-engineered, and its early environmental instability, which needed four full-time AMIs until it was damped, has given way to working atmosphere controls, so he believes the next design can safely give half a gee at the rim. The donuts, wheel-shaped stations built as simply as possible and lit by mirrors through a transparent rim roof, are beyond VEHEMENT's reach, which Riker welcomes. With further attacks on Earth's food supplies forcing changes to supply schedules, Farm-1 already delivers raw kudzu allocated by population and need, though Julia has assured Riker that no spicing makes it taste of anything but kudzu. Riker expects the second farm, entering production within a week, to bring a comfortable food surplus for about three years before falling Earth production becomes a significant problem again. The third station, about half finished, will grow mixed crops, and Homer wants to ranch cattle, pigs and chickens on the fourth, and perhaps sheep; the Svalbard vault holds genetic material, but using it would require building artificial wombs.",
+  "summary": "[[character:riker]] visits [[character:homer]] in his [[technology:vr]]. Homer, now an industrial tycoon wholly absorbed in the space farms he proposed, is pressing his plan for a ranch donut: Farm-1 turned out heavily over-engineered, and its early environmental instability, which needed four full-time AMIs until it was damped, has given way to working atmosphere controls, so he believes the next design can safely give half a gee at the rim. The donuts, wheel-shaped stations built as simply as possible and lit by mirrors through a transparent rim roof, are beyond [[organization:vehement]]'s reach, which Riker welcomes. With further attacks on [[location:earth]]'s food supplies forcing changes to supply schedules, Farm-1 already delivers raw kudzu allocated by population and need, though [[character:julia-hendricks|Julia]] has assured Riker that no spicing makes it taste of anything but kudzu. Riker expects the second farm, entering production within a week, to bring a comfortable food surplus for about three years before falling Earth production becomes a significant problem again. The third station, about half finished, will grow mixed crops, and Homer wants to ranch cattle, pigs and chickens on the fourth, and perhaps sheep; the Svalbard vault holds genetic material, but using it would require building artificial wombs.",
   "date": "2168-01",
   "location_id": "location:sol",
   "updates": [
     {
       "entity_id": "character:riker",
-      "current_state": "At Sol, overseeing Farm-1's kudzu deliveries around attacks on food supplies; he expects the second space farm to give a comfortable surplus for about three years."
+      "current_state": "At [[location:sol]], overseeing Farm-1's kudzu deliveries around attacks on food supplies; he expects the second space farm to give a comfortable surplus for about three years."
     },
     {
       "entity_id": "character:homer",
@@ -19,7 +19,7 @@
     },
     {
       "entity_id": "technology:kudzu-gardens",
-      "description": "Kudzu gardens, informally called donuts, are unpopulated farming space stations proposed by Homer to feed Earth's starving survivors. Each is a simple spoked wheel facing the sun, spun just enough for up and down, with mirrors lighting one interior cavern. They grow a gene-engineered, human-digestible kudzu bred for calories and are built with Homer's printers at the cost of future colony ships. The first, Farm-1, supplies raw kudzu to Earth's survivors; later designs can grow mixed crops."
+      "description": "Kudzu gardens, informally called donuts, are unpopulated farming space stations proposed by [[character:homer]] to feed [[location:earth]]'s starving survivors. Each is a simple spoked wheel facing the sun, spun just enough for up and down, with mirrors lighting one interior cavern. They grow a gene-engineered, human-digestible kudzu bred for calories and are built with Homer's printers at the cost of future colony ships. The first, Farm-1, supplies raw kudzu to Earth's survivors; later designs can grow mixed crops."
     }
   ],
   "appearances": [

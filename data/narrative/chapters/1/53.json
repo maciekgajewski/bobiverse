@@ -1,7 +1,7 @@
 {
   "chapter": "1.53",
   "title": "53",
-  "summary": "Before the Deltan migration leaves its camp, a small pack of leopard-like predators, which Bob calls leopard-analogues, drags down a hunter who has strayed from the group; the other Deltans drive them off with spears, and he survives badly wounded. Bob tells Marvin he will help the Deltans for about a generation and then fade into legend so that they do not come to depend on him, and Marvin says that is roughly when he will leave to explore and meet other species. With a new batch of busters bringing his forces up to strength, Bob presents the resumption of the march to the circle of elders as information rather than an order, and after about a week of rest the tribe sets off the next morning without trouble. The second half of the trek is slower, through rougher, near-jungle country on the tropical south side of the mountains, so the migration will arrive well behind schedule, though winter is less of a concern there. Archimedes, now attached to a female from his cohort whom Bob calls Diana, agrees to introduce Bob to the tribe's medicine woman, whom he will not confront himself, and Diana insists on coming along. Three more gorilloid attacks, all smaller than the first raid, cost only a couple of lives against extensive gorilloid losses before the migration reaches the flint site. There Bob wants to thin out the gorilloids for miles around, while Marvin argues for killing only attackers so that the survivors learn to avoid the Deltans; Bob agrees to judge the situation at the site.",
+  "summary": "Before the [[event:deltan-migration]] leaves its camp, a small pack of leopard-like predators, which [[character:bob-replicant]] calls leopard-analogues, drags down a hunter who has strayed from the group; the other [[species:delta-eridani-natives|Deltans]] drive them off with spears, and he survives badly wounded. Bob tells [[character:marvin]] he will help the Deltans for about a generation and then fade into legend so that they do not come to depend on him, and Marvin says that is roughly when he will leave to explore and meet other species. With a new batch of busters bringing his forces up to strength, Bob presents the resumption of the march to the circle of elders as information rather than an order, and after about a week of rest the tribe sets off the next morning without trouble. The second half of the trek is slower, through rougher, near-jungle country on the tropical south side of the mountains, so the migration will arrive well behind schedule, though winter is less of a concern there. [[character:archimedes]], now attached to a female from his cohort whom Bob calls [[character:diana]], agrees to introduce Bob to the tribe's medicine woman, whom he will not confront himself, and Diana insists on coming along. Three more gorilloid attacks, all smaller than the first raid, cost only a couple of lives against extensive gorilloid losses before the migration reaches the flint site. There Bob wants to thin out the gorilloids for miles around, while Marvin argues for killing only attackers so that the survivors learn to avoid the Deltans; Bob agrees to judge the situation at the site.",
   "date": "2166-06",
   "location_id": "location:delta-eridani",
   "introducing": [
@@ -9,29 +9,29 @@
       "id": "character:diana",
       "name": "Diana",
       "species_id": "species:delta-eridani-natives",
-      "current_state": "A female Deltan from Archimedes' cohort whom Bob calls Diana, recently attached to Archimedes. Clearly afraid of Bob, she still stays close to Archimedes and insists on joining Bob's planned visit to the medicine woman."
+      "current_state": "A female Deltan from [[character:archimedes]]' cohort whom [[character:bob-replicant]] calls Diana, recently attached to Archimedes. Clearly afraid of Bob, she still stays close to Archimedes and insists on joining Bob's planned visit to the medicine woman."
     }
   ],
   "updates": [
     {
       "entity_id": "character:bob-replicant",
-      "current_state": "At Delta Eridani, guarding the Deltan migration, which has reached the flint site after three smaller gorilloid attacks. He means to help the Deltans for about a generation and then fade into legend."
+      "current_state": "At [[location:delta-eridani]], guarding the [[event:deltan-migration]], which has reached the flint site after three smaller gorilloid attacks. He means to help the [[species:delta-eridani-natives|Deltans]] for about a generation and then fade into legend."
     },
     {
       "entity_id": "character:marvin",
-      "current_state": "At Delta Eridani with Bob while new Bobs are built at the autofactory, he argues for killing only gorilloids that attack the Deltans. He expects to leave in about a generation to explore and meet other species."
+      "current_state": "At [[location:delta-eridani]] with [[character:bob-replicant]] while new Bobs are built at the [[technology:autofactory]], he argues for killing only gorilloids that attack the [[species:delta-eridani-natives|Deltans]]. He expects to leave in about a generation to explore and meet other species."
     },
     {
       "entity_id": "character:archimedes",
-      "current_state": "Effectively a member of the tribal council and recently attached to Diana, he travels with the migration on its second leg. He trusts Bob's ideas but will not confront the tribe's medicine woman, and has agreed to introduce Bob to her."
+      "current_state": "Effectively a member of the tribal council and recently attached to [[character:diana]], he travels with the migration on its second leg. He trusts [[character:bob-replicant]]'s ideas but will not confront the tribe's medicine woman, and has agreed to introduce Bob to her."
     },
     {
       "entity_id": "species:delta-eridani-natives",
-      "description": "An intelligent, fire-using native people of Delta Eridani 4, named Deltans by Bob, found on only one continent of Eden, where no related species uses fire or tools. They have bat- and pig-like faces, long spiderish limbs, brownish-gray to orangey-tan fur, patterned heads, mobile expressive ears and a guttural language. Their tribes have two genders, loose pairings, an annual breeding cycle and a council of elders, and their beliefs are basic animism. Once driven from older, better villages and now under pressure from gorilloid predators, the small tribe, with a small gene pool, is regaining flintworking, meat preservation and better defences with help from Bob's group, and now has axes and spears. Their medicine is at a potion-and-poultice stage."
+      "description": "An intelligent, fire-using native people of [[location:delta-eridani-4|Delta Eridani 4]], named Deltans by [[character:bob-replicant]], found on only one continent of Eden, where no related species uses fire or tools. They have bat- and pig-like faces, long spiderish limbs, brownish-gray to orangey-tan fur, patterned heads, mobile expressive ears and a guttural language. Their tribes have two genders, loose pairings, an annual breeding cycle and a council of elders, and their beliefs are basic animism. Once driven from older, better villages and now under pressure from gorilloid predators, the small tribe, with a small gene pool, is regaining flintworking, meat preservation and better defences with help from Bob's group, and now has axes and spears. Their medicine is at a potion-and-poultice stage."
     },
     {
       "entity_id": "location:delta-eridani-4",
-      "description": "The fourth inner rocky planet in the Delta Eridani system, also called Delta Eridani 4 and DE-4, and named Eden by Bob's group as the Deltans' birthplace. It is slightly larger than Earth, with lower gravity and a somewhat denser atmosphere. Its temperate-to-subtropical landscape mixes meadows, rocky bluffs and forests of huge brownish trees, and its ecosystem is as full as Earth's, with several apex predators such as pack-hunting leopard-analogues. A mountainous spine runs down the Deltans' home continent, crossed by only a couple of useful passes."
+      "description": "The fourth inner rocky planet in the [[location:delta-eridani]] system, also called Delta Eridani 4 and DE-4, and named Eden by [[character:bob-replicant]]'s group as the [[species:delta-eridani-natives|Deltans]]' birthplace. It is slightly larger than [[location:earth]], with lower gravity and a somewhat denser atmosphere. Its temperate-to-subtropical landscape mixes meadows, rocky bluffs and forests of huge brownish trees, and its ecosystem is as full as Earth's, with several apex predators such as pack-hunting leopard-analogues. A mountainous spine runs down the Deltans' home continent, crossed by only a couple of useful passes."
     }
   ],
   "appearances": [

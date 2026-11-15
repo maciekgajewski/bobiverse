@@ -1,7 +1,7 @@
 {
   "chapter": "1.10",
   "title": "10",
-  "summary": "Bob resumes consciousness after an explosive destroys the replicant matrices in the computer room and he is restored from backups. He reflects on the restored instance's continuity, deciding that he is conscious, alive, and Bob in the important respects. Dr. Landers confirms that Kenneth is gone and says only one spare matrix was available, while security personnel suspect internal FAITH factions leaked project progress to provoke outside reactions. As the project accelerates toward a currently estimated launch about a month away, Landers gives Bob continuous operation apart from nightly backup semi-sleep and access to more libraries.",
+  "summary": "[[character:bob-replicant]] resumes consciousness after an explosive destroys the replicant matrices in the computer room and he is restored from backups. He reflects on the restored instance's continuity, deciding that he is conscious, alive, and Bob in the important respects. [[character:dr-landers]] confirms that Kenneth is gone and says only one spare matrix was available, while security personnel suspect internal [[organization:free-american-independent-theocratic-hegemony]] factions leaked project progress to provoke outside reactions. As the project accelerates toward a currently estimated launch about a month away, Landers gives Bob continuous operation apart from nightly backup semi-sleep and access to more libraries.",
   "date": "2133-08-10",
   "location_id": "location:new-handeltown",
   "appearances": [
@@ -27,7 +27,7 @@
     },
     {
       "entity_id": "organization:free-american-independent-theocratic-hegemony",
-      "description": "The Free American Independent Theocratic Hegemony, a theocratic U.S. government that makes criticism a felony and permits the deactivation of machine persons for it. It controls most of North America, restricts information by default, and finances the replicant project, owning Bob. Some of its factions regard AI and replicants as abominations or reject all technology since steam power, and several seek to stop Project HEAVEN, the Habitable Earths Abiogenic Vessel Exploration Network. Security staff believe those factions leaked the project's progress to provoke rival nations."
+      "description": "The Free American Independent Theocratic Hegemony, a theocratic U.S. government that makes criticism a felony and permits the deactivation of machine persons for it. It controls most of North America, restricts information by default, and finances the replicant project, owning [[character:bob-replicant]]. Some of its factions regard AI and replicants as abominations or reject all technology since steam power, and several seek to stop Project HEAVEN, the Habitable Earths Abiogenic Vessel Exploration Network. Security staff believe those factions leaked the project's progress to provoke rival nations."
     }
   ]
 }

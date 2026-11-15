@@ -1,21 +1,21 @@
 {
   "chapter": "1.37",
   "title": "37",
-  "summary": "Bob and his allies face a large gorilloid assault on the Deltan colony. The Deltans defend Archimedes with spears and a hand axe, while Bob directs a buster drone to stop a breakthrough. The battle leaves heavy Deltan losses and raises concern about recoverable technological wreckage. As the group considers returning the Deltans to their former flint site, Luke and Bender decide to seek projects elsewhere while Marvin stays involved with the Deltans.",
+  "summary": "[[character:bob-replicant]] and his allies face a large gorilloid assault on the Deltan colony. The [[species:delta-eridani-natives|Deltans]] defend [[character:archimedes]] with spears and a [[technology:hand-axe]], while Bob directs a [[technology:buster-drone]] to stop a breakthrough. The battle leaves heavy Deltan losses and raises concern about recoverable technological wreckage. As the group considers returning the Deltans to their former flint site, [[character:luke]] and [[character:bender]] decide to seek projects elsewhere while [[character:marvin]] stays involved with the Deltans.",
   "date": "2165-08",
   "location_id": "location:delta-eridani",
   "introducing": [
     {
       "id": "technology:hand-axe",
       "name": "hand axe",
-      "description": "A large hand axe made by Archimedes for Deltan defense. Comparable in scale to a felling axe, it proves effective against gorilloids and becomes a model the other Deltan males want to reproduce."
+      "description": "A large hand axe made by [[character:archimedes]] for Deltan defense. Comparable in scale to a felling axe, it proves effective against gorilloids and becomes a model the other Deltan males want to reproduce."
     },
     {
       "id": "event:deltan-colony-battle",
       "name": "Battle at the Deltan colony",
       "date": "2165-08",
       "location_id": "location:delta-eridani",
-      "description": "A large gorilloid assault on the Deltan colony kills thirty Deltans and injures about fifteen more. The Deltans repel the attackers with their weapons and Bob's buster-drone intervention, but the losses deepen the danger facing their small community.",
+      "description": "A large gorilloid assault on the Deltan colony kills thirty [[species:delta-eridani-natives|Deltans]] and injures about fifteen more. The Deltans repel the attackers with their weapons and [[character:bob-replicant]]'s buster-drone intervention, but the losses deepen the danger facing their small community.",
       "participant_ids": [
         "character:bob-replicant",
         "character:archimedes",
@@ -26,31 +26,31 @@
   "updates": [
     {
       "entity_id": "character:bob-replicant",
-      "current_state": "At Delta Eridani, adjusting his plans after a large gorilloid assault on the Deltans."
+      "current_state": "At [[location:delta-eridani]], adjusting his plans after a large gorilloid assault on the [[species:delta-eridani-natives|Deltans]]."
     },
     {
       "entity_id": "character:marvin",
-      "current_state": "At Delta Eridani, remaining involved with the Deltans for the foreseeable future after the assault."
+      "current_state": "At [[location:delta-eridani]], remaining involved with the [[species:delta-eridani-natives|Deltans]] for the foreseeable future after the assault."
     },
     {
       "entity_id": "character:luke",
-      "current_state": "Seeking a project of his own after helping Bob's Deltan effort."
+      "current_state": "Seeking a project of his own after helping [[character:bob-replicant]]'s Deltan effort."
     },
     {
       "entity_id": "character:bender",
-      "current_state": "Seeking a project of his own after helping Bob's Deltan effort."
+      "current_state": "Seeking a project of his own after helping [[character:bob-replicant]]'s Deltan effort."
     },
     {
       "entity_id": "character:archimedes",
-      "current_state": "At Eden, investigating a buster-drone impact site and using a recovered bark scoop to dig tubers."
+      "current_state": "At [[location:delta-eridani-4|Eden]], investigating a buster-drone impact site and using a recovered bark scoop to dig tubers."
     },
     {
       "entity_id": "character:arnold",
-      "current_state": "At Eden, having used Archimedes's hand axe to help rally Deltan defenders during a gorilloid assault."
+      "current_state": "At [[location:delta-eridani-4|Eden]], having used [[character:archimedes]]'s [[technology:hand-axe]] to help rally Deltan defenders during a gorilloid assault."
     },
     {
       "entity_id": "character:moses",
-      "current_state": "Still alive among the Deltans and possibly able to remember the location of their former flint source."
+      "current_state": "Still alive among the [[species:delta-eridani-natives|Deltans]] and possibly able to remember the location of their former flint source."
     },
     {
       "entity_id": "technology:guppi-interface",

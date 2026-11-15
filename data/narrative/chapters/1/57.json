@@ -1,7 +1,7 @@
 {
   "chapter": "1.57",
   "title": "57",
-  "summary": "Having headed for the far reaches to stay away from the other Bobs, Mario eases into Beta Hydri at a deliberately modest deceleration in case Medeiros is watching, with busters already stenciled with the Brazilian's name. The system is large and well filled out, yet Guppy, now a sharp-tongued personality in his own right, finds it completely stripped of metals, something no theory of planet formation allows. Ruling out Medeiros, Mario takes a careful look at the rocky planets and finds on the fourth, GL19-4, a crashed alien cargo carrier spilling pure metal ingots. The planet's whole ecosystem turns out to be dead: biological drones find that a massive burst of radiation killed everything at once an estimated fifty to a hundred years ago, and almost all of the animal remains are missing. When a ROAMer opens a container in the wreck, mechanical ants wake and start dismantling it, so Mario self-destructs both ROAMers and firewalls their communications. He discovers that his own SUDDAR scans are powering the ants, sends in a one-centimeter ROAMer to seal two of them in plastic for close scanning, and finds that the wreck's own SUDDAR unit appears built to transmit power. Concluding that aliens probably sterilized the planet, mined the system and carried off the carcasses, Mario realizes this first contact is grim and the other Bobs must be warned, but without metal he cannot build a station to reach Bill, so he has to leave.",
+  "summary": "Having headed for the far reaches to stay away from the other Bobs, [[character:mario]] eases into [[location:beta-hydri]] at a deliberately modest deceleration in case [[character:ernesto-medeiros|Medeiros]] is watching, with busters already stenciled with the Brazilian's name. The system is large and well filled out, yet Guppy, now a sharp-tongued personality in his own right, finds it completely stripped of metals, something no theory of planet formation allows. Ruling out Medeiros, Mario takes a careful look at the rocky planets and finds on the fourth, [[location:gl19-4]], a crashed [[vessel:alien-cargo-carrier]] spilling pure metal ingots. The planet's whole ecosystem turns out to be dead: biological drones find that a massive burst of radiation killed everything at once an estimated fifty to a hundred years ago, and almost all of the animal remains are missing. When a ROAMer opens a container in the wreck, [[technology:mechanical-ants]] wake and start dismantling it, so Mario self-destructs both [[technology:roamers]] and firewalls their communications. He discovers that his own [[technology:suddar]] scans are powering the ants, sends in a one-centimeter ROAMer to seal two of them in plastic for close scanning, and finds that the wreck's own SUDDAR unit appears built to transmit power. Concluding that aliens probably sterilized the planet, mined the system and carried off the carcasses, Mario realizes this first contact is grim and the other Bobs must be warned, but without metal he cannot build a station to reach [[character:bill]], so he has to leave.",
   "date": "2169-08",
   "location_id": "location:beta-hydri",
   "introducing": [
@@ -11,7 +11,7 @@
       "kind": "star",
       "parent_location_id": "location:beta-hydri",
       "parent_relation": "member_of_system",
-      "description": "The star at the center of the Beta Hydri system. Its spectral lines show about two-thirds of Sol's metallicity, so its planets would be expected to share a similar metal content."
+      "description": "The star at the center of the [[location:beta-hydri]] system. Its spectral lines show about two-thirds of [[location:sol]]'s metallicity, so its planets would be expected to share a similar metal content."
     },
     {
       "id": "location:gl19-4",
@@ -23,36 +23,36 @@
       "body_class": "rocky",
       "color": "brown, with gray oceans",
       "visual_description": "A muddy brown planet with gray oceans under a dense, murky atmosphere.",
-      "description": "The fourth planet of Beta Hydri, a muddy rocky world with gray oceans and a dense, murky atmosphere. Its surface looks shaped by heavy volcanic activity, though without obvious rings or chains of volcanoes. It has a magnetic field and therefore a metallic core, but its crust holds almost no metal, only scattered patches not worth mining.",
-      "state": "Once covered by an ecosystem of trees, bushes and animals, it is now lifeless: the vegetation stands dried out and weathered, and very few animal carcasses remain. A crashed alien cargo carrier lies split open on its surface."
+      "description": "The fourth planet of [[location:beta-hydri]], a muddy rocky world with gray oceans and a dense, murky atmosphere. Its surface looks shaped by heavy volcanic activity, though without obvious rings or chains of volcanoes. It has a magnetic field and therefore a metallic core, but its crust holds almost no metal, only scattered patches not worth mining.",
+      "state": "Once covered by an ecosystem of trees, bushes and animals, it is now lifeless: the vegetation stands dried out and weathered, and very few animal carcasses remain. A crashed [[vessel:alien-cargo-carrier]] lies split open on its surface."
     },
     {
       "id": "vessel:alien-cargo-carrier",
       "name": "alien cargo carrier",
-      "description": "An apparently fully automated alien cargo ship, the Bobs' first evidence of intelligent life beyond Earth, carrying ingots of pure metals such as iron, titanium, copper and nickel. It has a fusion reactor, a SURGE drive and a SUDDAR unit that seems designed to transmit power as well as serve as radar, appears to be run by an AI or AMI, and held dormant mechanical ants that woke when a ROAMer opened a container.",
-      "current_state": "It lies crashed and split open on GL19-4, apparently only about a quarter full, with stacks of ingots spilled out; its metal, even counting the hulk itself, is not enough for Mario to build a space station."
+      "description": "An apparently fully automated alien cargo ship, the Bobs' first evidence of intelligent life beyond [[location:earth]], carrying ingots of pure metals such as iron, titanium, copper and nickel. It has a fusion reactor, a [[technology:surge-drive]] and a [[technology:suddar]] unit that seems designed to transmit power as well as serve as radar, appears to be run by an AI or [[technology:ami]], and held dormant [[technology:mechanical-ants]] that woke when a ROAMer opened a container.",
+      "current_state": "It lies crashed and split open on [[location:gl19-4]], apparently only about a quarter full, with stacks of ingots spilled out; its metal, even counting the hulk itself, is not enough for [[character:mario]] to build a space station."
     },
     {
       "id": "technology:mechanical-ants",
       "name": "mechanical ants",
-      "description": "Ant-sized alien machines found aboard a crashed alien cargo carrier at GL19-4. Once activated they swarm over metal objects, dismantle them and separate the material by element, ignoring plastic and ceramic parts, and they can extend small cutters from their front appendages. They draw their power from SUDDAR beams received through subspace, so scanning them wakes them and they go dormant once scanning stops. Close scans show technology that Mario finds worth testing in simulations."
+      "description": "Ant-sized alien machines found aboard a crashed [[vessel:alien-cargo-carrier]] at [[location:gl19-4]]. Once activated they swarm over metal objects, dismantle them and separate the material by element, ignoring plastic and ceramic parts, and they can extend small cutters from their front appendages. They draw their power from [[technology:suddar]] beams received through subspace, so scanning them wakes them and they go dormant once scanning stops. Close scans show technology that [[character:mario]] finds worth testing in simulations."
     },
     {
       "id": "event:gl19-4-die-off",
       "name": "Die-off on GL19-4",
       "location_id": "location:gl19-4",
-      "description": "A planet-wide extinction in which a radiation surge comparable to a gamma-ray burst killed all life on GL19-4 at once, gut flora included, leaving standing dead forests but almost no animal carcasses. Mario dates it fifty to a hundred years before his 2169 visit and suspects that aliens killed the planet's life, mined the system and collected the carcasses, making it a first contact the other Bobs must hear about."
+      "description": "A planet-wide extinction in which a radiation surge comparable to a gamma-ray burst killed all life on [[location:gl19-4]] at once, gut flora included, leaving standing dead forests but almost no animal carcasses. [[character:mario]] dates it fifty to a hundred years before his 2169 visit and suspects that aliens killed the planet's life, mined the system and collected the carcasses, making it a first contact the other Bobs must hear about."
     }
   ],
   "updates": [
     {
       "entity_id": "character:mario",
-      "current_state": "At Beta Hydri, after finding a crashed alien cargo carrier and a dead ecosystem on GL19-4, he has to warn the other Bobs. The system's missing metals leave him unable to build a space station that could transmit to Bill, so he must leave."
+      "current_state": "At [[location:beta-hydri]], after finding a crashed [[vessel:alien-cargo-carrier]] and a dead ecosystem on [[location:gl19-4]], he has to warn the other Bobs. The system's missing metals leave him unable to build a space station that could transmit to [[character:bill]], so he must leave."
     },
     {
       "entity_id": "location:beta-hydri",
-      "description": "A named star that Mario is heading toward from Epsilon Eridani. Bill considers it suitable, though distant compared with nearer stars of comparable potential. It is a large, well-filled-out system whose inner planets include rocky worlds such as GL19-4, the fourth planet.",
-      "state": "No metal ore remains anywhere in the system, though other elements are in normal ratios, which known formation theories cannot explain. A crashed alien cargo carrier full of pure ingots lies on GL19-4, and Mario tentatively concludes that aliens mined the system."
+      "description": "A named star that [[character:mario]] is heading toward from [[location:epsilon-eridani]]. [[character:bill]] considers it suitable, though distant compared with nearer stars of comparable potential. It is a large, well-filled-out system whose inner planets include rocky worlds such as [[location:gl19-4]], the fourth planet.",
+      "state": "No metal ore remains anywhere in the system, though other elements are in normal ratios, which known formation theories cannot explain. A crashed [[vessel:alien-cargo-carrier]] full of pure ingots lies on [[location:gl19-4]], and [[character:mario]] tentatively concludes that aliens mined the system."
     },
     {
       "entity_id": "technology:guppi-interface",
@@ -60,15 +60,15 @@
     },
     {
       "entity_id": "technology:roamers",
-      "description": "Remote observation and manipulation devices directed through GUPPI. They come in varied sizes, coordinate across scales and, once their tasks are defined, need little supervision. Running on reusable scripts, they inspect, assemble and repair ships, feed manufacturing systems and refine battle scrap into rail-gun ammunition; printers can make more of them. They can explore planetary surfaces, but without infrared, flight or camouflage they do it inefficiently. Exploration drones can carry them to a site, centimetre-sized units can examine wrecks, and they carry remote self-destruct charges."
+      "description": "Remote observation and manipulation devices directed through [[technology:guppi-interface|GUPPI]]. They come in varied sizes, coordinate across scales and, once their tasks are defined, need little supervision. Running on reusable scripts, they inspect, assemble and repair ships, feed manufacturing systems and refine battle scrap into rail-gun ammunition; printers can make more of them. They can explore planetary surfaces, but without infrared, flight or camouflage they do it inefficiently. Exploration drones can carry them to a site, centimetre-sized units can examine wrecks, and they carry remote self-destruct charges."
     },
     {
       "entity_id": "technology:suddar",
-      "description": "A subspace detection technology enabled by the same breakthrough as the SURGE drive. It can monitor distance, scan for threats and detect dense objects within a light-hour. It gives little fine detail at long range; a modified array can reach three light-hours at lower resolution, and point-focused pings give maximum detail on one target. Its beam can also carry power through subspace, as alien mechanical ants and an alien SUDDAR unit at Beta Hydri show."
+      "description": "A subspace detection technology enabled by the same breakthrough as the [[technology:surge-drive]]. It can monitor distance, scan for threats and detect dense objects within a light-hour. It gives little fine detail at long range; a modified array can reach three light-hours at lower resolution, and point-focused pings give maximum detail on one target. Its beam can also carry power through subspace, as alien [[technology:mechanical-ants]] and an alien SUDDAR unit at [[location:beta-hydri]] show."
     },
     {
       "entity_id": "technology:planetary-exploration-drone",
-      "description": "A practical drone design for planetary exploration. The football-sized surveillance variant carries cameras, microphones, gripping limbs and small reactors; the meter-long biological-analysis variant has many appendages and mechanical stomachs that analyze local organics in about a day. They can hover and camouflage themselves well enough to pass as part of a tree trunk. Surveillance drones can relay live video and record speech, and some carry speakers for talking with the Deltans. They can also ferry ROAMers, search in outward spirals and scan small objects in near-molecular detail; biological drones can do necropsies under AMI control."
+      "description": "A practical drone design for planetary exploration. The football-sized surveillance variant carries cameras, microphones, gripping limbs and small reactors; the meter-long biological-analysis variant has many appendages and mechanical stomachs that analyze local organics in about a day. They can hover and camouflage themselves well enough to pass as part of a tree trunk. Surveillance drones can relay live video and record speech, and some carry speakers for talking with the [[species:delta-eridani-natives|Deltans]]. They can also ferry [[technology:roamers]], search in outward spirals and scan small objects in near-molecular detail; biological drones can do necropsies under [[technology:ami]] control."
     }
   ],
   "appearances": [

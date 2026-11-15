@@ -1,7 +1,7 @@
 {
   "chapter": "1.23",
   "title": "23",
-  "summary": "Milo completes seven months of biological work at Omicron2 Eridani. He leaves automated surveying, refining, and defensive preparations in place, forwards his report to Bill and Sol, and departs for 82 Eridani using the SURGE drive.",
+  "summary": "[[character:milo]] completes seven months of biological work at [[location:omicron2-eridani]]. He leaves automated surveying, refining, and defensive preparations in place, forwards his report to [[character:bill]] and [[location:sol]], and departs for [[location:82-eridani]] using the [[technology:surge-drive]].",
   "date": "2153-02",
   "location_id": "location:omicron2-eridani",
   "introducing": [
@@ -9,18 +9,18 @@
       "id": "location:82-eridani",
       "name": "82 Eridani",
       "kind": "star_system",
-      "description": "A stellar system Milo selects as his next destination from Omicron2 Eridani.",
+      "description": "A stellar system [[character:milo]] selects as his next destination from [[location:omicron2-eridani]].",
       "astronomy_object_id": "stellar-system-005566"
     }
   ],
   "updates": [
     {
       "entity_id": "character:milo",
-      "current_state": "Departing Omicron2 Eridani for 82 Eridani after completing a biological survey and sending his report."
+      "current_state": "Departing [[location:omicron2-eridani]] for [[location:82-eridani]] after completing a biological survey and sending his report."
     },
     {
       "entity_id": "technology:3d-printers",
-      "description": "Manufacturing equipment that gives Bob virtually unlimited flexibility for building things, including more printers, robotic workers, miners and Von Neumann machines. Increasingly common but still in its infancy, the technology has been shown to place individual atoms on a substrate."
+      "description": "Manufacturing equipment that gives [[character:bob-replicant]] virtually unlimited flexibility for building things, including more printers, robotic workers, miners and Von Neumann machines. Increasingly common but still in its infancy, the technology has been shown to place individual atoms on a substrate."
     }
   ],
   "appearances": [

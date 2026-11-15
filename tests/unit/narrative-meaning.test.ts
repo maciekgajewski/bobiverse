@@ -13,6 +13,7 @@ import {
   type NarrativeWorld,
 } from "../../src/narrative/model";
 import { narrativeCorpus } from "../../src/narrative/runtime";
+import { plainProse } from "../fixtures/plain-prose";
 
 // Meaning-level expectations: facts about the projected canonical world, written
 // only as IDs, chapter refs and enum values (never book text). See
@@ -173,8 +174,12 @@ function evaluate(entry: Expectation, worldAt: WorldAt): string | null {
       ? null
       : `${label}: expected ${entry.field} unset, but it is set`;
   if (entry.expected !== undefined && HASHED.test(entry.expected)) {
-    // Report only the hash, never the projected text.
-    const got = typeof actual === "string" ? shortHash(actual) : typeof actual;
+    // Hash the display text, not inline entity link markup (ADR-0029). Report
+    // only the hash, never the projected text.
+    const got =
+      typeof actual === "string"
+        ? shortHash(plainProse(narrativeCorpus!, entry.chapter, actual))
+        : typeof actual;
     return got === entry.expected
       ? null
       : `${label}: expected ${entry.expected}, got ${got}`;
@@ -356,17 +361,28 @@ describe("merged-text restorations (BOB-20261113-FSHPA9)", () => {
     () => {
       if (!narrativeCorpus)
         throw new Error("Canonical narrative preparation failed.");
-      const keepsFact = (text: unknown) => {
-        expect(String(text)).toMatch(/\bLinus\b/);
-        expect(String(text)).toMatch(/\bHenry\b/);
-        expect(String(text)).toMatch(/\bsailing\b/);
+      const corpus = narrativeCorpus;
+      // Match display text, not inline entity link markup (ADR-0029).
+      const keepsFact = (text: string) => {
+        expect(text).toMatch(/\bLinus\b/);
+        expect(text).toMatch(/\bHenry\b/);
+        expect(text).toMatch(/\bsailing\b/);
       };
-      const read = field("technology:vr", "description");
-      keepsFact(written("1.42", "technology:vr", "description"));
-      keepsFact(read(worldAt("1.42")));
+      const read = (world: NarrativeWorld) =>
+        plainProse(
+          corpus,
+          world.view.chapter,
+          String(field("technology:vr", "description")(world)),
+        );
       keepsFact(
-        read(generateNarrativeWorld(narrativeCorpus, "1.42", "2162-04")),
+        plainProse(
+          corpus,
+          "1.42",
+          String(written("1.42", "technology:vr", "description")),
+        ),
       );
+      keepsFact(read(worldAt("1.42")));
+      keepsFact(read(generateNarrativeWorld(corpus, "1.42", "2162-04")));
     },
     SLOW,
   );

@@ -1,7 +1,7 @@
 {
   "chapter": "1.16",
   "title": "16",
-  "summary": "Bob surveys Epsilon Eridani's four known planets and finds no clear colony site. He decides to manufacture more Bobs; GUPPI responds immediately by launching drones, and within minutes robotic servants form an expanding sphere around him to begin the work.",
+  "summary": "[[character:bob-replicant]] surveys [[location:epsilon-eridani]]'s four known planets and finds no clear colony site. He decides to manufacture more Bobs; [[technology:guppi-interface|GUPPI]] responds immediately by launching drones, and within minutes robotic servants form an expanding sphere around him to begin the work.",
   "date": "2144-09",
   "location_id": "location:epsilon-eridani",
   "introducing": [
@@ -17,7 +17,7 @@
       "name": "Epsilon Eridani One",
       "kind": "planet",
       "body_class": "rocky",
-      "description": "The innermost planet, slightly larger than Mars, orbiting at about 0.35 AU. Strong solar radiation makes it hellishly hot; it is tidally locked, airless, and not remotely livable. Deep chasms glow red with hot magma, and its pools may be liquid lead. Gravimetric readings suggest unusually high density, probably from a large core; mineral wealth could interest colonists.",
+      "description": "The innermost planet, slightly larger than [[location:mars]], orbiting at about 0.35 AU. Strong solar radiation makes it hellishly hot; it is tidally locked, airless, and not remotely livable. Deep chasms glow red with hot magma, and its pools may be liquid lead. Gravimetric readings suggest unusually high density, probably from a large core; mineral wealth could interest colonists.",
       "visual_description": "It has a Mercury-like appearance.",
       "parent_location_id": "location:epsilon-eridani-star",
       "parent_relation": "orbits"
@@ -27,7 +27,7 @@
       "name": "EE-2",
       "kind": "planet",
       "body_class": "rocky",
-      "description": "A planet at 0.85 AU, about 90 percent of Earth's size, with comparatively little water: isolated seas cover about 30 percent of its surface. Its atmosphere holds about 3 percent oxygen, possibly from life in the seas, and snow, ice and frost reach the equator. Barely livable, it could host people with heavy technological help such as domes, and it compares favorably with Mars. It has a small moon.",
+      "description": "A planet at 0.85 AU, about 90 percent of [[location:earth]]'s size, with comparatively little water: isolated seas cover about 30 percent of its surface. Its atmosphere holds about 3 percent oxygen, possibly from life in the seas, and snow, ice and frost reach the equator. Barely livable, it could host people with heavy technological help such as domes, and it compares favorably with [[location:mars]]. It has a small moon.",
       "parent_location_id": "location:epsilon-eridani-star",
       "parent_relation": "orbits"
     },
@@ -35,7 +35,7 @@
       "id": "location:ee-2-moon-01",
       "name": "Moon 1",
       "kind": "moon",
-      "description": "A described small moon about 500 km in diameter. It is close enough to raise tides if EE-2 had oceans rather than landlocked seas.",
+      "description": "A described small moon about 500 km in diameter. It is close enough to raise tides if [[location:ee-2|EE-2]] had oceans rather than landlocked seas.",
       "parent_location_id": "location:ee-2",
       "parent_relation": "orbits"
     },
@@ -44,7 +44,7 @@
       "name": "EE-3",
       "kind": "planet",
       "body_class": "gas_giant",
-      "description": "A planet about 30 percent larger than Jupiter, with an extensive, very cluttered planetary neighborhood. It has no Saturn-like rings, but it has smaller rocks and a thin ring of ice gravel. Its orbit is slightly larger than Jupiter's, and the star's lower luminosity means it receives significantly less solar radiation. It has exactly 67 identified moons: 20 are large enough to have atmospheres, and three would qualify as planets in their own right. Bob judges none of those moons livable.",
+      "description": "A planet about 30 percent larger than [[location:jupiter]], with an extensive, very cluttered planetary neighborhood. It has no Saturn-like rings, but it has smaller rocks and a thin ring of ice gravel. Its orbit is slightly larger than Jupiter's, and the star's lower luminosity means it receives significantly less solar radiation. It has exactly 67 identified moons: 20 are large enough to have atmospheres, and three would qualify as planets in their own right. [[character:bob-replicant]] judges none of those moons livable.",
       "visual_description": "Apart from its size, it looks Jupiter-like and has fewer surface storms.",
       "parent_location_id": "location:epsilon-eridani-star",
       "parent_relation": "orbits"
@@ -82,7 +82,7 @@
       "name": "EE-4",
       "kind": "planet",
       "body_class": "gas_giant",
-      "description": "A planet only mildly interesting to Bob. Its weather patterns are smooth and laminar, arising almost entirely from rotation because solar heating is negligible. It has many moons; most are rock fragments too small to be spherical.",
+      "description": "A planet only mildly interesting to [[character:bob-replicant]]. Its weather patterns are smooth and laminar, arising almost entirely from rotation because solar heating is negligible. It has many moons; most are rock fragments too small to be spherical.",
       "parent_location_id": "location:epsilon-eridani-star",
       "parent_relation": "orbits"
     },
@@ -122,17 +122,17 @@
     {
       "id": "technology:3d-printers",
       "name": "3D printers",
-      "description": "Manufacturing equipment that gives Bob virtually unlimited flexibility for building things."
+      "description": "Manufacturing equipment that gives [[character:bob-replicant]] virtually unlimited flexibility for building things."
     }
   ],
   "updates": [
     {
       "entity_id": "location:epsilon-eridani",
-      "description": "A stellar system estimated to be about one billion years old and selected as Heaven-1's destination."
+      "description": "A stellar system estimated to be about one billion years old and selected as [[vessel:heaven-1]]'s destination."
     },
     {
       "entity_id": "character:bob-replicant",
-      "current_state": "At Epsilon Eridani, Bob begins manufacturing more Bobs, acting free of his former mission imperatives. GUPPI immediately launches drones, and robotic servants form an expanding sphere around him to begin the work."
+      "current_state": "At [[location:epsilon-eridani]], Bob begins manufacturing more Bobs, acting free of his former mission imperatives. [[technology:guppi-interface|GUPPI]] immediately launches drones, and robotic servants form an expanding sphere around him to begin the work."
     },
     {
       "entity_id": "technology:guppi-interface",
@@ -140,7 +140,7 @@
     },
     {
       "entity_id": "technology:mining-drones",
-      "description": "Small mining craft carried aboard Heaven-1. Each has a small SURGE drive. Their design can be adapted for other purposes, including ship-busters."
+      "description": "Small mining craft carried aboard [[vessel:heaven-1]]. Each has a small [[technology:surge-drive]]. Their design can be adapted for other purposes, including [[technology:ship-busters]]."
     }
   ],
   "appearances": [

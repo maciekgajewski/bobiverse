@@ -1,7 +1,7 @@
 {
   "chapter": "1.46",
   "title": "46",
-  "summary": "Milo arrives at 82 Eridani, a system that astronomical data had marked as a strong candidate for a habitable planet, and his survey finds two planets in the comfort zone. He sends the news to Bill at Epsilon Eridani and heads for the closer, outer planet, a world with large bodies of water and two moons, the larger of which looks blue. As he moves into orbit, four missiles swing around a moon toward him; unable to outrun them, he launches all eight of his busters against them with orders to hunt for a Brazilian ship afterward. A second wave of four missiles then appears from the moon's other side. Realizing that Medeiros has outflanked him, Milo fires his rail gun while transmitting a situation report and a differential backup that he calculates will not finish in time as the final missiles close in.",
+  "summary": "[[character:milo]] arrives at [[location:82-eridani]], a system that astronomical data had marked as a strong candidate for a habitable planet, and his survey finds two planets in the comfort zone. He sends the news to [[character:bill]] at [[location:epsilon-eridani]] and heads for the closer, outer planet, a world with large bodies of water and two moons, the larger of which looks blue. As he moves into orbit, four missiles swing around a moon toward him; unable to outrun them, he launches all eight of his busters against them with orders to hunt for a Brazilian ship afterward. A second wave of four missiles then appears from the moon's other side. Realizing that [[character:ernesto-medeiros|Medeiros]] has outflanked him, Milo fires his rail gun while transmitting a situation report and a differential backup that he calculates will not finish in time as the final missiles close in.",
   "date": "2165-08",
   "location_id": "location:82-eridani",
   "introducing": [
@@ -11,7 +11,7 @@
       "kind": "star",
       "parent_location_id": "location:82-eridani",
       "parent_relation": "member_of_system",
-      "description": "The G5V star at the center of the 82 Eridani system. It is smaller and less luminous than Sol but within the range of yellow suns that humans would prefer."
+      "description": "The G5V star at the center of the [[location:82-eridani]] system. It is smaller and less luminous than [[location:sol]] but within the range of yellow suns that [[species:human|humans]] would prefer."
     },
     {
       "id": "location:82-eridani-1",
@@ -20,7 +20,7 @@
       "parent_location_id": "location:82-eridani-star",
       "parent_relation": "orbits",
       "orbital_order": 1024,
-      "description": "The inner of two planets in 82 Eridani's comfort zone, lying at the zone's inside edge."
+      "description": "The inner of two planets in [[location:82-eridani]]'s comfort zone, lying at the zone's inside edge."
     },
     {
       "id": "location:82-eridani-2",
@@ -29,7 +29,7 @@
       "parent_location_id": "location:82-eridani-star",
       "parent_relation": "orbits",
       "orbital_order": 2048,
-      "description": "The outer of two planets in 82 Eridani's comfort zone, lying almost at the zone's outside edge. It has large bodies of water and two moons: a smaller one closer in and a larger, blue one farther out."
+      "description": "The outer of two planets in [[location:82-eridani]]'s comfort zone, lying almost at the zone's outside edge. It has large bodies of water and two moons: a smaller one closer in and a larger, blue one farther out."
     },
     {
       "id": "location:82-eridani-2-moon-01",
@@ -38,7 +38,7 @@
       "parent_location_id": "location:82-eridani-2",
       "parent_relation": "orbits",
       "orbital_order": 1024,
-      "description": "The smaller of 82 Eridani 2's two moons, orbiting closer to the planet."
+      "description": "The smaller of [[location:82-eridani-2]]'s two moons, orbiting closer to the planet."
     },
     {
       "id": "location:82-eridani-2-moon-02",
@@ -48,26 +48,26 @@
       "parent_relation": "orbits",
       "orbital_order": 2048,
       "color": "blue",
-      "description": "The larger of 82 Eridani 2's two moons, orbiting farther from the planet. It shows a blue color, and Milo suspects it may have open water."
+      "description": "The larger of [[location:82-eridani-2]]'s two moons, orbiting farther from the planet. It shows a blue color, and [[character:milo]] suspects it may have open water."
     }
   ],
   "updates": [
     {
       "entity_id": "character:milo",
-      "current_state": "At 82 Eridani, caught in a two-wave missile ambush he attributes to Medeiros, with his busters spent and his rail gun unable to stop every missile. The last missiles were reaching him as he transmitted a situation report and a differential backup toward Epsilon Eridani."
+      "current_state": "At [[location:82-eridani]], caught in a two-wave missile ambush he attributes to [[character:ernesto-medeiros|Medeiros]], with his busters spent and his rail gun unable to stop every missile. The last missiles were reaching him as he transmitted a situation report and a differential backup toward [[location:epsilon-eridani]]."
     },
     {
       "entity_id": "character:ernesto-medeiros",
-      "current_state": "Milo concludes that Medeiros outflanked him in a two-wave missile ambush at 82 Eridani."
+      "current_state": "[[character:milo]] concludes that Medeiros outflanked him in a two-wave missile ambush at [[location:82-eridani]]."
     },
     {
       "entity_id": "location:82-eridani",
-      "description": "A stellar system centered on a G5V star that is smaller and less luminous than Sol but within the range of yellow suns humans would prefer. Astronomical data marked it as a very good candidate for a habitable planet, and Milo selected it as his next destination from Omicron2 Eridani. Its survey finds two planets in the comfort zone, one at the inside edge and one almost at the outside edge; the outer planet has large bodies of water and two moons.",
-      "state": "Hostile missiles, which Milo attributes to Medeiros, ambushed him as he approached orbit around the outer comfort-zone planet."
+      "description": "A stellar system centered on a G5V star that is smaller and less luminous than [[location:sol]] but within the range of yellow suns [[species:human|humans]] would prefer. Astronomical data marked it as a very good candidate for a habitable planet, and [[character:milo]] selected it as his next destination from [[location:omicron2-eridani]]. Its survey finds two planets in the comfort zone, one at the inside edge and one almost at the outside edge; the outer planet has large bodies of water and two moons.",
+      "state": "Hostile missiles, which [[character:milo]] attributes to [[character:ernesto-medeiros|Medeiros]], ambushed him as he approached orbit around the outer comfort-zone planet."
     },
     {
       "entity_id": "technology:ship-busters",
-      "description": "Improvised attack units carrying small reactors, oversized SURGE drives, AMI pilots and dense metal projectiles instead of warheads. They intercept missiles or ram vessels at very high acceleration, can drift on stored power with reactors off, and their steel balls double as rail-gun ammunition. Usually launched in pairs against missiles, they can take follow-on orders such as hunting a ship of a given profile."
+      "description": "Improvised attack units carrying small reactors, oversized SURGE drives, [[technology:ami]] pilots and dense metal projectiles instead of warheads. They intercept missiles or ram vessels at very high acceleration, can drift on stored power with reactors off, and their steel balls double as rail-gun ammunition. Usually launched in pairs against missiles, they can take follow-on orders such as hunting a ship of a given profile."
     }
   ],
   "appearances": [

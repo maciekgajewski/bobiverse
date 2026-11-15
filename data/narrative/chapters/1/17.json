@@ -1,7 +1,7 @@
 {
   "chapter": "1.17",
   "title": "17",
-  "summary": "Bob completes his transfer into the upgraded Heaven-1A and brings four new replicants online. Bob says their former booby-traps and imperatives have been removed, and Riker, Bill, Milo, and Mario quickly choose different names and priorities as the new HEAVEN vessels take on manufacturing and shakedown work. Bill remains in-system to oversee production and investigate an unexpected SUDDAR result, while Bob's proposal for early terraforming on EE-2 and the others' possible journeys make clear that the copies are already pursuing distinct paths.",
+  "summary": "[[character:bob-replicant]] completes his transfer into the upgraded [[vessel:heaven-1a]] and brings four new replicants online. Bob says their former booby-traps and imperatives have been removed, and [[character:riker]], [[character:bill]], [[character:milo]], and [[character:mario]] quickly choose different names and priorities as the new HEAVEN vessels take on manufacturing and shakedown work. Bill remains in-system to oversee production and investigate an unexpected [[technology:suddar]] result, while Bob's proposal for early terraforming on [[location:ee-2|EE-2]] and the others' possible journeys make clear that the copies are already pursuing distinct paths.",
   "date": "2145-07",
   "location_id": "location:epsilon-eridani",
   "introducing": [
@@ -12,7 +12,7 @@
       "parent_id": "character:bob-replicant",
       "birth_chapter": "1.17",
       "birth_date": "2145",
-      "current_state": "Newly activated and considering a distant Sol fly-by to listen for radio traffic while planning another copy."
+      "current_state": "Newly activated and considering a distant [[location:sol]] fly-by to listen for radio traffic while planning another copy."
     },
     {
       "id": "character:spike",
@@ -25,7 +25,7 @@
       "parent_id": "character:bob-replicant",
       "birth_chapter": "1.17",
       "birth_date": "2145",
-      "current_state": "Newly activated and planning to remain at Epsilon Eridani to oversee production, monitor for Earth signals, and research subspace theory."
+      "current_state": "Newly activated and planning to remain at [[location:epsilon-eridani]] to oversee production, monitor for [[location:earth]] signals, and research subspace theory."
     },
     {
       "id": "character:milo",
@@ -34,7 +34,7 @@
       "parent_id": "character:bob-replicant",
       "birth_chapter": "1.17",
       "birth_date": "2145",
-      "current_state": "Newly activated; he declines to accompany Riker near Earth and is preparing to leave for a selected destination system."
+      "current_state": "Newly activated; he declines to accompany [[character:riker]] near [[location:earth]] and is preparing to leave for a selected destination system."
     },
     {
       "id": "character:mario",
@@ -48,38 +48,38 @@
     {
       "id": "vessel:heaven-1a",
       "name": "Heaven-1A",
-      "description": "A version-2 HEAVEN vessel built as Bob's trade-up. Its design has a larger reactor and drive, a rail-gun, storage and launch facilities for ship-busters, higher-capacity replicant systems, room for ROAMers and mining drones, and greater cargo capacity.",
-      "current_state": "Bob has completed his transfer into this vessel."
+      "description": "A version-2 HEAVEN vessel built as [[character:bob-replicant]]'s trade-up. Its design has a larger reactor and drive, a rail-gun, storage and launch facilities for [[technology:ship-busters]], higher-capacity replicant systems, room for [[technology:roamers]] and [[technology:mining-drones]], and greater cargo capacity.",
+      "current_state": "[[character:bob-replicant]] has completed his transfer into this vessel."
     },
     {
       "id": "vessel:heaven-2",
       "name": "Heaven-2",
-      "description": "A version-2 HEAVEN vessel with a larger reactor and drive, a rail-gun, ship-buster storage and launch facilities, higher-capacity replicant systems, room for ROAMers and mining drones, and greater cargo capacity.",
+      "description": "A version-2 HEAVEN vessel with a larger reactor and drive, a rail-gun, ship-buster storage and launch facilities, higher-capacity replicant systems, room for [[technology:roamers]] and [[technology:mining-drones]], and greater cargo capacity.",
       "current_state": "Monitoring the manufacturing systems."
     },
     {
       "id": "vessel:heaven-3",
       "name": "Heaven-3",
-      "description": "A version-2 HEAVEN vessel with a larger reactor and drive, a rail-gun, ship-buster storage and launch facilities, higher-capacity replicant systems, room for ROAMers and mining drones, and greater cargo capacity.",
-      "current_state": "Preparing for a shakedown cruise after reporting a weak SUDDAR ping caused by emitter flaws."
+      "description": "A version-2 HEAVEN vessel with a larger reactor and drive, a rail-gun, ship-buster storage and launch facilities, higher-capacity replicant systems, room for [[technology:roamers]] and [[technology:mining-drones]], and greater cargo capacity.",
+      "current_state": "Preparing for a shakedown cruise after reporting a weak [[technology:suddar]] ping caused by emitter flaws."
     },
     {
       "id": "vessel:heaven-4",
       "name": "Heaven-4",
-      "description": "A version-2 HEAVEN vessel with a larger reactor and drive, a rail-gun, ship-buster storage and launch facilities, higher-capacity replicant systems, room for ROAMers and mining drones, and greater cargo capacity.",
-      "current_state": "Preparing for a shakedown cruise after Bob's transfer is confirmed."
+      "description": "A version-2 HEAVEN vessel with a larger reactor and drive, a rail-gun, ship-buster storage and launch facilities, higher-capacity replicant systems, room for [[technology:roamers]] and [[technology:mining-drones]], and greater cargo capacity.",
+      "current_state": "Preparing for a shakedown cruise after [[character:bob-replicant]]'s transfer is confirmed."
     },
     {
       "id": "vessel:heaven-5",
       "name": "Heaven-5",
-      "description": "A version-2 HEAVEN vessel with a larger reactor and drive, a rail-gun, ship-buster storage and launch facilities, higher-capacity replicant systems, room for ROAMers and mining drones, and greater cargo capacity.",
-      "current_state": "Preparing for a shakedown cruise after Bob's transfer is confirmed."
+      "description": "A version-2 HEAVEN vessel with a larger reactor and drive, a rail-gun, ship-buster storage and launch facilities, higher-capacity replicant systems, room for [[technology:roamers]] and [[technology:mining-drones]], and greater cargo capacity.",
+      "current_state": "Preparing for a shakedown cruise after [[character:bob-replicant]]'s transfer is confirmed."
     },
     {
       "id": "location:bill-skunkworks",
       "name": "Bill's skunkworks",
       "kind": "locale",
-      "description": "Bill's dedicated Epsilon Eridani workshop for the new system's manufacturing and research work.",
+      "description": "[[character:bill]]'s dedicated [[location:epsilon-eridani]] workshop for the new system's manufacturing and research work.",
       "parent_location_id": "location:epsilon-eridani",
       "parent_relation": "located_on",
       "prominent": true,
@@ -88,18 +88,18 @@
     {
       "id": "technology:relay-station",
       "name": "relay station",
-      "description": "An automated station intended for every system Bob visits. It can send encrypted status reports and planetary surveys to Earth, and, when colonization is viable, serve as a beacon, communications relay, and in-system hub; it is to have an AMI and limited manufacturing capability."
+      "description": "An automated station intended for every system [[character:bob-replicant]] visits. It can send encrypted status reports and planetary surveys to [[location:earth]], and, when colonization is viable, serve as a beacon, communications relay, and in-system hub; it is to have an [[technology:ami]] and limited manufacturing capability."
     }
   ],
   "updates": [
     {
       "entity_id": "character:bob-replicant",
       "aliases": ["Bob-1"],
-      "current_state": "At Epsilon Eridani in Heaven-1A after completing a hardware transfer and bringing four new replicants online."
+      "current_state": "At [[location:epsilon-eridani]] in [[vessel:heaven-1a]] after completing a hardware transfer and bringing four new replicants online."
     },
     {
       "entity_id": "vessel:heaven-1",
-      "description": "A converted interplanetary freighter equipped as a Von Neumann probe: a small, light, resilient design built to copy itself. It carries a SURGE drive ring, fusion reactor, ramscoop, three large 3D printers, ROAMers, nanites and mining cargo carriers, but no weapons. Version-2 HEAVENs add a larger reactor and drive, a rail-gun, ship-busters, bigger replicant systems and more cargo room. Its communications report to Earth and were not built for interstellar conversation."
+      "description": "A converted interplanetary freighter equipped as a [[technology:von-neumann-probe]]: a small, light, resilient design built to copy itself. It carries a [[technology:surge-drive]] ring, fusion reactor, ramscoop, three large [[technology:3d-printers]], [[technology:roamers]], [[technology:nanites]] and mining cargo carriers, but no weapons. Version-2 HEAVENs add a larger reactor and drive, a rail-gun, [[technology:ship-busters]], bigger replicant systems and more cargo room. Its communications report to [[location:earth]] and were not built for interstellar conversation."
     },
     {
       "entity_id": "technology:guppi-interface",
@@ -107,20 +107,20 @@
     },
     {
       "entity_id": "technology:suddar",
-      "description": "A subspace detection technology enabled by the same breakthrough as the SURGE drive. It can monitor distance, scan for threats and detect dense objects within a light-hour. An emitter flaw can give a much weaker ping with poor close-range sensitivity, which Bill suspects may reach farther."
+      "description": "A subspace detection technology enabled by the same breakthrough as the [[technology:surge-drive]]. It can monitor distance, scan for threats and detect dense objects within a light-hour. An emitter flaw can give a much weaker ping with poor close-range sensitivity, which [[character:bill]] suspects may reach farther."
     },
     {
       "entity_id": "technology:replicant-matrix",
-      "description": "A spare hardware unit carried aboard Heaven-1 that can contain a complete GUPPI system."
+      "description": "A spare hardware unit carried aboard [[vessel:heaven-1]] that can contain a complete [[technology:guppi-interface|GUPPI]] system."
     },
     {
       "entity_id": "technology:roamers",
-      "description": "Remote observation and manipulation devices directed through GUPPI. They come in varied sizes, coordinate across scales and, once their tasks are defined, need little supervision. They can inspect ship circuitry with gnat-sized units, carry video cameras and pick up vibrations through a wall. Running on reusable scripts, they feed ore to manufacturing systems, gather parts and assemble ships, and printers can make more of them."
+      "description": "Remote observation and manipulation devices directed through [[technology:guppi-interface|GUPPI]]. They come in varied sizes, coordinate across scales and, once their tasks are defined, need little supervision. They can inspect ship circuitry with gnat-sized units, carry video cameras and pick up vibrations through a wall. Running on reusable scripts, they feed ore to manufacturing systems, gather parts and assemble ships, and printers can make more of them."
     },
     {
       "entity_id": "location:ee-2",
       "possible_colony_target": true,
-      "description": "A planet at 0.85 AU, about 90 percent of Earth's size, with comparatively little water: isolated seas cover about 30 percent of its surface. Its atmosphere holds about 3 percent oxygen, possibly from life in the seas, and snow, ice and frost reach the equator. Barely livable, it could host people with heavy technological help such as domes, and it compares favorably with Mars. Bob proposes early terraforming by sending Kuiper objects inward to enlarge its oceans."
+      "description": "A planet at 0.85 AU, about 90 percent of [[location:earth]]'s size, with comparatively little water: isolated seas cover about 30 percent of its surface. Its atmosphere holds about 3 percent oxygen, possibly from life in the seas, and snow, ice and frost reach the equator. Barely livable, it could host people with heavy technological help such as domes, and it compares favorably with [[location:mars]]. [[character:bob-replicant]] proposes early terraforming by sending Kuiper objects inward to enlarge its oceans."
     }
   ],
   "appearances": [

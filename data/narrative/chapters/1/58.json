@@ -1,14 +1,14 @@
 {
   "chapter": "1.58",
   "title": "58",
-  "summary": "The colony ships have been checked out end to end, inspected by the USE delegation and taken on a shakedown cruise to Jupiter and back, and now wait in low Earth orbit. With Bill's VR upgrades, Homer can dance around Riker's captain's chair in person, which has its downsides. Ten shuttles of five hundred seats make forty trips to bring the USE colonists up to the ships, where they are sedated and locked into stasis pods; a share of the Svalbard Vaults' contents goes aboard each ship and the shuttles are docked in the holds. During the long round of speeches Riker switches off his proprioception emulation and lets sandbox Bob stand in on video. Howard, the newest Bob, escorts the ships and privately is to make sure the colonists behave, with a few of Bill's recent inventions in his hold. Limited to 1 g, the ships face a little over eighteen years in transit, about six aboard, crewed by Riker clones and ROAMers; Riker installed the replicant matrices at the last moment, and there have been no hacking attempts. The third ship, for the Spits and FAITH's enclave, will follow in four months to found the first settlement on whichever planet the USE contingent does not pick, a price Valter accepts philosophically. Three more ships are under construction, and kudzu production and leftover resources will feed those who stay. Watching the ships pass the orbit of Mars in the holotank after more than a decade of work, Riker tears up, then he and Homer get back to the day's list.",
+  "summary": "The colony ships have been checked out end to end, inspected by the [[organization:united-states-of-eurasia]] delegation and taken on a shakedown cruise to [[location:jupiter]] and back, and now wait in low [[location:earth]] orbit. With [[character:bill]]'s [[technology:vr]] upgrades, [[character:homer]] can dance around [[character:riker]]'s captain's chair in person, which has its downsides. Ten shuttles of five hundred seats make forty trips to bring the USE colonists up to the ships, where they are sedated and locked into stasis pods; a share of the Svalbard Vaults' contents goes aboard each ship and the shuttles are docked in the holds. During the long round of speeches Riker switches off his proprioception emulation and lets sandbox [[character:bob-replicant]] stand in on video. [[character:howard]], the newest Bob, escorts the ships and privately is to make sure the colonists behave, with a few of Bill's recent inventions in his hold. Limited to 1 g, the ships face a little over eighteen years in transit, about six aboard, crewed by Riker clones and [[technology:roamers]]; Riker installed the replicant matrices at the last moment, and there have been no hacking attempts. The third ship, for the Spits and [[organization:free-american-independent-theocratic-hegemony]]'s enclave, will follow in four months to found the first settlement on whichever planet the USE contingent does not pick, a price Valter accepts philosophically. Three more ships are under construction, and kudzu production and leftover resources will feed those who stay. Watching the ships pass the orbit of [[location:mars]] in the holotank after more than a decade of work, Riker tears up, then he and Homer get back to the day's list.",
   "date": "2171-04",
   "location_id": "location:sol",
   "introducing": [
     {
       "id": "character:howard",
       "name": "Howard",
-      "current_state": "The newest Bob, escorting Exodus-1 and Exodus-2 and privately charged by Riker with keeping the colonists in line; his hold carries a few of Bill's recent inventions."
+      "current_state": "The newest [[character:bob-replicant]], escorting [[vessel:exodus-1]] and [[vessel:exodus-2]] and privately charged by [[character:riker]] with keeping the colonists in line; his hold carries a few of [[character:bill]]'s recent inventions."
     },
     {
       "id": "event:first-colony-ships-departure",
@@ -20,54 +20,54 @@
         "character:homer",
         "character:howard"
       ],
-      "description": "The launch from Sol of the first two USE colony ships, Exodus-1 and Exodus-2, after more than a decade of work. Shuttles carried the USE colonists to the ships in low Earth orbit, where they were put into stasis, and a share of the Svalbard Vaults' contents was loaded aboard. After a long ceremony, the ships, crewed by Riker clones and ROAMers and escorted by the newest Bob, Howard, set out on a voyage of a little over eighteen years."
+      "description": "The launch from [[location:sol]] of the first two [[organization:united-states-of-eurasia]] colony ships, [[vessel:exodus-1]] and [[vessel:exodus-2]], after more than a decade of work. Shuttles carried the USE colonists to the ships in low [[location:earth]] orbit, where they were put into stasis, and a share of the Svalbard Vaults' contents was loaded aboard. After a long ceremony, the ships, crewed by Riker clones and [[technology:roamers]] and escorted by the newest [[character:bob-replicant]], [[character:howard]], set out on a voyage of a little over eighteen years."
     }
   ],
   "updates": [
     {
       "entity_id": "character:riker",
-      "current_state": "At Sol after the launch of Exodus-1 and Exodus-2, he hopes new and returning ships can carry emigrants for as long as people want to leave. Regular video calls with the Hendricks household, his sister's descendants, make him feel real."
+      "current_state": "At [[location:sol]] after the launch of [[vessel:exodus-1]] and [[vessel:exodus-2]], he hopes new and returning ships can carry emigrants for as long as people want to leave. Regular video calls with the Hendricks household, his sister's descendants, make him feel real."
     },
     {
       "entity_id": "character:gudmund-valter",
-      "current_state": "Leading the Spitsbergen refuge, which is to sail with FAITH's enclave on the third colony ship and found the first settlement on whichever planet the USE contingent does not choose; he accepts the price of going first."
+      "current_state": "Leading the [[organization:spitsbergen-refuge]], which is to sail with [[organization:free-american-independent-theocratic-hegemony]]'s enclave on the third colony ship and found the first settlement on whichever planet the [[organization:united-states-of-eurasia]] contingent does not choose; he accepts the price of going first."
     },
     {
       "entity_id": "vessel:exodus-1",
-      "current_state": "After checkout, a USE inspection and a shakedown cruise, it left Sol with its sister ship in April 2171, carrying USE colonists and a share of the Svalbard Vaults' contents; escorted by Howard, it has passed Mars on a voyage of just over eighteen years."
+      "current_state": "After checkout, a [[organization:united-states-of-eurasia]] inspection and a shakedown cruise, it left [[location:sol]] with its sister ship in April 2171, carrying USE colonists and a share of the Svalbard Vaults' contents; escorted by [[character:howard]], it has passed [[location:mars]] on a voyage of just over eighteen years."
     },
     {
       "entity_id": "vessel:exodus-2",
-      "current_state": "After checkout, a USE inspection and a shakedown cruise, it left Sol with its sister ship in April 2171, carrying USE colonists and a share of the Svalbard Vaults' contents; escorted by Howard, it has passed Mars on a voyage of just over eighteen years."
+      "current_state": "After checkout, a [[organization:united-states-of-eurasia]] inspection and a shakedown cruise, it left [[location:sol]] with its sister ship in April 2171, carrying USE colonists and a share of the Svalbard Vaults' contents; escorted by [[character:howard]], it has passed [[location:mars]] on a voyage of just over eighteen years."
     },
     {
       "entity_id": "vessel:exodus-3",
-      "current_state": "Due to leave Sol four months after the first two ships, carrying the Spitsbergen refuge, FAITH's enclave and Julia Hendricks's family to found the first settlement on whichever planet the USE contingent does not pick."
+      "current_state": "Due to leave [[location:sol]] four months after the first two ships, carrying the [[organization:spitsbergen-refuge]], [[organization:free-american-independent-theocratic-hegemony]]'s enclave and [[character:julia-hendricks]]'s family to found the first settlement on whichever planet the [[organization:united-states-of-eurasia]] contingent does not pick."
     },
     {
       "entity_id": "vessel:use-colony-ship",
-      "description": "A USE colony-ship design created by refugee scientists as an off-world refuge, carrying ten thousand people in stasis pods. Two drive rings and a massive reactor cooling section move its huge central cargo section, much of whose mass is stasis shielding; Riker likens it to an unarmed science-fiction warship. With no human crew, it is run by a couple of Riker clones and many ROAMers, accelerates at up to 1 g, and takes colonists up in 500-person shuttles that travel docked in its holds.",
-      "current_state": "Exodus-1 and Exodus-2 left Sol in April 2171, escorted by Howard, on a voyage of a little over eighteen years; Exodus-3 follows four months later, and three more ships are under construction."
+      "description": "A [[organization:united-states-of-eurasia]] colony-ship design created by refugee scientists as an off-world refuge, carrying ten thousand people in stasis pods. Two drive rings and a massive reactor cooling section move its huge central cargo section, much of whose mass is stasis shielding; [[character:riker]] likens it to an unarmed science-fiction warship. With no human crew, it is run by a couple of Riker clones and many [[technology:roamers]], accelerates at up to 1 g, and takes colonists up in 500-person shuttles that travel docked in its holds.",
+      "current_state": "[[vessel:exodus-1]] and [[vessel:exodus-2]] left [[location:sol]] in April 2171, escorted by [[character:howard]], on a voyage of a little over eighteen years; [[vessel:exodus-3]] follows four months later, and three more ships are under construction."
     },
     {
       "entity_id": "organization:united-states-of-eurasia",
-      "current_state": "Its colonists left Earth first aboard Exodus-1 and Exodus-2 in April 2171 and will get first choice of planet. The Spitsbergen refuge is technically part of USE but rejects Colonel Butterworth's authority."
+      "current_state": "Its colonists left [[location:earth]] first aboard [[vessel:exodus-1]] and [[vessel:exodus-2]] in April 2171 and will get first choice of planet. The [[organization:spitsbergen-refuge]] is technically part of USE but rejects [[character:george-butterworth|Colonel Butterworth]]'s authority."
     },
     {
       "entity_id": "organization:spitsbergen-refuge",
-      "current_state": "It is to leave on Exodus-3 with FAITH's enclave four months after the first colony ships and found the first settlement on the planet the USE contingent does not pick, building infrastructure for later groups."
+      "current_state": "It is to leave on [[vessel:exodus-3]] with [[organization:free-american-independent-theocratic-hegemony]]'s enclave four months after the first colony ships and found the first settlement on the planet the [[organization:united-states-of-eurasia]] contingent does not pick, building infrastructure for later groups."
     },
     {
       "entity_id": "organization:free-american-independent-theocratic-hegemony",
-      "current_state": "Its enclave, having traded its food surplus for the rest of ship three's places, is to leave on Exodus-3 with the Spits four months after the first colony ships, to help found the settlement on the planet the USE contingent does not pick."
+      "current_state": "Its enclave, having traded its food surplus for the rest of ship three's places, is to leave on [[vessel:exodus-3]] with the Spits four months after the first colony ships, to help found the settlement on the planet the [[organization:united-states-of-eurasia]] contingent does not pick."
     },
     {
       "entity_id": "organization:svalbard-global-trust",
-      "current_state": "Riker's team has access to its vaults, and a share of their contents was loaded onto each of the first colony ships."
+      "current_state": "[[character:riker]]'s team has access to its vaults, and a share of their contents was loaded onto each of the first colony ships."
     },
     {
       "entity_id": "technology:vr",
-      "description": "A virtual-reality interface developed aboard Heaven-1 to give a bodiless mind sensory input and an embodied experience; its software is still being refined. It provides convincing sensations, a humanlike avatar and shared environments such as libraries, parks and command decks, where users can create objects and play games. Bill regards such embodied activity as important to keeping a human sense of self. Bill's upgrades let Bobs interact physically rather than only through video windows, and proprioception can be switched off."
+      "description": "A virtual-reality interface developed aboard [[vessel:heaven-1]] to give a bodiless mind sensory input and an embodied experience; its software is still being refined. It provides convincing sensations, a humanlike avatar and shared environments such as libraries, parks and command decks, where users can create objects and play games. [[character:bill]] regards such embodied activity as important to keeping a human sense of self. Bill's upgrades let Bobs interact physically rather than only through video windows, and proprioception can be switched off."
     }
   ],
   "appearances": [

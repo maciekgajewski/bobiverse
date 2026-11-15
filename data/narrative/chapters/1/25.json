@@ -7,21 +7,21 @@
     {
       "id": "technology:subspace-communications",
       "name": "subspace communications",
-      "description": "A communications technology that carries signals through subspace, demonstrated with synchronized telemetry across a light-minute-scale separation. It can support real-time shared VR, but it requires equipment at both ends and predicted dropout at roughly twenty-five light-years means stations must still route longer links."
+      "description": "A communications technology that carries signals through subspace, demonstrated with synchronized telemetry across a light-minute-scale separation. It can support real-time shared [[technology:vr]], but it requires equipment at both ends and predicted dropout at roughly twenty-five light-years means stations must still route longer links."
     }
   ],
   "updates": [
     {
       "entity_id": "character:bill",
-      "current_state": "At Epsilon Eridani, testing subspace communications with Garfield and sending the preliminary plans so other systems can build compatible equipment."
+      "current_state": "At [[location:epsilon-eridani]], testing [[technology:subspace-communications|subspace communications]] with [[character:garfield]] and sending the preliminary plans so other systems can build compatible equipment."
     },
     {
       "entity_id": "character:garfield",
-      "current_state": "Returning to Epsilon Eridani after helping Bill test subspace communications at increasing separation."
+      "current_state": "Returning to [[location:epsilon-eridani]] after helping [[character:bill]] test [[technology:subspace-communications|subspace communications]] at increasing separation."
     },
     {
       "entity_id": "technology:vr",
-      "description": "A virtual-reality interface Bob builds aboard Heaven-1 to provide sensory input and an embodied experience while he travels as a bodiless mind. It initially needs hardware modifications and remains an ongoing software project. Planned improvements are intended to support more direct interaction between users. It has become realistic enough to produce physical sensations that feel real."
+      "description": "A virtual-reality interface [[character:bob-replicant]] builds aboard [[vessel:heaven-1]] to provide sensory input and an embodied experience while he travels as a bodiless mind. It initially needs hardware modifications and remains an ongoing software project. Planned improvements are intended to support more direct interaction between users. It has become realistic enough to produce physical sensations that feel real."
     },
     {
       "entity_id": "technology:von-neumann-probe",
@@ -40,5 +40,5 @@
       "location_id": "location:epsilon-eridani"
     }
   ],
-  "summary": "Bill and Garfield test subspace communications while Garfield recedes from Bill. Their paired telemetry stays synchronized even as the radio signal lags, and Garfield can enter Bill's VR without delay. The projected range limit means routers remain necessary, but Bill sends the still-awkward plans so other systems can build compatible equipment without waiting years for a later update."
+  "summary": "[[character:bill]] and [[character:garfield]] test [[technology:subspace-communications|subspace communications]] while Garfield recedes from Bill. Their paired telemetry stays synchronized even as the radio signal lags, and Garfield can enter Bill's [[technology:vr]] without delay. The projected range limit means routers remain necessary, but Bill sends the still-awkward plans so other systems can build compatible equipment without waiting years for a later update."
 }

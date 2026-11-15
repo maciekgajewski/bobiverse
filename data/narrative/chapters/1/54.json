@@ -1,61 +1,61 @@
 {
   "chapter": "1.54",
   "title": "54",
-  "summary": "Riker, Homer, Charles and Ralph drift half a kilometer from the first two colony ships to watch their final assembly in person, though they had agreed a drone feed would be just as good; even Colonel Butterworth had considered taking a shuttle up. Construction had been balanced so both ships reached the same stage together, and only the connection of the drive rings to the hull remained. Every UN delegate streams the event, and the UN sensibly skips the speeches. When the construction AMI reports all connections successful, the two colony ships, officially Exodus-1 and Exodus-2, are complete, and Riker finds himself tearing up. Afterwards he talks by video with Julia Hendricks and her family, his sister's descendants, for whom these calls with their famous ancestor have become routine; seeing them makes him feel more real than VR does. He outlines the remaining system, integration and stress tests and the shakedown cruise. Julia's family and the Spits group will travel on Exodus-3, a promise Riker obtained from Cranston before agreeing to his proposal, while about three hundred people who cannot fit aboard will be first onto the fourth ship, with established homes guaranteed at Omicron2 Eridani; Cranston asked for volunteers and got them. Julia is glad the old fear that hers might be humanity's last generation did not come true, and her young son Justin, one of the newest members of Clan Bob, laughs at the face his uncle William makes.",
+  "summary": "[[character:riker]], [[character:homer]], [[character:charles]] and [[character:ralph]] drift half a kilometer from the first two colony ships to watch their final assembly in person, though they had agreed a drone feed would be just as good; even [[character:george-butterworth|Colonel Butterworth]] had considered taking a shuttle up. Construction had been balanced so both ships reached the same stage together, and only the connection of the drive rings to the hull remained. Every [[organization:united-nations|UN]] delegate streams the event, and the UN sensibly skips the speeches. When the construction [[technology:ami]] reports all connections successful, the two colony ships, officially [[vessel:exodus-1]] and [[vessel:exodus-2]], are complete, and Riker finds himself tearing up. Afterwards he talks by video with [[character:julia-hendricks]] and her family, his sister's descendants, for whom these calls with their famous ancestor have become routine; seeing them makes him feel more real than [[technology:vr]] does. He outlines the remaining system, integration and stress tests and the shakedown cruise. Julia's family and the Spits group will travel on [[vessel:exodus-3]], a promise Riker obtained from [[character:cranston|Cranston]] before agreeing to his proposal, while about three hundred people who cannot fit aboard will be first onto the fourth ship, with established homes guaranteed at [[location:omicron2-eridani]]; Cranston asked for volunteers and got them. Julia is glad the old fear that hers might be [[species:human|humanity]]'s last generation did not come true, and her young son [[character:justin-hendricks|Justin]], one of the newest members of Clan Bob, laughs at the face his uncle William makes.",
   "date": "2170-10",
   "location_id": "location:sol",
   "introducing": [
     {
       "id": "character:ralph",
       "name": "Ralph",
-      "current_state": "At Sol, he watches the final assembly of the first two colony ships in person with Riker, Homer and Charles."
+      "current_state": "At [[location:sol]], he watches the final assembly of the first two colony ships in person with [[character:riker]], [[character:homer]] and [[character:charles]]."
     },
     {
       "id": "character:justin-hendricks",
       "name": "Justin Hendricks",
       "species_id": "species:human",
       "aliases": ["Justin", "Justin Hendriks"],
-      "current_state": "A young child, son of Julia Hendricks and one of the newest members of Clan Bob. He sits on his mother's lap during her video calls with Riker, whom he loves as his uncle William, and he and his family are to travel on Exodus-3."
+      "current_state": "A young child, son of [[character:julia-hendricks]] and one of the newest members of Clan Bob. He sits on his mother's lap during her video calls with [[character:riker]], whom he loves as his uncle William, and he and his family are to travel on [[vessel:exodus-3]]."
     },
     {
       "id": "vessel:exodus-1",
       "name": "Exodus-1",
-      "description": "A USE colony ship, officially named Exodus-1, built at Sol alongside Exodus-2 as the first two ships of the colony fleet.",
-      "current_state": "Complete after the final connection of its drive rings to the hull, which the construction AMI reported successful; system, integration and stress tests and a shakedown cruise remain."
+      "description": "A [[vessel:use-colony-ship]], officially named Exodus-1, built at [[location:sol]] alongside [[vessel:exodus-2]] as the first two ships of the colony fleet.",
+      "current_state": "Complete after the final connection of its drive rings to the hull, which the construction [[technology:ami]] reported successful; system, integration and stress tests and a shakedown cruise remain."
     },
     {
       "id": "vessel:exodus-2",
       "name": "Exodus-2",
-      "description": "A USE colony ship, officially named Exodus-2, built at Sol alongside Exodus-1 as the first two ships of the colony fleet.",
-      "current_state": "Complete after the final connection of its drive rings to the hull, which the construction AMI reported successful; system, integration and stress tests and a shakedown cruise remain."
+      "description": "A [[vessel:use-colony-ship]], officially named Exodus-2, built at [[location:sol]] alongside [[vessel:exodus-1]] as the first two ships of the colony fleet.",
+      "current_state": "Complete after the final connection of its drive rings to the hull, which the construction [[technology:ami]] reported successful; system, integration and stress tests and a shakedown cruise remain."
     },
     {
       "id": "vessel:exodus-3",
       "name": "Exodus-3",
-      "description": "The third USE colony ship, known earlier as ship three, following Exodus-1 and Exodus-2.",
-      "current_state": "Still to follow the first two ships, carrying the Spitsbergen group, Julia Hendricks's family and FAITH's enclave; about three hundred people who cannot fit aboard will go first on the fourth ship."
+      "description": "The third [[vessel:use-colony-ship]], known earlier as ship three, following [[vessel:exodus-1]] and [[vessel:exodus-2]].",
+      "current_state": "Still to follow the first two ships, carrying the Spitsbergen group, [[character:julia-hendricks]]'s family and [[organization:free-american-independent-theocratic-hegemony]]'s enclave; about three hundred people who cannot fit aboard will go first on the fourth ship."
     }
   ],
   "updates": [
     {
       "entity_id": "character:riker",
-      "current_state": "At Sol, he has seen Exodus-1 and Exodus-2 completed and plans their tests and shakedown cruise. Regular video calls with the Hendricks household, his sister's descendants, make him feel real."
+      "current_state": "At [[location:sol]], he has seen [[vessel:exodus-1]] and [[vessel:exodus-2]] completed and plans their tests and shakedown cruise. Regular video calls with the Hendricks household, his sister's descendants, make him feel real."
     },
     {
       "entity_id": "character:julia-hendricks",
-      "current_state": "Treating Riker as a relative, she talks with him by video regularly and calls him Will, often with her family and young son Justin around her. Her family is to travel on Exodus-3."
+      "current_state": "Treating [[character:riker]] as a relative, she talks with him by video regularly and calls him Will, often with her family and young son [[character:justin-hendricks|Justin]] around her. Her family is to travel on [[vessel:exodus-3]]."
     },
     {
       "entity_id": "character:cranston",
-      "current_state": "His deal trading FAITH's food surplus for the rest of ship three's places stands, on Riker's condition that the Hendricks family and the Spits ride Exodus-3. He has found volunteers to go first on the fourth ship, with homes guaranteed at Omicron2 Eridani."
+      "current_state": "His deal trading [[organization:free-american-independent-theocratic-hegemony]]'s food surplus for the rest of ship three's places stands, on [[character:riker]]'s condition that the Hendricks family and the Spits ride [[vessel:exodus-3]]. He has found volunteers to go first on the fourth ship, with homes guaranteed at [[location:omicron2-eridani]]."
     },
     {
       "entity_id": "vessel:use-colony-ship",
-      "current_state": "Exodus-1 and Exodus-2 are complete and await tests and a shakedown cruise. Exodus-3 is assigned to the Spitsbergen refuge, the Hendricks family and FAITH's enclave, and its overflow will go first on a fourth ship."
+      "current_state": "[[vessel:exodus-1]] and [[vessel:exodus-2]] are complete and await tests and a shakedown cruise. [[vessel:exodus-3]] is assigned to the [[organization:spitsbergen-refuge]], the Hendricks family and [[organization:free-american-independent-theocratic-hegemony]]'s enclave, and its overflow will go first on a fourth ship."
     },
     {
       "entity_id": "organization:united-nations",
-      "current_state": "Every delegate followed the completion of Exodus-1 and Exodus-2 by video stream, and the assembly decided against making speeches for the occasion."
+      "current_state": "Every delegate followed the completion of [[vessel:exodus-1]] and [[vessel:exodus-2]] by video stream, and the assembly decided against making speeches for the occasion."
     }
   ],
   "appearances": [

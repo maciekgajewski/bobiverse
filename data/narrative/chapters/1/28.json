@@ -1,7 +1,7 @@
 {
   "chapter": "1.28",
   "title": "28",
-  "summary": "Calvin surveys the B system while Goku surveys A. Their reconnaissance finds wreckage from a destroyed USE vessel and then locates a Brazilian construction yard building new probes; the system's surveyed resources meet autofactory requirements. Calvin and Goku destroy the yard and its probes, although one vessel escapes; they claim the system, plan defensive replication with combat-class HEAVEN vessels, and decide to report to Bill and work in pairs more often.",
+  "summary": "[[character:calvin]] surveys the B system while [[character:goku]] surveys A. Their reconnaissance finds wreckage from a destroyed [[organization:united-states-of-eurasia]] vessel and then locates a Brazilian construction yard building new probes; the system's surveyed resources meet [[technology:autofactory]] requirements. Calvin and Goku destroy the yard and its probes, although one vessel escapes; they claim the system, plan defensive replication with combat-class HEAVEN vessels, and decide to report to [[character:bill]] and work in pairs more often.",
   "date": "2163-11",
   "location_id": "location:alpha-centauri",
   "introducing": [
@@ -9,7 +9,7 @@
       "id": "location:alpha-centauri-a",
       "name": "Alpha Centauri A",
       "kind": "star",
-      "description": "The A star component of the Alpha Centauri system, surveyed by Goku.",
+      "description": "The A star component of the [[location:alpha-centauri]] system, surveyed by [[character:goku]].",
       "parent_location_id": "location:alpha-centauri",
       "parent_relation": "member_of_system"
     },
@@ -17,7 +17,7 @@
       "id": "location:alpha-centauri-a-1",
       "name": "Alpha Centauri A 1",
       "kind": "planet",
-      "description": "A planet in Alpha Centauri A's comfort zone, identified on Goku's first survey pass.",
+      "description": "A planet in [[location:alpha-centauri-a]]'s comfort zone, identified on [[character:goku]]'s first survey pass.",
       "parent_location_id": "location:alpha-centauri-a",
       "parent_relation": "orbits"
     },
@@ -25,7 +25,7 @@
       "id": "location:alpha-centauri-b",
       "name": "Alpha Centauri B",
       "kind": "star",
-      "description": "The B star component of the Alpha Centauri system. It is more orange than Sol and has less than half Sol's luminosity; Calvin considers it less than ideal for a human home.",
+      "description": "The B star component of the [[location:alpha-centauri]] system. It is more orange than [[location:sol]] and has less than half Sol's luminosity; [[character:calvin]] considers it less than ideal for a human home.",
       "parent_location_id": "location:alpha-centauri",
       "parent_relation": "member_of_system"
     },
@@ -34,7 +34,7 @@
       "name": "Alpha Centauri B 1",
       "kind": "planet",
       "body_class": "rocky",
-      "description": "A small Mercury-like planet in an inner orbit around Alpha Centauri B.",
+      "description": "A small Mercury-like planet in an inner orbit around [[location:alpha-centauri-b]].",
       "parent_location_id": "location:alpha-centauri-b",
       "parent_relation": "orbits"
     },
@@ -42,7 +42,7 @@
       "id": "location:alpha-centauri-b-asteroid-belt-1",
       "name": "asteroid belt",
       "kind": "asteroid_belt",
-      "description": "An asteroid belt identified during Calvin's survey of Alpha Centauri B. Scouts find wreckage there from a USE vessel, autofactory equipment, and fragments from two to three vessels.",
+      "description": "An asteroid belt identified during [[character:calvin]]'s survey of [[location:alpha-centauri-b]]. Scouts find wreckage there from a [[organization:united-states-of-eurasia]] vessel, [[technology:autofactory]] equipment, and fragments from two to three vessels.",
       "parent_location_id": "location:alpha-centauri-b",
       "parent_relation": "orbits"
     },
@@ -50,7 +50,7 @@
       "id": "location:alpha-centauri-b-asteroid-belt-2",
       "name": "asteroid belt",
       "kind": "asteroid_belt",
-      "description": "A second asteroid belt in Alpha Centauri B's comfort zone.",
+      "description": "A second asteroid belt in [[location:alpha-centauri-b]]'s comfort zone.",
       "parent_location_id": "location:alpha-centauri-b",
       "parent_relation": "orbits"
     },
@@ -63,31 +63,31 @@
   "updates": [
     {
       "entity_id": "character:calvin",
-      "current_state": "At Alpha Centauri with Goku after they destroy a Brazilian construction yard and claim the system."
+      "current_state": "At [[location:alpha-centauri]] with [[character:goku]] after they destroy a Brazilian construction yard and claim the system."
     },
     {
       "entity_id": "character:goku",
-      "current_state": "At Alpha Centauri with Calvin after they destroy a Brazilian construction yard and claim the system."
+      "current_state": "At [[location:alpha-centauri]] with [[character:calvin]] after they destroy a Brazilian construction yard and claim the system."
     },
     {
       "entity_id": "location:alpha-centauri",
-      "state": "Calvin and Goku claim control of the system after destroying a Brazilian construction yard."
+      "state": "[[character:calvin]] and [[character:goku]] claim control of the system after destroying a Brazilian construction yard."
     },
     {
       "entity_id": "technology:exploration-scouts",
-      "description": "Small craft that investigate planets directly, filling a gap in the original mission design. In reconnaissance they activate at staggered distances on random vectors so an observer cannot trace the launching vessel, and modified SUDDAR arrays extend their survey range."
+      "description": "Small craft that investigate planets directly, filling a gap in the original mission design. In reconnaissance they activate at staggered distances on random vectors so an observer cannot trace the launching vessel, and modified [[technology:suddar]] arrays extend their survey range."
     },
     {
       "entity_id": "technology:suddar",
-      "description": "A subspace detection technology enabled by the same breakthrough as the SURGE drive. It can monitor distance, scan for threats and detect dense objects within a light-hour. An emitter flaw can give a much weaker ping with poor close-range sensitivity, which Bill suspects may reach farther. It gives little fine detail at long range, and a modified array can reach three light-hours at much lower resolution."
+      "description": "A subspace detection technology enabled by the same breakthrough as the [[technology:surge-drive]]. It can monitor distance, scan for threats and detect dense objects within a light-hour. An emitter flaw can give a much weaker ping with poor close-range sensitivity, which [[character:bill]] suspects may reach farther. It gives little fine detail at long range, and a modified array can reach three light-hours at much lower resolution."
     },
     {
       "entity_id": "vessel:heaven-9",
-      "current_state": "At Alpha Centauri with Heaven-10 after Calvin and Goku's attack on a Brazilian construction yard."
+      "current_state": "At [[location:alpha-centauri]] with [[vessel:heaven-10]] after [[character:calvin]] and [[character:goku]]'s attack on a Brazilian construction yard."
     },
     {
       "entity_id": "vessel:heaven-10",
-      "current_state": "At Alpha Centauri with Heaven-9 after Calvin and Goku's attack on a Brazilian construction yard."
+      "current_state": "At [[location:alpha-centauri]] with [[vessel:heaven-9]] after [[character:calvin]] and [[character:goku]]'s attack on a Brazilian construction yard."
     }
   ],
   "appearances": [

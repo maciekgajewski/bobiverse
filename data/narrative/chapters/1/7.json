@@ -1,7 +1,7 @@
 {
   "chapter": "1.7",
   "title": "7",
-  "summary": "Dr. Landers tells Bob that Project HEAVEN has been reduced from eight planned vessels to one as opponents converge on the project, leaving it vulnerable to sabotage. After gaining full project and library access, Bob explores the geopolitical race for self-replicating probes and learns how the USE, China, the Brazilian Empire, and Australia compare. Landers believes Bob and the other remaining replicant offer an unconventional advantage.",
+  "summary": "[[character:dr-landers]] tells [[character:bob-replicant]] that Project HEAVEN has been reduced from eight planned vessels to one as opponents converge on the project, leaving it vulnerable to sabotage. After gaining full project and library access, Bob explores the geopolitical race for self-replicating probes and learns how the [[organization:united-states-of-eurasia]], [[organization:china]], the [[organization:brazilian-empire]], and [[organization:australia]] compare. Landers believes Bob and the other remaining replicant offer an unconventional advantage.",
   "date": "2133-07-25",
   "location_id": "location:new-handeltown",
   "introducing": [
@@ -13,27 +13,27 @@
     {
       "id": "technology:suddar",
       "name": "SUDDAR",
-      "description": "A subspace technology enabled by the same theoretical breakthrough as the SURGE drive and associated with the new possibility of interstellar probes and colonization."
+      "description": "A subspace technology enabled by the same theoretical breakthrough as the [[technology:surge-drive]] and associated with the new possibility of interstellar probes and colonization."
     },
     {
       "id": "organization:united-states-of-eurasia",
       "name": "USE",
-      "description": "The United States of Eurasia controls Europe and most of western Russia. It began an interstellar probe project two years earlier, and Dr. Landers considers it the strongest long-term competitor, with a substantial lead in colonization readiness."
+      "description": "The United States of Eurasia controls Europe and most of western Russia. It began an interstellar probe project two years earlier, and [[character:dr-landers]] considers it the strongest long-term competitor, with a substantial lead in colonization readiness."
     },
     {
       "id": "organization:china",
       "name": "China",
-      "description": "A major power whose probe project is sacrificing other concerns for speed and is expected to use an AMI. Dr. Landers's organization considers its project the most likely to fail outright."
+      "description": "A major power whose probe project is sacrificing other concerns for speed and is expected to use an [[technology:ami]]. [[character:dr-landers]]'s organization considers its project the most likely to fail outright."
     },
     {
       "id": "organization:brazilian-empire",
       "name": "Brazilian Empire",
-      "description": "A belligerent power believed by Dr. Landers's organization to be potentially arming its probes and to be the most likely sabotage threat. His organization expects it to launch multiple probes and, if it finds a suitable system, establish a military presence and reproduce there."
+      "description": "A belligerent power believed by [[character:dr-landers]]'s organization to be potentially arming its probes and to be the most likely sabotage threat. His organization expects it to launch multiple probes and, if it finds a suitable system, establish a military presence and reproduce there."
     },
     {
       "id": "organization:australia",
       "name": "Australia",
-      "description": "A suspected participant in the international interstellar-probe race, referred to as Australia. Dr. Landers's organization suspects it of operating a probe project."
+      "description": "A suspected participant in the international interstellar-probe race, referred to as Australia. [[character:dr-landers]]'s organization suspects it of operating a probe project."
     }
   ],
   "appearances": [
@@ -55,7 +55,7 @@
     },
     {
       "entity_id": "organization:free-american-independent-theocratic-hegemony",
-      "description": "The Free American Independent Theocratic Hegemony, a theocratic U.S. government that makes criticism a felony and permits the deactivation of machine persons for it. It controls most of North America, restricts information by default, and finances the replicant project, owning Bob. Some of its factions regard AI and replicants as abominations or reject all technology since steam power, and several seek to stop Project HEAVEN, the Habitable Earths Abiogenic Vessel Exploration Network."
+      "description": "The Free American Independent Theocratic Hegemony, a theocratic U.S. government that makes criticism a felony and permits the deactivation of machine persons for it. It controls most of North America, restricts information by default, and finances the replicant project, owning [[character:bob-replicant]]. Some of its factions regard AI and replicants as abominations or reject all technology since steam power, and several seek to stop Project HEAVEN, the Habitable Earths Abiogenic Vessel Exploration Network."
     },
     {
       "entity_id": "technology:von-neumann-probe",

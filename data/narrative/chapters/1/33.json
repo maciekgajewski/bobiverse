@@ -1,14 +1,14 @@
 {
   "chapter": "1.33",
   "title": "33",
-  "summary": "Riker finds that about fifteen million humans remain on Earth as worsening cold threatens their refuges. He and Arthur improve contact with a hard-to-ignore holographic presentation, then convene a new United Nations of survivor groups to decide its own governance rather than accept Riker's control. Riker rejects FAITH's demand for preferential evacuation treatment. Gudmund Valter, leader of the Spitsbergen refuge, warns that its food outlook is worsening but reveals that its surviving seed and animal-genetics vaults could substantially improve future colonies.",
+  "summary": "[[character:riker]] finds that about fifteen million [[species:human|humans]] remain on [[location:earth]] as worsening cold threatens their refuges. He and [[character:arthur]] improve contact with a hard-to-ignore holographic presentation, then convene a new [[organization:united-nations]] of survivor groups to decide its own governance rather than accept Riker's control. Riker rejects [[organization:free-american-independent-theocratic-hegemony]]'s demand for preferential evacuation treatment. [[character:gudmund-valter]], leader of the Spitsbergen refuge, warns that its food outlook is worsening but reveals that its surviving seed and animal-genetics vaults could substantially improve future colonies.",
   "date": "2158-03",
   "location_id": "location:sol",
   "introducing": [
     {
       "id": "organization:united-nations",
       "name": "United Nations",
-      "description": "A new assembly of surviving human groups convened by Riker to organize cooperation on humanity's survival. Its delegates are to determine their own chairperson and meeting rules rather than accept Riker as their permanent authority.",
+      "description": "A new assembly of surviving human groups convened by [[character:riker]] to organize cooperation on [[species:human|humanity]]'s survival. Its delegates are to determine their own chairperson and meeting rules rather than accept Riker as their permanent authority.",
       "current_state": "Its first sessions have begun, and its delegates are working out their governance arrangements."
     },
     {
@@ -20,7 +20,7 @@
   "updates": [
     {
       "entity_id": "character:riker",
-      "current_state": "At Sol, organizing surviving Earth enclaves into a United Nations while continuing to coordinate their survival and eventual evacuation."
+      "current_state": "At [[location:sol]], organizing surviving [[location:earth]] enclaves into a [[organization:united-nations]] while continuing to coordinate their survival and eventual evacuation."
     },
     {
       "entity_id": "location:earth",
@@ -28,11 +28,11 @@
     },
     {
       "entity_id": "organization:free-american-independent-theocratic-hegemony",
-      "current_state": "Its San Diego enclave seeks preferential evacuation treatment, but Riker rejects the demand."
+      "current_state": "Its San Diego enclave seeks preferential evacuation treatment, but [[character:riker]] rejects the demand."
     },
     {
       "entity_id": "organization:united-states-of-eurasia",
-      "current_state": "Its enclave outside Augsburg is expected to depart Earth first because it supplied colony-ship plans, an arrangement opposed by many other survivor groups."
+      "current_state": "Its enclave outside Augsburg is expected to depart [[location:earth]] first because it supplied colony-ship plans, an arrangement opposed by many other survivor groups."
     },
     {
       "entity_id": "technology:guppi-interface",
@@ -40,7 +40,7 @@
     },
     {
       "entity_id": "vessel:use-colony-ship",
-      "current_state": "The planned evacuation ships can move only a small fraction of Earth's survivors at a time, so most people must be kept alive on Earth while construction and destination planning continue."
+      "current_state": "The planned evacuation ships can move only a small fraction of [[location:earth]]'s survivors at a time, so most people must be kept alive on Earth while construction and destination planning continue."
     }
   ],
   "appearances": [

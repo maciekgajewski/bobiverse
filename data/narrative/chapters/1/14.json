@@ -1,7 +1,7 @@
 {
   "chapter": "1.14",
   "title": "14",
-  "summary": "Bob surveys Epsilon Eridani for usable resources while preparing an ambush for an approaching Brazilian probe. With asteroid materials located, miners deployed, and factory systems ready, he accepts a months-long delay to reproduction in order to prepare for a possible battle.",
+  "summary": "[[character:bob-replicant]] surveys [[location:epsilon-eridani]] for usable resources while preparing an ambush for an approaching Brazilian probe. With asteroid materials located, miners deployed, and factory systems ready, he accepts a months-long delay to reproduction in order to prepare for a possible battle.",
   "date": "2144-08",
   "location_id": "location:epsilon-eridani",
   "appearances": [
@@ -20,16 +20,16 @@
   "updates": [
     {
       "entity_id": "character:bob-replicant",
-      "current_state": "At Epsilon Eridani, preparing an ambush for an approaching Brazilian probe; the work will delay reproduction by months."
+      "current_state": "At [[location:epsilon-eridani]], preparing an ambush for an approaching Brazilian probe; the work will delay reproduction by months."
     },
     {
       "entity_id": "technology:suddar",
-      "description": "A subspace technology enabled by the same theoretical breakthrough as the SURGE drive and associated with the new possibility of interstellar probes and colonization. It can be used to monitor distance, scan for threats, and detect dense objects within a light-hour radius."
+      "description": "A subspace technology enabled by the same theoretical breakthrough as the [[technology:surge-drive]] and associated with the new possibility of interstellar probes and colonization. It can be used to monitor distance, scan for threats, and detect dense objects within a light-hour radius."
     },
     {
       "entity_id": "vessel:heaven-1",
-      "description": "A converted interplanetary freighter equipped as a Von Neumann probe: a small, light, resilient design built to copy itself. It carries a SURGE drive ring, fusion reactor, ramscoop, three large 3D printers, ROAMers, nanites and mining cargo carriers, but no weapons.",
-      "current_state": "At Epsilon Eridani, its miners are deployed, sufficient material has been located, and its factory systems are ready to manufacture."
+      "description": "A converted interplanetary freighter equipped as a [[technology:von-neumann-probe]]: a small, light, resilient design built to copy itself. It carries a [[technology:surge-drive]] ring, fusion reactor, ramscoop, three large 3D printers, [[technology:roamers]], [[technology:nanites]] and mining cargo carriers, but no weapons.",
+      "current_state": "At [[location:epsilon-eridani]], its miners are deployed, sufficient material has been located, and its factory systems are ready to manufacture."
     }
   ]
 }

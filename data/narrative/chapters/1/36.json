@@ -1,14 +1,14 @@
 {
   "chapter": "1.36",
   "title": "36",
-  "summary": "Riker manages fractious negotiations among prospective emigrant groups. He rejects Valter's attempt to use the Svalbard vaults to secure priority passage, weighs Butterworth's proposal to accelerate a third colony ship, and refuses FAITH's attempted obedience override. Valter later indicates that a closer third-ship schedule may allow a compromise.",
+  "summary": "[[character:riker]] manages fractious negotiations among prospective emigrant groups. He rejects Valter's attempt to use the Svalbard vaults to secure priority passage, weighs [[character:george-butterworth|Butterworth]]'s proposal to accelerate a third colony ship, and refuses [[organization:free-american-independent-theocratic-hegemony]]'s attempted obedience override. Valter later indicates that a closer third-ship schedule may allow a compromise.",
   "date": "2158-09",
   "location_id": "location:sol",
   "introducing": [
     {
       "id": "organization:spitsbergen-refuge",
       "name": "Spitsbergen refuge",
-      "description": "The Spitsbergen refuge, also called the Spits, is a survivor group technically within USE that does not recognize Colonel Butterworth's authority."
+      "description": "The Spitsbergen refuge, also called the Spits, is a survivor group technically within [[organization:united-states-of-eurasia]] that does not recognize [[character:george-butterworth|Colonel Butterworth]]'s authority."
     },
     {
       "id": "organization:svalbard-global-trust",
@@ -18,17 +18,17 @@
     {
       "id": "character:cranston",
       "name": "Minister Cranston",
-      "current_state": "After invoking protocol override four alpha twenty-three, he fails to compel Riker and has his call terminated."
+      "current_state": "After invoking [[technology:protocol-override-four-alpha-twenty-three]], he fails to compel [[character:riker]] and has his call terminated."
     },
     {
       "id": "technology:buried-imperatives",
       "name": "buried imperatives",
-      "description": "Buried imperatives are control directives that FAITH programmers installed in a replicant matrix. A protocol override is intended to activate one and compel Riker's obedience."
+      "description": "Buried imperatives are control directives that [[organization:free-american-independent-theocratic-hegemony]] programmers installed in a [[technology:replicant-matrix]]. A protocol override is intended to activate one and compel [[character:riker]]'s obedience."
     },
     {
       "id": "technology:protocol-override-four-alpha-twenty-three",
       "name": "protocol override four alpha twenty-three",
-      "description": "Protocol override four alpha twenty-three is a code phrase intended to activate a buried imperative and make Riker obedient."
+      "description": "Protocol override four alpha twenty-three is a code phrase intended to activate a buried imperative and make [[character:riker]] obedient."
     }
   ],
   "appearances": [
@@ -41,27 +41,27 @@
   "updates": [
     {
       "entity_id": "organization:united-states-of-eurasia",
-      "current_state": "Its enclave outside Augsburg is to leave Earth first for supplying the colony-ship plans, against many groups' objections. The Spitsbergen refuge is technically part of USE but rejects Colonel Butterworth's authority."
+      "current_state": "Its enclave outside Augsburg is to leave [[location:earth]] first for supplying the colony-ship plans, against many groups' objections. The [[organization:spitsbergen-refuge]] is technically part of USE but rejects [[character:george-butterworth|Colonel Butterworth]]'s authority."
     },
     {
       "entity_id": "character:george-butterworth",
-      "current_state": "Leading a surviving USE group from an underground military installation while coordinating with Riker and Homer. His group would fill the first two colony ships, and he refuses to surrender passage or leave part of it behind."
+      "current_state": "Leading a surviving [[organization:united-states-of-eurasia]] group from an underground military installation while coordinating with [[character:riker]] and [[character:homer]]. His group would fill the first two colony ships, and he refuses to surrender passage or leave part of it behind."
     },
     {
       "entity_id": "character:gudmund-valter",
-      "current_state": "Leading the Spitsbergen refuge while seeking survival and emigration assurances for its people. He demands priority passage in return for access to the Svalbard vaults, but later signals willingness to discuss a closer third-ship schedule."
+      "current_state": "Leading the [[organization:spitsbergen-refuge]] while seeking survival and emigration assurances for its people. He demands priority passage in return for access to the Svalbard vaults, but later signals willingness to discuss a closer third-ship schedule."
     },
     {
       "entity_id": "vessel:use-colony-ship",
-      "current_state": "The ships can move only a small fraction of Earth's survivors at a time, so most must be kept alive meanwhile. Butterworth proposes speeding up a third ship by a year at the cost of delaying the first two by almost four months."
+      "current_state": "The ships can move only a small fraction of [[location:earth]]'s survivors at a time, so most must be kept alive meanwhile. [[character:george-butterworth|Butterworth]] proposes speeding up a third ship by a year at the cost of delaying the first two by almost four months."
     },
     {
       "entity_id": "technology:replicant-matrix",
-      "description": "A spare hardware unit carried aboard Heaven-1 that can contain a complete GUPPI system. Riker's matrix once contained buried imperatives installed by FAITH programmers; Bob-1 removed some of them during the journey to Epsilon Eridani."
+      "description": "A spare hardware unit carried aboard [[vessel:heaven-1]] that can contain a complete [[technology:guppi-interface|GUPPI]] system. [[character:riker]]'s matrix once contained [[technology:buried-imperatives]] installed by [[organization:free-american-independent-theocratic-hegemony]] programmers; [[character:bob-replicant|Bob-1]] removed some of them during the journey to [[location:epsilon-eridani]]."
     },
     {
       "entity_id": "character:riker",
-      "current_state": "At Sol, organizing surviving Earth enclaves into a United Nations while managing fractious negotiations over survival and eventual evacuation."
+      "current_state": "At [[location:sol]], organizing surviving [[location:earth]] enclaves into a [[organization:united-nations]] while managing fractious negotiations over survival and eventual evacuation."
     }
   ],
   "mentions": [

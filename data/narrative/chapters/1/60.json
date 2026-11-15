@@ -1,37 +1,37 @@
 {
   "chapter": "1.60",
   "title": "60",
-  "summary": "Khan leads eight version-3 Bobs, Bill's answer to Milo's death, to 82 Eridani, where Medeiros has had thirty-five years to dig in. Approaching from stellar north, they send booby-trapped scout probes ahead, but Hannibal is vaporized by a nuclear bomb that was cloaked against ordinary SUDDAR sweeps. Three more such bombs are closing in; a fly-by probe scan identifies them as fission weapons, and the Bobs destroy them with Bill's new plasma spikes, the weapon's first real combat use. Bill's advice is to update their backups and go in rather than give Medeiros more time, so the seven survivors dive toward the inner system at 10 g. Medeiros answers with scattering units, over a hundred decoy fusion sources and cloaked bombs. A near miss knocks out Fred and Jackson, whose dead-man switches overload their reactors, and when Medeiros realizes the spikes cannot chase a target his whole force closes in, jinking. Splitting up, Khan works out from the radio-command lag in recorded telemetry that the orders spread out from one point, and the remaining Bobs launch every buster they have at it while jamming SUDDAR at full power. Hector and Tom go silent, probably caught by a nuke, and Barney drops out; Khan is crippled for minutes by two near detonations until Guppy's roamers restore his drive. Forty-four busters reach three Brazilian probes at the target point and destroy them, but Medeiros's AMI units fight on. With his drive failing, Elmer sends a final differential to Bill and keeps jamming so that Khan can slip away silently, and is overwhelmed. After coasting away for two weeks to make repairs, Khan, the only survivor of the eight, debriefs in Bill's VR: three of the lost Bobs' backups did not complete over unreliable SCUT links and have gone onto the In Memoriam list, but Elmer's arrived intact. They agree that a return is needed, since not every copy of Medeiros may be dead and his AMI units are still active, and Bill wants to understand the cloaking. Thirteen years from home, Khan asks Bill to load his backup into one of the new ships so he can join the next wave.",
+  "summary": "[[character:khan]] leads eight version-3 Bobs, [[character:bill]]'s answer to [[character:milo]]'s death, to [[location:82-eridani]], where [[character:ernesto-medeiros|Medeiros]] has had thirty-five years to dig in. Approaching from stellar north, they send booby-trapped scout probes ahead, but [[character:hannibal]] is vaporized by a nuclear bomb that was cloaked against ordinary [[technology:suddar]] sweeps. Three more such bombs are closing in; a fly-by probe scan identifies them as fission weapons, and the Bobs destroy them with Bill's new plasma spikes, the weapon's first real combat use. Bill's advice is to update their backups and go in rather than give Medeiros more time, so the seven survivors dive toward the inner system at 10 g. Medeiros answers with scattering units, over a hundred decoy fusion sources and cloaked bombs. A near miss knocks out [[character:fred]] and [[character:jackson]], whose dead-man switches overload their reactors, and when Medeiros realizes the spikes cannot chase a target his whole force closes in, jinking. Splitting up, Khan works out from the radio-command lag in recorded telemetry that the orders spread out from one point, and the remaining Bobs launch every buster they have at it while jamming SUDDAR at full power. [[character:hector]] and [[character:tom]] go silent, probably caught by a nuke, and [[character:barney]] drops out; Khan is crippled for minutes by two near detonations until Guppy's roamers restore his drive. Forty-four busters reach three Brazilian probes at the target point and destroy them, but Medeiros's [[technology:ami]] units fight on. With his drive failing, [[character:elmer]] sends a final differential to Bill and keeps jamming so that Khan can slip away silently, and is overwhelmed. After coasting away for two weeks to make repairs, Khan, the only survivor of the eight, debriefs in Bill's [[technology:vr]]: three of the lost Bobs' backups did not complete over unreliable [[technology:subspace-communications|SCUT]] links and have gone onto the In Memoriam list, but Elmer's arrived intact. They agree that a return is needed, since not every copy of Medeiros may be dead and his AMI units are still active, and Bill wants to understand the cloaking. Thirteen years from home, Khan asks Bill to load his backup into one of the new ships so he can join the next wave.",
   "date": "2185-04",
   "location_id": "location:82-eridani",
   "introducing": [
     {
       "id": "character:khan",
       "name": "Khan",
-      "current_state": "The only one of the eight Bobs sent to 82 Eridani to survive the battle there. After repairs he is on a thirteen-year trip back, and he has asked Bill to load his backup into one of the new ships so that he can join the next wave against Medeiros."
+      "current_state": "The only one of the eight Bobs sent to [[location:82-eridani]] to survive the battle there. After repairs he is on a thirteen-year trip back, and he has asked [[character:bill]] to load his backup into one of the new ships so that he can join the next wave against [[character:ernesto-medeiros|Medeiros]]."
     },
     {
       "id": "character:hannibal",
       "name": "Hannibal",
-      "current_state": "Destroyed at 82 Eridani by a cloaked nuclear bomb, leaving only a radioactive cloud.",
+      "current_state": "Destroyed at [[location:82-eridani]] by a cloaked nuclear bomb, leaving only a radioactive cloud.",
       "death_date": "2185-04"
     },
     {
       "id": "character:tom",
       "name": "Tom",
-      "current_state": "Lost at 82 Eridani when his signal cut off without warning, probably caught by a nuclear bomb.",
+      "current_state": "Lost at [[location:82-eridani]] when his signal cut off without warning, probably caught by a nuclear bomb.",
       "death_date": "2185-04"
     },
     {
       "id": "character:barney",
       "name": "Barney",
-      "current_state": "Lost at 82 Eridani; he dropped out during the final fighting, and how is not stated.",
+      "current_state": "Lost at [[location:82-eridani]]; he dropped out during the final fighting, and how is not stated.",
       "death_date": "2185-04"
     },
     {
       "id": "character:fred",
       "name": "Fred",
-      "current_state": "Lost at 82 Eridani when a nearby detonation crippled his ship and its dead-man switch overloaded the reactor.",
+      "current_state": "Lost at [[location:82-eridani]] when a nearby detonation crippled his ship and its [[technology:dead-man-switch]] overloaded the reactor.",
       "death_date": "2185-04"
     },
     {
@@ -45,19 +45,19 @@
     {
       "id": "character:elmer",
       "name": "Elmer",
-      "current_state": "Destroyed at 82 Eridani after his drive failed, having stayed behind to keep jamming SUDDAR so that Khan could escape. His last differential backup reached Bill intact.",
+      "current_state": "Destroyed at [[location:82-eridani]] after his drive failed, having stayed behind to keep jamming [[technology:suddar]] so that [[character:khan]] could escape. His last differential backup reached [[character:bill]] intact.",
       "death_date": "2185-04"
     },
     {
       "id": "character:jackson",
       "name": "Jackson",
-      "current_state": "Lost at 82 Eridani when a nearby detonation crippled his ship and its dead-man switch overloaded the reactor.",
+      "current_state": "Lost at [[location:82-eridani]] when a nearby detonation crippled his ship and its [[technology:dead-man-switch]] overloaded the reactor.",
       "death_date": "2185-04"
     },
     {
       "id": "character:hector",
       "name": "Hector",
-      "current_state": "Lost at 82 Eridani when his signal cut off without warning, probably caught by a nuclear bomb.",
+      "current_state": "Lost at [[location:82-eridani]] when his signal cut off without warning, probably caught by a nuclear bomb.",
       "death_date": "2185-04"
     },
     {
@@ -65,7 +65,7 @@
       "name": "Battle at 82 Eridani",
       "date": "2185-04",
       "location_id": "location:82-eridani",
-      "description": "An attack by eight version-3 Bobs under Khan on Medeiros, entrenched at 82 Eridani for about thirty-five years, launched to avenge Milo. Against cloaked fission bombs, decoys and AMI-piloted units, the Bobs used plasma spikes in real combat for the first time and destroyed three probes believed to be Medeiros, but every Bob except Khan was lost and only Elmer's backup arrived intact. Whether every copy of Medeiros was destroyed is unknown, and a return wave is planned.",
+      "description": "An attack by eight version-3 Bobs under [[character:khan]] on [[character:ernesto-medeiros|Medeiros]], entrenched at [[location:82-eridani]] for about thirty-five years, launched to avenge [[character:milo]]. Against cloaked fission bombs, decoys and AMI-piloted units, the Bobs used plasma spikes in real combat for the first time and destroyed three probes believed to be Medeiros, but every Bob except Khan was lost and only [[character:elmer]]'s backup arrived intact. Whether every copy of Medeiros was destroyed is unknown, and a return wave is planned.",
       "participant_ids": [
         "character:khan",
         "character:hannibal",
@@ -83,39 +83,39 @@
     {
       "id": "technology:plasma-spike",
       "name": "plasma spike",
-      "description": "A weapon from Bill's Skunk Works, derived from light-saber technology, that projects magnetically bottled million-degree plasma at close to light speed as a charged spear that melts through its target and delivers a localized EMP. Having very little mass, it is invisible to SUDDAR, but it cannot follow a dodging target and its cannons need time to recharge. It saw its first real combat at 82 Eridani in 2185."
+      "description": "A weapon from [[character:bill]]'s Skunk Works, derived from light-saber technology, that projects magnetically bottled million-degree plasma at close to light speed as a charged spear that melts through its target and delivers a localized EMP. Having very little mass, it is invisible to [[technology:suddar]], but it cannot follow a dodging target and its cannons need time to recharge. It saw its first real combat at [[location:82-eridani]] in 2185."
     },
     {
       "id": "technology:dead-man-switch",
       "name": "dead-man switch",
-      "description": "A safeguard on Bob vessels: when a ship loses too much functionality, its dead-man switch triggers a reactor overload that destroys it. Bobs make sure their dead-man switches are in order before going into battle."
+      "description": "A safeguard on [[character:bob-replicant]] vessels: when a ship loses too much functionality, its dead-man switch triggers a reactor overload that destroys it. Bobs make sure their dead-man switches are in order before going into battle."
     },
     {
       "id": "technology:backup",
       "name": "backup",
-      "description": "A stored copy of a Bob's mind that can be sent to another Bob, either as a full backup or as a differential update. Transmissions over SCUT can fail to complete because of dropped packets and re-sends, and a Bob whose backup fails is added to the In Memoriam list; a completed backup can be loaded into a new ship."
+      "description": "A stored copy of a Bob's mind that can be sent to another Bob, either as a full backup or as a differential update. Transmissions over [[technology:subspace-communications|SCUT]] can fail to complete because of dropped packets and re-sends, and a Bob whose backup fails is added to the In Memoriam list; a completed backup can be loaded into a new ship."
     }
   ],
   "updates": [
     {
       "entity_id": "character:bill",
-      "current_state": "Having avenged Milo by sending eight version-3 Bobs against Medeiros, he has added the three Bobs whose backups failed to the In Memoriam list and wants to learn how the Brazilian cloaking works."
+      "current_state": "Having avenged [[character:milo]] by sending eight version-3 Bobs against [[character:ernesto-medeiros|Medeiros]], he has added the three Bobs whose backups failed to the In Memoriam list and wants to learn how the Brazilian cloaking works."
     },
     {
       "entity_id": "character:ernesto-medeiros",
-      "current_state": "Entrenched at 82 Eridani for about thirty-five years, he ambushed an eight-Bob squad there in April 2185; three probes believed to be him were destroyed, but other copies may survive and his AMI units remain active."
+      "current_state": "Entrenched at [[location:82-eridani]] for about thirty-five years, he ambushed an eight-Bob squad there in April 2185; three probes believed to be him were destroyed, but other copies may survive and his [[technology:ami]] units remain active."
     },
     {
       "entity_id": "location:82-eridani",
-      "state": "Medeiros, entrenched here for about thirty-five years and responsible for Milo's loss, fought off eight version-3 Bobs in April 2185; three probes believed to be him were destroyed, but his AMI units remain active and only one Bob escaped."
+      "state": "[[character:ernesto-medeiros|Medeiros]], entrenched here for about thirty-five years and responsible for [[character:milo]]'s loss, fought off eight version-3 Bobs in April 2185; three probes believed to be him were destroyed, but his [[technology:ami]] units remain active and only one [[character:bob-replicant]] escaped."
     },
     {
       "entity_id": "technology:ship-busters",
-      "description": "Improvised attack units carrying small reactors, oversized SURGE drives, AMI pilots and dense metal projectiles instead of warheads. They intercept missiles or ram vessels at very high acceleration, can drift on stored power with reactors off, and their steel balls double as rail-gun ammunition. They can take follow-on orders, and a later version carries a controlled fusion detonation and can be sent at targets located only to within a few thousand kilometers."
+      "description": "Improvised attack units carrying small reactors, oversized SURGE drives, [[technology:ami]] pilots and dense metal projectiles instead of warheads. They intercept missiles or ram vessels at very high acceleration, can drift on stored power with reactors off, and their steel balls double as rail-gun ammunition. They can take follow-on orders, and a later version carries a controlled fusion detonation and can be sent at targets located only to within a few thousand kilometers."
     },
     {
       "entity_id": "technology:exploration-scouts",
-      "description": "Small craft that investigate planets directly, filling a gap in the original mission design. In reconnaissance they activate at staggered distances on random vectors so an observer cannot trace the launching vessel, and modified SUDDAR arrays extend their survey range. Reconnaissance probes carry shielded reactors, three-light-hour SUDDARs and SCUT links, are booby-trapped against capture, and fly without radio emissions so that most pass through a system undetected."
+      "description": "Small craft that investigate planets directly, filling a gap in the original mission design. In reconnaissance they activate at staggered distances on random vectors so an observer cannot trace the launching vessel, and modified [[technology:suddar]] arrays extend their survey range. Reconnaissance probes carry shielded reactors, three-light-hour SUDDARs and [[technology:subspace-communications|SCUT]] links, are booby-trapped against capture, and fly without radio emissions so that most pass through a system undetected."
     },
     {
       "entity_id": "technology:ami",
@@ -123,15 +123,15 @@
     },
     {
       "entity_id": "technology:subspace-communications",
-      "description": "SCUT, the Subspace Communications Universal Transceiver, carries signals through subspace; its notes describe instantaneous communication across interstellar distances, using the same object and VR interfaces as earlier tests. Those tests predicted dropouts at about twenty-five light-years, so longer links must be relayed. No unit is yet small enough to fit inside Bill's moose-sized android prototype, and its bandwidth is too unreliable for dependable backups."
+      "description": "SCUT, the Subspace Communications Universal Transceiver, carries signals through subspace; its notes describe instantaneous communication across interstellar distances, using the same object and [[technology:vr]] interfaces as earlier tests. Those tests predicted dropouts at about twenty-five light-years, so longer links must be relayed. No unit is yet small enough to fit inside [[character:bill]]'s moose-sized android prototype, and its bandwidth is too unreliable for dependable backups."
     },
     {
       "entity_id": "technology:suddar",
-      "description": "A subspace detection technology enabled by the same breakthrough as the SURGE drive. It can monitor distance, scan for threats and detect dense objects within a light-hour. It gives little fine detail at long range; a modified array can reach three light-hours at lower resolution, and point-focused pings give maximum detail on one target. Its beam can also carry power through subspace, as alien mechanical ants and an alien SUDDAR unit at Beta Hydri show. At full intensity it can jam a whole system, and Medeiros's bombs at 82 Eridani were cloaked against it."
+      "description": "A subspace detection technology enabled by the same breakthrough as the [[technology:surge-drive]]. It can monitor distance, scan for threats and detect dense objects within a light-hour. It gives little fine detail at long range; a modified array can reach three light-hours at lower resolution, and point-focused pings give maximum detail on one target. Its beam can also carry power through subspace, as alien [[technology:mechanical-ants]] and an alien SUDDAR unit at [[location:beta-hydri]] show. At full intensity it can jam a whole system, and [[character:ernesto-medeiros|Medeiros]]'s bombs at [[location:82-eridani]] were cloaked against it."
     },
     {
       "entity_id": "technology:vr",
-      "description": "A virtual-reality interface developed aboard Heaven-1 to give a bodiless mind sensory input and an embodied experience; its software is still being refined. It provides convincing sensations, a humanlike avatar and shared environments such as libraries, parks and command decks, where users can create objects and play games. Bill regards such embodied activity as important to keeping a human sense of self. Bill's upgrades let Bobs interact physically rather than only through video windows, and proprioception can be switched off. Bobs in different star systems can share a session, such as a virtual pub, but not while travelling at high tau. Bobs feel fully human in it most of the time."
+      "description": "A virtual-reality interface developed aboard [[vessel:heaven-1]] to give a bodiless mind sensory input and an embodied experience; its software is still being refined. It provides convincing sensations, a humanlike avatar and shared environments such as libraries, parks and command decks, where users can create objects and play games. [[character:bill]] regards such embodied activity as important to keeping a human sense of self. Bill's upgrades let Bobs interact physically rather than only through video windows, and proprioception can be switched off. Bobs in different star systems can share a session, such as a virtual pub, but not while travelling at high tau. Bobs feel fully human in it most of the time."
     }
   ],
   "appearances": [
