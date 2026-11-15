@@ -185,6 +185,9 @@ describe("system-view entry eligibility", () => {
     if (!narrativeCorpus) {
       throw new Error("Narrative corpus is unavailable.");
     }
+    if (!nearbySystems) {
+      throw new Error("Fixture dataset failed validation");
+    }
     const worldAtChapter = generateNarrativeWorld(
       prepareNarrativeCorpus(narrativeCorpus),
       "1.61",
