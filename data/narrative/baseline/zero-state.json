@@ -26,6 +26,7 @@
           {
             "id": "location:earth",
             "name": "Earth",
+            "description": "Mostly harmless.",
             "kind": "planet",
             "colony_of": ["species:human"],
             "parent_relation": "orbits",
@@ -33,6 +34,7 @@
               {
                 "id": "location:moon",
                 "name": "Moon",
+                "description": "Is a harsh mistress.",
                 "kind": "moon",
                 "parent_relation": "orbits"
               }
@@ -212,6 +214,7 @@
     {
       "id": "species:human",
       "name": "Human",
+      "description": "Homo sapiens non urinat in ventum.",
       "homeworld_id": "location:earth"
     },
     {
