@@ -15,12 +15,12 @@
     "description": {
       "type": "string",
       "minLength": 1,
-      "description": "Original, reader-visible plain-text summary; never copied book text or Markdown."
+      "description": "Original, reader-visible plain-text summary with optional inline entity links (ADR-0029); never copied book text or Markdown."
     },
     "state": {
       "type": "string",
       "minLength": 1,
-      "description": "One or two concise sentences describing only the latest reader-visible condition; no controlled vocabulary is imposed."
+      "description": "One or two concise sentences describing only the latest reader-visible condition, as plain text with optional inline entity links (ADR-0029); no controlled vocabulary is imposed."
     },
     "entity_id": {
       "type": "string",

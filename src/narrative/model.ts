@@ -3,6 +3,13 @@ import type { ErrorObject, ValidateFunction } from "ajv";
 import narrativeSchema from "../../data/schema/narrative-data-model.schema.json";
 import speciesPresentationSchema from "../../data/schema/species-presentation.schema.json";
 import { resolveAssetForRole, type AssetRole } from "./assets";
+import {
+  containsInlineLinkMarkup,
+  inlineLinkEntityFields,
+  inlineLinks,
+  inlineLinksToPlainText,
+  parseInlineLinks,
+} from "./inline-links";
 
 export type NarrativeRecord = Record<string, unknown>;
 
@@ -1223,6 +1230,273 @@ function validateNarrativeCorpusStructure(
     throw new NarrativeStructureValidationError(diagnostics);
 }
 
+/*
+ * Inline entity links in prose (ADR-0029). The parser lives in
+ * ./inline-links so the renderer and offline tooling share it.
+ */
+
+const inlineLinkFieldSet = new Set<string>(inlineLinkEntityFields);
+const chapterLinkFieldPointer =
+  /^\/(introducing|updates)\/(\d+)\/(description|state|current_state)$/;
+
+function forEachSourceString(
+  value: unknown,
+  pointer: string,
+  visit: (
+    text: string,
+    pointer: string,
+    parent: NarrativeRecord | null,
+  ) => void,
+  parent: NarrativeRecord | null = null,
+): void {
+  if (typeof value === "string") {
+    visit(value, pointer, parent);
+    return;
+  }
+  if (Array.isArray(value)) {
+    value.forEach((entry, index) =>
+      forEachSourceString(entry, `${pointer}/${index}`, visit, null),
+    );
+    return;
+  }
+  if (!value || typeof value !== "object") return;
+  const record = value as NarrativeRecord;
+  for (const [key, entry] of Object.entries(record))
+    forEachSourceString(entry, `${pointer}/${key}`, visit, record);
+}
+
+function lastPointerKey(pointer: string): string {
+  return pointer.slice(pointer.lastIndexOf("/") + 1);
+}
+
+function inlineMarkupOffset(
+  text: string,
+): { offset: number; found: string } | null {
+  const candidates = ["[[", "]]", "\\\\"]
+    .map((found) => ({ found, offset: text.indexOf(found) }))
+    .filter((candidate) => candidate.offset !== -1)
+    .sort((left, right) => left.offset - right.offset);
+  return candidates[0] ?? null;
+}
+
+function noLinkFieldMessage(text: string): string | null {
+  if (!containsInlineLinkMarkup(text)) return null;
+  const first = inlineMarkupOffset(text)!;
+  return `this field does not allow inline entity links or link escapes (ADR-0029); found "${first.found}" at offset ${first.offset}.`;
+}
+
+/** A prose value that may contain links, with the context its links need. */
+interface InlineLinkWrite {
+  text: string;
+  pointer: string;
+  /** The chapter of the write; null for the zero state. */
+  chapter: string | null;
+  /** The record whose field this is (self-links are rejected); null for a summary. */
+  ownerId: string | null;
+}
+
+/** Collects link-capable prose and rejects markup elsewhere, in reading order. */
+function collectInlineLinkWrites(
+  zeroState: NarrativeRecord,
+  chapters: readonly NarrativeRecord[],
+): InlineLinkWrite[] {
+  const writes: InlineLinkWrite[] = [];
+  forEachSourceString(zeroState, "", (text, pointer, parent) => {
+    const key = lastPointerKey(pointer);
+    if (
+      parent &&
+      inlineLinkFieldSet.has(key) &&
+      typeof parent.id === "string"
+    ) {
+      writes.push({ text, pointer, chapter: null, ownerId: parent.id });
+      return;
+    }
+    const message = noLinkFieldMessage(text);
+    if (message) throw new Error(`Zero state ${pointer}: ${message}`);
+  });
+  for (const chapter of chapters) {
+    const id = chapterId(chapter);
+    forEachSourceString(chapter, "", (text, pointer) => {
+      if (pointer === "/summary") {
+        writes.push({ text, pointer, chapter: id, ownerId: null });
+        return;
+      }
+      const field = chapterLinkFieldPointer.exec(pointer);
+      if (field) {
+        const record = (chapter[field[1]!] as NarrativeRecord[])[
+          Number(field[2])
+        ]!;
+        const ownerId =
+          field[1] === "introducing" ? record.id : record.entity_id;
+        writes.push({
+          text,
+          pointer,
+          chapter: id,
+          ownerId: typeof ownerId === "string" ? ownerId : null,
+        });
+        return;
+      }
+      const message = noLinkFieldMessage(text);
+      if (message) throw chapterSemanticError(id, pointer, message);
+    });
+  }
+  return writes;
+}
+
+function assertNoInlineLinkMarkup(value: unknown, label: string): void {
+  forEachSourceString(value, "", (text, pointer) => {
+    const message = noLinkFieldMessage(text);
+    if (message) throw new Error(`${label} ${pointer}: ${message}`);
+  });
+}
+
+/**
+ * ADR-0029 validation: syntax, allowed fields, known and already-introduced
+ * targets, zero-state-only targets in zero-state prose, and no self-links.
+ */
+function assertInlineEntityLinks(
+  corpus: NarrativeCorpus,
+  zeroStateEntities: readonly NarrativeEntity[],
+  chapters: readonly NarrativeRecord[],
+  introductionChapters: ReadonlyMap<string, string>,
+): void {
+  assertNoInlineLinkMarkup(corpus.books, "Book catalogue");
+  assertNoInlineLinkMarkup(corpus.assets, "Asset registry");
+  const zeroStateIds = new Set(zeroStateEntities.map((entity) => entity.id));
+  for (const write of collectInlineLinkWrites(corpus.zeroState, chapters)) {
+    const fail = (message: string): Error =>
+      write.chapter === null
+        ? new Error(`Zero state ${write.pointer}: ${message}`)
+        : chapterSemanticError(write.chapter, write.pointer, message);
+    const parsed = parseInlineLinks(write.text);
+    if (!parsed.ok)
+      throw fail(
+        `malformed inline entity link at offset ${parsed.error.offset}: ${parsed.error.message} (ADR-0029).`,
+      );
+    for (const link of inlineLinks(parsed.segments)) {
+      const at = `inline link at offset ${link.offset}`;
+      const introducedIn = introductionChapters.get(link.target);
+      if (!zeroStateIds.has(link.target) && introducedIn === undefined)
+        throw fail(`${at} targets an unknown entity: ${link.target}.`);
+      if (write.chapter === null && !zeroStateIds.has(link.target))
+        throw fail(
+          `${at} targets ${link.target}, introduced in chapter ${introducedIn}; zero-state prose may link only zero-state entities.`,
+        );
+      if (
+        write.chapter !== null &&
+        introducedIn !== undefined &&
+        !zeroStateIds.has(link.target) &&
+        compareChapter(introducedIn, write.chapter) > 0
+      )
+        throw fail(
+          `${at} targets ${link.target}, which is introduced later in chapter ${introducedIn}.`,
+        );
+      if (link.target === write.ownerId)
+        throw fail(`${at} targets the record itself: ${link.target}.`);
+    }
+  }
+}
+
+type NameHistory = ReadonlyMap<
+  string,
+  ReadonlyArray<{ chapter: string | null; name: string }>
+>;
+
+function buildNameHistory(
+  zeroStateEntities: readonly NarrativeEntity[],
+  chapters: readonly NarrativeRecord[],
+): NameHistory {
+  const history = new Map<
+    string,
+    Array<{ chapter: string | null; name: string }>
+  >();
+  const add = (id: unknown, chapter: string | null, name: unknown) => {
+    if (typeof id !== "string" || typeof name !== "string") return;
+    const entries = history.get(id) ?? [];
+    entries.push({ chapter, name });
+    history.set(id, entries);
+  };
+  for (const entity of zeroStateEntities) add(entity.id, null, entity.name);
+  for (const chapter of chapters) {
+    const id = chapterId(chapter);
+    for (const record of (chapter.introducing as
+      NarrativeRecord[] | undefined) ?? [])
+      add(record.id, id, record.name);
+    for (const record of (chapter.updates as NarrativeRecord[] | undefined) ??
+      [])
+      add(record.entity_id, id, record.name);
+  }
+  return history;
+}
+
+function nameAsOf(
+  history: NameHistory,
+  target: string,
+  chapter: string | null,
+): string {
+  let name = target;
+  for (const entry of history.get(target) ?? []) {
+    if (
+      entry.chapter === null ||
+      (chapter !== null && compareChapter(entry.chapter, chapter) <= 0)
+    )
+      name = entry.name;
+  }
+  return name;
+}
+
+/**
+ * Default link labels for hidden targets (ADR-0029): for each prose value, the
+ * label of every link in order, using the target's name as of the write's
+ * chapter. Keyed by source text; when two writes share a text, the earliest
+ * write wins, which is never later than any write a reader can see.
+ */
+function buildInlineLinkFallbackLabels(
+  zeroState: NarrativeRecord,
+  zeroStateEntities: readonly NarrativeEntity[],
+  chapters: readonly NarrativeRecord[],
+): ReadonlyMap<string, readonly string[]> {
+  const history = buildNameHistory(zeroStateEntities, chapters);
+  const fallbacks = new Map<string, readonly string[]>();
+  for (const write of collectInlineLinkWrites(zeroState, chapters)) {
+    if (fallbacks.has(write.text)) continue;
+    const parsed = parseInlineLinks(write.text);
+    if (!parsed.ok) continue;
+    const links = inlineLinks(parsed.segments);
+    if (!links.length) continue;
+    fallbacks.set(
+      write.text,
+      Object.freeze(
+        links.map(
+          (link) => link.label ?? nameAsOf(history, link.target, write.chapter),
+        ),
+      ),
+    );
+  }
+  return fallbacks;
+}
+
+/**
+ * Display text for prose as written in a chapter: links become their labels or
+ * the target's name as of that chapter, and escapes are removed. Offline
+ * tooling (sentence preservation) uses it; projection does not.
+ */
+export function inlineLinkDisplayTextResolver(
+  corpus: NarrativeCorpus,
+): (text: string, chapter: string | null) => string {
+  const chapters = [...corpus.chapters].sort((left, right) =>
+    compareChapter(chapterId(left), chapterId(right)),
+  );
+  const history = buildNameHistory(
+    assertZeroStateSemantics(corpus.zeroState, corpus.knownAstronomyObjectIds),
+    chapters,
+  );
+  return (text, chapter) =>
+    inlineLinksToPlainText(text, (target) =>
+      nameAsOf(history, target, chapter),
+    );
+}
+
 function validateNarrativeCorpusSemantics(
   corpus: NarrativeCorpus,
   options: { skipProjectedLocationConstraints?: boolean } = {},
@@ -1627,6 +1901,12 @@ function validateNarrativeCorpusSemantics(
       introductionDates.set(entityId, chapterDate(chapter));
     }
   }
+  assertInlineEntityLinks(
+    corpus,
+    zeroStateEntities,
+    chapters,
+    introductionChapters,
+  );
   assertTemporalWrites(chapters);
   if (!options.skipProjectedLocationConstraints) {
     assertProjectedLocationConstraints(zeroStateEntities, chapters);
@@ -1716,6 +1996,8 @@ interface PreparedNarrativeIndexes {
   meaningfulDateOptions: Map<string, readonly MeaningfulNarrativeDate[]>;
   /** Ordered activity per reader-visible chapter ("" is the zero state). */
   activityByChapter: Map<string, readonly NarrativeActivity[]>;
+  /** Default labels of inline links per prose text (ADR-0029). */
+  inlineLinkFallbackLabels: ReadonlyMap<string, readonly string[]>;
 }
 
 interface PreparedChapterDetailSource {
@@ -1852,14 +2134,15 @@ export function prepareNarrativeCorpus(
     compareChapter(chapterId(left), chapterId(right)),
   );
   const books = asRecord(prepared.books.books, "Book catalogue books");
+  const zeroStateEntities = deepFreeze(
+    assertZeroStateSemantics(
+      prepared.zeroState,
+      prepared.knownAstronomyObjectIds,
+    ),
+  );
   preparedNarrativeIndexes.set(prepared, {
     chapters,
-    zeroStateEntities: deepFreeze(
-      assertZeroStateSemantics(
-        prepared.zeroState,
-        prepared.knownAstronomyObjectIds,
-      ),
-    ),
+    zeroStateEntities,
     chapterById: new Map(
       chapters.map((chapter) => [chapterId(chapter), chapter]),
     ),
@@ -1871,6 +2154,11 @@ export function prepareNarrativeCorpus(
     ),
     meaningfulDateOptions: new Map(),
     activityByChapter: new Map(),
+    inlineLinkFallbackLabels: buildInlineLinkFallbackLabels(
+      prepared.zeroState,
+      zeroStateEntities,
+      chapters,
+    ),
   });
   narrativePreparationCounts.set(
     rawCorpus,
@@ -1901,6 +2189,17 @@ function indexesFor(corpus: PreparedNarrativeCorpus): PreparedNarrativeIndexes {
     );
   }
   return indexes;
+}
+
+/**
+ * Default labels for inline entity links whose target the current view does
+ * not project (ADR-0029): each prose text maps to its links' labels in order,
+ * using the target's name as of the chapter that wrote the text.
+ */
+export function preparedInlineLinkFallbackLabels(
+  corpus: PreparedNarrativeCorpus,
+): ReadonlyMap<string, readonly string[]> {
+  return indexesFor(corpus).inlineLinkFallbackLabels;
 }
 
 /** Prepared chapters in reader order (book, then chapter), whatever the input order. */

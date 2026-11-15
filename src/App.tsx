@@ -52,6 +52,7 @@ import {
   meaningfulNarrativeDateOptions,
   projectNarrativeChapterDetail,
   formatNarrativeDate,
+  preparedInlineLinkFallbackLabels,
   type MeaningfulNarrativeDate,
   type NarrativeChapterDetail,
   type NarrativeWorld,
@@ -937,6 +938,7 @@ export default function App() {
     );
   if (!narrativeCorpus)
     throw new Error("Narrative corpus is unavailable after preparation.");
+  const inlineLinkFallbacks = preparedInlineLinkFallbackLabels(narrativeCorpus);
 
   return (
     <main
@@ -1233,6 +1235,7 @@ export default function App() {
             systems={mapProjection.contextSystems}
             knownAstronomySystemIds={mapProjection.knownSystemIds}
             assets={narrativeCorpus.assets}
+            inlineLinkFallbacks={inlineLinkFallbacks}
             headingId="desktop-object-details-heading"
             canGoBack={inspectorHistory.index > 0}
             canGoForward={
@@ -1353,6 +1356,7 @@ export default function App() {
             systems={mapProjection.contextSystems}
             knownAstronomySystemIds={mapProjection.knownSystemIds}
             assets={narrativeCorpus.assets}
+            inlineLinkFallbacks={inlineLinkFallbacks}
             headingId="compact-object-details-heading"
             showHistoryControls={false}
             canGoBack={inspectorHistory.index > 0}
