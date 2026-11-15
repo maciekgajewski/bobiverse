@@ -426,8 +426,15 @@ appending a sentence per chapter.
   for that chapter, entity, and field in
   `data/narrative/sentence-preservation-exceptions.json`, with a reason citing
   "Maciej 2026-11-14 22:54, delegated condensation".
-- Entity links inside descriptions will be added in a separate later branch once
-  their code lands.
+- Inline entity links (ADR-0029, `data-model-definition.md` §Inline entity links)
+  may appear in `description`, `state`, `current_state`, and chapter `summary`. Link
+  only entities introduced in the same chapter or earlier. Link the first mention of a
+  target in a field, not every mention, and never the entity itself. Write an explicit
+  `|label` whenever the sentence needs a form other than the bare name, such as a
+  short form, a lower-case or plural use, or a generic name:
+  `[[location:x|the star]]`. A possessive goes outside the brackets:
+  `[[character:x]]'s`. Adding link markup around unchanged words needs no
+  sentence-preservation exception; changing the visible words does.
 
 This replaces "keep full merged texts" (D2, §Reading order and story dates) for
 descriptions.

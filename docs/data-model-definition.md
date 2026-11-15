@@ -1468,7 +1468,8 @@ deterministic in-memory/build output and are not committed snapshots.
 
 Every chapter source record validates against the shared Draft 2020-12 schema contract.
 It requires the canonical `chapter` reference, nonempty reader-visible `title`,
-original plain-text `summary`, story `date`, and a default `location_id`. A summary is
+original plain-text `summary` (with optional inline entity links, below), story `date`,
+and a default `location_id`. A summary is
 a synopsis, not a dateline: it begins with narrative action, subject, or change rather
 than repeating the structured date or mechanically leading with the default location.
 Location wording remains appropriate when it is naturally needed to explain the
@@ -1610,6 +1611,39 @@ announce unrevealed, unknown, unexplained, unavailable, unspecified, or otherwis
 missing knowledge; those gaps remain in extraction evidence and review artifacts.
 Both may be changed or cleared under the ordinary per-entity update rules unless a
 record type explicitly says otherwise.
+
+### Inline entity links
+
+Prose may link to other entities inline (ADR-0029). A link is `[[kind:slug]]`, which
+displays the target's name, or `[[kind:slug|label]]`, which displays `label`. The
+target is an entity ID, verbatim, of a kind that `mentions` accepts: `character`,
+`species`, `technology`, `organization`, `vessel`, `event`, or `location`. Asset and
+astronomy IDs cannot be linked. Inside the brackets there is no whitespace around
+the target or `|`, at most one `|`, and no line break; a label is nonempty, has no
+leading or trailing whitespace, and contains none of `[`, `]`, `|`, or `\`. Outside
+links, `\[[`, `\]]`, and `\\` write a literal `[[`, `]]`, and `\` (doubled again in
+JSON source); a `\` before any other character is an error. Lone `[`, `]`, and `|`
+are ordinary text.
+
+| Links allowed                                                             | Links and escapes rejected                                            |
+| ------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `description`: species, technology, organization, vessel, event, location | every other string, including `name`, `aliases`, chapter `title`      |
+| `state`: location; `current_state`: character, organization, vessel       | survey `visual_description` and `color`, asset `source`, book `title` |
+| chapter `summary`                                                         | the `reason` of a sentence-preservation exception                     |
+
+The rules apply to introductions, updates, and zero-state records alike. A target
+must be seeded in the zero state or introduced by the write's own chapter or an
+earlier one in reading order; `effective_date` does not change the write's chapter.
+Zero-state prose may link only zero-state entities, and a record may not link to
+itself. A link is prose, not structure: it adds no narrative activity and neither
+satisfies nor makes redundant a supplemental mention.
+
+The inspector renders a link whose target the current view projects as an inline
+button that opens the target. A link to a target the view does not project (for
+example in Date mode before the target's date) is plain text with no hint. A bare
+`[[id]]` then shows the target's name as of the write's chapter. Sentence
+preservation compares display text, so adding or removing link markup around
+unchanged words is not a violation.
 
 ### Zero-state nested Solar-System locations
 
@@ -1981,6 +2015,10 @@ layer. It rejects at least:
   authored optional array; or an appearance array with no `lead` appearance;
 - a malformed, duplicate, unresolved, later-introduced, or structurally redundant
   supplemental mention target; or an asset/non-direct entity ID in `mentions`;
+- malformed or nested inline entity link markup, an empty or whitespace-padded link
+  label, a link target of the wrong form or kind, an unknown or later-introduced link
+  target, a zero-state link to a chapter-introduced entity, a self-link, or link
+  markup or escapes in a field that does not allow links (ADR-0029);
 - competing state writes from the same source chapter or otherwise equal narrative
   moments;
 - a broken location parent tree; a parent/child/relation combination outside the shared

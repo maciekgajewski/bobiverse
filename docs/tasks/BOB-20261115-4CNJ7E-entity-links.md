@@ -81,7 +81,41 @@ git diff --check
 
 ## Risks and decisions
 
-- Recorded as the implementation lands.
+Where the spec left a choice, the implementation takes these:
+
+- **Fallback labels are keyed by text.** `preparedInlineLinkFallbackLabels` maps
+  each prose value to its links' labels in order. When two writes share the exact
+  text, the earliest write's names win; that write is never later than one a reader
+  can see, so the name stays reader-safe.
+- **`$defs/state` wording too.** The spec names the `$defs/description` text; the
+  `$defs/state` text gets the same note, because location `state` and every
+  `current_state` allow links. The optional schema `not` guard on fields without
+  links is not added: the semantic layer already rejects markup in every such
+  string, including books, assets and exception reasons.
+- **What "fields without links" covers.** In a chapter file, every string except
+  the top-level `summary` and `description`, `state` and `current_state` directly
+  on an `introducing` or `updates` record (so survey observation text is covered).
+  In the zero state, `description`, `state` and `current_state` on any record with
+  an `id` allow links. The whole book catalogue and asset registry reject them. A
+  lone `\` in such a field is not an escape and stays allowed.
+- **A stray `]]` is malformed.** Only `[[` and `]]` are reserved, so a `]]` outside
+  a link must be escaped.
+- **Offsets** are zero-based character offsets in the decoded string, after JSON
+  unescaping.
+- **Self-links** compare with the `id` of an introduction or zero-state record and
+  the `entity_id` of an update. A summary has no owner.
+- **The summary opening-sentence date check** still runs on the raw text, labels
+  included, so a date inside a label is still caught.
+- **Sentence preservation default.** Without a resolver,
+  `findSentencePreservationViolations` shows a bare `[[id]]` as its ID; the
+  `narrative:validate` CLI always passes the name-as-of-chapter resolver.
+- **Renderer last resort.** If a hidden bare link has no fallback (only when a
+  caller passes none; the app always passes the prepared map), it shows the
+  target ID rather than nothing.
+- **e2e data.** No canonical data has links yet and chapter data is out of scope,
+  so the e2e test rewrites Earth's zero-state `description` in the dev server's
+  JSON module through a test-only `page.route`. The app then validates and
+  renders it through the normal path.
 
 ## Log
 
