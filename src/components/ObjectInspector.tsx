@@ -16,6 +16,7 @@ import {
   resolveHeaderIllustration,
   type HeaderIllustration,
 } from "../narrative/header-illustration";
+import { disambiguatedEntityLabel } from "../narrative/entity-label";
 import type { CharacterInspectorSectionState } from "../narrative/progress";
 import { defaultCharacterInspectorSectionState } from "../narrative/progress";
 import { SystemDetails } from "./SystemDetails";
@@ -139,10 +140,12 @@ function CharacterSection({
 function EntityLink({
   id,
   entities,
+  currentName,
   onSelect,
 }: {
   id: string;
   entities: ReadonlyMap<string, NarrativeEntity>;
+  currentName: string;
   onSelect: (selection: SelectionIdentity) => void;
 }) {
   const target = entities.get(id);
@@ -153,7 +156,7 @@ function EntityLink({
       className="link-button"
       onClick={() => onSelect({ kind: "narrative", id })}
     >
-      {String(target.name)}
+      {disambiguatedEntityLabel(target, currentName)}
     </button>
   );
 }
@@ -293,7 +296,12 @@ function NarrativeDetails({
     : null;
   const relationship = (id: unknown) =>
     typeof id === "string" ? (
-      <EntityLink id={id} entities={entities} onSelect={onSelect} />
+      <EntityLink
+        id={id}
+        entities={entities}
+        currentName={name}
+        onSelect={onSelect}
+      />
     ) : null;
   const ancestors =
     entity.entity_type === "character"
@@ -410,6 +418,7 @@ function NarrativeDetails({
                         key={id}
                         id={id}
                         entities={entities}
+                        currentName={name}
                         onSelect={onSelect}
                       />
                     ))}
@@ -443,6 +452,7 @@ function NarrativeDetails({
                         key={id}
                         id={id}
                         entities={entities}
+                        currentName={name}
                         onSelect={onSelect}
                       />
                     ))}
@@ -463,6 +473,7 @@ function NarrativeDetails({
                         key={id}
                         id={id}
                         entities={entities}
+                        currentName={name}
                         onSelect={onSelect}
                       />
                     ))}

@@ -828,4 +828,103 @@ describe("object inspector", () => {
       screen.queryByText(/physical radius|luminosity/i),
     ).not.toBeInTheDocument();
   });
+  it("disambiguates a same-named primary star in Contains and leaves unique names bare", async () => {
+    const user = userEvent.setup();
+    const system: NarrativeEntity = {
+      id: "location:epsilon-eridani",
+      entity_type: "location",
+      name: "Epsilon Eridani",
+      kind: "star_system",
+      child_ids: ["location:epsilon-eridani-star", "location:bill-skunkworks"],
+    };
+    const star: NarrativeEntity = {
+      id: "location:epsilon-eridani-star",
+      entity_type: "location",
+      name: "Epsilon Eridani",
+      kind: "star",
+      parent_location_id: "location:epsilon-eridani",
+    };
+    const skunkworks: NarrativeEntity = {
+      id: "location:bill-skunkworks",
+      entity_type: "location",
+      name: "Bill's skunkworks",
+      kind: "locale",
+      parent_location_id: "location:epsilon-eridani",
+    };
+    const solarSystem: NarrativeEntity = {
+      id: "location:solar-system",
+      entity_type: "location",
+      name: "Solar System",
+      kind: "star_system",
+      child_ids: ["location:sol"],
+    };
+    const sol: NarrativeEntity = {
+      id: "location:sol",
+      entity_type: "location",
+      name: "Sol",
+      kind: "star",
+      parent_location_id: "location:solar-system",
+    };
+    const caseWorld: NarrativeWorld = {
+      entities: [system, star, skunkworks, solarSystem, sol],
+      activity: [],
+      view: { chapter: "1.61", display_date: "2185" },
+    };
+    const onSelect = vi.fn();
+    const { rerender } = render(
+      <ObjectInspector
+        selection={{ kind: "narrative", id: system.id }}
+        narrativeItem={item(system)}
+        world={caseWorld}
+        systems={[]}
+        assets={{ assets: [] }}
+        onSelect={onSelect}
+      />,
+    );
+    expect(
+      screen.getByRole("button", { name: "Epsilon Eridani (star)" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Bill's skunkworks" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Epsilon Eridani" }),
+    ).not.toBeInTheDocument();
+    await user.click(
+      screen.getByRole("button", { name: "Epsilon Eridani (star)" }),
+    );
+    expect(onSelect).toHaveBeenCalledWith({
+      kind: "narrative",
+      id: "location:epsilon-eridani-star",
+    });
+
+    rerender(
+      <ObjectInspector
+        selection={{ kind: "narrative", id: star.id }}
+        narrativeItem={item(star)}
+        world={caseWorld}
+        systems={[]}
+        assets={{ assets: [] }}
+        onSelect={onSelect}
+      />,
+    );
+    expect(
+      screen.getByRole("button", { name: "Epsilon Eridani (star system)" }),
+    ).toBeInTheDocument();
+
+    rerender(
+      <ObjectInspector
+        selection={{ kind: "narrative", id: solarSystem.id }}
+        narrativeItem={item(solarSystem)}
+        world={caseWorld}
+        systems={[]}
+        assets={{ assets: [] }}
+        onSelect={vi.fn()}
+      />,
+    );
+    expect(screen.getByRole("button", { name: "Sol" })).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Sol (star)" }),
+    ).not.toBeInTheDocument();
+  });
 });

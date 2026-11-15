@@ -3299,3 +3299,29 @@ test("an inline entity link in a description opens its target like a relationshi
   await inspector.getByRole("button", { name: "Forward" }).click();
   await expect(inspector.getByRole("heading", { name: "Sol" })).toBeVisible();
 });
+
+test("system Contains disambiguates a same-named primary star at chapter 1.61", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await seedChapter(page, "1.61");
+  await page.goto("/");
+  const inspector = await inspectFromBrowser(
+    page,
+    "Epsilon Eridani",
+    /^Epsilon Eridani(?! One)/,
+  );
+  await expect(
+    inspector.getByRole("heading", { level: 2, name: "Epsilon Eridani" }),
+  ).toBeVisible();
+  await expect(inspector.locator(".entity-kind")).toHaveText("star system");
+  await expect(
+    inspector.getByRole("button", { name: "Epsilon Eridani (star)" }),
+  ).toBeVisible();
+  await expect(
+    inspector.getByRole("button", { name: "Bill's skunkworks" }),
+  ).toBeVisible();
+  await expect(
+    inspector.getByRole("button", { name: "Epsilon Eridani", exact: true }),
+  ).toHaveCount(0);
+});
