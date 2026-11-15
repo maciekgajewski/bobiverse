@@ -3106,7 +3106,7 @@ test("system Contains disambiguates a same-named primary star at chapter 1.61", 
   const inspector = await inspectFromBrowser(
     page,
     "Epsilon Eridani",
-    /^Epsilon Eridani(?: Active)?$/,
+    /^Epsilon Eridani(?! One)/,
   );
   await expect(
     inspector.getByRole("heading", { level: 2, name: "Epsilon Eridani" }),
