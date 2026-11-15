@@ -3300,7 +3300,7 @@ test("an inline entity link in a description opens its target like a relationshi
   await expect(inspector.getByRole("heading", { name: "Sol" })).toBeVisible();
 });
 
-test("system Contains disambiguates a same-named primary star at chapter 1.61", async ({
+test("merged Epsilon Eridani Contains lists uniquely named children at chapter 1.61", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
@@ -3317,9 +3317,12 @@ test("system Contains disambiguates a same-named primary star at chapter 1.61", 
   await expect(inspector.locator(".entity-kind")).toHaveText("star system");
   await expect(
     inspector.getByRole("button", { name: "Epsilon Eridani (star)" }),
-  ).toBeVisible();
+  ).toHaveCount(0);
   await expect(
     inspector.getByRole("button", { name: "Bill's skunkworks" }),
+  ).toBeVisible();
+  await expect(
+    inspector.getByRole("button", { name: "Epsilon Eridani One" }),
   ).toBeVisible();
   await expect(
     inspector.getByRole("button", { name: "Epsilon Eridani", exact: true }),
@@ -3331,18 +3334,16 @@ test("system Contains disambiguates a same-named primary star at chapter 1.61", 
   );
   await expect(trail.getByRole("button")).toHaveCount(0);
 
-  await inspector
-    .getByRole("button", { name: "Epsilon Eridani (star)" })
-    .click();
-  await expect(inspector.locator(".entity-kind")).toHaveText("star");
-  const starTrail = inspector.getByRole("navigation", { name: "Object trail" });
-  await expect(starTrail).toHaveText(
-    "Epsilon Eridani (star system)›Epsilon Eridani (star)",
-  );
+  await inspector.getByRole("button", { name: "Epsilon Eridani One" }).click();
+  await expect(inspector.locator(".entity-kind")).toHaveText("planet");
+  const childTrail = inspector.getByRole("navigation", {
+    name: "Object trail",
+  });
+  await expect(childTrail).toHaveText("Epsilon Eridani›Epsilon Eridani One");
   await expect(
-    starTrail.getByRole("button", { name: "Epsilon Eridani (star system)" }),
+    childTrail.getByRole("button", { name: "Epsilon Eridani" }),
   ).toBeVisible();
-  await expect(starTrail.getByText("Epsilon Eridani (star)")).toHaveAttribute(
+  await expect(childTrail.getByText("Epsilon Eridani One")).toHaveAttribute(
     "aria-current",
     "page",
   );

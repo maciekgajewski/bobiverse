@@ -741,8 +741,8 @@
     "kind": "field",
     "subject": "location:82-eridani",
     "field": "description",
-    "expected": "sha256:ac27d84970d17a3a",
-    "basis": "Captain approval 2026-11-13 (1.51)"
+    "expected": "sha256:6a45aa7d68257bb2",
+    "basis": "delegated-condensation rule (Maciej, 2026-11-14 22:54); the fact survives in the 1.51 chapter summary"
   },
   {
     "chapter": "1.51",
