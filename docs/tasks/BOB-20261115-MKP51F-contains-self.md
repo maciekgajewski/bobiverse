@@ -1,6 +1,6 @@
 # BOB-20261115-MKP51F: Disambiguate same-named Contains children
 
-Status: In progress
+Status: Ready
 Phase: 2 (narrative foundation and chapter timeline; responsive shell)
 Last updated: 2026-11-15
 
@@ -103,3 +103,27 @@ Manual: the Captain's check after deployment (checklist in
 - Created on origin/master `8cd0485` under the authorization above, on local
   branch `bob-20261115-mkp51f-contains-self` in the
   `~/src/bobiverse-contains` worktree.
+
+- Implemented in `8cc6d39`. Validation, all passed: `python3 scripts/tasks.py
+  check` (88 task files, 30 ADRs), `npm run format:check`, `npm run lint`,
+  `npm run typecheck`, `npm run test` (492 passed, 44 files), `npm run
+  data:test` (90 passed), `npm run data:validate`, `npm run narrative:validate`,
+  `npm run build`, `git diff --check` and `npx prettier --check` on the changed
+  Markdown.
+- Full e2e on spare port 5198 (untracked `playwright.alt5198.config.ts`, deleted
+  afterwards), one worker, no retries. First run used a `$`-anchored
+  `inspectFromBrowser` name regex that does not match recency text in the
+  object-browser row. Chromium and Firefox each had 55 passed, 3 skipped and 1
+  failed: the new Chapter 1.61 Contains test timed out on that click.
+  WebKit loaded the already-edited regex from the worktree and had 56 passed
+  and 3 skipped (the Enter system tests behind `ENABLE_ENTER_SYSTEM`).
+- `d3b4e78` relaxes the browser match to `/^Epsilon Eridani(?! One)/`. The
+  isolated Contains test then passed once each in Chromium (8.9s), Firefox
+  (9.1s) and WebKit (9.9s). Combined with the first-run totals that is 56
+  passed and 3 skipped per browser. No known-flake reruns were required. No
+  icon-specimen PNG was rewritten.
+- Before/after screenshots at 390×844 (Epsilon Eridani at Chapter 1.61) were
+  taken for review outside the repository: Contains changes from a bare
+  "Epsilon Eridani" child to "Epsilon Eridani (star)" beside "Bill's
+  skunkworks".
+- Not pushed and not merged. This branch is for review only.
