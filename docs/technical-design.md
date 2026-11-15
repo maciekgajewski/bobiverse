@@ -737,10 +737,14 @@ Assistant characters are deferred. Any public implementation must use original
 visual designs rather than an Admiral Ackbar or John Cleese likeness. The About
 dialog's small, credited Admiral Ackbar illustration is a separate, Captain-approved
 exception (fair use, 2026-11-13): it is a decorative reference, not an assistant
-character. The visible caption is "Guppy, or Admiral Ackbar", with "Admiral Ackbar"
+character. The visible caption is "GUPPI, or Admiral Ackbar", with "Admiral Ackbar"
 linking to the source illustration; the full credit lives in the image's alternative
 text and in `public/assets/CREDITS.md`
-(`tasks/BOB-20261114-KA0X30-about-dialog.md`).
+(`tasks/BOB-20261114-KA0X30-about-dialog.md`). "GUPPI" opens GUPPI's info card
+(`technology:guppi-interface`) only while GUPPI is selectable in the projected world
+at the reader's knowledge chapter; in the pre-book zero state and before GUPPI is
+introduced it is plain text with no way to open the card
+(`tasks/BOB-20261114-ANZFK6-guppi-about-caption.md`).
 
 ## 12. Narrative data and spoiler model
 

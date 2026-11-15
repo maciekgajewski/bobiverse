@@ -2360,7 +2360,7 @@ async function expectAboutDialogContent(page: Page) {
     )
     .toBe(150);
   await expect(dialog.locator("figcaption")).toHaveText(
-    "Guppy, or Admiral Ackbar",
+    "GUPPI, or Admiral Ackbar",
   );
   const captionLink = dialog.getByRole("link", { name: "Admiral Ackbar" });
   await expect(captionLink).toHaveAttribute(
@@ -2500,6 +2500,88 @@ for (const viewport of [
     await expect(menuButton).toBeFocused();
   });
 }
+
+// The About caption's "GUPPI" opens GUPPI's card only once GUPPI is known
+// (introduced in Chapter 1.2); before that, and in zero state, it is plain text.
+async function storeKnowledgeChapter(page: Page, chapter: string) {
+  await page.addInitScript((value) => {
+    window.localStorage.setItem(
+      "bobiverse.app-state.v2",
+      JSON.stringify({
+        furthestChapterRead: value,
+        viewChapter: value,
+        displayDate: "2133",
+        mode: "chapter",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+  }, chapter);
+}
+
+for (const chapter of [null, "1.1"] as const) {
+  test(`About caption keeps GUPPI as plain text ${chapter ? `at Chapter ${chapter}` : "in zero state"}`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    if (chapter) await storeKnowledgeChapter(page, chapter);
+    await page.goto("/");
+    await page
+      .locator(".topbar-title")
+      .getByRole("button", { name: "What is this?" })
+      .click();
+    const dialog = await expectAboutDialogContent(page);
+    const caption = dialog.locator("figcaption");
+    await expect(caption.getByRole("button")).toHaveCount(0);
+    await expect(caption.getByRole("link")).toHaveText(["Admiral Ackbar"]);
+    await caption.getByText(/^GUPPI/).click();
+    await expect(dialog).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "GUPPI interface" }),
+    ).toHaveCount(0);
+  });
+}
+
+test("desktop About caption opens GUPPI's card once GUPPI is known", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await storeKnowledgeChapter(page, "1.2");
+  await page.goto("/");
+  const link = page
+    .locator(".topbar-title")
+    .getByRole("button", { name: "What is this?" });
+  await link.click();
+  const dialog = await expectAboutDialogContent(page);
+  await expect(dialog.locator("figcaption")).toHaveText(
+    "GUPPI, or Admiral Ackbar",
+  );
+  await dialog.getByRole("button", { name: "GUPPI" }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect(
+    page
+      .locator(".right-rail")
+      .getByRole("heading", { level: 2, name: "GUPPI interface" }),
+  ).toBeVisible();
+  await expect(link).toBeFocused();
+});
+
+test("compact About caption opens GUPPI's card in the detail sheet", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await storeKnowledgeChapter(page, "1.2");
+  await page.goto("/");
+  await openMenuCommand(page, "What is this?");
+  const dialog = await expectAboutDialogContent(page);
+  await dialog.getByRole("button", { name: "GUPPI" }).click();
+  await expect(dialog).toHaveCount(0);
+  const sheet = page.getByRole("dialog", { name: "Selected object" });
+  await expect(
+    sheet.getByRole("heading", { level: 2, name: "GUPPI interface" }),
+  ).toBeVisible();
+  await expect(sheet.getByRole("button", { name: "Close" })).toBeFocused();
+});
 
 // Compact chapter selector (Variant A): top-bar chip and chapter picker.
 async function chooseTopbarChapter(page: Page, name: string): Promise<void> {
