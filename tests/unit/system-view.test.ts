@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
+import { nearbySystems } from "../../src/domain/data";
 import type { StellarSystem } from "../../src/domain/types";
 import type { NarrativeWorld } from "../../src/narrative/model";
+import {
+  generateNarrativeWorld,
+  prepareNarrativeCorpus,
+} from "../../src/narrative/model";
+import { narrativeCorpus } from "../../src/narrative/runtime";
 import { systemViewEntryForNarrativeSelection } from "../../src/system-view";
 
 const astronomySystem: StellarSystem = {
@@ -131,4 +137,72 @@ describe("system-view entry eligibility", () => {
       systemViewEntryForNarrativeSelection(fixture, [], "location:system"),
     ).toBeNull();
   });
+
+  it("accepts recognized orbits children hanging directly off the system", () => {
+    const fixture = world([
+      {
+        id: "location:planet",
+        entity_type: "location",
+        kind: "planet",
+        parent_location_id: "location:system",
+        parent_relation: "orbits",
+      },
+    ]);
+
+    expect(
+      systemViewEntryForNarrativeSelection(
+        fixture,
+        [astronomySystem],
+        "location:system",
+      ),
+    ).toEqual({
+      astronomySystemId: "fixture-system",
+      narrativeSystemId: "location:system",
+    });
+  });
+
+  it("rejects a star-less system whose only child is a non-orbital locale", () => {
+    const fixture = world([
+      {
+        id: "location:locale",
+        entity_type: "location",
+        kind: "locale",
+        parent_location_id: "location:system",
+        parent_relation: "located_on",
+      },
+    ]);
+
+    expect(
+      systemViewEntryForNarrativeSelection(
+        fixture,
+        [astronomySystem],
+        "location:system",
+      ),
+    ).toBeNull();
+  });
+
+  it("treats the merged Epsilon Eridani system as enterable at chapter 1.61", () => {
+    if (!narrativeCorpus) {
+      throw new Error("Narrative corpus is unavailable.");
+    }
+    if (!nearbySystems) {
+      throw new Error("Fixture dataset failed validation");
+    }
+    const worldAtChapter = generateNarrativeWorld(
+      prepareNarrativeCorpus(narrativeCorpus),
+      "1.61",
+    );
+    expect(
+      worldAtChapter.entities.some(
+        (entity) => entity.id === "location:epsilon-eridani-star",
+      ),
+    ).toBe(false);
+    const entry = systemViewEntryForNarrativeSelection(
+      worldAtChapter,
+      nearbySystems.systems,
+      "location:epsilon-eridani",
+    );
+    expect(entry).not.toBeNull();
+    expect(entry?.narrativeSystemId).toBe("location:epsilon-eridani");
+  }, 30_000);
 });

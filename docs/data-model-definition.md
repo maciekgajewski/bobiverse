@@ -1374,6 +1374,11 @@ location also requires `parent_relation`. Leaves omit `children`; when supplied,
 | `planet`, `dwarf_planet`         | `moon`                                                                 | `orbits`                   |
 | `planet`, `dwarf_planet`, `moon` | `locale`                                                               | `located_on`               |
 
+This zero-state Solar System seed keeps `star_system` → `star` with
+`member_of_system`; Sol is unchanged. In chapter data, a single-star system may
+instead have planets, dwarf planets and belts orbit the `star_system` directly
+(see the shared semantic parent table below).
+
 The source preserves every authored child-array order. Among a parent's children whose
 relation is `orbits`, that order asserts inner-to-outer order; it contains no distances
 or other measured orbital facts. A planet or dwarf planet may have at most four moon
@@ -1685,6 +1690,8 @@ semantic parent table is:
 | Parent kind                                                                    | Child kind                                                             | Required `parent_relation` |
 | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------- | -------------------------- |
 | `star_system`                                                                  | `star`                                                                 | `member_of_system`         |
+| `star_system`                                                                  | `planet`, `dwarf_planet`, `asteroid_belt`, `kuiper_belt`, `oort_cloud` | `orbits`                   |
+| `star_system`                                                                  | `megastructure`                                                        | `orbits` or `located_on`   |
 | `star`                                                                         | `planet`, `dwarf_planet`, `asteroid_belt`, `kuiper_belt`, `oort_cloud` | `orbits`                   |
 | `star`                                                                         | `megastructure`                                                        | `orbits` or `located_on`   |
 | `planet`, `dwarf_planet`                                                       | `moon`                                                                 | `orbits`                   |
@@ -1692,6 +1699,11 @@ semantic parent table is:
 | `planet`, `dwarf_planet`, `moon`                                               | `locale`                                                               | `located_on`               |
 | `megastructure`                                                                | `locale`, `megastructure`                                              | `contained_in`             |
 | `locale`                                                                       | `locale`                                                               | `contained_in`             |
+
+In a single-star system the narrative may omit a separate `star` child and attach
+`orbits` descendants directly to the `star_system`. Multi-star systems still
+introduce `member_of_system` star children. The zero-state Sol system remains
+`star_system` → `star`.
 
 Every effective location with `parent_relation: "orbits"` has an integer ordering key
 from `1` through `9007199254740991`. Nested zero-state child arrays assign implicit

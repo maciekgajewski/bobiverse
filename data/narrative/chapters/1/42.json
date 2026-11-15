@@ -43,7 +43,6 @@
     "character:riker",
     "character:homer",
     "character:bob-replicant",
-    "species:human",
-    "location:epsilon-eridani-star"
+    "species:human"
   ]
 }
