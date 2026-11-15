@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useMemo, type ReactNode } from "react";
 import type { SelectionIdentity } from "../domain/selection";
 import type { Component, StellarSystem } from "../domain/types";
 import type { NarrativeBrowserItem } from "../narrative/browser";
@@ -782,6 +782,10 @@ function ChapterDetails({
   onSelect: (selection: SelectionIdentity) => void;
   inlineLinkFallbacks: ReadonlyMap<string, readonly string[]>;
 }) {
+  const entitiesById = useMemo(
+    () => new Map(world.entities.map((entity) => [entity.id, entity])),
+    [world.entities],
+  );
   const trimmedTitle = detail.title.trim();
   const numericOnly = trimmedTitle === detail.localNumber;
   const pictureAlt = `Illustration for Book ${detail.bookNumber}, Chapter ${detail.localNumber}${
@@ -806,9 +810,7 @@ function ChapterDetails({
         <p>
           <NarrativeText
             text={detail.summary}
-            entities={
-              new Map(world.entities.map((entity) => [entity.id, entity]))
-            }
+            entities={entitiesById}
             onSelect={onSelect}
             fallbackLabels={inlineLinkFallbacks}
           />
