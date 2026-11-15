@@ -64,9 +64,23 @@
 :where(*:not(select):not(option):not(optgroup))::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(#76cfe2, #3e6688);
 }
+/* The document itself never scrolls (BOB-20261115-HT8509). On Android Chrome
+   100vh is the large viewport (address bar hidden), taller than the 100svh
+   app shell, so a 100vh body left the page scrollable by the address bar's
+   height; a scroll chained out of a sheet scrolled the top bar off screen
+   with no way back. The root is the small viewport and never scrolls
+   vertically; below the 320px minimum it still scrolls sideways. */
+html {
+  height: 100%;
+  height: 100svh;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior: none;
+}
 body {
   min-width: 320px;
-  min-height: 100vh;
+  height: 100%;
+  overflow: hidden;
   margin: 0;
   background: radial-gradient(
     circle at 54% -10%,
@@ -96,8 +110,8 @@ button:focus-visible {
   top: var(--space-4);
 }
 .app-shell {
+  height: 100vh;
   height: 100svh;
-  min-height: 100vh;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
   gap: 0.5rem;
@@ -105,7 +119,8 @@ button:focus-visible {
   padding: 0.5rem;
 }
 .terminal-state {
-  min-height: 100vh;
+  height: 100%;
+  overflow: auto;
   display: grid;
   place-content: center;
   padding: 2rem;
@@ -2061,6 +2076,7 @@ h2 {
   gap: 0;
   min-height: 0;
   overflow: auto;
+  overscroll-behavior: contain;
   padding: 1rem;
 }
 .about-intro {
@@ -2152,10 +2168,6 @@ h2 {
   gap: 1.15rem;
 }
 /* What's new reuses the About frame and layout. */
-.about-figure figcaption .whats-new-credit {
-  display: block;
-  margin-top: 0.2rem;
-}
 .whats-new-notes h3 {
   margin: 0 0 0.35rem;
   color: var(--text-primary);
@@ -2606,10 +2618,16 @@ h2 {
     left: 0;
     width: auto;
     max-width: none;
-    max-height: min(34rem, 86svh);
+    /* dvh follows the browser's own bars, so the sheet never runs under
+       them; the body scrolls inside it. */
+    max-height: min(34rem, 86vh);
+    max-height: min(34rem, 86dvh);
     border-bottom: 0;
     border-radius: 1rem 1rem 0 0;
     transform: none;
+  }
+  .about-dialog .about-body {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
   }
   .about-intro {
     flex-direction: column;

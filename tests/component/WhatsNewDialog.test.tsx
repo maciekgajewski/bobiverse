@@ -65,27 +65,26 @@ describe("WhatsNewDialog", () => {
     expect(latest).toHaveTextContent("A fictional later release.");
   });
 
-  it("shows the credited Jeeves picture with Jeeves as plain text by default", () => {
+  it("shows the Jeeves picture, credited in its alt, with Jeeves as plain text by default", () => {
     render(<WhatsNewDialog onClose={vi.fn()} notes={NOTES} />);
     const dialog = screen.getByRole("dialog", { name: "What\u2019s new" });
     const image = within(dialog).getByRole("img", { name: JEEVES_IMAGE_ALT });
     expect(image).toHaveAttribute("src", WHATS_NEW_IMAGE_SRC);
     expect(image).toHaveAttribute("width", "150");
     expect(image).toHaveAttribute("height", "200");
+    // The credits live in the alt text (and About > Credits), not the caption.
+    for (const credit of [
+      "original AI-assisted painting",
+      "Alan Light (1989, CC BY 2.0)",
+      "Bruce Baker (2014, CC BY 2.0)",
+    ])
+      expect(image.getAttribute("alt")).toContain(credit);
     const caption = dialog.querySelector("figcaption")!;
-    expect(caption.textContent).toMatch(/^Jeeves/);
+    expect(caption.textContent).toBe("Jeeves");
     expect(
       within(caption).queryByRole("button", { name: "Jeeves" }),
     ).not.toBeInTheDocument();
-    const links = within(caption).getAllByRole("link");
-    expect(links.map((link) => link.getAttribute("href"))).toEqual([
-      "https://commons.wikimedia.org/wiki/File:John_Cleese_at_1989_Oscars.jpg",
-      "https://commons.wikimedia.org/wiki/File:John_Cleese_(cropped).jpg",
-    ]);
-    for (const link of links) {
-      expect(link).toHaveAttribute("target", "_blank");
-      expect(link).toHaveAttribute("rel", "noopener noreferrer");
-    }
+    expect(within(dialog).queryAllByRole("link")).toEqual([]);
     expect(WHATS_NEW_CAPTION_ENTITY_ID).toBe("technology:jeeves");
   });
 
@@ -101,6 +100,58 @@ describe("WhatsNewDialog", () => {
     );
     await user.click(screen.getByRole("button", { name: "Jeeves" }));
     expect(onOpenJeeves).toHaveBeenCalledTimes(1);
+    const caption = document.querySelector("figcaption")!;
+    expect(caption.textContent).toBe("Jeeves");
+  });
+
+  it("makes What is this? in the notes open About when the caller allows it", async () => {
+    const user = userEvent.setup();
+    const onOpenAbout = vi.fn();
+    const notes: readonly ReleaseNote[] = [
+      {
+        version: "0.9.0",
+        summary: "A fictional first release.",
+        highlights: [
+          "Plain highlight.",
+          [
+            { opens: "about", label: "What is this?" },
+            " explains the companion.",
+          ],
+        ],
+      },
+    ];
+    const { unmount } = render(
+      <WhatsNewDialog onClose={vi.fn()} notes={notes} />,
+    );
+    const plainItem = screen.getAllByRole("listitem")[1]!;
+    expect(plainItem).toHaveTextContent(
+      "What is this? explains the companion.",
+    );
+    expect(within(plainItem).queryByRole("button")).not.toBeInTheDocument();
+    unmount();
+
+    render(
+      <WhatsNewDialog
+        onClose={vi.fn()}
+        onOpenAbout={onOpenAbout}
+        notes={notes}
+      />,
+    );
+    const item = screen.getAllByRole("listitem")[1]!;
+    expect(item).toHaveTextContent("What is this? explains the companion.");
+    const button = within(item).getByRole("button", { name: "What is this?" });
+    expect(button).toHaveAttribute("aria-haspopup", "dialog");
+    await user.click(button);
+    expect(onOpenAbout).toHaveBeenCalledTimes(1);
+  });
+
+  it("links What is this? in the real v0.9.0 notes", () => {
+    render(<WhatsNewDialog onClose={vi.fn()} onOpenAbout={vi.fn()} />);
+    const release = screen.getByRole("region", { name: "Version 0.9.0" });
+    const items = within(release).getAllByRole("listitem");
+    expect(
+      within(items.at(-1)!).getByRole("button", { name: "What is this?" }),
+    ).toBeInTheDocument();
   });
 
   it("closes with Escape, the X and the backdrop", async () => {

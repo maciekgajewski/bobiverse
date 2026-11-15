@@ -2124,6 +2124,59 @@ describe("atlas shell", () => {
       await waitFor(() => expect(menu).toHaveFocus());
     });
 
+    it("opens About from What is this? in the notes, closing What's new", async () => {
+      window.localStorage.setItem(WHATS_NEW_STORAGE_KEY, "0.0.1");
+      storeOldReader();
+      const user = userEvent.setup();
+      render(<App />);
+      const dialog = whatsNew()!;
+      const release = within(dialog).getByRole("region", {
+        name: "Version 0.9.0",
+      });
+      await user.click(
+        within(release).getByRole("button", { name: "What is this?" }),
+      );
+      expect(whatsNew()).not.toBeInTheDocument();
+      expect(window.localStorage.getItem(WHATS_NEW_STORAGE_KEY)).toBe(
+        NEWEST_RELEASE_NOTES_VERSION,
+      );
+      const about = screen.getByRole("dialog", { name: "What is this?" });
+      expect(document.querySelector("main.app-shell")).toHaveAttribute("inert");
+      await user.click(within(about).getByRole("button", { name: "Close" }));
+      expect(
+        screen.queryByRole("dialog", { name: "What is this?" }),
+      ).not.toBeInTheDocument();
+      expect(whatsNew()).not.toBeInTheDocument();
+      await waitFor(() =>
+        expect(
+          within(document.querySelector(".topbar-title")!).getByRole("button", {
+            name: "What is this?",
+          }),
+        ).toHaveFocus(),
+      );
+    });
+
+    it("on a phone, What is this? in the notes opens About and returns focus to Menu", async () => {
+      vi.stubGlobal("matchMedia", compactMatchMedia);
+      const user = userEvent.setup();
+      render(<App />);
+      const menu = screen.getByRole("button", { name: "Menu" });
+      await user.click(menu);
+      await user.click(
+        within(screen.getByRole("dialog", { name: "Menu" })).getByRole(
+          "button",
+          { name: "What\u2019s new" },
+        ),
+      );
+      await user.click(
+        within(whatsNew()!).getByRole("button", { name: "What is this?" }),
+      );
+      const about = screen.getByRole("dialog", { name: "What is this?" });
+      await user.keyboard("{Escape}");
+      expect(about).not.toBeInTheDocument();
+      await waitFor(() => expect(menu).toHaveFocus());
+    });
+
     it("keeps Jeeves as plain text until Jeeves is known, then opens his card", async () => {
       // Jeeves is introduced in Chapter 1.13.
       window.localStorage.setItem(
@@ -2176,6 +2229,53 @@ describe("atlas shell", () => {
       expect(
         screen.getAllByRole("heading", { level: 2, name: "Jeeves" }).length,
       ).toBeGreaterThan(0);
+    });
+
+    it("snaps the document back to the top so the top bar stays visible", () => {
+      const scrollTo = vi.fn();
+      vi.stubGlobal("scrollTo", scrollTo);
+      const { unmount } = render(<App />);
+      const own = Object.getOwnPropertyDescriptor(window, "scrollY");
+      Object.defineProperty(window, "scrollY", {
+        configurable: true,
+        value: 56,
+      });
+      try {
+        window.dispatchEvent(new Event("scroll"));
+        expect(scrollTo).toHaveBeenCalledWith(window.scrollX, 0);
+        scrollTo.mockClear();
+        unmount();
+        window.dispatchEvent(new Event("scroll"));
+        expect(scrollTo).not.toHaveBeenCalled();
+      } finally {
+        if (own) Object.defineProperty(window, "scrollY", own);
+        else delete (window as { scrollY?: number }).scrollY;
+      }
+    });
+
+    it("leaves focus scrolling alone while a text field is focused", async () => {
+      const scrollTo = vi.fn();
+      vi.stubGlobal("scrollTo", scrollTo);
+      render(<App />);
+      const field = screen.getAllByRole("searchbox")[0]!;
+      field.focus();
+      expect(field).toHaveFocus();
+      const own = Object.getOwnPropertyDescriptor(window, "scrollY");
+      Object.defineProperty(window, "scrollY", {
+        configurable: true,
+        value: 56,
+      });
+      try {
+        window.dispatchEvent(new Event("scroll"));
+        expect(scrollTo).not.toHaveBeenCalled();
+        field.blur();
+        await waitFor(() =>
+          expect(scrollTo).toHaveBeenCalledWith(window.scrollX, 0),
+        );
+      } finally {
+        if (own) Object.defineProperty(window, "scrollY", own);
+        else delete (window as { scrollY?: number }).scrollY;
+      }
     });
 
     it("renders and opens What's new when localStorage is blocked", async () => {
