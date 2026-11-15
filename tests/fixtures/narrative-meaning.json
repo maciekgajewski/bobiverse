@@ -742,7 +742,7 @@
     "subject": "location:82-eridani",
     "field": "description",
     "expected": "sha256:6a45aa7d68257bb2",
-    "basis": "delegated-condensation rule (Maciej, 2026-11-14 22:54); the fact survives in the 1.51 chapter summary"
+    "basis": "delegated-condensation (Maciej 2026-11-14 22:54)"
   },
   {
     "chapter": "1.51",
