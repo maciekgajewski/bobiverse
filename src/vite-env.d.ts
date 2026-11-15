@@ -27,6 +27,8 @@ interface Bob034MapPerformanceBridge {
     visibleRadiusPx: number;
     pickRadiusPx: number;
   };
+  /** Place the camera at a distance along the current view direction. */
+  setCameraDistance: (distance: number) => void;
   /** Renderer and scene-material counters for render-churn regression tests. */
   renderStats: () => {
     programs: number;

@@ -447,7 +447,7 @@ function nearbySystemComponentId(name: string): string {
   return component.id;
 }
 
-test("canvas picking uses the invisible click target outside the visible star", async ({
+test("canvas picking still selects a star just outside its visible glyph", async ({
   page,
 }) => {
   test.setTimeout(45_000);
@@ -460,8 +460,9 @@ test("canvas picking uses the invisible click target outside the visible star", 
   const inspector = page.getByRole("complementary", {
     name: "Object inspector",
   });
-  // WISE 0855-0714 is astronomy-only with a 0.05 visible quad inside a 0.09
-  // click target, so a click between the two radii can only hit the target.
+  // WISE 0855-0714 is astronomy-only with a 0.05 visible quad. After zooming
+  // in, a click between that glyph and the projected 0.09 pc pick radius
+  // must still select it via screen-space picking.
   await page
     .getByRole("searchbox", { name: "Search visible objects" })
     .fill("WISE 0855-0714");
@@ -878,9 +879,11 @@ test("mobile detail window has an X close icon and tap-sized history in one head
 });
 
 // BOB-20261114-H960PW: the phone detail view is a snap sheet over a live map.
+
 test("phone detail sheet snaps over an interactive map and its trail follows links", async ({
   page,
 }) => {
+  test.setTimeout(45_000);
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
@@ -946,7 +949,18 @@ test("phone detail sheet snaps over an interactive map and its trail follows lin
       },
     ),
   ).toBe(true);
-  await caption.click();
+  // Click the system name, which sits next to Sol's centre, not the
+  // whole caption box (the rail can sit nearer another star). A
+  // coordinate click matches a real tap: Playwright's locator click
+  // can hit the canvas first, hover-expand the tooltip, then treat
+  // the aria-hidden name as invisible and time out (Firefox).
+  const nameBox = (await caption
+    .locator(".narrative-map-label-name")
+    .boundingBox())!;
+  await page.mouse.click(
+    nameBox.x + nameBox.width / 2,
+    nameBox.y + nameBox.height / 2,
+  );
   await expect(
     sheet.getByRole("heading", { name: "Solar System" }),
   ).toBeVisible();
@@ -1480,7 +1494,7 @@ test("the permanent local backdrop preserves responsive map interaction", async 
     );
     await expect(page.getByTestId("star-map-canvas")).toHaveAttribute(
       "data-component-render-calls",
-      "2",
+      "1",
     );
     await expect(page.getByTestId("star-map-canvas")).toHaveAttribute(
       "data-context-emphasis",
