@@ -2420,9 +2420,13 @@ for (const viewport of [
       const style = getComputedStyle(element);
       const range = document.createRange();
       range.selectNodeContents(element);
-      const lineTops = new Set(
-        [...range.getClientRects()].map((rect) => Math.round(rect.top)),
-      );
+      // The chapter is a button (inline-block in Chromium), whose box and
+      // text rects sit a pixel or so off the line's text rect; tops within
+      // 3px are one visual line.
+      const lineTops: number[] = [];
+      for (const rect of range.getClientRects())
+        if (lineTops.every((top) => Math.abs(top - rect.top) > 3))
+          lineTops.push(rect.top);
       return {
         scrollWidth: element.scrollWidth,
         clientWidth: element.clientWidth,
@@ -2431,7 +2435,7 @@ for (const viewport of [
         lineHeight: parseFloat(style.lineHeight),
         paddingY:
           parseFloat(style.paddingTop) + parseFloat(style.paddingBottom),
-        lines: lineTops.size,
+        lines: lineTops.length,
       };
     });
     expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.clientWidth);
