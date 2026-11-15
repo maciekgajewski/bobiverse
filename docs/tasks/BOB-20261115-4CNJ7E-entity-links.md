@@ -124,3 +124,17 @@ Where the spec left a choice, the implementation takes these:
 - Created on origin/master `01f1281` under the authorization above, on local
   branch `bob-20261115-4cnj7e-entity-links` in the `~/src/bobiverse-entitylinks`
   worktree. ADR-0029 added with this task file.
+- Implemented in `0cc72d7` (parser, validation, sentence preservation, schema
+  wording), `0dd652c` (inspector rendering), `d0a0ed7` (e2e) and `54cdae3`
+  (docs). Validation, all passed: `python3 scripts/tasks.py check`,
+  `npm run format:check`, `npm run lint`, `npm run typecheck`, `npm run test`
+  (543 passed), `npm run data:test` (90 passed), `npm run data:validate`,
+  `npm run narrative:validate`, `npm run build`, `git diff --check` and
+  `npx prettier --check` on the changed Markdown.
+- Full e2e on a spare dev-server port 5199 (untracked throwaway config, deleted
+  afterwards), one worker, no retries: chromium and firefox each 60 passed and 3
+  skipped (the Enter system tests behind `ENABLE_ENTER_SYSTEM`); webkit 59
+  passed, 3 skipped and 1 failed, the known "permanent local backdrop" flake
+  (30 s timeout), which passed 3/3 run alone with `--repeat-each=3`. No
+  icon-specimen PNG was rewritten. Screenshots of a linked description at
+  390×844 and 1280×800 were taken for review outside the repository.
