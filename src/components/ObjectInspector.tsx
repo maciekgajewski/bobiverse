@@ -258,7 +258,7 @@ function NarrativeDetails({
   onToggleSection: (section: keyof CharacterInspectorSectionState) => void;
   systemEntry: SystemViewEntry | null;
   onEnterSystem: (entry: SystemViewEntry) => void;
-  inlineLinkFallbacks?: ReadonlyMap<string, readonly string[]>;
+  inlineLinkFallbacks: ReadonlyMap<string, readonly string[]>;
 }) {
   const { entity } = item;
   const name = String(entity.name);
@@ -780,7 +780,7 @@ function ChapterDetails({
   assets: NarrativeRecord;
   headingId: string;
   onSelect: (selection: SelectionIdentity) => void;
-  inlineLinkFallbacks?: ReadonlyMap<string, readonly string[]>;
+  inlineLinkFallbacks: ReadonlyMap<string, readonly string[]>;
 }) {
   const trimmedTitle = detail.title.trim();
   const numericOnly = trimmedTitle === detail.localNumber;
@@ -887,6 +887,8 @@ export function InspectorHistoryControls({
   );
 }
 
+const noInlineLinkFallbacks: ReadonlyMap<string, readonly string[]> = new Map();
+
 export function ObjectInspector({
   selection,
   narrativeItem,
@@ -911,7 +913,7 @@ export function ObjectInspector({
   onEnterSystem = () => undefined,
   onComponentSelect = () => undefined,
   showHistoryControls = true,
-  inlineLinkFallbacks,
+  inlineLinkFallbacks = noInlineLinkFallbacks,
 }: {
   selection: SelectionIdentity | null;
   narrativeItem: NarrativeBrowserItem | null;

@@ -25,6 +25,7 @@ describe("NarrativeText", () => {
           text="Works at [[location:fixture-town]] and [[location:fixture-town|there]]."
           entities={entities}
           onSelect={onSelect}
+          fallbackLabels={new Map()}
         />
       </p>,
     );
@@ -63,6 +64,21 @@ describe("NarrativeText", () => {
     expect(container.querySelector("[title], a")).toBeNull();
   });
 
+  it("never shows a raw target ID when a hidden link has no fallback", () => {
+    const { container } = render(
+      <p>
+        <NarrativeText
+          text="Built before the [[event:fixture-war]]."
+          entities={entities}
+          onSelect={vi.fn()}
+          fallbackLabels={new Map()}
+        />
+      </p>,
+    );
+    expect(container.textContent).toBe("Built before the fixture war.");
+    expect(container.textContent).not.toContain("event:");
+  });
+
   it("unescapes literals and keeps markup-like text as text", () => {
     const { container } = render(
       <p>
@@ -70,6 +86,7 @@ describe("NarrativeText", () => {
           text={"Tagged \\[[draft\\]] in a \\\\ folder with <b>tags</b>."}
           entities={entities}
           onSelect={vi.fn()}
+          fallbackLabels={new Map()}
         />
       </p>,
     );
