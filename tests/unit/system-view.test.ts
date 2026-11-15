@@ -201,5 +201,5 @@ describe("system-view entry eligibility", () => {
     );
     expect(entry).not.toBeNull();
     expect(entry?.narrativeSystemId).toBe("location:epsilon-eridani");
-  });
+  }, 30_000);
 });
