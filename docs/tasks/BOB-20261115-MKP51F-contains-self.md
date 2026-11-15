@@ -104,12 +104,12 @@ Manual: the Captain's check after deployment (checklist in
   branch `bob-20261115-mkp51f-contains-self` in the
   `~/src/bobiverse-contains` worktree.
 
-- Implemented in `8cc6d39`. Validation, all passed: `python3 scripts/tasks.py
-  check` (88 task files, 30 ADRs), `npm run format:check`, `npm run lint`,
-  `npm run typecheck`, `npm run test` (492 passed, 44 files), `npm run
-  data:test` (90 passed), `npm run data:validate`, `npm run narrative:validate`,
-  `npm run build`, `git diff --check` and `npx prettier --check` on the changed
-  Markdown.
+- Implemented in `8cc6d39`. Validation, all passed:
+  `python3 scripts/tasks.py check` (88 task files, 30 ADRs), `npm run format:check`,
+  `npm run lint`, `npm run typecheck`, `npm run test` (492 passed, 44 files),
+  `npm run data:test` (90 passed), `npm run data:validate`,
+  `npm run narrative:validate`, `npm run build`, `git diff --check` and
+  `npx prettier --check` on the changed Markdown.
 - Full e2e on spare port 5198 (untracked `playwright.alt5198.config.ts`, deleted
   afterwards), one worker, no retries. First run used a `$`-anchored
   `inspectFromBrowser` name regex that does not match recency text in the
