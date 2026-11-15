@@ -147,7 +147,7 @@
     },
     {
       "entity_id": "location:delta-eridani",
-      "description": "A stellar system centered on an orange star cooler than [[location:sol]] but more than two and a half times as large. [[character:bob-replicant]] chose it for its lack of a binary companion, low ultraviolet emissions, long-lived stellar type, and wide potential habitable zone; [[character:bill]] considered it a likely source of habitable planets. Its survey identifies five inner rocky planets and five outer gas giants separated by an asteroid belt. Two outer giants have rings rivaling [[location:saturn]]'s, and the largest is about six [[location:jupiter]] masses."
+      "description": "A stellar system centered on an orange star cooler than [[location:sol]] but more than two and a half times as large. [[character:bob-replicant]] chose it for its lack of a binary companion, low ultraviolet emissions, long-lived stellar type, and wide potential habitable zone; [[character:bill]] considered it a likely source of habitable planets."
     },
     {
       "entity_id": "technology:planetary-exploration-drone",
