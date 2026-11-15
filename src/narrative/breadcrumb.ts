@@ -1,5 +1,6 @@
 import type { SelectionIdentity } from "../domain/selection";
 import type { StellarSystem } from "../domain/types";
+import { disambiguatedAdjacentLabels } from "./entity-label";
 import type { NarrativeEntity, NarrativeWorld } from "./model";
 
 export interface InspectorCrumb {
@@ -65,9 +66,7 @@ export function inspectorBreadcrumbTrail(
   );
   const entity = entities.get(selection.id);
   if (!entity) return [];
-  const trail: InspectorCrumb[] = [
-    { key: entity.id, label: String(entity.name), target: null },
-  ];
+  const chain: NarrativeEntity[] = [entity];
   const visited = new Set([entity.id]);
   let parentId =
     entity.entity_type === "location"
@@ -77,12 +76,14 @@ export function inspectorBreadcrumbTrail(
     const parent = entities.get(parentId);
     if (!parent) break;
     visited.add(parent.id);
-    trail.unshift({
-      key: parent.id,
-      label: String(parent.name),
-      target: { kind: "narrative", id: parent.id },
-    });
+    chain.unshift(parent);
     parentId = stringValue(parent.parent_location_id);
   }
-  return trail;
+  const labels = disambiguatedAdjacentLabels(chain);
+  return chain.map((item, index) => ({
+    key: item.id,
+    label: labels[index] ?? String(item.name),
+    target:
+      index < chain.length - 1 ? { kind: "narrative", id: item.id } : null,
+  }));
 }

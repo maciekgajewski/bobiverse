@@ -1496,6 +1496,69 @@ describe("atlas shell", () => {
     ).toBeEnabled();
   });
 
+  it("disambiguates adjacent same-named crumbs in the compact object trail", async () => {
+    vi.stubGlobal("matchMedia", compactMatchMedia);
+    window.localStorage.setItem(
+      "bobiverse.app-state.v2",
+      JSON.stringify({
+        furthestChapterRead: "1.61",
+        viewChapter: "1.61",
+        displayDate: null,
+        mode: "chapter",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: "Menu" }));
+    await user.click(screen.getByRole("button", { name: "Search" }));
+    const browser = screen.getByRole("dialog", { name: "Search" });
+    await user.type(
+      within(browser).getByRole("searchbox", {
+        name: "Search visible objects",
+      }),
+      "Epsilon Eridani",
+    );
+    const systemHits = within(browser).getAllByRole("button", {
+      name: /^Epsilon Eridani(?! One)/,
+    });
+    await user.click(systemHits[0]);
+    const sheet = await screen.findByRole("dialog", {
+      name: "Selected object",
+    });
+    expect(sheet.querySelector(".entity-kind")).toHaveTextContent(
+      "star system",
+    );
+    const header = sheet.querySelector<HTMLElement>(".compact-panel-header")!;
+    let trail = within(header).getByRole("navigation", {
+      name: "Object trail",
+    });
+    expect(within(trail).getByText("Epsilon Eridani")).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+    expect(within(trail).queryByRole("button")).not.toBeInTheDocument();
+
+    await user.click(
+      within(sheet).getByRole("button", { name: "Epsilon Eridani (star)" }),
+    );
+    expect(sheet.querySelector(".entity-kind")).toHaveTextContent("star");
+    trail = within(header).getByRole("navigation", { name: "Object trail" });
+    expect(trail).toHaveTextContent(
+      "Epsilon Eridani (star system)›Epsilon Eridani (star)",
+    );
+    expect(within(trail).getByText("Epsilon Eridani (star)")).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+    expect(
+      within(trail).getByRole("button", {
+        name: "Epsilon Eridani (star system)",
+      }),
+    ).toBeInTheDocument();
+  });
+
   it("opens About from the desktop title link and returns focus to it", async () => {
     const user = userEvent.setup();
     render(<App />);

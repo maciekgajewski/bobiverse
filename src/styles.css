@@ -2638,10 +2638,16 @@ h2 {
     align-items: center;
     min-width: 0;
   }
-  /* Only the furthest ancestors shorten; the parent and the current object
-     keep their full names. */
-  .inspector-breadcrumb li:nth-last-child(-n + 2),
-  .inspector-breadcrumb li:nth-last-child(-n + 2) > * {
+  /* When the trail is too narrow, the parent crumb shrinks with an
+     ellipsis so the current object can keep its full name. Earlier
+     ancestors already collapse to "…". */
+  .inspector-breadcrumb li:nth-last-child(2),
+  .inspector-breadcrumb li:nth-last-child(2) > * {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .inspector-breadcrumb li:last-child,
+  .inspector-breadcrumb li:last-child > * {
     flex: 0 0 auto;
   }
   .crumb-separator {
