@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { devices, expect, test, type Page } from "@playwright/test";
 import { NEWEST_RELEASE_NOTES_VERSION } from "../../src/release-notes";
 
 // Phone layout checks (BOB-20261115-HT8509): Maciej's Android Chrome lost the
@@ -187,4 +187,52 @@ test("What is this? in the release notes opens About", async ({ page }) => {
   await about.getByRole("button", { name: "Close" }).click();
   await expect(about).toHaveCount(0);
   await expect(menu).toBeFocused();
+});
+
+// iPhone Safari scrolls a focused input into view when the keyboard opens.
+// The top bar's snap-back must not fight that: the Search box stays in view
+// and the top bar stays put.
+test.describe("iPhone Search focus", () => {
+  const iPhone = devices["iPhone 13"];
+  test.use({
+    viewport: iPhone.viewport,
+    userAgent: iPhone.userAgent,
+    deviceScaleFactor: iPhone.deviceScaleFactor,
+    isMobile: async ({ browserName }, provide) =>
+      provide(browserName !== "firefox"),
+    hasTouch: true,
+  });
+
+  test("keeps the focused Search box and the top bar in view", async ({
+    page,
+    browserName,
+  }) => {
+    test.skip(browserName !== "webkit", "iPhone emulation runs in WebKit");
+    await seedSeenNotes(page);
+    await page.goto("/");
+    await expect(page.locator(".map-narrative-badge")).toBeVisible();
+    await page.evaluate(() => {
+      (window as unknown as { __scrolls: number }).__scrolls = 0;
+      window.addEventListener("scroll", () => {
+        (window as unknown as { __scrolls: number }).__scrolls += 1;
+      });
+    });
+    await page.getByRole("button", { name: "Search", exact: true }).tap();
+    const search = page.getByRole("searchbox", {
+      name: "Search visible objects",
+    });
+    await expect(search).toBeVisible();
+    await search.focus();
+    await expect(search).toBeFocused();
+    await search.fill("alpha");
+    await expect(search).toBeInViewport({ ratio: 1 });
+    await expect(search).toBeFocused();
+    await expectTopBarOnScreen(page);
+    // Nothing scrolled the document, so the snap-back never ran.
+    expect(
+      await page.evaluate(
+        () => (window as unknown as { __scrolls: number }).__scrolls,
+      ),
+    ).toBe(0);
+  });
 });

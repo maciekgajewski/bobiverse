@@ -42,7 +42,8 @@ reproduces the report exactly (`scrollY` 56, top bar at -56px).
 Fix: the root is the small viewport and never scrolls vertically (`html` is
 `100svh` with `overflow-y: hidden`, `body` is `100%`, the shell is `100svh`
 without the `100vh` minimum), the dialog body has `overscroll-behavior:
-contain`, and App snaps any vertical document scroll back to the top.
+contain`, and App snaps any vertical document scroll back to the top (except while a text field is focused, where the browser may lift it above
+the on-screen keyboard).
 
 ## Authorization
 
@@ -121,3 +122,9 @@ npm run test:e2e:csp
 
 - Reproduced against the deployed LAN build `2384f2a` in Playwright with an
   extra-tall body standing in for Android's large viewport; fixed as above.
+- The manager approved `d61e717`. Added an iPhone 13 (WebKit) e2e test: the
+  focused Search box stays in view and the top bar stays put. As a precaution
+  for real on-screen keyboards, which emulation does not have, the snap-back
+  now waits while a text field is focused and runs once focus leaves it.
+- Landed on master with a `--no-ff` merge and pushed; awaiting Maciej's
+  acceptance on his phone (the task stays In progress until then).

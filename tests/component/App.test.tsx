@@ -2253,6 +2253,31 @@ describe("atlas shell", () => {
       }
     });
 
+    it("leaves focus scrolling alone while a text field is focused", async () => {
+      const scrollTo = vi.fn();
+      vi.stubGlobal("scrollTo", scrollTo);
+      render(<App />);
+      const field = screen.getAllByRole("searchbox")[0]!;
+      field.focus();
+      expect(field).toHaveFocus();
+      const own = Object.getOwnPropertyDescriptor(window, "scrollY");
+      Object.defineProperty(window, "scrollY", {
+        configurable: true,
+        value: 56,
+      });
+      try {
+        window.dispatchEvent(new Event("scroll"));
+        expect(scrollTo).not.toHaveBeenCalled();
+        field.blur();
+        await waitFor(() =>
+          expect(scrollTo).toHaveBeenCalledWith(window.scrollX, 0),
+        );
+      } finally {
+        if (own) Object.defineProperty(window, "scrollY", own);
+        else delete (window as { scrollY?: number }).scrollY;
+      }
+    });
+
     it("renders and opens What's new when localStorage is blocked", async () => {
       const restore = blockLocalStorage();
       try {
