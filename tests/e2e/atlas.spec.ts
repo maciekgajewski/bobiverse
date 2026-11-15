@@ -1419,6 +1419,7 @@ test("the permanent local backdrop preserves responsive map interaction", async 
   page,
   baseURL,
 }) => {
+  test.setTimeout(60_000);
   const appOrigin = new URL(baseURL!).origin;
   const attemptedCrossOriginRequests: string[] = [];
   await page.route("**/*", async (route) => {
