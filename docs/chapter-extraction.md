@@ -287,6 +287,19 @@ to satisfy a required field. Classify a source-supported fine-grained place as
 in the chapter summary, an event description, or another suitable entity
 description. The rule limits browser granularity without deleting source knowledge.
 
+### Star systems
+
+A single-star system is one location entity: the `star_system`. Do not create a
+separate `star` entity for it. Planets, dwarf planets, and belts take
+`parent_relation` `orbits` on the system directly. Put facts about the star in the
+system's `description`, within the length guideline in §Descriptions.
+
+Create separate `star` entities only for multi-star systems, such as Alpha Centauri
+A/B or Omicron2 Eridani, as `member_of_system` children of the system.
+
+Sol is a permanent, valid exception: the Sun stays a separate star entity
+(`location:sol`) in the Solar System, which the schema and validator require.
+
 ### System surveys
 
 Beginning with Chapter `1.16`, a source-described system survey overrides ordinary

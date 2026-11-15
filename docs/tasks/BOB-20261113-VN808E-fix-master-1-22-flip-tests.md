@@ -1,8 +1,8 @@
 # BOB-20261113-VN808E: fix master chapter-view flip tests after the 1.22 drop
 
-Status: In progress
+Status: Done
 Phase: 4 (LLM-assisted editorial pipeline)
-Last updated: 2026-11-13
+Last updated: 2026-11-15
 
 ## Objective
 
@@ -77,3 +77,6 @@ entries at 1.22 and 1.23.
 ## Log
 
 - 2026-11-13: implemented on a branch from master `90dab38`.
+
+- 2026-11-15: Landed on master as squash commit `a7017da` (PR #26). No user-visible UI change
+  needs visual acceptance, so the task is Done.

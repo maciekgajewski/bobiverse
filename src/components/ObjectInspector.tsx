@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useMemo, type ReactNode } from "react";
 import type { SelectionIdentity } from "../domain/selection";
 import type { Component, StellarSystem } from "../domain/types";
 import type { NarrativeBrowserItem } from "../narrative/browser";
@@ -258,7 +258,7 @@ function NarrativeDetails({
   onToggleSection: (section: keyof CharacterInspectorSectionState) => void;
   systemEntry: SystemViewEntry | null;
   onEnterSystem: (entry: SystemViewEntry) => void;
-  inlineLinkFallbacks?: ReadonlyMap<string, readonly string[]>;
+  inlineLinkFallbacks: ReadonlyMap<string, readonly string[]>;
 }) {
   const { entity } = item;
   const name = String(entity.name);
@@ -780,8 +780,12 @@ function ChapterDetails({
   assets: NarrativeRecord;
   headingId: string;
   onSelect: (selection: SelectionIdentity) => void;
-  inlineLinkFallbacks?: ReadonlyMap<string, readonly string[]>;
+  inlineLinkFallbacks: ReadonlyMap<string, readonly string[]>;
 }) {
+  const entitiesById = useMemo(
+    () => new Map(world.entities.map((entity) => [entity.id, entity])),
+    [world.entities],
+  );
   const trimmedTitle = detail.title.trim();
   const numericOnly = trimmedTitle === detail.localNumber;
   const pictureAlt = `Illustration for Book ${detail.bookNumber}, Chapter ${detail.localNumber}${
@@ -806,9 +810,7 @@ function ChapterDetails({
         <p>
           <NarrativeText
             text={detail.summary}
-            entities={
-              new Map(world.entities.map((entity) => [entity.id, entity]))
-            }
+            entities={entitiesById}
             onSelect={onSelect}
             fallbackLabels={inlineLinkFallbacks}
           />
@@ -887,6 +889,8 @@ export function InspectorHistoryControls({
   );
 }
 
+const noInlineLinkFallbacks: ReadonlyMap<string, readonly string[]> = new Map();
+
 export function ObjectInspector({
   selection,
   narrativeItem,
@@ -911,7 +915,7 @@ export function ObjectInspector({
   onEnterSystem = () => undefined,
   onComponentSelect = () => undefined,
   showHistoryControls = true,
-  inlineLinkFallbacks,
+  inlineLinkFallbacks = noInlineLinkFallbacks,
 }: {
   selection: SelectionIdentity | null;
   narrativeItem: NarrativeBrowserItem | null;

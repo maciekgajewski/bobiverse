@@ -571,9 +571,10 @@ On a phone in portrait (about 390×844) and landscape (about 844×390), and on d
   button. The map fills everything below it, edge to edge on phones.
 - **Read through** in the bar asks for confirmation before revealing a chapter, the
   same as the dock and the Timeline and progress panel.
-- The menu opens a right-hand drawer with Chapter/Date mode, **Search**, **Inspect selection** (when something is selected),
-  **Timeline and progress** and **Reset view**. Close, Escape and tapping outside
-  close it and the panels it opens, and focus returns to the menu button.
+- The menu opens a right-hand drawer with Chapter/Date mode, **Search**, **Inspect
+  selection** (when something is selected), **Timeline and progress**, **Reset view**
+  and **What is this?**. Close, Escape and tapping outside close it and the panels
+  it opens, and focus returns to the menu button.
 - The astronomy notice is a chip in the map's bottom-right corner, collapsed by
   default, that shows "NASA/GSFC SVS · ESA/Gaia/DPAC" in full. Tapping it shows the
   catalogue line, acknowledgements and the backdrop credit link; tapping again or

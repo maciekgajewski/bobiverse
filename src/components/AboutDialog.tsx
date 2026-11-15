@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
+import { ABOUT_IMAGE_ALT } from "../about-image";
 import { catalogueAcknowledgements } from "../domain/catalogue-acknowledgements";
 import {
   GALACTIC_STARFIELD_SOURCE_URL,
@@ -10,12 +11,16 @@ import {
 // kept verbatim in AboutCopy so it can be edited in one place.
 export const ABOUT_TITLE = "What is this?";
 export const ABOUT_IMAGE_SRC = "/assets/ackbar.webp";
-// Full credit; also matches the credit block in public/assets/CREDITS.md.
-export const ABOUT_IMAGE_ALT =
-  "Admiral Ackbar illustration by Michael Sutfin, from The New Essential Guide to Characters. Star Wars © Lucasfilm Ltd. Used under fair use.";
+// Full credit, kept in a neutral module; re-exported for the dialog's users.
+export { ABOUT_IMAGE_ALT };
 export const ABOUT_IMAGE_SOURCE =
   "https://starwars.fandom.com/wiki/File:Ackbar-NEGTC.png";
-export const ABOUT_IMAGE_CAPTION = "GUPPI, or Admiral Ackbar";
+// The caption is "<entity>, or <source>": the entity part opens GUPPI when it
+// is reader-known and the source part links to ABOUT_IMAGE_SOURCE.
+const ABOUT_CAPTION_ENTITY_LABEL = "GUPPI";
+const ABOUT_CAPTION_SOURCE_LABEL = "Admiral Ackbar";
+const ABOUT_CAPTION_JOIN = ", or ";
+export const ABOUT_IMAGE_CAPTION = `${ABOUT_CAPTION_ENTITY_LABEL}${ABOUT_CAPTION_JOIN}${ABOUT_CAPTION_SOURCE_LABEL}`;
 // The narrative entity the caption's "GUPPI" opens when it is reader-known.
 export const ABOUT_CAPTION_ENTITY_ID = "technology:guppi-interface";
 
@@ -304,14 +309,14 @@ export function AboutDialog({
                     className="link-button about-caption-entity"
                     onClick={onOpenGuppi}
                   >
-                    GUPPI
+                    {ABOUT_CAPTION_ENTITY_LABEL}
                   </button>
                 ) : (
-                  "GUPPI"
+                  ABOUT_CAPTION_ENTITY_LABEL
                 )}
-                , or{" "}
+                {ABOUT_CAPTION_JOIN}
                 <ExternalLink href={ABOUT_IMAGE_SOURCE}>
-                  Admiral Ackbar
+                  {ABOUT_CAPTION_SOURCE_LABEL}
                 </ExternalLink>
               </figcaption>
             </figure>

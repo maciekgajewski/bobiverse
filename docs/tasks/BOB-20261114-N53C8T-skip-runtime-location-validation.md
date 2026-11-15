@@ -1,8 +1,8 @@
 # BOB-20261114-N53C8T: skip runtime location validation in production builds
 
-Status: In progress
+Status: Done
 Phase: 2 (narrative foundation and chapter timeline)
-Last updated: 2026-11-14
+Last updated: 2026-11-15
 
 ## Objective and user-visible outcome
 
@@ -128,3 +128,6 @@ ran `narrative:validate` over the same corpus. No generated artifacts.
   same backdrop test failed repeatedly at varying assertions (also seen on
   the unrelated about-caption branch) and was not changed here. e2e uses the
   Vite dev server, so the production-only skip is not on that path.
+
+- 2026-11-15: Landed on master as merge `377640d`. No user-visible UI change
+  needs visual acceptance, so the task is Done.
