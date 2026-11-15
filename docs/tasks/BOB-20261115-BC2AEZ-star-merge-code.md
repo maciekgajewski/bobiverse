@@ -33,9 +33,10 @@ After the change:
   data branch `184fce51e96d0daca4f0debaf6534688e6d0bc33` (base `824e7ca`).
   Local only: do not push or merge to master. Do not edit `data/` or chapter
   JSON.
-- The 82 Eridani Chapter 1.51 description pin is updated because the
-  Extractor condensed that text under Maciej's delegated-condensation rule,
-  as relayed by the manager. No other pins are to be changed.
+- The 82 Eridani Chapter 1.51 description pin is updated under the
+  delegated-condensation rule (Maciej, 2026-11-14 22:54). The fact
+  survives in the 1.51 chapter summary (verified). No other pins are to
+  be changed.
 
 ## Binding references
 
@@ -56,9 +57,11 @@ After the change:
    6C60VA unit coverage on synthetic fixtures.
 2. Update only the `tests/fixtures/narrative-meaning.json` pin for
    `location:82-eridani` description at Chapter 1.51, from `ac27d84970d17a3a`
-   to `6a45aa7d68257bb2`. Basis: condensed text accepted under Maciej's
-   delegated-condensation rule, as relayed by the manager. If any other pin
-   or snapshot breaks, stop and report; do not re-pin.
+   to `6a45aa7d68257bb2`. The fixture `basis` field must match
+   `^[A-Za-z0-9 .:()-]{1,48}$`, so it stores
+   `delegated-condensation (Maciej 2026-11-14 22:54)`. The full citation
+   and the verified 1.51 chapter-summary note are in the log. If any other
+   pin or snapshot breaks, stop and report; do not re-pin.
 3. `src/system-view.ts`: a star system with recognized `orbits` children
    hanging directly off the system, and no star child, is enterable. Unit
    tests include a synthetic case and the merged Epsilon Eridani system at
@@ -102,9 +105,9 @@ Manual: the Captain's check after deployment (checklist in
 - **Stacked on the Extractor data head, not on origin/master.** Landing must
   wait for a review of this code branch and for the data branch itself.
 - **One meaning pin only.** The 1.51 82 Eridani description hash changes
-  because that condensed text was accepted under Maciej's
-  delegated-condensation rule, as relayed by the manager. Any further pin or
-  snapshot failure is reported, not silently re-pinned.
+  under the delegated-condensation rule (Maciej, 2026-11-14 22:54). The
+  fixture basis field is length- and charset-limited; see the log. Any
+  further pin or snapshot failure is reported, not silently re-pinned.
 - **Enter-system tests stay at unit level** while `ENABLE_ENTER_SYSTEM` is
   false. Existing e2e Enter system tests already skip.
 - **Zero-state Sol is unchanged.** The zero-state parent table still
@@ -118,3 +121,56 @@ Manual: the Captain's check after deployment (checklist in
   not `origin/master`) under the authorization above, on local branch
   `bob-20261115-star-merge-code` in the `~/src/bobiverse-starmerge` worktree.
   Dev and e2e use port 5200.
+
+### 2026-11-15 (Europe/Warsaw) — implementation and validation
+
+Implementation is complete on this branch. Not pushed; not merged to master.
+
+The only meaning pin changed is `location:82-eridani` description at
+Chapter 1.51, now `sha256:6a45aa7d68257bb2`. The fixture `basis` field
+must match `^[A-Za-z0-9 .:()-]{1,48}$`, so the exact steering citation
+`delegated-condensation rule (Maciej, 2026-11-14 22:54)` (54 characters,
+and it contains a comma) cannot be stored verbatim, and the
+chapter-summary note cannot fit beside it. The stored basis is
+`delegated-condensation (Maciej 2026-11-14 22:54)`. The fact was verified
+to survive in the 1.51 chapter summary: one sentence mentions Milo, 82
+Eridani, promising, and colonisation. Chapter 1.51 no longer writes a
+description for `location:82-eridani`. The "holds every pinned fact"
+test passed; no other pin was changed.
+
+No remaining live system/star pair shares a name (Alpha Centauri versus
+A/B, Omicron2 Eridani versus Omicron Eridani A, Solar System versus
+Sol). `ObjectInspector.test.tsx` and `narrative-breadcrumb.test.ts` keep
+synthetic same-name coverage. The live `App.test.tsx` and e2e cases now
+walk merged Epsilon Eridani to **Epsilon Eridani One**.
+
+`src/system-view.ts` treats recognized `orbits` children hanging directly
+off the system as enterable, still behind `ENABLE_ENTER_SYSTEM`. Unit
+tests cover a synthetic direct-orbit case, a star-less locale-only
+rejection, and live merged Epsilon Eridani at Chapter 1.61. The only
+production star-child assumption found was `system-view.ts`.
+
+Docs in `data-model-definition.md`, `technical-design.md` §9.2, and
+`visual-testing.md` (MKP51F, 6C60VA, and a new BC2AEZ section) were
+updated as planned. Zero-state Sol is unchanged.
+
+Validation at `5b631b4` (08:11 Europe/Warsaw):
+
+- `scripts/tasks.py check`: 92 task files and 31 ADRs.
+- `format:check`, `lint`, `typecheck`: passed.
+- `npm test`: 47 files, 557 tests passed.
+- `data:test`: 90 passed.
+- `data:validate`: 277 reconciled systems.
+- `narrative:validate`: zero state and 61 chapter source files.
+- `build`, `git diff --check`, and Prettier on the changed Markdown:
+  passed.
+- `git diff -- 184fce51 -- data/` is empty.
+
+E2e on port 5200 with untracked `playwright.alt5200.config.ts`, one
+worker, no retries, `xvfb-run`, chromium, firefox, and webkit: 183
+passed, 9 skipped (the three `ENABLE_ENTER_SYSTEM` tests in each
+browser), 0 failed, 30.1 minutes, finished 08:44 Europe/Warsaw. The
+merged Epsilon Eridani test passed in all three browsers. The known
+flake cases (permanent local backdrop; canvas picking after framing
+settles) passed in all three; no isolated rerun. Port 5173 stayed
+HTTP 200. The alt config was deleted afterwards.
