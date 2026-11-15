@@ -20,6 +20,7 @@ import type { CharacterInspectorSectionState } from "../narrative/progress";
 import { defaultCharacterInspectorSectionState } from "../narrative/progress";
 import { SystemDetails } from "./SystemDetails";
 import { ObjectItemBullet } from "./ObjectBrowserIcons";
+import { NarrativeText } from "./NarrativeText";
 import type { SystemViewEntry } from "../system-view";
 import { ENABLE_ENTER_SYSTEM } from "../features";
 
@@ -240,6 +241,7 @@ function NarrativeDetails({
   onToggleSection,
   systemEntry,
   onEnterSystem,
+  inlineLinkFallbacks,
 }: {
   item: NarrativeBrowserItem;
   world: NarrativeWorld;
@@ -253,6 +255,7 @@ function NarrativeDetails({
   onToggleSection: (section: keyof CharacterInspectorSectionState) => void;
   systemEntry: SystemViewEntry | null;
   onEnterSystem: (entry: SystemViewEntry) => void;
+  inlineLinkFallbacks?: ReadonlyMap<string, readonly string[]>;
 }) {
   const { entity } = item;
   const name = String(entity.name);
@@ -260,6 +263,14 @@ function NarrativeDetails({
     world.entities.map((candidate) => [candidate.id, candidate]),
   );
   const aliases = stringList(entity.aliases);
+  const prose = (value: unknown) => (
+    <NarrativeText
+      text={String(value)}
+      entities={entities}
+      onSelect={onSelect}
+      fallbackLabels={inlineLinkFallbacks}
+    />
+  );
   const mappedId =
     entity.entity_type === "location"
       ? mappedAstronomyId(entity, entities)
@@ -341,7 +352,7 @@ function NarrativeDetails({
             )}
             {stringValue(entity.current_state) && (
               <Detail label="Current state">
-                {String(entity.current_state)}
+                {prose(entity.current_state)}
               </Detail>
             )}
             {stringValue(entity.birth_date) && (
@@ -373,7 +384,7 @@ function NarrativeDetails({
           {stringValue(entity.description) && (
             <div className="character-overview-description">
               <h4>Description</h4>
-              <p>{String(entity.description)}</p>
+              <p>{prose(entity.description)}</p>
             </div>
           )}
         </CharacterSection>
@@ -471,7 +482,7 @@ function NarrativeDetails({
             entity.entity_type === "location") &&
             stringValue(entity.current_state ?? entity.state) && (
               <Detail label="Current state">
-                {String(entity.current_state ?? entity.state)}
+                {prose(entity.current_state ?? entity.state)}
               </Detail>
             )}
         </dl>
@@ -576,7 +587,7 @@ function NarrativeDetails({
         stringValue(entity.description) && (
           <section className="inspector-section">
             <h3>Description</h3>
-            <p>{String(entity.description)}</p>
+            <p>{prose(entity.description)}</p>
           </section>
         )}
       {astronomySystem && (
@@ -747,14 +758,18 @@ function ChapterContext({
 
 function ChapterDetails({
   detail,
+  world,
   assets,
   headingId,
   onSelect,
+  inlineLinkFallbacks,
 }: {
   detail: NarrativeChapterDetail;
+  world: NarrativeWorld;
   assets: NarrativeRecord;
   headingId: string;
   onSelect: (selection: SelectionIdentity) => void;
+  inlineLinkFallbacks?: ReadonlyMap<string, readonly string[]>;
 }) {
   const trimmedTitle = detail.title.trim();
   const numericOnly = trimmedTitle === detail.localNumber;
@@ -777,7 +792,16 @@ function ChapterDetails({
       <Picture pictureId={detail.pictureId} assets={assets} alt={pictureAlt} />
       <section className="inspector-section chapter-synopsis">
         <h3>Synopsis</h3>
-        <p>{detail.summary}</p>
+        <p>
+          <NarrativeText
+            text={detail.summary}
+            entities={
+              new Map(world.entities.map((entity) => [entity.id, entity]))
+            }
+            onSelect={onSelect}
+            fallbackLabels={inlineLinkFallbacks}
+          />
+        </p>
       </section>
       <div className="chapter-relationship-frame">
         <ChapterRelationshipList
@@ -876,6 +900,7 @@ export function ObjectInspector({
   onEnterSystem = () => undefined,
   onComponentSelect = () => undefined,
   showHistoryControls = true,
+  inlineLinkFallbacks,
 }: {
   selection: SelectionIdentity | null;
   narrativeItem: NarrativeBrowserItem | null;
@@ -904,6 +929,11 @@ export function ObjectInspector({
    * to the close icon, so it turns the in-body copy off.
    */
   showHistoryControls?: boolean;
+  /**
+   * Default labels for inline entity links whose target the current view does
+   * not project (`preparedInlineLinkFallbackLabels`, ADR-0029).
+   */
+  inlineLinkFallbacks?: ReadonlyMap<string, readonly string[]>;
 }) {
   if (dateContext)
     return (
@@ -943,9 +973,11 @@ export function ObjectInspector({
     return withHistory(
       <ChapterDetails
         detail={chapterDetail}
+        world={world}
         assets={assets}
         headingId={headingId}
         onSelect={onSelect}
+        inlineLinkFallbacks={inlineLinkFallbacks}
       />,
     );
   if (selection.kind === "narrative" && narrativeItem)
@@ -964,6 +996,7 @@ export function ObjectInspector({
           onToggleSection={onToggleSection}
           systemEntry={systemEntry}
           onEnterSystem={onEnterSystem}
+          inlineLinkFallbacks={inlineLinkFallbacks}
         />
         {enteredSystem && (
           <ComponentChooser
