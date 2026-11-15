@@ -139,6 +139,22 @@ test("production bundle makes no non-self requests and no CSP violations", async
   await about.getByRole("button", { name: "Close" }).click();
   await expect(about).toHaveCount(0);
 
+  // What's new (release notes and the Jeeves picture) once under the CSP.
+  await page
+    .locator(".topbar-title")
+    .getByRole("button", { name: "What\u2019s new" })
+    .click();
+  const whatsNew = page.getByRole("dialog", { name: "What\u2019s new" });
+  await expect(whatsNew).toBeVisible({ timeout: 10_000 });
+  const jeeves = whatsNew.getByRole("img", { name: /^Jeeves illustration/ });
+  await expect
+    .poll(() =>
+      jeeves.evaluate((element: HTMLImageElement) => element.naturalWidth),
+    )
+    .toBe(150);
+  await whatsNew.getByRole("button", { name: "Close" }).click();
+  await expect(whatsNew).toHaveCount(0);
+
   const sol = page.getByRole("button", { name: "Solar System" }).first();
   await expect(sol).toBeVisible({ timeout: 15_000 });
   await sol.click();
