@@ -431,11 +431,46 @@ function createAjv(): Ajv2020 {
   return new Ajv2020({ allErrors: true, strict: false, verbose: true });
 }
 
-const narrativeAjv = createAjv();
-narrativeAjv.addSchema(narrativeSchema);
-narrativeAjv.addSchema(speciesPresentationSchema);
+/**
+ * Production Vite bundles expose `import.meta.env.PROD === true`. tsx and
+ * Node have no `import.meta.env`, so this is false for `narrative:validate`.
+ * Vitest keeps `PROD` false, so tests still run Ajv compilation.
+ */
+function isViteProductionBuild(): boolean {
+  const env = (
+    import.meta as ImportMeta & { readonly env?: { readonly PROD?: boolean } }
+  ).env;
+  return env?.PROD === true;
+}
+
+/**
+ * Ajv compiles validators with `Function(...)`, which a strict CSP
+ * `script-src 'self'` rejects as `unsafe-eval`. Production browser builds
+ * skip that compilation: `npm run build` already ran `narrative:validate`
+ * over the same authored corpus. Development, Vitest, and the CLI still
+ * compile and run the validators, including the generated-world check.
+ */
+export function shouldCompileNarrativeSchemas(): boolean {
+  return !isViteProductionBuild();
+}
+
+let narrativeAjv: Ajv2020 | null = null;
 const narrativeValidators = new Map<string, ValidateFunction>();
 const validatorCompilationCounts = new Map<string, number>();
+
+function getNarrativeAjv(): Ajv2020 {
+  if (!narrativeAjv) {
+    narrativeAjv = createAjv();
+    narrativeAjv.addSchema(narrativeSchema);
+    narrativeAjv.addSchema(speciesPresentationSchema);
+  }
+  return narrativeAjv;
+}
+
+const acceptAllSchema: ValidateFunction = Object.assign(
+  (() => true) as unknown as ValidateFunction,
+  { errors: null },
+);
 
 function errorMessage(errors: ErrorObject[] | null | undefined): string {
   return (errors ?? [])
@@ -447,12 +482,14 @@ function errorMessage(errors: ErrorObject[] | null | undefined): string {
 }
 
 function validatorFor(definition: string): ValidateFunction {
+  if (!shouldCompileNarrativeSchemas()) return acceptAllSchema;
   const cached = narrativeValidators.get(definition);
   if (cached) return cached;
+  const ajv = getNarrativeAjv();
   const validator =
     definition === "species_presentation_source"
-      ? narrativeAjv.getSchema(String(speciesPresentationSchema.$id))
-      : narrativeAjv.getSchema(`${schemaId}#/$defs/${definition}`);
+      ? ajv.getSchema(String(speciesPresentationSchema.$id))
+      : ajv.getSchema(`${schemaId}#/$defs/${definition}`);
   if (!validator)
     throw new Error(`Missing narrative schema definition: ${definition}.`);
   narrativeValidators.set(definition, validator);
@@ -2106,18 +2143,6 @@ function prepareChapterDetailSource(
 export interface PrepareNarrativeCorpusOptions {
   /** Formats structural failures without replacing their mandatory evaluation. */
   formatStructureErrors?: FormatNarrativeStructureErrors;
-}
-
-/**
- * Production Vite bundles expose `import.meta.env.PROD === true`. tsx and
- * Node have no `import.meta.env`, so this is false for `narrative:validate`.
- * Vitest keeps `PROD` false, so tests still run the check.
- */
-function isViteProductionBuild(): boolean {
-  const env = (
-    import.meta as ImportMeta & { readonly env?: { readonly PROD?: boolean } }
-  ).env;
-  return env?.PROD === true;
 }
 
 /**

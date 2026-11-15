@@ -11,6 +11,7 @@ export default tseslint.config(
       "node_modules",
       "playwright-report",
       "test-results",
+      ".csp-probe/**",
     ],
   },
   js.configs.recommended,
@@ -24,6 +25,16 @@ export default tseslint.config(
         "warn",
         { allowConstantExport: true },
       ],
+    },
+  },
+  {
+    files: ["scripts/**/*.{js,mjs,cjs}"],
+    languageOptions: {
+      globals: {
+        process: "readonly",
+        console: "readonly",
+        URL: "readonly",
+      },
     },
   },
 );
