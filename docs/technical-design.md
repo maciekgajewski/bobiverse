@@ -691,7 +691,12 @@ the current non-null `viewChapter`; Date mode, zero state, a lower ceiling, or a
 ineligible transition clears it through the shared accessible status. Chapter
 selection never supplies a map-focus target. `ObjectInspector` resolves narrative
 selections only against the current projected entity registry and renders sparse
-type-specific fields and eligible relationship links. A projection change makes an
+type-specific fields and eligible relationship links. Description, state and
+chapter-synopsis prose renders inline entity links (ADR-0029) through one
+`NarrativeText` component: a target in the current projected registry is an inline
+button that selects it like a relationship link, and any other target is plain text
+with no hint, labelled with the name precomputed for the write's chapter when the
+link has no explicit label. A projection change makes an
 absent narrative selection ineligible immediately, clears it, and announces the
 change. Inspector relationship traversal is recorded in a transient, unpersisted
 selection stack shared by the wide and compact inspector. Relationship links append

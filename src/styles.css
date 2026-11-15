@@ -1936,6 +1936,21 @@ h2 {
   cursor: pointer;
   font-size: 0.77rem;
 }
+/* Inline entity links in narrative prose (ADR-0029): read as part of the
+   sentence, so they inherit the prose font and spacing. */
+.link-button.inline-entity-link {
+  display: inline;
+  min-height: 0;
+  padding: 0;
+  font: inherit;
+  text-align: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.15em;
+}
+.link-button.inline-entity-link:hover {
+  color: var(--accent-cyan);
+}
 /* About ("What is this?") dialog. */
 .about-link {
   display: none;

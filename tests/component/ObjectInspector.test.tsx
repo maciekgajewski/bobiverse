@@ -307,6 +307,126 @@ describe("object inspector", () => {
     ).toBeInTheDocument();
   });
 
+  it("renders inline entity links in prose and gates hidden targets", async () => {
+    const user = userEvent.setup();
+    const onSelect = vi.fn();
+    const town: NarrativeEntity = {
+      id: "location:fixture-town",
+      entity_type: "location",
+      name: "Fixture Town",
+    };
+    const description =
+      "A transport based at [[location:fixture-town]], built before the [[event:fixture-war]].";
+    const vessel: NarrativeEntity = {
+      id: "vessel:fixture-transport",
+      entity_type: "vessel",
+      name: "Fixture transport",
+      description,
+      current_state: "Docked at [[location:fixture-town|the town]].",
+    };
+    const { container } = render(
+      <ObjectInspector
+        selection={{ kind: "narrative", id: vessel.id }}
+        narrativeItem={item(vessel)}
+        world={{
+          entities: [vessel, town],
+          activity: [],
+          view: { chapter: null, display_date: "2200" },
+        }}
+        systems={[]}
+        assets={{ assets: [] }}
+        onSelect={onSelect}
+        inlineLinkFallbacks={
+          new Map([[description, ["Fixture town", "Fixture war"]]])
+        }
+      />,
+    );
+    expect(container.textContent).toContain(
+      "A transport based at Fixture Town, built before the Fixture war.",
+    );
+    expect(container.textContent).toContain("Docked at the town.");
+    expect(container.textContent).not.toContain("[[");
+    expect(screen.queryByRole("button", { name: "Fixture war" })).toBeNull();
+    await user.click(screen.getByRole("button", { name: "the town" }));
+    expect(onSelect).toHaveBeenLastCalledWith({
+      kind: "narrative",
+      id: "location:fixture-town",
+    });
+    await user.click(screen.getByRole("button", { name: "Fixture Town" }));
+    expect(onSelect).toHaveBeenCalledTimes(2);
+  });
+
+  it("renders inline entity links in a character's state and a chapter synopsis", async () => {
+    const user = userEvent.setup();
+    const onSelect = vi.fn();
+    const town: NarrativeEntity = {
+      id: "location:fixture-town",
+      entity_type: "location",
+      name: "Fixture Town",
+    };
+    const character: NarrativeEntity = {
+      id: "character:fixture-pat",
+      entity_type: "character",
+      name: "Fixture Pat",
+      current_state: "Works at [[location:fixture-town]].",
+    };
+    const linkedWorld: NarrativeWorld = {
+      entities: [character, town],
+      activity: [],
+      view: { chapter: "1.7", display_date: "2200" },
+    };
+    const { unmount } = render(
+      <ObjectInspector
+        selection={{ kind: "narrative", id: character.id }}
+        narrativeItem={item(character)}
+        world={linkedWorld}
+        systems={[]}
+        assets={{ assets: [] }}
+        onSelect={onSelect}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Fixture Town" }));
+    expect(onSelect).toHaveBeenLastCalledWith({
+      kind: "narrative",
+      id: "location:fixture-town",
+    });
+    unmount();
+    render(
+      <ObjectInspector
+        selection={{ kind: "chapter", id: "1.7" }}
+        narrativeItem={null}
+        chapterDetail={{
+          chapter: "1.7",
+          bookNumber: "1",
+          bookTitle: "Fixture volume",
+          localNumber: "7",
+          title: "Fixture title",
+          date: "2200",
+          summary: "[[character:fixture-pat|Pat]] moves to the town.",
+          pictureId: null,
+          location: { id: "location:fixture-town", name: "Fixture Town" },
+          leadCharacters: [],
+          events: [],
+          vessels: [],
+          technologies: [],
+          appearingCharacters: [],
+        }}
+        world={linkedWorld}
+        systems={[]}
+        assets={{ assets: [] }}
+        onSelect={onSelect}
+      />,
+    );
+    expect(document.querySelector(".chapter-synopsis p")).toHaveTextContent(
+      "Pat moves to the town.",
+    );
+    await user.click(screen.getByRole("button", { name: "Pat" }));
+    expect(onSelect).toHaveBeenLastCalledWith({
+      kind: "narrative",
+      id: "character:fixture-pat",
+    });
+  });
+
   it("renders one sparse-safe chapter detail surface and selects relationships", async () => {
     const user = userEvent.setup();
     const onSelect = vi.fn();

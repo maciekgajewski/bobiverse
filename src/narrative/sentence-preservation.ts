@@ -3,6 +3,10 @@ import {
   compareNarrativeDates,
   type NarrativeRecord,
 } from "./model";
+import {
+  containsInlineLinkMarkup,
+  inlineLinksToPlainText,
+} from "./inline-links";
 
 /**
  * Merged-text sentence preservation (BOB-20261113-JRV53G).
@@ -13,6 +17,11 @@ import {
  * chapter: the write of the latest-read earlier chapter (decision (c)). Only
  * chapter-authored writes (introductions and updates) are compared; zero-state
  * values are not.
+ *
+ * Values are compared as display text (ADR-0029): inline entity links become
+ * their labels or default names and escapes are removed before sentences are
+ * split, so adding or removing link markup around unchanged words is not a
+ * violation, while changing the visible words still is.
  *
  * This is offline editorial tooling run by `narrative:validate`. Projection never
  * calls it, so the browser bundle and the reader-facing model are unchanged.
@@ -133,8 +142,22 @@ interface ChapterWrite {
   pointer: string;
 }
 
+export interface SentencePreservationOptions {
+  /**
+   * Converts a prose value written in `chapter` to display text. `narrative:validate`
+   * passes `inlineLinkDisplayTextResolver(corpus)`, which shows `[[id]]` as the
+   * target's name as of that chapter. The default shows it as the target ID.
+   */
+  displayText?: (value: string, chapter: string) => string;
+}
+
+function defaultDisplayText(value: string): string {
+  return inlineLinksToPlainText(value, (target) => target);
+}
+
 function chapterWrites(
   chapter: NarrativeRecord,
+  displayText: (value: string, chapter: string) => string,
 ): Map<string, Map<SentencePreservedField, ChapterWrite>> {
   const writes = new Map<string, Map<SentencePreservedField, ChapterWrite>>();
   const sources: Array<[string, string]> = [
@@ -162,7 +185,7 @@ function chapterWrites(
         // Within one chapter, story-date order decides the visible write.
         if (!prior || (compareNarrativeDates(prior.date, date) ?? -1) <= 0) {
           fields.set(field, {
-            value,
+            value: displayText(value, String(chapter.chapter)),
             date,
             pointer: `/${list}/${index}/${field}`,
           });
@@ -181,7 +204,9 @@ function chapterWrites(
  */
 export function findSentencePreservationViolations(
   chapters: readonly NarrativeRecord[],
+  options: SentencePreservationOptions = {},
 ): SentencePreservationViolation[] {
+  const displayText = options.displayText ?? defaultDisplayText;
   const ordered = [...chapters].sort((left, right) =>
     compareNarrativeChapters(String(left.chapter), String(right.chapter)),
   );
@@ -189,7 +214,7 @@ export function findSentencePreservationViolations(
   const violations: SentencePreservationViolation[] = [];
   for (const chapter of ordered) {
     const chapterReference = String(chapter.chapter);
-    const writes = chapterWrites(chapter);
+    const writes = chapterWrites(chapter, displayText);
     for (const [entityId, fields] of writes) {
       for (const [field, write] of fields) {
         const earlier = visible.get(`${entityId}\u0000${field}`);
@@ -285,6 +310,10 @@ export function parseSentencePreservationExceptions(
       if (typeof entry[key] !== "string" || !String(entry[key]).trim())
         fail(`${label}.${key} must be a non-empty string.`);
     }
+    if (containsInlineLinkMarkup(String(entry.reason)))
+      fail(
+        `${label}.reason must not contain inline entity link markup or escapes (ADR-0029).`,
+      );
     if (!/^[1-9][0-9]*\.[1-9][0-9]*$/.test(String(entry.chapter)))
       fail(`${label}.chapter must use book.chapter form.`);
     if (

@@ -11,6 +11,7 @@ import { fileURLToPath } from "node:url";
 import { nearbySystems } from "../src/domain/data";
 import {
   generateNarrativeWorld,
+  inlineLinkDisplayTextResolver,
   NarrativeStructureValidationError,
   prepareNarrativeCorpus,
   type FormatNarrativeStructureErrors,
@@ -320,7 +321,9 @@ async function sentencePreservationErrors(
     }
   }
   const { unexcused, unused } = applySentencePreservationExceptions(
-    findSentencePreservationViolations(loaded.corpus.chapters),
+    findSentencePreservationViolations(loaded.corpus.chapters, {
+      displayText: inlineLinkDisplayTextResolver(loaded.corpus),
+    }),
     exceptions,
   );
   const errors = unexcused.map((violation) => {
