@@ -3258,7 +3258,7 @@ test("system Contains disambiguates a same-named primary star at chapter 1.61", 
     .click();
   await expect(inspector.locator(".entity-kind")).toHaveText("star");
   const starTrail = inspector.getByRole("navigation", { name: "Object trail" });
-  await expect(starTrail).toHaveTextContent(
+  await expect(starTrail).toHaveText(
     "Epsilon Eridani (star system)›Epsilon Eridani (star)",
   );
   await expect(
