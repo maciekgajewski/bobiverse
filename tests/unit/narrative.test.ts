@@ -2084,6 +2084,30 @@ describe("narrative corpus validation and projection", () => {
       expect(() => validateNarrativeCorpus(unrelatedMonthWord)).not.toThrow();
     }
 
+    const linkedName = createNarrativeFixtureCorpus();
+    linkedName.chapters[0]!.date = "2200-08";
+    (
+      linkedName.chapters[0]!.introducing as Array<Record<string, unknown>>
+    )[1]!.name = "Fixture Alex of August";
+    linkedName.chapters[0]!.summary =
+      "[[character:fixture-alex]] begins the work.";
+    expect(() => validateNarrativeCorpus(linkedName)).toThrow(
+      "Chapter 1.1 /summary: opening sentence must not repeat the structured chapter date.",
+    );
+
+    const linkedSlug = createNarrativeFixtureCorpus();
+    linkedSlug.chapters[0]!.date = "2200-08";
+    (
+      linkedSlug.chapters[0]!.introducing as Array<Record<string, unknown>>
+    ).push({
+      id: "technology:drill-2200",
+      name: "Fixture drill",
+      description: "A fictional drilling tool.",
+    });
+    linkedSlug.chapters[0]!.summary =
+      "A fictional [[technology:drill-2200]] is introduced.";
+    expect(() => validateNarrativeCorpus(linkedSlug)).not.toThrow();
+
     const laterContext = createNarrativeFixtureCorpus();
     laterContext.chapters[0]!.date = "2200-08";
     laterContext.chapters[0]!.summary =

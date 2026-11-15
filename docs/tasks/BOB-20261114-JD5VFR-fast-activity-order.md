@@ -1,8 +1,8 @@
 # BOB-20261114-JD5VFR: fast narrative activity ordering
 
-Status: In progress
+Status: Done
 Phase: 2 (narrative foundation and chapter timeline; responsive shell)
-Last updated: 2026-11-14
+Last updated: 2026-11-15
 
 ## Objective and user-visible outcome
 
@@ -152,3 +152,6 @@ object browser, timeline and Date-mode date list look the same as before.
   3,024 ms / 3,234 ms (maximum 5.2 s), so it fails the late budget. With 4x CPU
   throttling (an untracked one-off variant, 4 samples), 1.50↔1.61 took about
   0.39 s / 0.43 s on the new code against about 12.3 s / 11.5 s on `c8ce3cc`.
+
+- 2026-11-15: Landed on master as merge `0f942ec`. No user-visible UI change
+  needs visual acceptance, so the task is Done.

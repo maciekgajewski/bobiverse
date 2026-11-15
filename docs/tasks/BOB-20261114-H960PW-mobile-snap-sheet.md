@@ -2,7 +2,7 @@
 
 Status: In progress
 Phase: 2 (narrative foundation and chapter timeline; responsive shell)
-Last updated: 2026-11-14
+Last updated: 2026-11-15
 
 ## Objective and user-visible outcome
 
@@ -194,3 +194,6 @@ Manual: the Captain checks the sheet and drawer in a phone browser after deploym
 - Screenshots: `docs/design/artifacts/BOB-20261114-H960PW-mobile-snap-sheet/` holds
   `phone-390x844-peek.png`, `phone-390x844-half.png`, `phone-390x844-full.png`,
   `landscape-844x390-drawer.png` and `desktop-1280x800.png` (unchanged layout).
+
+- 2026-11-15: Landed at `5c2d9d7` and live; awaiting Maciej's visual
+  acceptance.

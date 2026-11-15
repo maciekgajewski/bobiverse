@@ -138,3 +138,6 @@ Where the spec left a choice, the implementation takes these:
   (30 s timeout), which passed 3/3 run alone with `--repeat-each=3`. No
   icon-specimen PNG was rewritten. Screenshots of a linked description at
   390×844 and 1280×800 were taken for review outside the repository.
+
+- 2026-11-15: Landed at `66d9526` and live; awaiting Maciej's visual
+  acceptance.

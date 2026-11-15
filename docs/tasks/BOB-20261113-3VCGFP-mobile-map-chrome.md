@@ -2,7 +2,7 @@
 
 Status: In progress
 Phase: 2 (narrative foundation and chapter timeline; responsive shell)
-Last updated: 2026-11-13
+Last updated: 2026-11-15
 
 ## Objective and user-visible outcome
 
@@ -209,3 +209,6 @@ Manual: the Captain's visual acceptance on a phone and on desktop after deployme
   - Merged origin/master (`a7017da`) as merge commits; no rebase.
 - Remains In progress until the Captain's visual acceptance on a phone and desktop
   after deployment.
+
+- 2026-11-15: Landed at `e31c763` and live; awaiting Maciej's visual
+  acceptance.

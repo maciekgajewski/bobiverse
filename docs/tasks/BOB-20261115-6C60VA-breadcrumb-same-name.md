@@ -1,6 +1,6 @@
 # BOB-20261115-6C60VA: Disambiguate same-named adjacent breadcrumbs
 
-Status: Ready
+Status: In progress
 Phase: 2 (narrative foundation and chapter timeline; responsive shell)
 Last updated: 2026-11-15
 
@@ -125,3 +125,6 @@ Manual: the Captain's check after deployment (checklist in
   complete.
 - Not pushed and not merged. This branch is stacked on pending MKP51F
   `8323ab7` and is for review only.
+
+- 2026-11-15: Landed at `a992e18` and live; awaiting Maciej's visual
+  acceptance.

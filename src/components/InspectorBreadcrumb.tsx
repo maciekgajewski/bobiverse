@@ -40,12 +40,17 @@ export function InspectorBreadcrumb({
                 <button
                   type="button"
                   className="link-button crumb-link"
+                  title={crumb.label}
                   onClick={() => onSelect(target)}
                 >
                   {crumb.label}
                 </button>
               ) : (
-                <span className="crumb-current" aria-current="page">
+                <span
+                  className="crumb-current"
+                  aria-current="page"
+                  title={crumb.label}
+                >
                   {crumb.label}
                 </span>
               )}

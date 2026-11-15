@@ -2,7 +2,7 @@
 
 Status: In progress
 Phase: 2 (narrative foundation and chapter timeline; responsive shell)
-Last updated: 2026-11-14
+Last updated: 2026-11-15
 
 ## Objective and user-visible outcome
 
@@ -165,3 +165,6 @@ after deployment.
 - Created on origin/master `3c3d368` after the Captain's design approval of
   2026-11-14 16:00, relayed by Piotr Developer Manager. Moved straight to In
   progress.
+
+- 2026-11-15: Landed at `c8ce3cc` and live; awaiting Maciej's visual
+  acceptance.
