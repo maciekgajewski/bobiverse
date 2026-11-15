@@ -3221,3 +3221,81 @@ test("GUPPI's header illustration never appears before GUPPI is known", async ({
     page.locator('img[src="/assets/guppi-ackbar-head.webp"]'),
   ).toHaveCount(0);
 });
+
+/**
+ * BOB-20261115-4CNJ7E: no canonical chapter data has inline entity links yet,
+ * so this test-only route rewrites one prose field of the dev server's JSON
+ * module before the app prepares (and validates) the corpus. Vite serves each
+ * top-level JSON key as an `export const name = <JSON>;` line.
+ */
+async function injectProse(
+  page: Page,
+  modulePath: string,
+  id: string,
+  field: string,
+  text: string,
+): Promise<void> {
+  const setProse = (value: unknown): boolean => {
+    if (Array.isArray(value)) return value.some(setProse);
+    if (!value || typeof value !== "object") return false;
+    const record = value as Record<string, unknown>;
+    if (record.id === id || record.entity_id === id) {
+      record[field] = text;
+      return true;
+    }
+    return Object.values(record).some(setProse);
+  };
+  await page.route(`**${modulePath}?import*`, async (route) => {
+    const response = await route.fetch();
+    let injected = false;
+    const body = (await response.text()).replace(
+      /^export const (\w+) = (.*);$/gm,
+      (line, name: string, json: string) => {
+        if (injected) return line;
+        let value: unknown;
+        try {
+          value = JSON.parse(json);
+        } catch {
+          return line;
+        }
+        if (!setProse(value)) return line;
+        injected = true;
+        return `export const ${name} = ${JSON.stringify(value)};`;
+      },
+    );
+    if (!injected) throw new Error(`No ${id} record in ${modulePath}.`);
+    await route.fulfill({ response, body });
+  });
+}
+
+test("an inline entity link in a description opens its target like a relationship link", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await injectProse(
+    page,
+    "/data/narrative/baseline/zero-state.json",
+    "location:earth",
+    "description",
+    "Test-only prose: a planet that orbits [[location:sol|its star]] with the [[location:moon]] nearby.",
+  );
+  await page.goto("/");
+  const inspector = await inspectFromBrowser(page, "Earth", /^Earth/);
+  await expect(inspector.getByRole("heading", { name: "Earth" })).toBeVisible();
+  const description = inspector
+    .locator(".inspector-section")
+    .filter({ has: page.getByRole("heading", { name: "Description" }) })
+    .locator("p");
+  await expect(description).toHaveText(
+    "Test-only prose: a planet that orbits its star with the Moon nearby.",
+  );
+  const links = description.locator("button.inline-entity-link");
+  await expect(links).toHaveText(["its star", "Moon"]);
+
+  await links.first().click();
+  await expect(inspector.getByRole("heading", { name: "Sol" })).toBeVisible();
+  await inspector.getByRole("button", { name: "Back" }).click();
+  await expect(inspector.getByRole("heading", { name: "Earth" })).toBeVisible();
+  await inspector.getByRole("button", { name: "Forward" }).click();
+  await expect(inspector.getByRole("heading", { name: "Sol" })).toBeVisible();
+});
