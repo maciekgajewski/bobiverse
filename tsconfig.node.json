@@ -15,8 +15,10 @@
   },
   "include": [
     "vite.config.ts",
+    "vite.troika-csp-plugin.ts",
     "vitest.config.ts",
     "playwright.config.ts",
+    "playwright.csp.config.ts",
     "eslint.config.js",
     "scripts"
   ]

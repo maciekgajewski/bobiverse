@@ -957,15 +957,35 @@ on an effective kind, transit system-status fields, colony_of combined with
 possible_colony_target, and the four-moon cap) is part of that semantic pass in
 development, tests, and `npm run narrative:validate`. Production browser builds
 skip that one pass at startup because `npm run build` already ran
-`narrative:validate` over the same corpus; every other structural and semantic
-check still runs during preparation.
+`narrative:validate` over the same corpus.
 
-One Draft 2020-12 Ajv registry lives for the application or CLI module lifetime. Each
-named schema validator is resolved and cached once, including the generated-world
-validator; copied error arrays preserve diagnostics without exposing Ajv's mutable
-`errors` property. The CLI supplies source-aware structural formatting to the same
-preparation call, so file, line, and column diagnostics do not require a second
-schema-validation pass.
+They also skip Ajv's runtime `Function(...)` compilation, including the
+generated-world schema check. Ajv needs `unsafe-eval`, which the public
+Content-Security-Policy `script-src 'self'` does not grant. `npm run build`
+already ran `narrative:validate` over the same authored corpus; development,
+Vitest, and the CLI still compile and run every structural and semantic
+validator, including the generated-world check.
+
+troika-three-text typesets the two map axis labels. Under the same public
+Content-Security-Policy, its typography workers cannot `importScripts` a
+blob URL because `script-src 'self'` does not include `blob:`. Creating the
+worker itself is allowed (`worker-src 'self' blob:`), so troika would not
+take its documented main-thread fallback and typesetting would throw. A Vite
+plugin forces `troika-worker-utils` onto that main-thread path, and also
+strips the unicode-font-resolver jsDelivr CDN so a missing glyph cannot
+fetch a third-party font.
+
+Zod also probes JIT compilation with `new Function("")`. That throw is
+caught and JIT is disabled, but browsers still emit a script-src CSP
+violation for the probe. The production entry calls `z.config({ jitless: true })`
+before any schema is parsed so the probe never runs.
+
+One Draft 2020-12 Ajv registry lives for the CLI and non-production module
+lifetime. Each named schema validator is resolved and cached once, including
+the generated-world validator; copied error arrays preserve diagnostics without
+exposing Ajv's mutable `errors` property. The CLI supplies source-aware
+structural formatting to the same preparation call, so file, line, and column
+diagnostics do not require a second schema-validation pass.
 
 Application-level projection coordination owns each reader-progress transition. It
 normalizes progress, obtains prepared meaningful-date options, generates exactly one

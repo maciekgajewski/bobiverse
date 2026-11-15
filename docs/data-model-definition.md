@@ -1287,9 +1287,12 @@ The indexes are not generated narrative fields and must never be serialized into
 
 The browser prepares its static corpus once at module initialization. One CLI
 invocation prepares once and reuses the result for validation and optional generation.
-The Draft 2020-12 Ajv registry and its named validators also live for that module
-lifetime; source-located CLI diagnostics are emitted during the structural portion of
-preparation rather than by a preliminary duplicate pass.
+The Draft 2020-12 Ajv registry and its named validators also live for that
+module lifetime in development, tests, and the CLI; source-located CLI
+diagnostics are emitted during the structural portion of preparation rather
+than by a preliminary duplicate pass. Production browser builds skip Ajv
+compilation because it requires `unsafe-eval`, which the public CSP does not
+grant; `npm run build` already ran `narrative:validate` over the same corpus.
 
 A reader-progress transition has one application-owned projection result: normalized
 progress, meaningful dates, one generated world, its map join, selection eligibility,
