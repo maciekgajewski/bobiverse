@@ -54,11 +54,11 @@
     },
     {
       "entity_id": "technology:vr",
-      "description": "A virtual-reality interface Bob builds aboard Heaven-1 to provide sensory input and an embodied experience while he travels as a bodiless mind. It initially needs hardware modifications and remains an ongoing software project. Planned improvements are intended to support more direct interaction between users. It has become realistic enough to produce physical sensations that feel real and a full avatar that looks and behaves like a human."
+      "description": "A virtual-reality interface Bob builds aboard Heaven-1 to give a bodiless mind sensory input and an embodied experience. Still an ongoing software project, it produces physical sensations that feel real and a full humanlike avatar, and planned improvements aim at more direct interaction between users."
     },
     {
       "entity_id": "location:earth",
-      "state": "Cloud and dust obscure a heavily damaged surface; asteroid strikes and nuclear weapons have disrupted weather patterns, and dozens of impact sites are visible. A survivor group's estimate puts the global human population below twenty million, with substantial uncertainty, and expects recovery to take five to ten thousand years."
+      "state": "Cloud and dust hide a surface scarred by dozens of asteroid and nuclear impacts that have disrupted the weather. A survivor group estimates the population at under twenty million, with recovery taking five to ten thousand years."
     },
     {
       "entity_id": "location:epsilon-eridani",

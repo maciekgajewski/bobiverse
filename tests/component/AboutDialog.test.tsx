@@ -5,6 +5,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 import {
+  ABOUT_CAPTION_ENTITY_ID,
   ABOUT_IMAGE_ALT,
   ABOUT_IMAGE_CAPTION,
   ABOUT_IMAGE_SOURCE,
@@ -14,7 +15,7 @@ import {
 
 const CREDIT =
   "Admiral Ackbar illustration by Michael Sutfin, from The New Essential Guide to Characters. Star Wars © Lucasfilm Ltd. Used under fair use.";
-const CAPTION = "Guppy, or Admiral Ackbar";
+const CAPTION = "GUPPI, or Admiral Ackbar";
 const SOURCE = "https://starwars.fandom.com/wiki/File:Ackbar-NEGTC.png";
 
 describe("AboutDialog", () => {
@@ -110,6 +111,61 @@ describe("AboutDialog", () => {
     expect(ABOUT_IMAGE_ALT).toBe(CREDIT);
     expect(ABOUT_IMAGE_CAPTION).toBe(CAPTION);
     expect(ABOUT_IMAGE_SOURCE).toBe(SOURCE);
+  });
+
+  it("renders GUPPI as plain text when no GUPPI card can be opened", () => {
+    render(<AboutDialog onClose={() => undefined} />);
+    const dialog = screen.getByRole("dialog", { name: "What is this?" });
+    const caption = dialog.querySelector("figure figcaption")!;
+    expect(caption.textContent).toBe(CAPTION);
+    expect(
+      within(dialog).queryByRole("button", { name: "GUPPI" }),
+    ).not.toBeInTheDocument();
+    expect(
+      within(dialog).queryByRole("link", { name: "GUPPI" }),
+    ).not.toBeInTheDocument();
+    expect(caption.querySelector("button, a[href*='guppi' i]")).toBeNull();
+    expect(within(caption as HTMLElement).getAllByRole("link")).toHaveLength(1);
+  });
+
+  it("makes GUPPI open its card when the caller allows it", async () => {
+    const user = userEvent.setup();
+    const onOpenGuppi = vi.fn();
+    const onClose = vi.fn();
+    render(<AboutDialog onClose={onClose} onOpenGuppi={onOpenGuppi} />);
+    const dialog = screen.getByRole("dialog", { name: "What is this?" });
+    const caption = dialog.querySelector("figure figcaption")!;
+    expect(caption.textContent).toBe(CAPTION);
+    const guppi = within(dialog).getByRole("button", { name: "GUPPI" });
+    expect(caption.contains(guppi)).toBe(true);
+    expect(guppi).toHaveAttribute("type", "button");
+    // "Admiral Ackbar" keeps its source link.
+    expect(
+      within(dialog).getByRole("link", { name: "Admiral Ackbar" }),
+    ).toHaveAttribute("href", SOURCE);
+    expect(ABOUT_CAPTION_ENTITY_ID).toBe("technology:guppi-interface");
+    await user.click(guppi);
+    expect(onOpenGuppi).toHaveBeenCalledTimes(1);
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it("includes the GUPPI control in the focus trap when it is offered", async () => {
+    const user = userEvent.setup();
+    render(
+      <AboutDialog onClose={() => undefined} onOpenGuppi={() => undefined} />,
+    );
+    const dialog = screen.getByRole("dialog", { name: "What is this?" });
+    const close = within(dialog).getByRole("button", { name: "Close" });
+    expect(close).toHaveFocus();
+    await user.tab();
+    expect(within(dialog).getByRole("button", { name: "GUPPI" })).toHaveFocus();
+    await user.tab();
+    expect(
+      within(dialog).getByRole("link", { name: "Admiral Ackbar" }),
+    ).toHaveFocus();
+    await user.tab({ shift: true });
+    await user.tab({ shift: true });
+    expect(close).toHaveFocus();
   });
 
   it("ships the image asset and a matching credits file", () => {

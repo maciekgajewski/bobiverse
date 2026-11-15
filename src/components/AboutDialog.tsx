@@ -10,7 +10,9 @@ export const ABOUT_IMAGE_ALT =
   "Admiral Ackbar illustration by Michael Sutfin, from The New Essential Guide to Characters. Star Wars © Lucasfilm Ltd. Used under fair use.";
 export const ABOUT_IMAGE_SOURCE =
   "https://starwars.fandom.com/wiki/File:Ackbar-NEGTC.png";
-export const ABOUT_IMAGE_CAPTION = "Guppy, or Admiral Ackbar";
+export const ABOUT_IMAGE_CAPTION = "GUPPI, or Admiral Ackbar";
+// The narrative entity the caption's "GUPPI" opens when it is reader-known.
+export const ABOUT_CAPTION_ENTITY_ID = "technology:guppi-interface";
 
 const FOCUSABLE_DIALOG_ELEMENTS =
   'a[href], button:not(:disabled), [tabindex]:not([tabindex="-1"])';
@@ -74,7 +76,18 @@ export function AboutCopy() {
   );
 }
 
-export function AboutDialog({ onClose }: { onClose: () => void }) {
+export function AboutDialog({
+  onClose,
+  onOpenGuppi = null,
+}: {
+  onClose: () => void;
+  /**
+   * Opens GUPPI's info card. The caller passes it only while GUPPI is known
+   * at the reader's knowledge chapter; without it "GUPPI" is plain text, so
+   * the caption never leaks a spoiler or opens a hidden card.
+   */
+  onOpenGuppi?: (() => void) | null;
+}) {
   const dialog = useRef<HTMLDivElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
 
@@ -150,7 +163,18 @@ export function AboutDialog({ onClose }: { onClose: () => void }) {
               decoding="async"
             />
             <figcaption>
-              Guppy, or{" "}
+              {onOpenGuppi ? (
+                <button
+                  type="button"
+                  className="link-button about-caption-entity"
+                  onClick={onOpenGuppi}
+                >
+                  GUPPI
+                </button>
+              ) : (
+                "GUPPI"
+              )}
+              , or{" "}
               <ExternalLink href={ABOUT_IMAGE_SOURCE}>
                 Admiral Ackbar
               </ExternalLink>

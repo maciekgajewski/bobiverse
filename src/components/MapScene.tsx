@@ -42,6 +42,7 @@ import {
   focusDurationMs,
   perspectiveWorldWidthAtTarget,
 } from "../domain/camera-motion";
+import { collectRenderMaterialStats } from "../domain/render-stats";
 import { closestMarkerSystemId } from "../domain/star-picking";
 import {
   advanceTravelPulseOffset,
@@ -299,7 +300,7 @@ function CameraController({
   restoring: boolean;
   onRestoringChange: (restoring: boolean) => void;
 }) {
-  const { camera, gl, size } = useThree();
+  const { camera, gl, scene, size } = useThree();
   const controls = useRef<OrbitControlsImpl>(null);
   const motion = useRef<CameraMotion | null>(null);
   const reducedMotion = useReducedMotion();
@@ -436,6 +437,56 @@ function CameraController({
         knownSystemIds: [...knownSystemIds],
         activeSystemIds: [...activeSystemIds],
       },
+      componentScreenRadii: (componentId) => {
+        const system = systems.find((candidate) =>
+          candidate.components.some(
+            (component) => component.id === componentId,
+          ),
+        );
+        if (!system)
+          throw new Error(`Unknown rendered component ${componentId}.`);
+        const index = system.components.findIndex(
+          (component) => component.id === componentId,
+        );
+        const component = system.components[index]!;
+        const offset = componentOffset(
+          component,
+          index,
+          system.components.length,
+        );
+        const centre = new Vector3(
+          system.render_position.x + offset[0],
+          system.render_position.y + offset[1],
+          system.render_position.z + offset[2],
+        );
+        // Billboarded quads face the camera, so measure along camera right.
+        const right = new Vector3().setFromMatrixColumn(camera.matrixWorld, 0);
+        const bounds = gl.domElement.getBoundingClientRect();
+        const toScreen = (point: Vector3) => {
+          const projected = point.clone().project(camera);
+          return {
+            x: bounds.left + (projected.x * 0.5 + 0.5) * bounds.width,
+            y: bounds.top + (-projected.y * 0.5 + 0.5) * bounds.height,
+          };
+        };
+        const screenCentre = toScreen(centre);
+        const radiusPx = (radius: number) => {
+          const edge = toScreen(centre.clone().addScaledVector(right, radius));
+          return Math.hypot(edge.x - screenCentre.x, edge.y - screenCentre.y);
+        };
+        return {
+          ...screenCentre,
+          visibleRadiusPx: radiusPx(
+            componentVisibleRadius(component, knownSystemIds.has(system.id)),
+          ),
+          pickRadiusPx: radiusPx(componentPickRadius(component)),
+        };
+      },
+      renderStats: () => ({
+        programs: gl.info.programs?.length ?? 0,
+        drawCalls: gl.info.render.calls,
+        ...collectRenderMaterialStats(scene),
+      }),
       renderer: () => {
         const context = gl.getContext();
         const extension = context.getExtension("WEBGL_debug_renderer_info");
@@ -453,7 +504,7 @@ function CameraController({
         delete window.__bob034MapPerformance;
       }
     };
-  }, [activeSystemIds, camera, gl, knownSystemIds, systems]);
+  }, [activeSystemIds, camera, gl, knownSystemIds, scene, systems]);
   useEffect(() => {
     if (zoomedSystemId || restorePose.current) return;
     if (!selected) return;
@@ -636,7 +687,12 @@ const StarMarker = memo(function StarMarker({
         const pickable = !interactionLocked && (!zoomed || entered);
         return (
           <Billboard key={component.id} position={offset} follow>
+            {/* Click target only: never drawn (raycasting ignores visible), and
+                single-pass so three.js does not split a transparent
+                double-sided material into back and front passes, which flags
+                needsUpdate and re-derives program parameters every frame. */}
             <mesh
+              visible={false}
               userData={{ systemId: system.id, componentId: component.id }}
               raycast={pickable ? Mesh.prototype.raycast : ignoreRaycast}
             >
@@ -648,6 +704,7 @@ const StarMarker = memo(function StarMarker({
               />
               <meshBasicMaterial
                 transparent
+                forceSinglePass
                 opacity={0}
                 depthWrite={false}
                 colorWrite={false}

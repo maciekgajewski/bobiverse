@@ -434,15 +434,17 @@ the close icon. Its ancestors are selection controls that append to the same pat
 confirmation before any later chapter data becomes available. Selecting or scrubbing
 a timeline never advances it.
 
-When progress is absent, the first confirmed **Read through** choice also initializes
-`viewChapter` to that chapter, sets `displayDate` to its story date, and enters Chapter
-mode. This is one deliberate transition from zero state to the confirmed chapter
-view. Later ceiling increases leave an already valid view chapter and display mode
-unchanged.
+Every confirmed **Read through** choice also sets `viewChapter` to that chapter, sets
+`displayDate` to its story date, and enters Chapter mode, so picking a read-through
+chapter always shows that chapter's universe in one deliberate transition. This
+applies to the first choice, to later increases and to lowering the ceiling
+(`../tasks/BOB-20261114-CTS3FN-read-through-drives-view.md`, which replaces the
+earlier rule that later increases left the view chapter and display mode unchanged).
 
-Lowering the ceiling is allowed. If the new ceiling precedes `viewChapter`, the
-workspace moves the knowledge chapter to that ceiling and recomputes the selected
-mode without retaining later facts.
+Lowering the ceiling is allowed. The knowledge chapter moves to the new ceiling and
+the projection is recomputed without retaining later facts. **Knowledge through** and
+the chapter track can still look back at an earlier chapter without lowering the
+ceiling.
 
 ### 10.2 Chapter mode
 

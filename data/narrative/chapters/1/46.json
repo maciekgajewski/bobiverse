@@ -67,7 +67,7 @@
     },
     {
       "entity_id": "technology:ship-busters",
-      "description": "Improvised attack units carrying small reactors, oversized SURGE drives, AMI pilots, and dense metal projectiles instead of explosive warheads. They can intercept missiles or strike vessels at very high acceleration. They can drift on stored power with their reactors off and destroy targets through kinetic-energy ramming, which requires enough speed to penetrate a hull. Their steel balls can also serve as rail-gun ammunition. Against missiles they are usually launched in pairs, and they can be given follow-on instructions, such as seeking out a ship matching a given profile once the missiles are dealt with."
+      "description": "Improvised attack units carrying small reactors, oversized SURGE drives, AMI pilots and dense metal projectiles instead of warheads. They intercept missiles or ram vessels at very high acceleration, can drift on stored power with reactors off, and their steel balls double as rail-gun ammunition. Usually launched in pairs against missiles, they can take follow-on orders such as hunting a ship of a given profile."
     }
   ],
   "appearances": [

@@ -212,7 +212,12 @@ export function persistReaderProgress(progress: ReaderProgress): void {
   window.localStorage.setItem(storageKey, JSON.stringify(progress));
 }
 
-/** This is the only transition that can advance the spoiler ceiling. */
+/**
+ * This is the only transition that can change the spoiler ceiling. Confirming a
+ * Read through chapter, forwards or backwards, also shows that chapter's
+ * universe: the knowledge chapter follows the new ceiling, in Chapter mode, at
+ * the chapter's story date (BOB-20261114-CTS3FN).
+ */
 export function confirmReadThrough(
   current: ReaderProgress,
   chapter: string,
@@ -220,38 +225,13 @@ export function confirmReadThrough(
 ): ReaderProgress {
   if (!knownChapter(chapters, chapter))
     throw new Error(`Unknown chapter: ${chapter}.`);
-  if (
-    current.furthestChapterRead &&
-    compareNarrativeChapters(chapter, current.furthestChapterRead) < 0
-  ) {
-    const view =
-      current.viewChapter === null
-        ? null
-        : compareNarrativeChapters(current.viewChapter, chapter) <= 0
-          ? current.viewChapter
-          : chapter;
-    return {
-      ...current,
-      furthestChapterRead: chapter,
-      viewChapter: view,
-      displayDate:
-        current.mode === "chapter"
-          ? view
-            ? chapterDate(chapters, view)
-            : null
-          : current.displayDate,
-    };
-  }
-  if (!current.furthestChapterRead) {
-    return {
-      ...current,
-      furthestChapterRead: chapter,
-      viewChapter: chapter,
-      displayDate: chapterDate(chapters, chapter),
-      mode: "chapter",
-    };
-  }
-  return { ...current, furthestChapterRead: chapter };
+  return {
+    ...current,
+    furthestChapterRead: chapter,
+    viewChapter: chapter,
+    displayDate: chapterDate(chapters, chapter),
+    mode: "chapter",
+  };
 }
 
 export function returnToZeroState(current?: ReaderProgress): ReaderProgress {
