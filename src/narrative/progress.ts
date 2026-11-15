@@ -96,18 +96,48 @@ export function normalizeCharacterInspectorSectionState(
   };
 }
 
-const storageKey = "bobiverse.app-state.v2";
-const legacyStorageKey = "bobiverse.app-state.v1";
-const defaultProgress: ReaderProgress = {
-  furthestChapterRead: null,
-  viewChapter: null,
-  displayDate: null,
-  mode: "chapter",
-  timelineZoom: 1,
-  timelinePan: 0,
-  browserGroups: defaultBrowserGroupState(),
-  characterInspectorSections: defaultCharacterInspectorSectionState(),
-};
+/** Prefix for every app-owned localStorage key. New keys must use it. */
+export const APP_STORAGE_PREFIX = "bobiverse.";
+const storageKey = `${APP_STORAGE_PREFIX}app-state.v2`;
+const legacyStorageKey = `${APP_STORAGE_PREFIX}app-state.v1`;
+
+function clearAppOwnedStorage(): void {
+  const keys: string[] = [];
+  for (let i = 0; i < window.localStorage.length; i += 1) {
+    const key = window.localStorage.key(i);
+    if (key?.startsWith(APP_STORAGE_PREFIX)) keys.push(key);
+  }
+  for (const key of keys) window.localStorage.removeItem(key);
+}
+
+export function emptyReaderProgress(): ReaderProgress {
+  return {
+    furthestChapterRead: null,
+    viewChapter: null,
+    displayDate: null,
+    mode: "chapter",
+    timelineZoom: 1,
+    timelinePan: 0,
+    browserGroups: defaultBrowserGroupState(),
+    characterInspectorSections: defaultCharacterInspectorSectionState(),
+  };
+}
+
+export function isDefaultReaderProgress(progress: ReaderProgress): boolean {
+  const empty = emptyReaderProgress();
+  return (
+    progress.furthestChapterRead === empty.furthestChapterRead &&
+    progress.viewChapter === empty.viewChapter &&
+    progress.displayDate === empty.displayDate &&
+    progress.mode === empty.mode &&
+    progress.timelineZoom === empty.timelineZoom &&
+    progress.timelinePan === empty.timelinePan &&
+    JSON.stringify(progress.browserGroups) ===
+      JSON.stringify(empty.browserGroups) &&
+    JSON.stringify(progress.characterInspectorSections) ===
+      JSON.stringify(empty.characterInspectorSections)
+  );
+}
 
 function knownChapter(
   chapters: readonly NarrativeChapterSummary[],
@@ -140,7 +170,7 @@ export function normalizeReaderProgress(
   const furthest = knownChapter(chapters, record.furthestChapterRead);
   if (!furthest)
     return {
-      ...defaultProgress,
+      ...emptyReaderProgress(),
       browserGroups: normalizeBrowserGroupState(record.browserGroups),
       characterInspectorSections: normalizeCharacterInspectorSectionState(
         record.characterInspectorSections,
@@ -204,12 +234,23 @@ export function loadReaderProgress(
       meaningfulDates,
     );
   } catch {
-    return { ...defaultProgress };
+    return emptyReaderProgress();
   }
 }
 
 export function persistReaderProgress(progress: ReaderProgress): void {
+  if (isDefaultReaderProgress(progress)) {
+    window.localStorage.removeItem(storageKey);
+    window.localStorage.removeItem(legacyStorageKey);
+    return;
+  }
   window.localStorage.setItem(storageKey, JSON.stringify(progress));
+}
+
+/** Remove every app-owned localStorage key and return a fresh default state. */
+export function forgetReaderProgress(): ReaderProgress {
+  clearAppOwnedStorage();
+  return emptyReaderProgress();
 }
 
 /**
@@ -236,7 +277,7 @@ export function confirmReadThrough(
 
 export function returnToZeroState(current?: ReaderProgress): ReaderProgress {
   return {
-    ...defaultProgress,
+    ...emptyReaderProgress(),
     browserGroups: current
       ? { ...current.browserGroups }
       : defaultBrowserGroupState(),
