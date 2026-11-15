@@ -64,6 +64,7 @@ schemas, contracts, tooling, or includes broader editorial remediation.
   in cookies.
 - Use custom CSS and design tokens. Do not copy Stellaris, Star Wars, celebrity, or
   other third-party visual assets.
+- Accepted exception: the GUPPI/Admiral Ackbar head image (`public/assets/guppi-ackbar-head.webp`, credited in `public/assets/CREDITS.md`); the Captain (Maciej) accepted it as fair use with credit.
 
 ## Content and intellectual property
 
