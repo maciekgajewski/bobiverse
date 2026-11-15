@@ -12,6 +12,7 @@ import {
   sentenceOpening,
   splitSentences,
 } from "../../src/narrative/sentence-preservation";
+import { inlineLinksToPlainText } from "../../src/narrative/inline-links";
 
 // Every text here is synthetic. No book text is read or written.
 
@@ -449,4 +450,95 @@ describe("narrative:validate sentence preservation", () => {
       await rm(parent, { recursive: true, force: true });
     }
   }, 60_000);
+});
+
+describe("sentence preservation with inline entity links (ADR-0029)", () => {
+  const plain = "A test probe. It flies to Testworld. Dr. Vance built it.";
+  const write = (value: string) =>
+    findSentencePreservationViolations(
+      [
+        chapter(
+          "1.1",
+          "2200",
+          [],
+          [{ id: "vessel:probe", description: plain }],
+        ),
+        chapter("1.2", "2201", [
+          { entity_id: "vessel:probe", description: value },
+        ]),
+      ],
+      {
+        displayText: (text, reference) =>
+          inlineLinksToPlainText(text, (target) =>
+            target === "location:testworld" && reference === "1.2"
+              ? "Testworld"
+              : target,
+          ),
+      },
+    );
+
+  it("treats adding link markup around unchanged words as no change", () => {
+    expect(
+      write(
+        "A test probe. It flies to [[location:testworld|Testworld]]. [[character:vance|Dr. Vance]] built it.",
+      ),
+    ).toEqual([]);
+    expect(
+      write(
+        "A test probe. It flies to [[location:testworld]]. Dr. Vance built it.",
+      ),
+    ).toEqual([]);
+  });
+
+  it("still reports changed visible words, quoting the display text", () => {
+    expect(
+      write(
+        "A test probe. It flies to [[location:testworld|the planet]]. Dr. Vance built it.",
+      ),
+    ).toMatchObject([
+      { chapter: "1.2", sentenceIndex: 1, sentence: "It flies to Testworld." },
+    ]);
+  });
+
+  it("compares display text on both sides by default", () => {
+    expect(
+      findSentencePreservationViolations([
+        chapter(
+          "1.1",
+          "2200",
+          [],
+          [
+            {
+              id: "vessel:probe",
+              description:
+                "Built by [[character:vance|Vance]]. Tagged \\[[x\\]].",
+            },
+          ],
+        ),
+        chapter("1.2", "2201", [
+          {
+            entity_id: "vessel:probe",
+            description: "Built by Vance. Tagged \\[[x\\]]. It flies.",
+          },
+        ]),
+      ]),
+    ).toEqual([]);
+  });
+
+  it("rejects link markup in an exception reason", () => {
+    expect(() =>
+      parseSentencePreservationExceptions({
+        exceptions: [
+          {
+            chapter: "1.2",
+            entity_id: "vessel:probe",
+            field: "description",
+            reason: "Condensed near [[location:testworld]].",
+          },
+        ],
+      }),
+    ).toThrow(
+      "exceptions[0].reason must not contain inline entity link markup or escapes (ADR-0029).",
+    );
+  });
 });

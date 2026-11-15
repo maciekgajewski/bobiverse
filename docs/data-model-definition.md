@@ -41,12 +41,12 @@ the identical listing below documents its shared definitions.
     "description": {
       "type": "string",
       "minLength": 1,
-      "description": "Original, reader-visible plain-text summary; never copied book text or Markdown."
+      "description": "Original, reader-visible plain-text summary with optional inline entity links (ADR-0029); never copied book text or Markdown."
     },
     "state": {
       "type": "string",
       "minLength": 1,
-      "description": "One or two concise sentences describing only the latest reader-visible condition; no controlled vocabulary is imposed."
+      "description": "One or two concise sentences describing only the latest reader-visible condition, as plain text with optional inline entity links (ADR-0029); no controlled vocabulary is imposed."
     },
     "entity_id": {
       "type": "string",
@@ -1088,12 +1088,12 @@ ordering suffix is metadata and never appears in the user interface.
 
 The JSON value is always a string in one of these forms:
 
-| Form               | Meaning                                            | Valid examples          |
-| ------------------ | -------------------------------------------------- | ----------------------- |
-| `"YYYY"` | A year is known. | `"2165"` |
-| `"YYYY-MM"` | A Gregorian month is known. | `"2165-08"` |
-| `"YYYY-MM-DD"` | A Gregorian day is known. | `"2165-08-17"` |
-| suffix `.d+` | Optional ordering suffix at any precision. | `"2165-08.1"` |
+| Form           | Meaning                                    | Valid examples |
+| -------------- | ------------------------------------------ | -------------- |
+| `"YYYY"`       | A year is known.                           | `"2165"`       |
+| `"YYYY-MM"`    | A Gregorian month is known.                | `"2165-08"`    |
+| `"YYYY-MM-DD"` | A Gregorian day is known.                  | `"2165-08-17"` |
+| suffix `.d+`   | Optional ordering suffix at any precision. | `"2165-08.1"`  |
 
 `YYYY` is exactly four positive decimal digits. Month and day are zero-padded
 Gregorian components, including leap-year validity. A suffix is a non-negative
