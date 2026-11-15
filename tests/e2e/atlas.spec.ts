@@ -3246,4 +3246,26 @@ test("system Contains disambiguates a same-named primary star at chapter 1.61", 
   await expect(
     inspector.getByRole("button", { name: "Epsilon Eridani", exact: true }),
   ).toHaveCount(0);
+  const trail = inspector.getByRole("navigation", { name: "Object trail" });
+  await expect(trail.getByText("Epsilon Eridani")).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+  await expect(trail.getByRole("button")).toHaveCount(0);
+
+  await inspector
+    .getByRole("button", { name: "Epsilon Eridani (star)" })
+    .click();
+  await expect(inspector.locator(".entity-kind")).toHaveText("star");
+  const starTrail = inspector.getByRole("navigation", { name: "Object trail" });
+  await expect(starTrail).toHaveTextContent(
+    "Epsilon Eridani (star system)›Epsilon Eridani (star)",
+  );
+  await expect(
+    starTrail.getByRole("button", { name: "Epsilon Eridani (star system)" }),
+  ).toBeVisible();
+  await expect(starTrail.getByText("Epsilon Eridani (star)")).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
 });

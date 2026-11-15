@@ -45,6 +45,26 @@ const world = {
       parent_location_id: "location:loop-a",
     },
     {
+      id: "location:epsilon-eridani",
+      entity_type: "location",
+      name: "Epsilon Eridani",
+      kind: "star_system",
+    },
+    {
+      id: "location:epsilon-eridani-star",
+      entity_type: "location",
+      name: "Epsilon Eridani",
+      kind: "star",
+      parent_location_id: "location:epsilon-eridani",
+    },
+    {
+      id: "location:epsilon-eridani-one",
+      entity_type: "location",
+      name: "Epsilon Eridani One",
+      kind: "planet",
+      parent_location_id: "location:epsilon-eridani-star",
+    },
+    {
       id: "character:bob",
       entity_type: "character",
       name: "Bob",
@@ -152,5 +172,43 @@ describe("inspector breadcrumb trail", () => {
         systems,
       ),
     ).toEqual([]);
+  });
+
+  it("qualifies adjacent same-named system and star crumbs, including the current", () => {
+    const trail = inspectorBreadcrumbTrail(
+      { kind: "narrative", id: "location:epsilon-eridani-star" },
+      world,
+      systems,
+    );
+    expect(labels(trail)).toEqual([
+      "Epsilon Eridani (star system)",
+      "Epsilon Eridani (star)",
+    ]);
+    expect(trail.map((crumb) => crumb.target)).toEqual([
+      { kind: "narrative", id: "location:epsilon-eridani" },
+      null,
+    ]);
+  });
+
+  it("leaves a one-crumb system trail and a uniquely named planet unqualified", () => {
+    expect(
+      labels(
+        inspectorBreadcrumbTrail(
+          { kind: "narrative", id: "location:epsilon-eridani" },
+          world,
+          systems,
+        ),
+      ),
+    ).toEqual(["Epsilon Eridani"]);
+    const trail = inspectorBreadcrumbTrail(
+      { kind: "narrative", id: "location:epsilon-eridani-one" },
+      world,
+      systems,
+    );
+    expect(labels(trail)).toEqual([
+      "Epsilon Eridani (star system)",
+      "Epsilon Eridani (star)",
+      "Epsilon Eridani One",
+    ]);
   });
 });

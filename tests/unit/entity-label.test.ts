@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { disambiguatedEntityLabel } from "../../src/narrative/entity-label";
+import {
+  disambiguatedAdjacentLabels,
+  disambiguatedEntityLabel,
+} from "../../src/narrative/entity-label";
 
 describe("disambiguatedEntityLabel", () => {
   const system = {
@@ -50,5 +53,41 @@ describe("disambiguatedEntityLabel", () => {
         "Epsilon Eridani",
       ),
     ).toBe("Epsilon Eridani");
+  });
+
+  it("qualifies adjacent same-named crumbs on both sides, including the last", () => {
+    expect(disambiguatedAdjacentLabels([system, star])).toEqual([
+      "Epsilon Eridani (star system)",
+      "Epsilon Eridani (star)",
+    ]);
+  });
+
+  it("leaves a single crumb and uniquely named neighbours unqualified", () => {
+    expect(disambiguatedAdjacentLabels([system])).toEqual(["Epsilon Eridani"]);
+    expect(disambiguatedAdjacentLabels([system, star, skunkworks])).toEqual([
+      "Epsilon Eridani (star system)",
+      "Epsilon Eridani (star)",
+      "Bill's skunkworks",
+    ]);
+    expect(
+      disambiguatedAdjacentLabels([
+        { name: "Solar System", entity_type: "location", kind: "star_system" },
+        sol,
+        { name: "Earth", entity_type: "location", kind: "planet" },
+      ]),
+    ).toEqual(["Solar System", "Sol", "Earth"]);
+  });
+
+  it("leaves same-named crumbs bare when a kind is missing", () => {
+    expect(
+      disambiguatedAdjacentLabels([
+        {
+          name: "Epsilon Eridani",
+          entity_type: "location",
+          kind: "star_system",
+        },
+        { name: "Epsilon Eridani", entity_type: "location" },
+      ]),
+    ).toEqual(["Epsilon Eridani (star system)", "Epsilon Eridani"]);
   });
 });
