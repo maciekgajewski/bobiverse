@@ -13,7 +13,7 @@ import { compareNarrativeChapters } from "../narrative/model";
 import { ChapterPicker } from "./ChapterPicker";
 import { BookGlyph, ChevronIcon, ShieldIcon } from "./icons";
 
-export { CloseIcon, ResetViewIcon, ShieldIcon } from "./icons";
+export { CloseIcon, ResetViewIcon, SearchIcon, ShieldIcon } from "./icons";
 
 export function ReadThroughOptions({
   chapters,

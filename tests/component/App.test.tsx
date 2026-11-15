@@ -1260,11 +1260,7 @@ describe("atlas shell", () => {
     expect(
       within(drawer).getByRole("button", { name: "Chapter mode" }),
     ).toHaveAttribute("aria-pressed", "true");
-    for (const name of [
-      "Browse objects",
-      "Timeline and progress",
-      "Reset view",
-    ]) {
+    for (const name of ["Search", "Timeline and progress", "Reset view"]) {
       expect(within(drawer).getByRole("button", { name })).toBeEnabled();
     }
     await user.keyboard("{Escape}");
@@ -1274,10 +1270,8 @@ describe("atlas shell", () => {
     await waitFor(() => expect(menu).toHaveFocus());
 
     await user.click(menu);
-    await user.click(screen.getByRole("button", { name: "Browse objects" }));
-    expect(
-      screen.getByRole("dialog", { name: "Object browser" }),
-    ).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Search" }));
+    expect(screen.getByRole("dialog", { name: "Search" })).toBeInTheDocument();
     expect(
       screen.queryByRole("dialog", { name: "Menu" }),
     ).not.toBeInTheDocument();
@@ -1285,10 +1279,10 @@ describe("atlas shell", () => {
     await waitFor(() => expect(menu).toHaveFocus());
 
     await user.click(menu);
-    await user.click(screen.getByRole("button", { name: "Browse objects" }));
+    await user.click(screen.getByRole("button", { name: "Search" }));
     await user.click(document.querySelector(".compact-panel-backdrop")!);
     expect(
-      screen.queryByRole("dialog", { name: "Object browser" }),
+      screen.queryByRole("dialog", { name: "Search" }),
     ).not.toBeInTheDocument();
     await waitFor(() => expect(menu).toHaveFocus());
 
@@ -1323,9 +1317,9 @@ describe("atlas shell", () => {
     render(<App />);
     const menu = screen.getByRole("button", { name: "Menu" });
     await user.click(menu);
-    await user.click(screen.getByRole("button", { name: "Browse objects" }));
+    await user.click(screen.getByRole("button", { name: "Search" }));
     await user.click(
-      within(screen.getByRole("dialog", { name: "Object browser" })).getByRole(
+      within(screen.getByRole("dialog", { name: "Search" })).getByRole(
         "button",
         { name: /^Solar System(?:Active)?$/ },
       ),
@@ -1370,9 +1364,9 @@ describe("atlas shell", () => {
     const user = userEvent.setup();
     render(<App />);
     await user.click(screen.getByRole("button", { name: "Menu" }));
-    await user.click(screen.getByRole("button", { name: "Browse objects" }));
+    await user.click(screen.getByRole("button", { name: "Search" }));
     await user.click(
-      within(screen.getByRole("dialog", { name: "Object browser" })).getByRole(
+      within(screen.getByRole("dialog", { name: "Search" })).getByRole(
         "button",
         { name: /^Solar System(?:Active)?$/ },
       ),
@@ -1452,8 +1446,8 @@ describe("atlas shell", () => {
     const user = userEvent.setup();
     render(<App />);
     await user.click(screen.getByRole("button", { name: "Menu" }));
-    await user.click(screen.getByRole("button", { name: "Browse objects" }));
-    const browser = screen.getByRole("dialog", { name: "Object browser" });
+    await user.click(screen.getByRole("button", { name: "Search" }));
+    const browser = screen.getByRole("dialog", { name: "Search" });
     await user.type(
       within(browser).getByRole("searchbox", {
         name: "Search visible objects",
@@ -1882,6 +1876,34 @@ describe("atlas shell", () => {
       expect(topbar()).toHaveAccessibleName("Read through, Book 1 Chapter 3");
       expectChapterView("1.3");
     });
+  });
+
+  it("opens Search from the compact map pill and returns focus to the pill", async () => {
+    vi.stubGlobal("matchMedia", compactMatchMedia);
+    const user = userEvent.setup();
+    render(<App />);
+    const map = screen.getByRole("region", {
+      name: "Interactive three dimensional nearby stellar-system map",
+    });
+    const pill = within(map).getByRole("button", { name: "Search" });
+    expect(pill.querySelector("svg.search-icon")).toBeInTheDocument();
+    expect(pill).toHaveTextContent("Search");
+    expect(pill).toHaveAttribute("aria-expanded", "false");
+    await user.click(pill);
+    expect(screen.getByRole("dialog", { name: "Search" })).toBeInTheDocument();
+    expect(pill).not.toBeVisible();
+    await user.keyboard("{Escape}");
+    expect(
+      screen.queryByRole("dialog", { name: "Search" }),
+    ).not.toBeInTheDocument();
+    await waitFor(() => expect(pill).toHaveFocus());
+
+    await user.click(pill);
+    await user.click(document.querySelector(".compact-panel-backdrop")!);
+    expect(
+      screen.queryByRole("dialog", { name: "Search" }),
+    ).not.toBeInTheDocument();
+    await waitFor(() => expect(pill).toHaveFocus());
   });
 
   it("puts Reset view on the map as one labelled icon control", async () => {
