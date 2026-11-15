@@ -66,6 +66,8 @@ schema, and the binding documents. After verifying the chapter, source SHA-256, 
 sealed-ledger SHA-256, read `references/reconciliation-exceptions.md` and
 `references/event-exceptions.md`. Never stage either file in blind Pass 1. Then
 reconcile under contract §Pass 2 reconciliation and §Reading order and story dates.
+Write every description update as a condensed summary under contract §Descriptions
+(length guideline, dropped-sentence table, sentence-preservation exception).
 
 ## Assemble, validate, and review
 

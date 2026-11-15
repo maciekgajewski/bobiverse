@@ -99,15 +99,15 @@
     },
     {
       "entity_id": "vessel:heaven-1",
-      "description": "A converted interplanetary freighter equipped as a Von Neumann probe. It is a small, light, resilient design intended to build copies of itself. It has a SURGE drive ring, fusion reactor, ramscoop generator, fabrication equipment including three large 3D printers, communications and sensor systems, and ROAMer and nanite systems; its autonomous cargo carriers move miners and materials; it has no weapons and little spare room. The version-2 HEAVEN design adds a larger reactor and drive, a rail-gun, ship-buster storage and launch facilities, higher-capacity replicant systems, room for ROAMers and mining drones, and greater cargo capacity. The HEAVEN project's communications are designed to send information from its vessels to Earth, not to support conversations across interstellar light-time delays."
+      "description": "A converted interplanetary freighter equipped as a Von Neumann probe: a small, light, resilient design built to copy itself. It carries a SURGE drive ring, fusion reactor, ramscoop, three large 3D printers, ROAMers, nanites and mining cargo carriers, but no weapons. Version-2 HEAVENs add a larger reactor and drive, a rail-gun, ship-busters, bigger replicant systems and more cargo room. Its communications report to Earth and were not built for interstellar conversation."
     },
     {
       "entity_id": "technology:guppi-interface",
-      "description": "An interface that offloads tasks for replicants while retaining their human limits on multitasking. Its name expands to General Unit Primary Peripheral Interface, and its logs retain monitoring-interface and script activity. Its operating system is firmware; changing its replication priority would require a new core and ship. Version-2 GUPPI is being given enough memory capacity that a personality matrix is contemplated."
+      "description": "GUPPI, the General Unit Primary Peripheral Interface, offloads tasks for replicants, who keep human limits on multitasking. Its operating system is firmware, so changing its replication priority would require a new core and ship. Version 2 has enough memory that a personality matrix is contemplated."
     },
     {
       "entity_id": "technology:suddar",
-      "description": "A subspace technology enabled by the same theoretical breakthrough as the SURGE drive and associated with the new possibility of interstellar probes and colonization. It can be used to monitor distance, scan for threats, and detect dense objects within a light-hour radius. An emitter flaw can produce a much weaker ping with poor close-range sensitivity; Bill hypothesizes that weaker signals may instead reach farther because attenuation changes with signal strength."
+      "description": "A subspace detection technology enabled by the same breakthrough as the SURGE drive. It can monitor distance, scan for threats and detect dense objects within a light-hour. An emitter flaw can give a much weaker ping with poor close-range sensitivity, which Bill suspects may reach farther."
     },
     {
       "entity_id": "technology:replicant-matrix",
@@ -115,12 +115,12 @@
     },
     {
       "entity_id": "technology:roamers",
-      "description": "Remote observation and manipulation devices directed through GUPPI. They come in varied sizes, can coordinate across scales, and need minimal supervision once their tasks, dependencies, and interruption conditions are defined. Without active intervention, they can work up to ten times faster. They can inspect ship circuitry with gnat-sized units, carry video cameras for remote observation, and pick up vibrations transmitted through a wall when pressed against it. Reusable scripts automate many routine activities, leaving assembly work largely self-directed. In manufacturing, they feed raw ore into manufacturing systems, gather parts, and assemble ships; smaller printer operations can make additional ROAMers and ship-buster components."
+      "description": "Remote observation and manipulation devices directed through GUPPI. They come in varied sizes, coordinate across scales and, once their tasks are defined, need little supervision. They can inspect ship circuitry with gnat-sized units, carry video cameras and pick up vibrations through a wall. Running on reusable scripts, they feed ore to manufacturing systems, gather parts and assemble ships, and printers can make more of them."
     },
     {
       "entity_id": "location:ee-2",
       "possible_colony_target": true,
-      "description": "A planet orbiting at 0.85 AU, about 90 percent of Earth's size, with comparatively little water. Its isolated seas cover about 30 percent of the surface and are surrounded by land. Its atmosphere contains about 3 percent oxygen, which may reflect photosynthetic life in the seas or a natural process. Bare rock shows no green, while snow, polar ice, and morning frost reach the equator. It seems barely livable, though people could probably live there with substantial technological assistance such as domes; its atmosphere and water make it comparatively favorable against Mars. A described small moon is noted. Bob proposes early terraforming by directing Kuiper objects inward to increase the oceans."
+      "description": "A planet at 0.85 AU, about 90 percent of Earth's size, with comparatively little water: isolated seas cover about 30 percent of its surface. Its atmosphere holds about 3 percent oxygen, possibly from life in the seas, and snow, ice and frost reach the equator. Barely livable, it could host people with heavy technological help such as domes, and it compares favorably with Mars. Bob proposes early terraforming by sending Kuiper objects inward to enlarge its oceans."
     }
   ],
   "appearances": [

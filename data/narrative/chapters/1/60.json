@@ -65,7 +65,7 @@
       "name": "Battle at 82 Eridani",
       "date": "2185-04",
       "location_id": "location:82-eridani",
-      "description": "An attack by eight version-3 Bobs under Khan on Medeiros at 82 Eridani, launched to avenge Milo. Medeiros, entrenched for about thirty-five years, opened with cloaked fission bombs and fought with decoys and AMI-piloted units, while the Bobs used plasma spikes for the first time in real combat. After locating him by the lag in his radio commands, the Bobs destroyed three Brazilian probes believed to be Medeiros with a mass buster strike, but his units kept fighting and every Bob except Khan was lost. Three of the lost Bobs' backups failed to complete and Elmer's arrived intact; whether every copy of Medeiros was destroyed is unknown, and a return wave is planned.",
+      "description": "An attack by eight version-3 Bobs under Khan on Medeiros, entrenched at 82 Eridani for about thirty-five years, launched to avenge Milo. Against cloaked fission bombs, decoys and AMI-piloted units, the Bobs used plasma spikes in real combat for the first time and destroyed three probes believed to be Medeiros, but every Bob except Khan was lost and only Elmer's backup arrived intact. Whether every copy of Medeiros was destroyed is unknown, and a return wave is planned.",
       "participant_ids": [
         "character:khan",
         "character:hannibal",
@@ -83,7 +83,7 @@
     {
       "id": "technology:plasma-spike",
       "name": "plasma spike",
-      "description": "A weapon developed at Bill's Skunk Works from light-saber technology, which holds a high-temperature ionized plasma in a magnetic bottle. The plasma and its field are projected like a torpedo at close to light speed as a million-degree, highly charged spear that melts through its target and delivers a very localized EMP. Having very little mass, a spike is invisible to SUDDAR, and other detection is limited by light speed, but it cannot follow a dodging target and the spike cannons need time to recharge. After extensive testing at Epsilon Eridani it saw its first real combat at 82 Eridani in 2185."
+      "description": "A weapon from Bill's Skunk Works, derived from light-saber technology, that projects magnetically bottled million-degree plasma at close to light speed as a charged spear that melts through its target and delivers a localized EMP. Having very little mass, it is invisible to SUDDAR, but it cannot follow a dodging target and its cannons need time to recharge. It saw its first real combat at 82 Eridani in 2185."
     },
     {
       "id": "technology:dead-man-switch",
@@ -99,23 +99,23 @@
   "updates": [
     {
       "entity_id": "character:bill",
-      "current_state": "He has made good on his promise to avenge Milo by sending eight version-3 Bobs against Medeiros at 82 Eridani, and after heavy losses has added the three Bobs whose backups failed to the In Memoriam list. He wants to learn how the Brazilian cloaking works and has new ships available for a return wave."
+      "current_state": "Having avenged Milo by sending eight version-3 Bobs against Medeiros, he has added the three Bobs whose backups failed to the In Memoriam list and wants to learn how the Brazilian cloaking works."
     },
     {
       "entity_id": "character:ernesto-medeiros",
-      "current_state": "Entrenched at 82 Eridani for about thirty-five years, he ambushed an eight-Bob squad there in April 2185 with cloaked fission bombs, decoys and AMI-piloted units. Three Brazilian probes believed to be him were destroyed by busters, but it is unknown whether all of his copies were eliminated, and his AMI units are still active."
+      "current_state": "Entrenched at 82 Eridani for about thirty-five years, he ambushed an eight-Bob squad there in April 2185; three probes believed to be him were destroyed, but other copies may survive and his AMI units remain active."
     },
     {
       "entity_id": "location:82-eridani",
-      "state": "Medeiros, entrenched there for about thirty-five years and responsible for Milo's loss, fought off a squad of eight version-3 Bobs in April 2185. Three Brazilian probes believed to be Medeiros were destroyed, but AMI-piloted Brazilian units remain active, other copies may survive, and only one Bob escaped."
+      "state": "Medeiros, entrenched here for about thirty-five years and responsible for Milo's loss, fought off eight version-3 Bobs in April 2185; three probes believed to be him were destroyed, but his AMI units remain active and only one Bob escaped."
     },
     {
       "entity_id": "technology:ship-busters",
-      "description": "Improvised attack units carrying small reactors, oversized SURGE drives, AMI pilots, and dense metal projectiles instead of explosive warheads. They can intercept missiles or strike vessels at very high acceleration. They can drift on stored power with their reactors off and destroy targets through kinetic-energy ramming, which requires enough speed to penetrate a hull. Their steel balls can also serve as rail-gun ammunition. Against missiles they are usually launched in pairs, and they can be given follow-on instructions, such as seeking out a ship matching a given profile once the missiles are dealt with. A later version carries a new controlled fusion detonation, and these busters are smart enough to be sent against a target located only to within a few thousand kilometres."
+      "description": "Improvised attack units carrying small reactors, oversized SURGE drives, AMI pilots and dense metal projectiles instead of warheads. They intercept missiles or ram vessels at very high acceleration, can drift on stored power with reactors off, and their steel balls double as rail-gun ammunition. They can take follow-on orders, and a later version carries a controlled fusion detonation and can be sent at targets located only to within a few thousand kilometers."
     },
     {
       "entity_id": "technology:exploration-scouts",
-      "description": "Small craft intended to investigate planets directly, filling a gap in a mission design that made no allowance for such investigation. Available libraries contain information on environmental sensors. In reconnaissance, scouts can activate at staggered distances and random vectors to prevent an observer from backtracking the launching vessel's trajectory; modified SUDDAR arrays equip them for longer-range surveying. Reconnaissance scout probes can carry heavily shielded reactors, SUDDARs with a three-light-hour range and SCUT links, and are booby-trapped so that their technology cannot be captured; launched across a broad front without radio emissions, most are expected to pass through a system undetected."
+      "description": "Small craft that investigate planets directly, filling a gap in the original mission design. In reconnaissance they activate at staggered distances on random vectors so an observer cannot trace the launching vessel, and modified SUDDAR arrays extend their survey range. Reconnaissance probes carry shielded reactors, three-light-hour SUDDARs and SCUT links, are booby-trapped against capture, and fly without radio emissions so that most pass through a system undetected."
     },
     {
       "entity_id": "technology:ami",
@@ -123,15 +123,15 @@
     },
     {
       "entity_id": "technology:subspace-communications",
-      "description": "SCUT, short for Subspace Communications Universal Transceiver, is a communications technology that carries signals through subspace. A finished unit uses a different transport layer while retaining the same object and virtual-reality interfaces. Its notes describe instantaneous communication across interstellar distances; earlier tests predicted dropouts at roughly twenty-five light-years, requiring stations to route longer links. The finished product is unadorned, without chrome or a logo. SCUT units cannot yet be made small enough to fit inside Bill's moose-sized android prototype, where faster-than-light links would relieve its control latency. Its bandwidth is not dependable enough for reliable backups: dropped packets and re-sends can leave a backup transmission incomplete."
+      "description": "SCUT, the Subspace Communications Universal Transceiver, carries signals through subspace; its notes describe instantaneous communication across interstellar distances, using the same object and VR interfaces as earlier tests. Those tests predicted dropouts at about twenty-five light-years, so longer links must be relayed. No unit is yet small enough to fit inside Bill's moose-sized android prototype, and its bandwidth is too unreliable for dependable backups."
     },
     {
       "entity_id": "technology:suddar",
-      "description": "A subspace technology enabled by the same theoretical breakthrough as the SURGE drive and associated with the new possibility of interstellar probes and colonization. It can be used to monitor distance, scan for threats, and detect dense objects within a light-hour radius. An emitter flaw can produce a much weaker ping with poor close-range sensitivity; Bill hypothesizes that weaker signals may instead reach farther because attenuation changes with signal strength. It can detect objects at range but cannot provide fine detail at the distance encountered near Jupiter. A modified array can adjust its range to three light-hours, with much reduced resolution. It can make point-focused pings for maximum detail on a target. Its beam can also carry usable power through subspace: alien mechanical ants found at Beta Hydri draw their power from it, waking when scanned and going dormant when scans stop, and an alien SUDDAR unit aboard a crashed cargo carrier appears designed to transmit power to a tuned receiver as well as to serve as radar. At maximum intensity, SUDDAR jamming blinds everyone in a system except for visual and radar detection. Medeiros's bombs at 82 Eridani were cloaked or shielded so that they showed up only on a ping aimed straight at them, and even then were barely detectable with Bill's SUDDAR improvements; how the cloaking works is unknown, and Khan suspects that the Brazilian Empire developed it on Earth."
+      "description": "A subspace detection technology enabled by the same breakthrough as the SURGE drive. It can monitor distance, scan for threats and detect dense objects within a light-hour. It gives little fine detail at long range; a modified array can reach three light-hours at lower resolution, and point-focused pings give maximum detail on one target. Its beam can also carry power through subspace, as alien mechanical ants and an alien SUDDAR unit at Beta Hydri show. At full intensity it can jam a whole system, and Medeiros's bombs at 82 Eridani were cloaked against it."
     },
     {
       "entity_id": "technology:vr",
-      "description": "A virtual-reality interface developed aboard Heaven-1 to provide sensory input and an embodied experience for a bodiless mind. Its initial construction required hardware modifications, and its software remains under development. It provides convincing physical sensations and a full humanlike avatar, renders interactive objects such as a Nerf basketball and hoop, and supports shared environments including libraries, parks, and command decks. Users can create objects during a session and play games together. Ball games expose remaining physics inaccuracies and provide test cases for refinement. Bill regards varied embodied activity as important to retaining a human sense of self. Linus uses it to provide Henry with a realistic sailing life that includes eating, sleeping, and bodily functions. One observed basketball trajectory was unrealistic. Improvements were planned to support more direct interaction between users, and upgrades from Bill now let Bobs interact physically with one another instead of only talking through video windows, though this has its downsides. Its proprioception emulation can be switched off, as Riker does to avoid falling over when he is virtually asleep. Bobs in different star systems can meet in one shared VR session, such as a virtual pub, but a travelling Bob can no longer interface with VR once his tau gets too high. Bobs are so used to VR that they feel fully human most of the time, until an incongruous action jolts them back to reality."
+      "description": "A virtual-reality interface developed aboard Heaven-1 to give a bodiless mind sensory input and an embodied experience; its software is still being refined. It provides convincing sensations, a humanlike avatar and shared environments such as libraries, parks and command decks, where users can create objects and play games. Bill regards such embodied activity as important to keeping a human sense of self. Bill's upgrades let Bobs interact physically rather than only through video windows, and proprioception can be switched off. Bobs in different star systems can share a session, such as a virtual pub, but not while travelling at high tau. Bobs feel fully human in it most of the time."
     }
   ],
   "appearances": [

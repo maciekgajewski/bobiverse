@@ -402,6 +402,124 @@ test("canvas picking selects a known map system after framing settles", async ({
   ).toHaveCount(1);
 });
 
+async function seedChapter(page: Page, chapter: string): Promise<void> {
+  await page.addInitScript((viewChapter) => {
+    window.localStorage.setItem(
+      "bobiverse.app-state.v2",
+      JSON.stringify({
+        furthestChapterRead: viewChapter,
+        viewChapter,
+        displayDate: null,
+        mode: "chapter",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+  }, chapter);
+}
+
+test("canvas picking uses the invisible click target outside the visible star", async ({
+  page,
+}) => {
+  test.setTimeout(45_000);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await seedChapter(page, "1.61");
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/");
+  await page.waitForFunction(() => window.__bob034MapPerformance !== undefined);
+  await settleMapCamera(page);
+  const inspector = page.getByRole("complementary", {
+    name: "Object inspector",
+  });
+  // WISE 0855-0714 is astronomy-only with a 0.05 visible quad inside a 0.09
+  // click target, so a click between the two radii can only hit the target.
+  await page
+    .getByRole("searchbox", { name: "Search visible objects" })
+    .fill("WISE 0855-0714");
+  await page.getByRole("button", { name: /WISE 0855-0714/ }).click();
+  await expect(
+    inspector.getByRole("heading", { name: "WISE 0855-0714" }),
+  ).toBeVisible();
+  await settleMapCamera(page);
+  const canvas = page.getByTestId("star-map-canvas");
+  await canvas.hover({ position: { x: 100, y: 40 } });
+  for (let step = 0; step < 80; step += 1) {
+    await page.mouse.wheel(0, -120);
+  }
+  await settleMapCamera(page);
+  await canvas.click({ position: { x: 100, y: 40 } });
+  await expect(
+    page.getByText(
+      "Select a map marker or browser item to inspect its reader-safe details.",
+    ),
+  ).toBeVisible();
+  await page.mouse.move(1, 1);
+  await settleMapCamera(page);
+  const probe = await page.evaluate(() =>
+    window.__bob034MapPerformance!.componentScreenRadii(
+      "stellar-component-000138",
+    ),
+  );
+  expect(probe.pickRadiusPx - probe.visibleRadiusPx).toBeGreaterThan(8);
+  const ring = {
+    x: probe.x + (probe.visibleRadiusPx + probe.pickRadiusPx) / 2,
+    y: probe.y,
+  };
+  expect(
+    await page.evaluate(
+      ({ x, y }) => document.elementFromPoint(x, y)?.tagName,
+      ring,
+    ),
+  ).toBe("CANVAS");
+  await page.mouse.click(ring.x, ring.y);
+  await page.mouse.move(1, 1);
+  await expect(
+    inspector.getByRole("heading", { name: "WISE 0855-0714" }),
+  ).toBeVisible();
+});
+
+test("an idle map has no per-frame material or shader-program churn", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await seedChapter(page, "1.61");
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/");
+  await expect(
+    page
+      .locator(".map-narrative-badge")
+      .filter({ hasText: "Knowledge through Chapter 1.61" }),
+  ).toBeVisible();
+  await page.waitForFunction(() => window.__bob034MapPerformance !== undefined);
+  await settleMapCamera(page);
+  await page.mouse.move(1, 1);
+  // Count rendered animation frames rather than wall time, so a slow software
+  // renderer measures the same 60 frames as a GPU.
+  const { before, after } = await page.evaluate(
+    () =>
+      new Promise<{
+        before: ReturnType<Bob034MapPerformanceBridge["renderStats"]>;
+        after: ReturnType<Bob034MapPerformanceBridge["renderStats"]>;
+      }>((resolve) => {
+        const bridge = window.__bob034MapPerformance!;
+        const start = bridge.renderStats();
+        let frames = 0;
+        const step = () => {
+          frames += 1;
+          if (frames < 60) requestAnimationFrame(step);
+          else resolve({ before: start, after: bridge.renderStats() });
+        };
+        requestAnimationFrame(step);
+      }),
+  );
+  expect(after.materials).toBeGreaterThan(300);
+  // A transparent double-sided material without forceSinglePass is drawn in
+  // two passes, each flagging needsUpdate, so its version climbs every frame.
+  expect(after.twoPassMaterials).toBe(0);
+  expect(after.materialVersionSum - before.materialVersionSum).toBe(0);
+  expect(after.programs).toBe(before.programs);
+});
+
 test("Solar System enters and exits the fixed system mode", async ({
   page,
 }) => {
@@ -2082,8 +2200,9 @@ for (const viewport of [
       })),
     ).toEqual({ height: viewport.height, width: viewport.width });
 
-    // Read through stays in the bar as the compact chip; the Knowledge/mode/
-    // command set moves to the menu drawer.
+    // Read through stays in the bar as the compact chip; the mode and command
+    // set moves to the menu drawer, which has no Knowledge through select
+    // (BOB-20261114-CTS3FN).
     const readThrough = page.locator("#topbar-read-through");
     await expect(readThrough).toBeVisible();
     await expect(readThrough).toHaveText("Pre-book");
@@ -2102,7 +2221,7 @@ for (const viewport of [
     const drawer = page.getByRole("dialog", { name: "Menu" });
     await expect(drawer).toBeVisible();
     await expect(drawer.getByRole("button", { name: "Close" })).toBeFocused();
-    await expect(drawer.getByLabel("Knowledge through")).toBeVisible();
+    await expect(drawer.getByLabel("Knowledge through")).toHaveCount(0);
     for (const name of [
       "Close",
       "Chapter mode",
@@ -2629,6 +2748,129 @@ for (const viewport of [
         .getByRole("dialog", { name: "Timeline and progress" })
         .getByLabel("Read through"),
     ).toHaveValue("1.2");
+  });
+}
+
+// BOB-20261114-CTS3FN: confirming a Read through chapter, forwards or backwards,
+// shows that chapter's universe, and the phone menu has no Knowledge through.
+for (const viewport of [
+  { width: 390, height: 844 },
+  { width: 1280, height: 800 },
+]) {
+  test(`picking a read-through chapter shows that chapter at ${viewport.width}x${viewport.height}`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(viewport);
+    await page.addInitScript(() => {
+      if (window.sessionStorage.getItem("cts3fn-seeded")) return;
+      window.sessionStorage.setItem("cts3fn-seeded", "1");
+      window.localStorage.setItem(
+        "bobiverse.app-state.v2",
+        JSON.stringify({
+          furthestChapterRead: "1.3",
+          viewChapter: "1.1",
+          displayDate: "2016",
+          mode: "chapter",
+          timelineZoom: 1,
+          timelinePan: 0,
+        }),
+      );
+    });
+    await page.goto("/");
+    const compact = viewport.width < 1200;
+    const badge = page.locator(".map-narrative-badge");
+    const chip = page.locator("#topbar-read-through");
+    const stored = () =>
+      page.evaluate(
+        () =>
+          JSON.parse(localStorage.getItem("bobiverse.app-state.v2")!) as {
+            furthestChapterRead: string | null;
+            viewChapter: string | null;
+            mode: string;
+          },
+      );
+    await expect(badge).toContainText(
+      "Latest known · Knowledge through Chapter 1.1",
+    );
+    await expect(chip).toHaveText("1 · Ch 3");
+
+    if (compact) {
+      await page.getByRole("button", { name: "Menu" }).click();
+      const drawer = page.getByRole("dialog", { name: "Menu" });
+      await expect(
+        drawer.getByRole("button", { name: "Chapter mode" }),
+      ).toBeVisible();
+      await expect(drawer.getByLabel("Knowledge through")).toHaveCount(0);
+      await expect(drawer.locator("select")).toHaveCount(0);
+      await page.keyboard.press("Escape");
+      await expect(drawer).toHaveCount(0);
+    } else {
+      // Desktop keeps the dock's Knowledge through select (out of scope).
+      await expect(page.locator("#desktop-knowledge-through")).toHaveValue(
+        "1.1",
+      );
+    }
+
+    // Forwards, from an earlier knowledge view.
+    await chooseTopbarChapter(page, "Book 1 · Chapter 5");
+    await expect(chip).toHaveText("1 · Ch 5");
+    await expect(badge).toContainText(
+      "Latest known · Knowledge through Chapter 1.5",
+    );
+    await expect.poll(stored).toMatchObject({
+      furthestChapterRead: "1.5",
+      viewChapter: "1.5",
+      mode: "chapter",
+    });
+    if (!compact) {
+      await expect(page.locator("#desktop-knowledge-through")).toHaveValue(
+        "1.5",
+      );
+      await expect(
+        page.getByRole("button", { name: "Book 1, Chapter 6, locked" }),
+      ).toBeDisabled();
+    }
+
+    // Backwards, from Date mode: the ceiling and the view both move back.
+    if (compact) {
+      await openMenuCommand(page, "Date mode");
+      if (await page.getByRole("dialog", { name: "Menu" }).count())
+        await page.keyboard.press("Escape");
+    } else {
+      await page.getByRole("button", { name: "Date mode" }).click();
+    }
+    await expect(badge).toContainText("Universe in");
+    await chooseTopbarChapter(page, "Book 1 · Chapter 2");
+    await expect(chip).toHaveText("1 · Ch 2");
+    await expect(badge).toContainText(
+      "Latest known · Knowledge through Chapter 1.2",
+    );
+    await expect.poll(stored).toMatchObject({
+      furthestChapterRead: "1.2",
+      viewChapter: "1.2",
+      mode: "chapter",
+    });
+    if (!compact) {
+      await expect(
+        page.getByRole("button", { name: "Chapter mode" }),
+      ).toHaveAttribute("aria-pressed", "true");
+      await expect(
+        page.getByRole("button", { name: "Book 1, Chapter 3, locked" }),
+      ).toBeDisabled();
+      const options = await page
+        .locator("#desktop-knowledge-through option")
+        .evaluateAll((elements) =>
+          elements.map((element) => (element as HTMLOptionElement).value),
+        );
+      expect(options).toEqual(["", "1.1", "1.2"]);
+    }
+
+    // The choice survives a reload.
+    await page.reload();
+    await expect(badge).toContainText(
+      "Latest known · Knowledge through Chapter 1.2",
+    );
+    await expect(chip).toHaveText("1 · Ch 2");
   });
 }
 

@@ -570,8 +570,7 @@ On a phone in portrait (about 390×844) and landscape (about 844×390), and on d
   button. The map fills everything below it, edge to edge on phones.
 - **Read through** in the bar asks for confirmation before revealing a chapter, the
   same as the dock and the Timeline and progress panel.
-- The menu opens a right-hand drawer with **Knowledge through**, Chapter/Date mode,
-  **Browse objects**, **Inspect selection** (when something is selected),
+- The menu opens a right-hand drawer with Chapter/Date mode, **Browse objects**, **Inspect selection** (when something is selected),
   **Timeline and progress** and **Reset view**. Close, Escape and tapping outside
   close it and the panels it opens, and focus returns to the menu button.
 - The astronomy notice is a chip in the map's bottom-right corner, collapsed by
@@ -637,6 +636,24 @@ On a phone in portrait (about 390×844) and landscape (about 844×390), and on d
   new chapter, and after Cancel nothing changes.
 - With a keyboard, the arrow keys move around the grid and up to Pre-book, Home and
   End jump to the first and last chapter, and Enter or Space chooses.
+
+## BOB-20261114-CTS3FN read-through drives the view
+
+On a phone in portrait (about 390×844) and on desktop (about 1280×800):
+
+- The phone menu has no **Knowledge through** select. It still has Chapter/Date
+  mode, **Browse objects**, **Inspect selection** (when something is selected),
+  **Timeline and progress**, **Reset view** and **What is this?**.
+- Pick a later chapter in the **Read through** pill and confirm it: the pill, the map
+  badge (`Latest known · Knowledge through Chapter N`), the map and the object
+  browser all move to that chapter, in Chapter mode, even if you were looking at an
+  earlier chapter, at a date, or at the zero state.
+- Pick an earlier chapter and confirm it: the view moves back to that chapter and
+  nothing from later chapters stays visible.
+- Cancel leaves the pill and the view unchanged.
+- On desktop, and in the phone's **Timeline and progress** panel, **Knowledge
+  through** and the chapter track can still look back at an earlier chapter without
+  changing the pill.
 
 ## Default and reset camera
 

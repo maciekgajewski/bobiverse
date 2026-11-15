@@ -19,11 +19,11 @@
     },
     {
       "entity_id": "vessel:heaven-1",
-      "description": "A converted interplanetary freighter equipped as a Von Neumann probe. It is a small, light, resilient design intended to build copies of itself. It has a SURGE drive ring, fusion reactor, ramscoop generator, fabrication equipment including three large 3D printers, communications and sensor systems, and ROAMer and nanite systems; its autonomous cargo carriers move miners and materials; it has no weapons and little spare room. The version-2 HEAVEN design adds a larger reactor and drive, a rail-gun, ship-buster storage and launch facilities, higher-capacity replicant systems, room for ROAMers and mining drones, and greater cargo capacity. The HEAVEN project's communications are designed to send information from its vessels to Earth, not to support conversations across interstellar light-time delays. Version-2 HEAVEN vessels have better reactor shielding, and Riker's and Homer's versions are further strengthened."
+      "description": "A converted interplanetary freighter equipped as a Von Neumann probe: a small, light, resilient design built to copy itself. It carries a SURGE drive ring, fusion reactor, ramscoop, three large 3D printers, ROAMers, nanites and mining cargo carriers, but no weapons. Version-2 HEAVENs add a larger reactor and drive, better reactor shielding, a rail-gun, ship-busters, bigger replicant systems and more cargo room. Its communications report to Earth and were not built for interstellar conversation."
     },
     {
       "entity_id": "technology:suddar",
-      "description": "A subspace technology enabled by the same theoretical breakthrough as the SURGE drive and associated with the new possibility of interstellar probes and colonization. It can be used to monitor distance, scan for threats, and detect dense objects within a light-hour radius. An emitter flaw can produce a much weaker ping with poor close-range sensitivity; Bill hypothesizes that weaker signals may instead reach farther because attenuation changes with signal strength. It can detect objects at range but cannot provide fine detail at the distance encountered near Jupiter."
+      "description": "A subspace detection technology enabled by the same breakthrough as the SURGE drive. It can monitor distance, scan for threats and detect dense objects within a light-hour. An emitter flaw can give a much weaker ping with poor close-range sensitivity, which Bill suspects may reach farther. It gives little fine detail at long range."
     }
   ],
   "appearances": [

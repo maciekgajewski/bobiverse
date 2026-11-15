@@ -1254,7 +1254,9 @@ describe("atlas shell", () => {
     await user.click(menu);
     const drawer = screen.getByRole("dialog", { name: "Menu" });
     expect(within(drawer).getByRole("button", { name: "Close" })).toHaveFocus();
-    expect(within(drawer).getByLabelText("Knowledge through")).toBeDisabled();
+    expect(
+      within(drawer).queryByLabelText("Knowledge through"),
+    ).not.toBeInTheDocument();
     expect(
       within(drawer).getByRole("button", { name: "Chapter mode" }),
     ).toHaveAttribute("aria-pressed", "true");
@@ -1699,7 +1701,7 @@ describe("atlas shell", () => {
     );
   });
 
-  it("keeps Knowledge through in the compact menu in Date mode", async () => {
+  it("has no Knowledge through select in the compact menu, in either mode", async () => {
     window.localStorage.setItem(
       "bobiverse.app-state.v2",
       JSON.stringify({
@@ -1716,6 +1718,10 @@ describe("atlas shell", () => {
     render(<App />);
     await user.click(screen.getByRole("button", { name: "Menu" }));
     let drawer = screen.getByRole("dialog", { name: "Menu" });
+    expect(
+      within(drawer).queryByLabelText("Knowledge through"),
+    ).not.toBeInTheDocument();
+    expect(document.getElementById("menu-knowledge-through")).toBeNull();
     await user.click(within(drawer).getByRole("button", { name: "Date mode" }));
     if (!screen.queryByRole("dialog", { name: "Menu" })) {
       await user.click(screen.getByRole("button", { name: "Menu" }));
@@ -1724,14 +1730,158 @@ describe("atlas shell", () => {
     expect(
       within(drawer).getByRole("button", { name: "Date mode" }),
     ).toHaveAttribute("aria-pressed", "true");
-    const knowledge = within(drawer).getByLabelText("Knowledge through");
-    expect(knowledge).toBeEnabled();
-    expect(knowledge).toHaveValue("1.2");
-    await user.selectOptions(knowledge, "1.1");
-    expect(knowledge).toHaveValue("1.1");
     expect(
-      within(drawer).getByRole("button", { name: "Chapter mode" }),
-    ).toHaveAttribute("aria-pressed", "true");
+      within(drawer).queryByLabelText("Knowledge through"),
+    ).not.toBeInTheDocument();
+  });
+
+  describe("read-through drives the view (BOB-20261114-CTS3FN)", () => {
+    const storeProgress = (progress: Record<string, unknown>) =>
+      window.localStorage.setItem(
+        "bobiverse.app-state.v2",
+        JSON.stringify({ timelineZoom: 1, timelinePan: 0, ...progress }),
+      );
+    const dockKnowledge = () =>
+      screen.getByLabelText("Knowledge through", {
+        selector: "#desktop-knowledge-through",
+      });
+    const topbar = () => document.getElementById("topbar-read-through")!;
+    const pickInTopbar = async (
+      user: ReturnType<typeof userEvent.setup>,
+      name: string,
+    ) => {
+      await user.click(topbar());
+      await user.click(
+        within(screen.getByRole("dialog", { name: "Read through" })).getByRole(
+          "radio",
+          { name },
+        ),
+      );
+    };
+    const expectChapterView = (chapter: string) => {
+      expect(
+        screen.getAllByText(
+          `Latest known · Knowledge through Chapter ${chapter}`,
+        ).length,
+      ).toBeGreaterThan(0);
+      expect(
+        screen.getByRole("button", { name: "Chapter mode" }),
+      ).toHaveAttribute("aria-pressed", "true");
+      expect(dockKnowledge()).toHaveValue(chapter);
+    };
+
+    it("moves the view forward to a later confirmed chapter from an earlier knowledge view", async () => {
+      storeProgress({
+        furthestChapterRead: "1.2",
+        viewChapter: "1.1",
+        displayDate: "2133",
+        mode: "chapter",
+      });
+      const user = userEvent.setup();
+      render(<App />);
+      expectChapterView("1.1");
+      await pickInTopbar(user, "Book 1 · Chapter 3");
+      await user.click(
+        screen.getByRole("button", { name: "Confirm read through" }),
+      );
+      expect(topbar()).toHaveAccessibleName("Read through, Book 1 Chapter 3");
+      expect(dockReadThrough()).toHaveValue("1.3");
+      expectChapterView("1.3");
+    });
+
+    it("moves the view back and lowers the ceiling from Date mode in the dock", async () => {
+      storeProgress({
+        furthestChapterRead: "1.3",
+        viewChapter: "1.3",
+        displayDate: "2133",
+        mode: "date",
+      });
+      const user = userEvent.setup();
+      render(<App />);
+      expect(screen.getByRole("button", { name: "Date mode" })).toHaveAttribute(
+        "aria-pressed",
+        "true",
+      );
+      await user.selectOptions(dockReadThrough(), "1.2");
+      await user.click(
+        screen.getByRole("button", { name: "Confirm read through" }),
+      );
+      expect(topbar()).toHaveAccessibleName("Read through, Book 1 Chapter 2");
+      expectChapterView("1.2");
+      const options = Array.from(
+        dockKnowledge().querySelectorAll("option"),
+        (option) => option.value,
+      );
+      expect(options).toEqual(["", "1.1", "1.2"]);
+    });
+
+    it("leaves the zero-state knowledge view for the confirmed chapter", async () => {
+      storeProgress({
+        furthestChapterRead: "1.3",
+        viewChapter: null,
+        displayDate: null,
+        mode: "chapter",
+      });
+      const user = userEvent.setup();
+      render(<App />);
+      expect(screen.getAllByText("Pre-book zero state").length).toBeGreaterThan(
+        0,
+      );
+      await pickInTopbar(user, "Book 1 · Chapter 1");
+      await user.click(
+        screen.getByRole("button", { name: "Confirm read through" }),
+      );
+      expect(topbar()).toHaveAccessibleName("Read through, Book 1 Chapter 1");
+      expectChapterView("1.1");
+    });
+
+    it("leaves progress and the view unchanged on Cancel", async () => {
+      storeProgress({
+        furthestChapterRead: "1.2",
+        viewChapter: "1.1",
+        displayDate: "2133",
+        mode: "chapter",
+      });
+      const user = userEvent.setup();
+      render(<App />);
+      await pickInTopbar(user, "Book 1 · Chapter 3");
+      await user.click(screen.getByRole("button", { name: "Cancel" }));
+      expect(topbar()).toHaveAccessibleName("Read through, Book 1 Chapter 2");
+      expectChapterView("1.1");
+    });
+
+    it("keeps dock Knowledge through able to look back without lowering the ceiling", async () => {
+      storeProgress({
+        furthestChapterRead: "1.2",
+        viewChapter: "1.2",
+        displayDate: "2133",
+        mode: "chapter",
+      });
+      const user = userEvent.setup();
+      render(<App />);
+      await user.selectOptions(dockKnowledge(), "1.1");
+      expectChapterView("1.1");
+      expect(topbar()).toHaveAccessibleName("Read through, Book 1 Chapter 2");
+      expect(dockReadThrough()).toHaveValue("1.2");
+    });
+
+    it("shows the chapter picked in the compact top bar", async () => {
+      storeProgress({
+        furthestChapterRead: "1.2",
+        viewChapter: "1.1",
+        displayDate: "2133",
+        mode: "chapter",
+      });
+      vi.stubGlobal("matchMedia", compactMatchMedia);
+      const user = userEvent.setup();
+      render(<App />);
+      await pickInTopbar(user, "Book 1 · Chapter 3");
+      await user.click(
+        screen.getByRole("button", { name: "Confirm read through" }),
+      );
+      expect(topbar()).toHaveAccessibleName("Read through, Book 1 Chapter 3");
+      expectChapterView("1.3");
+    });
   });
 
   it("puts Reset view on the map as one labelled icon control", async () => {

@@ -25,7 +25,7 @@
     },
     {
       "entity_id": "technology:von-neumann-probe",
-      "description": "A self-replicating spacecraft designed to travel between star systems and construct new copies of itself along the way. Interstellar use became possible after a breakthrough in subspace theory, and such probes are central to a competitive international colonization effort. Their exponential replication could eventually explore the galaxy, but practical self-construction remains the central obstacle. Their overall process needs artificial intelligence to manage it and respond to encountered situations; replication and manufacturing are close to sufficient, and ion drives are considered buildable with funding."
+      "description": "A self-replicating spacecraft that travels between star systems building copies of itself, made possible for interstellar use by a subspace breakthrough and central to a competitive international colonization effort. Exponential replication could explore the galaxy, but practical self-construction is the main obstacle. The process needs artificial intelligence to manage it; replication and manufacturing are nearly sufficient, and ion drives are considered buildable with funding."
     }
   ],
   "appearances": [
