@@ -134,3 +134,16 @@ env VITE_APP_VERSION=0.9.0 BOBIVERSE_COMMIT=<sha> npx vite build  # About shows 
 
 - Created on origin/master `995523c` (CSP fix landed) on local branch
   `bob-20261115-release-readiness` in `~/src/bobiverse-release`.
+- Implemented in `a0b00a2` (versioning and release docs) and `3b81256` (What's
+  new, Jeeves art and the About version). The Jeeves files are byte-identical to
+  the approved `~/jeeves-final/` copies.
+- Validation on `3b81256`: tasks check, format:check, lint (one pre-existing
+  fast-refresh warning in `AboutDialog.tsx`), typecheck, test (616 passed in 54
+  files), data:test (90), data:validate, narrative:validate, build, prettier on
+  the changed Markdown and `git diff --check` all passed. e2e on port 5203, one
+  worker, no retries: chromium, firefox and webkit each 64 passed and 3 skipped;
+  no known-flake reruns were needed. `npm run test:e2e:csp`: 3 passed.
+- A local release build (`VITE_APP_VERSION=0.9.0 BOBIVERSE_COMMIT=3b81256…`)
+  shows "Version 0.9.0 (3b81256)" at the end of About. Screenshots for visual
+  acceptance (What's new at 1440×900 and 390×844, Jeeves's info header at both
+  sizes, About with the version) were taken outside the repository.
