@@ -69,3 +69,85 @@ export function nearestScreenPick(
 
   return closest;
 }
+
+/** Ignore a following caption click for this long after a tracked pointerup. */
+export const CAPTION_CLICK_DEDUPE_MS = 500;
+
+export interface PickPointer {
+  id: number;
+  x: number;
+  y: number;
+}
+
+export interface PickGestureUp {
+  /** Start of the single-pointer gesture if this up may commit a pick. */
+  mayPickFrom: PickPointer | null;
+  /** True if this pointer was part of a pick gesture or a suppressed pinch. */
+  tracked: boolean;
+}
+
+/**
+ * First pointer on the map starts a pick gesture. A second pointer cancels
+ * it and suppresses picks until every tracked pointer is up, so a pinch
+ * whose first finger stays still does not select on release.
+ */
+export function createPickGesture() {
+  let start: PickPointer | null = null;
+  let suppressed = false;
+  const activeIds = new Set<number>();
+
+  return {
+    pointerDown(pointer: PickPointer, onMap: boolean): void {
+      if (start !== null || suppressed || activeIds.size > 0) {
+        activeIds.add(pointer.id);
+        if (activeIds.size > 1) {
+          start = null;
+          suppressed = true;
+        }
+        return;
+      }
+      if (!onMap) return;
+      activeIds.add(pointer.id);
+      start = { id: pointer.id, x: pointer.x, y: pointer.y };
+    },
+    pointerUp(pointerId: number): PickGestureUp {
+      if (!activeIds.has(pointerId)) {
+        return { mayPickFrom: null, tracked: false };
+      }
+      const mayPickFrom =
+        !suppressed && start !== null && start.id === pointerId ? start : null;
+      activeIds.delete(pointerId);
+      if (mayPickFrom) start = null;
+      if (activeIds.size === 0) {
+        start = null;
+        suppressed = false;
+      }
+      return { mayPickFrom, tracked: true };
+    },
+    pointerCancel(pointerId: number): void {
+      if (!activeIds.has(pointerId)) return;
+      activeIds.delete(pointerId);
+      if (start?.id === pointerId) start = null;
+      if (activeIds.size === 0) {
+        start = null;
+        suppressed = false;
+        return;
+      }
+      start = null;
+      suppressed = true;
+    },
+  };
+}
+
+export function createCaptionClickDedupe(windowMs = CAPTION_CLICK_DEDUPE_MS) {
+  let untilMs = 0;
+  return {
+    /** Call after any tracked pointerup so a following caption click is skipped. */
+    rememberPointerUp(nowMs: number): void {
+      untilMs = nowMs + windowMs;
+    },
+    shouldSkip(nowMs: number): boolean {
+      return nowMs < untilMs;
+    },
+  };
+}

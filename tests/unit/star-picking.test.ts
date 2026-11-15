@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
+  CAPTION_CLICK_DEDUPE_MS,
   COARSE_POINTER_PICK_RADIUS_PX,
   FINE_POINTER_PICK_RADIUS_PX,
   PICK_DRAG_THRESHOLD_PX,
+  createCaptionClickDedupe,
+  createPickGesture,
   effectivePickRadiusPx,
   nearestScreenPick,
   pointerMovedBeyondPickThreshold,
@@ -179,5 +182,104 @@ describe("pick drag threshold", () => {
     expect(
       pointerMovedBeyondPickThreshold({ x: 0, y: 0 }, { x: 6, y: 8 }),
     ).toBe(true);
+  });
+});
+
+describe("multi-touch pick gesture", () => {
+  it("allows a single-pointer tap on the map to pick", () => {
+    const gesture = createPickGesture();
+    gesture.pointerDown({ id: 1, x: 10, y: 20 }, true);
+    const up = gesture.pointerUp(1);
+    expect(up.tracked).toBe(true);
+    expect(up.mayPickFrom).toEqual({ id: 1, x: 10, y: 20 });
+  });
+
+  it("ignores a pointer that starts off the map", () => {
+    const gesture = createPickGesture();
+    gesture.pointerDown({ id: 1, x: 10, y: 20 }, false);
+    expect(gesture.pointerUp(1)).toEqual({ mayPickFrom: null, tracked: false });
+  });
+
+  it("does not pick when a second pointer arrives, even if the first stays still", () => {
+    const gesture = createPickGesture();
+    gesture.pointerDown({ id: 1, x: 40, y: 80 }, true);
+    gesture.pointerDown({ id: 2, x: 120, y: 90 }, true);
+    // The moving pinch finger lifts first; the still finger then releases
+    // on the same star it went down on.
+    expect(gesture.pointerUp(2)).toEqual({ mayPickFrom: null, tracked: true });
+    expect(gesture.pointerUp(1)).toEqual({ mayPickFrom: null, tracked: true });
+  });
+
+  it("does not pick if the still first finger lifts before the second", () => {
+    const gesture = createPickGesture();
+    gesture.pointerDown({ id: 1, x: 40, y: 80 }, true);
+    gesture.pointerDown({ id: 2, x: 120, y: 90 }, true);
+    expect(gesture.pointerUp(1).mayPickFrom).toBeNull();
+    expect(gesture.pointerUp(2).mayPickFrom).toBeNull();
+  });
+
+  it("allows a new single-pointer tap after every pointer is up", () => {
+    const gesture = createPickGesture();
+    gesture.pointerDown({ id: 1, x: 40, y: 80 }, true);
+    gesture.pointerDown({ id: 2, x: 120, y: 90 }, true);
+    gesture.pointerUp(2);
+    gesture.pointerUp(1);
+    gesture.pointerDown({ id: 3, x: 15, y: 15 }, true);
+    const up = gesture.pointerUp(3);
+    expect(up.mayPickFrom).toEqual({ id: 3, x: 15, y: 15 });
+  });
+
+  it("cancelling the first pointer while a second is down keeps picks suppressed", () => {
+    const gesture = createPickGesture();
+    gesture.pointerDown({ id: 1, x: 40, y: 80 }, true);
+    gesture.pointerDown({ id: 2, x: 120, y: 90 }, true);
+    gesture.pointerCancel(1);
+    expect(gesture.pointerUp(2).mayPickFrom).toBeNull();
+    gesture.pointerDown({ id: 3, x: 15, y: 15 }, true);
+    expect(gesture.pointerUp(3).mayPickFrom).toEqual({ id: 3, x: 15, y: 15 });
+  });
+});
+
+describe("caption click dedupe", () => {
+  it("lets onSelect fire once when pointerup and caption click handle the same tap", () => {
+    const gesture = createPickGesture();
+    const dedupe = createCaptionClickDedupe();
+    const selections: string[] = [];
+
+    const commitPointerUp = (id: number, nowMs: number) => {
+      const { mayPickFrom, tracked } = gesture.pointerUp(id);
+      if (tracked) dedupe.rememberPointerUp(nowMs);
+      if (!mayPickFrom) return;
+      if (pointerMovedBeyondPickThreshold(mayPickFrom, { x: 80, y: 40 })) {
+        return;
+      }
+      selections.push("sol");
+    };
+    const captionClick = (nowMs: number) => {
+      if (dedupe.shouldSkip(nowMs)) return;
+      selections.push("sol");
+    };
+
+    gesture.pointerDown({ id: 1, x: 80, y: 40 }, true);
+    commitPointerUp(1, 1_000);
+    captionClick(1_001);
+    expect(selections).toEqual(["sol"]);
+  });
+
+  it("still selects from a synthetic caption click that had no pointerup", () => {
+    const dedupe = createCaptionClickDedupe();
+    const selections: string[] = [];
+    if (!dedupe.shouldSkip(1_000)) selections.push("sol");
+    expect(selections).toEqual(["sol"]);
+  });
+
+  it("allows a later caption click after the dedupe window", () => {
+    const dedupe = createCaptionClickDedupe();
+    const selections: string[] = [];
+    dedupe.rememberPointerUp(1_000);
+    if (!dedupe.shouldSkip(1_000 + CAPTION_CLICK_DEDUPE_MS + 1)) {
+      selections.push("sol");
+    }
+    expect(selections).toEqual(["sol"]);
   });
 });

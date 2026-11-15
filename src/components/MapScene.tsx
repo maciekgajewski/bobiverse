@@ -42,6 +42,8 @@ import {
 } from "../domain/camera-motion";
 import { collectRenderMaterialStats } from "../domain/render-stats";
 import {
+  createCaptionClickDedupe,
+  createPickGesture,
   nearestScreenPick,
   pointerMovedBeyondPickThreshold,
   pointerPickRadiusPx,
@@ -848,9 +850,10 @@ const StarMarker = memo(function StarMarker({
                 data-caption-opacity={captionOpacity ?? 1}
                 style={{ opacity: captionOpacity ?? 1 }}
                 onClick={(event) => {
-                  // Synthetic clicks (tests) may not emit pointerup. Real
-                  // taps also arrive here after pointerup; the same
-                  // screen-space rule is idempotent for the same point.
+                  // Synthetic clicks (tests) may not emit pointerup.
+                  // Real taps also arrive here after pointerup; skip
+                  // when that pointerup already handled this tap so
+                  // onSelect fires once.
                   event.stopPropagation();
                   onCaptionActivate({
                     clientX: event.clientX,
@@ -1290,6 +1293,8 @@ function Scene({
   const selected = systems.find((system) => system.id === selectedId);
   const zoomed = zoomedSystemId !== null;
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const pickGesture = useRef(createPickGesture());
+  const captionClickDedupe = useRef(createCaptionClickDedupe());
   useEffect(() => {
     const canvas = gl.domElement;
     const pickOptions = () => ({
@@ -1354,26 +1359,25 @@ function Scene({
       }
       setHoveredId(null);
     };
-    const gesture = {
-      current: null as { id: number; x: number; y: number } | null,
-    };
     const onPointerDown = (event: PointerEvent) => {
       if (event.pointerType === "mouse" && event.button !== 0) return;
-      if (!isMapPointerTarget(event.target, canvas)) return;
-      gesture.current = {
-        id: event.pointerId,
-        x: event.clientX,
-        y: event.clientY,
-      };
+      pickGesture.current.pointerDown(
+        { id: event.pointerId, x: event.clientX, y: event.clientY },
+        isMapPointerTarget(event.target, canvas),
+      );
     };
     const onPointerUp = (event: PointerEvent) => {
-      const start = gesture.current;
-      if (!start || start.id !== event.pointerId) return;
-      gesture.current = null;
+      const { mayPickFrom, tracked } = pickGesture.current.pointerUp(
+        event.pointerId,
+      );
+      if (tracked) {
+        captionClickDedupe.current.rememberPointerUp(performance.now());
+      }
+      if (!mayPickFrom) return;
       if (isInteractionLocked()) return;
       if (
         pointerMovedBeyondPickThreshold(
-          { x: start.x, y: start.y },
+          { x: mayPickFrom.x, y: mayPickFrom.y },
           { x: event.clientX, y: event.clientY },
         )
       ) {
@@ -1406,7 +1410,7 @@ function Scene({
       if (insideCanvas) onDeselect();
     };
     const onPointerCancel = (event: PointerEvent) => {
-      if (gesture.current?.id === event.pointerId) gesture.current = null;
+      pickGesture.current.pointerCancel(event.pointerId);
     };
     const clearHover = () => setHoveredId(null);
     const clearHoverOnWindowExit = (event: PointerEvent) => {
@@ -1492,6 +1496,9 @@ function Scene({
             entered={system.id === zoomedSystemId}
             onCaptionActivate={({ clientX, clientY }) => {
               if (isInteractionLocked()) return;
+              if (captionClickDedupe.current.shouldSkip(performance.now())) {
+                return;
+              }
               const star = nearestScreenPick(
                 mapPickCandidates(
                   systems,

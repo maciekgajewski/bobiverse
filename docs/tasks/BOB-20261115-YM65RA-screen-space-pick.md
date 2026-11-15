@@ -122,3 +122,9 @@ npm run test:e2e:csp
 - CSP e2e on port 4208 with the matching temporary config: 3 passed
   (21.0s) across chromium, firefox and webkit. Both alt configs were
   deleted afterwards.
+- Review fix: a second pointer during a gesture now cancels the pick and
+  suppresses further picks until every tracked pointer is up, so a pinch
+  whose first finger stays still does not select on release. Caption
+  `onClick` skips when a tracked pointerup just handled the same tap, so
+  `onSelect` fires once. Unit tests cover the pinch, the still-finger
+  release, and the single caption-tap `onSelect`.
