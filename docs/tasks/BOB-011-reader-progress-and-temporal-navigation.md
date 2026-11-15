@@ -2,7 +2,7 @@
 
 Status: Done
 Phase: 2 (narrative foundation and chapter timeline)
-Last updated: 2026-07-26
+Last updated: 2026-11-15
 
 ## Objective
 
@@ -116,6 +116,11 @@ Chapter <chapter>`.
 3. Later ceiling increases preserve an already valid view chapter, date, and mode;
    advancing **Read through** always requires confirmation, and timeline navigation
    never advances it.
+   _Superseded in part by `BOB-20261114-CTS3FN-read-through-drives-view.md`: a
+   confirmed **Read through** chapter, forwards or backwards, now always becomes
+   the view chapter, in Chapter mode at its story date, so a later ceiling
+   increase no longer preserves the view. The confirmation and timeline clauses
+   still hold._
 4. Locked chapters cannot become the knowledge chapter through mouse, keyboard,
    URL/state restoration, or direct state manipulation.
 5. A locked entry exposes only spoiler-safe book/chapter identity. Its title, story

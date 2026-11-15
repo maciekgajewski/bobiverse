@@ -134,6 +134,12 @@ describe("InspectorBreadcrumb", () => {
       "aria-current",
       "page",
     );
+    // An ellipsized crumb keeps its full label as a tooltip.
+    expect(within(nav).getByRole("button", { name: "Sol" })).toHaveAttribute(
+      "title",
+      "Sol",
+    );
+    expect(within(nav).getByText("Earth")).toHaveAttribute("title", "Earth");
     await user.click(within(nav).getByRole("button", { name: "Sol" }));
     expect(onSelect).toHaveBeenCalledWith({ kind: "narrative", id: "c" });
   });

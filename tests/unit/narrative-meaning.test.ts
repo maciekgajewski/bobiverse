@@ -339,7 +339,8 @@ describe("Milo's backdated death (1.51, ADR-0028)", () => {
 
 describe("merged-text restorations (BOB-20261113-FSHPA9)", () => {
   // Each check takes the restored sentence from the earlier canonical write at
-  // run time, so no text is held here. The sentence must survive in the later
+  // run time, so no sentence text is held here; the technology:vr check holds
+  // only three short key-word patterns. The sentence must survive in the later
   // chapter's own write, in chapter view under either write order, and in date
   // view at that chapter's date (where it may show early; ADR-0028 accepts this).
   const lastSentence = (text: string) => text.split(/(?<=\.) /).at(-1)!;
