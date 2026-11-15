@@ -56,10 +56,5 @@
       "location_id": "location:epsilon-eridani"
     }
   ],
-  "mentions": [
-    "location:epsilon-eridani-star",
-    "technology:ami",
-    "technology:buster-drone",
-    "technology:vr"
-  ]
+  "mentions": ["technology:ami", "technology:buster-drone", "technology:vr"]
 }

@@ -1496,7 +1496,7 @@ describe("atlas shell", () => {
     ).toBeEnabled();
   });
 
-  it("disambiguates adjacent same-named crumbs in the compact object trail", async () => {
+  it("walks the compact object trail from the merged Epsilon Eridani system to a child", async () => {
     vi.stubGlobal("matchMedia", compactMatchMedia);
     window.localStorage.setItem(
       "bobiverse.app-state.v2",
@@ -1539,23 +1539,25 @@ describe("atlas shell", () => {
       "page",
     );
     expect(within(trail).queryByRole("button")).not.toBeInTheDocument();
+    expect(
+      within(sheet).queryByRole("button", { name: "Epsilon Eridani (star)" }),
+    ).not.toBeInTheDocument();
+    expect(
+      within(sheet).getByRole("button", { name: "Bill's skunkworks" }),
+    ).toBeInTheDocument();
 
     await user.click(
-      within(sheet).getByRole("button", { name: "Epsilon Eridani (star)" }),
+      within(sheet).getByRole("button", { name: "Epsilon Eridani One" }),
     );
-    expect(sheet.querySelector(".entity-kind")).toHaveTextContent("star");
+    expect(sheet.querySelector(".entity-kind")).toHaveTextContent("planet");
     trail = within(header).getByRole("navigation", { name: "Object trail" });
-    expect(trail).toHaveTextContent(
-      "Epsilon Eridani (star system)›Epsilon Eridani (star)",
-    );
-    expect(within(trail).getByText("Epsilon Eridani (star)")).toHaveAttribute(
+    expect(trail).toHaveTextContent("Epsilon Eridani›Epsilon Eridani One");
+    expect(within(trail).getByText("Epsilon Eridani One")).toHaveAttribute(
       "aria-current",
       "page",
     );
     expect(
-      within(trail).getByRole("button", {
-        name: "Epsilon Eridani (star system)",
-      }),
+      within(trail).getByRole("button", { name: "Epsilon Eridani" }),
     ).toBeInTheDocument();
   });
 

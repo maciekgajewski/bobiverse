@@ -692,10 +692,13 @@ in the left-hand **Object browser**.
 On a phone in portrait (about 390×844) or desktop, after reading through Chapter 1.16
 or later:
 
-- Open the star system **Epsilon Eridani**. Under **Contains**, the first link reads
-  **Epsilon Eridani (star)**, not a second bare **Epsilon Eridani**, and
-  **Bill's skunkworks** is still listed. The heading is still **Epsilon Eridani**
-  with kind **star system**.
+- Open the star system **Epsilon Eridani**. Under **Contains**, the children are
+  uniquely named planets such as **Epsilon Eridani One** and **Bill's
+  skunkworks**. There is no **Epsilon Eridani (star)** link. The heading is still
+  **Epsilon Eridani** with kind **star system**. Same-name disambiguation of a
+  primary star remains a presentation rule, covered by unit fixtures; no live
+  system still shares a name with its star (Alpha Centauri A/B, Omicron Eridani
+  A and Sol all differ from their systems).
 - Open **Solar System**: **Contains** still lists **Sol** with no kind suffix.
 
 ## BOB-20261115-6C60VA same-named adjacent breadcrumbs
@@ -704,13 +707,26 @@ On a phone in portrait (about 390×844), after reading through Chapter 1.16 or l
 
 - Open the star system **Epsilon Eridani**. The object trail is a single current
   crumb, **Epsilon Eridani**, with no kind suffix.
-- Open its primary star (from **Contains** or Search). The trail reads
-  **Epsilon Eridani (star system) › Epsilon Eridani (star)**, with the star
-  current and in bold. The heading is still **Epsilon Eridani** with kind
-  **star**. On a narrow phone the ancestor crumb may ellipsize so the current
-  name stays in full; the link still has the complete name.
+- Open **Epsilon Eridani One** from **Contains**. The trail reads **Epsilon
+  Eridani › Epsilon Eridani One**, with the planet current and in bold, and no
+  kind suffixes because the names already differ. Adjacent same-named crumbs
+  still take a kind suffix; that rule is covered by unit fixtures, because no
+  live system still shares a name with its star.
 - Open **Earth**. The trail is still **Solar System › Sol › Earth**, with no
   kind suffixes.
+
+## BOB-20261115-BC2AEZ star-merge code follow-up
+
+On a phone in portrait (about 390×844), after reading through Chapter 1.16 or later:
+
+- Open the star system **Epsilon Eridani**. **Contains** lists **Epsilon Eridani
+  One**, **EE-2**, **EE-3**, **EE-4** and **Bill's skunkworks**. There is no
+  **Epsilon Eridani (star)** child. The object trail is a single **Epsilon
+  Eridani** crumb.
+- Open **Epsilon Eridani One**. The trail is **Epsilon Eridani › Epsilon Eridani
+  One**, and the heading kind is **planet**.
+- **Enter system** remains hidden while `ENABLE_ENTER_SYSTEM` is off. Sol is
+  unchanged: **Solar System › Sol › Earth**.
 
 ## Default and reset camera
 

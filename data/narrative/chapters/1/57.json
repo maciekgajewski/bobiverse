@@ -6,18 +6,10 @@
   "location_id": "location:beta-hydri",
   "introducing": [
     {
-      "id": "location:beta-hydri-star",
-      "name": "Beta Hydri",
-      "kind": "star",
-      "parent_location_id": "location:beta-hydri",
-      "parent_relation": "member_of_system",
-      "description": "The star at the center of the [[location:beta-hydri]] system. Its spectral lines show about two-thirds of [[location:sol]]'s metallicity, so its planets would be expected to share a similar metal content."
-    },
-    {
       "id": "location:gl19-4",
       "name": "GL19-4",
       "kind": "planet",
-      "parent_location_id": "location:beta-hydri-star",
+      "parent_location_id": "location:beta-hydri",
       "parent_relation": "orbits",
       "orbital_order": 4,
       "body_class": "rocky",
@@ -51,7 +43,7 @@
     },
     {
       "entity_id": "location:beta-hydri",
-      "description": "A named star that [[character:mario]] is heading toward from [[location:epsilon-eridani]]. [[character:bill]] considers it suitable, though distant compared with nearer stars of comparable potential. It is a large, well-filled-out system whose inner planets include rocky worlds such as [[location:gl19-4]], the fourth planet.",
+      "description": "A stellar system whose rocky inner planets include [[location:gl19-4]], the fourth planet. Its star's spectral lines show about two-thirds of [[location:sol]]'s metallicity, so its planets would be expected to share a similar metal content. [[character:bill]] considers it suitable, though distant compared with nearer stars of comparable potential.",
       "state": "No metal ore remains anywhere in the system, though other elements are in normal ratios, which known formation theories cannot explain. A crashed [[vessel:alien-cargo-carrier]] full of pure ingots lies on [[location:gl19-4]], and [[character:mario]] tentatively concludes that aliens mined the system."
     },
     {
