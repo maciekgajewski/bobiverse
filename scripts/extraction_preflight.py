@@ -104,13 +104,18 @@ NON-CONFORMING run, when --approval-file names a JSON object with the string fie
 target and "date" must be YYYY-MM-DD. The approval covers item 1 only.
 
 Item 7 builds the prior root with source_evidence.py prepare-corpus, using the
-target's immediate canonical predecessor as the stand-in candidate. A zero-state
-target (1.1), a missing predecessor and a book boundary (b.1 with b > 1) fail closed.
-With --pending-predecessor (repeatable, in chapter order), the prior root is built
-from the canonical chapters plus those not-yet-promoted candidates instead. They
-must be files outside the repository, exactly the chapters after the latest
-canonical one up to the target's predecessor, in order; the report marks the run
-as based on PENDING predecessors.
+target's immediate canonical predecessor as the stand-in candidate. Within a book
+the predecessor of b.n is b.(n-1). The first chapter of a later book (b.1, b > 1)
+follows the previous book's last chapter, b-1.N, where N is that book's
+"chapter_count" in data/narrative/books.json. A zero-state target (1.1), a target
+whose book has no books.json entry, a target past its book's chapter_count, a
+boundary whose previous book records no chapter_count and a missing predecessor
+fail closed. With --pending-predecessor (repeatable, in chapter order), the prior
+root is built from the canonical chapters plus those not-yet-promoted candidates
+instead. They must be files outside the repository, exactly the chapters after the
+latest canonical one up to the target's predecessor, in reading order (crossing a
+book boundary the same way); the report marks the run as based on PENDING
+predecessors.
 
 Output carries only source fingerprint fields, never source bytes. The JSON report
 goes to stdout, or to --report (outside the repository); a short summary goes to
@@ -421,18 +426,73 @@ def check_tooling(repository: Path) -> dict[str, Any]:
     return item(6, not problems, evidence)
 
 
-def predecessor(chapter: str) -> tuple[str | None, str | None]:
+def chapter_key(chapter: str) -> tuple[int, int]:
     match = CHAPTER_RE.fullmatch(chapter)
     assert match is not None
-    book, number = int(match["book"]), int(match["chapter"])
+    return int(match["book"]), int(match["chapter"])
+
+
+def read_books(repository: Path) -> tuple[dict[str, Any], str | None]:
+    """Read the book catalogue; chapter counts place book boundaries."""
+    path = repository / "data" / "narrative" / "books.json"
+    try:
+        record = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
+        return {}, f"books.json is not a readable JSON file: {type(error).__name__}"
+    books = record.get("books") if isinstance(record, dict) else None
+    if not isinstance(books, dict):
+        return {}, 'books.json has no "books" object'
+    return books, None
+
+
+def chapter_count(books: dict[str, Any], book: int) -> int | None:
+    entry = books.get(str(book))
+    count = entry.get("chapter_count") if isinstance(entry, dict) else None
+    return count if isinstance(count, int) and not isinstance(count, bool) else None
+
+
+def predecessor(
+    chapter: str, books: dict[str, Any]
+) -> tuple[str | None, str | None]:
+    book, number = chapter_key(chapter)
     if book == 1 and number == 1:
         return None, "cannot certify a zero-state prior chain"
-    if number == 1:
+    if not isinstance(books.get(str(book)), dict):
+        return None, (
+            f"book {book} has no entry in books.json; add it before extracting "
+            f"{chapter}"
+        )
+    count = chapter_count(books, book)
+    if count is not None and number > count:
+        return None, (
+            f"chapter {chapter} is past the {count} chapters that books.json "
+            f"records for book {book}"
+        )
+    if number > 1:
+        return f"{book}.{number - 1}", None
+    previous_count = chapter_count(books, book - 1)
+    if previous_count is None:
         return None, (
             "cannot establish the predecessor across a book boundary: books.json "
-            "records no chapter counts"
+            f"records no chapter_count for book {book - 1}"
         )
-    return f"{book}.{number - 1}", None
+    return f"{book - 1}.{previous_count}", None
+
+
+def successor(
+    key: tuple[int, int], books: dict[str, Any], last_book: int
+) -> tuple[tuple[int, int] | None, str | None]:
+    """The next chapter in reading order, crossing into later books by count."""
+    book, number = key
+    if book >= last_book:
+        return (book, number + 1), None
+    count = chapter_count(books, book)
+    if count is None:
+        return None, (
+            "cannot extend the pending chain across a book boundary: books.json "
+            f"records no chapter_count for book {book}"
+        )
+    return ((book, number + 1) if number < count else (book + 1, 1)), None
 
 
 def read_pending(
@@ -461,22 +521,40 @@ def read_pending(
     return entries, None
 
 
+def canonical_chapters(repository: Path) -> list[tuple[int, int]]:
+    root = repository / "data" / "narrative" / "chapters"
+    return sorted(
+        (int(path.parent.name), int(path.stem))
+        for path in root.glob("*/*.json")
+        if path.parent.name.isdigit() and path.stem.isdigit()
+    )
+
+
 def pending_problem(
-    pending: list[dict[str, Any]], chapters: Path, previous: str
+    pending: list[dict[str, Any]],
+    repository: Path,
+    previous: str,
+    books: dict[str, Any],
 ) -> str | None:
-    book, number = previous.split(".")
-    canonical = [
-        int(path.stem) for path in chapters.glob("*.json") if path.stem.isdigit()
-    ]
+    canonical = canonical_chapters(repository)
     if not canonical:
-        return f"no canonical chapter in book {book} to build the pending chain on"
-    latest = max(canonical)
-    expected = [f"{book}.{n}" for n in range(latest + 1, int(number) + 1)]
+        return "no canonical chapter to build the pending chain on"
+    latest, target = canonical[-1], chapter_key(previous)
+    expected: list[str] = []
+    cursor = latest
+    while cursor < target:
+        step, problem = successor(cursor, books, target[0])
+        if problem:
+            return problem
+        assert step is not None
+        cursor = step
+        expected.append(f"{cursor[0]}.{cursor[1]}")
     refs = [entry["ref"] for entry in pending]
     if refs != expected:
         return (
             f"pending predecessors must be exactly [{', '.join(expected)}] in order "
-            f"after the latest canonical chapter {book}.{latest}; got [{', '.join(refs)}]"
+            f"after the latest canonical chapter {latest[0]}.{latest[1]}; "
+            f"got [{', '.join(refs)}]"
         )
     return None
 
@@ -488,7 +566,10 @@ def check_prior_chain(
     workspace_ok: bool,
     pending_paths: list[Path],
 ) -> tuple[dict[str, Any], Path | None]:
-    previous, refusal = predecessor(chapter)
+    books, refusal = read_books(repository)
+    previous = None
+    if not refusal:
+        previous, refusal = predecessor(chapter, books)
     evidence: dict[str, Any] = {"target": chapter, "predecessor": previous}
     if refusal:
         evidence["problem"] = refusal
@@ -500,7 +581,7 @@ def check_prior_chain(
         evidence["basis"] = "PENDING"
         pending, problem = read_pending(pending_paths, repository)
         evidence["pending_predecessors"] = pending
-        problem = problem or pending_problem(pending, chapters, previous)
+        problem = problem or pending_problem(pending, repository, previous, books)
         if problem:
             evidence["problem"] = problem
             return item(7, False, evidence), None
@@ -541,10 +622,10 @@ def check_prior_chain(
     corpus = json.loads(result.stdout)
     provenance = corpus.get("provenance", {})
     for entry in pending[1:]:
-        shutil.copyfile(
-            entry["path"],
-            root / "chapters" / book / f"{entry['ref'].split('.')[1]}.json",
-        )
+        pending_book, pending_number = entry["ref"].split(".")
+        destination = root / "chapters" / pending_book / f"{pending_number}.json"
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(entry["path"], destination)
     stand_ins = [entry["ref"] for entry in pending] or [previous]
     evidence.update(
         {

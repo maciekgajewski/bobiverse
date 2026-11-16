@@ -81,7 +81,9 @@ function buildRepository(chapters: string[]) {
   const narrative = path.join(repository, "data/narrative");
   writeJson(path.join(narrative, "baseline/zero-state.json"), { zero: true });
   writeJson(path.join(narrative, "assets.json"), { assets: [] });
-  writeJson(path.join(narrative, "books.json"), { books: {} });
+  writeJson(path.join(narrative, "books.json"), {
+    books: { "1": { title: "Synthetic book one" } },
+  });
   for (const chapter of chapters) {
     const [book, number] = chapter.split(".");
     writeJson(path.join(narrative, `chapters/${book}/${number}.json`), {
@@ -131,6 +133,21 @@ function buildRepository(chapters: string[]) {
   git(repository, "init", "-q");
   git(repository, "add", ".");
   git(repository, "commit", "-q", "-m", "fixture");
+}
+
+/** Replaces the fixture's books.json and canonical chapters, then commits them. */
+function setNarrative(chapters: string[], books: Record<string, unknown>) {
+  const narrative = path.join(repository, "data/narrative");
+  rmSync(path.join(narrative, "chapters"), { recursive: true, force: true });
+  writeJson(path.join(narrative, "books.json"), { books });
+  for (const chapter of chapters) {
+    const [book, number] = chapter.split(".");
+    writeJson(path.join(narrative, `chapters/${book}/${number}.json`), {
+      chapter,
+    });
+  }
+  git(repository, "add", "-A");
+  git(repository, "commit", "-q", "-m", "fixture narrative");
 }
 
 function writeSource(name: string): string {
@@ -607,15 +624,6 @@ describe("extraction preflight", () => {
       );
     });
 
-    it("fails closed at a book boundary", () => {
-      const result = runPreflight({ chapter: "2.1" });
-
-      expect(failedItems(result.report)).toEqual([7, 8]);
-      expect(itemOf(result.report, 7).evidence.problem).toContain(
-        "book boundary",
-      );
-    });
-
     it("fails when canonical inputs are unclean", () => {
       writeJson(path.join(repository, "data/narrative/chapters/1/1.json"), {
         chapter: "1.1",
@@ -752,6 +760,204 @@ describe("extraction preflight", () => {
       expect(report).not.toHaveProperty("pending_predecessors");
       expect(itemOf(result.report, 7).evidence).not.toHaveProperty("basis");
       expect(result.stderr).not.toContain("PENDING");
+    });
+  });
+
+  describe("item 7 across a book boundary", () => {
+    // Synthetic counts: book 1 has 3 chapters and book 2 has 4 (the real
+    // catalogue records 61 and 57; the rule is the same).
+    const twoBooks = {
+      "1": { title: "Synthetic book one", chapter_count: 3 },
+      "2": { title: "Synthetic book two", chapter_count: 4 },
+    };
+
+    function pendingFile(chapter: string): string {
+      const file = path.join(fixture, "pending", `${chapter}.json`);
+      writeJson(file, { chapter, synthetic: true });
+      return file;
+    }
+
+    function withPending(chapter: string, refs: string[]) {
+      return runPreflight({
+        chapter,
+        extra: refs.flatMap((ref) => [
+          "--pending-predecessor",
+          pendingFile(ref),
+        ]),
+      });
+    }
+
+    function expectItem7Refusal(
+      result: ReturnType<typeof runPreflight>,
+      problem: string,
+    ) {
+      expect(result.status).toBe(1);
+      expect(failedItems(result.report)).toEqual([7, 8]);
+      expect(itemOf(result.report, 7).evidence.problem).toContain(problem);
+      expect(readFileSync(validatorLog, "utf8")).not.toContain("--root");
+    }
+
+    it("takes the previous book's last chapter as the predecessor of b.1", () => {
+      setNarrative(["1.1", "1.2", "1.3"], twoBooks);
+
+      const result = runPreflight({ chapter: "2.1" });
+
+      expect(result.status, result.stderr).toBe(0);
+      expect(failedItems(result.report)).toEqual([]);
+      expect(itemOf(result.report, 7).evidence).toMatchObject({
+        target: "2.1",
+        predecessor: "1.3",
+        candidate: "data/narrative/chapters/1/3.json",
+        chapters: ["1.1", "1.2", "1.3"],
+        inputs_clean: true,
+      });
+    });
+
+    it("blocks b.1 while the previous book's last chapter is not canonical", () => {
+      setNarrative(["1.1", "1.2"], twoBooks);
+
+      expectItem7Refusal(
+        runPreflight({ chapter: "2.1" }),
+        "the immediate predecessor 1.3 is not canonical",
+      );
+    });
+
+    it("never skips across books: b.1 does not accept an earlier chapter", () => {
+      setNarrative(["1.1", "1.2"], twoBooks);
+
+      // 1.2 is canonical, so it cannot stand in for the missing 1.3.
+      expectItem7Refusal(
+        withPending("2.1", ["1.2"]),
+        "pending predecessors must be exactly [1.3]",
+      );
+    });
+
+    it("keeps the within-book rule in a later book", () => {
+      setNarrative(["1.1", "1.2", "1.3", "2.1"], twoBooks);
+
+      const second = runPreflight({ chapter: "2.2" });
+      expect(second.status, second.stderr).toBe(0);
+      expect(itemOf(second.report, 7).evidence).toMatchObject({
+        predecessor: "2.1",
+        candidate: "data/narrative/chapters/2/1.json",
+        chapters: ["1.1", "1.2", "1.3", "2.1"],
+      });
+
+      rmSync(workspace, { recursive: true, force: true });
+      mkdirSync(workspace);
+      write(validatorLog, "");
+      expectItem7Refusal(
+        runPreflight({ chapter: "2.3" }),
+        "the immediate predecessor 2.2 is not canonical",
+      );
+    });
+
+    it("requires 2.1 before 2.2", () => {
+      setNarrative(["1.1", "1.2", "1.3"], twoBooks);
+
+      expectItem7Refusal(
+        runPreflight({ chapter: "2.2" }),
+        "the immediate predecessor 2.1 is not canonical",
+      );
+    });
+
+    it("still requires 1.(n-1) within book 1 when counts are recorded", () => {
+      setNarrative(["1.1"], twoBooks);
+
+      expectItem7Refusal(
+        runPreflight({ chapter: "1.3" }),
+        "the immediate predecessor 1.2 is not canonical",
+      );
+    });
+
+    it.each([
+      ["2.2", ["2.1"], ["1.1", "1.2", "1.3", "2.1"]],
+      ["2.3", ["2.1", "2.2"], ["1.1", "1.2", "1.3", "2.1", "2.2"]],
+    ])(
+      "accepts %s on a pending chain back to b.1 %j",
+      (chapter, refs, chapters) => {
+        setNarrative(["1.1", "1.2", "1.3"], twoBooks);
+
+        const result = withPending(chapter, refs);
+
+        expect(result.status, result.stderr).toBe(0);
+        expect(itemOf(result.report, 7).evidence).toMatchObject({
+          basis: "PENDING",
+          chapters,
+        });
+        expect(
+          readdirSync(path.join(workspace, "prior-root/chapters/2")).sort(),
+        ).toEqual(refs.map((ref) => `${ref.split(".")[1]}.json`));
+      },
+    );
+
+    it("accepts a pending chain that itself crosses the boundary", () => {
+      setNarrative(["1.1", "1.2"], twoBooks);
+
+      const result = withPending("2.2", ["1.3", "2.1"]);
+
+      expect(result.status, result.stderr).toBe(0);
+      expect(itemOf(result.report, 7).evidence.chapters).toEqual([
+        "1.1",
+        "1.2",
+        "1.3",
+        "2.1",
+      ]);
+      const priorRoot = path.join(workspace, "prior-root/chapters");
+      expect(readdirSync(path.join(priorRoot, "1")).sort()).toEqual([
+        "1.json",
+        "2.json",
+        "3.json",
+      ]);
+      expect(readdirSync(path.join(priorRoot, "2"))).toEqual(["1.json"]);
+    });
+
+    it.each([
+      ["2.2", ["2.1"], ["1.1", "1.2"], "exactly [1.3, 2.1]"],
+      ["2.3", ["2.2"], ["1.1", "1.2", "1.3"], "exactly [2.1, 2.2]"],
+      ["2.3", ["2.2", "2.1"], ["1.1", "1.2", "1.3"], "exactly [2.1, 2.2]"],
+    ])(
+      "refuses %s on pending %j with canonical %j",
+      (chapter, refs, canonical, problem) => {
+        setNarrative(canonical, twoBooks);
+
+        expectItem7Refusal(withPending(chapter, refs), problem);
+      },
+    );
+
+    it.each([
+      ["3.1", twoBooks, "book 3 has no entry in books.json"],
+      [
+        "2.1",
+        { "1": twoBooks["1"] },
+        "book 2 has no entry in books.json; add it before extracting 2.1",
+      ],
+      [
+        "2.1",
+        { "1": { title: "Synthetic book one" }, "2": twoBooks["2"] },
+        "across a book boundary: books.json records no chapter_count for book 1",
+      ],
+      [
+        "2.5",
+        twoBooks,
+        "chapter 2.5 is past the 4 chapters that books.json records for book 2",
+      ],
+    ])("fails closed for %s with catalogue %j", (chapter, books, problem) => {
+      setNarrative(["1.1", "1.2", "1.3", "2.1", "2.2", "2.3", "2.4"], books);
+
+      expectItem7Refusal(runPreflight({ chapter }), problem);
+    });
+
+    it("refuses a pending chain across a boundary without a chapter count", () => {
+      setNarrative(["1.1", "1.2", "1.3"], {
+        "1": { title: "Synthetic book one" },
+        "2": twoBooks["2"],
+      });
+
+      expectItem7Refusal(
+        withPending("2.2", ["2.1"]),
+        "cannot extend the pending chain across a book boundary",
+      );
     });
   });
 
