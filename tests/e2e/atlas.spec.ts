@@ -1,6 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import path from "node:path";
+import { COARSE_POINTER_PICK_RADIUS_PX } from "../../src/domain/star-picking";
 import { ENABLE_ENTER_SYSTEM } from "../../src/features";
 import { NEWEST_RELEASE_NOTES_VERSION } from "../../src/release-notes";
 
@@ -263,6 +264,88 @@ test("phone browser opens, selection opens inspector, and light-years remain fix
   }
 });
 
+/**
+ * A canvas-local click position that is outside the coarse (22px) pick
+ * radius — or the star's own projected pick quad, if larger — of every
+ * currently rendered star centre, and at least that far from every
+ * caption box. Chosen at runtime so a hard-coded point cannot drift
+ * into range as the camera or layout changes.
+ */
+async function emptyMapClickPosition(
+  page: Page,
+): Promise<{ x: number; y: number }> {
+  await page.waitForFunction(() => window.__bob034MapPerformance !== undefined);
+  return page.evaluate((clearancePx) => {
+    const canvas = document.querySelector<HTMLElement>(
+      "[data-testid=star-map-canvas]",
+    );
+    const bridge = window.__bob034MapPerformance;
+    if (!canvas || !bridge) {
+      throw new Error("Map canvas or performance bridge is unavailable.");
+    }
+    const bounds = canvas.getBoundingClientRect();
+    const centres = bridge.fixture.componentIds.map((componentId) => {
+      const radii = bridge.componentScreenRadii(componentId);
+      return {
+        x: radii.x,
+        y: radii.y,
+        radius: Math.max(clearancePx, radii.pickRadiusPx),
+      };
+    });
+    const captions = [
+      ...document.querySelectorAll<HTMLElement>(".narrative-map-label"),
+    ].map((label) => {
+      const box = label.getBoundingClientRect();
+      return {
+        left: box.left - clearancePx,
+        right: box.right + clearancePx,
+        top: box.top - clearancePx,
+        bottom: box.bottom + clearancePx,
+      };
+    });
+    const isClear = (clientX: number, clientY: number) => {
+      if (
+        centres.some(
+          (centre) =>
+            Math.hypot(centre.x - clientX, centre.y - clientY) <= centre.radius,
+        )
+      ) {
+        return false;
+      }
+      if (
+        captions.some(
+          (box) =>
+            clientX >= box.left &&
+            clientX <= box.right &&
+            clientY >= box.top &&
+            clientY <= box.bottom,
+        )
+      ) {
+        return false;
+      }
+      const hit = document.elementFromPoint(clientX, clientY);
+      return hit === canvas || canvas.contains(hit);
+    };
+    const inset = 4;
+    const step = 8;
+    for (let y = bounds.top + inset; y <= bounds.bottom - inset; y += step) {
+      for (let x = bounds.left + inset; x <= bounds.right - inset; x += step) {
+        if (isClear(x, y)) {
+          return { x: x - bounds.left, y: y - bounds.top };
+        }
+      }
+    }
+    throw new Error(
+      "Could not find an empty map point outside every star pick radius and caption.",
+    );
+  }, COARSE_POINTER_PICK_RADIUS_PX);
+}
+
+async function clickEmptyMap(page: Page): Promise<void> {
+  const position = await emptyMapClickPosition(page);
+  await page.getByTestId("star-map-canvas").click({ position });
+}
+
 test("empty map clicks clear inspection selection", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
@@ -270,9 +353,8 @@ test("empty map clicks clear inspection selection", async ({ page }) => {
   await expect(
     page.getByRole("heading", { name: "Solar System" }),
   ).toBeVisible();
-  await page
-    .getByTestId("star-map-canvas")
-    .click({ position: { x: 100, y: 40 } });
+  await settleMapCamera(page);
+  await clickEmptyMap(page);
   await expect(
     page.getByText(
       "Select a map marker or browser item to inspect its reader-safe details.",
@@ -348,9 +430,8 @@ test("empty map click clears an open Date context", async ({ page }) => {
   await page.getByRole("button", { name: "Date mode" }).click();
   await page.locator(".date-event-dot").first().click();
   await expect(page.getByText("Date context")).toBeVisible();
-  await page
-    .getByTestId("star-map-canvas")
-    .click({ position: { x: 100, y: 40 } });
+  await settleMapCamera(page);
+  await clickEmptyMap(page);
   await expect(page.getByText("Date context")).toHaveCount(0);
   await expect(
     page.getByText(
