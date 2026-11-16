@@ -1449,14 +1449,20 @@ same registry and validation rules, does not make the chapter a narrative entity
 is shown only when that exact chapter is eligible for Chapter-mode inspection.
 
 `books.json` is the sole manually authored book catalogue. It uses a numeric-keyed
-object: each key is the canonical positive book number and each value initially
-contains only the nonempty `title`. The catalogue may be empty while the zero-state is
+object: each key is the canonical positive book number and each value contains the
+nonempty `title` and an optional positive integer `chapter_count`, the number of
+chapters in the published book. The catalogue may be empty while the zero-state is
 the only authored narrative source; once a chapter is added, its book key is required.
+When `chapter_count` is present, no chapter of that book may have a higher number.
+The extraction preflight uses it to place book boundaries: the first chapter of
+book `b` (`b > 1`) follows chapter `chapter_count` of book `b - 1`
+(`chapter-extraction.md`, §Candidate assembly and temporary corpus). A book may be
+catalogued before any of its chapters is canonical.
 
 ```json
 {
   "books": {
-    "1": { "title": "Book title" }
+    "1": { "title": "Book title", "chapter_count": 61 }
   }
 }
 ```
@@ -2010,8 +2016,9 @@ layer. It rejects at least:
 
 - malformed scalar values or non-canonical IDs;
 - malformed zero-state source or `books.json`, a chapter path that disagrees with its
-  `chapter` value, a chapter whose book is absent from `books.json`, or an
-  incomplete/out-of-order generated chapter manifest;
+  `chapter` value, a chapter whose book is absent from `books.json`, a chapter
+  numbered past its book's `chapter_count`, or an incomplete/out-of-order generated
+  chapter manifest;
 - a malformed asset registry, missing or invalid role, duplicate asset ID or path, an
   unsafe static asset path, a missing or non-regular registered file under
   `public/assets/`, unsafe or non-monochrome icon SVG content, a non-SVG icon-role
