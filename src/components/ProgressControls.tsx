@@ -10,8 +10,11 @@ import {
   PRE_BOOK_LABEL,
   chapterBook,
   chapterNumber,
+  CHAPTER_TITLE_SEPARATOR,
   compactReadThroughLabel,
   readThroughLabel,
+  truncateChapterTitle,
+  visibleChapterTitle,
   type NarrativeChapterSummary,
   type ReaderProgress,
 } from "../narrative/progress";
@@ -21,18 +24,56 @@ import { BookGlyph, ChevronIcon, ShieldIcon } from "./icons";
 
 export { CloseIcon, ResetViewIcon, SearchIcon, ShieldIcon } from "./icons";
 
+/**
+ * A native option's text cannot ellipsize with CSS, so a long title is
+ * shortened in the text and given in full in the option's tooltip.
+ */
+function TitledOption({
+  value,
+  label,
+  title,
+}: {
+  value: string;
+  label: string;
+  title: string | null;
+}) {
+  return (
+    <option
+      value={value}
+      title={title ? `${label}${CHAPTER_TITLE_SEPARATOR}${title}` : undefined}
+    >
+      {title
+        ? `${label}${CHAPTER_TITLE_SEPARATOR}${truncateChapterTitle(title)}`
+        : label}
+    </option>
+  );
+}
+
+/**
+ * Every chapter is listed, so only those at or before the confirmed Read
+ * through carry a title; later chapters stay number-only (spoiler gate).
+ */
 export function ReadThroughOptions({
   chapters,
+  readThroughChapter = null,
 }: {
   chapters: readonly NarrativeChapterSummary[];
+  readThroughChapter?: string | null;
 }) {
   return (
     <>
       <option value="">{PRE_BOOK_LABEL}</option>
       {chapters.map((chapter) => (
-        <option key={chapter.chapter} value={chapter.chapter}>
-          {readThroughLabel(chapter.chapter)}
-        </option>
+        <TitledOption
+          key={chapter.chapter}
+          value={chapter.chapter}
+          label={readThroughLabel(chapter.chapter)}
+          title={visibleChapterTitle(
+            chapters,
+            chapter.chapter,
+            readThroughChapter,
+          )}
+        />
       ))}
     </>
   );
@@ -83,9 +124,16 @@ export function KnowledgeThroughSelect({
       >
         <option value="">Zero state</option>
         {unlockedChapters(chapters, progress).map((chapter) => (
-          <option key={chapter.chapter} value={chapter.chapter}>
-            Chapter {chapter.chapter}
-          </option>
+          <TitledOption
+            key={chapter.chapter}
+            value={chapter.chapter}
+            label={`Chapter ${chapter.chapter}`}
+            title={visibleChapterTitle(
+              chapters,
+              chapter.chapter,
+              progress.furthestChapterRead,
+            )}
+          />
         ))}
       </select>
     </div>

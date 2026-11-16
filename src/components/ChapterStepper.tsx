@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import {
+  CHAPTER_TITLE_SEPARATOR,
   adjacentKnowledgeChapters,
+  visibleChapterTitle,
   type NarrativeChapterSummary,
 } from "../narrative/progress";
 
@@ -71,19 +73,27 @@ export function ChapterStepper({
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [prev, next, onChapterSelect]);
 
+  // Titles only for chapters at or before Read through (spoiler gate); an
+  // untitled chapter keeps the number-only label.
+  const titled = (target: string) => {
+    const title = visibleChapterTitle(chapters, target, readThroughChapter);
+    return title ? `${target}${CHAPTER_TITLE_SEPARATOR}${title}` : target;
+  };
   const prevLabel = prev
-    ? `Previous chapter, Chapter ${prev}`
+    ? `Previous chapter, Chapter ${titled(prev)}`
     : "Previous chapter, unavailable, first chapter";
   const nextLabel = next
-    ? `Next chapter, Chapter ${next}`
+    ? `Next chapter, Chapter ${titled(next)}`
     : atLastChapter
       ? "Next chapter, unavailable, last chapter"
       : atReadThrough
         ? "Next chapter, unavailable, at your read-through chapter"
         : "Next chapter, unavailable";
-  const prevTitle = prev ? `Previous chapter, ${prev}` : "First chapter";
+  const prevTitle = prev
+    ? `Previous chapter, ${titled(prev)}`
+    : "First chapter";
   const nextTitle = next
-    ? `Next chapter, ${next}`
+    ? `Next chapter, ${titled(next)}`
     : atLastChapter
       ? "Last chapter"
       : LIMIT_TITLE;

@@ -3016,3 +3016,35 @@ h2 {
     animation-duration: 0.01ms !important;
   }
 }
+
+/* Chapter titles (BOB-20261116-35B47D): a title stays on one line and
+   ellipsizes; the full title is the tooltip, and the chapter card heading
+   shows it in full. Untitled chapters never get these classes. */
+.link-button.chapter-link.titled {
+  display: block;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  text-align: left;
+}
+/* A one-line clamp rather than nowrap: the link's min-content stays one word
+   wide, so a long title never widens the card or badge around it. The titled
+   link takes its own line. */
+.chapter-link-clamp {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  overflow: hidden;
+}
+/* A titled link needs a definite badge width to ellipsize against: the badge
+   takes the free space beside Search, with the link on its second line. */
+.map-narrative-badge:has(.chapter-link.titled) {
+  display: block;
+  flex: 1 1 auto;
+}
+.chapter-above.titled {
+  max-width: 12rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

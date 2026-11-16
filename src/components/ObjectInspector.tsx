@@ -25,7 +25,12 @@ import type {
   CharacterInspectorSectionState,
   NarrativeChapterSummary,
 } from "../narrative/progress";
-import { defaultCharacterInspectorSectionState } from "../narrative/progress";
+import {
+  CHAPTER_TITLE_SEPARATOR,
+  chapterReferenceLabel,
+  defaultCharacterInspectorSectionState,
+  visibleChapterTitle,
+} from "../narrative/progress";
 import { SystemDetails } from "./SystemDetails";
 import { ObjectItemBullet } from "./ObjectBrowserIcons";
 import { NarrativeText } from "./NarrativeText";
@@ -179,10 +184,13 @@ export function ChapterLink({
   chapter,
   readThroughChapter,
   onChapterSelect,
+  chapters = [],
 }: {
   chapter: string;
   readThroughChapter: string | null;
   onChapterSelect: (chapter: string) => void;
+  /** Chapter summaries for the title; without them the link is number-only. */
+  chapters?: readonly NarrativeChapterSummary[];
 }) {
   const label = `Chapter ${chapter}`;
   if (
@@ -190,13 +198,30 @@ export function ChapterLink({
     compareNarrativeChapters(chapter, readThroughChapter) > 0
   )
     return <>{label}</>;
+  // A title only ever appears on a linkable (read) chapter; it ellipsizes on
+  // one line and the full reference is the tooltip (BOB-20261116-35B47D).
+  const title = visibleChapterTitle(chapters, chapter, readThroughChapter);
   return (
     <button
       type="button"
-      className="link-button inline-entity-link chapter-link"
+      className={`link-button inline-entity-link chapter-link${title ? " titled" : ""}`}
+      aria-label={title ? chapterReferenceLabel(chapter, title) : undefined}
+      title={title ? chapterReferenceLabel(chapter, title) : undefined}
       onClick={() => onChapterSelect(chapter)}
     >
-      {label}
+      {title ? (
+        // The clamp sits on an inner span: WebKit ignores a button's own
+        // display for line clamping.
+        <span className="chapter-link-clamp">
+          {label}
+          <span className="chapter-link-title">
+            {CHAPTER_TITLE_SEPARATOR}
+            {title}
+          </span>
+        </span>
+      ) : (
+        label
+      )}
     </button>
   );
 }
@@ -280,6 +305,7 @@ function NarrativeDetails({
   onSelect,
   onChapterSelect,
   readThroughChapter,
+  chapters,
   travelStops,
   sectionState,
   onToggleSection,
@@ -295,6 +321,7 @@ function NarrativeDetails({
   onSelect: (selection: SelectionIdentity) => void;
   onChapterSelect: (chapter: string) => void;
   readThroughChapter: string | null;
+  chapters: readonly NarrativeChapterSummary[];
   travelStops: readonly CharacterTravelStop[];
   sectionState: CharacterInspectorSectionState;
   onToggleSection: (section: keyof CharacterInspectorSectionState) => void;
@@ -329,6 +356,7 @@ function NarrativeDetails({
         chapter={item.lastActivity.source_chapter}
         readThroughChapter={readThroughChapter}
         onChapterSelect={onChapterSelect}
+        chapters={chapters}
       />
       {item.lastActivity.effective_date
         ? ` · ${displayDate(item.lastActivity.effective_date)}`
@@ -1076,6 +1104,7 @@ export function ObjectInspector({
           onSelect={onSelect}
           onChapterSelect={onChapterSelect}
           readThroughChapter={readThroughChapter}
+          chapters={chapters}
           travelStops={travelStops}
           sectionState={sectionState}
           onToggleSection={onToggleSection}

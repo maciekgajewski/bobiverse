@@ -1994,7 +1994,8 @@ describe("atlas shell", () => {
       expect(screen.getAllByText("Pre-book zero state").length).toBeGreaterThan(
         0,
       );
-      await pickInTopbar(user, "Book 1 · Chapter 1");
+      // 1.1 is at or before Read through 1.3, so its source title shows.
+      await pickInTopbar(user, "Book 1 · Chapter 1 · Bob Version 1.0");
       await user.click(
         screen.getByRole("button", { name: "Confirm read through" }),
       );
@@ -2665,7 +2666,9 @@ describe("atlas shell", () => {
       expect(history.push).toHaveBeenCalledTimes(1);
       const length = window.history.length;
       await user.click(
-        screen.getByRole("button", { name: "Previous chapter, Chapter 1.1" }),
+        screen.getByRole("button", {
+          name: "Previous chapter, Chapter 1.1 · Bob Version 1.0",
+        }),
       );
       expect(
         within(desktopInspector()).getByRole("heading", {

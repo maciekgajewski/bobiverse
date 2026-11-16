@@ -15,10 +15,11 @@ import type {
 } from "../../src/narrative/progress";
 
 // Fixture chapters only: twelve chapters in one book, plus a fixture-only
-// second book for the tab tests. Real data has only Book 1.
+// second book for the tab tests. Real data has only Book 1. Titles are the
+// bare local number, the untitled form (BOB-20261116-35B47D).
 const chapter = (id: string): NarrativeChapterSummary => ({
   chapter: id,
-  title: `Fixture ${id}`,
+  title: id.split(".")[1]!,
   date: "2000",
   bookTitle: `Fixture book ${id.split(".")[0]}`,
 });

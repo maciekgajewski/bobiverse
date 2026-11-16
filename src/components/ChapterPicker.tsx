@@ -9,10 +9,12 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import {
+  CHAPTER_TITLE_SEPARATOR,
   PRE_BOOK_LABEL,
   chapterBook,
   chapterNumber,
   readThroughLabel,
+  visibleChapterTitle,
   type NarrativeChapterSummary,
 } from "../narrative/progress";
 import { BookGlyph, CloseIcon, ShieldIcon } from "./icons";
@@ -296,16 +298,25 @@ export function ChapterPicker({
             id={`chapter-picker-panel-${activeBook}`}
             aria-labelledby={`chapter-picker-tab-${activeBook}`}
           >
-            {activeChapters.map(({ chapter }) => (
-              <button
-                key={chapter}
-                className="chapter-picker-cell"
-                aria-label={readThroughLabel(chapter)}
-                {...radio(chapter)}
-              >
-                {chapterNumber(chapter)}
-              </button>
-            ))}
+            {activeChapters.map(({ chapter }) => {
+              // Only chapters at or before the confirmed Read through may
+              // name their title; later cells stay number-only.
+              const title = visibleChapterTitle(chapters, chapter, value);
+              const label = readThroughLabel(chapter);
+              return (
+                <button
+                  key={chapter}
+                  className="chapter-picker-cell"
+                  aria-label={
+                    title ? `${label}${CHAPTER_TITLE_SEPARATOR}${title}` : label
+                  }
+                  title={title ?? undefined}
+                  {...radio(chapter)}
+                >
+                  {chapterNumber(chapter)}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
