@@ -55,9 +55,7 @@ spawning for both passes; the run's own records attest those settings.
    astronomy under §Astronomy preflight and isolated acquisition.
 5. Freeze the candidate and record its SHA-256 before any comparison (§Candidate
    assembly and temporary corpus, §Checksum provenance).
-6. Assemble the review package (§Review package), including the D2 list (§Reading
-   order and story dates). The list is reporting only: not a promotion gate, and
-   never a reason to rewrite the candidate while D2 is open.
+6. Assemble the review package (§Review package).
 7. After C1, record the run outputs with `scripts/chapter_promotion.py record`
    (allowlisted files only, never book text; §Checksum provenance).
 

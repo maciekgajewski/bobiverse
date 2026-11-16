@@ -367,8 +367,8 @@ been explained`, or `full specifications are unavailable`; when a sentence mixes
   it remains coherent;
 - do not duplicate structured fields unless needed for a coherent standalone entry;
 - keep transient operational condition in the type's `state` or `current_state`;
-  author every `current_state` as one or two concise sentences describing only the
-  latest known condition, never identity, biography, chapter synopsis, or accumulated
+  author every `current_state` as one or two concise sentences describing the
+  condition as of its effective date, never identity, biography, chapter synopsis, or accumulated
   adventure history;
 - never import later knowledge, model-memory facts, or unsupported expansions to make
   an entry sound complete.
@@ -376,9 +376,8 @@ been explained`, or `full specifications are unavailable`; when a sentence mixes
 Type checklists:
 
 - `character`: who the person is (stable identity, role, and a few defining
-  facts), not their latest condition; `current_state` owns that condition. A
-  `description` may appear on the introduction and on later updates; the latest
-  description in effect at the viewed chapter wins;
+  facts), not their changing condition; `current_state` owns that condition. A
+  `description` may appear on the introduction and on later updates;
 - `species`: source-supported sentience and civilization-creating capacity, what
   kind of beings they are, distinguishing known traits, and reader-visible home or
   social context. Only populations meeting both gates are modeled; animals,
@@ -430,8 +429,8 @@ appending a sentence per chapter.
   survives in an event, the chapter summary, or another entity, or is trivia. When a
   dropped fact has no other home, keep it if it is identity-level; otherwise flag it
   in the review package. Do not add it elsewhere.
-- `current_state` and `state` hold only the entity's latest condition as of that
-  chapter. Earlier steps, completed plans, and scene detail belong in the chapter
+- `current_state` and `state` hold only the entity's condition as of the write's
+  effective date (`effective_date ?? chapter date`). Earlier steps, completed plans, and scene detail belong in the chapter
   `summary` or an event. When a chain of writes runs well over the guideline, condense
   every over-long write in the chain, not only the latest one.
 - Use US spelling (color, defense, center, meter), which is the majority convention in
@@ -452,9 +451,6 @@ appending a sentence per chapter.
   `[[location:x|the star]]`. A possessive goes outside the brackets:
   `[[character:x]]'s`. Adding link markup around unchanged words needs no
   sentence-preservation exception; changing the visible words does.
-
-This replaces "keep full merged texts" (D2, §Reading order and story dates) for
-descriptions.
 
 ### Summaries
 
@@ -477,9 +473,9 @@ the heading or opening-scene boundary. Non-overlapping calendar ranges order
 normally. Identical calendar portions compare the effective suffix (omitted means
 zero), then canonical chapter; overlapping unequal-precision chapter facts use
 canonical chapter. Apply this rule consistently to state writes, appearances, dated
-events, and any generated activity. Requested display dates use range containment
-without a chapter fallback, and chronologically unplaced events have no
-source-chapter moment.
+events, and any generated activity. Requested display dates use the calendar-precision rule
+without a chapter fallback, and undated facts are dated as defined in
+`design-principles.md`.
 
 Do not add mechanical suffixes merely to force validation or reproduce canonical
 chapter order. If the source reveals that chronology differs from chapter order,
@@ -489,30 +485,7 @@ day and never appears in reader-facing text. The reviewed 2158 sequence uses rea
 month precision: Chapter `1.31` is `2158-01`, Chapter `1.33` is `2158-03`, Chapters
 `1.34` and `1.36` are `2158-09`, and Chapter `1.32` is `2158-10`.
 
-**Captain decision D2 (closed).** When reading order and story dates diverge, the
-full-field update rule in §Descriptions can carry a fact into an update dated earlier
-than the chapter that first established it, and an existing later-dated write could
-hide newly revealed knowledge. The Captain decided (2026-11-13, relayed by the
-manager; ADR-0028):
-
-- 19:59 CET: "Gap: (c) chapter view uses last chapter read, date view keeps story
-  date". In chapter view the latest-read chapter's write wins, so a later-dated write
-  no longer hides it; Date view keeps story-date order.
-- 20:01 CET: "Merge: (a) keep full merged texts". The full-field update rule in
-  §Descriptions applies unchanged: start from the complete prior reviewed entry and
-  integrate the new information, even when the update is dated earlier than some of
-  the facts it carries. For descriptions, condensed summaries replace full merged
-  texts from 2026-11-14 22:54 CET (§Descriptions).
-
-Because merged writes carry full texts, Date view may show such a fact before the
-story date it belongs to. This is a known, accepted limitation. As reporting only,
-the review package lists every update whose prior entry contains a fact first
-established at a later story date than the target chapter's, so the Captain can see
-where this happens. The list is not a promotion gate and is not a reason to drop
-merged facts from a candidate.
-
-BOB-20261112-1TWD9T records the options that were considered; ADR-0028 records the
-decision.
+How views order competing writes is defined in `design-principles.md`.
 
 ## Candidate assembly and temporary corpus
 
@@ -674,8 +647,6 @@ Resolve human-review questions one at a time, then present:
 - evidence IDs with bounded excerpts rendered by `source_evidence.py review`; these
   stay on the extraction host;
 - unresolved or low-confidence items and applied exceptions;
-- the D2 list from §Reading order and story dates. It is reporting only and not a
-  promotion gate;
 - the dropped-sentence table for every condensed description write (§Descriptions);
 - narrative and astronomy preflight output, including any automatically resolved
   mapped-anchor bootstrap;

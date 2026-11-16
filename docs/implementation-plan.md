@@ -264,7 +264,7 @@ Jovians`: author three distinct anonymous gas giants as the guaranteed lower bou
   preserve `several` in the system description, and place their stable schematic
   ordinals after OE-2. Do not treat this as a general qualitative-count conversion or
   assert an exact total or unsupported properties.
-- Keep every `current_state` to one or two sentences about the latest condition and
+- Keep every `current_state` to one or two sentences about the condition as of its date and
   every description centered on its entity, using general capability language rather
   than retelling a named character's actions. Keep missing-knowledge claims in
   extraction evidence and review artifacts; omit disclosure-gap notices from

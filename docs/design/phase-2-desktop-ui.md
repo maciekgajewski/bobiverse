@@ -61,7 +61,7 @@ The workspace has four related but independent values:
 | Value                 | Meaning                                                                           | Constraint                                                 |
 | --------------------- | --------------------------------------------------------------------------------- | ---------------------------------------------------------- |
 | `furthestChapterRead` | Explicitly confirmed spoiler ceiling, shown as **Read through**                   | Optional; advancing requires a deliberate confirmation     |
-| `viewChapter`         | Chapter whose reader-visible claims are available, shown as **Knowledge through** | Optional and never later than `furthestChapterRead`        |
+| `viewChapter`         | Chapter that sets the soft ceiling (`../design-principles.md`)                    | Optional and never later than `furthestChapterRead`        |
 | `displayDate`         | Meaningful story date used for world-state projection                             | Optional; in Chapter mode it follows the knowledge chapter |
 | `selectedObject`      | One projected narrative object, in-scope astronomy system, or inspectable chapter | Must be cleared if a state change makes it ineligible      |
 
@@ -138,21 +138,11 @@ task to make desktop zoom usable.
 
 ## 6. Projected-object eligibility
 
-The browser, narrative map treatment, and narrative inspector expose only objects that
-are:
-
-1. reader-visible at `viewChapter`; and
-2. temporally eligible at `displayDate`.
-
-Chapter mode uses the selected knowledge chapter's story date. Date mode uses the
-independently selected meaningful date. An object revealed by the allowed knowledge
-set but effective only after the displayed date is absent rather than shown as a
-future object.
+Which objects the browser, narrative map treatment, and narrative inspector expose is
+defined by the hard and soft ceilings in `../design-principles.md`.
 
 An explicitly unmapped location may satisfy both gates. It remains browsable and
-inspectable but has no map marker. A chronologically unplaced event remains available
-in its reader-visible chapter context but is omitted from Date mode because it cannot
-be placed in a represented year.
+inspectable but has no map marker.
 
 The zero-state projection is the eligible object set when no chapter is selected.
 
@@ -219,8 +209,7 @@ Ordering adapts to the timeline mode:
 - **Chapter mode:** current-chapter objects first, followed by latest reader-order
   activity at or before `viewChapter`.
 - **Date mode:** objects active at `displayDate` first, followed by latest comparable
-  story-time activity at or before `displayDate`, using only claims permitted by
-  `viewChapter`.
+  story-time activity at or before `displayDate`.
 
 Objects with the same recency sort by their projected display name using a stable,
 locale-aware comparison. Group order never changes in response to activity.
@@ -477,13 +466,11 @@ platform rendering.
 
 ### 10.3 Date mode
 
-Date mode preserves **Knowledge through** and changes only `displayDate`.
+Date mode changes only `displayDate`.
 
 The chronological timeline contains meaningful dates derivable from the permitted
 reader-visible claims: eligible chapter state dates, introductions, updates, dated
-events, and generated activity. It does not offer arbitrary year entry. A later
-chapter may add a newly revealed earlier date, but that date appears only when the
-knowledge chapter reaches the reveal.
+events, and generated activity. It does not offer arbitrary year entry.
 
 Horizontal position is a linear function of Gregorian elapsed time. A 100-year gap
 occupies ten times the distance of a 10-year gap at the same zoom. Date mode presents
