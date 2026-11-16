@@ -527,14 +527,28 @@ JSON output records the base Git commit, whether the canonical inputs were clean
 candidate. Keep that output with the review package and explain any unclean or
 unknown result.
 
+Immediate predecessor: within a book, the predecessor of chapter `b.n` is
+`b.(n-1)`. The first chapter of a later book, `b.1` with `b > 1`, follows the
+previous book's last chapter, `(b-1).N`, where `N` is that book's `chapter_count` in
+`data/narrative/books.json` (for example, `1.61` precedes `2.1`). The predecessor
+must be canonical (or pending, below); an earlier chapter never stands in for it, so
+`2.1` does not accept `1.60` and `2.3` does not accept `2.1`. The extraction
+preflight fails closed when the target's book has no `books.json` entry, when the
+target is numbered past its book's `chapter_count`, and at a book boundary whose
+previous book records no `chapter_count`. `1.1` has no predecessor; the preflight
+cannot certify a zero-state prior chain.
+
 Pending predecessors: when the chapters just before the target are candidates not
 yet promoted (approved or awaiting approval), the prior root is the canonical
 chapters plus those candidates, in chapter order. Pass each one to
 `scripts/extraction_preflight.py` with `--pending-predecessor`, in order. Each must
 be a file outside the repository, and together they must be exactly the chapters
-after the latest canonical one up to the target's predecessor. The same validators
-run on that root. The report marks the run as based on PENDING predecessors and
-lists each one's chapter, path and SHA-256.
+after the latest canonical one up to the target's predecessor, in reading order
+across book boundaries by the same rule. For example, with `1.61` canonical,
+`2.3` takes pending `2.1` and `2.2`; with `1.60` the latest canonical chapter, `2.2`
+takes pending `1.61` and `2.1`. The same validators run on that root. The report
+marks the run as based on PENDING predecessors and lists each one's chapter, path
+and SHA-256.
 
 After manually staging canonical files into any checkout, run
 `npm run narrative:manifest` before generating projections, and confirm that the

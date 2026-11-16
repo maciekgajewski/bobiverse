@@ -34,7 +34,9 @@ spawning for both passes; the run's own records attest those settings.
    using the last prior chapter as the stand-in candidate, and check that its
    provenance shows `inputs_clean: true` (§Candidate assembly and temporary corpus).
    If the chapters just before the target are not yet promoted, pass their candidates
-   in order with `--pending-predecessor`; the report marks the run PENDING.
+   in order with `--pending-predecessor`; the report marks the run PENDING. The first
+   chapter of a later book follows the previous book's last chapter by its
+   `books.json` `chapter_count` (`1.61` precedes `2.1`).
 8. Run both validators from §Candidate assembly and temporary corpus on that prior
    root. An astronomy failure here is a baseline problem: stop and report it
    (§Astronomy preflight and isolated acquisition).
