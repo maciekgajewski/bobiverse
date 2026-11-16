@@ -624,6 +624,20 @@ describe("extraction preflight", () => {
       );
     });
 
+    it("lists the prior chapters in numeric reading order", () => {
+      setNarrative(
+        Array.from({ length: 11 }, (_, index) => `1.${index + 1}`),
+        { "1": { title: "Synthetic book one" } },
+      );
+
+      const result = runPreflight({ chapter: "1.12" });
+
+      expect(result.status, result.stderr).toBe(0);
+      expect(itemOf(result.report, 7).evidence.chapters).toEqual(
+        Array.from({ length: 11 }, (_, index) => `1.${index + 1}`),
+      );
+    });
+
     it("fails when canonical inputs are unclean", () => {
       writeJson(path.join(repository, "data/narrative/chapters/1/1.json"), {
         chapter: "1.1",
