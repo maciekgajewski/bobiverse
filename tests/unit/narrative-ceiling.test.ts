@@ -7,6 +7,7 @@ import {
 } from "../../src/narrative/ceiling";
 import {
   isNarrativeDateEligible,
+  narrativeDateRange,
   type NarrativeRecord,
 } from "../../src/narrative/model";
 import { narrativeCorpus } from "../../src/narrative/runtime";
@@ -199,10 +200,11 @@ describe("chapterLatestDate (§3.1)", () => {
     expect(withEvent("2165-11.9", "2165-12")).toBe("2165-12");
   });
 
-  it("resolves canonical chapter 1.24 to the four-asteroid diversion's 2157", () => {
+  it("resolves canonical chapter 1.24 to the four-asteroid diversion's date", () => {
     const record = canonicalChapters().find(
       (candidate) => candidate.chapter === "1.24",
     )!;
+    const header = record.date as string;
     const eventDates = [
       ...((record.introducing as NarrativeRecord[] | undefined) ?? []).map(
         (introduced) => [introduced.id, introduced.date],
@@ -210,13 +212,22 @@ describe("chapterLatestDate (§3.1)", () => {
       ...((record.updates as NarrativeRecord[] | undefined) ?? []).map(
         (update) => [update.entity_id, update.date],
       ),
-    ];
-    expect(eventDates).toContainEqual([
-      "event:four-asteroid-diversion",
-      "2157",
-    ]);
-    expect(chapterLatestDate(record)).toBe("2157");
-    expect(chapterLatestDate(record)).not.toBe(record.date);
+    ].filter(([id]) => id === "event:four-asteroid-diversion");
+    expect(eventDates).toHaveLength(1);
+    const eventDate = eventDates[0]![1];
+    expect(typeof eventDate).toBe("string");
+    // The event is later than the header by §3.1: later range end, or the same
+    // end with a later start, or the same range with a higher suffix.
+    const event = narrativeDateRange(eventDate as string);
+    const chapterHeader = narrativeDateRange(header);
+    expect(
+      event.end > chapterHeader.end ||
+        (event.end === chapterHeader.end &&
+          (event.start > chapterHeader.start ||
+            (event.start === chapterHeader.start &&
+              event.suffix > chapterHeader.suffix))),
+    ).toBe(true);
+    expect(chapterLatestDate(record)).toBe(eventDate);
   });
 
   it("returns the header date for every canonical chapter without event dates or effective dates", () => {

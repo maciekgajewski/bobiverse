@@ -52,7 +52,8 @@ helpers; the projection does not use them yet, so nothing changes for readers.
 
 - `2185` is known at a `2185-04` ceiling, `2185-04` at a `2185` ceiling, and
   `2185-05` is not known at a `2185-04` ceiling; suffix ties follow ADR-0026.
-- Canonical chapter 1.24 resolves to `2157` (event `four-asteroid-diversion`); a
+- Canonical chapter 1.24 resolves to the date of event `four-asteroid-diversion`
+  as read from its data (currently `2157`), which is later than its header; a
   chapter without dated events or effective dates resolves to its header date.
 - A backdated update lowers an entity's earliest date once its chapter is read,
   and never before.
