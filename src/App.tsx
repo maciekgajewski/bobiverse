@@ -958,17 +958,24 @@ export default function App() {
   // user-interaction requirement), and the entry it was pushed from with
   // them. The auto-shown What's new entry is therefore pushed only after the
   // first user activation; before that, Back behaves as it did without it.
+  // A touch pointerdown and Escape are not activations, so the listeners
+  // wait for pointerup, click or another key, and defer to
+  // `navigator.userActivation` where the browser has it.
   const [userActivated, setUserActivated] = useState(
     () => navigator.userActivation?.hasBeenActive ?? false,
   );
   useEffect(() => {
     if (userActivated) return;
-    const activate = () => setUserActivated(true);
-    window.addEventListener("pointerdown", activate, true);
-    window.addEventListener("keydown", activate, true);
+    const activate = (event: Event) => {
+      if (event instanceof KeyboardEvent && event.key === "Escape") return;
+      if (navigator.userActivation?.hasBeenActive === false) return;
+      setUserActivated(true);
+    };
+    const events = ["pointerup", "click", "keydown"] as const;
+    for (const type of events) window.addEventListener(type, activate, true);
     return () => {
-      window.removeEventListener("pointerdown", activate, true);
-      window.removeEventListener("keydown", activate, true);
+      for (const type of events)
+        window.removeEventListener(type, activate, true);
     };
   }, [userActivated]);
   const openDialog: AppDialog | null = aboutOrigin

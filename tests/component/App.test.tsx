@@ -2593,7 +2593,13 @@ describe("atlas shell", () => {
       // Browsers skip entries pushed before any user interaction, so the
       // entry waits for the first activation.
       expect(history.push).not.toHaveBeenCalled();
+      // A pointerdown alone (a touch start) and Escape are not activations.
       fireEvent.pointerDown(
+        within(whatsNew()!).getByRole("heading", { name: "Version 0.9.0" }),
+      );
+      fireEvent.keyDown(window, { key: "Escape" });
+      expect(history.push).not.toHaveBeenCalled();
+      fireEvent.pointerUp(
         within(whatsNew()!).getByRole("heading", { name: "Version 0.9.0" }),
       );
       expect(history.push).toHaveBeenCalledTimes(1);
