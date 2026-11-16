@@ -47,6 +47,8 @@ async function expandAstronomyNotice(page: Page): Promise<void> {
 }
 
 async function settleMapCamera(page: Page): Promise<void> {
+  // The bridge mounts with the WebGL map, which can lag a cold dev server.
+  await page.waitForFunction(() => window.__bob034MapPerformance !== undefined);
   await page.evaluate(
     () =>
       new Promise<void>((resolve, reject) => {

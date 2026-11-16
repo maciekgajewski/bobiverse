@@ -1,4 +1,10 @@
-import { useCallback, useRef, useState, type RefObject } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type RefObject,
+} from "react";
 import { useReadThroughConfirmationFocus } from "./useReadThroughConfirmationFocus";
 import {
   PRE_BOOK_LABEL,
@@ -246,6 +252,13 @@ export function TopbarReadThrough({
     // The shell may be inert until the next render; return focus after it.
     window.setTimeout(() => chip.current?.focus(), 0);
   }, [setOpen]);
+  // The picker has no browser history entry. Browser Back while it is open
+  // closes it as a side effect of the same popstate (BOB-20261116-ZBZF9F).
+  useEffect(() => {
+    if (!pickerOpen) return;
+    window.addEventListener("popstate", closePicker);
+    return () => window.removeEventListener("popstate", closePicker);
+  }, [closePicker, pickerOpen]);
   return (
     <div className="topbar-read-through">
       <span className="topbar-read-through-caption" aria-hidden="true">

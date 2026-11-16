@@ -712,7 +712,15 @@ selection stack shared by the wide and compact inspector. Relationship links app
 after the current entry and discard any forward branch; Back and Forward restore only
 eligible entries without changing reader progress. Map, browser, and timeline
 selections start a new stack, while projection changes remove ineligible history
-entries. Browser session history and URLs are unchanged. Type-specific group SVGs,
+entries. Browser session history is a projection of that stack
+([ADR-0030](adrs/0030-in-app-back-via-browser-history.md)): one same-URL entry per
+card up to the current index above a base entry, plus at most one About or What's
+new entry on top. Soft Back and Forward call `history.back()` / `history.forward()`,
+so device Back equals soft Back; X, Escape and an empty map tap fully dismiss the
+card. A confirmed read-through change or Forget progress clears the stack and its
+browser entries under a new generation, so neither Back nor Forward can restore
+them. URLs, hashes and deep links are unchanged, and `history.state` never carries
+reader progress. Type-specific group SVGs,
 the shared ordinary row-bullet SVG, and species-row icons are presentation-only and
 carry no selection or domain semantics. Species rows are the sole row-bullet
 exception: after the centralized reader-safe world projection, they join to the
