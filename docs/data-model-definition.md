@@ -1885,8 +1885,9 @@ metadata; neither is inferred from the other.
 
 `current_state` does not establish a character location. A character location is only
 confirmed by an appearance with an effective location. From reader-visible appearances
-whose effective story dates are eligible at the requested display date (every
-reader-visible appearance in a chapter view), the generated projection exposes a `last_known_location` only when one appearance has
+whose effective story dates are known at the soft ceiling (the chapter's latest date in
+a chapter view, the requested date in a date view; a year or month counts for its whole
+period), the generated projection exposes a `last_known_location` only when one appearance has
 a uniquely latest narrative moment. Identical calendar portions and overlapping
 unequal-precision facts use the shared chapter fallback after any authoritative
 suffix comparison. The generated value records `location_id`,

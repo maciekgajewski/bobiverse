@@ -956,31 +956,31 @@
     "kind": "field",
     "subject": "character:riker",
     "field": "current_state",
-    "expected": "sha256:65f163fa9eb7afbe",
-    "basis": "canonical 1.21 (FSHPA9)"
+    "expected": "sha256:a3dd4e770e28ed84",
+    "basis": "ADR-0031 soft ceiling: canonical 1.18"
   },
   {
     "chapter": "1.22",
     "kind": "field",
     "subject": "character:homer",
     "field": "current_state",
-    "expected": "sha256:c3e7e71f23a8f495",
-    "basis": "canonical 1.21 (FSHPA9)"
+    "expected": "sha256:641d60a1e6d897ba",
+    "basis": "ADR-0031 soft ceiling: canonical 1.20"
   },
   {
     "chapter": "1.23",
     "kind": "field",
     "subject": "character:riker",
     "field": "current_state",
-    "expected": "sha256:65f163fa9eb7afbe",
-    "basis": "canonical 1.21 (FSHPA9)"
+    "expected": "sha256:406751d5e8bd77da",
+    "basis": "ADR-0031 soft ceiling: canonical 1.19"
   },
   {
     "chapter": "1.23",
     "kind": "field",
     "subject": "character:homer",
     "field": "current_state",
-    "expected": "sha256:c3e7e71f23a8f495",
-    "basis": "canonical 1.21 (FSHPA9)"
+    "expected": "sha256:641d60a1e6d897ba",
+    "basis": "ADR-0031 soft ceiling: canonical 1.20"
   }
 ]

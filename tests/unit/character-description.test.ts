@@ -107,7 +107,7 @@ describe("character description schema", () => {
 });
 
 describe("character description projection", () => {
-  it("uses the latest description at the viewed chapter and hides later writes", () => {
+  it("uses the latest description read and never one from an unread chapter", () => {
     const fixture = corpus();
     introAlex(fixture).description = "Introduced identity.";
     const laterUpdate = fixture.chapters[1]!.updates?.find(
@@ -134,16 +134,19 @@ describe("character description projection", () => {
     expect(alex(generateNarrativeWorld(prepared, "1.3"))).toMatchObject({
       description: "Latest identity.",
     });
-    // Date mode: a later-dated write must not leak into an earlier story date,
-    // even when the later chapter has already been read.
+    // Description follows Read through only (design principles rule (f)):
+    // at an earlier soft ceiling it still fuses every chapter read, while the
+    // state stays as of the soft ceiling.
     expect(
       alex(generateNarrativeWorld(prepared, "1.3", "2200.0")),
     ).toMatchObject({
-      description: "Introduced identity.",
+      description: "Latest identity.",
+      current_state: "initial state",
     });
+    // Nothing from an unread chapter.
     expect(
-      alex(generateNarrativeWorld(prepared, "1.3", "2200.0")),
-    ).not.toMatchObject({
+      alex(generateNarrativeWorld(prepared, "1.2", "2200.0")),
+    ).toMatchObject({
       description: "Later identity.",
     });
   });
