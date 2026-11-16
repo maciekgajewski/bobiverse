@@ -115,7 +115,7 @@ and names only).
 - Rule (a) applies to chapter-introduced locations too, so at a non-linear
   chapter whole star systems revealed in a later-dated chapter leave the map
   (for example the `location:omicron2-eridani` system at 1.20). On the data at
-  `adc77b1`, chapter view hides entities at 20 chapters: 1.20 (16), 1.22 (16),
+  `c6db505` (unchanged from `adc77b1`), chapter view hides entities at 20 chapters: 1.20 (16), 1.22 (16),
   1.25 (19), 1.28 (14), 1.29 (21), 1.31–1.34 (25 each), 1.36 (29), 1.38 (31),
   1.40 (9), 1.41 (40), 1.42 (41), 1.43 (33), 1.45 (35), 1.46 (5) and 1.55–1.57
   (5 each).
@@ -168,3 +168,8 @@ and names only).
   worlds, with a comment explaining why `chapterLatestDate` would leak (nit 3);
   direct tests for `death_date`, `colony_of` and
   `narrativeEntitiesBeforeExistence` (nit 4); follow-ups for nits 1 and 2 above.
+- Merged master `c6db505` (book 1 data fixes: 1.24 `four-asteroid-diversion`
+  dated 2157-04, so the 1.24 soft ceiling is now 2157-04; 1.39 and 1.56) without
+  conflicts or test changes; the hidden-entity chapters and counts are
+  unchanged. Ticked constitution §5 items 2, 3 and 5, and the projection part of
+  item 6.
