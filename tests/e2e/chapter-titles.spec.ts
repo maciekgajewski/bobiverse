@@ -114,9 +114,9 @@ for (const layout of [
     await next.click();
     await expect(inspector.locator(".chapter-seq-current")).toHaveText("1.60");
 
-    // The card heading keeps the stored title in full; the badge truncates.
+    // The card heading shows the full display title; the badge truncates.
     await expect(inspector.getByRole("heading", { level: 2 })).toHaveText(
-      `60 - ${LONG_TITLE}`,
+      LONG_TITLE,
     );
     await expect(badge.locator(".chapter-link-title")).toHaveText(
       ` · ${LONG_TITLE}`,

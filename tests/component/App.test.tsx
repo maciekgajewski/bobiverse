@@ -349,7 +349,7 @@ describe("atlas shell", () => {
 
     await user.click(
       screen.getByRole("button", {
-        name: "Book 1, 1 - Bob Version 1.0",
+        name: "Book 1, 1 — Bob Version 1.0",
       }),
     );
 
@@ -362,7 +362,7 @@ describe("atlas shell", () => {
     ).toBeInTheDocument();
     expect(
       within(inspector).getByRole("heading", {
-        name: "1 - Bob Version 1.0",
+        name: "Bob Version 1.0",
       }),
     ).toBeInTheDocument();
     expect(within(inspector).getByText("Synopsis")).toBeInTheDocument();
@@ -389,7 +389,7 @@ describe("atlas shell", () => {
     render(<App />);
     await user.click(
       screen.getByRole("button", {
-        name: "Book 1, 2 - Bob Version 2.0",
+        name: "Book 1, 2 — Bob Version 2.0",
       }),
     );
     const inspector = screen.getByRole("complementary", {
@@ -414,7 +414,7 @@ describe("atlas shell", () => {
     await user.click(back);
     expect(
       within(inspector).getByRole("heading", {
-        name: "2 - Bob Version 2.0",
+        name: "Bob Version 2.0",
       }),
     ).toBeInTheDocument();
     expect(forward).toBeEnabled();
@@ -436,12 +436,12 @@ describe("atlas shell", () => {
 
     await user.click(
       screen.getByRole("button", {
-        name: "Book 1, 1 - Bob Version 1.0",
+        name: "Book 1, 1 — Bob Version 1.0",
       }),
     );
     expect(
       within(inspector).getByRole("heading", {
-        name: "1 - Bob Version 1.0",
+        name: "Bob Version 1.0",
       }),
     ).toBeInTheDocument();
     expect(back).toBeDisabled();
@@ -474,7 +474,7 @@ describe("atlas shell", () => {
 
     await user.click(
       screen.getByRole("button", {
-        name: "Book 1, 2 - Bob Version 2.0",
+        name: "Book 1, 2 — Bob Version 2.0",
       }),
     );
     expect(
@@ -732,7 +732,7 @@ describe("atlas shell", () => {
     render(<App />);
     await user.click(
       screen.getByRole("button", {
-        name: "Book 1, 2 - Bob Version 2.0",
+        name: "Book 1, 2 — Bob Version 2.0",
       }),
     );
     await user.selectOptions(dockReadThrough(), "1.1");
@@ -784,7 +784,7 @@ describe("atlas shell", () => {
 
     await user.click(
       screen.getByRole("button", {
-        name: "Book 1, 1 - Bob Version 1.0",
+        name: "Book 1, 1 — Bob Version 1.0",
       }),
     );
     const dialog = await screen.findByRole("dialog", {
@@ -792,7 +792,7 @@ describe("atlas shell", () => {
     });
     expect(
       within(dialog).getByRole("heading", {
-        name: "1 - Bob Version 1.0",
+        name: "Bob Version 1.0",
       }),
     ).toBeInTheDocument();
 
@@ -2456,7 +2456,7 @@ describe("atlas shell", () => {
       const user = userEvent.setup();
       render(<App />);
       await user.click(
-        screen.getByRole("button", { name: "Book 1, 2 - Bob Version 2.0" }),
+        screen.getByRole("button", { name: "Book 1, 2 — Bob Version 2.0" }),
       );
       expect(history.push).toHaveBeenCalledTimes(1);
       expect(window.history.state).toMatchObject({
@@ -2477,7 +2477,7 @@ describe("atlas shell", () => {
       expect(history.back).toHaveBeenCalledTimes(1);
       expect(
         await within(inspector).findByRole("heading", {
-          name: "2 - Bob Version 2.0",
+          name: "Bob Version 2.0",
         }),
       ).toBeInTheDocument();
       await user.click(
@@ -2499,11 +2499,11 @@ describe("atlas shell", () => {
       const user = userEvent.setup();
       render(<App />);
       await user.click(
-        screen.getByRole("button", { name: "Book 1, 2 - Bob Version 2.0" }),
+        screen.getByRole("button", { name: "Book 1, 2 — Bob Version 2.0" }),
       );
       expect(
         within(desktopInspector()).getByRole("heading", {
-          name: "2 - Bob Version 2.0",
+          name: "Bob Version 2.0",
         }),
       ).toBeInTheDocument();
       window.history.back();
@@ -2517,7 +2517,7 @@ describe("atlas shell", () => {
       const user = userEvent.setup();
       render(<App />);
       await user.click(
-        screen.getByRole("button", { name: "Book 1, 2 - Bob Version 2.0" }),
+        screen.getByRole("button", { name: "Book 1, 2 — Bob Version 2.0" }),
       );
       const sheet = await screen.findByRole("dialog", {
         name: "Selected object",
@@ -2551,7 +2551,7 @@ describe("atlas shell", () => {
       const user = userEvent.setup();
       render(<App />);
       await user.click(
-        screen.getByRole("button", { name: "Book 1, 2 - Bob Version 2.0" }),
+        screen.getByRole("button", { name: "Book 1, 2 — Bob Version 2.0" }),
       );
       const about = () => screen.queryByRole("dialog", { name: /What is/ });
       await user.click(screen.getByRole("button", { name: "What is this?" }));
@@ -2578,7 +2578,7 @@ describe("atlas shell", () => {
       // The card under the dialog is untouched.
       expect(
         within(desktopInspector()).getByRole("heading", {
-          name: "2 - Bob Version 2.0",
+          name: "Bob Version 2.0",
         }),
       ).toBeInTheDocument();
     });
@@ -2624,7 +2624,7 @@ describe("atlas shell", () => {
       const user = userEvent.setup();
       render(<App />);
       await user.click(
-        screen.getByRole("button", { name: "Book 1, 2 - Bob Version 2.0" }),
+        screen.getByRole("button", { name: "Book 1, 2 — Bob Version 2.0" }),
       );
       await user.click(
         within(desktopInspector()).getByRole("button", {
@@ -2660,7 +2660,7 @@ describe("atlas shell", () => {
       const user = userEvent.setup();
       render(<App />);
       await user.click(
-        screen.getByRole("button", { name: "Book 1, 2 - Bob Version 2.0" }),
+        screen.getByRole("button", { name: "Book 1, 2 — Bob Version 2.0" }),
       );
       expect(history.push).toHaveBeenCalledTimes(1);
       const length = window.history.length;
@@ -2671,11 +2671,11 @@ describe("atlas shell", () => {
       );
       expect(
         within(desktopInspector()).getByRole("heading", {
-          name: "1 - Bob Version 1.0",
+          name: "Bob Version 1.0",
         }),
       ).toBeInTheDocument();
       await user.click(
-        screen.getByRole("button", { name: "Book 1, 2 - Bob Version 2.0" }),
+        screen.getByRole("button", { name: "Book 1, 2 — Bob Version 2.0" }),
       );
       await settle();
       expect(history.push).toHaveBeenCalledTimes(1);
@@ -2691,7 +2691,7 @@ describe("atlas shell", () => {
       const user = userEvent.setup();
       const first = render(<App />);
       await user.click(
-        screen.getByRole("button", { name: "Book 1, 2 - Bob Version 2.0" }),
+        screen.getByRole("button", { name: "Book 1, 2 — Bob Version 2.0" }),
       );
       await user.click(
         within(desktopInspector()).getByRole("button", {
@@ -2733,7 +2733,7 @@ describe("atlas shell", () => {
       const user = userEvent.setup();
       const first = render(<App />);
       await user.click(
-        screen.getByRole("button", { name: "Book 1, 2 - Bob Version 2.0" }),
+        screen.getByRole("button", { name: "Book 1, 2 — Bob Version 2.0" }),
       );
       await user.click(
         within(desktopInspector()).getByRole("button", {

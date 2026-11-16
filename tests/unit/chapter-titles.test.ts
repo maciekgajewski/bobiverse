@@ -86,10 +86,15 @@ describe("chapterDisplayTitle", () => {
     );
   });
 
-  it("keeps book 1 timeline labels and qualifies later books", () => {
+  it("strips book 1 timeline labels and qualifies later books", () => {
     expect(chapterTimelineLabel(summary("1.1", "1 - Bob Version 1.0"))).toBe(
-      "1 - Bob Version 1.0",
+      "1 — Bob Version 1.0",
     );
+    expect(chapterTimelineLabel(summary("1.2", "2 - Bob Version 2.0"))).toBe(
+      "2 — Bob Version 2.0",
+    );
+    expect(chapterTimelineLabel(summary("1.3", "3"))).toBe("3");
+    expect(chapterTimelineLabel(summary("1.61", "61"))).toBe("61");
     expect(chapterTimelineLabel(summary("1.18", "18"))).toBe("18");
     expect(
       chapterTimelineLabel(summary("2.1", "1 - Fixture Title Alpha")),
@@ -131,6 +136,16 @@ describe("visibleChapterTitle (spoiler gate)", () => {
     expect(Array.from(shortened)).toHaveLength(40);
     expect(shortened.endsWith("…")).toBe(true);
     expect(long.startsWith(shortened.slice(0, -1))).toBe(true);
+  });
+
+  it("truncates only past exactly 40 characters", () => {
+    const forty = "F".repeat(40);
+    expect(Array.from(forty)).toHaveLength(40);
+    expect(truncateChapterTitle(forty)).toBe(forty);
+    const fortyOne = "F".repeat(41);
+    const shortened = truncateChapterTitle(fortyOne);
+    expect(shortened).toBe(`${"F".repeat(39)}…`);
+    expect(Array.from(shortened)).toHaveLength(40);
   });
 });
 

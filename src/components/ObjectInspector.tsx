@@ -27,6 +27,7 @@ import type {
 } from "../narrative/progress";
 import {
   CHAPTER_TITLE_SEPARATOR,
+  chapterDisplayTitle,
   chapterReferenceLabel,
   defaultCharacterInspectorSectionState,
   visibleChapterTitle,
@@ -863,10 +864,14 @@ function ChapterDetails({
     () => new Map(world.entities.map((entity) => [entity.id, entity])),
     [world.entities],
   );
-  const trimmedTitle = detail.title.trim();
-  const numericOnly = trimmedTitle === detail.localNumber;
+  // The card shows the display title ("Bob Version 2.0" for the stored
+  // "2 - Bob Version 2.0") in its heading and illustration text; an untitled
+  // chapter keeps its stored bare number as the heading. The card only opens
+  // for a read chapter (BOB-20261116-35B47D).
+  const displayTitle = chapterDisplayTitle(detail);
+  const heading = displayTitle ?? detail.title;
   const pictureAlt = `Illustration for Book ${detail.bookNumber}, Chapter ${detail.localNumber}${
-    numericOnly ? "" : `, ${trimmedTitle}`
+    displayTitle ? `, ${displayTitle}` : ""
   }`;
   return (
     <article
@@ -887,7 +892,7 @@ function ChapterDetails({
           onChapterSelect={onChapterSelect}
         />
       </div>
-      <h2 id={headingId}>{detail.title}</h2>
+      <h2 id={headingId}>{heading}</h2>
       <ChapterContext detail={detail} onSelect={onSelect} />
       <Picture pictureId={detail.pictureId} assets={assets} alt={pictureAlt} />
       <section className="inspector-section chapter-synopsis">
