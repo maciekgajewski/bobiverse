@@ -129,3 +129,21 @@ git diff --check
 
 - Implementation started on `bob-20261116-back-nav` in
   `~/src/bobiverse-backnav`, based on origin/master `5011537`.
+- Firefox e2e showed that browsers skip history entries pushed before any
+  user interaction; the auto-shown What's new entry now waits for the first
+  activation (see Risks and decisions).
+- `tests/e2e/atlas.spec.ts` `settleMapCamera` now waits for the map
+  performance bridge, as `emptyMapClickPosition` already did; a cold dev
+  server made `empty map clicks clear inspection selection` fail once on
+  chromium with "Map performance bridge is unavailable".
+- Full validation: `tasks.py check` (103 task files, 32 ADRs),
+  format:check, lint (existing AboutDialog fast-refresh warning only),
+  typecheck, 694 tests, 90 data tests, data:validate, narrative:validate,
+  build, `git diff --check`, and Prettier on the changed Markdown.
+- e2e at `fec1803` on chromium, firefox and webkit, one worker, no retries,
+  temporary untracked `playwright.alt5209.config.ts` on port 5209: 274
+  passed, 11 skipped, 0 failed (41.6m): chromium 91 passed / 4 skipped,
+  firefox 91 / 4, webkit 92 / 3. All 15 back-nav runs passed. Port 5173
+  was left untouched.
+- CSP e2e on port 4209 with a matching temporary config: 3 passed (15.4s).
+  Both temporary configs were deleted afterwards.
