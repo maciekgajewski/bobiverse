@@ -12,6 +12,17 @@ import {
   WhatsNewDialog,
 } from "./components/WhatsNewDialog";
 import { markWhatsNewSeen, shouldAutoShowWhatsNew } from "./whats-new";
+import {
+  AppHistorySync,
+  isAppHistoryState,
+  loadHistoryGen,
+  projectAppHistory,
+  sameInspectorStack,
+  stackFromState,
+  storeHistoryGen,
+  type AppDialog,
+  type AppHistoryState,
+} from "./app-history";
 import { DetailSheet } from "./components/DetailSheet";
 import { InspectorBreadcrumb } from "./components/InspectorBreadcrumb";
 import { StarMap, type MapScale } from "./components/MapScene";
@@ -246,15 +257,103 @@ function canRenderWebgl(): boolean {
   }
 }
 
+// Whether a selection may be shown in a projection: the rule
+// `updateProgress` applies to the open card and its history.
+function isSelectionEligibleInProjection(
+  candidate: SelectionIdentity,
+  projection: Pick<
+    ApplicationProjection,
+    "progress" | "world" | "chapterDetail" | "map"
+  >,
+): boolean {
+  if (candidate.kind === "chapter")
+    return (
+      projection.progress.mode === "chapter" &&
+      projection.progress.viewChapter === candidate.id &&
+      projection.chapterDetail?.chapter === candidate.id
+    );
+  if (candidate.kind === "component") return false;
+  return isSelectionEligibleForMap(
+    candidate,
+    projection.world,
+    new Set(projection.map.contextSystems.map((system) => system.id)),
+  );
+}
+
+interface HistoryBoot {
+  projection: ApplicationProjection;
+  gen: number;
+  stack: InspectorHistory;
+  /** What the browser holds from the base entry up to the current one. */
+  model: AppHistoryState[];
+}
+
+// On reload the browser keeps `history.state`. The card stack is restored
+// only when the entry is from this tab's current generation and every
+// selection is still eligible; otherwise a new generation starts and the
+// first sync walks back to the base entry and rewrites it. Restoring never
+// touches reader progress (BOB-20261116-ZBZF9F).
+function bootHistory(projection: ApplicationProjection): HistoryBoot {
+  const gen = loadHistoryGen();
+  const state: unknown = window.history.state;
+  if (!isAppHistoryState(state))
+    return { projection, gen, stack: EMPTY_INSPECTOR_HISTORY, model: [] };
+  const stack = stackFromState(state);
+  if (
+    state.gen === gen &&
+    !projection.error &&
+    stack.entries.every((entry) =>
+      isSelectionEligibleInProjection(entry, projection),
+    )
+  ) {
+    const model = projectAppHistory(stack, null, gen);
+    // About and What's new are not restored; the first sync steps off the
+    // dialog entry.
+    if (state.layer === "dialog") model.push(state);
+    return {
+      projection,
+      gen,
+      stack: stack.index >= 0 ? stack : EMPTY_INSPECTOR_HISTORY,
+      model,
+    };
+  }
+  const below = Math.max(
+    0,
+    Math.min(state.depth, (window.history.length || 1) - 1),
+  );
+  return {
+    projection,
+    gen: storeHistoryGen(gen + 1),
+    stack: EMPTY_INSPECTOR_HISTORY,
+    model: Array.from({ length: below + 1 }, () => state),
+  };
+}
+
+function isCompactLayout(): boolean {
+  return (
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(max-width: 1199px)").matches
+  );
+}
+
 export default function App() {
   const systems = nearbySystems?.systems ?? EMPTY_SYSTEMS;
-  const [selection, setSelection] = useState<SelectionIdentity | null>(null);
+  const [boot] = useState(() => bootHistory(loadInitialProjection(systems)));
+  const [selection, setSelection] = useState<SelectionIdentity | null>(
+    () => boot.stack.entries[boot.stack.index] ?? null,
+  );
   const [systemMode, setSystemMode] = useState<SystemMode | null>(null);
   const systemModeRef = useRef<SystemMode | null>(null);
   const pendingSystemExitReason = useRef<string | null>(null);
   const [inspectorHistory, setInspectorHistory] = useState<InspectorHistory>(
-    EMPTY_INSPECTOR_HISTORY,
+    boot.stack,
   );
+  // Browser history projects the card stack plus one dialog
+  // (src/app-history.ts). `historyGen` changes whenever the stack is cleared
+  // or replaced rather than stepped.
+  const [historyGen, setHistoryGen] = useState(boot.gen);
+  const [historySync] = useState(() => new AppHistorySync(window.history));
+  const popStateHandler = useRef<(state: unknown) => void>(() => undefined);
   const [browserQuery, setBrowserQuery] = useState("");
   const [selectionStatus, setSelectionStatus] = useState("");
   const [mobilePanel, setMobilePanel] = useState<MobilePanel | null>(null);
@@ -281,8 +380,8 @@ export default function App() {
     "checking",
   );
   const [resetToken, setResetToken] = useState(0);
-  const [applicationProjection, setApplicationProjection] = useState(() =>
-    loadInitialProjection(systems),
+  const [applicationProjection, setApplicationProjection] = useState(
+    () => boot.projection,
   );
   const progress = applicationProjection.progress;
   const [pendingReadThrough, setPendingReadThrough] = useState<string | null>(
@@ -532,12 +631,22 @@ export default function App() {
 
   // Menu, timeline and Search-from-menu return focus to the Menu button.
   // Search opened from the map pill returns focus to the pill.
+  // X and Escape on the detail sheet fully dismiss the card, as an empty map
+  // tap does; browser history then walks back to the base entry
+  // (BOB-20261116-ZBZF9F).
   const closeMobilePanel = useCallback(() => {
     if (!mobilePanel) return;
     const panel = mobilePanel;
     const origin = searchOrigin.current;
     searchOrigin.current = null;
     setMobilePanel(null);
+    if (panel === "inspector") {
+      setInspectorHistory(EMPTY_INSPECTOR_HISTORY);
+      if (selection) {
+        setSelection(null);
+        setSelectionStatus("Selection cleared.");
+      }
+    }
     window.setTimeout(() => {
       if (panel === "browser" && origin === "pill") {
         searchButton.current?.focus();
@@ -545,7 +654,7 @@ export default function App() {
         menuButton.current?.focus();
       }
     }, 0);
-  }, [mobilePanel]);
+  }, [mobilePanel, selection]);
   const openSearch = (origin: "pill" | "menu") => {
     searchOrigin.current = origin;
     setMobilePanel("browser");
@@ -748,11 +857,23 @@ export default function App() {
     )
       openInspectorSheet(openSnap);
   };
+  const bumpHistoryGen = () =>
+    setHistoryGen((current) => storeHistoryGen(current + 1));
   const selectExternalObject = (
     nextSelection: SelectionIdentity,
     openSnap: SheetSnap = "half",
   ) => {
-    setInspectorHistory(rootInspectorHistory(nextSelection));
+    const next = rootInspectorHistory(nextSelection);
+    // A fresh root over an open card or dialog replaces the stack: the old
+    // entries leave browser history and the new root is pushed once.
+    if (
+      (inspectorHistory.index >= 0 &&
+        !sameInspectorStack(inspectorHistory, next)) ||
+      aboutOrigin !== null ||
+      whatsNewOrigin !== null
+    )
+      bumpHistoryGen();
+    setInspectorHistory(next);
     showSelection(nextSelection, openSnap);
   };
   const selectInspectorRelationship = (nextSelection: SelectionIdentity) => {
@@ -793,6 +914,8 @@ export default function App() {
     }
     setSelection(null);
     setSystemMode(null);
+    // Never backable: the cleared stack leaves browser history too.
+    bumpHistoryGen();
     setInspectorHistory(EMPTY_INSPECTOR_HISTORY);
     setPendingReadThrough(null);
     setBrowserQuery("");
@@ -830,10 +953,112 @@ export default function App() {
     setWhatsNewOrigin(null);
     setAboutOrigin(compact ? "menu" : "topbar");
   };
+  const openDialog: AppDialog | null = aboutOrigin
+    ? "about"
+    : whatsNewOrigin
+      ? "whats-new"
+      : null;
+  const desiredHistory = useMemo(
+    () => projectAppHistory(inspectorHistory, openDialog, historyGen),
+    [historyGen, inspectorHistory, openDialog],
+  );
+  useEffect(() => {
+    historySync.start(boot.model);
+  }, [boot.model, historySync]);
+  useEffect(() => {
+    // The disabled Enter system flow keeps its own history entry.
+    if (systemMode) return;
+    historySync.sync(desiredHistory);
+    if (!historySync.pending) return;
+    const fallback = window.setTimeout(
+      () => historySync.abandonPending(),
+      3000,
+    );
+    return () => window.clearTimeout(fallback);
+  }, [desiredHistory, historySync, systemMode]);
+  const isLiveHistoryState = (state: AppHistoryState) =>
+    state.gen === historyGen &&
+    stackFromState(state).entries.every((entry) =>
+      isSelectionEligibleInProjection(entry, applicationProjection),
+    );
+  // Shows a live browser entry: the card stack at its index (or no card) and
+  // its dialog, if any. Menu, Search, Timeline, the read-through
+  // confirmation and the astronomy notice are not in history; they close as
+  // a side effect.
+  const showHistoryState = (state: AppHistoryState) => {
+    setAstronomyNoticeOpen(false);
+    setPendingReadThrough(null);
+    const compact = isCompactLayout();
+    const dialog = state.layer === "dialog" ? state.dialog : null;
+    if (aboutOrigin && dialog !== "about") closeAbout();
+    if (whatsNewOrigin && dialog !== "whats-new") closeWhatsNew();
+    if (dialog === "about" && !aboutOrigin)
+      setAboutOrigin(compact ? "menu" : "topbar");
+    if (dialog === "whats-new" && !whatsNewOrigin)
+      setWhatsNewOrigin(compact ? "menu" : "topbar");
+    if (mobilePanel && mobilePanel !== "inspector") setMobilePanel(null);
+    const target = stackFromState(state);
+    if (target.index < 0) {
+      setDateContext(null);
+      setInspectorHistory(EMPTY_INSPECTOR_HISTORY);
+      if (mobilePanel) setMobilePanel(null);
+      if (selection) {
+        setSelection(null);
+        setSelectionStatus("Selection cleared.");
+      }
+      return;
+    }
+    const keepsForward =
+      inspectorHistory.entries.length > target.index &&
+      target.entries.every((entry, index) =>
+        sameSelection(entry, inspectorHistory.entries[index]!),
+      );
+    const entries = keepsForward ? inspectorHistory.entries : target.entries;
+    const nextSelection = entries[target.index]!;
+    if (
+      inspectorHistory.index === target.index &&
+      keepsForward &&
+      selection &&
+      sameSelection(selection, nextSelection)
+    )
+      return;
+    setInspectorHistory({ entries, index: target.index });
+    setDateContext(null);
+    setSelection(nextSelection);
+    setSelectionStatus(
+      `${selectionName(nextSelection) || "Object"} restored from inspector history.`,
+    );
+    if (compact) openInspectorSheet("half");
+  };
+  useEffect(() => {
+    popStateHandler.current = (state: unknown) => {
+      if (systemModeRef.current) return;
+      const outcome = historySync.handlePop(state, isLiveHistoryState);
+      if (outcome.kind === "navigate") showHistoryState(outcome.state);
+    };
+  });
+  useEffect(() => {
+    const onPopState = (event: PopStateEvent) =>
+      popStateHandler.current(event.state);
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
   const navigateInspectorHistory = (offset: -1 | 1) => {
     const nextIndex = inspectorHistory.index + offset;
     const nextSelection = inspectorHistory.entries[nextIndex];
     if (!nextSelection) return;
+    // Soft Back and Forward walk browser history, and the popstate handler
+    // is the only writer, so device Back equals soft Back. The direct update
+    // below is only a fallback when the browser has no matching entry.
+    if (
+      !systemMode &&
+      !historySync.pending &&
+      (offset < 0 ? historySync.depth > 0 : historySync.canGoForward)
+    ) {
+      if (offset < 0) window.history.back();
+      else window.history.forward();
+      return;
+    }
     setInspectorHistory((current) => ({ ...current, index: nextIndex }));
     setDateContext(null);
     setSelection(nextSelection);
@@ -841,29 +1066,33 @@ export default function App() {
       `${selectionName(nextSelection) || "Object"} restored from inspector history.`,
     );
   };
+  // `clearHistory` is the never-backable read-through change: the card
+  // closes and the whole stack, browser entries included, is cleared.
   const updateProgress = (
     next: ReaderProgress,
     requestedSelection?: SelectionIdentity | null,
+    { clearHistory = false }: { clearHistory?: boolean } = {},
   ) => {
     try {
       const projected = projectReaderProgress(next, systems);
+      if (clearHistory) {
+        bumpHistoryGen();
+        setInspectorHistory(EMPTY_INSPECTOR_HISTORY);
+        if (selection)
+          setSelectionStatus(
+            isSelectionEligibleInProjection(selection, projected)
+              ? "Selection cleared."
+              : "Selection cleared because the object is not eligible in this view.",
+          );
+        if (mobilePanel === "inspector") setMobilePanel(null);
+        setSelection(null);
+        setApplicationProjection(projected);
+        return;
+      }
       let nextSelection =
         requestedSelection === undefined ? selection : requestedSelection;
-      const nextContextIds = new Set(
-        projected.map.contextSystems.map((system) => system.id),
-      );
       const isEligible = (candidate: SelectionIdentity): boolean =>
-        candidate.kind === "chapter"
-          ? projected.progress.mode === "chapter" &&
-            projected.progress.viewChapter === candidate.id &&
-            projected.chapterDetail?.chapter === candidate.id
-          : candidate.kind === "component"
-            ? false
-            : isSelectionEligibleForMap(
-                candidate,
-                projected.world,
-                nextContextIds,
-              );
+        isSelectionEligibleInProjection(candidate, projected);
       if (nextSelection) {
         if (!isEligible(nextSelection)) {
           const closedInDateMode =
@@ -902,15 +1131,19 @@ export default function App() {
             }
           }
         }
-        setInspectorHistory(
+        const nextHistory =
           retainedIndex >= 0
             ? {
                 entries: retained.map(({ entry }) => entry),
                 index: retainedIndex,
               }
-            : rootInspectorHistory(nextSelection),
-        );
+            : rootInspectorHistory(nextSelection);
+        // Dropped entries are a rewrite, not a step.
+        if (!sameInspectorStack(nextHistory, inspectorHistory))
+          bumpHistoryGen();
+        setInspectorHistory(nextHistory);
       } else {
+        if (inspectorHistory.index >= 0) bumpHistoryGen();
         setInspectorHistory(EMPTY_INSPECTOR_HISTORY);
       }
       setSelection(nextSelection);
@@ -978,6 +1211,8 @@ export default function App() {
       pendingReadThrough === ""
         ? returnToZeroState(progress)
         : confirmReadThrough(progress, pendingReadThrough, narrativeChapters),
+      undefined,
+      { clearHistory: true },
     );
     setPendingReadThrough(null);
   };

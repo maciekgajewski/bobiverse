@@ -802,12 +802,15 @@ describe("atlas shell", () => {
     await waitFor(() =>
       expect(screen.getByRole("button", { name: "Menu" })).toHaveFocus(),
     );
+    // Escape fully dismisses the card (BOB-20261116-ZBZF9F), so there is no
+    // selection left to inspect.
     await user.click(screen.getByRole("button", { name: "Menu" }));
     expect(
-      within(screen.getByRole("dialog", { name: "Menu" })).getByRole("button", {
-        name: "Inspect selection",
-      }),
-    ).toBeInTheDocument();
+      within(screen.getByRole("dialog", { name: "Menu" })).queryByRole(
+        "button",
+        { name: "Inspect selection" },
+      ),
+    ).not.toBeInTheDocument();
   });
 
   const seedDateProgress = () => {
@@ -2409,6 +2412,304 @@ describe("atlas shell", () => {
       );
       expect(window.localStorage.getItem(WHATS_NEW_STORAGE_KEY)).toBeNull();
       expect(window.localStorage.getItem("bobiverse.app-state.v2")).toBeNull();
+    });
+  });
+
+  // In-app Back (BOB-20261116-ZBZF9F): browser history is a projection of the
+  // card stack. Soft Back only calls history.back(); popstate applies it.
+  describe("browser Back", () => {
+    const seedChapterTwo = () =>
+      window.localStorage.setItem(
+        "bobiverse.app-state.v2",
+        JSON.stringify({
+          furthestChapterRead: "1.2",
+          viewChapter: "1.2",
+          displayDate: "2133",
+          mode: "chapter",
+          timelineZoom: 1,
+          timelinePan: 0,
+        }),
+      );
+    const spyHistory = () => ({
+      push: vi.spyOn(window.history, "pushState"),
+      replace: vi.spyOn(window.history, "replaceState"),
+      back: vi.spyOn(window.history, "back"),
+      forward: vi.spyOn(window.history, "forward"),
+      go: vi.spyOn(window.history, "go"),
+    });
+    const desktopInspector = () =>
+      screen.getByRole("complementary", { name: "Object inspector" });
+    const emptyInspectorText =
+      "Select a map marker or browser item to inspect its reader-safe details.";
+    // Lets queued history traversals and their popstate run.
+    const settle = () => new Promise((resolve) => setTimeout(resolve, 20));
+
+    beforeEach(() => {
+      window.sessionStorage.clear();
+    });
+
+    it("pushes one entry per selection and soft Back calls history.back() once", async () => {
+      seedChapterTwo();
+      const history = spyHistory();
+      const user = userEvent.setup();
+      render(<App />);
+      await user.click(
+        screen.getByRole("button", { name: "Book 1, 2 - Bob Version 2.0" }),
+      );
+      expect(history.push).toHaveBeenCalledTimes(1);
+      expect(window.history.state).toMatchObject({
+        bobiverse: 1,
+        layer: "card",
+        index: 0,
+      });
+      const inspector = desktopInspector();
+      await user.click(
+        within(inspector).getByRole("button", {
+          name: "Location: New Handeltown",
+        }),
+      );
+      expect(history.push).toHaveBeenCalledTimes(2);
+      expect(window.history.state).toMatchObject({ layer: "card", index: 1 });
+
+      await user.click(within(inspector).getByRole("button", { name: "Back" }));
+      expect(history.back).toHaveBeenCalledTimes(1);
+      expect(
+        await within(inspector).findByRole("heading", {
+          name: "2 - Bob Version 2.0",
+        }),
+      ).toBeInTheDocument();
+      await user.click(
+        within(inspector).getByRole("button", { name: "Forward" }),
+      );
+      expect(history.forward).toHaveBeenCalledTimes(1);
+      expect(
+        await within(inspector).findByRole("heading", {
+          name: "New Handeltown",
+        }),
+      ).toBeInTheDocument();
+      await settle();
+      expect(history.push).toHaveBeenCalledTimes(2);
+      expect(history.go).not.toHaveBeenCalled();
+    });
+
+    it("device Back at index 0 closes the card", async () => {
+      seedChapterTwo();
+      const user = userEvent.setup();
+      render(<App />);
+      await user.click(
+        screen.getByRole("button", { name: "Book 1, 2 - Bob Version 2.0" }),
+      );
+      expect(
+        within(desktopInspector()).getByRole("heading", {
+          name: "2 - Bob Version 2.0",
+        }),
+      ).toBeInTheDocument();
+      window.history.back();
+      expect(await screen.findByText(emptyInspectorText)).toBeInTheDocument();
+    });
+
+    it("X on the compact sheet fully dismisses with one go(-(index + 1))", async () => {
+      vi.stubGlobal("matchMedia", compactMatchMedia);
+      seedChapterTwo();
+      const history = spyHistory();
+      const user = userEvent.setup();
+      render(<App />);
+      await user.click(
+        screen.getByRole("button", { name: "Book 1, 2 - Bob Version 2.0" }),
+      );
+      const sheet = await screen.findByRole("dialog", {
+        name: "Selected object",
+      });
+      await user.click(
+        within(sheet).getByRole("button", {
+          name: "Location: New Handeltown",
+        }),
+      );
+      expect(history.push).toHaveBeenCalledTimes(2);
+      await user.click(within(sheet).getByRole("button", { name: "Close" }));
+      expect(
+        screen.queryByRole("dialog", { name: "Selected object" }),
+      ).not.toBeInTheDocument();
+      expect(history.go).toHaveBeenCalledTimes(1);
+      expect(history.go).toHaveBeenCalledWith(-2);
+      await settle();
+      expect(window.history.state).toMatchObject({ layer: "base" });
+      expect(history.go).toHaveBeenCalledTimes(1);
+      expect(history.back).not.toHaveBeenCalled();
+      // Nothing is left to inspect: the stack is closed, not just hidden.
+      await user.click(screen.getByRole("button", { name: "Menu" }));
+      expect(
+        screen.queryByRole("button", { name: "Inspect selection" }),
+      ).not.toBeInTheDocument();
+    });
+
+    it("About pushes one entry; Escape and device Back close it without a second pop", async () => {
+      seedChapterTwo();
+      const history = spyHistory();
+      const user = userEvent.setup();
+      render(<App />);
+      await user.click(
+        screen.getByRole("button", { name: "Book 1, 2 - Bob Version 2.0" }),
+      );
+      const about = () => screen.queryByRole("dialog", { name: /What is/ });
+      await user.click(screen.getByRole("button", { name: "What is this?" }));
+      expect(about()).toBeInTheDocument();
+      expect(history.push).toHaveBeenCalledTimes(2);
+      expect(window.history.state).toMatchObject({
+        layer: "dialog",
+        dialog: "about",
+      });
+      await user.keyboard("{Escape}");
+      expect(about()).not.toBeInTheDocument();
+      expect(history.back).toHaveBeenCalledTimes(1);
+      await settle();
+      expect(history.back).toHaveBeenCalledTimes(1);
+      expect(history.go).not.toHaveBeenCalled();
+      expect(window.history.state).toMatchObject({ layer: "card", index: 0 });
+
+      await user.click(screen.getByRole("button", { name: "What is this?" }));
+      expect(history.push).toHaveBeenCalledTimes(3);
+      window.history.back();
+      await waitFor(() => expect(about()).not.toBeInTheDocument());
+      await settle();
+      expect(history.back).toHaveBeenCalledTimes(2);
+      // The card under the dialog is untouched.
+      expect(
+        within(desktopInspector()).getByRole("heading", {
+          name: "2 - Bob Version 2.0",
+        }),
+      ).toBeInTheDocument();
+    });
+
+    it("auto-shown What's new pushes one entry and device Back closes it", async () => {
+      window.localStorage.setItem(WHATS_NEW_STORAGE_KEY, "0.0.1");
+      seedChapterTwo();
+      const history = spyHistory();
+      render(<App />);
+      const whatsNew = () =>
+        screen.queryByRole("dialog", { name: "What\u2019s new" });
+      expect(whatsNew()).toBeInTheDocument();
+      expect(history.push).toHaveBeenCalledTimes(1);
+      expect(window.history.state).toMatchObject({
+        layer: "dialog",
+        dialog: "whats-new",
+      });
+      window.history.back();
+      await waitFor(() => expect(whatsNew()).not.toBeInTheDocument());
+      expect(window.localStorage.getItem(WHATS_NEW_STORAGE_KEY)).toBe(
+        NEWEST_RELEASE_NOTES_VERSION,
+      );
+      await settle();
+      expect(history.back).toHaveBeenCalledTimes(1);
+      expect(history.push).toHaveBeenCalledTimes(1);
+    });
+
+    it("a confirmed read-through pushes nothing and Back cannot restore the old cards", async () => {
+      seedChapterTwo();
+      const history = spyHistory();
+      const user = userEvent.setup();
+      render(<App />);
+      await user.click(
+        screen.getByRole("button", { name: "Book 1, 2 - Bob Version 2.0" }),
+      );
+      await user.click(
+        within(desktopInspector()).getByRole("button", {
+          name: "Lead character: Bob",
+        }),
+      );
+      expect(history.push).toHaveBeenCalledTimes(2);
+      history.push.mockClear();
+
+      await user.selectOptions(dockReadThrough(), "1.1");
+      await user.click(
+        screen.getByRole("button", { name: "Confirm read through" }),
+      );
+      expect(screen.getByText(emptyInspectorText)).toBeInTheDocument();
+      expect(history.go).toHaveBeenCalledWith(-2);
+      await settle();
+      expect(history.push).not.toHaveBeenCalled();
+      expect(window.history.state).toMatchObject({ layer: "base" });
+      // The old card entries are still in the browser's Forward list, but
+      // from an older generation: Forward cannot bring them back.
+      window.history.forward();
+      await settle();
+      expect(screen.getByText(emptyInspectorText)).toBeInTheDocument();
+      expect(
+        within(desktopInspector()).queryByRole("heading", { name: "Bob" }),
+      ).not.toBeInTheDocument();
+      expect(window.history.state).toMatchObject({ layer: "base" });
+    });
+
+    it("the stepper and selectTimelineChapter push nothing over an open card", async () => {
+      seedChapterTwo();
+      const history = spyHistory();
+      const user = userEvent.setup();
+      render(<App />);
+      await user.click(
+        screen.getByRole("button", { name: "Book 1, 2 - Bob Version 2.0" }),
+      );
+      expect(history.push).toHaveBeenCalledTimes(1);
+      const length = window.history.length;
+      await user.click(
+        screen.getByRole("button", { name: "Previous chapter, Chapter 1.1" }),
+      );
+      expect(
+        within(desktopInspector()).getByRole("heading", {
+          name: "1 - Bob Version 1.0",
+        }),
+      ).toBeInTheDocument();
+      await user.click(
+        screen.getByRole("button", { name: "Book 1, 2 - Bob Version 2.0" }),
+      );
+      await settle();
+      expect(history.push).toHaveBeenCalledTimes(1);
+      expect(window.history.length).toBe(length);
+      expect(window.history.state).toMatchObject({ layer: "card", index: 0 });
+      // Back closes the card rather than stepping through chapters.
+      window.history.back();
+      expect(await screen.findByText(emptyInspectorText)).toBeInTheDocument();
+    });
+
+    it("restores the stack on reload only for the current generation", async () => {
+      seedChapterTwo();
+      const user = userEvent.setup();
+      const first = render(<App />);
+      await user.click(
+        screen.getByRole("button", { name: "Book 1, 2 - Bob Version 2.0" }),
+      );
+      await user.click(
+        within(desktopInspector()).getByRole("button", {
+          name: "Location: New Handeltown",
+        }),
+      );
+      await settle();
+      first.unmount();
+
+      // Same tab, same generation: the card comes back, progress unchanged.
+      const second = render(<App />);
+      expect(
+        within(desktopInspector()).getByRole("heading", {
+          name: "New Handeltown",
+        }),
+      ).toBeInTheDocument();
+      expect(
+        within(desktopInspector()).getByRole("button", { name: "Back" }),
+      ).toBeEnabled();
+      await settle();
+      second.unmount();
+
+      // A different generation is stale and is never restored.
+      const gen = Number(
+        window.sessionStorage.getItem("bobiverse.history-gen"),
+      );
+      window.sessionStorage.setItem("bobiverse.history-gen", String(gen + 5));
+      render(<App />);
+      expect(screen.getByText(emptyInspectorText)).toBeInTheDocument();
+      await settle();
+      expect(window.history.state).toMatchObject({ layer: "base" });
+      expect(
+        JSON.parse(window.localStorage.getItem("bobiverse.app-state.v2")!),
+      ).toMatchObject({ furthestChapterRead: "1.2" });
     });
   });
 });
