@@ -275,8 +275,16 @@ const narrativeWorldProjections = new WeakMap<
 
 /**
  * Hard and soft ceilings for travel histories and other per-world
- * projections. Worlds not built by generateNarrativeWorld fall back to their
- * view chapter and display date.
+ * projections. Generated worlds always carry their own ceilings.
+ *
+ * A world not built by generateNarrativeWorld (a hand-built test world, or a
+ * copy that lost this side table) falls back to its view chapter and
+ * `display_date`, deliberately not to `chapterLatestDate`. Such a world does
+ * not record which view it is: its `display_date` is the chapter's header date
+ * in chapter view but the soft ceiling itself in date view. `chapterLatestDate`
+ * would widen a date-view world past its date and leak later story time, while
+ * `display_date` can only be narrower than a chapter view's ceiling (the header
+ * date is never after the latest date), so it errs on the side of hiding.
  */
 function worldCeilings(world: NarrativeWorld): NarrativeWorldCeilings {
   const projection = narrativeWorldProjections.get(world);

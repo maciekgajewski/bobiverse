@@ -27,6 +27,7 @@ const late = "character:fixture-late";
 const human = "species:fixture-human";
 const moved = "event:fixture-moved";
 const undated = "event:fixture-undated";
+const mars = "location:mars";
 
 function chapter(
   id: string,
@@ -109,6 +110,13 @@ function corpus() {
     chapter("1.6", "2185-04", {
       updates: [{ entity_id: alex, current_state: "alex 2185-04 later read" }],
     }),
+    // Other soft-ceiling properties: a death and a colony written in 2190-02.
+    chapter("1.7", "2190-02", {
+      updates: [
+        { entity_id: alex, death_date: "2190-01" },
+        { entity_id: mars, colony_of: [human] },
+      ],
+    }),
   ];
   return base;
 }
@@ -190,6 +198,55 @@ describe("two-ceiling narrative projection", () => {
     expect(ids(at("1.3", "2165-02")).has(kai)).toBe(false);
     // Zero-state entities exist at every soft ceiling.
     expect(ids(at("1.1", "2160-01")).has("location:earth")).toBe(true);
+  });
+
+  it("hides death_date and colony_of written after the soft ceiling", () => {
+    const before = at("1.7", "2190-01");
+    expect(find(before, alex)).not.toHaveProperty("death_date");
+    expect(find(before, mars)).not.toHaveProperty("colony_of");
+    // Read, but dated after the soft ceiling: the same as unread for state.
+    expect(find(at("1.7", "2185"), alex)).not.toHaveProperty("death_date");
+    const after = at("1.7", "2190-02");
+    expect(find(after, alex)?.death_date).toBe("2190-01");
+    expect(find(after, mars)?.colony_of).toEqual([human]);
+    expect(softCeilingProperties.has("death_date")).toBe(true);
+    expect(softCeilingProperties.has("colony_of")).toBe(true);
+  });
+
+  it("lists exactly the read entities that do not exist yet, with hard-ceiling fields and no state", () => {
+    const beforeIds = (world: NarrativeWorld) =>
+      narrativeEntitiesBeforeExistence(world).map((entity) => entity.id);
+    // Kai is introduced in 2170-06 and not yet seen at 2165-03.
+    const early = at("1.2", "2165-03");
+    expect(beforeIds(early)).toEqual([kai]);
+    const kaiBefore = narrativeEntitiesBeforeExistence(early)[0]!;
+    expect(kaiBefore).toMatchObject({
+      id: kai,
+      entity_type: "character",
+      name: "Fixture Kai",
+      species_id: human,
+    });
+    expect(kaiBefore).not.toHaveProperty("current_state");
+    expect(ids(early).has(kai)).toBe(false);
+    // The moved event waits for its current date; Kai now exists via 1.3.
+    const moving = at("1.4", "2165-03");
+    expect(beforeIds(moving)).toEqual([moved]);
+    expect(narrativeEntitiesBeforeExistence(moving)[0]).toMatchObject({
+      name: "Fixture moved event",
+      date: "2172-02",
+    });
+    // Unread entities are never listed; existing ones never are either.
+    expect(beforeIds(at("1.5", "2185-03"))).toEqual([late]);
+    expect(beforeIds(at("1.6", "2190"))).toEqual([]);
+    // Zero state and hand-built worlds list nothing.
+    expect(beforeIds(generateNarrativeWorld(prepared))).toEqual([]);
+    expect(
+      narrativeEntitiesBeforeExistence({
+        entities: [],
+        activity: [],
+        view: { chapter: null, display_date: null },
+      }),
+    ).toEqual([]);
   });
 
   it("counts a year- or month-precision fact for its whole period", () => {
