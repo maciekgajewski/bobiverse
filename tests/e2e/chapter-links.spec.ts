@@ -57,7 +57,9 @@ test("desktop: the badge and an info card's recency chapter open chapter cards",
   const inspector = page.getByRole("complementary", {
     name: "Object inspector",
   });
-  await expect(inspector.locator(".chapter-title-label")).toHaveText("Chapter");
+  await expect(inspector.locator(".chapter-seq-eyebrow-word")).toHaveText(
+    "Chapter",
+  );
 
   await page
     .getByRole("complementary", { name: "Object browser" })
@@ -76,7 +78,9 @@ test("desktop: the badge and an info card's recency chapter open chapter cards",
   const link = recency.getByRole("button", { name: /^Chapter 1\.\d+$/ });
   const chapter = (await link.textContent())!.replace("Chapter ", "");
   await link.click();
-  await expect(inspector.locator(".chapter-title-label")).toHaveText("Chapter");
+  await expect(inspector.locator(".chapter-seq-eyebrow-word")).toHaveText(
+    "Chapter",
+  );
   await expect(badge).toHaveText(
     `Latest known · Knowledge through Chapter ${chapter}`,
   );
@@ -119,7 +123,9 @@ for (const [width, height] of [
 
     await link.click();
     const sheet = page.getByRole("dialog", { name: "Selected object" });
-    await expect(sheet.locator(".chapter-title-label")).toHaveText("Chapter");
+    await expect(sheet.locator(".chapter-seq-eyebrow-word")).toHaveText(
+      "Chapter",
+    );
     expect(await savedProgress(page)).toMatchObject({
       furthestChapterRead: "1.20",
       viewChapter: "1.18",

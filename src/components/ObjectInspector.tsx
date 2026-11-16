@@ -21,13 +21,17 @@ import {
   type HeaderIllustration,
 } from "../narrative/header-illustration";
 import { disambiguatedEntityLabel } from "../narrative/entity-label";
-import type { CharacterInspectorSectionState } from "../narrative/progress";
+import type {
+  CharacterInspectorSectionState,
+  NarrativeChapterSummary,
+} from "../narrative/progress";
 import { defaultCharacterInspectorSectionState } from "../narrative/progress";
 import { SystemDetails } from "./SystemDetails";
 import { ObjectItemBullet } from "./ObjectBrowserIcons";
 import { NarrativeText } from "./NarrativeText";
 import type { SystemViewEntry } from "../system-view";
 import { ENABLE_ENTER_SYSTEM } from "../features";
+import { ChapterStepper } from "./ChapterStepper";
 
 const typeLabels: Record<NarrativeEntity["entity_type"], string> = {
   character: "Character",
@@ -812,6 +816,9 @@ function ChapterDetails({
   assets,
   headingId,
   onSelect,
+  onChapterSelect,
+  chapters,
+  readThroughChapter,
   inlineLinkFallbacks,
 }: {
   detail: NarrativeChapterDetail;
@@ -819,6 +826,9 @@ function ChapterDetails({
   assets: NarrativeRecord;
   headingId: string;
   onSelect: (selection: SelectionIdentity) => void;
+  onChapterSelect: (chapter: string) => void;
+  chapters: readonly NarrativeChapterSummary[];
+  readThroughChapter: string | null;
   inlineLinkFallbacks: ReadonlyMap<string, readonly string[]>;
 }) {
   const entitiesById = useMemo(
@@ -840,7 +850,15 @@ function ChapterDetails({
       <p className="chapter-book-title">
         Book {detail.bookNumber} · {detail.bookTitle}
       </p>
-      <p className="eyebrow chapter-title-label">Chapter</p>
+      <div className="eyebrow chapter-title-label">
+        <span className="chapter-seq-eyebrow-word">Chapter</span>
+        <ChapterStepper
+          chapter={detail.chapter}
+          chapters={chapters}
+          readThroughChapter={readThroughChapter}
+          onChapterSelect={onChapterSelect}
+        />
+      </div>
       <h2 id={headingId}>{detail.title}</h2>
       <ChapterContext detail={detail} onSelect={onSelect} />
       <Picture pictureId={detail.pictureId} assets={assets} alt={pictureAlt} />
@@ -947,6 +965,7 @@ export function ObjectInspector({
   onSelect,
   onChapterSelect = () => undefined,
   readThroughChapter = null,
+  chapters = [],
   travelStops = [],
   sectionState = defaultCharacterInspectorSectionState(),
   onToggleSection = () => undefined,
@@ -977,6 +996,8 @@ export function ObjectInspector({
    * it chapters in the recency line are plain text.
    */
   readThroughChapter?: string | null;
+  /** Catalogue used by the chapter eyebrow stepper to find previous / next. */
+  chapters?: readonly NarrativeChapterSummary[];
   travelStops?: readonly CharacterTravelStop[];
   sectionState?: CharacterInspectorSectionState;
   onToggleSection?: (section: keyof CharacterInspectorSectionState) => void;
@@ -1037,6 +1058,9 @@ export function ObjectInspector({
         assets={assets}
         headingId={headingId}
         onSelect={onSelect}
+        onChapterSelect={onChapterSelect}
+        chapters={chapters}
+        readThroughChapter={readThroughChapter}
         inlineLinkFallbacks={inlineLinkFallbacks}
       />,
     );

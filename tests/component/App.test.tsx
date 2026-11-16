@@ -656,7 +656,7 @@ describe("atlas shell", () => {
       );
       expect(
         within(inspector()).getByText("Chapter", {
-          selector: ".chapter-title-label",
+          selector: ".chapter-seq-eyebrow-word",
         }),
       ).toBeInTheDocument();
       expect(saved()).toMatchObject({
@@ -704,7 +704,7 @@ describe("atlas shell", () => {
       await user.click(link);
       expect(
         within(inspector()).getByText("Chapter", {
-          selector: ".chapter-title-label",
+          selector: ".chapter-seq-eyebrow-word",
         }),
       ).toBeInTheDocument();
       expect(saved()).toMatchObject({
