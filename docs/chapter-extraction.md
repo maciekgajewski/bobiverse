@@ -559,6 +559,20 @@ Run narrative and astronomy validation against that exact prior root.
 Canonical-master success is not a substitute. If it requires new acquisition, stage
 it as below before proceeding.
 
+Revision targets differ. When canonical chapters exist at or after the target (a
+correction to an existing chapter), the prior root is a strict prefix of the
+canonical chain, while the species presentation registry and the pinned astronomy
+describe the whole chain. The pinned GCNS and CNS5 plans are exact for the whole
+chain's anchors, so a prefix with fewer anchors correctly fails the exact-plan guard
+(step 8 below), and a registry assignment to a species that a later chapter
+introduces is a forward reference, not a prior-chain defect. The extraction preflight
+therefore validates the prefix's narrative with only those forward assignments
+withheld (it lists them), and validates astronomy on the full canonical chain at the
+base revision. Anchor discovery accumulates in reading order, so the prefix's anchors
+are a subset of the canonical ones that check covers. Every other registry entry and
+every prior-chain failure still fails item 8, and Checklist B still validates the
+whole corpus with the candidate.
+
 Under ADR-0016, an exact normalized narrative name that is unique across one accepted
 astronomy system's effective name and aliases receives a deterministic source-backed
 bootstrap without separate Captain approval. Normalization only case-folds, trims,

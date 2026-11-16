@@ -39,7 +39,11 @@ spawning for both passes; the run's own records attest those settings.
    `books.json` `chapter_count` (`1.61` precedes `2.1`).
 8. Run both validators from §Candidate assembly and temporary corpus on that prior
    root. An astronomy failure here is a baseline problem: stop and report it
-   (§Astronomy preflight and isolated acquisition).
+   (§Astronomy preflight and isolated acquisition). For a revision target, with
+   canonical chapters at or after it, the prior root's presentation registry
+   withholds only assignments to species those chapters introduce, and astronomy is
+   validated on the full canonical chain instead (§Astronomy preflight and isolated
+   acquisition).
 9. Isolation plan: separate fresh contexts for Pass 1 and Pass 2, and the exact Pass
    1 staging list (§Context isolation).
 

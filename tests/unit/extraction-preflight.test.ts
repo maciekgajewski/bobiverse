@@ -105,29 +105,58 @@ function buildRepository(chapters: string[]) {
       readFileSync(path.join(repositoryRoot, file), "utf8"),
     );
   }
+  // The fake validators model the two whole-chain checks a prefix can trip: species
+  // presentation assignments must name a species the root introduces, and the
+  // pinned astronomy plan must cover exactly the root's mapped anchors.
   write(
     path.join(repository, "node_modules/.bin/tsx"),
-    [
-      "#!/bin/sh",
-      'echo "tsx $*" >> "$PREFLIGHT_FAKE_LOG"',
-      'if [ -n "$FAKE_NARRATIVE_FAIL" ]; then echo "fixture narrative error" >&2; exit 1; fi',
-      'echo "Validated fixture narrative"',
-      "",
-    ].join("\n"),
+    String.raw`#!${python}
+import json, os, sys
+from pathlib import Path
+args = sys.argv[1:]
+with open(os.environ["PREFLIGHT_FAKE_LOG"], "a") as log:
+    log.write("tsx " + " ".join(args) + "\n")
+if os.environ.get("FAKE_NARRATIVE_FAIL"):
+    sys.exit("fixture narrative error")
+root = Path(args[args.index("--root") + 1]) if "--root" in args else Path("data/narrative")
+base = root.parent if root.name == "narrative" else root
+known = set()
+for chapter in sorted(root.glob("chapters/*/*.json")):
+    document = json.loads(chapter.read_text())
+    if document.get("broken"):
+        sys.exit(f"{chapter}: fixture chapter error")
+    known.update(e["id"] for e in document.get("introducing", []) if e["id"].startswith("species:"))
+for assignment in json.loads((base / "presentation/species.json").read_text()).get("assignments", []):
+    if assignment["species_id"] not in known:
+        sys.exit(f"error: Species presentation assignment references unknown species {assignment['species_id']}.")
+print("Validated fixture narrative")
+`,
     0o755,
   );
   write(
     path.join(repository, ".venv/bin/python"),
-    [
-      "#!/bin/sh",
-      'echo "python $*" >> "$PREFLIGHT_FAKE_LOG"',
-      'case "$FAKE_DATA" in',
-      `  uncovered) echo "ValueError: ${uncoveredAnchor}" >&2; exit 1;;`,
-      '  baseline) echo "ValueError: fixture baseline failure" >&2; exit 1;;',
-      "esac",
-      'echo "Validated fixture astronomy"',
-      "",
-    ].join("\n"),
+    String.raw`#!${python}
+import json, os, sys
+from pathlib import Path
+args = sys.argv[1:]
+with open(os.environ["PREFLIGHT_FAKE_LOG"], "a") as log:
+    log.write("python " + " ".join(args) + "\n")
+if os.environ.get("FAKE_DATA") == "uncovered":
+    sys.exit("ValueError: ${uncoveredAnchor}")
+if os.environ.get("FAKE_DATA") == "baseline":
+    sys.exit("ValueError: fixture baseline failure")
+root = Path(args[args.index("--narrative-root") + 1]) if "--narrative-root" in args else Path("data/narrative")
+anchors = set()
+for chapter in root.glob("chapters/*/*.json"):
+    anchors.update(json.loads(chapter.read_text()).get("anchors", []))
+plan = Path("data/astronomy-plan.json")
+pinned = set(json.loads(plan.read_text())["anchors"]) if plan.exists() else set()
+if anchors - pinned:
+    sys.exit("ValueError: ${uncoveredAnchor}: " + ", ".join(sorted(anchors - pinned)))
+if anchors != pinned:
+    sys.exit("ValueError: GCNS acquisition queries differ from the exact plan")
+print("Validated fixture astronomy")
+`,
     0o755,
   );
   git(repository, "init", "-q");
@@ -994,6 +1023,219 @@ describe("extraction preflight", () => {
       expect(itemOf(result.report, 8).evidence.failure_classes).toEqual([
         "astronomy-baseline",
       ]);
+    });
+  });
+
+  describe("item 8 on a revision target", () => {
+    // Revising 1.2 of a canonical 1.1-1.4: the prior root is the prefix 1.1, while
+    // 1.3 introduces species:late and maps anchor:b. As in the real corpus, the
+    // presentation registry and the pinned plan describe the whole chain.
+    function buildRevisionChain(
+      overrides: Record<string, Record<string, unknown>> = {},
+      assignments: string[] = ["species:late"],
+    ) {
+      const narrative = path.join(repository, "data/narrative");
+      rmSync(path.join(narrative, "chapters"), {
+        recursive: true,
+        force: true,
+      });
+      const chapters: Record<string, Record<string, unknown>> = {
+        "1.1": { chapter: "1.1", anchors: ["anchor:a"] },
+        "1.2": { chapter: "1.2" },
+        "1.3": {
+          chapter: "1.3",
+          introducing: [{ id: "species:late" }],
+          anchors: ["anchor:b"],
+        },
+        "1.4": { chapter: "1.4" },
+        ...overrides,
+      };
+      for (const [chapter, document] of Object.entries(chapters)) {
+        const [book, number] = chapter.split(".");
+        writeJson(
+          path.join(narrative, `chapters/${book}/${number}.json`),
+          document,
+        );
+      }
+      writeJson(path.join(repository, "data/presentation/species.json"), {
+        species: [],
+        assignments: assignments.map((id) => ({
+          species_id: id,
+          style_id: "style:fixture",
+        })),
+      });
+      writeJson(path.join(repository, "data/astronomy-plan.json"), {
+        anchors: ["anchor:a", "anchor:b"],
+      });
+      git(repository, "add", "-A");
+      git(repository, "commit", "-q", "-m", "fixture revision chain");
+    }
+
+    function runFake(executable: string, args: string[]) {
+      return spawnSync(path.join(repository, executable), args, {
+        cwd: repository,
+        encoding: "utf8",
+        env: { PREFLIGHT_FAKE_LOG: validatorLog },
+      });
+    }
+
+    it("models both failures of the unscoped prefix, as the real validators raised them", () => {
+      buildRevisionChain();
+      const prefix = path.join(fixture, "unscoped-prefix");
+      writeJson(path.join(prefix, "chapters/1/1.json"), {
+        chapter: "1.1",
+        anchors: ["anchor:a"],
+      });
+      writeJson(
+        path.join(prefix, "presentation/species.json"),
+        JSON.parse(
+          readFileSync(
+            path.join(repository, "data/presentation/species.json"),
+            "utf8",
+          ),
+        ),
+      );
+
+      const narrative = runFake("node_modules/.bin/tsx", [
+        "scripts/narrative-cli.ts",
+        "validate",
+        "--root",
+        prefix,
+      ]);
+      const astronomy = runFake(".venv/bin/python", [
+        "scripts/validate_data.py",
+        "--narrative-root",
+        prefix,
+      ]);
+
+      expect(narrative.status).toBe(1);
+      expect(narrative.stderr).toContain(
+        "Species presentation assignment references unknown species species:late.",
+      );
+      expect(astronomy.status).toBe(1);
+      expect(astronomy.stderr).toContain(
+        "GCNS acquisition queries differ from the exact plan",
+      );
+    });
+
+    it("passes a revision whose later chapters introduce a species and an anchor", () => {
+      buildRevisionChain();
+
+      const result = runPreflight({ chapter: "1.2" });
+
+      expect(result.status, result.stderr).toBe(0);
+      expect(failedItems(result.report)).toEqual([]);
+      const priorRoot = path.join(workspace, "prior-root");
+      expect(itemOf(result.report, 7).evidence).toMatchObject({
+        chapters: ["1.1"],
+        later_canonical_chapters: ["1.2", "1.3", "1.4"],
+        presentation: {
+          source: "data/presentation/species.json",
+          scope: "prior chain",
+          withheld_forward_assignments: [
+            { species_id: "species:late", introduced_in: "1.3" },
+          ],
+        },
+      });
+      const scoped = JSON.parse(
+        readFileSync(path.join(priorRoot, "presentation/species.json"), "utf8"),
+      ) as { assignments: unknown[] };
+      expect(scoped.assignments).toEqual([]);
+      const canonical = path.join(repository, "data/narrative");
+      expect(readFileSync(validatorLog, "utf8").trim().split("\n")).toEqual([
+        "tsx scripts/narrative-cli.ts validate",
+        `tsx scripts/narrative-cli.ts validate --root ${priorRoot}`,
+        `python scripts/validate_data.py --narrative-root ${canonical}`,
+      ]);
+      const validators = itemOf(result.report, 8);
+      expect(validators.evidence).toMatchObject({
+        prior_root: priorRoot,
+        astronomy_root: canonical,
+        astronomy_basis: "canonical chain at the base revision",
+      });
+      expect(validators.limits.join(" ")).toContain(
+        "canonical chapters 1.2 to 1.4 follow the prior root",
+      );
+      expect(git(repository, "status", "--porcelain")).toBe("");
+    });
+
+    it("withholds nothing the prior chain already introduces", () => {
+      buildRevisionChain();
+
+      const result = runPreflight({ chapter: "1.4" });
+
+      expect(result.status, result.stderr).toBe(0);
+      expect(itemOf(result.report, 7).evidence).toMatchObject({
+        chapters: ["1.1", "1.2", "1.3"],
+        later_canonical_chapters: ["1.4"],
+        presentation: { withheld_forward_assignments: [] },
+      });
+    });
+
+    it("keeps a tip target entirely on the prior root", () => {
+      buildRevisionChain();
+
+      const result = runPreflight({ chapter: "1.5" });
+
+      expect(result.status, result.stderr).toBe(0);
+      const evidence = itemOf(result.report, 7).evidence;
+      expect(evidence).not.toHaveProperty("later_canonical_chapters");
+      expect(evidence).not.toHaveProperty("presentation");
+      const priorRoot = path.join(workspace, "prior-root");
+      expect(readFileSync(validatorLog, "utf8")).toContain(
+        `python scripts/validate_data.py --narrative-root ${priorRoot}`,
+      );
+      expect(itemOf(result.report, 8).evidence).not.toHaveProperty(
+        "astronomy_root",
+      );
+    });
+
+    it("still fails a broken chapter in the prior chain", () => {
+      buildRevisionChain({
+        "1.1": { chapter: "1.1", anchors: ["anchor:a"], broken: true },
+      });
+
+      const result = runPreflight({ chapter: "1.2" });
+
+      expect(result.status).toBe(1);
+      expect(failedItems(result.report)).toContain(8);
+      expect(itemOf(result.report, 8).evidence.failure_classes).toEqual([
+        "narrative",
+      ]);
+    });
+
+    it("still fails an assignment to a species no canonical chapter introduces", () => {
+      buildRevisionChain({}, ["species:late", "species:misspelt"]);
+
+      const result = runPreflight({ chapter: "1.2" });
+
+      expect(result.status).toBe(1);
+      expect(failedItems(result.report)).toContain(8);
+      expect(itemOf(result.report, 7).evidence.presentation).toMatchObject({
+        withheld_forward_assignments: [
+          { species_id: "species:late", introduced_in: "1.3" },
+        ],
+      });
+      const validators = itemOf(result.report, 8).evidence;
+      expect(validators.failure_classes).toEqual(["narrative"]);
+      expect(JSON.stringify(validators.results)).toContain(
+        "unknown species species:misspelt",
+      );
+    });
+
+    it("still fails a prior-chain anchor the pinned plan does not cover", () => {
+      buildRevisionChain({
+        "1.1": { chapter: "1.1", anchors: ["anchor:a", "anchor:unpinned"] },
+      });
+
+      const result = runPreflight({ chapter: "1.2" });
+
+      expect(result.status).toBe(1);
+      expect(failedItems(result.report)).toEqual([8]);
+      expect(itemOf(result.report, 8).evidence).toMatchObject({
+        failure_classes: ["uncovered-anchor"],
+        see: "§Astronomy preflight and isolated acquisition",
+      });
     });
   });
 
