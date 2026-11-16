@@ -1,7 +1,12 @@
 {
   "books": {
     "1": {
-      "title": "We Are Legion (We are Bob)"
+      "title": "We Are Legion (We are Bob)",
+      "chapter_count": 61
+    },
+    "2": {
+      "title": "For We Are Many",
+      "chapter_count": 57
     }
   }
 }

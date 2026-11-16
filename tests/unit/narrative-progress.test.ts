@@ -448,6 +448,66 @@ describe("reader progress", () => {
       expect(refused.furthestChapterRead).toBe("1.2");
     });
 
+    it("orders and clamps chapters numerically across a book boundary", () => {
+      const acrossBooks: NarrativeChapterSummary[] = [
+        "2.10",
+        "1.61",
+        "2.2",
+        "2.1",
+        "1.60",
+        "2.9",
+      ].map((chapter) => ({
+        chapter,
+        title: chapter,
+        date: "2200",
+        bookTitle: "Fixture",
+      }));
+
+      expect(adjacentKnowledgeChapters("1.61", "2.10", acrossBooks)).toEqual({
+        prev: "1.60",
+        next: "2.1",
+        atReadThrough: false,
+        atLastChapter: false,
+      });
+      expect(adjacentKnowledgeChapters("2.1", "2.10", acrossBooks)).toEqual({
+        prev: "1.61",
+        next: "2.2",
+        atReadThrough: false,
+        atLastChapter: false,
+      });
+      expect(
+        adjacentKnowledgeChapters("2.9", "2.10", acrossBooks),
+      ).toMatchObject({ prev: "2.2", next: "2.10" });
+      expect(
+        adjacentKnowledgeChapters("2.10", "2.10", acrossBooks),
+      ).toMatchObject({ prev: "2.9", next: null, atLastChapter: true });
+      // Read through 1.61 keeps the stepper and selector out of book 2.
+      expect(
+        adjacentKnowledgeChapters("1.61", "1.61", acrossBooks),
+      ).toMatchObject({ next: null, atReadThrough: true });
+      const atEndOfBookOne = {
+        ...empty,
+        furthestChapterRead: "1.61",
+        viewChapter: "1.61",
+        displayDate: "2200",
+      };
+      expect(selectKnowledgeChapter(atEndOfBookOne, "2.1", acrossBooks)).toBe(
+        atEndOfBookOne,
+      );
+      // 2.10 sorts after 2.9, not between 2.1 and 2.2.
+      const readToNine = { ...atEndOfBookOne, furthestChapterRead: "2.9" };
+      expect(selectKnowledgeChapter(readToNine, "2.10", acrossBooks)).toBe(
+        readToNine,
+      );
+      expect(
+        selectKnowledgeChapter(
+          { ...atEndOfBookOne, furthestChapterRead: "2.10" },
+          "2.9",
+          acrossBooks,
+        ).viewChapter,
+      ).toBe("2.9");
+    });
+
     it("treats the last catalogue chapter as the end of the stepper", () => {
       expect(adjacentKnowledgeChapters("1.3", "1.3", chapters)).toEqual({
         prev: "1.2",
