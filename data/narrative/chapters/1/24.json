@@ -13,7 +13,7 @@
     {
       "id": "event:four-asteroid-diversion",
       "name": "Diversion of the four asteroids",
-      "date": "2157",
+      "date": "2157-04",
       "location_id": "location:sol",
       "description": "[[character:riker]] and [[character:homer]] redirect four asteroids away from [[location:earth]] by replacing their drive controllers and hot-wiring the systems for sideways thrust. Riker assesses the impacts as extinction-level, and the replacement controllers place the asteroids in long-period, high-inclination orbits that will not cross Earth's orbit.",
       "participant_ids": ["character:riker", "character:homer"]
