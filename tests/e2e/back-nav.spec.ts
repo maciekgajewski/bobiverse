@@ -63,6 +63,10 @@ for (const layout of [
     test("Back closes What's new, walks the cards, closes the card, then leaves; Forward restores one step", async ({
       page,
     }) => {
+      // A page the reader used before opening the atlas. Firefox skips
+      // history entries the user never interacted with, so it gets a click.
+      await page.setContent("<button>Before the atlas</button>");
+      await page.getByRole("button", { name: "Before the atlas" }).click();
       await seed(page, "0.0.1");
       await page.goto("/");
       const whatsNew = page.getByRole("dialog", { name: "What\u2019s new" });
@@ -70,6 +74,9 @@ for (const layout of [
       // Browsers skip entries pushed before any user interaction, so the
       // reader touches the notes first, as a real reader would.
       await whatsNew.getByRole("heading", { name: "Version 0.9.0" }).click();
+      await expect
+        .poll(() => page.evaluate(() => window.history.state?.layer))
+        .toBe("dialog");
       await page.goBack();
       await expect(whatsNew).toBeHidden();
 
