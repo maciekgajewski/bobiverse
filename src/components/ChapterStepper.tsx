@@ -7,11 +7,7 @@ import {
 function isEditableTarget(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false;
   if (target.isContentEditable) return true;
-  return Boolean(
-    target.closest("input, textarea, select, [contenteditable='true']") ??
-    (target.isContentEditable ? target : null) ??
-    target.closest("[contenteditable]"),
-  );
+  return Boolean(target.closest("input, textarea, select, [contenteditable]"));
 }
 
 function hasBlockingDialog(): boolean {
