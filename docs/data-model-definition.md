@@ -1229,18 +1229,16 @@ supplemental mentions, and their mapped-system ancestry use the enclosing chapte
 date. `mention` is the supplemental reference's only direct reason; a mentioned mapped
 location also derives `mapped_system_ancestry`. Event
 introductions and updates use the event's own date when it is known; otherwise they
-remain chronologically unplaced with `effective_date: null`. Event locations and
+are dated as defined in `design-principles.md`. Event locations and
 participants use that same effective event date. Every active narrative location also
 activates its mapped narrative star-system ancestor, if one exists, without copying
 astronomy identity or physical facts into the narrative record.
 
-Chapter-mode consumers use source chapter reader order. Date-mode consumers first
-apply the shared calendar-range eligibility rule, then compare two dated activity
-facts by their narrative moments. Non-overlapping ranges use Gregorian order;
+Consumers first apply the shared calendar-range eligibility rule, then compare two
+dated activity facts by their narrative moments. Non-overlapping ranges use Gregorian order;
 identical calendar portions use suffix then canonical chapter; overlapping
 unequal-precision chapter facts use canonical chapter.
-Unplaced records remain available to chapter context but have no narrative moment and
-are not date-positioned. The generated activity array uses a deterministic topological
+Undated records are dated as defined in `design-principles.md`. The generated activity array uses a deterministic topological
 order that preserves every definite narrative-moment relation. Stable array placement
 among undated, tied, or incomparable records is serialization order only and does not
 assert story chronology. Activity is a read-only presentation index. It never changes
@@ -1267,23 +1265,11 @@ The application keeps two optional global values:
 
 Projection begins with the zero-state source. Before a reader selects a chapter, the
 generated world is that complete snapshot alone; neither optional progress value is
-required for that result. A chapter view applies the following two independent stages
-to the zero state:
-
-1. Reader order is the spoiler gate. Select only chapter records at or before
-   `viewChapter`, comparing the numeric components of `chapter`. Those records are
-   the facts the reader is allowed to know.
-2. Story time is the world-state gate. Every state-bearing property supplied by an
-   introduction or ordinary update has the effective story date of its enclosing
-   chapter, unless a non-event, non-location update supplies `effective_date`
-   (ADR-0028); dated events keep their own `date`. A chapter view applies every
-   reader-visible value with no story-time cutoff and, for each entity property,
-   uses the value from the latest-read chapter (story-date order only breaks ties
-   within one chapter), so it shows the latest known state from all chapters read
-   so far, whatever their dates (ADR-0028). A Date-mode view applies only
-   reader-visible values whose effective date is definitively at or before the
-   requested display date, then uses the chronologically latest value.
-   The chapter view still reports `viewChapter.date` as its `display_date`.
+required for that result. Every state-bearing property supplied by an introduction or
+ordinary update has the effective story date of its enclosing chapter, unless a
+non-event, non-location update supplies `effective_date` (ADR-0028); dated events
+keep their own `date`. The hard and soft ceilings, and how views select state, are
+defined in `design-principles.md`.
 
 Raw zero-state, asset, book, and chapter records must first cross
 `prepareNarrativeCorpus`. That boundary performs one complete structural and semantic
@@ -1310,13 +1296,6 @@ surfaces commit that result together. Chapter detail is a typed immutable runtim
 view, not a second world or generated snapshot. State that does not change the
 knowledge chapter, display date, or mode does not generate another world.
 
-A future date-exploration UI may request any valid story date as the cutoff,
-including a date earlier or later than the selected chapter. It
-must reuse the same reader-visible chapter set chosen in stage 1; it must not load or
-infer a later chapter merely because that chapter has an earlier effective date. Its
-result is therefore the world state inferred from the reader's selected chapter
-knowledge, not an assertion of the complete in-universe state at that date.
-
 Dated chapter-authored facts compare an ordering moment made from the effective story
 date and source chapter. Non-overlapping Gregorian ranges order chronologically.
 Identical calendar portions compare effective suffix, then canonical numeric chapter;
@@ -1325,15 +1304,12 @@ appearances, dated events, activity, sightings, and travel history use this same
 fact-to-fact contract.
 
 The chapter fallback does not apply to a requested display date. Eligibility is
-date-only: earlier non-overlap, identical calendar portions at or below the display
-suffix, and facts contained by the display range are eligible; later non-overlap and
-facts containing a less-precise display range are not. Meaningful-date controls may
-retain ordering-distinct values with the same reader-visible label.
-Chronologically unplaced events remain reader-visible but have no narrative moment.
+date-only and follows the calendar-precision rule in `design-principles.md`.
+Meaningful-date controls may retain ordering-distinct values with the same
+reader-visible label.
 
-An event uses its projected optional `date` for its in-universe occurrence. If that
-value is absent, it remains reader-visible after its introduction but is not placed at
-a precise story-time point. Story `date` is never used to grant reader visibility.
+An event uses its projected optional `date` for its in-universe occurrence. Story
+`date` is never used to grant reader visibility.
 
 ## Zero-state and chapter-authored source records
 
@@ -1575,8 +1551,8 @@ update object has `entity_id` plus one or more ordinary properties of that entit
   optional `effective_date` (ADR-0028). It is not an entity property: it places
   every property in that update at that story date instead of the chapter's date. It
   must be on or before the chapter's own `date` (definitively eligible at it).
-  Revealing stays with the chapter: the update is invisible to any reader-knowledge
-  view earlier than its chapter, whatever its date. It must not be earlier than the
+  Revealing stays with the chapter: the update is invisible at any read-through
+  earlier than its chapter, whatever its date. It must not be earlier than the
   date of the chapter that introduced the entity. An update must still supply at
   least one ordinary property.
 - An omitted property is unchanged.
@@ -1630,7 +1606,7 @@ capabilities use entity-centered language such as “It can” or “It is used 
 named-character relationship appears only when it is defining or a source-supported
 assessment must be attributed. `state` is reader-visible free text with no global
 controlled vocabulary. Every `current_state` is one or two concise sentences about
-only the latest known condition, never identity prose, history, a chapter synopsis,
+only the condition as of its effective date, never identity prose, history, a chapter synopsis,
 or an accumulated adventure log. A description omits clauses and sentences that only
 announce unrevealed, unknown, unexplained, unavailable, unspecified, or otherwise
 missing knowledge; those gaps remain in extraction evidence and review artifacts.
@@ -1861,7 +1837,7 @@ are a canonical `character:` ID and a nonempty reader-visible `name`.
 | `species_id`     | optional `species_id`                     | Reference to an introduced species entity.                                                                                                                                               |
 | `parent_id`      | optional `character_id`                   | One source-supported direct parent character.                                                                                                                                            |
 | `description`    | optional nonempty string                  | Who the character is: a stable identity blurb (about 300 characters as a guideline, not a hard limit). Optional inline `[[kind:slug]]` links are allowed. Distinct from `current_state`. |
-| `current_state`  | optional nonempty string                  | One or two concise sentences describing only the character's latest known condition.                                                                                                     |
+| `current_state`  | optional nonempty string                  | One or two concise sentences describing only the character's condition as of its date.                                                                                                   |
 | `picture_id`     | optional `asset_id`                       | Chapter-controlled assignment of a manually curated image asset.                                                                                                                         |
 | `aliases`        | optional array of unique nonempty strings | Additional reader-visible names that become searchable only when introduced or updated.                                                                                                  |
 | `birth_date`     | optional `date`                           | Known birth date at the available story-time precision.                                                                                                                                  |
@@ -1979,7 +1955,7 @@ canonical `event:` ID and a nonempty reader-visible `name`.
 | `name`            | nonempty string                                | Reader-visible event name.                                                                                                   |
 | `location_id`     | optional `location_id`                         | Reference to any seeded or introduced narrative location, including transit or explicitly unmapped locations.                |
 | `picture_id`      | optional `asset_id`                            | Chapter-controlled assignment of a manually curated image asset.                                                             |
-| `date`            | optional `date`                                | Story-time occurrence date; when absent, the event remains chronologically unplaced.                                         |
+| `date`            | optional `date`                                | Story-time occurrence date; when absent, it is dated as in `design-principles.md`.                                           |
 | `description`     | optional nonempty string                       | Original reader-visible summary; it must not copy book text.                                                                 |
 | `participant_ids` | optional array of unique `character_id` values | Named character participants. Omission asserts no participant information; `[]` states that no named character participates. |
 
@@ -1988,8 +1964,7 @@ supplied with `null` to clear their prior values. A supplied list replaces the c
 previous `participant_ids` list. Each supplied location, asset, or character reference
 must resolve to an already seeded or introduced entity of the matching type.
 
-An event's effective occurrence date is its currently projected `date`. If that value
-is absent, the event remains reader-visible but has no precise story-time placement. A
+An event's effective occurrence date is its currently projected `date`. A
 later reader-visible update may therefore reveal, correct, or clear an event date.
 Event visibility remains governed by reader order; the occurrence date places an
 already visible event in story time and never grants spoiler visibility.

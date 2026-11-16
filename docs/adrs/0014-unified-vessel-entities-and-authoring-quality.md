@@ -34,7 +34,7 @@ instead of defining its general capabilities.
   capabilities, and limitations. Its current state records only a meaningful latest
   operational condition.
 - Every `current_state`, regardless of entity type, is an editorially enforced
-  one- or two-sentence account of the latest known condition. It is not a biography,
+  one- or two-sentence account of the condition as of its effective date. It is not a biography,
   identity definition, chapter summary, or accumulated adventure log.
 - Every entity description is a concise encyclopedia entry centered on the entity.
   Describe capabilities in general language such as `It can` or `It is used to`.

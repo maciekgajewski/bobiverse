@@ -814,15 +814,14 @@ chapter-patch rules as other mutable entity state.
 ADR-0015 keeps disclosure gaps in extraction evidence and reconciliation rather than
 reader-facing descriptions.
 
-Every authored `current_state` is one or two concise sentences describing only the
-latest known condition, not identity, history, a chapter synopsis, or an accumulated
+Every authored `current_state` is one or two concise sentences describing the
+condition as of its effective date, not identity, history, a chapter synopsis, or an accumulated
 adventure log. Every authored description is an entity-centered encyclopedia entry.
 Character records may carry an optional `description` on the introduction and on
 updates: a stable identity blurb of who they are (about 300 characters as a
-guideline, not a hard limit). `current_state` remains the latest condition. Inline
-`[[kind:slug]]` links are allowed in both fields. The latest `description` in
-effect at the viewed chapter wins, with the same reader-order and story-time
-projection and spoiler gating as `current_state`.
+guideline, not a hard limit). Inline `[[kind:slug]]` links are allowed in both
+fields. How descriptions and states are projected is defined in
+`design-principles.md`.
 Capabilities use general language such as “It can” or “It is used to”; named-character
 relationships remain only when defining or when a source-supported assessment needs
 attribution. Descriptions omit statements whose purpose is to announce unrevealed,
@@ -835,28 +834,17 @@ Spoiler safety has two independent dimensions:
 2. Story time determines the in-universe moment represented by the selected chapter.
 
 `furthestChapterRead` is a guarded reader-progress ceiling. Advancing it requires an
-explicit confirmation. `viewChapter`, labelled **Knowledge through** in the Phase 2
-UI, selects a chapter at or before that ceiling. Both are absent before the reader
-selects a chapter, when the zero state is rendered. Reader order first decides which
-facts the reader may know; story time then orders those facts. A chapter view shows
-the latest known state from every chapter read so far, with no story-time cutoff, so
-an earlier-dated chapter read after a later-dated one shows both chapters' states,
-and where both write one property the later-read chapter's value wins (ADR-0028).
-A Date-mode view cuts at its requested date and keeps story-date order. A future story-state change
-must not alter an earlier in-universe Date-mode view merely because its chapter was
-read first. Conversely, a fact first revealed later must not alter an earlier
-reader-knowledge view in any mode, even if it was already true in-universe. ADR-0002,
-as refined by ADR-0005, ADR-0009, ADR-0013, ADR-0026, and ADR-0028 (backdated updates
-and chapter-view latest state), defines this two-stage projection and its temporal
-validation rules.
+explicit confirmation. `viewChapter` selects a chapter at or before that ceiling.
+Both are absent before the reader selects a chapter, when the zero state is
+rendered. The hard and soft ceilings, and how each view selects state, are defined
+in `design-principles.md`.
 
 Dated chapter-authored facts compare a Gregorian calendar range, optional hidden
 ordering suffix, and source chapter. Non-overlapping ranges use calendar order;
 identical calendar portions use suffix then canonical chapter; overlapping
 unequal-precision chapter facts use canonical chapter. This fact-to-fact rule applies
 to state writes, appearances, dated events, generated activity, sightings, and travel
-history. Display-date eligibility remains chapter-free and uses range containment.
-Chronologically unplaced event activity remains Chapter-mode context only.
+history. Display-date eligibility is chapter-free.
 
 Every confirmed **Read through** choice also sets `viewChapter` to that same chapter,
 in Chapter mode at its story date, so picking a read-through chapter always shows
@@ -870,11 +858,7 @@ fact is retained. **Knowledge through** and the chapter track can afterwards mov
 `furthestChapterRead`. Returning **Read through** to the pre-book zero state clears
 both.
 
-Phase 2 Date mode may use a meaningful requested story date as a cutoff for the
-second stage, which a chapter view does not apply. It retains the first stage's reader-visible chapter
-set: no later chapter becomes available merely because its story date precedes the
-requested date. The result is explicitly the state inferred from selected reader
-knowledge at that date, not a claim about unrevealed in-universe facts. The UI exposes
+Date mode uses a meaningful requested story date as the soft ceiling. The UI exposes
 only dates derived from the permitted knowledge set; it does not provide arbitrary
 date entry or expose ordering suffixes. Its axis places each value at the start of its
 represented range using the Gregorian elapsed-day fraction of that year. This anchor
@@ -898,9 +882,8 @@ The generator also emits read-only narrative activity derived from introductions
 updates, appearances, chapter and event locations, event participation, supplemental
 mentions, and mapped stellar-system ancestry. Each record preserves its target, source
 chapter, nullable comparable effective date, and one or more controlled reasons.
-Reasons coalesce only for the same target, chapter, and effective date; unplaced event
-activity remains available in Chapter mode but is never date-positioned. Activity
-supports Chapter-mode reader-order recency and Date-mode narrative-moment recency.
+Reasons coalesce only for the same target, chapter, and effective date. Activity
+supports narrative-moment recency.
 Equal-suffix and overlapping unequal-precision activity facts use canonical chapter
 order. The generated array uses a
 deterministic topological order that preserves every definite moment relation;

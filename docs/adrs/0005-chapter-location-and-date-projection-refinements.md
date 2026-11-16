@@ -28,10 +28,7 @@ current rules without rewriting those historical ADRs.
   relations. Only a mapped root `star_system` directly references an astronomy-system
   record; mapped descendants inherit that system context. Transit locations and
   explicitly unknown locations are unmapped under the documented rules.
-- A normal chapter view projects reader-visible facts to `viewChapter.date`. A future
-  date-exploration UI may substitute any requested story date only for that second
-  projection stage. It retains the selected reader-visible chapter set and therefore
-  presents reader-inferred state, never unrevealed in-universe facts.
+- Chapter and date projection follow `../design-principles.md`.
 
 This ADR supersedes ADR-0001 only for its typed-collection and arbitrary
 astronomy-reference wording, and ADR-0002 only for its mandatory-appearance wording.

@@ -37,9 +37,7 @@ semantics.
 - The narrative-moment comparator applies wherever two chapter-authored facts are
   ordered, including state writes, appearances, events, and generated narrative
   activity.
-- Chronologically unplaced event activity has no narrative moment. It remains
-  available only to Chapter-mode reader-order context and never participates in
-  Date-mode fact-to-fact recency.
+- Undated facts are dated as defined in `../design-principles.md`.
 - Generic date comparison remains date-only for requested display dates, temporal
   eligibility against a display date, meaningful-date coordinates, and any other
   value that has no source chapter.
@@ -58,8 +56,6 @@ incomparability remain unchanged.
   canonical chapter order, so `last_known_location` remains available.
 - Equal year-only activity and event facts use the same ordering rule as state writes
   instead of each consumer inventing a local fallback.
-- Undated event activity remains explicitly outside story-time ordering; deterministic
-  generated-array placement does not make it chronologically placed.
 - A later canonical chapter is an accepted chronological fact for equal year-only
   narrative moments. Authors use indexed dates when chapter order would not match the
   intended within-year chronology.

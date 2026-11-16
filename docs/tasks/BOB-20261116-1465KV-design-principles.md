@@ -13,7 +13,9 @@ defines the hard ceiling (Read through) and the soft ceiling (the chronological
 point chosen by chapter or date), the map and info-card rules, proposed edge rules
 pending Maciej's confirmation, an Implications section listing every superseded
 rule and code conflict, and a plan with a proposed What's new bullet for the
-release that ships the soft ceiling. Docs only: no reader-visible change.
+release that ships the soft ceiling. Maciej accepted it on 2026-11-16 and
+ADR-0031 ratifies it. Every conflicting earlier rule is removed from the ADRs
+and docs. Docs only: no reader-visible change.
 
 ## Authorization
 
@@ -23,6 +25,16 @@ release that ships the soft ceiling. Docs only: no reader-visible change.
 - Maciej's additions, relayed the same evening: frame the document as the
   constitution, list each superseded rule in the Implications section, and add a
   plan with a proposed What's new sentence. Do not change What's new code or data.
+- Maciej accepted the document on 2026-11-16, relayed by the manager: "Yes to all,
+  including suggestions on the document." Finalise it on the same branch: status
+  Accepted, the edge rules folded in as accepted rules plus three more (calendar
+  precision, description hard-ceiling only, cards before existence), a chapter's
+  soft ceiling at its latest date, and a ratifying ADR.
+- Maciej, relayed the same evening: "Remove all the superseded decisions so that
+  they don't clutter the context". Delete the conflicting rules from the ADRs,
+  docs and AGENTS.md instead of marking them superseded, keep the ratifying ADR
+  short, and shrink the constitution's implications to the open code and data
+  work.
 
 ## Binding references
 
@@ -39,11 +51,21 @@ release that ships the soft ceiling. Docs only: no reader-visible change.
 1. Add `docs/design-principles.md`.
 2. List the new document first among the authoritative documents in
    `AGENTS.md`.
+3. Add ADR-0031 (`docs/adrs/0031-design-principles-constitution.md`) ratifying
+   the document.
+4. Remove the conflicting rules from ADR-0002, ADR-0005, ADR-0013, ADR-0014,
+   ADR-0028, `docs/technical-design.md`, `docs/data-model-definition.md`,
+   `docs/chapter-extraction.md`, `docs/chapter-extraction-checklists.md`,
+   `docs/implementation-plan.md`, `docs/visual-testing.md` and
+   `docs/design/phase-2-desktop-ui.md`, leaving one pointer line to the
+   constitution where a removal would leave a gap.
 
 ## Out of scope
 
 - Any code, schema, data, chapter JSON or What's new change.
-- Amending or superseding ADRs (a follow-up ADR is part of the document's plan).
+- `docs/chapter-promotion-log.md` and landed task files (historical records).
+- UI labels quoted in `docs/visual-testing.md` and
+  `docs/design/phase-2-desktop-ui.md`, which change with the code.
 - Fixing any listed conflict.
 - Pushing or merging to master.
 
@@ -51,7 +73,11 @@ release that ships the soft ceiling. Docs only: no reader-visible change.
 
 - The document states Maciej's six principles without changing their intent and
   uses "non-linear chapter" as the term for chapters out of story-time order.
-- Edge rules (a)–(d) are marked as pending Maciej's confirmation.
+- The document is Accepted; rules (a)–(g) are accepted rules, and a chapter's
+  latest date is defined from real data-model fields.
+- ADR-0031 is Accepted and short; no superseded rule remains in the ADRs or docs
+  outside historical records, and the constitution lists only open code and data
+  work.
 - The Implications section cites files, sections and ADR decisions verified on
   master `fd81ca8` and invents nothing.
 - The plan contains a one-sentence proposed What's new bullet, marked as
@@ -61,15 +87,18 @@ release that ships the soft ceiling. Docs only: no reader-visible change.
 
 ```bash
 python3 scripts/tasks.py check
-npx prettier --check AGENTS.md docs/design-principles.md docs/tasks/BOB-20261116-1465KV-design-principles.md
+npx prettier --check <changed Markdown>
+npm run format:check
+npm run lint
 git diff --check
 ```
 
 ## Risks and decisions
 
-- The document is proposed until Maciej approves it. Code still follows the
-  superseded ADRs until the plan's steps land.
-- Edge rules (a)–(d) and the What's new wording await Maciej.
+- Code and data still differ from the constitution until the plan's steps land;
+  the constitution's §5 lists the gaps.
+- The What's new wording is proposed for the soft-ceiling release; it is not in
+  `src/release-notes.ts`.
 
 ## Log
 
@@ -77,3 +106,8 @@ git diff --check
 
 - Created on master `fd81ca8` on local branch `bob-20261116-design-principles`
   in the `~/src/bobiverse-principles` worktree. Docs only.
+- First commit `915ad34`: proposed document, AGENTS.md entry, this task.
+- Maciej accepted the document. Finalised it as Accepted, folded in rules (a)–(g)
+  and the chapter latest-date definition, and added ADR-0031. Then, per
+  Maciej, removed the superseded rules from the ADRs and docs and shrank the
+  constitution's implications to the open code and data work.

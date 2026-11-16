@@ -304,8 +304,7 @@ browser. Narrative details and relationship controls must remain usable.
 Inspect at least one sparse record of every supported type. Verify absent fields do
 not produce placeholders, eligible relationships act as selection controls, and a
 mention alone does not become a relationship. New Handeltown must say
-**Explicitly unmapped** and remain selectable. An unplaced event must say
-**Chronologically unplaced** in Chapter mode and be absent in Date mode. Character
+**Explicitly unmapped** and remain selectable. Character
 details must label the eligible appearance as **Last seen**, with chapter and year,
 and must never call activity or `current_state` a current location.
 
@@ -434,8 +433,7 @@ the selected label and outer corner frame, and the camera must focus Sol without
 changing canonical coordinates or the established viewing angle.
 
 Switch between Chapter and Date modes and confirm overlapping calendar-precision
-activity uses the later canonical chapter for recency while chronologically unplaced activity remains
-Chapter-mode only. Confirm the Bob-to-Sol result is derived from the shared projection;
+activity uses the later canonical chapter for recency. Confirm the Bob-to-Sol result is derived from the shared projection;
 disabling WebGL must leave Bob and the New Handeltown relationship inspectable even
 though precise camera focus and the WebGL frame are unavailable.
 
@@ -477,7 +475,7 @@ confirm **Inspect selection** receives focus and reopens the standalone context.
 
 Repeat the compact timeline/progress flow at a CSS viewport below 1200 pixels and at
 200% browser zoom. Also inspect a short desktop viewport with reduced motion enabled.
-Exercise empty search, no selection, explicitly unmapped, chronologically unplaced,
+Exercise empty search, no selection, explicitly unmapped,
 WebGL unavailable, missing astronomy coverage, and invalid narrative projection
 content. Every state must explain what remains usable or what the reader can do next.
 

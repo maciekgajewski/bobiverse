@@ -16,11 +16,8 @@ knowledge of facts about earlier story time.
 
 ## Decision
 
-- Reader order is the spoiler-visibility gate. Only source records introduced at or
-  before `viewChapter` may contribute knowledge to that view.
-- Story time is the state-projection gate. An introduced entity or ordinary update
-  has the effective story date of its enclosing chapter and contributes to temporal
-  state only when that date is definitively at or before `viewChapter.date`.
+- Reader order is the spoiler-visibility gate and story time is the state-projection
+  gate; `../design-principles.md` defines both ceilings.
 - Within the reader-visible and temporally eligible set, the chronologically latest
   value for an entity property wins. Reader order must never break a story-time tie.
 - An event's own `date`, when present, controls its in-universe occurrence. An event
