@@ -1994,8 +1994,7 @@ describe("atlas shell", () => {
       expect(screen.getAllByText("Pre-book zero state").length).toBeGreaterThan(
         0,
       );
-      // 1.1 is at or before Read through 1.3, so its source title shows.
-      await pickInTopbar(user, "Book 1 · Chapter 1 · Bob Version 1.0");
+      await pickInTopbar(user, "Book 1 · Chapter 1");
       await user.click(
         screen.getByRole("button", { name: "Confirm read through" }),
       );

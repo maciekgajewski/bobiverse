@@ -169,11 +169,12 @@ for (const layout of [
     await page.locator("#topbar-read-through").click();
     const picker = page.getByRole("dialog", { name: "Read through" });
     await expect(
-      picker.getByRole("radio", {
-        name: `Book 1 · Chapter 60 · ${LONG_TITLE}`,
-      }),
+      picker.getByRole("radio", { name: "Book 1 · Chapter 60", exact: true }),
     ).toHaveAttribute("title", LONG_TITLE);
-    const future = picker.getByRole("radio", { name: "Book 1 · Chapter 61" });
+    const future = picker.getByRole("radio", {
+      name: "Book 1 · Chapter 61",
+      exact: true,
+    });
     await expect(future).not.toHaveAttribute("title");
     await future.scrollIntoViewIfNeeded();
     await expectNoFutureTitle(page);

@@ -229,9 +229,10 @@ describe("chapter titles", () => {
       .click(screen.getByRole("button", { name: /^Read through/ }));
     const picker = screen.getByRole("dialog", { name: "Read through" });
     const beta = within(picker).getByRole("radio", {
-      name: "Book 2 · Chapter 2 · Fixture Title Beta",
+      name: "Book 2 · Chapter 2",
     });
     expect(beta).toHaveAttribute("title", "Fixture Title Beta");
+    expect(beta).toHaveAccessibleDescription("Fixture Title Beta");
     expect(beta).toHaveTextContent(/^2$/);
     expect(
       within(picker).getByRole("radio", { name: "Book 2 · Chapter 10" }),

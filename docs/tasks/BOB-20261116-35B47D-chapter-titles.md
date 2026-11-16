@@ -18,8 +18,9 @@ Wherever a chapter is shown, a read chapter now names its title:
 - the Knowledge through and desktop Read through selectors: `Chapter 2.3 ·
 Title` (long titles shortened to 40 characters with an ellipsis, full text
   in the option tooltip);
-- the Read through picker grid: number cells; a titled read chapter adds the
-  title to the cell's accessible name and tooltip;
+- the Read through picker grid: number cells; a titled read chapter gets the
+  title as the cell tooltip (its accessible description), while the
+  accessible name stays `Book N · Chapter M`;
 - the timeline track: book 1 keeps its existing label (`3`, or the stored
   `1 - Bob Version 1.0`); later books show the full reference
   (`2.1 — Title`, or `2.5` untitled) so an entry stays unambiguous when the
@@ -129,6 +130,9 @@ chapter modules in flight with fixture titles; set
 
 ## Known risks or unresolved decisions
 
+- The top-bar view status (desktop) stays number-only; the map badge below
+  it names the title. One atlas e2e that compared the two now expects the
+  badge suffix ` · Bob Version 2.0`.
 - Component fixtures that used words as titles for book 1 chapters now use
   the bare number (the real untitled form); two App tests now expect the 1.1
   title in the picker and stepper.

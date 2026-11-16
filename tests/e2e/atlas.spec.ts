@@ -2195,9 +2195,12 @@ test("desktop surfaces stay on one projection through chapter and date changes",
   await page.getByRole("button", { name: "Confirm read through" }).click();
 
   const sharedChapterStatus = "Latest known · Knowledge through Chapter 1.2";
+  // The badge's chapter link also names the read chapter's title
+  // (BOB-20261116-35B47D); the top-bar status stays number-only.
+  const badgeTitle = " · Bob Version 2.0";
   await expect(page.locator(".view-status")).toHaveText(sharedChapterStatus);
   await expect(page.locator(".map-narrative-badge")).toHaveText(
-    sharedChapterStatus,
+    sharedChapterStatus + badgeTitle,
   );
   await page.getByRole("button", { name: "Bob Active" }).click();
   await expect(
@@ -2213,7 +2216,7 @@ test("desktop surfaces stay on one projection through chapter and date changes",
   const sharedDateStatus = "Universe in 2016 · Knowledge through Chapter 1.2";
   await expect(page.locator(".view-status")).toHaveText(sharedDateStatus);
   await expect(page.locator(".map-narrative-badge")).toHaveText(
-    sharedDateStatus,
+    sharedDateStatus + badgeTitle,
   );
   await expect(
     page.getByText(
@@ -2224,7 +2227,7 @@ test("desktop surfaces stay on one projection through chapter and date changes",
   await page.getByRole("button", { name: "Chapter mode" }).click();
   await expect(page.locator(".view-status")).toHaveText(sharedChapterStatus);
   await expect(page.locator(".map-narrative-badge")).toHaveText(
-    sharedChapterStatus,
+    sharedChapterStatus + badgeTitle,
   );
 });
 
