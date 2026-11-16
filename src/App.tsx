@@ -1379,6 +1379,7 @@ export default function App() {
             onSelect={selectInspectorRelationship}
             onChapterSelect={selectTimelineChapter}
             readThroughChapter={progress.furthestChapterRead}
+            chapters={narrativeChapters}
             travelStops={selectedCharacterTravel.stops}
             sectionState={progress.characterInspectorSections}
             onToggleSection={(section) =>
@@ -1502,6 +1503,7 @@ export default function App() {
             onSelect={selectInspectorRelationship}
             onChapterSelect={selectTimelineChapter}
             readThroughChapter={progress.furthestChapterRead}
+            chapters={narrativeChapters}
             travelStops={selectedCharacterTravel.stops}
             sectionState={progress.characterInspectorSections}
             onToggleSection={(section) =>

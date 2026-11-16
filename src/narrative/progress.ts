@@ -330,6 +330,43 @@ export function selectKnowledgeChapter(
   };
 }
 
+/**
+ * Previous and next chapters the eyebrow stepper may move to. Next never
+ * goes past Read through, so the stepper cannot raise the spoiler ceiling.
+ */
+export function adjacentKnowledgeChapters(
+  chapter: string,
+  furthestChapterRead: string | null,
+  chapters: readonly Pick<NarrativeChapterSummary, "chapter">[],
+): {
+  prev: string | null;
+  next: string | null;
+  atReadThrough: boolean;
+  atLastChapter: boolean;
+} {
+  const sorted = chapters
+    .map((item) => item.chapter)
+    .slice()
+    .sort(compareNarrativeChapters);
+  const index = sorted.indexOf(chapter);
+  const last = sorted.at(-1) ?? null;
+  const atLastChapter = last !== null && chapter === last;
+  const atReadThrough =
+    furthestChapterRead !== null && chapter === furthestChapterRead;
+  if (index < 0) {
+    return { prev: null, next: null, atReadThrough, atLastChapter };
+  }
+  const prev = index > 0 ? sorted[index - 1]! : null;
+  const rawNext = index < sorted.length - 1 ? sorted[index + 1]! : null;
+  const next =
+    rawNext &&
+    furthestChapterRead &&
+    compareNarrativeChapters(rawNext, furthestChapterRead) <= 0
+      ? rawNext
+      : null;
+  return { prev, next, atReadThrough, atLastChapter };
+}
+
 export function selectDisplayDate(
   current: ReaderProgress,
   date: string,

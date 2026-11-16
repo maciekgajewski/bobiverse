@@ -11,6 +11,7 @@ import {
   normalizeReaderProgress,
   forgetReaderProgress,
   persistReaderProgress,
+  adjacentKnowledgeChapters,
   selectKnowledgeChapter,
   selectZeroKnowledgeView,
   setTimelineViewport,
@@ -408,5 +409,52 @@ describe("reader progress", () => {
         expect.objectContaining({ id: "event:fixture-indexed-event" }),
       ]),
     );
+  });
+
+  describe("adjacentKnowledgeChapters", () => {
+    it("returns the previous and next catalogue chapters within Read through", () => {
+      expect(adjacentKnowledgeChapters("1.2", "1.3", chapters)).toEqual({
+        prev: "1.1",
+        next: "1.3",
+        atReadThrough: false,
+        atLastChapter: false,
+      });
+    });
+
+    it("disables previous at the first chapter and keeps it addressable", () => {
+      expect(adjacentKnowledgeChapters("1.1", "1.3", chapters)).toEqual({
+        prev: null,
+        next: "1.2",
+        atReadThrough: false,
+        atLastChapter: false,
+      });
+    });
+
+    it("disables next at the Read through ceiling without returning a later chapter", () => {
+      expect(adjacentKnowledgeChapters("1.2", "1.2", chapters)).toEqual({
+        prev: "1.1",
+        next: null,
+        atReadThrough: true,
+        atLastChapter: false,
+      });
+      const current = {
+        ...empty,
+        furthestChapterRead: "1.2",
+        viewChapter: "1.2",
+        displayDate: "2200.2",
+      };
+      const refused = selectKnowledgeChapter(current, "1.3", chapters);
+      expect(refused).toBe(current);
+      expect(refused.furthestChapterRead).toBe("1.2");
+    });
+
+    it("treats the last catalogue chapter as the end of the stepper", () => {
+      expect(adjacentKnowledgeChapters("1.3", "1.3", chapters)).toEqual({
+        prev: "1.2",
+        next: null,
+        atReadThrough: true,
+        atLastChapter: true,
+      });
+    });
   });
 });
