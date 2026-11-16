@@ -953,9 +953,27 @@ export default function App() {
     setWhatsNewOrigin(null);
     setAboutOrigin(compact ? "menu" : "topbar");
   };
+  // Browsers skip history entries pushed before the reader has interacted
+  // with the page (Chrome's history-manipulation intervention, Firefox's
+  // user-interaction requirement), and the entry it was pushed from with
+  // them. The auto-shown What's new entry is therefore pushed only after the
+  // first user activation; before that, Back behaves as it did without it.
+  const [userActivated, setUserActivated] = useState(
+    () => navigator.userActivation?.hasBeenActive ?? false,
+  );
+  useEffect(() => {
+    if (userActivated) return;
+    const activate = () => setUserActivated(true);
+    window.addEventListener("pointerdown", activate, true);
+    window.addEventListener("keydown", activate, true);
+    return () => {
+      window.removeEventListener("pointerdown", activate, true);
+      window.removeEventListener("keydown", activate, true);
+    };
+  }, [userActivated]);
   const openDialog: AppDialog | null = aboutOrigin
     ? "about"
-    : whatsNewOrigin
+    : whatsNewOrigin && (whatsNewOrigin !== "auto" || userActivated)
       ? "whats-new"
       : null;
   const desiredHistory = useMemo(

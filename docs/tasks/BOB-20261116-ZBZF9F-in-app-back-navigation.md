@@ -115,6 +115,11 @@ git diff --check
   nothing.
 - A stale `popstate` is rewritten to a copy of the current entry, so after
   a clear one Forward or Back press can appear to do nothing.
+- The auto-shown What's new entry is pushed on the reader's first user
+  activation (pointerdown or keydown), not at start-up. Chrome and Firefox
+  skip entries pushed before any interaction, together with the entry they
+  were pushed from, so a start-up push would make the first Back leave the
+  site. Firefox e2e caught this: `goBack()` left the auto-shown notes open.
 - The skip link's `#map-stage` fragment entry is not part of the projection
   and is ignored by the handler.
 

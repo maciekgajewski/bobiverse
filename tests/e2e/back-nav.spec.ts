@@ -67,6 +67,9 @@ for (const layout of [
       await page.goto("/");
       const whatsNew = page.getByRole("dialog", { name: "What\u2019s new" });
       await expect(whatsNew).toBeVisible();
+      // Browsers skip entries pushed before any user interaction, so the
+      // reader touches the notes first, as a real reader would.
+      await whatsNew.getByRole("heading", { name: "Version 0.9.0" }).click();
       await page.goBack();
       await expect(whatsNew).toBeHidden();
 

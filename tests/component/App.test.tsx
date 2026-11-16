@@ -1,5 +1,6 @@
 import {
   cleanup,
+  fireEvent,
   render,
   screen,
   waitFor,
@@ -2589,6 +2590,12 @@ describe("atlas shell", () => {
       const whatsNew = () =>
         screen.queryByRole("dialog", { name: "What\u2019s new" });
       expect(whatsNew()).toBeInTheDocument();
+      // Browsers skip entries pushed before any user interaction, so the
+      // entry waits for the first activation.
+      expect(history.push).not.toHaveBeenCalled();
+      fireEvent.pointerDown(
+        within(whatsNew()!).getByRole("heading", { name: "Version 0.9.0" }),
+      );
       expect(history.push).toHaveBeenCalledTimes(1);
       expect(window.history.state).toMatchObject({
         layer: "dialog",

@@ -33,7 +33,9 @@ as matching Maciej's direction; task `BOB-20261116-ZBZF9F` implements it.
   landing `popstate` finish only the browser side, so the app's own collapse
   never steps twice.
 - Opening About or What's new (including the start-up auto-show) pushes one
-  entry; Back closes it without touching the cards. What's new → About is a
+  entry; Back closes it without touching the cards. The start-up auto-show
+  pushes its entry on the first user activation, because browsers skip
+  entries pushed before any interaction. What's new → About is a
   `replaceState`. Caption links dismiss the dialog and open a fresh card root.
 - A confirmed read-through change and Forget progress are never backable.
   They close the card, clear the stack, bump a per-tab generation, walk back
