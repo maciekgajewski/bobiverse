@@ -83,7 +83,7 @@ for (const layout of [
       await openChapterFromBadge(page, "1.2");
       const card = inspector(page);
       await expect(
-        card.getByRole("heading", { name: "2 - Bob Version 2.0" }),
+        card.getByRole("heading", { name: "Bob Version 2.0" }),
       ).toBeVisible();
       await card
         .getByRole("button", { name: "Location: New Handeltown" })
@@ -94,7 +94,7 @@ for (const layout of [
 
       await page.goBack();
       await expect(
-        card.getByRole("heading", { name: "2 - Bob Version 2.0" }),
+        card.getByRole("heading", { name: "Bob Version 2.0" }),
       ).toBeVisible();
       await page.goForward();
       await expect(
@@ -102,7 +102,7 @@ for (const layout of [
       ).toBeVisible();
       await page.goBack();
       await expect(
-        card.getByRole("heading", { name: "2 - Bob Version 2.0" }),
+        card.getByRole("heading", { name: "Bob Version 2.0" }),
       ).toBeVisible();
       await page.goBack();
       await expectCardClosed(page);
@@ -141,7 +141,7 @@ for (const layout of [
       // Soft Back is history.back(): the same step as device Back.
       await card.getByRole("button", { name: "Back" }).click();
       await expect(
-        card.getByRole("heading", { name: "2 - Bob Version 2.0" }),
+        card.getByRole("heading", { name: "Bob Version 2.0" }),
       ).toBeVisible();
       // Device Back at index 0 closes the card instead of stepping chapters.
       await page.goBack();

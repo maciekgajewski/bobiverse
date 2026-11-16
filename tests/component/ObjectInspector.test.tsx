@@ -583,6 +583,60 @@ describe("object inspector", () => {
     });
   });
 
+  it.each([
+    ["1.2", "1", "2", "2 - Bob Version 2.0", "Bob Version 2.0", true],
+    ["2.1", "2", "1", "1 - Fixture Title", "Fixture Title", true],
+    ["1.3", "1", "3", "3", "3", false],
+  ])(
+    "strips the stored number prefix from the chapter card heading and illustration text (%s %j)",
+    (chapter, bookNumber, localNumber, title, heading, titled) => {
+      render(
+        <ObjectInspector
+          selection={{ kind: "chapter", id: chapter }}
+          narrativeItem={null}
+          chapterDetail={{
+            chapter,
+            bookNumber,
+            bookTitle: "Fixture volume",
+            localNumber,
+            title,
+            date: "2200",
+            summary: "A compact original fixture synopsis.",
+            pictureId: "asset:fixture-chapter",
+            location: { id: "location:fixture", name: "Fixture location" },
+            leadCharacters: [],
+            events: [],
+            vessels: [],
+            technologies: [],
+            appearingCharacters: [],
+          }}
+          world={world}
+          systems={[]}
+          assets={{
+            assets: [
+              {
+                id: "asset:fixture-chapter",
+                path: "assets/fixture-chapter.webp",
+                role: "illustration",
+                source: "Test-only chapter illustration.",
+              },
+            ],
+          }}
+          onSelect={vi.fn()}
+          readThroughChapter={chapter}
+        />,
+      );
+      expect(screen.getByRole("heading", { level: 2 }).textContent).toBe(
+        heading,
+      );
+      expect(screen.getByRole("img").getAttribute("alt")).toBe(
+        `Illustration for Book ${bookNumber}, Chapter ${localNumber}${
+          titled ? `, ${heading}` : ""
+        }`,
+      );
+    },
+  );
+
   it("omits chapter illustration and empty optional relationship groups", () => {
     const { container } = render(
       <ObjectInspector

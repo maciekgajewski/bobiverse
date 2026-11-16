@@ -88,7 +88,7 @@ describe("timeline dock", () => {
           chapter: "1.3",
           title: ` 3 ${separator} Descriptive fixture `,
         }),
-      ).toBe(`3 ${separator} Descriptive fixture`);
+      ).toBe("3 — Descriptive fixture");
     }
     expect(
       chapterTimelineLabel({

@@ -5,9 +5,9 @@ import { ChapterStepper } from "../../src/components/ChapterStepper";
 import type { NarrativeChapterSummary } from "../../src/narrative/progress";
 
 const chapters: NarrativeChapterSummary[] = [
-  { chapter: "1.1", title: "One", date: "2016", bookTitle: "Fixture" },
-  { chapter: "1.2", title: "Two", date: "2133-06-24", bookTitle: "Fixture" },
-  { chapter: "1.3", title: "Three", date: "2133-06-25", bookTitle: "Fixture" },
+  { chapter: "1.1", title: "1", date: "2016", bookTitle: "Fixture" },
+  { chapter: "1.2", title: "2", date: "2133-06-24", bookTitle: "Fixture" },
+  { chapter: "1.3", title: "3", date: "2133-06-25", bookTitle: "Fixture" },
 ];
 
 describe("chapter eyebrow stepper", () => {

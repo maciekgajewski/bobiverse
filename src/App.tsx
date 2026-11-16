@@ -1515,6 +1515,7 @@ export default function App() {
                     chapter={progress.viewChapter}
                     readThroughChapter={progress.furthestChapterRead}
                     onChapterSelect={selectTimelineChapter}
+                    chapters={narrativeChapters}
                   />
                 </>
               ) : (

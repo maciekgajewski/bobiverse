@@ -884,6 +884,16 @@ All later views—map, search, characters, systems, paths, chronicles, and genea
 one shared visibility policy. A UI component may not implement an independent spoiler
 filter.
 
+Chapter references themselves are never hidden, but a chapter's source title is
+chapter content (BOB-20261116-35B47D). The required chapter `title` keeps its
+extraction form (`3`, or `4 - Source title`); the shared `chapterDisplayTitle` helper
+derives the display title by stripping the leading `<number> - ` prefix, and a bare
+number means untitled. `visibleChapterTitle` returns that title only for a chapter at or
+before Read through; every later chapter, in every control, label, tooltip, and
+accessible name, keeps the number-only form. Titles render on one line with an
+ellipsis where space is short, with the full title in a tooltip and in the chapter card
+heading.
+
 The generator also emits read-only narrative activity derived from introductions,
 updates, appearances, chapter and event locations, event participation, supplemental
 mentions, and mapped stellar-system ancestry. Each record preserves its target, source

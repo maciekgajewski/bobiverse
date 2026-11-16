@@ -11,7 +11,10 @@ import type {
   NarrativeChapterSummary,
   ReaderProgress,
 } from "../narrative/progress";
-import { chapterTimelineLabel } from "../narrative/progress";
+import {
+  chapterDisplayTitle,
+  chapterTimelineLabel,
+} from "../narrative/progress";
 import {
   compareNarrativeChapters,
   formatNarrativeDate,
@@ -392,7 +395,10 @@ export function TimelineDock({
           value={selectedReadThrough}
           onChange={(event) => onReadThroughChoice(event.target.value)}
         >
-          <ReadThroughOptions chapters={chapters} />
+          <ReadThroughOptions
+            chapters={chapters}
+            readThroughChapter={progress.furthestChapterRead}
+          />
         </select>
         <p>
           <strong>Spoiler-free limit.</strong> Confirm before revealing more.
@@ -440,6 +446,9 @@ export function TimelineDock({
                 ) > 0;
               const selected = chapter.chapter === progress.viewChapter;
               const label = chapterTimelineLabel(chapter);
+              // A titled entry ellipsizes; its full label is the tooltip.
+              // Locked entries never show a title (spoiler gate).
+              const titled = !locked && chapterDisplayTitle(chapter) !== null;
               const bookNumber = chapter.chapter.split(".")[0]!;
               const localNumber = chapter.chapter.split(".")[1]!;
               return (
@@ -450,6 +459,7 @@ export function TimelineDock({
                     <li
                       className="chapter-book-divider"
                       key={`book-${chapter.chapter.split(".")[0]}`}
+                      title={chapter.bookTitle || undefined}
                     >
                       <span>Book {chapter.chapter.split(".")[0]}</span>
                     </li>
@@ -471,7 +481,10 @@ export function TimelineDock({
                         )
                       }
                     >
-                      <span className="chapter-above">
+                      <span
+                        className={`chapter-above${titled ? " titled" : ""}`}
+                        title={titled ? label : undefined}
+                      >
                         {locked ? `Chapter ${chapter.chapter}` : label}
                       </span>
                       <span className="chapter-dot" />

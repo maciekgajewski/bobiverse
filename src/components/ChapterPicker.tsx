@@ -13,6 +13,7 @@ import {
   chapterBook,
   chapterNumber,
   readThroughLabel,
+  visibleChapterTitle,
   type NarrativeChapterSummary,
 } from "../narrative/progress";
 import { BookGlyph, CloseIcon, ShieldIcon } from "./icons";
@@ -296,16 +297,24 @@ export function ChapterPicker({
             id={`chapter-picker-panel-${activeBook}`}
             aria-labelledby={`chapter-picker-tab-${activeBook}`}
           >
-            {activeChapters.map(({ chapter }) => (
-              <button
-                key={chapter}
-                className="chapter-picker-cell"
-                aria-label={readThroughLabel(chapter)}
-                {...radio(chapter)}
-              >
-                {chapterNumber(chapter)}
-              </button>
-            ))}
+            {activeChapters.map(({ chapter }) => {
+              // Only chapters at or before the confirmed Read through may
+              // name their title; later cells stay number-only. The title is
+              // the cell's tooltip (and so its accessible description); the
+              // accessible name stays the stable "Book N · Chapter M".
+              const title = visibleChapterTitle(chapters, chapter, value);
+              return (
+                <button
+                  key={chapter}
+                  className="chapter-picker-cell"
+                  aria-label={readThroughLabel(chapter)}
+                  title={title ?? undefined}
+                  {...radio(chapter)}
+                >
+                  {chapterNumber(chapter)}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>

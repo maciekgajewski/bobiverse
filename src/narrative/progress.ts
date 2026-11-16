@@ -43,14 +43,90 @@ export function compactReadThroughLabel(chapter: string): string {
     : "Pre-book";
 }
 
+/** Separator between a chapter reference and its title, e.g. "Chapter 2.3 · Title". */
+export const CHAPTER_TITLE_SEPARATOR = " · ";
+
+/**
+ * Display title derived from a chapter's required `title`, or null when the
+ * chapter is untitled (BOB-20261116-35B47D). The extraction contract stores
+ * the bare local number ("3") for an untitled chapter and
+ * "<number> - <source title>" for a titled one; the prefix is stripped. Any
+ * other nonempty text that is not just the number is used as is. Book 1's
+ * 1.1 and 1.2 therefore show "Bob Version 1.0" and "Bob Version 2.0"
+ * (approved by the manager, 2026-11-16).
+ */
+export function chapterDisplayTitle(
+  chapter: Pick<NarrativeChapterSummary, "chapter" | "title">,
+): string | null {
+  const title = chapter.title.trim();
+  const localNumber = chapterNumber(chapter.chapter);
+  if (!title || title === localNumber) return null;
+  const prefixed = numberPrefixedTitle(localNumber).exec(title);
+  const display = (prefixed ? prefixed[1]! : title).trim();
+  return display && display !== localNumber ? display : null;
+}
+
+function numberPrefixedTitle(localNumber: string): RegExp {
+  return new RegExp(`^${localNumber}\\s*(?:-|–|—|:)\\s+(\\S.*)$`, "su");
+}
+
+/**
+ * Spoiler-gated chapter title: a title is chapter content, so it is returned
+ * only for a chapter at or before Read through. Later chapters, and every
+ * chapter in the pre-book zero state, stay number-only.
+ */
+export function visibleChapterTitle(
+  chapters: readonly Pick<NarrativeChapterSummary, "chapter" | "title">[],
+  chapter: string,
+  readThroughChapter: string | null,
+): string | null {
+  if (
+    !readThroughChapter ||
+    compareNarrativeChapters(chapter, readThroughChapter) > 0
+  )
+    return null;
+  const summary = chapters.find((candidate) => candidate.chapter === chapter);
+  return summary ? chapterDisplayTitle(summary) : null;
+}
+
+/** "Chapter 2.3 · Title", or the plain "Chapter 2.3" when untitled. */
+export function chapterReferenceLabel(
+  chapter: string,
+  title: string | null,
+): string {
+  return title
+    ? `Chapter ${chapter}${CHAPTER_TITLE_SEPARATOR}${title}`
+    : `Chapter ${chapter}`;
+}
+
+/**
+ * Shortens a title to at most `maxLength` characters with an ellipsis, for
+ * places that cannot ellipsize with CSS (native select options). The full
+ * title stays available in a tooltip.
+ */
+export function truncateChapterTitle(title: string, maxLength = 40): string {
+  const characters = Array.from(title);
+  if (characters.length <= maxLength) return title;
+  return `${characters
+    .slice(0, maxLength - 1)
+    .join("")
+    .trimEnd()}…`;
+}
+
 export function chapterTimelineLabel(
   chapter: Pick<NarrativeChapterSummary, "chapter" | "title">,
 ): string {
+  // Book 1 keeps its per-book number ("1 — Bob Version 1.0", or "3"). Later
+  // books carry the full reference ("2.1 — Title", or "2.5") so a track entry
+  // stays unambiguous once the "Book N" divider has scrolled out of view.
+  // Both strip the stored "N - " prefix (BOB-20261116-35B47D).
+  if (chapterBook(chapter.chapter) !== "1") {
+    const title = chapterDisplayTitle(chapter);
+    return title ? `${chapter.chapter} — ${title}` : chapter.chapter;
+  }
   const localNumber = chapter.chapter.split(".")[1]!;
-  const title = chapter.title.trim();
-  if (title === localNumber) return localNumber;
-  const prefixedTitle = new RegExp(`^${localNumber}\\s*(?:-|–|—|:)\\s+\\S`);
-  return prefixedTitle.test(title) ? title : `${localNumber} — ${title}`;
+  const title = chapterDisplayTitle(chapter);
+  return title ? `${localNumber} — ${title}` : localNumber;
 }
 
 export interface ReaderProgress {

@@ -1329,12 +1329,12 @@ test("compact chapter inspection shares relationships and focus behavior", async
     name: "Timeline and progress",
   });
   await timeline
-    .getByRole("button", { name: "Book 1, 2 - Bob Version 2.0" })
+    .getByRole("button", { name: "Book 1, 2 — Bob Version 2.0" })
     .click();
 
   const inspector = page.getByRole("dialog", { name: "Selected object" });
   await expect(
-    inspector.getByRole("heading", { name: "2 - Bob Version 2.0" }),
+    inspector.getByRole("heading", { name: "Bob Version 2.0" }),
   ).toBeVisible();
   await expect(inspector.getByRole("button", { name: "Close" })).toBeFocused();
   await page.keyboard.press("Shift+Tab");
@@ -1357,7 +1357,7 @@ test("compact chapter inspection shares relationships and focus behavior", async
   await expect(forward).toBeDisabled();
   await back.click();
   await expect(
-    inspector.getByRole("heading", { name: "2 - Bob Version 2.0" }),
+    inspector.getByRole("heading", { name: "Bob Version 2.0" }),
   ).toBeVisible();
   await expect(forward).toBeEnabled();
   await forward.click();
@@ -1878,7 +1878,7 @@ test("reader progress is confirmed before chapter data is unlocked", async ({
   await expect(page.locator(".map-narrative-badge")).toHaveText(
     "Pre-book zero state",
   );
-  await expect(page.getByText("1 - Bob Version 1.0")).toHaveCount(0);
+  await expect(page.getByText("1 — Bob Version 1.0")).toHaveCount(0);
   await dockReadThrough(page).selectOption("1.1");
   await expect(
     page.getByRole("dialog", { name: "Confirm read progress" }),
@@ -1895,7 +1895,7 @@ test("reader progress is confirmed before chapter data is unlocked", async ({
     page.getByRole("button", { name: "Confirm read through" }),
   ).toBeFocused();
   await page.getByRole("button", { name: "Confirm read through" }).click();
-  await expect(page.getByText("1 - Bob Version 1.0")).toBeVisible();
+  await expect(page.getByText("1 — Bob Version 1.0")).toBeVisible();
   await expect(page.locator(".map-narrative-badge")).toContainText(
     "Latest known · Knowledge through Chapter 1.1",
   );
@@ -1935,13 +1935,13 @@ test("reader progress is confirmed before chapter data is unlocked", async ({
   await dockReadThrough(page).selectOption("1.2");
   await page.getByRole("button", { name: "Confirm read through" }).click();
   await page
-    .getByRole("button", { name: "Book 1, 2 - Bob Version 2.0" })
+    .getByRole("button", { name: "Book 1, 2 — Bob Version 2.0" })
     .click();
   const chapterInspector = page.getByRole("complementary", {
     name: "Object inspector",
   });
   await expect(
-    chapterInspector.getByRole("heading", { name: "2 - Bob Version 2.0" }),
+    chapterInspector.getByRole("heading", { name: "Bob Version 2.0" }),
   ).toBeVisible();
   await expect(chapterInspector.getByText("Synopsis")).toBeVisible();
   await expect(
@@ -1959,7 +1959,7 @@ test("reader progress is confirmed before chapter data is unlocked", async ({
     "Knowledge through Chapter 1.2",
   );
   await page
-    .getByRole("button", { name: "Book 1, 2 - Bob Version 2.0" })
+    .getByRole("button", { name: "Book 1, 2 — Bob Version 2.0" })
     .click();
   await page.getByRole("button", { name: "Date mode" }).click();
   await expect(page.locator(".selection-status")).toHaveText(
@@ -2195,9 +2195,12 @@ test("desktop surfaces stay on one projection through chapter and date changes",
   await page.getByRole("button", { name: "Confirm read through" }).click();
 
   const sharedChapterStatus = "Latest known · Knowledge through Chapter 1.2";
+  // The badge's chapter link also names the read chapter's title
+  // (BOB-20261116-35B47D); the top-bar status stays number-only.
+  const badgeTitle = " · Bob Version 2.0";
   await expect(page.locator(".view-status")).toHaveText(sharedChapterStatus);
   await expect(page.locator(".map-narrative-badge")).toHaveText(
-    sharedChapterStatus,
+    sharedChapterStatus + badgeTitle,
   );
   await page.getByRole("button", { name: "Bob Active" }).click();
   await expect(
@@ -2213,7 +2216,7 @@ test("desktop surfaces stay on one projection through chapter and date changes",
   const sharedDateStatus = "Universe in 2016 · Knowledge through Chapter 1.2";
   await expect(page.locator(".view-status")).toHaveText(sharedDateStatus);
   await expect(page.locator(".map-narrative-badge")).toHaveText(
-    sharedDateStatus,
+    sharedDateStatus + badgeTitle,
   );
   await expect(
     page.getByText(
@@ -2224,7 +2227,7 @@ test("desktop surfaces stay on one projection through chapter and date changes",
   await page.getByRole("button", { name: "Chapter mode" }).click();
   await expect(page.locator(".view-status")).toHaveText(sharedChapterStatus);
   await expect(page.locator(".map-narrative-badge")).toHaveText(
-    sharedChapterStatus,
+    sharedChapterStatus + badgeTitle,
   );
 });
 
