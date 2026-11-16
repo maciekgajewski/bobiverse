@@ -160,10 +160,10 @@ The code and data do not yet follow this constitution in these places.
    follow rule (e). The cutoff must not rely on `compareNarrativeDates`, which returns
    `null` for overlapping ranges of different precision.
 5. **Entity existence.** Entities appear from their introduction date. They must
-   appear from their earliest known story date (rule (a)). The validation that an
-   `effective_date` is not earlier than the introducing chapter's date (ADR-0028,
-   `docs/data-model-definition.md`) limits the dates that can be recorded and needs
-   revisiting.
+   appear from their earliest known story date (rule (a)). Validation done in
+   BOB-20261116-E87SYK: an `effective_date` may now be earlier than the introducing
+   chapter's date (ADR-0028, `docs/data-model-definition.md`). The projection part
+   is still open.
 6. **Undated facts.** `generateNarrativeWorld` drops undated events in Date view, and
    generated activity for an undated event has `effective_date: null`. Both must use
    the revealing chapter's date (rule (c)).
@@ -176,12 +176,12 @@ The code and data do not yet follow this constitution in these places.
    as the knowledge bound. `docs/visual-testing.md` and
    `docs/design/phase-2-desktop-ui.md` quote these labels and change with them.
 9. **Sentence-preservation check** (`src/narrative/sentence-preservation.ts`).
-   `state` and `current_state` use `when-not-later`, which assumes the latest-read
-   write wins; an earlier-dated state is its own snapshot and must not carry later
-   facts. `description` and `visual_description` stay `always`.
+   Done in BOB-20261116-E87SYK: `state` and `current_state` use `same-date`, so a
+   write is checked only against the latest-read earlier write of an equal or
+   overlapping date. `description` and `visual_description` stay `always`.
 10. **Schema text** (`data/schema/narrative-data-model.schema.json`, mirrored in
-    `docs/data-model-definition.md`). The `current_state` descriptions still say "the
-    latest reader-visible condition" and "the latest condition".
+    `docs/data-model-definition.md`). Done in BOB-20261116-E87SYK: state is described
+    as the condition as of the write's effective date.
 11. **Chapter data.** Existing state writes that merged in later-dated facts (for
     example `character:riker` and `character:homer` at 1.22, `character:bill` at
     1.42) need Extractor review, and non-linear chapters (such as Bill's 2.6 state)

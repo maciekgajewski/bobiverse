@@ -135,12 +135,6 @@
     },
     {
       "chapter": "1.42",
-      "entity_id": "character:bill",
-      "field": "current_state",
-      "reason": "pre-existing, predates check"
-    },
-    {
-      "chapter": "1.42",
       "entity_id": "technology:surge-drive",
       "field": "description",
       "reason": "pre-existing, predates check; then Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
@@ -413,18 +407,6 @@
       "chapter": "1.5",
       "entity_id": "organization:free-american-independent-theocratic-hegemony",
       "field": "description",
-      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
-    },
-    {
-      "chapter": "1.56",
-      "entity_id": "character:bill",
-      "field": "current_state",
-      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
-    },
-    {
-      "chapter": "1.56",
-      "entity_id": "location:ee-2",
-      "field": "state",
       "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
     },
     {

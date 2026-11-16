@@ -723,6 +723,9 @@ git diff --check
 These generic validators are required safety nets for every chapter, as is the
 merged-text sentence-preservation check: when a chapter writes a merged text for a
 field, the write keeps every sentence of the earlier canonical value that is visible
-for that field. That check runs in `narrative:validate`. A reviewed exception in
+for that field. For `state` and `current_state`, that earlier value is the latest-read
+write with an equal or overlapping story date (`effective_date ?? chapter date`); a
+state write whose date neither equals nor overlaps any earlier write's date is its
+own snapshot and is not checked. That check runs in `narrative:validate`. A reviewed exception in
 `data/narrative/sentence-preservation-exceptions.json` can excuse one write; a
 condensed description write (§Descriptions) is excused this way.
