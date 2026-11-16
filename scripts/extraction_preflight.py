@@ -65,6 +65,13 @@ PENDING_CAVEAT = (
     "The prior chain includes PENDING predecessors (candidates not yet promoted): "
     "{}. Re-run this preflight if any of them changes before promotion."
 )
+REVISION_CAVEAT = (
+    "Revision target: canonical chapters {} to {} follow the prior root. Its "
+    "presentation registry withholds only the assignments to species those chapters "
+    "introduce, and astronomy is validated on the full canonical chain whose anchor "
+    "set the pinned plans cover. Checklist B still validates the whole corpus with "
+    "the candidate."
+)
 K5_CAVEAT = (
     "The approval file's format is checked, not its authenticity; it substitutes "
     "for item 1 only and never waives items 2-8 (K5)."
@@ -116,6 +123,17 @@ instead. They must be files outside the repository, exactly the chapters after t
 latest canonical one up to the target's predecessor, in reading order (crossing a
 book boundary the same way); the report marks the run as based on PENDING
 predecessors.
+
+Item 8 runs both validators on that prior root. When the target is a revision, so
+canonical chapters exist at or after it, the prior root is a strict prefix of the
+canonical chain while the presentation registry and the pinned astronomy describe the
+whole chain. The prior root's copy of data/presentation/species.json then withholds
+the assignments whose species a canonical chapter at or after the target introduces
+(listed in item 7's evidence); every other assignment and style is still validated.
+Astronomy validation runs on the full canonical chain at the base revision instead,
+because the pinned GCNS and CNS5 plans are exact for its anchor set and the prefix's
+anchors are a subset of it. Without later canonical chapters both validators run on
+the prior root unchanged.
 
 Output carries only source fingerprint fields, never source bytes. The JSON report
 goes to stdout, or to --report (outside the repository); a short summary goes to
@@ -559,6 +577,90 @@ def pending_problem(
     return None
 
 
+def later_canonical(repository: Path, chapter: str) -> list[str]:
+    """Canonical chapters at or after the target: non-empty for a revision."""
+    target = chapter_key(chapter)
+    return [
+        f"{book}.{number}"
+        for book, number in canonical_chapters(repository)
+        if (book, number) >= target
+    ]
+
+
+def introduced_species(document: Any) -> list[str]:
+    """Species IDs a chapter introduces, as the narrative validator counts them."""
+    if not isinstance(document, dict) or not isinstance(
+        document.get("introducing"), list
+    ):
+        return []
+    return [
+        entry["id"]
+        for entry in document["introducing"]
+        if isinstance(entry, dict)
+        and isinstance(entry.get("id"), str)
+        and entry["id"].startswith("species:")
+    ]
+
+
+def scope_presentation(
+    repository: Path, root: Path, later: list[str]
+) -> tuple[dict[str, Any], str | None]:
+    """Withhold species assignments that only a later canonical chapter can satisfy.
+
+    The registry describes the whole canonical chain, so at a revision's prior root an
+    assignment to a species first introduced at or after the target is a forward
+    reference, not a prior-chain defect. Only those assignments are withheld; an
+    assignment to a species no canonical chapter introduces stays and still fails.
+    """
+    forward: dict[str, str] = {}
+    for ref in later:
+        book, number = ref.split(".")
+        path = repository / "data" / "narrative" / "chapters" / book / f"{number}.json"
+        try:
+            document = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
+            return {}, (
+                f"canonical chapter {ref} is not a readable JSON file: "
+                f"{type(error).__name__}"
+            )
+        for species in introduced_species(document):
+            forward.setdefault(species, ref)
+    path = root / "presentation" / "species.json"
+    try:
+        registry = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
+        return {}, (
+            "the prior root's presentation registry is not a readable JSON file: "
+            f"{type(error).__name__}"
+        )
+    assignments = registry.get("assignments") if isinstance(registry, dict) else None
+    withheld: list[dict[str, str]] = []
+    if isinstance(assignments, list):
+        kept = []
+        for assignment in assignments:
+            species = (
+                assignment.get("species_id") if isinstance(assignment, dict) else None
+            )
+            if isinstance(species, str) and species in forward:
+                withheld.append(
+                    {"species_id": species, "introduced_in": forward[species]}
+                )
+            else:
+                kept.append(assignment)
+        if withheld:
+            registry["assignments"] = kept
+            path.write_text(
+                json.dumps(registry, indent=2, ensure_ascii=False) + "\n",
+                encoding="utf-8",
+            )
+    return {
+        "source": "data/presentation/species.json",
+        "scope": "prior chain",
+        "withheld_forward_assignments": withheld,
+        "sha256": sha256_file(path),
+    }, None
+
+
 def check_prior_chain(
     chapter: str,
     repository: Path,
@@ -639,25 +741,42 @@ def check_prior_chain(
     if provenance.get("inputs_clean") is not True:
         evidence["problem"] = "provenance does not show inputs_clean: true"
         return item(7, False, evidence), root
+    later = [] if pending else later_canonical(repository, chapter)
+    if later:
+        evidence["later_canonical_chapters"] = later
+        presentation, problem = scope_presentation(repository, root, later)
+        evidence["presentation"] = presentation
+        if problem:
+            evidence["problem"] = problem
+            return item(7, False, evidence), root
     return item(7, True, evidence), root
 
 
 def check_validators(
-    repository: Path, root: Path | None, prior_ok: bool
+    repository: Path, root: Path | None, prior_item: dict[str, Any]
 ) -> dict[str, Any]:
-    if root is None or not prior_ok:
+    if root is None or prior_item["result"] != "pass":
         return item(
             8,
             False,
             {"problem": "no certified prior root (item 7 failed); validators not run"},
         )
+    later = prior_item["evidence"].get("later_canonical_chapters") or []
+    # A revision's prefix has no exact pinned plan of its own; the pins describe the
+    # canonical chain, whose anchors include the prefix's (§Astronomy preflight).
+    astronomy_root = repository / "data" / "narrative" if later else root
     narrative = run_validator(
         "narrative", narrative_command(repository, root), repository
     )
     astronomy = run_validator(
-        "data:validate", data_command(repository, root), repository
+        "data:validate", data_command(repository, astronomy_root), repository
     )
     evidence: dict[str, Any] = {"prior_root": str(root), "results": []}
+    limits = []
+    if later:
+        evidence["astronomy_root"] = str(astronomy_root)
+        evidence["astronomy_basis"] = "canonical chain at the base revision"
+        limits.append(REVISION_CAVEAT.format(later[0], later[-1]))
     failure_classes = []
     if narrative["exit_code"] != 0:
         failure_classes.append("narrative")
@@ -670,7 +789,7 @@ def check_validators(
     evidence["results"] = [strip_private(narrative), strip_private(astronomy)]
     if failure_classes:
         evidence["failure_classes"] = failure_classes
-    return item(8, not failure_classes, evidence)
+    return item(8, not failure_classes, evidence, limits)
 
 
 def summary(report: dict[str, Any]) -> str:
@@ -793,7 +912,7 @@ def main() -> int:
         arguments.pending_predecessor,
     )
     items.append(prior_item)
-    items.append(check_validators(repository, root, prior_item["result"] == "pass"))
+    items.append(check_validators(repository, root, prior_item))
 
     verdict = "pass" if all(entry["result"] == "pass" for entry in items) else "fail"
     report = {
