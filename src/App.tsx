@@ -288,6 +288,9 @@ interface HistoryBoot {
   model: AppHistoryState[];
 }
 
+/** The last start-up generation bump, so a repeated boot does not redo it. */
+let lastBootBump: { staleGen: number; gen: number } | null = null;
+
 // On reload the browser keeps `history.state`. The card stack is restored
 // only when the entry is from this tab's current generation and every
 // selection is still eligible; otherwise a new generation starts and the
@@ -321,9 +324,17 @@ function bootHistory(projection: ApplicationProjection): HistoryBoot {
     0,
     Math.min(state.depth, (window.history.length || 1) - 1),
   );
+  // StrictMode runs this twice in development; the second run must not bump
+  // the generation again, or the stored one would run ahead of the app's.
+  const repeat =
+    lastBootBump !== null &&
+    lastBootBump.staleGen === state.gen &&
+    lastBootBump.gen === gen;
+  const nextGen = repeat ? gen : storeHistoryGen(gen + 1);
+  lastBootBump = { staleGen: state.gen, gen: nextGen };
   return {
     projection,
-    gen: storeHistoryGen(gen + 1),
+    gen: nextGen,
     stack: EMPTY_INSPECTOR_HISTORY,
     model: Array.from({ length: below + 1 }, () => state),
   };

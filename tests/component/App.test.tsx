@@ -7,6 +7,7 @@ import {
   within,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { StrictMode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const dateContextMapHarness = vi.hoisted(() => ({
@@ -2754,7 +2755,12 @@ describe("atlas shell", () => {
           timelinePan: 0,
         }),
       );
-      render(<App />);
+      // StrictMode boots twice; the generation is bumped once.
+      render(
+        <StrictMode>
+          <App />
+        </StrictMode>,
+      );
       expect(screen.getByText(emptyInspectorText)).toBeInTheDocument();
       expect(
         within(desktopInspector()).queryByRole("heading", {
@@ -2767,7 +2773,11 @@ describe("atlas shell", () => {
         layer: "base",
         depth: 0,
       });
-      expect((window.history.state as { gen: number }).gen).not.toBe(gen);
+      const next = (window.history.state as { gen: number }).gen;
+      expect(next).not.toBe(gen);
+      expect(window.sessionStorage.getItem("bobiverse.history-gen")).toBe(
+        String(next),
+      );
       expect(screen.getByText(emptyInspectorText)).toBeInTheDocument();
     });
   });
