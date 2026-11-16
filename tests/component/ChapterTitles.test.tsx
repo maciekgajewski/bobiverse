@@ -8,6 +8,7 @@ import {
   TopbarReadThrough,
 } from "../../src/components/ProgressControls";
 import { TimelineDock } from "../../src/components/TimelineDock";
+import bookCatalogue from "../../data/narrative/books.json";
 import { defaultBrowserGroupState } from "../../src/narrative/browser";
 import type {
   NarrativeChapterSummary,
@@ -15,7 +16,9 @@ import type {
 } from "../../src/narrative/progress";
 
 // Chapter titles in the UI (BOB-20261116-35B47D). Fixture chapters and
-// obviously fake titles only; real data has no book 2 yet.
+// obviously fake chapter titles only; book titles come from the real
+// books.json catalogue (book 2 landed with BOB-20261116-6D7ER3).
+const bookTitles: Record<string, { title: string }> = bookCatalogue.books;
 const summary = (
   chapter: string,
   title: string,
@@ -24,7 +27,7 @@ const summary = (
   chapter,
   title,
   date,
-  bookTitle: `Fixture book ${chapter.split(".")[0]}`,
+  bookTitle: bookTitles[chapter.split(".")[0]].title,
 });
 const LONG_TITLE =
   "Fixture Title Alpha With An Extremely Long Name That Never Fits On A Phone";
@@ -119,7 +122,7 @@ describe("chapter titles", () => {
       [...track.querySelectorAll(".chapter-book-divider")].map((divider) =>
         divider.getAttribute("title"),
       ),
-    ).toEqual(["Fixture book 1", "Fixture book 2"]);
+    ).toEqual([bookTitles["1"].title, "For We Are Many"]);
     // Untitled and book 1 entries keep their exact number-only form.
     const sixty = track.querySelector('[data-chapter="1.60"] .chapter-above')!;
     expect(sixty.outerHTML).toBe('<span class="chapter-above">60</span>');

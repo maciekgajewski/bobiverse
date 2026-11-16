@@ -85,9 +85,10 @@ a pending Read through names only the number.
 ## Out of scope
 
 - `data/` (including `books.json`) and the extraction preflight /
-  predecessor logic: the separate book 2 preflight branch
-  (`bob-20261116-book2-preflight`) owns them. Real book 2 chapters also need
-  that branch's book 2 catalogue entry before the runtime can load them.
+  predecessor logic, owned by BOB-20261116-6D7ER3. Its book 2 catalogue
+  entry ("For We Are Many", merged to master in 63bc106) is what the
+  timeline divider tooltip shows; the component tests read that real entry.
+  Real book 2 chapter files are still to be extracted.
 - Push, merge, tags, deploy, port 5173, and other worktrees.
 
 ## Acceptance criteria
