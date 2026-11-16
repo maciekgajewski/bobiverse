@@ -147,3 +147,18 @@ git diff --check
   was left untouched.
 - CSP e2e on port 4209 with a matching temporary config: 3 passed (15.4s).
   Both temporary configs were deleted afterwards.
+- Review-fix commits on top of `7fe2d1a` (`aabb55b`, `d7d04d9`, `92e6a23`,
+  `60d1857`): stale-popstate reconcile from entry depth, lowered-progress
+  reload test, What's new push on a real activation, and an idempotent
+  StrictMode generation bump.
+- Full validation at `60d1857`: `tasks.py check` (103 task files, 32 ADRs),
+  format:check, lint (existing AboutDialog fast-refresh warning only),
+  typecheck, 696 tests, 90 data tests, data:validate, narrative:validate,
+  build, `git diff --check`, and Prettier on the changed Markdown.
+- e2e at `60d1857` on chromium, firefox and webkit, one worker, no retries,
+  temporary untracked `playwright.alt5209.config.ts` on port 5209: 274
+  passed, 11 skipped, 0 failed (41.7m): chromium 91 passed / 4 skipped,
+  firefox 91 / 4, webkit 92 / 3. All 15 back-nav runs passed. Port 5173
+  was left untouched.
+- CSP e2e on port 4209 with a matching temporary config: 3 passed (15.6s).
+  Both temporary configs were deleted afterwards.
