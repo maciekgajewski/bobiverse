@@ -459,6 +459,7 @@ export function TimelineDock({
                     <li
                       className="chapter-book-divider"
                       key={`book-${chapter.chapter.split(".")[0]}`}
+                      title={chapter.bookTitle || undefined}
                     >
                       <span>Book {chapter.chapter.split(".")[0]}</span>
                     </li>

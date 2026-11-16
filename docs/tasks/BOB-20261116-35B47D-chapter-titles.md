@@ -20,8 +20,15 @@ Title` (long titles shortened to 40 characters with an ellipsis, full text
   in the option tooltip);
 - the Read through picker grid: number cells; a titled read chapter adds the
   title to the cell's accessible name and tooltip;
-- the timeline track keeps its existing label (`3 — Title` or the stored
-  `N - Title`), ellipsized at 12rem with the full label as the tooltip.
+- the timeline track: book 1 keeps its existing label (`3`, or the stored
+  `1 - Bob Version 1.0`); later books show the full reference
+  (`2.1 — Title`, or `2.5` untitled) so an entry stays unambiguous when the
+  `Book N` divider has scrolled away. Titled labels ellipsize at 12rem with
+  the full label as the tooltip, and each divider has the book title (from
+  `books.json`) as its tooltip;
+- elsewhere a chapter is already named in full (`Chapter 2.1`, `2.1` in the
+  stepper, `Book 2 · Chapter 1` in the Read through selector, `2 · Ch 1` on
+  the top-bar chip); the picker's number cells stay inside their book tab.
 
 Untitled chapters (the bare number) render exactly as before. What's new has
 no chapter references, so it is unchanged.

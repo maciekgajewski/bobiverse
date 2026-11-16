@@ -116,6 +116,13 @@ export function truncateChapterTitle(title: string, maxLength = 40): string {
 export function chapterTimelineLabel(
   chapter: Pick<NarrativeChapterSummary, "chapter" | "title">,
 ): string {
+  // Book 1 keeps its established per-book label. Later books carry the full
+  // reference ("2.1 — Title", or "2.5") so a track entry stays unambiguous
+  // once the "Book N" divider has scrolled out of view (BOB-20261116-35B47D).
+  if (chapterBook(chapter.chapter) !== "1") {
+    const title = chapterDisplayTitle(chapter);
+    return title ? `${chapter.chapter} — ${title}` : chapter.chapter;
+  }
   const localNumber = chapter.chapter.split(".")[1]!;
   const title = chapter.title.trim();
   if (!title || title === localNumber) return localNumber;

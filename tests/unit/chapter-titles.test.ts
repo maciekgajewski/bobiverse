@@ -86,14 +86,15 @@ describe("chapterDisplayTitle", () => {
     );
   });
 
-  it("leaves the existing timeline label unchanged", () => {
+  it("keeps book 1 timeline labels and qualifies later books", () => {
     expect(chapterTimelineLabel(summary("1.1", "1 - Bob Version 1.0"))).toBe(
       "1 - Bob Version 1.0",
     );
     expect(chapterTimelineLabel(summary("1.18", "18"))).toBe("18");
     expect(
       chapterTimelineLabel(summary("2.1", "1 - Fixture Title Alpha")),
-    ).toBe("1 - Fixture Title Alpha");
+    ).toBe("2.1 — Fixture Title Alpha");
+    expect(chapterTimelineLabel(summary("2.5", "5"))).toBe("2.5");
   });
 });
 

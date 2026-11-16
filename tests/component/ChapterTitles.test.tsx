@@ -106,7 +106,20 @@ describe("chapter titles", () => {
     ).toEqual(["1.60", "1.61", "2.1", "2.2", "2.9", "2.10"]);
     const alpha = track.querySelector('[data-chapter="2.1"] .chapter-above')!;
     expect(alpha).toHaveClass("titled");
-    expect(alpha).toHaveAttribute("title", `1 - ${LONG_TITLE}`);
+    expect(alpha).toHaveAttribute("title", `2.1 — ${LONG_TITLE}`);
+    // Book 2 entries carry the full reference (locked ones already did);
+    // the divider names the book.
+    expect(
+      track.querySelector('[data-chapter="2.9"] .chapter-above')!.textContent,
+    ).toBe("Chapter 2.9");
+    expect(
+      screen.getByRole("button", { name: "Book 2, 2.2 — Fixture Title Beta" }),
+    ).toBeEnabled();
+    expect(
+      [...track.querySelectorAll(".chapter-book-divider")].map((divider) =>
+        divider.getAttribute("title"),
+      ),
+    ).toEqual(["Fixture book 1", "Fixture book 2"]);
     // Untitled and book 1 entries keep their exact number-only form.
     const sixty = track.querySelector('[data-chapter="1.60"] .chapter-above')!;
     expect(sixty.outerHTML).toBe('<span class="chapter-above">60</span>');
