@@ -2718,5 +2718,51 @@ describe("atlas shell", () => {
         JSON.parse(window.localStorage.getItem("bobiverse.app-state.v2")!),
       ).toMatchObject({ furthestChapterRead: "1.2" });
     });
+
+    it("restores nothing on reload once saved progress no longer covers the stack", async () => {
+      seedChapterTwo();
+      const user = userEvent.setup();
+      const first = render(<App />);
+      await user.click(
+        screen.getByRole("button", { name: "Book 1, 2 - Bob Version 2.0" }),
+      );
+      await user.click(
+        within(desktopInspector()).getByRole("button", {
+          name: "Location: New Handeltown",
+        }),
+      );
+      await settle();
+      expect(window.history.state).toMatchObject({ layer: "card", index: 1 });
+      const { gen } = window.history.state as { gen: number };
+      first.unmount();
+
+      // Same tab and generation, but progress was lowered to 1.1 meanwhile.
+      window.localStorage.setItem(
+        "bobiverse.app-state.v2",
+        JSON.stringify({
+          furthestChapterRead: "1.1",
+          viewChapter: "1.1",
+          displayDate: "2133",
+          mode: "chapter",
+          timelineZoom: 1,
+          timelinePan: 0,
+        }),
+      );
+      render(<App />);
+      expect(screen.getByText(emptyInspectorText)).toBeInTheDocument();
+      expect(
+        within(desktopInspector()).queryByRole("heading", {
+          name: "New Handeltown",
+        }),
+      ).not.toBeInTheDocument();
+      await settle();
+      expect(window.history.state).toMatchObject({
+        bobiverse: 1,
+        layer: "base",
+        depth: 0,
+      });
+      expect((window.history.state as { gen: number }).gen).not.toBe(gen);
+      expect(screen.getByText(emptyInspectorText)).toBeInTheDocument();
+    });
   });
 });
