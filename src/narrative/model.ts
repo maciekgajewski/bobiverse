@@ -1683,9 +1683,17 @@ function validateNarrativeCorpusSemantics(
     if (chapterIds.has(id))
       throw new Error(`Duplicate chapter reference: ${id}.`);
     chapterIds.add(id);
-    const [book] = id.split(".");
+    const [book, localNumber] = id.split(".");
     if (!(book in books))
       throw new Error(`Chapter ${id} belongs to an unknown book.`);
+    const chapterCount = asRecord(
+      books[book],
+      `Book catalogue entry ${book}`,
+    ).chapter_count;
+    if (typeof chapterCount === "number" && Number(localNumber) > chapterCount)
+      throw new Error(
+        `Chapter ${id} is past the ${chapterCount} chapters that books.json records for book ${book}.`,
+      );
     const summary = asString(chapter.summary, `Chapter ${id} summary`);
     const date = parseNarrativeDate(
       asString(chapter.date, `Chapter ${id} date`),

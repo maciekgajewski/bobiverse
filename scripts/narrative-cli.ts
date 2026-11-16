@@ -117,14 +117,15 @@ async function readChapters(root: string): Promise<LoadedJson[]> {
   }
   const chapters: LoadedJson[] = [];
   const bookEntries = await readdir(chaptersRoot, { withFileTypes: true });
+  // Numeric name order keeps reading order: 1/9 < 1/10 and 1/61 < 2/1.
   for (const bookEntry of bookEntries.sort((left, right) =>
-    left.name.localeCompare(right.name),
+    left.name.localeCompare(right.name, "en", { numeric: true }),
   )) {
     if (!bookEntry.isDirectory()) continue;
     const bookPath = path.join(chaptersRoot, bookEntry.name);
     const chapterEntries = await readdir(bookPath, { withFileTypes: true });
     for (const chapterEntry of chapterEntries.sort((left, right) =>
-      left.name.localeCompare(right.name),
+      left.name.localeCompare(right.name, "en", { numeric: true }),
     )) {
       if (!chapterEntry.isFile() || !chapterEntry.name.endsWith(".json"))
         continue;

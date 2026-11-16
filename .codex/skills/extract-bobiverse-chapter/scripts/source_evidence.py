@@ -477,15 +477,18 @@ def command_prepare_corpus(arguments: argparse.Namespace) -> None:
     copied_prior: list[str] = []
     chapters_root = narrative_root / "chapters"
     if chapters_root.exists():
-        for chapter_file in sorted(chapters_root.glob("*/*.json")):
-            relative = chapter_file.relative_to(chapters_root)
-            candidate_id = f"{relative.parts[0]}.{chapter_file.stem}"
+        prior: list[tuple[tuple[int, int], Path, str]] = []
+        for chapter_file in chapters_root.glob("*/*.json"):
+            candidate_id = f"{chapter_file.parent.name}.{chapter_file.stem}"
             try:
                 candidate_key = chapter_key(candidate_id)
             except EvidenceError:
                 continue
-            if candidate_key >= target_key:
-                continue
+            if candidate_key < target_key:
+                prior.append((candidate_key, chapter_file, candidate_id))
+        # Reading order, numeric by book then chapter: 1.9 < 1.10 < 1.61 < 2.1.
+        for _, chapter_file, candidate_id in sorted(prior):
+            relative = chapter_file.relative_to(chapters_root)
             destination = output_root / "chapters" / relative
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(chapter_file, destination)

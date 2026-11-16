@@ -381,6 +381,35 @@ describe("narrative corpus validation and projection", () => {
     }
   });
 
+  it("bounds each book's chapters by its optional catalogue chapter count", () => {
+    const counted = createNarrativeFixtureCorpus();
+    counted.books = {
+      books: {
+        "1": { title: "Fixture volume", chapter_count: 3 },
+        "2": { title: "Later fixture volume", chapter_count: 57 },
+      },
+    };
+    expect(() => validateNarrativeCorpus(counted)).not.toThrow();
+
+    const overflow = createNarrativeFixtureCorpus();
+    overflow.books = {
+      books: { "1": { title: "Fixture volume", chapter_count: 2 } },
+    };
+    expect(() => validateNarrativeCorpus(overflow)).toThrow(
+      "Chapter 1.3 is past the 2 chapters that books.json records for book 1.",
+    );
+
+    for (const chapterCount of [0, 2.5, "3"]) {
+      expect(
+        narrativeSchemaErrors("books_source", {
+          books: {
+            "1": { title: "Fixture volume", chapter_count: chapterCount },
+          },
+        }),
+      ).not.toEqual([]);
+    }
+  });
+
   it("accepts the zero state as a complete pre-book world with an empty catalogue", () => {
     const corpus = createNarrativeFixtureCorpus();
     corpus.books = { books: {} };

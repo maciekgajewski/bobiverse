@@ -971,7 +971,8 @@
               "type": "object",
               "required": ["title"],
               "properties": {
-                "title": { "type": "string", "minLength": 1 }
+                "title": { "type": "string", "minLength": 1 },
+                "chapter_count": { "type": "integer", "minimum": 1 }
               },
               "additionalProperties": false
             }
