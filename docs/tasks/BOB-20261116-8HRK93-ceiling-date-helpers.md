@@ -1,6 +1,6 @@
 # BOB-20261116-8HRK93: ceiling date helpers
 
-Status: In progress
+Status: Done
 Phase: 2 (narrative foundation and chapter timeline)
 Last updated: 2026-11-16
 
@@ -97,3 +97,8 @@ git diff --check
   `tasks.py check`, format:check, lint, typecheck, test (60 files, 788 tests),
   data:test (90 tests), data:validate, narrative:validate, build and
   `git diff --check`. No e2e (no UI change). Sent to the manager for review.
+- Approved by the manager at `e9f5961`. Per the manager, the canonical 1.24 test
+  now reads the `four-asteroid-diversion` date from the chapter data instead of
+  a literal (`9fae5f4`). Merged master `3be3086` (T1, BOB-20261116-E87SYK) into
+  the branch without conflicts, revalidated, and landed with the no-ff merge
+  "Merge BOB-20261116-8HRK93: ceiling date helpers". Done.
