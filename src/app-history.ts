@@ -384,13 +384,30 @@ export class AppHistorySync {
       return { kind: "navigate", state };
     }
     // Stale: rewrite this entry to the current UI and keep showing it. The
-    // browser now holds a copy of the current entry one step further on.
-    if (top) {
-      this.history.replaceState(top, "");
-      this.model = [...this.model, top];
-    }
+    // entry's own depth says where the browser is, even when the pop is a
+    // late landing of a walk back that was abandoned, so the model is
+    // rebuilt from it rather than assumed to be one step further on.
     this.forwardEntries = [];
+    this.reconcile(state.depth);
     return { kind: "stale" };
+  }
+
+  /**
+   * Rebuilds the model for a browser that is `depth` entries above the base:
+   * the desired projection up to that depth (padded with its top when the
+   * browser is further on), with the current entry rewritten to match. Any
+   * rest of the projection is then pushed, so the browser ends on the UI.
+   */
+  private reconcile(depth: number): void {
+    const desired = this.desired ?? this.model;
+    if (desired.length === 0) return;
+    const top = desired.length - 1;
+    this.model = Array.from(
+      { length: depth + 1 },
+      (_, position) => desired[Math.min(position, top)]!,
+    );
+    this.history.replaceState(this.model[depth], "");
+    if (depth < top) this.apply();
   }
 
   private apply(): void {

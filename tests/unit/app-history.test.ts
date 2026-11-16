@@ -318,6 +318,36 @@ describe("AppHistorySync", () => {
     );
   });
 
+  it("counts a late landing after the fallback from the entry's depth", () => {
+    const { history, sync, outcomes, flush, project, setLive } = setup(7);
+    // Two cards open, then a read-through bumps the generation: go(-2).
+    sync.sync(project(stack(1, A, B)));
+    setLive((state) => state.gen === 8);
+    sync.sync(project(EMPTY_STACK, null, 8));
+    expect(history.calls.at(-1)).toBe("go(-2)");
+    // The 3 s fallback fires before the popstate arrives.
+    sync.abandonPending();
+    expect(sync.pending).toBe(false);
+    // The late pop lands on the old base: the browser is at the bottom.
+    flush();
+    expect(outcomes.at(-1)).toEqual({ kind: "stale" });
+    expect(history.position).toBe(0);
+    expect(history.state).toMatchObject({ layer: "base", gen: 8 });
+    expect(sync.depth).toBe(0);
+    // Opening a card and pressing X walks back once, onto the base, and
+    // never off the bottom of the app's history.
+    sync.sync(project(stack(0, C), null, 8));
+    expect(history.position).toBe(1);
+    history.calls = [];
+    sync.sync(project(EMPTY_STACK, null, 8));
+    expect(history.calls).toEqual(["back"]);
+    flush();
+    expect(history.position).toBe(0);
+    expect(history.state).toMatchObject({ layer: "base", gen: 8 });
+    expect(sync.pending).toBe(false);
+    expect(sync.depth).toBe(0);
+  });
+
   it("recovers when a walk back never lands", () => {
     const { history, sync, project } = setup();
     sync.sync(project(stack(0, A)));
