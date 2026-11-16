@@ -137,3 +137,8 @@ and names only).
 
 - Created on master `212b867` on local branch
   `bob-20261116-two-ceiling-projection` in the `~/src/bobiverse-t3` worktree.
+- Committed `c58d167`; marked BOB-20261116-E87SYK Done (`97f94fb`); merged master
+  `adc77b1` into the branch. Non-e2e validation passed: `tasks.py check`,
+  format:check, lint, typecheck, test (61 files, 813 tests), data:test (93
+  tests), data:validate, narrative:validate, build and `git diff --check`. E2e
+  and the CSP check are still to run (chapter view output changes).
