@@ -28,6 +28,12 @@ constitution.
   approval.
 - Code and data still differ from it in the places listed in
   `../design-principles.md` §5; those are open work, not choices.
+- Property classification for the soft ceiling (§2.5, §5 item 3): structural
+  fields (`kind`, `parent_location_id`, `orbital_order`, `species_id`,
+  `parent_id`) follow Read through, like name, picture and description; only
+  state-like properties follow the soft ceiling (`softCeilingProperties` in
+  `src/narrative/model.ts`). This was the manager's call on 2026-11-16
+  (BOB-20261116-TB1C66); Maciej may override it.
 
 ## Alternatives considered
 

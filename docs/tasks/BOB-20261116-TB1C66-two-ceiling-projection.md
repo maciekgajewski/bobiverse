@@ -2,7 +2,7 @@
 
 Status: In progress
 Phase: 2 (narrative foundation and chapter timeline)
-Last updated: 2026-11-16
+Last updated: 2026-11-17
 
 ## Objective and user-visible outcome
 
@@ -103,13 +103,15 @@ and names only).
 
 ## Known risks or unresolved decisions
 
-- Property classification is a choice the constitution leaves open: only the
-  six `softCeilingProperties` follow the soft ceiling. Structural and identity
-  fields (species_id, parent_id, kind, parent_location_id, orbital_order,
-  aliases) follow Read through, so an entity that exists before its
-  introduction's date (via a backdated update or an appearance) keeps them. In
-  book 1 no structural field changes over story time, so this shows only in
-  synthetic tests. Adding a property to the set is a one-line change.
+- Property classification (decided): only the six `softCeilingProperties`
+  follow the soft ceiling. Structural fields (`kind`, `parent_location_id`,
+  `orbital_order`, `species_id`, `parent_id`) follow Read through, like name,
+  picture and description, as do aliases and every event field; an entity that
+  exists before its introduction's date (via a backdated update or an
+  appearance) therefore keeps them. This was the manager's call on 2026-11-16,
+  recorded in ADR-0031; Maciej may override it. In book 1 no structural field
+  changes over story time. Moving a property between the sets is a one-line
+  change.
 - Rule (a) applies to chapter-introduced locations too, so at a non-linear
   chapter whole star systems revealed in a later-dated chapter leave the map
   (for example the `location:omicron2-eridani` system at 1.20).
@@ -142,3 +144,8 @@ and names only).
   format:check, lint, typecheck, test (61 files, 813 tests), data:test (93
   tests), data:validate, narrative:validate, build and `git diff --check`. E2e
   and the CSP check are still to run (chapter view output changes).
+
+### 2026-11-17 (Europe/Warsaw)
+
+- Approved by the manager at `c42af8e` after an independent review, confirming
+  that structural fields follow Read through (recorded here and in ADR-0031).
