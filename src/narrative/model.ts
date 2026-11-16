@@ -1628,7 +1628,6 @@ function validateNarrativeCorpusSemantics(
     }
   };
   const availableIds = new Set(zeroStateEntities.map((entity) => entity.id));
-  const introductionDates = new Map<string, string>();
   const allCanonicalSpeciesIds = new Set(
     zeroStateEntities
       .filter((entity) => entity.entity_type === "species")
@@ -1825,18 +1824,6 @@ function validateNarrativeCorpusSemantics(
           `${update.effective_date} must be on or before the chapter date ${chapterDate(chapter)}.`,
         );
       }
-      const introducedOn = introductionDates.get(targetId);
-      if (
-        typeof update.effective_date === "string" &&
-        introducedOn &&
-        compareNarrativeDates(update.effective_date, introducedOn) === -1
-      ) {
-        throw chapterSemanticError(
-          id,
-          `/updates/${updateIndex}/effective_date`,
-          `${update.effective_date} is before ${targetId} was introduced (${introducedOn}).`,
-        );
-      }
       const roleMessage = pictureRoleMessage(
         update,
         `Update ${targetId} picture_id`,
@@ -1959,7 +1946,6 @@ function validateNarrativeCorpusSemantics(
     }
     for (const entityId of introducedThisChapter) {
       availableIds.add(entityId);
-      introductionDates.set(entityId, chapterDate(chapter));
     }
   }
   assertInlineEntityLinks(

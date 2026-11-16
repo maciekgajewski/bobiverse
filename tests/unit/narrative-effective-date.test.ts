@@ -300,18 +300,23 @@ describe("backdated updates and chapter-view latest known state", () => {
     },
   );
 
-  it("rejects an effective_date before the entity's introduction", () => {
+  it("accepts an effective_date before the entity's introduction (rule (a))", () => {
+    // Entities show from their earliest known story date
+    // (docs/design-principles.md rule (a)), so a later chapter may record a
+    // state from before the entity was introduced.
     expect(() =>
       prepareNarrativeCorpus(
         corpus({
           "1.4": [
-            { entity_id: alex, death_date: "2150", effective_date: "2150" },
+            {
+              entity_id: alex,
+              current_state: "a child",
+              effective_date: "2150",
+            },
           ],
         }),
       ),
-    ).toThrow(
-      /effective_date: 2150 is before character:fixture-alex was introduced \(2160-01\)/,
-    );
+    ).not.toThrow();
   });
 
   it("accepts an effective_date equal to the chapter date", () => {
