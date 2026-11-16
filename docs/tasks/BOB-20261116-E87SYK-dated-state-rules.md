@@ -1,6 +1,6 @@
 # BOB-20261116-E87SYK: dated-state write rules
 
-Status: In progress
+Status: Done
 Phase: 2 (narrative foundation and chapter timeline)
 Last updated: 2026-11-16
 
@@ -119,3 +119,11 @@ together. No generated artifact is committed.
   with the projection task.
 - Constitution §5 items 5, 9 and 10 still describe this work as open; updating
   that list is left to the manager.
+
+## Log
+
+### 2026-11-16 (Europe/Warsaw)
+
+- Approved by the manager at `a735024` and landed on master with the no-ff merge
+  `3be3086` ("Merge BOB-20261116-E87SYK: dated-state write rules"), which also
+  ticked constitution §5 items 5, 9 and 10. Deployed to the LAN site. Done.
