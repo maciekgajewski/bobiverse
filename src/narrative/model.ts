@@ -688,7 +688,11 @@ function rangeFor(date: ParsedNarrativeDate): [number, number] {
   return [start, Date.UTC(date.year, 11, 31) / 86400000];
 }
 
-interface NarrativeDateRange {
+/**
+ * A narrative date's Gregorian calendar range (ADR-0026) in whole UTC days since
+ * the epoch, inclusive at both ends, plus its precision and ordering suffix.
+ */
+export interface NarrativeDateRange {
   readonly start: number;
   readonly end: number;
   readonly precision: ParsedNarrativeDate["precision"];
@@ -698,7 +702,7 @@ interface NarrativeDateRange {
 const narrativeDateRanges = new Map<string, NarrativeDateRange>();
 
 /** Parses once per distinct date string; invalid dates throw and are not cached. */
-function narrativeDateRange(value: string): NarrativeDateRange {
+export function narrativeDateRange(value: string): NarrativeDateRange {
   let range = narrativeDateRanges.get(value);
   if (!range) {
     const date = parseNarrativeDate(value);
