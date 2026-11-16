@@ -11,12 +11,10 @@ import {
 /**
  * Merged-text sentence preservation (BOB-20261113-JRV53G).
  *
- * Under "Merge: (a) keep full merged texts" (ADR-0028), a chapter that writes a
- * prose field which already had a visible value keeps every sentence of that
- * value verbatim. The earlier value is the one chapter view shows just before the
- * chapter: the write of the latest-read earlier chapter (decision (c)). Only
- * chapter-authored writes (introductions and updates) are compared; zero-state
- * values are not.
+ * A chapter that writes a prose field which already had a value keeps every
+ * sentence of the earlier value it is compared against verbatim. Which earlier
+ * value that is depends on the field's policy below. Only chapter-authored writes
+ * (introductions and updates) are compared; zero-state values are not.
  *
  * Values are compared as display text (ADR-0029): inline entity links become
  * their labels or default names and escapes are removed before sentences are
@@ -28,24 +26,28 @@ import {
  */
 
 /**
- * Which prose fields are checked, and when.
+ * Which prose fields are checked, and against which earlier write.
  *
- * - `always`: every write must keep the earlier value's sentences. This is the
- *   full-field update rule for `description` in docs/chapter-extraction.md
- *   §Descriptions.
- * - `when-not-later`: only a write whose story date is not later than the earlier
- *   write's (earlier, the same date, or an overlapping date of different
- *   precision) must keep them. That is the ADR-0028 case, where the write is read
- *   later but dated earlier and would otherwise hide what is known. A later-dated
- *   `state` or `current_state` write is the new latest condition, which
- *   §Descriptions says replaces the old one.
+ * - `always`: every write must keep the sentences of the latest-read earlier
+ *   write, whatever either's story date. `description` is fused from everything
+ *   read (docs/design-principles.md rule (f)), as is `visual_description`.
+ * - `same-date`: a write is a snapshot of the entity's condition as of its own
+ *   story date (`effective_date ?? chapter date`), so it is compared only with an
+ *   earlier-read snapshot of the same moment. It must keep the sentences of the
+ *   latest-read earlier write whose date is equal to or overlaps its own
+ *   (`compareNarrativeDates` returns `0` or `null`, as for `2185` and
+ *   `2185-04`). When every earlier-read write is strictly earlier or strictly
+ *   later in story time, the write is a different snapshot and is not checked: a
+ *   state dated earlier must not carry later facts, and a later one may replace
+ *   them (docs/design-principles.md §2.5: current state masks what comes after
+ *   the soft ceiling).
  */
 export const sentencePreservationPolicy = {
   description: "always",
   visual_description: "always",
-  state: "when-not-later",
-  current_state: "when-not-later",
-} as const satisfies Record<string, "always" | "when-not-later">;
+  state: "same-date",
+  current_state: "same-date",
+} as const satisfies Record<string, "always" | "same-date">;
 
 export type SentencePreservedField = keyof typeof sentencePreservationPolicy;
 
@@ -138,8 +140,13 @@ export interface SentencePreservationViolation {
 
 interface ChapterWrite {
   value: string;
+  /** Story date of the write: `effective_date ?? chapter date`. */
   date: string;
   pointer: string;
+}
+
+interface ReadWrite extends ChapterWrite {
+  chapter: string;
 }
 
 export interface SentencePreservationOptions {
@@ -198,9 +205,29 @@ function chapterWrites(
 }
 
 /**
- * Lists every sentence that a chapter's write drops from the value visible in
- * chapter view just before that chapter. Chapters may come in any order; they
- * are compared in reading order.
+ * The earlier-read write a new write must preserve, or `undefined` when there is
+ * none to check against. `history` holds the field's earlier writes in reading
+ * order.
+ */
+function comparedWrite(
+  field: SentencePreservedField,
+  write: ChapterWrite,
+  history: readonly ReadWrite[],
+): ReadWrite | undefined {
+  if (sentencePreservationPolicy[field] === "always") return history.at(-1);
+  for (let index = history.length - 1; index >= 0; index -= 1) {
+    const earlier = history[index]!;
+    // 0: the same date; null: overlapping ranges of different precision.
+    if ((compareNarrativeDates(write.date, earlier.date) ?? 0) === 0)
+      return earlier;
+  }
+  return undefined;
+}
+
+/**
+ * Lists every sentence that a chapter's write drops from the earlier write it is
+ * compared against (see `sentencePreservationPolicy`). Chapters may come in any
+ * order; they are compared in reading order.
  */
 export function findSentencePreservationViolations(
   chapters: readonly NarrativeRecord[],
@@ -210,23 +237,16 @@ export function findSentencePreservationViolations(
   const ordered = [...chapters].sort((left, right) =>
     compareNarrativeChapters(String(left.chapter), String(right.chapter)),
   );
-  const visible = new Map<string, ChapterWrite & { chapter: string }>();
+  const histories = new Map<string, ReadWrite[]>();
   const violations: SentencePreservationViolation[] = [];
   for (const chapter of ordered) {
     const chapterReference = String(chapter.chapter);
     const writes = chapterWrites(chapter, displayText);
     for (const [entityId, fields] of writes) {
       for (const [field, write] of fields) {
-        const earlier = visible.get(`${entityId}\u0000${field}`);
+        const history = histories.get(`${entityId}\u0000${field}`) ?? [];
+        const earlier = comparedWrite(field, write, history);
         if (!earlier) continue;
-        const dateOrder = compareNarrativeDates(write.date, earlier.date);
-        if (
-          sentencePreservationPolicy[field] === "when-not-later" &&
-          dateOrder !== null &&
-          dateOrder > 0
-        ) {
-          continue;
-        }
         const kept = new Set(splitSentences(write.value));
         const sentences = splitSentences(earlier.value);
         sentences.forEach((sentence, sentenceIndex) => {
@@ -246,10 +266,10 @@ export function findSentencePreservationViolations(
     }
     for (const [entityId, fields] of writes) {
       for (const [field, write] of fields) {
-        visible.set(`${entityId}\u0000${field}`, {
-          ...write,
-          chapter: chapterReference,
-        });
+        const key = `${entityId}\u0000${field}`;
+        const history = histories.get(key) ?? [];
+        history.push({ ...write, chapter: chapterReference });
+        histories.set(key, history);
       }
     }
   }

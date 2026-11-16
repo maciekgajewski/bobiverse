@@ -46,7 +46,7 @@ the identical listing below documents its shared definitions.
     "state": {
       "type": "string",
       "minLength": 1,
-      "description": "One or two concise sentences describing only the latest reader-visible condition, as plain text with optional inline entity links (ADR-0029); no controlled vocabulary is imposed."
+      "description": "One or two concise sentences describing only the condition as of the write's effective date (effective_date or the chapter date), as plain text with optional inline entity links (ADR-0029); no controlled vocabulary is imposed."
     },
     "entity_id": {
       "type": "string",
@@ -208,7 +208,7 @@ the identical listing below documents its shared definitions.
         "parent_id": { "$ref": "#/$defs/character_id" },
         "description": {
           "$ref": "#/$defs/description",
-          "description": "Who this character is: a stable identity blurb (about 300 characters as a guideline, not a hard limit). Distinct from current_state, which is the latest condition. Optional inline entity links (ADR-0029) are allowed."
+          "description": "Who this character is: a stable identity blurb (about 300 characters as a guideline, not a hard limit). Distinct from current_state, which is the condition as of the write's effective date. Optional inline entity links (ADR-0029) are allowed."
         },
         "current_state": { "$ref": "#/$defs/state" },
         "picture_id": { "$ref": "#/$defs/asset_id" },
@@ -240,7 +240,7 @@ the identical listing below documents its shared definitions.
         },
         "description": {
           "anyOf": [{ "$ref": "#/$defs/description" }, { "type": "null" }],
-          "description": "Who this character is: a stable identity blurb (about 300 characters as a guideline, not a hard limit). Distinct from current_state, which is the latest condition. Null clears the prior value. Optional inline entity links (ADR-0029) are allowed."
+          "description": "Who this character is: a stable identity blurb (about 300 characters as a guideline, not a hard limit). Distinct from current_state, which is the condition as of the write's effective date. Null clears the prior value. Optional inline entity links (ADR-0029) are allowed."
         },
         "current_state": {
           "anyOf": [{ "$ref": "#/$defs/state" }, { "type": "null" }]
@@ -1552,8 +1552,9 @@ update object has `entity_id` plus one or more ordinary properties of that entit
   every property in that update at that story date instead of the chapter's date. It
   must be on or before the chapter's own `date` (definitively eligible at it).
   Revealing stays with the chapter: the update is invisible at any read-through
-  earlier than its chapter, whatever its date. It must not be earlier than the
-  date of the chapter that introduced the entity. An update must still supply at
+  earlier than its chapter, whatever its date. It may be earlier than the date of
+  the chapter that introduced the entity: entities show from their earliest known
+  story date (`design-principles.md` rule (a)). An update must still supply at
   least one ordinary property.
 - An omitted property is unchanged.
 - A supplied scalar or object replaces its prior value.

@@ -26,8 +26,9 @@ fact appeared only from the reveal chapter's date and not from the real date.
 - Events keep their own `date`.
 - Nothing from a chapter after the read-through chapter is visible, in any view,
   even when it is dated earlier than chapters already read.
-- An `effective_date` must not be earlier than the date of the chapter that
-  introduced the entity.
+- An `effective_date` may be earlier than the date of the chapter that introduced
+  the entity; entities show from their earliest known story date
+  (`../design-principles.md` rule (a)).
 - How views select state by story time is defined in `../design-principles.md`.
 
 ## Consequences
