@@ -149,3 +149,8 @@ and names only).
 
 - Approved by the manager at `c42af8e` after an independent review, confirming
   that structural fields follow Read through (recorded here and in ADR-0031).
+- The Riker and Homer `current_state` meaning pins at 1.22 and 1.23
+  (`tests/fixtures/narrative-meaning.json`, changed in `c58d167`) follow the soft
+  ceiling, as constitution §5 item 11 requires: at 1.22 Riker shows 1.18's state
+  and Homer 1.20's, at 1.23 Riker shows 1.19's and Homer 1.20's. The manager
+  confirmed the change.
