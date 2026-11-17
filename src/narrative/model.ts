@@ -2445,6 +2445,11 @@ interface RevealedProjection {
  * `date`; an update by `effective_date ?? chapter date`, or for an event the
  * `date` it supplies, else the event's current date, else the chapter date.
  * Existence (rule (a)) is decided afterwards by `entitiesExistingAt`.
+ *
+ * Writes are applied chapter by chapter with no lookahead, so the state after
+ * chapter `index` is the projection of `readerVisible.slice(0, index + 1)`.
+ * `afterChapter` sees that intermediate state (read-only) and returns `false`
+ * to stop early.
  */
 function projectRevealedEntities(
   baseEntities: readonly NarrativeEntity[],
@@ -2452,6 +2457,7 @@ function projectRevealedEntities(
   softCeiling: string,
   orbitDisplayDate: string,
   locationsOnly = false,
+  afterChapter?: (index: number, projection: RevealedProjection) => boolean,
 ): RevealedProjection {
   const entities = [...baseEntities];
   const byId = new Map(entities.map((entity) => [entity.id, entity]));
@@ -2463,7 +2469,7 @@ function projectRevealedEntities(
         .filter((entity) => entity.entity_type === "location")
         .map((entity) => [entity.id, entity]),
     );
-  for (const chapter of readerVisible) {
+  for (const [chapterIndex, chapter] of readerVisible.entries()) {
     const date = chapterDate(chapter);
     const sourceChapter = chapterId(chapter);
     const locationsBefore = new Map(
@@ -2553,6 +2559,11 @@ function projectRevealedEntities(
       sourceChapter,
       orbitDisplayDate,
     );
+    if (
+      afterChapter &&
+      !afterChapter(chapterIndex, { entities, byId, revealingDates })
+    )
+      break;
   }
   return { entities, byId, revealingDates };
 }
@@ -2617,96 +2628,175 @@ function locationProjectionDates(
   return [...candidates];
 }
 
+function assertProjectedLocationsAt(
+  knowledgeChapter: string,
+  displayDate: string,
+  projection: RevealedProjection,
+  earliest: ReadonlyMap<string, string>,
+): void {
+  const existing = entitiesExistingAt(projection, earliest, displayDate);
+  const locations = new Map(
+    projection.entities
+      .filter((entity) => existing.has(entity.id))
+      .map((entity) => [entity.id, entity]),
+  );
+
+  const moonCounts = new Map<string, number>();
+  for (const location of locations.values()) {
+    const colonyOf = Array.isArray(location.colony_of)
+      ? location.colony_of.filter((id): id is string => typeof id === "string")
+      : [];
+    if (
+      location.kind === "transit" &&
+      (Object.hasOwn(location, "colony_of") ||
+        Object.hasOwn(location, "possible_colony_target") ||
+        Object.hasOwn(location, "prominent"))
+    ) {
+      throw chapterSemanticError(
+        knowledgeChapter,
+        "/locations",
+        `projection at ${displayDate} leaves system-status fields on transit location ${location.id}.`,
+      );
+    }
+    if (colonyOf.length > 0 && location.possible_colony_target === true) {
+      throw chapterSemanticError(
+        knowledgeChapter,
+        "/locations",
+        `projection at ${displayDate} combines nonempty colony_of with possible_colony_target on ${location.id}.`,
+      );
+    }
+    const effectiveProperties = surveyObservationProperties.filter(
+      (property) =>
+        Object.hasOwn(location, property) && location[property] !== null,
+    );
+    if (
+      effectiveProperties.length > 0 &&
+      (typeof location.kind !== "string" ||
+        !surveyedBodyKinds.has(location.kind))
+    ) {
+      throw chapterSemanticError(
+        knowledgeChapter,
+        "/locations",
+        `projection at ${displayDate} leaves survey properties ${effectiveProperties.join(", ")} on effective location kind ${String(location.kind)} for ${location.id}.`,
+      );
+    }
+    if (
+      location.kind !== "moon" ||
+      typeof location.parent_location_id !== "string"
+    ) {
+      continue;
+    }
+    const parentId = location.parent_location_id;
+    const count = (moonCounts.get(parentId) ?? 0) + 1;
+    moonCounts.set(parentId, count);
+    if (count > 4) {
+      throw chapterSemanticError(
+        knowledgeChapter,
+        "/locations",
+        `projection at ${displayDate} gives location ${parentId} ${count} direct moon children; maximum is 4.`,
+      );
+    }
+  }
+}
+
+/**
+ * Checks the projected locations at every soft ceiling a reader can reach at
+ * every Read through: the chapter view ceiling (§3.1) and each authored date
+ * of the chapters read so far.
+ *
+ * Projecting writes has no lookahead, so for each soft ceiling one pass over
+ * the chapters in reading order yields the projection at every Read through
+ * along the way; the pass checks it at each Read through that can reach that
+ * ceiling. This is the same set of (Read through, soft ceiling) checks as
+ * projecting each pair separately, in linear rather than quadratic projection
+ * work, and it reports the same first failure: the earliest Read through, then
+ * that Read through's first soft ceiling.
+ */
 function assertProjectedLocationConstraints(
   zeroStateEntities: readonly NarrativeEntity[],
   chapters: readonly NarrativeRecord[],
 ): void {
-  for (const [selectedIndex, selectedChapter] of chapters.entries()) {
-    const knowledgeChapter = chapterId(selectedChapter);
-    const readerVisible = chapters.slice(0, selectedIndex + 1);
-    const earliest = entityEarliestDates(readerVisible, knowledgeChapter);
-    // Every soft ceiling a reader can reach at this Read through: the chapter
-    // view ceiling (§3.1) and each authored date.
-    for (const displayDate of locationProjectionDates(
-      readerVisible,
-      chapterLatestDate(selectedChapter),
-    )) {
-      const projection = projectRevealedEntities(
-        zeroStateEntities
-          .filter((entity) => entity.entity_type === "location")
-          .map((entity) => structuredClone(entity)),
-        readerVisible,
+  const knowledgeChapters = chapters.map((chapter) => chapterId(chapter));
+  // Soft ceilings reachable at each Read through, in their check order.
+  const ceilingOrder = chapters.map(
+    (selectedChapter, selectedIndex) =>
+      new Map(
+        locationProjectionDates(
+          chapters.slice(0, selectedIndex + 1),
+          chapterLatestDate(selectedChapter),
+        ).map((date, order) => [date, order]),
+      ),
+  );
+  const earliestByIndex = new Map<number, ReadonlyMap<string, string>>();
+  const earliestAt = (index: number) => {
+    let earliest = earliestByIndex.get(index);
+    if (!earliest) {
+      earliest = entityEarliestDates(
+        chapters.slice(0, index + 1),
+        knowledgeChapters[index]!,
+      );
+      earliestByIndex.set(index, earliest);
+    }
+    return earliest;
+  };
+  const softCeilings = new Set<string>();
+  for (const order of ceilingOrder)
+    for (const date of order.keys()) softCeilings.add(date);
+  const locationEntities = zeroStateEntities.filter(
+    (entity) => entity.entity_type === "location",
+  );
+
+  let first: { index: number; order: number; error: unknown } | null = null;
+  const precedesFirst = (index: number, order: number) =>
+    first === null ||
+    index < first.index ||
+    (index === first.index && order < first.order);
+  for (const displayDate of softCeilings) {
+    // The first Read through at or after `index` that checks this ceiling.
+    const nextCheck = (index: number) => {
+      for (let next = index; next < chapters.length; next += 1) {
+        if (ceilingOrder[next]!.has(displayDate)) return next;
+      }
+      return null;
+    };
+    let completed = -1;
+    try {
+      projectRevealedEntities(
+        locationEntities.map((entity) => structuredClone(entity)),
+        chapters,
         displayDate,
         displayDate,
         true,
+        (index, projection) => {
+          completed = index;
+          const order = ceilingOrder[index]!.get(displayDate);
+          if (order === undefined) return precedesFirst(index + 1, -1);
+          if (!precedesFirst(index, order)) return false;
+          try {
+            assertProjectedLocationsAt(
+              knowledgeChapters[index]!,
+              displayDate,
+              projection,
+              earliestAt(index),
+            );
+          } catch (error) {
+            first = { index, order, error };
+            return false;
+          }
+          return true;
+        },
       );
-      const existing = entitiesExistingAt(projection, earliest, displayDate);
-      const locations = new Map(
-        projection.entities
-          .filter((entity) => existing.has(entity.id))
-          .map((entity) => [entity.id, entity]),
-      );
-
-      const moonCounts = new Map<string, number>();
-      for (const location of locations.values()) {
-        const colonyOf = Array.isArray(location.colony_of)
-          ? location.colony_of.filter(
-              (id): id is string => typeof id === "string",
-            )
-          : [];
-        if (
-          location.kind === "transit" &&
-          (Object.hasOwn(location, "colony_of") ||
-            Object.hasOwn(location, "possible_colony_target") ||
-            Object.hasOwn(location, "prominent"))
-        ) {
-          throw chapterSemanticError(
-            knowledgeChapter,
-            "/locations",
-            `projection at ${displayDate} leaves system-status fields on transit location ${location.id}.`,
-          );
-        }
-        if (colonyOf.length > 0 && location.possible_colony_target === true) {
-          throw chapterSemanticError(
-            knowledgeChapter,
-            "/locations",
-            `projection at ${displayDate} combines nonempty colony_of with possible_colony_target on ${location.id}.`,
-          );
-        }
-        const effectiveProperties = surveyObservationProperties.filter(
-          (property) =>
-            Object.hasOwn(location, property) && location[property] !== null,
-        );
-        if (
-          effectiveProperties.length > 0 &&
-          (typeof location.kind !== "string" ||
-            !surveyedBodyKinds.has(location.kind))
-        ) {
-          throw chapterSemanticError(
-            knowledgeChapter,
-            "/locations",
-            `projection at ${displayDate} leaves survey properties ${effectiveProperties.join(", ")} on effective location kind ${String(location.kind)} for ${location.id}.`,
-          );
-        }
-        if (
-          location.kind !== "moon" ||
-          typeof location.parent_location_id !== "string"
-        ) {
-          continue;
-        }
-        const parentId = location.parent_location_id;
-        const count = (moonCounts.get(parentId) ?? 0) + 1;
-        moonCounts.set(parentId, count);
-        if (count > 4) {
-          throw chapterSemanticError(
-            knowledgeChapter,
-            "/locations",
-            `projection at ${displayDate} gives location ${parentId} ${count} direct moon children; maximum is 4.`,
-          );
-        }
+    } catch (error) {
+      // Projecting chapter `completed + 1` failed; the per-pair projection
+      // fails there at the first Read through that checks this ceiling.
+      const index = nextCheck(completed + 1);
+      if (index !== null) {
+        const order = ceilingOrder[index]!.get(displayDate)!;
+        if (precedesFirst(index, order)) first = { index, order, error };
       }
     }
   }
+  if (first !== null) throw (first as { error: unknown }).error;
 }
 
 function deriveLocationChildren(entities: NarrativeEntity[]): void {

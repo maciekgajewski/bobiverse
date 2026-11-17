@@ -1470,6 +1470,27 @@ describe("narrative corpus validation and projection", () => {
     );
   });
 
+  it("reports the earliest Read through's projected-location violation first", () => {
+    const corpus = createNarrativeFixtureCorpus();
+    corpus.chapters[1]!.updates = [
+      { entity_id: "location:mars", kind: "locale", color: "rust red" },
+    ];
+    corpus.chapters[2]!.updates = [
+      {
+        entity_id: "location:moon",
+        parent_location_id: "location:jupiter",
+        parent_relation: "orbits",
+      },
+    ];
+    expect(() => validateNarrativeCorpus(corpus)).toThrow(
+      "Chapter 1.2 /locations: projection at 2200.2 leaves survey properties color on effective location kind locale for location:mars",
+    );
+    delete corpus.chapters[1]!.updates;
+    expect(() => validateNarrativeCorpus(corpus)).toThrow(
+      /^Chapter 1\.3 \/locations: projection at .* gives location location:jupiter 5 direct moon children; maximum is 4\.$/,
+    );
+  });
+
   it("projects deterministic non-metric orbital ordering across introductions and updates", () => {
     const corpus = createNarrativeFixtureCorpus();
     corpus.knownAstronomyObjectIds = ["sol", "fixture-system"];
