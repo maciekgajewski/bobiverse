@@ -102,3 +102,10 @@ The docs listed in scope item 4.
 - Blocked before implementation (`bb3f99b`): the replacement wording was not
   specified. The manager decided it the same day (see Decision); status In
   progress.
+- Implemented in `5052be9`. Full validation on `5052be9` passed:
+  `tasks.py check`, format:check, lint, typecheck, test (64 files, 836
+  tests), data:test, data:validate, narrative:validate, build and
+  `git diff --check`; e2e with one worker and no retries on chromium (95
+  passed, 4 skipped), firefox (95 passed, 4 skipped) and webkit (96 passed, 3
+  skipped); the CSP check (3 passed).
+- Awaiting manager review.
