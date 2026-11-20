@@ -149,12 +149,18 @@ The code and data do not yet follow this constitution in these places.
 2. **Chapter view soft ceiling.** `generateNarrativeWorld` uses no cutoff and
    reading-order writes in chapter view (`cutoff = null`,
    `writeOrder = "reading"`). It must cut at the chapter's latest date (§3.1) and
-   order writes by story date in every view.
+   order writes by story date in every view. Done in BOB-20261116-TB1C66: chapter
+   view's soft ceiling is the chapter's latest date (`chapterSoftCeiling`), and
+   state properties keep story order in every view; other properties follow Read
+   through (ADR-0031).
 3. **Dated states.** The projection keeps one winning value per property
    (`applyProperties` with `latestMoments`). It must keep each property's dated
    writes up to the hard ceiling, select state at the soft ceiling with
    `compareNarrativeMoments`, and project the description separately with no date
-   cutoff (rule (f)).
+   cutoff (rule (f)). Done in BOB-20261116-TB1C66: `softCeilingProperties` take
+   the latest-dated write known at the soft ceiling (`isKnownAtCeiling`) and are
+   absent when none is known; description, name, picture and structural fields
+   take the latest write read.
 4. **Calendar precision.** `isNarrativeDateEligible` rejects a fact whose range
    contains a less precise ceiling, so `2185` is not eligible at `2185-04`; it must
    follow rule (e). The cutoff must not rely on `compareNarrativeDates`, which returns
@@ -162,11 +168,14 @@ The code and data do not yet follow this constitution in these places.
 5. **Entity existence.** Entities appear from their introduction date. They must
    appear from their earliest known story date (rule (a)). Validation done in
    BOB-20261116-E87SYK: an `effective_date` may now be earlier than the introducing
-   chapter's date (ADR-0028, `docs/data-model-definition.md`). The projection part
-   is still open.
+   chapter's date (ADR-0028, `docs/data-model-definition.md`). Projection done in
+   BOB-20261116-TB1C66: entities appear from `entityEarliestDates`, events from
+   their current date.
 6. **Undated facts.** `generateNarrativeWorld` drops undated events in Date view, and
    generated activity for an undated event has `effective_date: null`. Both must use
-   the revealing chapter's date (rule (c)).
+   the revealing chapter's date (rule (c)). The projection part is done in
+   BOB-20261116-TB1C66: undated events show from their revealing chapter's date
+   in every view. Activity for an undated event still has `effective_date: null`.
 7. **Info card** (`src/components/ObjectInspector.tsx`). "Current state" needs the
    "as of chapter X" / "as of year Y" label and "no known state as of …" (rules (b)
    and (g)); the description must not be cut by the soft ceiling.

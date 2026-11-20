@@ -6,33 +6,48 @@ import {
 } from "../../src/narrative/model";
 import { narrativeCorpus } from "../../src/narrative/runtime";
 
-// Canonical pairs whose chapter-view winner flipped under ADR-0028 decision (c):
-// a later-read chapter with an earlier story date now wins in chapter view, and
-// Date view keeps story-date order. IDs, fields and chapter refs only; values
-// are compared with the canonical chapter writes, never written here. See
-// docs/tasks/BOB-20261113-WZGAM4-chapter-view-reading-order.md.
+// Canonical non-linear pairs: a later-read chapter dated earlier in story
+// time than the chapter read before it. Under the two ceilings (design
+// principles §2.5, ADR-0031), state takes the latest-dated write known at the
+// soft ceiling, so the later-read write is current only while the earlier-read
+// one is still in the future; description follows Read through only, so the
+// later-read write wins at every soft ceiling. IDs, fields and chapter refs
+// only; values are compared with the canonical chapter writes, never written
+// here.
 
-interface Flip {
+interface StateFlip {
   subject: string;
   field: string;
-  // Read points where chapter view shows the later-read write.
-  readPoints: string[];
+  laterRead: string;
+  earlierRead: string;
+  // Chapter views whose soft ceiling is before the earlier-read write's date.
+  laterReadCurrent: string[];
+  // Chapter views whose soft ceiling has reached it.
+  laterDatedCurrent: string[];
+}
+
+const stateFlips: StateFlip[] = [
+  {
+    subject: "character:bill",
+    field: "current_state",
+    laterRead: "1.42",
+    earlierRead: "1.41",
+    laterReadCurrent: ["1.42"],
+    laterDatedCurrent: ["1.43", "1.44"],
+  },
+];
+
+interface DescriptionFlip {
+  subject: string;
+  field: string;
   laterRead: string;
   earlierRead: string;
 }
 
-const flips: Flip[] = [
-  {
-    subject: "character:bill",
-    field: "current_state",
-    readPoints: ["1.42", "1.43", "1.44"],
-    laterRead: "1.42",
-    earlierRead: "1.41",
-  },
+const descriptionFlips: DescriptionFlip[] = [
   {
     subject: "technology:vr",
     field: "description",
-    readPoints: ["1.42"],
     laterRead: "1.42",
     earlierRead: "1.40",
   },
@@ -73,10 +88,20 @@ function projected(
   )?.[field];
 }
 
-describe("canonical chapter-view flips under ADR-0028 decision (c)", () => {
-  it.each(flips.map((flip) => [`${flip.subject} ${flip.field}`, flip]))(
-    "%s",
-    (_label, { subject, field, readPoints, laterRead, earlierRead }) => {
+describe("canonical non-linear pairs under the two ceilings", () => {
+  it.each(stateFlips.map((flip) => [`${flip.subject} ${flip.field}`, flip]))(
+    "state %s follows the soft ceiling",
+    (
+      _label,
+      {
+        subject,
+        field,
+        laterRead,
+        earlierRead,
+        laterReadCurrent,
+        laterDatedCurrent,
+      },
+    ) => {
       const later = written(laterRead, subject, field);
       const earlier = written(earlierRead, subject, field);
       expect(later).not.toEqual(earlier);
@@ -84,18 +109,42 @@ describe("canonical chapter-view flips under ADR-0028 decision (c)", () => {
       const earlierDate = chapter(earlierRead).date as string;
       // The later-read chapter is earlier in story time.
       expect(laterDate < earlierDate).toBe(true);
-      for (const knowledge of readPoints) {
+      for (const knowledge of laterReadCurrent) {
         expect(projected(knowledge, null, subject, field), knowledge).toEqual(
           later,
         );
       }
-      const knowledge = readPoints[0]!;
-      expect(projected(knowledge, earlierDate, subject, field)).toEqual(
+      for (const knowledge of laterDatedCurrent) {
+        expect(projected(knowledge, null, subject, field), knowledge).toEqual(
+          earlier,
+        );
+      }
+      expect(projected(laterRead, earlierDate, subject, field)).toEqual(
         earlier,
       );
-      expect(projected(knowledge, laterDate, subject, field)).toEqual(later);
+      expect(projected(laterRead, laterDate, subject, field)).toEqual(later);
     },
     // Each canonical projection takes about a second.
+    60_000,
+  );
+
+  it.each(
+    descriptionFlips.map((flip) => [`${flip.subject} ${flip.field}`, flip]),
+  )(
+    "description %s follows Read through only",
+    (_label, { subject, field, laterRead, earlierRead }) => {
+      const later = written(laterRead, subject, field);
+      const earlier = written(earlierRead, subject, field);
+      expect(later).not.toEqual(earlier);
+      expect(projected(earlierRead, null, subject, field)).toEqual(earlier);
+      expect(projected(laterRead, null, subject, field)).toEqual(later);
+      for (const date of [
+        chapter(earlierRead).date as string,
+        chapter(laterRead).date as string,
+      ]) {
+        expect(projected(laterRead, date, subject, field), date).toEqual(later);
+      }
+    },
     60_000,
   );
 });

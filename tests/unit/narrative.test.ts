@@ -790,8 +790,9 @@ describe("narrative corpus validation and projection", () => {
         (entity) => entity.id === "character:fixture-alex",
       )?.parent_id,
     ).toBe("character:fixture-parent-b");
-    // Chapter view: 1.3, read last, clears it, although 1.2 (2200.2) is later
-    // in story time (ADR-0028, decision (c)).
+    // parent_id follows Read through, not the soft ceiling: 1.3, read last,
+    // clears it at every soft ceiling, although 1.2 (2200.2) is later in story
+    // time.
     expect(
       generateNarrativeWorld(prepared, "1.3").entities.find(
         (entity) => entity.id === "character:fixture-alex",
@@ -799,6 +800,11 @@ describe("narrative corpus validation and projection", () => {
     ).toHaveProperty("parent_id", null);
     expect(
       generateNarrativeWorld(prepared, "1.3", "2200.2").entities.find(
+        (entity) => entity.id === "character:fixture-alex",
+      ),
+    ).toHaveProperty("parent_id", null);
+    expect(
+      generateNarrativeWorld(prepared, "1.2", "2200.0").entities.find(
         (entity) => entity.id === "character:fixture-alex",
       )?.parent_id,
     ).toBe("character:fixture-parent-b");
@@ -948,11 +954,19 @@ describe("narrative corpus validation and projection", () => {
         }),
       ]),
     );
-    // Chapter view includes every revealed stop; Date view cuts at the date.
+    // Every view cuts at its soft ceiling: chapter view at 1.3's latest date
+    // (2200.1), so 1.2's later-dated stop waits for a later soft ceiling.
     expect(
       characterTravelStops(corpus, world, "character:fixture-alex").map(
         (stop) => stop.source_chapter,
       ),
+    ).toEqual(["1.1", "1.3"]);
+    expect(
+      characterTravelStops(
+        corpus,
+        generateNarrativeWorld(corpus, "1.3", "2200.2"),
+        "character:fixture-alex",
+      ).map((stop) => stop.source_chapter),
     ).toEqual(["1.1", "1.3", "1.2"]);
     expect(
       characterTravelStops(
@@ -965,7 +979,7 @@ describe("narrative corpus validation and projection", () => {
 
   it("projects every character history without regenerating a world per stop", () => {
     const corpus = prepareNarrativeCorpus(createNarrativeFixtureCorpus());
-    const world = generateNarrativeWorld(corpus, "1.3");
+    const world = generateNarrativeWorld(corpus, "1.3", "2200.2");
     const generationCount = narrativeWorldGenerationCount(corpus);
     const histories = projectCharacterTravelHistories(corpus, world);
     expect(histories.get("character:fixture-alex")).toHaveLength(3);
@@ -1091,14 +1105,19 @@ describe("narrative corpus validation and projection", () => {
       current_state: null,
     });
 
-    // Chapter view at 1.3 shows 1.2's later-dated values (asserted below for
-    // the vessel); Date view at 1.3's own date shows the earlier story time.
+    // Chapter view at 1.3 (soft ceiling 2200.1) masks 1.2's later-dated state
+    // but keeps its name and description, which follow Read through only; Date
+    // view at 1.3's own date is the same soft ceiling.
     const prepared = prepareNarrativeCorpus(corpus);
     expect(
       generateNarrativeWorld(prepared, "1.3").entities.find(
         (entity) => entity.id === "vessel:fixture-probe",
       ),
-    ).toMatchObject({ name: "Renamed fixture probe", current_state: null });
+    ).toMatchObject({
+      name: "Renamed fixture probe",
+      description: "Later fictional vessel description.",
+      current_state: "Initially ready.",
+    });
     const readerVisibleEarlierStoryTime = generateNarrativeWorld(
       prepared,
       "1.3",
@@ -1108,7 +1127,7 @@ describe("narrative corpus validation and projection", () => {
       readerVisibleEarlierStoryTime.entities.find(
         (entity) => entity.id === "technology:fixture-drive",
       )?.description,
-    ).toBe("Initial fictional technology description.");
+    ).toBeNull();
     expect(
       readerVisibleEarlierStoryTime.entities.find(
         (entity) => entity.id === "organization:fixture-fleet",
@@ -1119,8 +1138,8 @@ describe("narrative corpus validation and projection", () => {
         (entity) => entity.id === "vessel:fixture-probe",
       ),
     ).toMatchObject({
-      name: "Fixture probe",
-      description: "Initial fictional vessel description.",
+      name: "Renamed fixture probe",
+      description: "Later fictional vessel description.",
       current_state: "Initially ready.",
     });
   });
@@ -1407,11 +1426,13 @@ describe("narrative corpus validation and projection", () => {
         (entity) => entity.id === "location:mars",
       ),
     ).toMatchObject({ kind: "planet", color: "rust red" });
+    // Structural fields such as kind follow Read through, not the soft
+    // ceiling, so the latest-read kind holds at every soft ceiling.
     expect(
       generateNarrativeWorld(nonChronological, "1.3", "2200.2").entities.find(
         (entity) => entity.id === "location:mars",
       ),
-    ).toMatchObject({ kind: "locale", color: null });
+    ).toMatchObject({ kind: "planet", color: "rust red" });
 
     const nonChronologicalMoonOverflow = createNarrativeFixtureCorpus();
     nonChronologicalMoonOverflow.chapters[1]!.updates = [
@@ -1428,9 +1449,11 @@ describe("narrative corpus validation and projection", () => {
         parent_relation: "orbits",
       },
     ];
-    expect(() => validateNarrativeCorpus(nonChronologicalMoonOverflow)).toThrow(
-      "projection at 2200.1 gives location location:jupiter 5 direct moon children; maximum is 4",
-    );
+    // parent_location_id follows Read through, not the soft ceiling, so the
+    // swap read across 1.2 and 1.3 is complete at every soft ceiling.
+    expect(() =>
+      validateNarrativeCorpus(nonChronologicalMoonOverflow),
+    ).not.toThrow();
   });
 
   it("prepareNarrativeCorpus, the build-time validator entry, rejects a constraint violation", () => {
@@ -1444,6 +1467,27 @@ describe("narrative corpus validation and projection", () => {
     ];
     expect(() => prepareNarrativeCorpus(ineligibleUpdate)).toThrow(
       "projection at 2200.2 leaves survey properties color on effective location kind locale for location:mars",
+    );
+  });
+
+  it("reports the earliest Read through's projected-location violation first", () => {
+    const corpus = createNarrativeFixtureCorpus();
+    corpus.chapters[1]!.updates = [
+      { entity_id: "location:mars", kind: "locale", color: "rust red" },
+    ];
+    corpus.chapters[2]!.updates = [
+      {
+        entity_id: "location:moon",
+        parent_location_id: "location:jupiter",
+        parent_relation: "orbits",
+      },
+    ];
+    expect(() => validateNarrativeCorpus(corpus)).toThrow(
+      "Chapter 1.2 /locations: projection at 2200.2 leaves survey properties color on effective location kind locale for location:mars",
+    );
+    delete corpus.chapters[1]!.updates;
+    expect(() => validateNarrativeCorpus(corpus)).toThrow(
+      /^Chapter 1\.3 \/locations: projection at .* gives location location:jupiter 5 direct moon children; maximum is 4\.$/,
     );
   });
 
@@ -2485,13 +2529,15 @@ describe("narrative corpus validation and projection", () => {
         reasons: ["event"],
       },
     ]);
+    // Rule (c): the undated event takes its revealing chapter's date (1.1,
+    // 2200.0), so Date view shows it too.
     expect(
       generateNarrativeWorld(
         prepareNarrativeCorpus(corpus),
         "1.3",
         "2200.1",
       ).entities.some((entity) => entity.id === "event:fixture-unplaced"),
-    ).toBe(false);
+    ).toBe(true);
     const placed = activity.filter((record) => record.effective_date !== null);
     for (let index = 1; index < placed.length; index += 1) {
       const previous = placed[index - 1]!;

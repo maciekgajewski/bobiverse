@@ -13,9 +13,10 @@ import {
 import { createNarrativeFixtureCorpus } from "../fixtures/narrative";
 
 // Synthetic, fictional records only (ADR-0028). Reader order reveals a write.
-// Chapter view shows the latest known state from every revealed chapter, and
-// the last chapter read wins a competing write; Date view cuts at the requested
-// date using `effective_date ?? chapter date` and keeps story-date order.
+// Every view shows state as of its soft ceiling (design principles §1, ADR-0031):
+// chapter view at the chapter's latest date, Date view at the requested date.
+// A write is dated `effective_date ?? chapter date`; the latest-dated write
+// known at the soft ceiling wins, and the later-read one wins a tie.
 
 function chapter(
   id: string,
@@ -158,7 +159,8 @@ describe("backdated updates and chapter-view latest known state", () => {
   });
 
   it("chapter view at an earlier-dated later chapter shows the states of both", () => {
-    // Read-through 1.5 (2168-06) after 1.4 (2174-01): no story-time cutoff.
+    // Read-through 1.5 (latest date 2168-06) after 1.4 (2174-01): 1.4's
+    // backdated write (2165-09) is known at 1.5's soft ceiling.
     expect(entity("1.5", null, alex)).toMatchObject({
       death_date: "2165-09",
       current_state: "lost",
@@ -173,11 +175,14 @@ describe("backdated updates and chapter-view latest known state", () => {
     expect(entity("1.5", "2170-03", sam).current_state).toBe("travelling");
   });
 
-  it("lets the latest-read chapter win competing writes in chapter view", () => {
+  it("keeps an earlier-dated write read later from becoming current at a later soft ceiling", () => {
     // 1.3 (2170-03) writes sam; 1.5, read later, writes sam with an earlier
-    // effective date (2166-02). Decision (c) (ADR-0028): in chapter view the
-    // write from the last chapter read wins.
+    // effective date (2166-02). At 1.5's soft ceiling (2168-06) 1.3's write is
+    // still in the future, so 1.5's is current.
     expect(entity("1.5", null, sam).current_state).toBe("repairing");
+    // 1.3 writes alex "seen" (2170-03); 1.4, read later, writes "lost" dated
+    // 2165-09. At 1.4's soft ceiling (2174-01) both are known and the
+    // later-dated "seen" stays current.
     const shadowed = prepareNarrativeCorpus(
       corpus({ "1.3": [{ entity_id: alex, current_state: "seen" }] }),
     );
@@ -185,7 +190,7 @@ describe("backdated updates and chapter-view latest known state", () => {
       (candidate) => candidate.id === alex,
     )!;
     expect(alexAt14.death_date).toBe("2165-09");
-    expect(alexAt14.current_state).toBe("lost");
+    expect(alexAt14.current_state).toBe("seen");
   });
 
   it("keeps story-date order for competing writes in date view", () => {
@@ -248,9 +253,12 @@ describe("backdated updates and chapter-view latest known state", () => {
   });
 
   it("keeps last-known location and travel history in agreement in both views", () => {
+    // Chapter view 1.5 cuts at its latest date (2168-06), before 1.4's
+    // 2174-01 sighting on Mars.
     const cases: Array<[string | null, string, string]> = [
-      [null, "location:mars", "1.4"],
+      [null, "location:earth", "1.5"],
       ["2168-06", "location:earth", "1.5"],
+      ["2174-01", "location:mars", "1.4"],
     ];
     for (const [date, location, source] of cases) {
       const at = world("1.5", date);

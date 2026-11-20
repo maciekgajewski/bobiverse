@@ -839,6 +839,20 @@ Both are absent before the reader selects a chapter, when the zero state is
 rendered. The hard and soft ceilings, and how each view selects state, are defined
 in `design-principles.md`.
 
+`generateNarrativeWorld` (`src/narrative/model.ts`) implements them. It takes
+`{ readThrough, softCeiling, chapter? }`: only chapters at or before `readThrough` are
+used; the properties in `softCeilingProperties` (`state`, `current_state`, `colony_of`,
+`possible_colony_target`, `death_date`, `death_event_id`) take the latest-dated write
+known at `softCeiling` (`isKnownAtCeiling`, later-read winning ties) and are absent
+when none is known; every other property, including `name`, `description`,
+`visual_description`, `picture_id`, structural location fields and every event field,
+takes the latest-read write. An entity is in `entities` only from its earliest known
+date (`entityEarliestDates`; an event from its current date, an undated one from its
+revealing chapter), the ancestors of a shown location are shown too, and entities read
+but not existing yet are available from `narrativeEntitiesBeforeExistence`. Chapter view
+passes the chapter's latest date (`chapterSoftCeiling`) as `softCeiling`. Travel
+histories and last-known locations use the same two ceilings.
+
 Dated chapter-authored facts compare a Gregorian calendar range, optional hidden
 ordering suffix, and source chapter. Non-overlapping ranges use calendar order;
 identical calendar portions use suffix then canonical chapter; overlapping

@@ -5,6 +5,7 @@ import {
   useState,
   type RefObject,
 } from "react";
+import { useFocusAfterCommit } from "./useFocusAfterCommit";
 import { useReadThroughConfirmationFocus } from "./useReadThroughConfirmationFocus";
 import {
   PRE_BOOK_LABEL,
@@ -281,6 +282,9 @@ export function TopbarReadThrough({
   const chip = useRef<HTMLButtonElement>(null);
   const confirmButton = useRef<HTMLButtonElement>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
+  // The shell is inert while the picker is open; the chip takes focus back
+  // in the commit that closes it (useFocusAfterCommit).
+  const focusChipAfterCommit = useFocusAfterCommit(pickerOpen);
   useReadThroughConfirmationFocus(
     ownsConfirmation,
     ownsConfirmation ? pendingReadThrough : null,
@@ -297,9 +301,8 @@ export function TopbarReadThrough({
   );
   const closePicker = useCallback(() => {
     setOpen(false);
-    // The shell may be inert until the next render; return focus after it.
-    window.setTimeout(() => chip.current?.focus(), 0);
-  }, [setOpen]);
+    focusChipAfterCommit(() => chip.current);
+  }, [focusChipAfterCommit, setOpen]);
   // The picker has no browser history entry. Browser Back while it is open
   // closes it as a side effect of the same popstate (BOB-20261116-ZBZF9F).
   useEffect(() => {
@@ -348,7 +351,7 @@ export function TopbarReadThrough({
           onChoose={(chapter) => {
             setOpen(false);
             if (chapter === value) {
-              window.setTimeout(() => chip.current?.focus(), 0);
+              focusChipAfterCommit(() => chip.current);
               return;
             }
             onReadThroughChoice(chapter);
