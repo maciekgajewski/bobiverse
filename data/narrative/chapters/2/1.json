@@ -1,0 +1,78 @@
+{
+  "chapter": "2.1",
+  "title": "1 - Sky God",
+  "summary": "[[character:bob-replicant]] watches through a [[technology:planetary-exploration-drone|drone]] as hunters from [[character:archimedes]]'s family group kill a pigoid with braced, [[technology:pointy-sticks|flint-tipped spears]], and one hunter's leg is gashed when his spear splinters. Back at the village the hunters side with Bob against the medicine woman [[character:cruella]], who for the first time cleans a wound with freshly boiled water and a boiled hide; Bob counts it a major victory against infection and pulls his drone back so she can save face. In his library [[technology:vr]], [[character:marvin]] shows him a globe of [[location:delta-eridani-4|Eden]]: his digging suggests the sentient [[species:delta-eridani-natives|Deltans]] came from a gorilloid-free part of their continent, where abandoned villages hold far too few graves for the expected population. Neither can explain it, but the tribe is thriving in its new village, which Bob calls [[location:camelot]] over Marvin's objection, and gorilloids have nearly stopped preying on it.",
+  "date": "2167-02",
+  "location_id": "location:delta-eridani",
+  "introducing": [
+    {
+      "id": "location:camelot",
+      "name": "Camelot",
+      "kind": "locale",
+      "parent_location_id": "location:delta-eridani-4",
+      "parent_relation": "located_on",
+      "colony_of": ["species:delta-eridani-natives"],
+      "description": "A Deltan village on [[location:delta-eridani-4|Eden]] at the old flint site, a former camp on a rocky rise above the forest with a sheltered hollow under a rock shelf, rain-fed rock pools and a central mesa. [[character:bob-replicant]] resettled the [[species:delta-eridani-natives|Deltan]] tribe there and calls it Camelot, a name [[character:marvin]] dislikes.",
+      "state": "The resettled tribe is thriving: hunting is good and gorilloids have almost stopped trying to prey on its people."
+    },
+    {
+      "id": "character:cruella",
+      "name": "Cruella",
+      "species_id": "species:delta-eridani-natives",
+      "description": "The medicine woman of the [[species:delta-eridani-natives|Deltan]] tribe at [[location:camelot]], who treats injuries with the help of an apprentice. Fearless and stubborn, she resists outside advice, including [[character:bob-replicant]]'s.",
+      "current_state": "Pressed by the hunters, she has for the first time cleaned a wound with freshly boiled water and a hide washed in boiling water, as [[character:bob-replicant]] has urged."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "Orbiting [[location:delta-eridani-4|Eden]], he guides the [[species:delta-eridani-natives|Deltans]] he resettled at [[location:camelot]] and has got their medicine woman to clean a wound with boiled water for the first time. He means to help them for about a generation and then fade into legend."
+    },
+    {
+      "entity_id": "character:marvin",
+      "current_state": "Orbiting [[location:delta-eridani-4|Eden]] with [[character:bob-replicant]], he researches Deltan history as a pet project and is puzzled by the too-few graves in the sentient Deltans' abandoned, gorilloid-free original range. He expects to leave in about a generation."
+    },
+    {
+      "entity_id": "character:spike",
+      "description": "A simulated cat that lives in [[character:bob-replicant]]'s [[technology:vr]], driven by its own A.I. It is as fickle and independent as a real cat: it wanders where it pleases, purrs on [[character:marvin]]'s lap and settles on Bob's keyboard."
+    },
+    {
+      "entity_id": "species:delta-eridani-natives",
+      "description": "An intelligent, fire-using native people of [[location:delta-eridani-4|Eden]], named Deltans by [[character:bob-replicant]]. They have bat- and pig-like faces, long spiderish limbs, brownish-gray to orangey-tan fur, patterned heads, mobile expressive ears and a guttural language, and live in hearth-based family groups called hexghi. Some have built an altar to Bob, whom they call the bawbe, and [[character:marvin]]'s research suggests the sentient Deltans first arose in another, gorilloid-free part of their continent."
+    },
+    {
+      "entity_id": "technology:jeeves",
+      "description": "A butler figure that [[character:bob-replicant]] created in his [[technology:vr]] aboard [[vessel:heaven-1]], styled after John Cleese and dressed in a tuxedo with tails. It serves Bob coffee and clears away dishes. The same Jeeves A.I. can run in other virtual-reality spaces, where it keeps that appearance."
+    },
+    {
+      "entity_id": "technology:translation-routine",
+      "description": "A software routine for interpreting speech. One version interprets the standard twenty-second-century accent so smoothly that differing speech patterns become effectively transparent; another lets its user converse in English with the [[species:delta-eridani-natives|Deltans]], converting idiom and metaphor as well as their more guttural language."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead"
+    },
+    {
+      "character_id": "character:marvin",
+      "role": "other"
+    },
+    {
+      "character_id": "character:spike",
+      "role": "other"
+    },
+    {
+      "character_id": "character:cruella",
+      "role": "other",
+      "location_id": "location:camelot"
+    }
+  ],
+  "mentions": [
+    "character:archimedes",
+    "technology:ami",
+    "technology:planetary-exploration-drone",
+    "technology:pointy-sticks",
+    "technology:vr"
+  ]
+}

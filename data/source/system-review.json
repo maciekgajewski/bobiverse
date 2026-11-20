@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0.0",
-  "accepted_candidate_sha256": "0871608839059501eb0036903b2070fd5b93306f6b61c0ef047805c7085b5be9",
-  "reviewer": "Independent Codex astronomy snapshot review /root/refreshed_snapshot_review under Captain-delegated authority",
-  "reviewed_at": "2026-08-05",
+  "accepted_candidate_sha256": "12a630ee87df905739e5d9a6a44bfdcc5547d735f44e7ceb0efdd5f1d9965a84",
+  "reviewer": "Independent agent astronomy snapshot review (ADR-0023, combined 003237+003706 option-A refresh) under Captain-delegated authority",
+  "reviewed_at": "2026-11-20",
   "anchor_bootstraps": [],
   "identity_transitions": [],
   "cns5_astrometry_overrides": [],

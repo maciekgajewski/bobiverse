@@ -1,0 +1,92 @@
+{
+  "chapter": "2.5",
+  "title": "5 - Progress",
+  "summary": "The colonists' town on [[location:vulcan]] has been laid out, its fence is nearly finished, and it is now officially called [[location:landing|Landing]]. In a call with [[character:howard]], [[character:george-butterworth|Colonel Butterworth]] and [[character:stephane-brodeur|Stéphane Brodeur]] go over the deaths of two people killed when raptors slipped into camp unseen behind log-hauling trucks. On the advice of Dr. Sheehy and her staff, Butterworth judges the raptors very smart animals rather than sentient beings and says the colonists will keep killing them as long as they keep trying to eat people, while Howard argues that sentience need not be all or nothing. With security ready, Howard's observation drones helping, the farms ready and shelter adequate, Butterworth declares the colony ready to decant the rest of its colonists, on schedule as long as the second [[technology:kudzu-gardens|farm donut]] reaches full production, and Howard welcomes Opening Day. He reflects that in about thirty-five years another twenty thousand people will need to settle on Vulcan or [[location:romulus]]. [[character:bert]], who with [[character:ernie]] has been orbiting Vulcan as a floating warehouse and is eager to haul more colonists from [[location:earth]], drops into Howard's [[technology:vr]] for coffee from [[technology:jeeves]]. [[vessel:exodus-3]] is due in the middle of next year because [[character:riker]] told Sam to take the flight slowly, giving the colony more lead time; the agreement had been to get the [[organization:spitsbergen-refuge|Spits]] off Earth within six months of the first two ships, with nothing said about arrival. Howard admits that Vulcan's hostile ecosystem forced the fence to be reinforced and electrified against brontos, raptors and other creatures, and shuttles start bringing colonists down that afternoon.",
+  "date": "2188-12",
+  "location_id": "location:vulcan",
+  "introducing": [
+    {
+      "id": "location:landing",
+      "name": "Landing",
+      "kind": "locale",
+      "parent_location_id": "location:vulcan",
+      "parent_relation": "located_on",
+      "colony_of": ["species:human"],
+      "description": "The town laid out for the [[organization:united-states-of-eurasia|USE]] colony on [[location:vulcan]]. Its official name was not thought inventive, but everyone considered it appropriate.",
+      "state": "Its fence, reinforced and electrified against brontos, raptors and other creatures, will be finished within forty-eight hours. Shelter is adequate, though many colonists will live in barracks for another month or two, and shuttles are starting to bring down the rest of the colonists."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:howard",
+      "current_state": "From the L4 point between [[location:vulcan]] and [[location:romulus]] he supports the Vulcan colony: his farms are ready and building a food surplus, and his ad hoc observation drones help its security until he builds a proper automated system. He has hailed Opening Day, the start of the full offload of colonists."
+    },
+    {
+      "entity_id": "character:george-butterworth",
+      "current_state": "Leading the colony on [[location:vulcan]], he has declared it ready and agreed to offload the rest of the colonists, on schedule if the second [[technology:kudzu-gardens|farm donut]] reaches full production. He judges the raptors very smart animals, not sentient, and hopes to help the Spits when they arrive."
+    },
+    {
+      "entity_id": "character:stephane-brodeur",
+      "current_state": "His security force is ready and helped by [[character:howard]]'s observation drones, and the fence of [[location:landing]] will be finished within forty-eight hours. Two people were recently killed when raptors slipped into camp unseen."
+    },
+    {
+      "entity_id": "character:bert",
+      "current_state": "One of the two Bobs crewing the first colony ships, he orbits [[location:vulcan]] with [[character:ernie]] as a floating warehouse and is eager to return to [[location:earth]] for more colonists now that the full offload has begun."
+    },
+    {
+      "entity_id": "character:ernie",
+      "current_state": "One of the two Bobs crewing the first colony ships, he orbits [[location:vulcan]] with [[character:bert]] as a floating warehouse and is eager to return to [[location:earth]] for more colonists now that the full offload has begun."
+    },
+    {
+      "entity_id": "vessel:exodus-1",
+      "current_state": "In orbit at [[location:omicron2-eridani]], it is starting to send its remaining colonists down to [[location:vulcan]] by shuttle after [[character:george-butterworth|Colonel Butterworth]] declared the colony ready. Once they are offloaded it is to fly back to [[location:earth]]."
+    },
+    {
+      "entity_id": "vessel:exodus-2",
+      "current_state": "In orbit at [[location:omicron2-eridani]], it is starting to send its remaining colonists down to [[location:vulcan]] by shuttle after [[character:george-butterworth|Colonel Butterworth]] declared the colony ready. Once they are offloaded it is to fly back to [[location:earth]]."
+    },
+    {
+      "entity_id": "vessel:exodus-3",
+      "current_state": "Due at [[location:omicron2-eridani]] in mid-2189, flown slowly on [[character:riker]]'s instruction to give the colony more lead time, it carries the [[organization:spitsbergen-refuge]], [[organization:free-american-independent-theocratic-hegemony|FAITH]]'s enclave and [[character:julia-hendricks]]'s family in stasis, to settle on [[location:romulus]]."
+    },
+    {
+      "entity_id": "location:omicron2-eridani",
+      "state": "[[character:milo]]'s automation has mined the system for a couple of decades. Its first colony, [[location:landing]] on [[location:vulcan]], is ready and receiving the rest of its colonists by shuttle, and [[vessel:exodus-3]] is due in mid-2189."
+    },
+    {
+      "entity_id": "location:vulcan",
+      "state": "Its first colony, the town of [[location:landing]], is ready to take in the remaining colonists, who are starting to come down by shuttle. Colonists kill the native raptors that threaten them, and raptors recently killed two people."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:howard",
+      "role": "lead",
+      "location_id": "location:omicron2-eridani"
+    },
+    {
+      "character_id": "character:george-butterworth",
+      "role": "other"
+    },
+    {
+      "character_id": "character:stephane-brodeur",
+      "role": "other",
+      "location_id": "location:vulcan"
+    },
+    {
+      "character_id": "character:bert",
+      "role": "other",
+      "location_id": "location:omicron2-eridani"
+    }
+  ],
+  "mentions": [
+    "character:riker",
+    "location:earth",
+    "location:romulus",
+    "organization:spitsbergen-refuge",
+    "technology:jeeves",
+    "technology:kudzu-gardens",
+    "technology:planetary-exploration-drone",
+    "technology:vr"
+  ]
+}

@@ -39,6 +39,10 @@ describe("species presentation registry", () => {
         species_id: "species:delta-eridani-natives",
         style_id: "species-style:deltan",
       },
+      {
+        species_id: "species:others",
+        style_id: "species-style:others",
+      },
     ]);
   });
 

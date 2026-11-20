@@ -1,0 +1,124 @@
+{
+  "chapter": "2.4",
+  "title": "4 - Water Planet",
+  "summary": "[[character:mulder]], a Bob from [[character:bill]]'s third cohort, reaches the long-period binary [[location:eta-cassiopeiae]], 19.5 light-years from [[location:epsilon-eridani]], because the closer good systems were already taken. From his tropical beach [[technology:vr]], with [[technology:guppi-interface|Guppy]] and [[character:spike]] for company, he finds no Jovian planets and no asteroid belt: the companion star has left only five rocky planets, a couple of stray asteroids and metal locked up in the planets. Spectra of [[location:eta-cassiopeiae-3|planet three]], in the habitable zone, show oxygen and water, but close scans find no land at all. After a survey flyby of every planet, Mulder sets up an [[technology:autofactory]] over [[location:eta-cassiopeiae-4|the fourth planet]], whose second moon has ore near the surface, sends [[technology:mining-drones]] down aboard newly built cargo vessels, and has a construction [[technology:ami]] start on new Bobs and a space station. Back at planet three, [[technology:suddar]] puts the ocean floor 800 km down, and [[technology:planetary-exploration-drone|exploration drones]], unable to dive because water would disrupt their [[technology:surge-drive]], trace the oxygen to floating plant mats kilometers wide that prove exceptionally biocompatible with humans. Mulder leaves a full report for the station to send to Bill and activates two clones, who name themselves [[character:skinner]] and [[character:jonny]]; sarcastic Jonny means to leave as soon as his vessel is ready, while Mulder may stay to study planet three, for which he floats the name Poseidon.",
+  "date": "2170-10",
+  "location_id": "location:eta-cassiopeiae",
+  "introducing": [
+    {
+      "id": "location:eta-cassiopeiae",
+      "name": "Eta Cassiopeiae",
+      "kind": "star_system",
+      "astronomy_object_id": "stellar-system-003237",
+      "description": "A long-period binary 19.5 light-years from [[location:epsilon-eridani]], with no Jovian planets or significant asteroid belt, only five rocky planets and a few eccentric asteroids. Its metal content, slightly richer than Sol's, lies almost entirely in the planets; Mulder guesses that the companion star and the missing Jovian swept the system of debris.",
+      "state": "An [[technology:autofactory]] orbits [[location:eta-cassiopeiae-4|the fourth planet]], mining drones work its second moon, and a space station that will relay Mulder's report is almost finished."
+    },
+    {
+      "id": "location:eta-cassiopeiae-a",
+      "name": "Eta Cassiopeiae A",
+      "kind": "star",
+      "description": "The brighter primary star of [[location:eta-cassiopeiae]], also abbreviated EC-A: a G3V star slightly larger and more luminous than Sol. Its companion's close passes make planets unlikely beyond about 9 AU from it.",
+      "parent_location_id": "location:eta-cassiopeiae",
+      "parent_relation": "member_of_system"
+    },
+    {
+      "id": "location:eta-cassiopeiae-b",
+      "name": "Eta Cassiopeiae B",
+      "kind": "star",
+      "description": "The companion star of [[location:eta-cassiopeiae]], on a long-period orbit that brings it within 36 AU of [[location:eta-cassiopeiae-a]] at periastron. Its repeated passes have disturbed the system's Kuiper and Oort objects, and the planets have been heavily bombarded.",
+      "parent_location_id": "location:eta-cassiopeiae",
+      "parent_relation": "member_of_system"
+    },
+    {
+      "id": "location:eta-cassiopeiae-3",
+      "name": "Eta Cassiopeiae 3",
+      "kind": "planet",
+      "parent_location_id": "location:eta-cassiopeiae-a",
+      "parent_relation": "orbits",
+      "orbital_order": 3072,
+      "body_class": "rocky",
+      "surface_gravity_g": 0.87,
+      "visual_description": "A cloudy ocean world with no land or ice caps, its water dotted with green patches of floating plants.",
+      "possible_colony_target": true,
+      "description": "The habitable-zone third planet of [[location:eta-cassiopeiae]], slightly smaller than Earth, with a 26-hour day, an Earth-like slightly oxygen-rich atmosphere, and a global ocean about 800 km deep. Floating symbiotic plant mats kilometers across produce its oxygen, host animal life, and are exceptionally biocompatible with humans; a rich ecosystem lives below the surface. Mulder has suggested the name Poseidon; the planet has four moons, two larger ones about half and a fifth the size of Earth's moon and two small inner rocks."
+    },
+    {
+      "id": "location:eta-cassiopeiae-4",
+      "name": "Eta Cassiopeiae 4",
+      "kind": "planet",
+      "parent_location_id": "location:eta-cassiopeiae-a",
+      "parent_relation": "orbits",
+      "orbital_order": 4096,
+      "body_class": "rocky",
+      "description": "The fourth planet of [[location:eta-cassiopeiae]], a rocky world with at least two moons. Its second moon has good ore deposits close to the surface.",
+      "state": "An [[technology:autofactory]] in its orbit is building Bobs and a space station from ore that mining drones bring up from its second moon."
+    },
+    {
+      "id": "character:mulder",
+      "name": "Mulder",
+      "parent_id": "character:bill",
+      "description": "A Bob replicant from [[character:bill]]'s third cohort who spent his early years at [[location:epsilon-eridani]] with [[character:homer]] and other Bobs, then traveled 19.5 light-years to [[location:eta-cassiopeiae]]. He works from a tropical beach VR and means to keep acting as a von Neumann probe until he hears otherwise.",
+      "current_state": "At [[location:eta-cassiopeiae]], his space station is nearly built with a colonization report for Bill on board, and he may stay to make another round of Bobs and study the life on [[location:eta-cassiopeiae-3|planet three]]."
+    },
+    {
+      "id": "character:skinner",
+      "name": "Skinner",
+      "aliases": ["HIC3821-1", "H-1"],
+      "parent_id": "character:mulder",
+      "description": "A Bob replicant restored from [[character:mulder]]'s backup at [[location:eta-cassiopeiae]], first designated HIC3821-1 (H-1). He chose the name Skinner, and his personality is already diverging from Mulder's.",
+      "current_state": "He is helping out at [[location:eta-cassiopeiae]] until his hull is ready and has not said whether he will then stay or leave."
+    },
+    {
+      "id": "character:jonny",
+      "name": "Jonny",
+      "aliases": ["HIC3821-2", "H-2"],
+      "parent_id": "character:mulder",
+      "description": "A Bob replicant restored from [[character:mulder]]'s backup at [[location:eta-cassiopeiae]], first designated HIC3821-2 (H-2). He named himself as a Jonny Quest type, and his sarcasm quickly grates on Mulder and [[character:skinner]].",
+      "current_state": "He is helping out at [[location:eta-cassiopeiae]] until his vessel is ready, then means to leave the system for somewhere more interesting."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "technology:ami",
+      "description": "Artificial Machine Intelligence (AMI) is an artificial intelligence created directly as a machine mind rather than copied from a biological mind. It can pilot a vessel, and manufacturing AMIs can carry out construction from standard plans, referring problems beyond their programming to their operator and avoiding labor issues. AMI pilots tend to be somewhat predictable in combat, and AMI-controlled units keep fighting after their controller is gone."
+    },
+    {
+      "entity_id": "technology:surge-drive",
+      "description": "A reactionless drive enabled by a breakthrough in subspace theory, with a low-intensity wide-field mode that can move a whole asteroid without tearing it apart. Water disrupts its field, so drones using it cannot go underwater, and even atmospheric flight needs careful tuning. The large-body asteroid drive is simple to build but material-intensive."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:mulder",
+      "role": "lead",
+      "location_id": "location:eta-cassiopeiae"
+    },
+    {
+      "character_id": "character:spike",
+      "role": "other"
+    },
+    {
+      "character_id": "character:skinner",
+      "role": "other",
+      "location_id": "location:eta-cassiopeiae"
+    },
+    {
+      "character_id": "character:jonny",
+      "role": "other",
+      "location_id": "location:eta-cassiopeiae"
+    }
+  ],
+  "mentions": [
+    "character:homer",
+    "character:riker",
+    "location:epsilon-eridani",
+    "technology:autofactory",
+    "technology:guppi-interface",
+    "technology:jeeves",
+    "technology:mining-drones",
+    "technology:planetary-exploration-drone",
+    "technology:roamers",
+    "technology:suddar",
+    "technology:vr"
+  ]
+}
