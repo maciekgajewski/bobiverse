@@ -11,6 +11,7 @@ import {
   WHATS_NEW_CAPTION_ENTITY_ID,
   WhatsNewDialog,
 } from "./components/WhatsNewDialog";
+import { useFocusAfterCommit } from "./components/useFocusAfterCommit";
 import { markWhatsNewSeen, shouldAutoShowWhatsNew } from "./whats-new";
 import {
   AppHistorySync,
@@ -405,6 +406,12 @@ export default function App() {
     "dock",
   );
   const [chapterPickerOpen, setChapterPickerOpen] = useState(false);
+  // About, What's new and the Read through picker make the shell inert.
+  // Focus goes back to their opener once the close has committed and the
+  // shell can take focus again, not on a timer (useFocusAfterCommit).
+  const shellInert =
+    aboutOrigin !== null || whatsNewOrigin !== null || chapterPickerOpen;
+  const focusAfterCommit = useFocusAfterCommit(shellInert);
   const [dateContext, setDateContext] = useState<string | null>(null);
   const [mapScale, setMapScale] = useState<MapScale>({
     label: `1 ${DISPLAY_DISTANCE_UNIT}`,
@@ -682,14 +689,14 @@ export default function App() {
   const closeAbout = useCallback(() => {
     const origin = aboutOrigin;
     setAboutOrigin(null);
-    window.setTimeout(() => {
+    focusAfterCommit(() => {
       const compact =
         typeof window.matchMedia === "function"
           ? window.matchMedia("(max-width: 1199px)").matches
           : origin === "menu";
-      (compact ? menuButton.current : aboutLink.current)?.focus();
-    }, 0);
-  }, [aboutOrigin]);
+      return compact ? menuButton.current : aboutLink.current;
+    });
+  }, [aboutOrigin, focusAfterCommit]);
 
   // What's new records the newest notes as seen when it closes. Focus returns
   // to whatever opened it; after the start-up auto-show there is no opener.
@@ -698,14 +705,14 @@ export default function App() {
     markWhatsNewSeen();
     setWhatsNewOrigin(null);
     if (origin === "auto") return;
-    window.setTimeout(() => {
+    focusAfterCommit(() => {
       const compact =
         typeof window.matchMedia === "function"
           ? window.matchMedia("(max-width: 1199px)").matches
           : origin === "menu";
-      (compact ? menuButton.current : whatsNewLink.current)?.focus();
-    }, 0);
-  }, [whatsNewOrigin]);
+      return compact ? menuButton.current : whatsNewLink.current;
+    });
+  }, [focusAfterCommit, whatsNewOrigin]);
 
   // The About caption names GUPPI. It opens GUPPI's card only while GUPPI is
   // a reader-visible entity at the knowledge chapter, and never in the
@@ -939,7 +946,7 @@ export default function App() {
     const compact =
       typeof window.matchMedia === "function" &&
       window.matchMedia("(max-width: 1199px)").matches;
-    if (!compact) window.setTimeout(() => aboutLink.current?.focus(), 0);
+    if (!compact) focusAfterCommit(() => aboutLink.current);
   };
   const openWhatsNewCaptionEntity = () => {
     if (!whatsNewCaptionEntityKnown) return;
@@ -952,7 +959,7 @@ export default function App() {
     const compact =
       typeof window.matchMedia === "function" &&
       window.matchMedia("(max-width: 1199px)").matches;
-    if (!compact) window.setTimeout(() => whatsNewLink.current?.focus(), 0);
+    if (!compact) focusAfterCommit(() => whatsNewLink.current);
   };
   // The notes' "What is this?" swaps What's new for About; About's close then
   // returns focus to the Menu button or the title link as usual.
@@ -1320,12 +1327,7 @@ export default function App() {
   const inlineLinkFallbacks = preparedInlineLinkFallbackLabels(narrativeCorpus);
 
   return (
-    <main
-      className="app-shell"
-      inert={
-        aboutOrigin !== null || whatsNewOrigin !== null || chapterPickerOpen
-      }
-    >
+    <main className="app-shell" inert={shellInert}>
       <a className="skip-link" href="#map-stage">
         Skip to star map
       </a>
