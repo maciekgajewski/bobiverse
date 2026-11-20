@@ -1,7 +1,8 @@
 import type { SelectionIdentity } from "../domain/selection";
 import type { StellarSystem } from "../domain/types";
+import { isKnownAtCeiling } from "./ceiling";
 import {
-  isNarrativeDateEligible,
+  narrativeWorldSoftCeiling,
   type NarrativeEntity,
   type NarrativeWorld,
 } from "./model";
@@ -253,17 +254,15 @@ export function projectNarrativeMap(
   }
 
   const activeSystemIds = new Set<string>();
+  const softCeiling = narrativeWorldSoftCeiling(world);
   for (const activity of world.activity) {
     if (!activity.reasons.includes("mapped_system_ancestry")) continue;
     const isCurrent =
       mode === "chapter"
         ? activity.source_chapter === world.view.chapter
         : activity.effective_date !== null &&
-          world.view.display_date !== null &&
-          isNarrativeDateEligible(
-            activity.effective_date,
-            world.view.display_date,
-          );
+          softCeiling !== null &&
+          isKnownAtCeiling(activity.effective_date, softCeiling);
     if (!isCurrent) continue;
     const astronomyId = narrativeSystemIds.get(activity.entity_id);
     if (astronomyId) activeSystemIds.add(astronomyId);

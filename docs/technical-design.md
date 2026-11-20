@@ -857,7 +857,9 @@ date (`entityEarliestDates`; an event from its current date, an undated one from
 revealing chapter), the ancestors of a shown location are shown too, and entities read
 but not existing yet are available from `narrativeEntitiesBeforeExistence`. Chapter view
 passes the chapter's latest date (`chapterSoftCeiling`) as `softCeiling`. Travel
-histories and last-known locations use the same two ceilings.
+histories and last-known locations use the same two ceilings. The app always passes
+`furthestChapterRead` as `readThrough`, and the selected chapter or Date-view date only
+as the soft ceiling (`tasks/BOB-20261120-C3EY9W-read-through-knowledge.md`).
 
 Dated chapter-authored facts compare a Gregorian calendar range, optional hidden
 ordering suffix, and source chapter. Non-overlapping ranges use calendar order;
@@ -879,7 +881,8 @@ fact is retained. **Knowledge through** and the chapter track can afterwards mov
 both.
 
 Date mode uses a meaningful requested story date as the soft ceiling. The UI exposes
-only dates derived from the permitted knowledge set; it does not provide arbitrary
+only dates derived from every chapter up to Read through
+(`meaningfulNarrativeDateOptions` for `furthestChapterRead`); it does not provide arbitrary
 date entry or expose ordering suffixes. Its axis places each value at the start of its
 represented range using the Gregorian elapsed-day fraction of that year. This anchor
 does not narrow imprecise facts.
@@ -903,7 +906,11 @@ updates, appearances, chapter and event locations, event participation, suppleme
 mentions, and mapped stellar-system ancestry. Each record preserves its target, source
 chapter, nullable comparable effective date, and one or more controlled reasons.
 Reasons coalesce only for the same target, chapter, and effective date. Activity
-supports narrative-moment recency.
+supports narrative-moment recency. A world's `activity` keeps the records through Read
+through whose date is known at the soft ceiling (`isKnownAtCeiling`; an undated record
+takes its source chapter's date) and whose target the world shows. The browser's and
+map's Date-view filters compare against the world's soft ceiling
+(`narrativeWorldSoftCeiling`) with the same rule.
 Equal-suffix and overlapping unequal-precision activity facts use canonical chapter
 order. The generated array uses a
 deterministic topological order that preserves every definite moment relation;
