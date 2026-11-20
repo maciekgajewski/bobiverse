@@ -9,7 +9,9 @@ describe("reconciled astronomy runtime data", () => {
     if (!nearbySystems) throw new Error("Fixture dataset failed validation");
     // Prior union: 271 systems. Chapter 1.40 adds the Epsilon Indi anchor;
     // its 20 ly neighbourhood contributes six previously uncovered systems.
-    expect(nearbySystems.systems).toHaveLength(277);
+    // Book 2 adds the Eta Cassiopeiae (2.4) and Zeta Tucanae (2.10) anchors;
+    // their neighbourhoods bring the union to 337 systems.
+    expect(nearbySystems.systems).toHaveLength(337);
     expect(nearbySystems.systems[0]?.id).toBe("sol");
     expect(nearbySystems.metadata.coverage).toEqual([
       {
@@ -45,6 +47,18 @@ describe("reconciled astronomy runtime data", () => {
         gcns_boundary_pc: 100,
       },
       {
+        anchor_id: "stellar-system-003237",
+        anchor_position_pc: {
+          xg: -3.180905,
+          yg: 4.9690967,
+          zg: -0.5221664,
+        },
+        radius_ly: mapDisplayConfig.context_radius_ly,
+        source_record_count: 89,
+        system_count: 77,
+        gcns_boundary_pc: 100,
+      },
+      {
         anchor_id: "stellar-system-003557",
         anchor_position_pc: {
           xg: 3.2764518,
@@ -54,6 +68,18 @@ describe("reconciled astronomy runtime data", () => {
         radius_ly: mapDisplayConfig.context_radius_ly,
         source_record_count: 95,
         system_count: 86,
+        gcns_boundary_pc: 100,
+      },
+      {
+        anchor_id: "stellar-system-003706",
+        anchor_position_pc: {
+          xg: 3.2906902,
+          yg: -4.1650043,
+          zg: -6.7770967,
+        },
+        radius_ly: mapDisplayConfig.context_radius_ly,
+        source_record_count: 108,
+        system_count: 96,
         gcns_boundary_pc: 100,
       },
       {
