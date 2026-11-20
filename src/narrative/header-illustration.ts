@@ -4,7 +4,11 @@ import {
   JEEVES_IMAGE_ALT,
   MOON_IMAGE_ALT,
 } from "../about-image";
-import type { NarrativeRecord, NarrativeWorld } from "./model";
+import {
+  narrativeEntitiesBeforeExistence,
+  type NarrativeRecord,
+  type NarrativeWorld,
+} from "./model";
 import type { ResolvedSpeciesPresentation } from "./species-presentation";
 
 /**
@@ -125,7 +129,11 @@ export function resolveHeaderIllustration(
   assets: NarrativeRecord,
   speciesPresentation?: ResolvedSpeciesPresentation,
 ): HeaderIllustration | null {
-  const entity = world.entities.find((candidate) => candidate.id === entityId);
+  // A card before existence (rule (g)) keeps its hard-ceiling picture.
+  const entity = [
+    ...world.entities,
+    ...narrativeEntitiesBeforeExistence(world),
+  ].find((candidate) => candidate.id === entityId);
   if (!entity) return null;
   const pictureId =
     typeof entity.picture_id === "string" && entity.picture_id.length > 0

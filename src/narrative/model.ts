@@ -266,6 +266,8 @@ interface NarrativeWorldProjection {
   readonly softCeiling: string | null;
   readonly chapterView: boolean;
   readonly beforeExistence: readonly NarrativeEntity[];
+  /** Story date of each source chapter read, for undated activity (rule (c)). */
+  readonly chapterDates: ReadonlyMap<string, string>;
 }
 
 const narrativeWorldProjections = new WeakMap<
@@ -361,6 +363,40 @@ export function narrativeStateAsOf(
       narrativeWorldProjections.get(world)?.softCeiling ??
       world.view.display_date,
   };
+}
+
+/**
+ * What the soft ceiling of `world` is called on cards (§2.5): "Chapter X" in
+ * chapter view (the selected chapter, not its latest date, §3.1) or the
+ * selected date in date view ("2157", "April 2157"). Null for the pre-book
+ * zero state and for hand-built worlds, which carry no ceilings.
+ */
+export function narrativeSoftCeilingLabel(
+  world: NarrativeWorld,
+): string | null {
+  const projection = narrativeWorldProjections.get(world);
+  if (!projection?.softCeiling) return null;
+  return projection.chapterView && world.view.chapter
+    ? `Chapter ${world.view.chapter}`
+    : formatNarrativeDate(projection.softCeiling);
+}
+
+/**
+ * An activity record's story date: its `effective_date`, or for undated
+ * activity the date of the chapter that reveals it (rule (c)). Null only for
+ * undated activity in a hand-built world.
+ */
+export function narrativeActivityStoryDate(
+  world: NarrativeWorld,
+  activity: NarrativeActivity,
+): string | null {
+  return (
+    activity.effective_date ??
+    narrativeWorldProjections
+      .get(world)
+      ?.chapterDates.get(activity.source_chapter) ??
+    null
+  );
 }
 
 /**
@@ -3445,10 +3481,14 @@ function projectNarrativeWorld(
     : softCeiling;
   let entities = zeroStateEntities;
   let beforeExistence: NarrativeEntity[] = [];
+  const chapterDates = new Map<string, string>();
   if (readThrough !== null && softCeiling !== null) {
     const readerVisible = indexes.chapters.filter(
       (candidate) => compareChapter(chapterId(candidate), readThrough) <= 0,
     );
+    for (const candidate of readerVisible) {
+      chapterDates.set(chapterId(candidate), chapterDate(candidate));
+    }
     const projection = projectRevealedEntities(
       zeroStateEntities,
       readerVisible,
@@ -3485,6 +3525,7 @@ function projectNarrativeWorld(
     softCeiling,
     chapterView: chapter !== null,
     beforeExistence,
+    chapterDates,
   });
   return world;
 }

@@ -187,7 +187,10 @@ The code and data do not yet follow this constitution in these places.
    the activity cut dates it by its revealing chapter (BOB-20261120-C3EY9W).
 7. **Info card** (`src/components/ObjectInspector.tsx`). "Current state" needs the
    "as of chapter X" / "as of year Y" label and "no known state as of …" (rules (b)
-   and (g)); the description must not be cut by the soft ceiling.
+   and (g)); the description must not be cut by the soft ceiling. Done in
+   BOB-20261120-73F83F: current state carries "as of Chapter X" or "as of" the
+   selected date, or reads "No known state" with it; cards of entities that do not
+   exist yet still open; chapter-view recency follows story time.
 8. **View labels.** The map badge ("Latest known · Knowledge through Chapter X",
    "Universe in Y · Knowledge through Chapter X", `src/App.tsx`) and the "Knowledge
    through" select (`src/components/ProgressControls.tsx`) name the selected chapter

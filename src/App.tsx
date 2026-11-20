@@ -53,7 +53,10 @@ import type { SheetSnap } from "./domain/sheet-snap";
 import type { StellarSystem } from "./domain/types";
 import { DISPLAY_DISTANCE_UNIT } from "./domain/units";
 import { inspectorBreadcrumbTrail } from "./narrative/breadcrumb";
-import { buildNarrativeBrowserGroups } from "./narrative/browser";
+import {
+  buildNarrativeBrowserGroups,
+  narrativeItemBeforeExistence,
+} from "./narrative/browser";
 import {
   focusSystemIdForSelection,
   isSelectionEligibleForMap,
@@ -295,6 +298,13 @@ function isSelectionEligibleInProjection(
       projection.chapterDetail?.chapter === candidate.id
     );
   if (candidate.kind === "component") return false;
+  // Rule (g): a read entity's card still opens before it exists at the soft
+  // ceiling (BOB-20261120-73F83F).
+  if (
+    candidate.kind === "narrative" &&
+    narrativeItemBeforeExistence(projection.world, candidate.id)
+  )
+    return true;
   return isSelectionEligibleForMap(
     candidate,
     projection.world,
@@ -526,7 +536,8 @@ export default function App() {
     selection?.kind === "narrative"
       ? (allBrowserGroups
           .flatMap((group) => group.items)
-          .find((item) => item.entity.id === selection.id) ?? null)
+          .find((item) => item.entity.id === selection.id) ??
+        narrativeItemBeforeExistence(narrativeWorld, selection.id))
       : null;
   const selectedMapId = systemMode
     ? systemMode.entry.astronomySystemId
@@ -835,9 +846,11 @@ export default function App() {
                 (component) => component.id === nextSelection.id,
               )?.designation
           : nextSelection.kind === "narrative"
-            ? narrativeWorld.entities.find(
+            ? (narrativeWorld.entities.find(
                 (entity) => entity.id === nextSelection.id,
-              )?.name
+              )?.name ??
+              narrativeItemBeforeExistence(narrativeWorld, nextSelection.id)
+                ?.name)
             : `Chapter ${nextSelection.id}`;
     return String(name ?? "Object");
   };

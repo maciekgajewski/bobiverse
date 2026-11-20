@@ -3,11 +3,18 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ObjectInspector } from "../../src/components/ObjectInspector";
 import { nearbySystems } from "../../src/domain/data";
-import type { NarrativeBrowserItem } from "../../src/narrative/browser";
-import type {
-  NarrativeEntity,
-  NarrativeWorld,
+import {
+  buildNarrativeBrowserGroups,
+  narrativeItemBeforeExistence,
+  type NarrativeBrowserItem,
+} from "../../src/narrative/browser";
+import {
+  chapterSoftCeiling,
+  generateNarrativeWorld,
+  type NarrativeEntity,
+  type NarrativeWorld,
 } from "../../src/narrative/model";
+import { asOfCorpus, asOfIds } from "../fixtures/narrative-as-of";
 
 const sparseEntities: NarrativeEntity[] = [
   {
@@ -1151,5 +1158,69 @@ describe("object inspector", () => {
         within(recency() as HTMLElement).queryByRole("button"),
       ).not.toBeInTheDocument();
     });
+  });
+});
+
+describe("object inspector current state as of the soft ceiling", () => {
+  const { alex, bea, kai } = asOfIds;
+  afterEach(cleanup);
+  const atChapter = (chapter: string) =>
+    generateNarrativeWorld(asOfCorpus, {
+      readThrough: "1.4",
+      softCeiling: chapterSoftCeiling(asOfCorpus, chapter),
+      chapter,
+    });
+  const renderCard = (target: NarrativeWorld, id: string) => {
+    const narrativeItem =
+      buildNarrativeBrowserGroups(target, "chapter")
+        .flatMap((group) => group.items)
+        .find((candidate) => candidate.entity.id === id) ??
+      narrativeItemBeforeExistence(target, id);
+    render(
+      <ObjectInspector
+        selection={{ kind: "narrative", id }}
+        narrativeItem={narrativeItem}
+        world={target}
+        systems={[]}
+        assets={{ assets: [] }}
+        onSelect={vi.fn()}
+      />,
+    );
+  };
+
+  it("labels known state with the selected chapter", () => {
+    renderCard(atChapter("1.2"), alex);
+    expect(screen.getByText("Current state")).toBeInTheDocument();
+    expect(screen.getByText("alex 2160")).toBeInTheDocument();
+    expect(screen.getByText("as of Chapter 1.2")).toBeInTheDocument();
+  });
+
+  it("labels known state with the selected date in date view", () => {
+    renderCard(
+      generateNarrativeWorld(asOfCorpus, {
+        readThrough: "1.4",
+        softCeiling: "2165-03",
+      }),
+      alex,
+    );
+    expect(screen.getByText("alex 2160")).toBeInTheDocument();
+    expect(screen.getByText("as of March 2165")).toBeInTheDocument();
+  });
+
+  it("shows no known state as of the soft ceiling (rule (b))", () => {
+    renderCard(atChapter("1.2"), bea);
+    expect(screen.getByText("No known state")).toBeInTheDocument();
+    expect(screen.getByText("as of Chapter 1.2")).toBeInTheDocument();
+  });
+
+  it("opens the card of an entity that does not exist yet (rule (g))", () => {
+    renderCard(atChapter("1.2"), kai);
+    expect(
+      screen.getByRole("heading", { name: "Fixture Kai" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("A fictional latecomer.")).toBeInTheDocument();
+    expect(screen.getByText("No known state")).toBeInTheDocument();
+    expect(screen.getByText("as of Chapter 1.2")).toBeInTheDocument();
+    expect(screen.queryByText("kai 2175")).toBeNull();
   });
 });
