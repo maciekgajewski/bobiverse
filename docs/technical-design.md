@@ -337,6 +337,12 @@ screen space (BOB-20261115-YM65RA). Marker materials stay single-pass. The
 `renderStats()` map bridge and an e2e guard require an idle map to show no
 material-version growth, a stable program count and no two-pass materials.
 
+The starfield texture and the axis-label font load inside their own
+`<Suspense fallback={null}>` boundaries within `<Canvas>`. A pending scene asset
+therefore never reaches the app root, where React Three Fiber would rethrow it
+and hold every app update until it loaded; the rest of the scene renders at once
+and the starfield and labels appear when ready (BOB-20261120-Y9W13K).
+
 Every rendered catalogue component retains every applicable GCNS/Gaia, CNS5, WDS,
 and accepted 20-pc-census identifier plus the fact and provenance used for
 presentation. Sol is an explicit generated origin using the same marker pipeline.
