@@ -89,3 +89,11 @@ npm run test:e2e:csp
 
 - Created on master `1b1fdbd` on local branch `bob-20261120-scene-suspense` in
   the `~/src/bobiverse-suspense` worktree.
+- Implemented in `298f429`. The new e2e fails on `1b1fdbd` (What's new never
+  opens while the assets are held) and passes 3/3 in Chromium on the branch.
+- Click-to-commit probe (Chromium, 4x CPU throttling, What's new clicked from
+  the page, dialog in the DOM measured by a MutationObserver; scripts outside
+  the repo). Natural load: before 118–130 ms when the click beat the scene's
+  asset requests and 1071–1365 ms when it landed during them (4 of 8); after
+  119–137 ms in 8 of 8. With both assets delayed 2 s and the click after the
+  starfield request starts: before 2270–3093 ms (6 of 6), after 118–143 ms.
