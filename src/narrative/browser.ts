@@ -1,7 +1,8 @@
+import { isKnownAtCeiling } from "./ceiling";
 import {
   compareNarrativeChapters,
   compareNarrativeMoments,
-  isNarrativeDateEligible,
+  narrativeWorldSoftCeiling,
   type NarrativeActivity,
   type NarrativeEntity,
   type NarrativeWorld,
@@ -95,21 +96,21 @@ function entityGroup(entity: NarrativeEntity): BrowserGroupId {
 
 function activityAtOrBefore(
   activity: NarrativeActivity,
-  displayDate: string,
+  softCeiling: string,
 ): boolean {
   if (!activity.effective_date) return false;
-  return isNarrativeDateEligible(activity.effective_date, displayDate);
+  return isKnownAtCeiling(activity.effective_date, softCeiling);
 }
 
 function latestActivity(
   activities: readonly NarrativeActivity[],
   mode: BrowserMode,
-  displayDate: string | null,
+  softCeiling: string | null,
 ): NarrativeActivity | null {
   const eligible =
-    mode === "date" && displayDate
+    mode === "date" && softCeiling
       ? activities.filter((activity) =>
-          activityAtOrBefore(activity, displayDate),
+          activityAtOrBefore(activity, softCeiling),
         )
       : [...activities];
   if (eligible.length === 0) return null;
@@ -156,16 +157,10 @@ function isActive(
       ),
     );
   }
+  const softCeiling = narrativeWorldSoftCeiling(world);
   return Boolean(
-    world.view.display_date &&
-    activities.some(
-      (activity) =>
-        activity.effective_date !== null &&
-        isNarrativeDateEligible(
-          activity.effective_date,
-          world.view.display_date!,
-        ),
-    ),
+    softCeiling &&
+    activities.some((activity) => activityAtOrBefore(activity, softCeiling)),
   );
 }
 
@@ -235,7 +230,11 @@ export function buildNarrativeBrowserGroups(
         ...(externalAliasesByEntityId.get(entity.id) ?? []),
       ],
       active: isActive(activities, world, mode),
-      lastActivity: latestActivity(activities, mode, world.view.display_date),
+      lastActivity: latestActivity(
+        activities,
+        mode,
+        narrativeWorldSoftCeiling(world),
+      ),
       speciesPresentation:
         entity.entity_type === "species"
           ? speciesPresentations.get(entity.id)

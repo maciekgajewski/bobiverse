@@ -1,8 +1,8 @@
 # BOB-20261116-TB1C66: two-ceiling projection
 
-Status: In progress
+Status: Done
 Phase: 2 (narrative foundation and chapter timeline)
-Last updated: 2026-11-17
+Last updated: 2026-11-20
 
 ## Objective and user-visible outcome
 
@@ -173,3 +173,10 @@ and names only).
   conflicts or test changes; the hidden-entity chapters and counts are
   unchanged. Ticked constitution §5 items 2, 3 and 5, and the projection part of
   item 6.
+
+### 2026-11-20 (Europe/Warsaw)
+
+- Approved by the manager at `9cf63c2` (the location-constraint refactor and
+  the dialog focus fix) and landed on master with the no-ff merge `1b1fdbd`
+  ("Merge T3: two-ceiling narrative projection"). Done. The T4 follow-up is
+  BOB-20261120-C3EY9W.

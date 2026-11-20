@@ -115,7 +115,7 @@ describe("narrative object browser projection", () => {
     ).toBeNull();
   });
 
-  it("marks date-mode activity active through shared containment and suffix eligibility", () => {
+  it("marks date-mode activity active when known at the soft ceiling (rule (e))", () => {
     const candidate = world();
     candidate.view.display_date = "2165";
     candidate.activity = [
@@ -149,7 +149,14 @@ describe("narrative object browser projection", () => {
       characters.items.find(({ entity }) => entity.id === "character:ada")
         ?.active,
     ).toBe(true);
+    // A year-precision fact counts for the whole year (rule (e)).
     candidate.activity[0]!.effective_date = "2165";
+    characters = buildNarrativeBrowserGroups(candidate, "date")[0]!;
+    expect(
+      characters.items.find(({ entity }) => entity.id === "character:ada")
+        ?.active,
+    ).toBe(true);
+    candidate.activity[0]!.effective_date = "2165-09";
     characters = buildNarrativeBrowserGroups(candidate, "date")[0]!;
     expect(
       characters.items.find(({ entity }) => entity.id === "character:ada")

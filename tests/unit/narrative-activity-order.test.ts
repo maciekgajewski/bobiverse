@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
+import { isKnownAtCeiling } from "../../src/narrative/ceiling";
 import {
+  chapterSoftCeiling,
   collectNarrativeActivity,
   generateNarrativeWorld,
   meaningfulNarrativeDateOptions,
@@ -211,6 +213,9 @@ describe("narrative activity ordering", () => {
     throw new Error("Canonical narrative preparation failed.");
   const corpus = narrativeCorpus;
   const chapters = preparedNarrativeChapters(corpus);
+  const chapterDates = new Map(
+    chapters.map((chapter) => [String(chapter.chapter), String(chapter.date)]),
+  );
 
   it("matches the reference repeated-scan order for every chapter", () => {
     let compared = 0;
@@ -223,15 +228,28 @@ describe("narrative activity ordering", () => {
         visible,
         corpus.knownAstronomyObjectIds,
       );
-      const expected = referenceOrder(collected, precedes).map(activityKey);
+      const reference = referenceOrder(collected, precedes);
+      const expected = reference.map(activityKey);
       expect(
         orderNarrativeActivity(collected).map(activityKey),
         chapter,
       ).toEqual(expected);
+      // The world keeps the same order, cut at the chapter's soft ceiling;
+      // undated activity takes its source chapter's date (rule (c)).
+      const softCeiling = chapterSoftCeiling(corpus, chapter);
       expect(
         generateNarrativeWorld(corpus, chapter).activity.map(activityKey),
         chapter,
-      ).toEqual(expected);
+      ).toEqual(
+        reference
+          .filter((record) =>
+            isKnownAtCeiling(
+              record.effective_date ?? chapterDates.get(record.source_chapter)!,
+              softCeiling,
+            ),
+          )
+          .map(activityKey),
+      );
       compared += 1;
     }
     expect(compared).toBe(chapters.length);

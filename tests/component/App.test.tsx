@@ -60,7 +60,10 @@ vi.mock("../../src/components/MapScene", async (importOriginal) => {
 import App from "../../src/App";
 import * as narrativeMap from "../../src/narrative/map";
 import * as narrativeModel from "../../src/narrative/model";
-import { narrativeRuntimePreparationCount } from "../../src/narrative/runtime";
+import {
+  narrativeCorpus,
+  narrativeRuntimePreparationCount,
+} from "../../src/narrative/runtime";
 import * as systemView from "../../src/system-view";
 import { NEWEST_RELEASE_NOTES_VERSION } from "../../src/release-notes";
 import { WHATS_NEW_STORAGE_KEY } from "../../src/whats-new";
@@ -278,6 +281,65 @@ describe("atlas shell", () => {
     expect(
       screen.getByText("Persisted projection failed."),
     ).toBeInTheDocument();
+  });
+
+  it("views an earlier chapter with everything read through (BOB-20261120-C3EY9W)", () => {
+    const corpus = narrativeCorpus!;
+    window.localStorage.setItem(
+      "bobiverse.app-state.v2",
+      JSON.stringify({
+        furthestChapterRead: "1.20",
+        viewChapter: "1.10",
+        displayDate: null,
+        mode: "chapter",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+    const generate = vi.spyOn(narrativeModel, "generateNarrativeWorld");
+    const options = vi.spyOn(narrativeModel, "meaningfulNarrativeDateOptions");
+
+    render(<App />);
+
+    // Read through is the hard ceiling; 1.10 is only the soft ceiling.
+    expect(generate).toHaveBeenLastCalledWith(corpus, {
+      readThrough: "1.20",
+      softCeiling: narrativeModel.chapterSoftCeiling(corpus, "1.10"),
+      chapter: "1.10",
+    });
+    expect(options).toHaveBeenCalledWith(corpus, "1.20");
+    expect(options).not.toHaveBeenCalledWith(corpus, "1.10");
+  });
+
+  it("keeps a date read after the viewed chapter in Date view (BOB-20261120-C3EY9W)", () => {
+    const corpus = narrativeCorpus!;
+    const viewed = new Set(
+      narrativeModel
+        .meaningfulNarrativeDateOptions(corpus, "1.10")
+        .map(({ date }) => date),
+    );
+    const laterRead = narrativeModel
+      .meaningfulNarrativeDateOptions(corpus, "1.20")
+      .find(({ date }) => !viewed.has(date))!.date;
+    window.localStorage.setItem(
+      "bobiverse.app-state.v2",
+      JSON.stringify({
+        furthestChapterRead: "1.20",
+        viewChapter: "1.10",
+        displayDate: laterRead,
+        mode: "date",
+        timelineZoom: 1,
+        timelinePan: 0,
+      }),
+    );
+    const generate = vi.spyOn(narrativeModel, "generateNarrativeWorld");
+
+    render(<App />);
+
+    expect(generate).toHaveBeenLastCalledWith(corpus, {
+      readThrough: "1.20",
+      softCeiling: laterRead,
+    });
   });
 
   it("routes selected-object transition failures to the recovery state", async () => {
