@@ -1,7 +1,7 @@
 # Design principles: the companion's constitution
 
 Status: Accepted 2026-11-16 (Maciej; ADR-0031)
-Last updated: 2026-11-16
+Last updated: 2026-11-20
 
 These are Maciej's governing design principles for the Bobiverse companion, in his
 words, made coherent. They are written for developers, agents and readers alike.
@@ -146,6 +146,10 @@ The code and data do not yet follow this constitution in these places.
    `projectCharacterTravelHistories` (`src/narrative/model.ts`) take `viewChapter`
    as the knowledge chapter. They must use Read through (`furthestChapterRead`) as
    the knowledge bound and the selected chapter or date only as the soft ceiling.
+   Done in BOB-20261120-C3EY9W: the app passes Read through to
+   `generateNarrativeWorld` and `meaningfulNarrativeDateOptions`, with the
+   selected chapter's latest date or the selected date as the soft ceiling; world
+   activity is cut at the soft ceiling.
 2. **Chapter view soft ceiling.** `generateNarrativeWorld` uses no cutoff and
    reading-order writes in chapter view (`cutoff = null`,
    `writeOrder = "reading"`). It must cut at the chapter's latest date (§3.1) and
@@ -164,7 +168,11 @@ The code and data do not yet follow this constitution in these places.
 4. **Calendar precision.** `isNarrativeDateEligible` rejects a fact whose range
    contains a less precise ceiling, so `2185` is not eligible at `2185-04`; it must
    follow rule (e). The cutoff must not rely on `compareNarrativeDates`, which returns
-   `null` for overlapping ranges of different precision.
+   `null` for overlapping ranges of different precision. Done for the projection
+   in BOB-20261116-TB1C66 and BOB-20261120-C3EY9W: the world, its activity and the
+   browser and map Date-view filters use `isKnownAtCeiling`.
+   `isNarrativeDateEligible` remains only in validation (`effective_date` against
+   its chapter's date).
 5. **Entity existence.** Entities appear from their introduction date. They must
    appear from their earliest known story date (rule (a)). Validation done in
    BOB-20261116-E87SYK: an `effective_date` may now be earlier than the introducing
@@ -175,7 +183,8 @@ The code and data do not yet follow this constitution in these places.
    generated activity for an undated event has `effective_date: null`. Both must use
    the revealing chapter's date (rule (c)). The projection part is done in
    BOB-20261116-TB1C66: undated events show from their revealing chapter's date
-   in every view. Activity for an undated event still has `effective_date: null`.
+   in every view. Activity for an undated event still has `effective_date: null`;
+   the activity cut dates it by its revealing chapter (BOB-20261120-C3EY9W).
 7. **Info card** (`src/components/ObjectInspector.tsx`). "Current state" needs the
    "as of chapter X" / "as of year Y" label and "no known state as of …" (rules (b)
    and (g)); the description must not be cut by the soft ceiling.

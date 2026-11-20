@@ -239,7 +239,7 @@ describe("narrative map projection", () => {
     });
   });
 
-  it("uses shared containment and suffix eligibility for date-mode active systems", () => {
+  it("marks date-mode systems active when their activity is known at the soft ceiling (rule (e))", () => {
     const datedWorld: NarrativeWorld = {
       ...world,
       activity: [
@@ -259,7 +259,13 @@ describe("narrative map projection", () => {
       ...projectNarrativeMap(datedWorld, [system("known", 0)], 20, "date")
         .activeSystemIds,
     ]).toEqual(["known"]);
+    // A year-precision fact counts for the whole year (rule (e)).
     datedWorld.activity[0]!.effective_date = "2165";
+    expect([
+      ...projectNarrativeMap(datedWorld, [system("known", 0)], 20, "date")
+        .activeSystemIds,
+    ]).toEqual(["known"]);
+    datedWorld.activity[0]!.effective_date = "2165-09";
     expect([
       ...projectNarrativeMap(datedWorld, [system("known", 0)], 20, "date")
         .activeSystemIds,
