@@ -115,3 +115,15 @@ sections, chapter-mode ordering) and constitution §5 item 7.
 
 - Created on master `fb01f93` on local branch `bob-20261120-as-of-cards` in
   the `~/src/bobiverse-t5` worktree.
+- Marked BOB-20261120-C3EY9W and BOB-20261120-Y9W13K Done (`48a1c73`);
+  implemented in `290dc9b`. A first full run at `290dc9b` passed every
+  non-e2e check and e2e on chromium and firefox; webkit was stopped part-way to
+  free the e2e ports for the book 2 landing.
+- Merged master `62828f6` (book 2 chapters 2.1–2.10) without conflicts in
+  `8ceb250`; no test or code changes were needed. Full validation on
+  `8ceb250` passed: `tasks.py check`, format:check, lint, typecheck, test
+  (64 files, 835 tests), data:test, data:validate, narrative:validate, build
+  and `git diff --check`; e2e with one worker and no retries on chromium (95
+  passed, 4 skipped), firefox (95 passed, 4 skipped) and webkit (96 passed, 3
+  skipped); the CSP check (3 passed).
+- Awaiting manager review.
