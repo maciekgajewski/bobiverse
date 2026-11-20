@@ -2,6 +2,7 @@ import { Billboard, Html, Line, OrbitControls, Text } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
   memo,
+  Suspense,
   useCallback,
   useEffect,
   useRef,
@@ -1451,33 +1452,39 @@ function Scene({
   return (
     <>
       <color attach="background" args={["#050812"]} />
-      <GalacticStarfield />
+      {/* Scene assets load inside their own boundaries, so a pending texture
+          or font never reaches <Canvas>, which would rethrow it to the app
+          root and hold up every app update until it arrives
+          (BOB-20261120-Y9W13K). Each part simply appears once loaded. */}
+      <Suspense fallback={null}>
+        <GalacticStarfield />
+      </Suspense>
       <ambientLight intensity={0.7} />
       {!zoomed && <GalacticPlaneGrid />}
       {!zoomed && travelLegs.length > 0 && (
         <TravelRoutes systems={travelSystems} legs={travelLegs} />
       )}
       {!zoomed && (
-        <Text
-          position={[16, 0.04, 0]}
-          font={notoSansRegularUrl}
-          fontSize={0.13}
-          color="#536986"
-          anchorX="center"
-        >
-          Galactic center · +Xg
-        </Text>
-      )}
-      {!zoomed && (
-        <Text
-          position={[0, 8, 0]}
-          font={notoSansRegularUrl}
-          fontSize={0.13}
-          color="#536986"
-          anchorX="center"
-        >
-          Galactic north · +Zg
-        </Text>
+        <Suspense fallback={null}>
+          <Text
+            position={[16, 0.04, 0]}
+            font={notoSansRegularUrl}
+            fontSize={0.13}
+            color="#536986"
+            anchorX="center"
+          >
+            Galactic center · +Xg
+          </Text>
+          <Text
+            position={[0, 8, 0]}
+            font={notoSansRegularUrl}
+            fontSize={0.13}
+            color="#536986"
+            anchorX="center"
+          >
+            Galactic north · +Zg
+          </Text>
+        </Suspense>
       )}
       <group>
         {systems.map((system) => (

@@ -8,12 +8,13 @@ type FocusTarget = () => HTMLElement | null | undefined;
  *
  * Closing About, What's new or the Read through picker removes `inert` from
  * the app shell, and an inert element cannot take focus. That commit is not
- * always synchronous with the click: while the map scene is still loading,
- * React Three Fiber's `<Canvas>` rethrows the scene's pending load (the
- * starfield texture, the label font) to the app root, which has no Suspense
- * boundary, so every update waits for the load before it commits
- * (BOB-20261116-TB1C66). A `setTimeout(…, 0)` focus then runs while the shell
- * is still inert and is lost. The request is kept until a commit in which
+ * always synchronous with the click: anything that suspends outside a Suspense
+ * boundary delays the commit. Before the scene assets (the starfield texture,
+ * the label font) had their own boundaries inside `<Canvas>`
+ * (BOB-20261120-Y9W13K), React Three Fiber rethrew their pending load to the
+ * app root, so every update waited for the load (BOB-20261116-TB1C66). A
+ * `setTimeout(…, 0)` focus then ran while the shell was still inert and was
+ * lost. The request is kept until a commit in which
  * `blocked` (the layer is still open) is false, and runs in that commit's
  * layout phase, after the DOM has lost `inert` and before paint.
  */

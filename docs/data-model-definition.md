@@ -1294,7 +1294,8 @@ progress, meaningful dates, one generated world, its map join, selection eligibi
 and the optional chapter detail resolved against that same world. All reader-facing
 surfaces commit that result together. Chapter detail is a typed immutable runtime
 view, not a second world or generated snapshot. State that does not change the
-knowledge chapter, display date, or mode does not generate another world.
+Read through chapter, selected chapter, display date, or mode does not generate another
+world.
 
 Dated chapter-authored facts compare an ordering moment made from the effective story
 date and source chapter. Non-overlapping Gregorian ranges order chronologically.

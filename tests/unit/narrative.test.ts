@@ -2593,13 +2593,15 @@ describe("narrative corpus validation and projection", () => {
       introductions.push(event);
     }
 
+    // A soft ceiling past the events keeps all of them in the world.
+    const request = { readThrough: "1.3", softCeiling: "2200.2" };
     const first = generateNarrativeWorld(
       prepareNarrativeCorpus(corpus),
-      "1.3",
+      request,
     ).activity;
     const second = generateNarrativeWorld(
       prepareNarrativeCorpus(corpus),
-      "1.3",
+      request,
     ).activity;
     expect(second).toEqual(first);
     const eventOrder = first

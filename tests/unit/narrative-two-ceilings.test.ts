@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { chapterLatestDate } from "../../src/narrative/ceiling";
+import {
+  chapterLatestDate,
+  isKnownAtCeiling,
+} from "../../src/narrative/ceiling";
 import {
   chapterSoftCeiling,
   compareNarrativeChapters,
@@ -345,6 +348,53 @@ describe("two-ceiling narrative projection", () => {
     expect(() =>
       projectNarrativeChapterDetail(prepared, "1.3", world),
     ).not.toThrow();
+  });
+
+  it("cuts activity at the soft ceiling, dating undated activity by its chapter", () => {
+    // Read through 1.6, looking at 2165-03 (BOB-20261120-C3EY9W).
+    const world = at("1.6", "2165-03");
+    const keys = world.activity.map(
+      (item) => `${item.entity_id}|${item.source_chapter}`,
+    );
+    // 1.3 (2165-03) is read after 1.2 but set before it.
+    expect(keys).toContain(`${alex}|1.3`);
+    expect(keys).toContain(`${kai}|1.3`);
+    // The undated event takes 1.3's date (rule (c)).
+    expect(keys).toContain(`${undated}|1.3`);
+    // Later-dated activity waits for its date, though read.
+    expect(keys).not.toContain(`${alex}|1.2`);
+    expect(keys.some((key) => key.startsWith(`${late}|`))).toBe(false);
+    expect(
+      world.activity.every(
+        (item) =>
+          item.effective_date === null ||
+          isKnownAtCeiling(item.effective_date, "2165-03"),
+      ),
+    ).toBe(true);
+    expect(
+      at("1.6", "2165-02").activity.some((item) => item.entity_id === undated),
+    ).toBe(false);
+    // Year precision: Alex's 2175 activity in 1.4 is known at 2175-01 (rule (e)).
+    expect(
+      at("1.6", "2175-01").activity.some(
+        (item) => item.entity_id === alex && item.source_chapter === "1.4",
+      ),
+    ).toBe(true);
+    expect(
+      at("1.6", "2174-12").activity.some(
+        (item) => item.entity_id === alex && item.source_chapter === "1.4",
+      ),
+    ).toBe(false);
+    // Activity only names entities the world shows.
+    for (const softCeiling of ["2160-01", "2165-03", "2175", "2190-02"]) {
+      const shown = ids(at("1.7", softCeiling));
+      expect(
+        at("1.7", softCeiling).activity.filter(
+          (item) => !shown.has(item.entity_id),
+        ),
+        softCeiling,
+      ).toEqual([]);
+    }
   });
 
   it("requires a soft ceiling exactly when something is read", () => {

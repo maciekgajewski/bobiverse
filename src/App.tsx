@@ -64,6 +64,7 @@ import {
   type SystemViewEntry,
 } from "./system-view";
 import {
+  chapterSoftCeiling,
   generateNarrativeWorld,
   characterTravelLegs,
   projectCharacterTravelHistories,
@@ -165,6 +166,14 @@ function rootInspectorHistory(selection: SelectionIdentity): InspectorHistory {
   return { entries: [selection], index: 0 };
 }
 
+/** A stored Read through chapter, or null when it is not a known chapter. */
+function readThroughChapter(chapter: string | null): string | null {
+  return chapter !== null &&
+    narrativeChapters.some((candidate) => candidate.chapter === chapter)
+    ? chapter
+    : null;
+}
+
 function projectReaderProgress(
   next: ReaderProgress,
   systems: readonly StellarSystem[],
@@ -174,26 +183,37 @@ function projectReaderProgress(
       narrativePreparationError ?? "Narrative corpus preparation failed.",
     );
   }
-  const initialOptions = next.viewChapter
-    ? meaningfulNarrativeDateOptions(narrativeCorpus, next.viewChapter)
+  // Read through is the knowledge bound (design principles §1, ADR-0031,
+  // BOB-20261120-C3EY9W): the world and the date options use every chapter up
+  // to it, and the selected chapter or date is only the soft ceiling.
+  const readThrough = readThroughChapter(next.furthestChapterRead);
+  const readThroughOptions = readThrough
+    ? meaningfulNarrativeDateOptions(narrativeCorpus, readThrough)
     : [];
   const progress = normalizeReaderProgress(
     next,
     narrativeChapters,
-    initialOptions.map(({ date }) => date),
+    readThroughOptions.map(({ date }) => date),
   );
-  const dateOptions =
-    progress.viewChapter === next.viewChapter
-      ? initialOptions
-      : progress.viewChapter
-        ? meaningfulNarrativeDateOptions(narrativeCorpus, progress.viewChapter)
-        : [];
-  const generatedWorld = generateNarrativeWorld(
+  const dateOptions = progress.viewChapter ? readThroughOptions : [];
+  const world = generateNarrativeWorld(
     narrativeCorpus,
-    progress.viewChapter,
-    progress.mode === "date" ? progress.displayDate : null,
+    !progress.viewChapter
+      ? { readThrough: null, softCeiling: null }
+      : progress.mode === "date" && progress.displayDate
+        ? {
+            readThrough: progress.furthestChapterRead,
+            softCeiling: progress.displayDate,
+          }
+        : {
+            readThrough: progress.furthestChapterRead,
+            softCeiling: chapterSoftCeiling(
+              narrativeCorpus,
+              progress.viewChapter,
+            ),
+            chapter: progress.viewChapter,
+          },
   );
-  const world = generatedWorld;
   const chapterDetail =
     progress.mode === "chapter" && progress.viewChapter
       ? projectNarrativeChapterDetail(
@@ -227,8 +247,9 @@ function loadInitialProjection(
         narrativePreparationError ?? "Narrative corpus preparation failed.",
       );
     }
-    const initialOptions = preliminary.viewChapter
-      ? meaningfulNarrativeDateOptions(narrativeCorpus, preliminary.viewChapter)
+    const readThrough = readThroughChapter(preliminary.furthestChapterRead);
+    const initialOptions = readThrough
+      ? meaningfulNarrativeDateOptions(narrativeCorpus, readThrough)
       : [];
     return projectReaderProgress(
       loadReaderProgress(
