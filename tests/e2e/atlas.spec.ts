@@ -2218,17 +2218,24 @@ test("desktop surfaces stay on one projection through chapter and date changes",
   await expect(page.locator(".map-narrative-badge")).toHaveText(
     sharedDateStatus + badgeTitle,
   );
+  // Bob does not exist yet in 2016, but his card is not cleared (rule (g),
+  // BOB-20261120-73F83F); the date marker shows its Date context meanwhile.
   await expect(
     page.getByText(
       "Selection cleared because the object is not eligible in this view.",
     ),
-  ).toBeAttached();
+  ).toHaveCount(0);
 
   await page.getByRole("button", { name: "Chapter mode" }).click();
   await expect(page.locator(".view-status")).toHaveText(sharedChapterStatus);
   await expect(page.locator(".map-narrative-badge")).toHaveText(
     sharedChapterStatus + badgeTitle,
   );
+  await expect(
+    page
+      .getByRole("complementary", { name: "Object inspector" })
+      .getByRole("heading", { name: "Bob" }),
+  ).toBeVisible();
 });
 
 test("chapter 1.11 Bob selection resolves through New Handeltown to Sol", async ({

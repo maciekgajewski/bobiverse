@@ -206,8 +206,9 @@ homeworld property, as chapter activity.
 
 Ordering adapts to the timeline mode:
 
-- **Chapter mode:** current-chapter objects first, followed by latest reader-order
-  activity at or before `viewChapter`.
+- **Chapter mode:** current-chapter objects first, followed by latest story-time
+  activity known at the chapter's soft ceiling, with reading order breaking ties
+  and an undated record taking its chapter's date (BOB-20261120-73F83F).
 - **Date mode:** objects active at `displayDate` first, followed by latest comparable
   story-time activity at or before `displayDate`.
 
@@ -385,6 +386,16 @@ the current projection:
 - **Technology:** description (GUPPI also has a header illustration).
 - **Organization:** description and current state.
 - **Vessel:** description and current state.
+
+Current state (characters, locations, organizations and vessels) is shown as of the
+soft ceiling, with a muted "as of Chapter X" line in Chapter mode or "as of Y" (the
+selected date) in Date mode; when nothing is known at the soft ceiling it reads "No
+known state" with the same line (design principles §2.5, rule (b)). The card of an
+entity read but not existing yet at the soft ceiling still opens, with its
+description and "No known state" (rule (g)): it stays open when the view moves
+before the entity's earliest date, and links to it from other cards open it. It is
+not listed in the browser or drawn on the map (BOB-20261120-73F83F).
+
 - **Astronomy-only system:** catalogue name, alternate designations, components,
   position/distance facts, provenance, and an explicit **Not story-known at this
   view** notice.
@@ -509,9 +520,9 @@ inspector recency:
 | Surface state         | Chapter mode                                           | Date mode                                         |
 | --------------------- | ------------------------------------------------------ | ------------------------------------------------- |
 | Active object         | Participates in selected chapter activity              | Has eligible activity at selected meaningful date |
-| Last activity         | Latest reader-order activity through knowledge chapter | Latest comparable activity at/before display date |
+| Last activity         | Latest story-time activity at the chapter soft ceiling | Latest comparable activity at/before display date |
 | Active system         | Mapped ancestry of selected-chapter activity           | Mapped ancestry of activity at selected date      |
-| Current list priority | Active objects, then reader-order recency              | Active objects, then story-time recency           |
+| Current list priority | Active objects, then story-time recency                | Active objects, then story-time recency           |
 
 A supplemental mention contributes direct `mention` activity for its target at the
 enclosing chapter's date. It does not place a character, event, or object at the

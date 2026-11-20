@@ -1,6 +1,6 @@
 # BOB-20261120-C3EY9W: Read through as the knowledge bound
 
-Status: In progress
+Status: Done
 Phase: 2 (narrative foundation and chapter timeline)
 Last updated: 2026-11-20
 
@@ -130,3 +130,7 @@ activity dated after their soft ceiling (deletions only, 472 records).
   1.51, 1.52 and 1.54 (for example 32 more at 1.27), and current state differs
   at more chapters.
 - Awaiting manager review.
+- Approved by the manager at `cd07750` and landed on master with the no-ff
+  merge `1677c90` ("Merge T4: Read through as the knowledge bound"). Done. Landed
+  as `1677c90`. The chapter-view recency risk above is addressed in
+  BOB-20261120-73F83F (T5).

@@ -1,6 +1,6 @@
 # BOB-20261120-Y9W13K: scene asset Suspense boundaries
 
-Status: In progress
+Status: Done
 Phase: 5 (publication readiness)
 Last updated: 2026-11-20
 
@@ -102,3 +102,5 @@ npm run test:e2e:csp
   (824), data:test, data:validate, narrative:validate, build and
   `git diff --check`; e2e with one worker and no retries passed on chromium
   (95), firefox (95) and webkit (96); the CSP check passed (3).
+- Approved by the manager at `90e67ea` and landed on master with the no-ff
+  merge `fb01f93` ("Merge scene loading boundaries"). Done. Landed as `fb01f93`.

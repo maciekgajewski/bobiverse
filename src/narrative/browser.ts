@@ -2,6 +2,8 @@ import { isKnownAtCeiling } from "./ceiling";
 import {
   compareNarrativeChapters,
   compareNarrativeMoments,
+  narrativeActivityStoryDate,
+  narrativeEntitiesBeforeExistence,
   narrativeWorldSoftCeiling,
   type NarrativeActivity,
   type NarrativeEntity,
@@ -102,11 +104,33 @@ function activityAtOrBefore(
   return isKnownAtCeiling(activity.effective_date, softCeiling);
 }
 
+/**
+ * Chapter-view recency (BOB-20261120-73F83F): story date first, undated
+ * activity taking its chapter's date (rule (c)), with reading order breaking
+ * ties and overlapping dates, so "latest" is latest in story time at the soft
+ * ceiling. Without a story date (hand-built worlds) reading order decides.
+ */
+function compareChapterRecency(
+  left: NarrativeActivity,
+  right: NarrativeActivity,
+  world: NarrativeWorld,
+): number {
+  const leftDate = narrativeActivityStoryDate(world, left);
+  const rightDate = narrativeActivityStoryDate(world, right);
+  return leftDate && rightDate
+    ? (compareNarrativeMoments(
+        { date: leftDate, sourceChapter: left.source_chapter },
+        { date: rightDate, sourceChapter: right.source_chapter },
+      ) ?? 0)
+    : compareNarrativeChapters(left.source_chapter, right.source_chapter);
+}
+
 function latestActivity(
   activities: readonly NarrativeActivity[],
   mode: BrowserMode,
-  softCeiling: string | null,
+  world: NarrativeWorld,
 ): NarrativeActivity | null {
+  const softCeiling = narrativeWorldSoftCeiling(world);
   const eligible =
     mode === "date" && softCeiling
       ? activities.filter((activity) =>
@@ -134,14 +158,9 @@ function latestActivity(
     );
     return uniquelyLatest.length === 1 ? uniquelyLatest[0]! : null;
   }
-  return eligible.reduce((latest, candidate) => {
-    return compareNarrativeChapters(
-      candidate.source_chapter,
-      latest.source_chapter,
-    ) > 0
-      ? candidate
-      : latest;
-  });
+  return eligible.reduce((latest, candidate) =>
+    compareChapterRecency(candidate, latest, world) > 0 ? candidate : latest,
+  );
 }
 
 function isActive(
@@ -168,6 +187,7 @@ function compareItems(
   left: NarrativeBrowserItem,
   right: NarrativeBrowserItem,
   mode: BrowserMode,
+  world: NarrativeWorld,
 ): number {
   if (left.active !== right.active) return left.active ? -1 : 1;
   if (left.lastActivity && !right.lastActivity) return -1;
@@ -175,10 +195,7 @@ function compareItems(
   if (left.lastActivity && right.lastActivity) {
     const recency =
       mode === "chapter"
-        ? compareNarrativeChapters(
-            right.lastActivity.source_chapter,
-            left.lastActivity.source_chapter,
-          )
+        ? compareChapterRecency(right.lastActivity, left.lastActivity, world)
         : left.lastActivity.effective_date && right.lastActivity.effective_date
           ? (compareNarrativeMoments(
               {
@@ -230,11 +247,7 @@ export function buildNarrativeBrowserGroups(
         ...(externalAliasesByEntityId.get(entity.id) ?? []),
       ],
       active: isActive(activities, world, mode),
-      lastActivity: latestActivity(
-        activities,
-        mode,
-        narrativeWorldSoftCeiling(world),
-      ),
+      lastActivity: latestActivity(activities, mode, world),
       speciesPresentation:
         entity.entity_type === "species"
           ? speciesPresentations.get(entity.id)
@@ -244,7 +257,7 @@ export function buildNarrativeBrowserGroups(
   return browserGroupDefinitions.flatMap(({ id, label }) => {
     const eligible = allItems
       .filter((item) => entityGroup(item.entity) === id)
-      .sort((left, right) => compareItems(left, right, mode));
+      .sort((left, right) => compareItems(left, right, mode, world));
     if (eligible.length === 0) return [];
     const items = normalizedQuery
       ? eligible.filter((item) =>
@@ -264,4 +277,31 @@ export function buildNarrativeBrowserGroups(
       },
     ];
   });
+}
+
+/**
+ * The card item for an entity read up to Read through that does not exist yet
+ * at the soft ceiling (rule (g)): it is in no browser group and has no
+ * activity, but its card still opens with its description and "no known state
+ * as of …". Null when `id` is not such an entity.
+ */
+export function narrativeItemBeforeExistence(
+  world: NarrativeWorld,
+  id: string,
+): NarrativeBrowserItem | null {
+  const entity = narrativeEntitiesBeforeExistence(world).find(
+    (candidate) => candidate.id === id,
+  );
+  if (!entity) return null;
+  return {
+    entity,
+    name: String(entity.name),
+    aliases: Array.isArray(entity.aliases)
+      ? entity.aliases.filter(
+          (alias): alias is string => typeof alias === "string",
+        )
+      : [],
+    active: false,
+    lastActivity: null,
+  };
 }

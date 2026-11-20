@@ -855,7 +855,10 @@ when none is known; every other property, including `name`, `description`,
 takes the latest-read write. An entity is in `entities` only from its earliest known
 date (`entityEarliestDates`; an event from its current date, an undated one from its
 revealing chapter), the ancestors of a shown location are shown too, and entities read
-but not existing yet are available from `narrativeEntitiesBeforeExistence`. Chapter view
+but not existing yet are available from `narrativeEntitiesBeforeExistence`; their cards
+still open (`narrativeItemBeforeExistence`, rule (g)), and cards label current state
+with `narrativeSoftCeilingLabel` ("Chapter X" or the selected date) or show "No known
+state" (BOB-20261120-73F83F). Chapter view
 passes the chapter's latest date (`chapterSoftCeiling`) as `softCeiling`. Travel
 histories and last-known locations use the same two ceilings. The app always passes
 `furthestChapterRead` as `readThrough`, and the selected chapter or Date-view date only
@@ -910,7 +913,9 @@ supports narrative-moment recency. A world's `activity` keeps the records throug
 through whose date is known at the soft ceiling (`isKnownAtCeiling`; an undated record
 takes its source chapter's date) and whose target the world shows. The browser's and
 map's Date-view filters compare against the world's soft ceiling
-(`narrativeWorldSoftCeiling`) with the same rule.
+(`narrativeWorldSoftCeiling`) with the same rule. Chapter-view recency orders activity
+by story date (`narrativeActivityStoryDate`: an undated record takes its source
+chapter's date) with reading order breaking ties (BOB-20261120-73F83F).
 Equal-suffix and overlapping unequal-precision activity facts use canonical chapter
 order. The generated array uses a
 deterministic topological order that preserves every definite moment relation;

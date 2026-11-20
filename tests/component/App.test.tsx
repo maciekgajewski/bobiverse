@@ -1315,7 +1315,7 @@ describe("atlas shell", () => {
     ).toBeInTheDocument();
   });
 
-  it("shows last-seen and unmapped details, then clears an ineligible selection", async () => {
+  it("shows last-seen details, then keeps the card open before the character exists (rule (g))", async () => {
     const user = userEvent.setup();
     render(<App />);
     await user.selectOptions(dockReadThrough(), "1.2");
@@ -1338,17 +1338,23 @@ describe("atlas shell", () => {
       within(inspector).getByRole("button", { name: "New Handeltown" }),
     ).toBeInTheDocument();
 
+    // Bob is read (Read through 1.2) but does not exist yet at 1.1's soft
+    // ceiling: the card stays open with no state as of 1.1
+    // (BOB-20261120-73F83F).
     await user.selectOptions(screen.getByLabelText("Knowledge through"), "1.1");
     expect(
-      await screen.findByText(
-        "Selection cleared because the object is not eligible in this view.",
-      ),
+      await within(inspector).findByText("as of Chapter 1.1"),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(
-        "Select a map marker or browser item to inspect its reader-safe details.",
-      ),
+      within(inspector).getByRole("heading", { name: "Bob" }),
     ).toBeInTheDocument();
+    expect(within(inspector).getByText("No known state")).toBeInTheDocument();
+    expect(within(inspector).queryByText("Last seen")).toBeNull();
+    expect(
+      screen.queryByText(
+        "Selection cleared because the object is not eligible in this view.",
+      ),
+    ).toBeNull();
   });
   it("confirms a top-bar Read through choice before revealing and keeps the dock in step", async () => {
     const user = userEvent.setup();

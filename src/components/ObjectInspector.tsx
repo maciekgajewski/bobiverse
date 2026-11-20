@@ -15,6 +15,8 @@ import {
   characterAncestors,
   compareNarrativeChapters,
   formatNarrativeDate,
+  narrativeEntitiesBeforeExistence,
+  narrativeSoftCeilingLabel,
 } from "../narrative/model";
 import {
   resolveHeaderIllustration,
@@ -61,6 +63,46 @@ function stringList(value: unknown): string[] {
 
 function displayDate(value: string): string {
   return formatNarrativeDate(value);
+}
+
+/**
+ * Entities a card can link to: those shown at the soft ceiling plus those
+ * read but not existing yet (rule (g)), whose cards still open.
+ */
+function cardLinkEntities(world: NarrativeWorld): Map<string, NarrativeEntity> {
+  return new Map(
+    [...world.entities, ...narrativeEntitiesBeforeExistence(world)].map(
+      (entity) => [entity.id, entity],
+    ),
+  );
+}
+
+/**
+ * Current state as of the soft ceiling (§2.5, rules (b) and (g)): the state
+ * with an "as of Chapter X" / "as of Y" line, or "No known state" with it.
+ * A world without ceilings (hand-built) shows the bare state, if any.
+ */
+function CurrentStateDetail({
+  state,
+  asOf,
+  prose,
+}: {
+  state: string | null;
+  asOf: string | null;
+  prose: (value: unknown) => ReactNode;
+}) {
+  if (!asOf)
+    return state ? <Detail label="Current state">{prose(state)}</Detail> : null;
+  return (
+    <Detail label="Current state">
+      {state ? (
+        prose(state)
+      ) : (
+        <span className="no-known-state">No known state</span>
+      )}
+      <span className="relationship-context">as of {asOf}</span>
+    </Detail>
+  );
 }
 
 function Detail({ label, children }: { label: string; children: ReactNode }) {
@@ -332,9 +374,8 @@ function NarrativeDetails({
 }) {
   const { entity } = item;
   const name = String(entity.name);
-  const entities = new Map(
-    world.entities.map((candidate) => [candidate.id, candidate]),
-  );
+  const entities = cardLinkEntities(world);
+  const asOf = narrativeSoftCeilingLabel(world);
   const aliases = stringList(entity.aliases);
   const prose = (value: unknown) => (
     <NarrativeText
@@ -430,11 +471,11 @@ function NarrativeDetails({
             {stringValue(entity.gender) && (
               <Detail label="Gender">{String(entity.gender)}</Detail>
             )}
-            {stringValue(entity.current_state) && (
-              <Detail label="Current state">
-                {prose(entity.current_state)}
-              </Detail>
-            )}
+            <CurrentStateDetail
+              state={stringValue(entity.current_state)}
+              asOf={asOf}
+              prose={prose}
+            />
             {stringValue(entity.birth_date) && (
               <Detail label="Birth date">
                 {displayDate(String(entity.birth_date))}
@@ -562,12 +603,13 @@ function NarrativeDetails({
             )}
           {(entity.entity_type === "organization" ||
             entity.entity_type === "vessel" ||
-            entity.entity_type === "location") &&
-            stringValue(entity.current_state ?? entity.state) && (
-              <Detail label="Current state">
-                {prose(entity.current_state ?? entity.state)}
-              </Detail>
-            )}
+            entity.entity_type === "location") && (
+            <CurrentStateDetail
+              state={stringValue(entity.current_state ?? entity.state)}
+              asOf={asOf}
+              prose={prose}
+            />
+          )}
         </dl>
       )}
       {ancestors.length > 0 && (
@@ -860,10 +902,7 @@ function ChapterDetails({
   readThroughChapter: string | null;
   inlineLinkFallbacks: ReadonlyMap<string, readonly string[]>;
 }) {
-  const entitiesById = useMemo(
-    () => new Map(world.entities.map((entity) => [entity.id, entity])),
-    [world.entities],
-  );
+  const entitiesById = useMemo(() => cardLinkEntities(world), [world]);
   // The card shows the display title ("Bob Version 2.0" for the stored
   // "2 - Bob Version 2.0") in its heading and illustration text; an untitled
   // chapter keeps its stored bare number as the heading. The card only opens
