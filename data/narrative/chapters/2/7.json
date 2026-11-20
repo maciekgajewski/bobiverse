@@ -1,0 +1,87 @@
+{
+  "chapter": "2.7",
+  "title": "7 - Back to Work",
+  "summary": "Missing the family he has sent in stasis aboard [[vessel:exodus-3]] toward [[location:omicron2-eridani]], and with no contact until they arrive and are revived, [[character:riker]] works through his day at [[location:sol]], starting with colony-ship construction. [[character:charles]] pops into his [[technology:vr]] to report that two groups are behind the sabotage: [[organization:vehement]], tech-savvy and aiming at food production, leaving calling cards and public statements, and cruder, deadlier bombings in Florianópolis that look like revenge on Brazil for the war, which Charles leaves to local law enforcement. Riker keeps to himself that a half-dozen [[technology:ami|AMIs]] now scan all communications in the solar system, telling no other Bob in case VEHEMENT can decrypt their traffic. [[character:homer]], whom Riker calls General Bullmoose, reports that his [[technology:kudzu-gardens|farm donuts]] are running smoothly and easing the food crisis as war damage drives [[location:earth]] into an ice age, but only about thirty thousand of fifteen million survivors have left the planet. Since the [[organization:united-states-of-eurasia|USE]] and [[organization:spitsbergen-refuge|Spits]] enclaves left in the first two ships, Riker has no one he talks with regularly, and he feels isolated. At the [[organization:united-nations|UN]], which he attends through a public avatar, [[character:mulder]]'s report from [[location:eta-cassiopeiae]] that [[location:eta-cassiopeiae-3]] can be lived on raises the question of whether one of the almost finished [[vessel:exodus-4]] and [[vessel:exodus-5]] should go there or both to Omicron2 Eridani. The Maldives' representative argues that [[species:human|humanity]] should settle a third system; Riker agrees, and hopes the session will call a vote.",
+  "date": "2171-07",
+  "location_id": "location:sol",
+  "introducing": [
+    {
+      "id": "vessel:exodus-4",
+      "name": "Exodus-4",
+      "description": "A colony ship built at [[location:sol]], where [[character:riker]] oversees colony-ship construction.",
+      "current_state": "Almost finished, with its destination undecided between [[location:eta-cassiopeiae-3]] and [[location:omicron2-eridani]]."
+    },
+    {
+      "id": "vessel:exodus-5",
+      "name": "Exodus-5",
+      "description": "A colony ship built at [[location:sol]] alongside [[vessel:exodus-4]], where [[character:riker]] oversees colony-ship construction.",
+      "current_state": "Almost finished, with its destination undecided: the [[organization:united-nations]] is debating whether one of it and [[vessel:exodus-4]] should go to [[location:eta-cassiopeiae-3]] or both to [[location:omicron2-eridani]]."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:riker",
+      "current_state": "At [[location:sol]], he oversees colony-ship construction and, missing his relatives in stasis aboard [[vessel:exodus-3]] and kept at arm's length by most enclaves, feels isolated. He secretly has [[technology:ami|AMIs]] scan all solar-system communications for [[organization:vehement]]."
+    },
+    {
+      "entity_id": "character:charles",
+      "description": "One of the first clones [[character:riker]] made in the solar system, he knows Earth's politics almost as well as Riker and where everything else in the system is far better.",
+      "current_state": "Still helping [[character:riker]] at [[location:sol]], he tracks the sabotage on [[location:earth]], blaming [[organization:vehement]] for the attacks on infrastructure and resentment of Brazil for the Florianópolis bombings."
+    },
+    {
+      "entity_id": "character:homer",
+      "current_state": "An industrial tycoon running the space-farm program like a military operation: each of his [[technology:kudzu-gardens|farm donuts]] brought online eases [[location:earth]]'s food crisis and pushes back the estimate of how long Earth stays habitable by a couple of years."
+    },
+    {
+      "entity_id": "vessel:exodus-3",
+      "current_state": "En route to [[location:omicron2-eridani]], it carries the [[organization:spitsbergen-refuge]], [[organization:free-american-independent-theocratic-hegemony|FAITH]]'s enclave and [[character:julia-hendricks]]'s family in stasis; there will be no contact with them until they arrive and are revived."
+    },
+    {
+      "entity_id": "organization:vehement",
+      "description": "VEHEMENT, whose name stands for Voluntary Extinction of Human Existence Means Earth's Natural Transformation, is an anonymous movement that advocates human extinction. It threatens violence and guerrilla tactics to coerce people into ending reproduction, and has also attacked food production and supply facilities, most often as token gestures that amount to statements.",
+      "current_state": "Very tech-savvy, it is sabotaging food-production infrastructure on [[location:earth]], leaving calling cards and public statements after its attacks, but has not yet reached the Bobs' space-based assets."
+    },
+    {
+      "entity_id": "location:earth",
+      "state": "War damage is driving it into an ice age: glaciers turn farmland into tundra and tundra into ice, food production keeps falling, and higher-latitude enclaves are being moved toward the equator. Of about fifteen million survivors amid spreading radioactivity, some thirty thousand have left so far; much refined metal remains."
+    },
+    {
+      "entity_id": "location:eta-cassiopeiae-3",
+      "state": "On [[character:mulder]]'s report that its floating mats can be lived on for now and its system has the resources for floating cities, several island-nation enclaves on [[location:earth]] want to settle it."
+    },
+    {
+      "entity_id": "organization:united-nations",
+      "current_state": "With [[character:riker]] attending through a public avatar, it is debating whether to send a colony ship to [[location:eta-cassiopeiae-3]]; the Maldives' representative argues for settling a third system, and more than half the delegates want to speak."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:riker",
+      "role": "lead",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:charles",
+      "role": "other",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:homer",
+      "role": "other"
+    }
+  ],
+  "mentions": [
+    "character:julia-hendricks",
+    "character:mulder",
+    "location:eta-cassiopeiae",
+    "location:omicron2-eridani",
+    "organization:brazilian-empire",
+    "organization:free-american-independent-theocratic-hegemony",
+    "organization:spitsbergen-refuge",
+    "organization:united-states-of-eurasia",
+    "species:human",
+    "technology:ami",
+    "technology:kudzu-gardens",
+    "technology:vr"
+  ]
+}

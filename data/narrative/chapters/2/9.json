@@ -1,0 +1,48 @@
+{
+  "chapter": "2.9",
+  "title": "9 - Something is Out There",
+  "summary": "In his [[technology:vr]] library, [[character:bob-replicant]] is going over the [[technology:autofactory]] schedule with Guppy, his [[technology:guppi-interface|GUPPI]], when [[character:marvin]] reports that scattered, disarticulated [[species:delta-eridani-natives|Deltan]] remains, chewed by something much bigger than a gorilloid, show that an unknown predator once hunted the Deltans almost to extinction at their original location. Bob pulls up his admittedly cursory early fauna survey of [[location:delta-eridani-4|Eden]], but none of the animals he catalogued, the leopard analogues and gorilloids included, seems able to take down a full-grown Deltan. Switching to his detailed but non-interactive recording of a Deltan village, he startles [[character:spike]] off Marvin's lap and wishes he could deal with the Deltans more directly than through a floating [[technology:planetary-exploration-drone|drone]]. He has Guppy print four more squads of exploration drones for a kilometre-by-kilometre search, delaying the high-priority armaments project again; with attempted gorilloid attacks down to almost zero and enough spare [[technology:buster-drone|busters]] to repel a large-scale attack, he accepts the delay, and Marvin maps out search strategies for the full survey.",
+  "date": "2169-09",
+  "location_id": "location:delta-eridani",
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "Orbiting [[location:delta-eridani-4|Eden]], he guides the [[species:delta-eridani-natives|Deltans]] at [[location:camelot]] as their sky god and has had four more squads of [[technology:planetary-exploration-drone|exploration drones]] printed to search for an unknown predator much bigger than a gorilloid, again delaying his high-priority armaments project."
+    },
+    {
+      "entity_id": "character:marvin",
+      "aliases": ["Marv"],
+      "current_state": "Orbiting [[location:delta-eridani-4|Eden]] with [[character:bob-replicant]], he has found [[species:delta-eridani-natives|Deltan]] remains showing that a predator much bigger than a gorilloid once nearly wiped out the Deltans at their original location, and is mapping search strategies for a full drone survey. He expects to leave in about a generation."
+    },
+    {
+      "entity_id": "species:delta-eridani-natives",
+      "description": "An intelligent, fire-using native people of [[location:delta-eridani-4|Eden]], named Deltans by [[character:bob-replicant]]. They have bat- and pig-like faces, long spiderish limbs, brownish-gray to orangey-tan fur, patterned heads, mobile expressive ears and a guttural language, and live in hearth-based family groups called hexghi. Some have built an altar to Bob, whom they call the bawbe, but they show little awe for the bawbe's divine authority and are skeptical and quick to question; [[character:marvin]]'s research suggests they first arose in another, gorilloid-free part of their continent, where an unidentified predator much bigger than a gorilloid once hunted them almost to extinction."
+    },
+    {
+      "entity_id": "location:camelot",
+      "state": "The tribe needs to guard only the mesa's two access paths, and attempted gorilloid attacks are down to almost zero, with enough spare [[technology:buster-drone|busters]] on hand to repel any large-scale attack."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead"
+    },
+    {
+      "character_id": "character:marvin",
+      "role": "other"
+    },
+    {
+      "character_id": "character:spike",
+      "role": "other"
+    }
+  ],
+  "mentions": [
+    "location:delta-eridani-4",
+    "technology:autofactory",
+    "technology:buster-drone",
+    "technology:guppi-interface",
+    "technology:planetary-exploration-drone",
+    "technology:vr"
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "chapter": "2.2",
+  "title": "2 - Colony Site",
+  "summary": "A small group of the theropod-like predators the colonists call raptors attacks a backhoe at the edge of the half-built fence on [[location:vulcan]], five days after the first humans land; the security teams of [[character:stephane-brodeur|Stéphane Brodeur]] kill most of them, let one or two escape on purpose and send a carcass for necropsy. [[character:howard]], who is overseeing [[technology:ami]] crews building [[technology:kudzu-gardens|farm donuts]] in orbit, puts his [[technology:planetary-exploration-drone|drones]] on guard, asks [[character:bill]] for his observation-drone designs and has [[technology:guppi-interface|Guppy]] switch half the [[technology:3d-printers|printers]] to four squads of drones. Inspecting the site, he finds the fence a third of the way round the planned town and doubts it will stop the huge brontos, while [[location:romulus]], where the colonists on [[vessel:exodus-3]] will settle, hangs in the western sky. In a call, [[character:george-butterworth|Colonel Butterworth]], friendlier to Howard than he ever was to [[character:riker]], reviews his surveillance plan, readies the farming specialists for decanting and puts off unloading everyone for about a month, despite [[character:bert]] and [[character:ernie]]'s impatience.",
+  "date": "2188-09",
+  "location_id": "location:vulcan",
+  "introducing": [
+    {
+      "id": "character:stephane-brodeur",
+      "name": "Stéphane Brodeur",
+      "species_id": "species:human",
+      "description": "The head of security for the [[organization:united-states-of-eurasia|USE]] colony on [[location:vulcan]], a Quebecois-accented officer who leads its armed security teams in the field and once turned down a desk job.",
+      "current_state": "After his teams beat off a raptor attack on a backhoe at the fence line, he has asked [[character:howard]] for surveillance and will ask the construction chief to cut back some tasks until it is in place."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:howard",
+      "parent_id": "character:riker",
+      "current_state": "Stationed at the L4 point between [[location:vulcan]] and [[location:romulus]], he supports the colony, is overseeing [[technology:ami]] crews building farm donuts, and has put drones on guard after a raptor attack. He is printing four squads of observation drones from [[character:bill]]'s designs, and wants the colonists offloaded quickly so that [[character:bert]] and [[character:ernie]] can head back to [[location:earth]]."
+    },
+    {
+      "entity_id": "character:george-butterworth",
+      "description": "A British-accented colonel in the [[organization:united-states-of-eurasia|United States of Eurasia]] Army Corps, he leads the USE enclave and is pushy but always professional and immaculately turned out. Wary at first that [[character:riker]] and [[character:homer]] are FAITH loyalists, he has been at odds with Riker since they first met and judges that [[location:earth]] will not recover in time for humanity.",
+      "current_state": "Arrived at [[location:omicron2-eridani]] aboard [[vessel:exodus-1]], he has chosen [[location:vulcan]] for the colony and, friendlier toward [[character:howard]] than he was toward [[character:riker]], is reviewing Howard's surveillance plan, readying the farming specialists to be decanted, and putting off unloading everyone for about a month. He is more relaxed, though the food margin is tighter than he likes, and hopes to help the Spits when they arrive."
+    },
+    {
+      "entity_id": "character:cranston",
+      "description": "The minister representing the [[organization:free-american-independent-theocratic-hegemony]] enclave, which still expects priority from [[character:riker]]. He proposes that his group share a ship with the [[organization:spitsbergen-refuge]] and addresses Riker as a replicant who owes FAITH obedience. He is not a people person, and his relationship with the Bobs has turned into mutual hostility.",
+      "current_state": "In stasis on the long voyage with [[organization:free-american-independent-theocratic-hegemony|FAITH]]'s colonists, who are to settle on [[location:romulus]] when [[vessel:exodus-3]] arrives."
+    },
+    {
+      "entity_id": "character:riker",
+      "current_state": "At [[location:sol]], he is building more colony ships as fast as he can to follow [[vessel:exodus-3]]."
+    },
+    {
+      "entity_id": "vessel:exodus-1",
+      "current_state": "In orbit at [[location:omicron2-eridani]] since September 2188 on station-keeping, it supports the [[location:vulcan]] colony setup while most of its colonists remain in stasis and will fly back to [[location:earth]] once they are offloaded."
+    },
+    {
+      "entity_id": "vessel:exodus-2",
+      "current_state": "In orbit at [[location:omicron2-eridani]] since September 2188 on station-keeping, it supports the [[location:vulcan]] colony setup while most of its colonists remain in stasis and will fly back to [[location:earth]] once they are offloaded."
+    },
+    {
+      "entity_id": "vessel:exodus-3",
+      "current_state": "En route to [[location:omicron2-eridani]] a few months behind [[vessel:exodus-1]] and [[vessel:exodus-2]], it carries the [[organization:spitsbergen-refuge]], [[organization:free-american-independent-theocratic-hegemony|FAITH]]'s enclave and [[character:julia-hendricks]]'s family in stasis, to settle on [[location:romulus]]."
+    },
+    {
+      "entity_id": "organization:united-states-of-eurasia",
+      "current_state": "Its enclave under [[character:george-butterworth|Colonel Butterworth]] is founding the first colony on [[location:vulcan]], with most colonists still in stasis aboard [[vessel:exodus-1]] and [[vessel:exodus-2]] while setup teams prepare the site. The colony is expected to support later colony ships."
+    },
+    {
+      "entity_id": "organization:free-american-independent-theocratic-hegemony",
+      "current_state": "Its enclave, led by [[character:cranston|Minister Cranston]], is in stasis aboard [[vessel:exodus-3]], a few months behind the first colony ships, and is to settle on [[location:romulus]] alongside the [[organization:spitsbergen-refuge]]."
+    },
+    {
+      "entity_id": "organization:spitsbergen-refuge",
+      "current_state": "Aboard [[vessel:exodus-3]], a few months behind the first colony ships, it is to settle on [[location:romulus]] with [[organization:free-american-independent-theocratic-hegemony|FAITH]]'s enclave and build infrastructure for later groups."
+    },
+    {
+      "entity_id": "location:vulcan",
+      "description": "The larger member of a double planet with [[location:romulus]], also designated OE-1A. On the cool side of the habitable zone but warmed by a thicker, carbon-dioxide-rich atmosphere, it has oceans, oxygen, large green land areas, and trees close enough to Terran ones to serve as building timber; its ecosystem is confirmed to be biocompatible with [[species:human|humans]]. [[character:milo]]'s planetary catalog warned that its prolific, competitive ecosystem would demand defenses; it includes theropod-like predators with shark-like teeth that colonists call raptors and large animals they call brontos.",
+      "state": "Chosen in September 2188 as the first colony site, it has setup crews, roamers and AMI-controlled equipment building housing, and a five-meter fence of native wood and metal about a third of the way round the planned town. After a raptor attack on a backhoe, drones stand guard, and the first civilians are about to be woken and brought down."
+    },
+    {
+      "entity_id": "location:romulus",
+      "state": "Chosen as the settlement site for the [[organization:free-american-independent-theocratic-hegemony|FAITH]] and [[organization:spitsbergen-refuge]] colonists aboard [[vessel:exodus-3]], due in a few months."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:howard",
+      "role": "lead",
+      "location_id": "location:omicron2-eridani"
+    },
+    {
+      "character_id": "character:stephane-brodeur",
+      "role": "other",
+      "location_id": "location:vulcan"
+    },
+    {
+      "character_id": "character:george-butterworth",
+      "role": "other"
+    }
+  ],
+  "mentions": [
+    "character:bert",
+    "character:bill",
+    "character:ernie",
+    "character:milo",
+    "location:earth",
+    "technology:3d-printers",
+    "technology:ami",
+    "technology:guppi-interface",
+    "technology:kudzu-gardens",
+    "technology:planetary-exploration-drone",
+    "technology:vr"
+  ]
+}
