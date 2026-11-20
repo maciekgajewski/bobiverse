@@ -34,8 +34,7 @@ const chapterPairs: readonly ChapterPair[] = [
   },
 ];
 const samplesPerScenario = 10;
-const chapterStatus = (chapter: string) =>
-  `Knowledge through Chapter ${chapter}`;
+const chapterStatus = (chapter: string) => `As of Chapter ${chapter}`;
 
 function chapterButton(page: Page, chapter: string) {
   return page.locator(`.chapter-track-entry button[data-chapter="${chapter}"]`);
@@ -117,9 +116,7 @@ async function transition(
           const badge = document.querySelector(".map-narrative-badge");
           if (
             selected &&
-            badge?.textContent?.includes(
-              `Knowledge through Chapter ${targetChapter}`,
-            )
+            badge?.textContent?.includes(`As of Chapter ${targetChapter}`)
           ) {
             requestAnimationFrame(() =>
               requestAnimationFrame(() => {

@@ -107,11 +107,17 @@ the menu and the bar adds the menu button
 own **Read through** select. Displayed
 interstellar distances, Galactic coordinate components, and map scale use light-years
 without a unit selector. Search belongs at the top of the object browser. The map
-contains a compact read-only context badge such as:
+contains a compact read-only context badge naming the soft ceiling
+(`../design-principles.md` §1, §5 item 8): in Chapter mode the selected chapter, as a
+link to its card, and in Date mode the selected date in the app's date format:
 
 ```text
-Universe in 2133 · Knowledge through Chapter 12
+As of Chapter 12
+As of 2133
 ```
+
+The world itself is built from everything up to **Read through**; the badge does not
+repeat it, because the **Read through** control is always visible.
 
 Before a chapter is selected, the badge says `Pre-book zero state`.
 
@@ -442,7 +448,7 @@ applies to the first choice, to later increases and to lowering the ceiling
 earlier rule that later increases left the view chapter and display mode unchanged).
 
 Lowering the ceiling is allowed. The knowledge chapter moves to the new ceiling and
-the projection is recomputed without retaining later facts. **Knowledge through** and
+the projection is recomputed without retaining later facts. **As of** and
 the chapter track can still look back at an earlier chapter without lowering the
 ceiling.
 
@@ -452,7 +458,7 @@ Chapter mode is the default timeline:
 
 - chapters appear in numeric book/chapter reading order and are grouped by book;
 - chapters after **Read through** are visibly locked and cannot be inspected;
-- selecting an unlocked chapter sets **Knowledge through** and sets `displayDate` to
+- selecting an unlocked chapter sets **As of** and sets `displayDate` to
   that chapter's date; selecting its timeline entry also replaces the current
   inspection selection with that chapter without focusing the map;
 - an unlocked label is the local chapter number alone for the same numeric-only
@@ -506,7 +512,7 @@ formatter.
 The persistent status line uses wording such as:
 
 ```text
-Universe in 2133 · using knowledge through Chapter 12
+As of 2133
 ```
 
 Returning to Chapter mode restores the previously selected chapter's normal

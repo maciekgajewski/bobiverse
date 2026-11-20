@@ -192,7 +192,7 @@ describe("book 2 chapter ordering", () => {
     });
   });
 
-  it("clamps Knowledge through to Read through with numeric order", () => {
+  it("clamps the As of chapter to Read through with numeric order", () => {
     const restored = normalizeReaderProgress(
       {
         furthestChapterRead: "2.9",
