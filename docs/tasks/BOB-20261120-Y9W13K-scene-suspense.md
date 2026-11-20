@@ -97,3 +97,8 @@ npm run test:e2e:csp
   asset requests and 1071–1365 ms when it landed during them (4 of 8); after
   119–137 ms in 8 of 8. With both assets delayed 2 s and the click after the
   starfield request starts: before 2270–3093 ms (6 of 6), after 118–143 ms.
+- Merged master `1677c90` (T4) without conflicts in `313abfb`. Full validation
+  on `313abfb` passed: `tasks.py check`, format:check, lint, typecheck, test
+  (824), data:test, data:validate, narrative:validate, build and
+  `git diff --check`; e2e with one worker and no retries passed on chromium
+  (95), firefox (95) and webkit (96); the CSP check passed (3).
