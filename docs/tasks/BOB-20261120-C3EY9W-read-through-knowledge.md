@@ -118,3 +118,15 @@ activity dated after their soft ceiling (deletions only, 472 records).
 
 - Created on master `1b1fdbd` on local branch
   `bob-20261120-read-through-knowledge` in the `~/src/bobiverse-t4` worktree.
+- Committed `a3fdf27`; marked BOB-20261116-TB1C66 Done (`d38e281`). Full
+  validation at `d38e281` passed: `tasks.py check`, format:check, lint,
+  typecheck, test (63 files, 824 tests), data:test, data:validate,
+  narrative:validate, build and `git diff --check`; e2e with one worker and no
+  retries on chromium (94 passed, 4 skipped), firefox (94 passed, 4 skipped)
+  and webkit (95 passed, 3 skipped); the CSP check (3 passed).
+- With Read through at the last chapter, chapter view shows entities the
+  chapter's own Read through does not at 1.12, 1.15, 1.19, 1.21, 1.23, 1.24,
+  1.27, 1.28, 1.30, 1.32, 1.34, 1.35, 1.37, 1.39, 1.40, 1.44, 1.48, 1.50,
+  1.51, 1.52 and 1.54 (for example 32 more at 1.27), and current state differs
+  at more chapters.
+- Awaiting manager review.
