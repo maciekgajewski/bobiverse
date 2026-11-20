@@ -1,0 +1,54 @@
+{
+  "chapter": "2.10",
+  "title": "10 - Genocide",
+  "summary": "After a seven-year voyage from [[location:beta-hydri]], [[character:mario]] arrives at [[location:zeta-tucanae]], having spent the trip going over the records of the [[event:gl19-4-die-off|die-off]] and system-wide metal mining at [[location:gl19-4]]. Finding the evidence convincing that someone had done it, he decides he must report to [[character:bill]] without waiting, and makes a cautious approach, watching for [[character:ernesto-medeiros|Medeiros]]: [[organization:brazilian-empire|Brazil]] had planned to keep producing Medeiros clones, and [[character:bob-replicant|Bob]] had prevailed against him at [[location:epsilon-eridani]], though Mario notes that was as much luck as anything. A week-long survey shows a star a little more luminous than [[location:sol]], a single asteroid belt, several inner rocky planets, and one habitable-zone planet, similar enough to [[location:earth]] to make him a little homesick, but the belt has already been stripped. Exploring through [[technology:planetary-exploration-drone|drone]] cameras, then a full-surface scan that [[technology:guppi-interface|Guppy]] sets up, he finds cities and infrastructure taken apart and the inhabitants collected with the metal. Mario attributes a worldwide slaughter of billions of sentient beings to [[species:others|the Others]] and concludes that meeting them would mean war.",
+  "date": "2176-11",
+  "location_id": "location:zeta-tucanae",
+  "introducing": [
+    {
+      "id": "location:zeta-tucanae",
+      "name": "Zeta Tucanae",
+      "kind": "star_system",
+      "astronomy_object_id": "stellar-system-003706",
+      "description": "A single-star system a little more luminous and a bit bigger than [[location:sol]], but slightly less massive. Metallicity is lower, but not low enough to make construction difficult. It has a single asteroid belt, several inner rocky planets and one habitable-zone planet, and is similar enough to [[location:earth]] to prompt homesickness.",
+      "state": "The asteroid belt has already been stripped of metal, and the habitable-zone planet shows worldwide destruction: cities and infrastructure taken apart, and the remains of a sentient population collected with the metal."
+    },
+    {
+      "id": "species:others",
+      "name": "Others",
+      "description": "A species to which [[character:mario]] attributes the stripping of metals from [[location:beta-hydri]] and [[location:zeta-tucanae]] and the killing of life found there. On [[location:gl19-4]] they left almost no animal life; on Zeta Tucanae's habitable-zone planet they killed billions of sentient beings and collected the bodies."
+    },
+    {
+      "id": "event:zeta-tucanae-genocide",
+      "name": "Genocide at Zeta Tucanae",
+      "location_id": "location:zeta-tucanae",
+      "description": "A worldwide slaughter on the habitable-zone planet of [[location:zeta-tucanae]], in which [[species:others|the Others]] took apart cities and infrastructure, killed billions of sentient beings, and collected the bodies. [[character:mario]] recognized the same pattern he had found in the records of [[location:gl19-4]]."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:mario",
+      "current_state": "Arriving at [[location:zeta-tucanae]] after a seven-year voyage from [[location:beta-hydri]], he has found the asteroid belt already stripped and, on the habitable-zone planet, a worldwide slaughter of sentient beings he attributes to [[species:others|the Others]]. He intends to warn [[character:bill]] and concludes that meeting the Others would mean war."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:mario",
+      "role": "lead"
+    }
+  ],
+  "mentions": [
+    "character:bill",
+    "character:bob-replicant",
+    "character:ernesto-medeiros",
+    "event:gl19-4-die-off",
+    "location:beta-hydri",
+    "location:earth",
+    "location:epsilon-eridani",
+    "location:gl19-4",
+    "location:sol",
+    "organization:brazilian-empire",
+    "technology:guppi-interface",
+    "technology:planetary-exploration-drone"
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "chapter": "2.3",
+  "title": "3 - Life in Camelot",
+  "summary": "At [[location:camelot]], [[character:bob-replicant]] watches through a [[technology:planetary-exploration-drone|drone]] as [[character:archimedes]], the brightest Deltan Bob has found anywhere on [[location:delta-eridani-4|Eden]], knaps flint under the eye of [[character:moses]], the tribe's only other skilled tool-maker, while another youth stabs his own foot trying to copy them. [[character:marvin]] remarks that Moses looks unwell, and Bob blames the hard [[event:deltan-migration|march]], after which a couple of elders have died. Walking with the drone, Archimedes reports that [[character:arnold]] likes having only the mesa's two paths to defend, though gorilloids have killed two villagers in recent days, and Bob reflects that saving the [[species:delta-eridani-natives|Deltans]] has become a full-time job likely to last a generation. At the practice range Arnold drills the mostly clumsy spear-throwers, and Bob admits that the medicine woman [[character:cruella]] still resists most of his advice. On the central bluff, past a glaring [[character:diana]], Archimedes asks how many bawbes there are, and Bob explains that he makes copies of himself, three so far at this star, of whom only Marvin has stayed.",
+  "date": "2167-03",
+  "location_id": "location:delta-eridani",
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "Orbiting [[location:delta-eridani-4|Eden]], he guides the [[species:delta-eridani-natives|Deltans]] at [[location:camelot]] as their sky god, the bawbe, a full-time job he expects to last about a generation. He means to teach them herding once he finds a suitable animal to domesticate."
+    },
+    {
+      "entity_id": "character:archimedes",
+      "current_state": "At [[location:camelot]], he is effectively a member of the tribal council, [[character:bob-replicant]]'s main spokesperson and, with [[character:moses]], one of the tribe's two best flint-knappers. He is still attached to [[character:diana]]."
+    },
+    {
+      "entity_id": "character:moses",
+      "current_state": "At [[location:camelot]], he is one of the tribe's two best flint-knappers and is teaching [[character:archimedes]] the craft, but he looks unwell, which [[character:bob-replicant]] puts down to the hard march from the old village."
+    },
+    {
+      "entity_id": "character:arnold",
+      "current_state": "A member of the tribal circle, he is pleased that [[location:camelot]] needs only its two access paths defended, and he coaches the tribe's spear-throwers on its practice range."
+    },
+    {
+      "entity_id": "character:diana",
+      "current_state": "A female Deltan from [[character:archimedes]]' cohort whom [[character:bob-replicant]] calls Diana. At [[location:camelot]] she returns Archimedes' wave but glares at Bob's drone, and Bob suspects she sees him as a rival for Archimedes' attention."
+    },
+    {
+      "entity_id": "character:cruella",
+      "current_state": "She still disbelieves or ignores most of what [[character:bob-replicant]] tells her, though she has taken up his suggestions for cleaning wounds."
+    },
+    {
+      "entity_id": "location:camelot",
+      "description": "A Deltan village on [[location:delta-eridani-4|Eden]] at the old flint site, which [[character:bob-replicant]] resettled and calls Camelot, a name [[character:marvin]] dislikes. It sits on a small mesa ringed mostly by scree and cliffs, reachable only by two paths about 120 degrees apart, and a rocky bluff at its center has a flat, exposed top with a wide view; spear-throwers practice beside the bluff's steep embankment.",
+      "state": "The tribe has settled in and needs to guard only the mesa's two access paths, but gorilloids, numerous on this side of the mountains, remain a threat: two villagers have been killed in recent days."
+    },
+    {
+      "entity_id": "species:delta-eridani-natives",
+      "description": "An intelligent, fire-using native people of [[location:delta-eridani-4|Eden]], named Deltans by [[character:bob-replicant]]. They have bat- and pig-like faces, long spiderish limbs, brownish-gray to orangey-tan fur, patterned heads, mobile expressive ears and a guttural language, and live in hearth-based family groups called hexghi. Some have built an altar to Bob, whom they call the bawbe, and [[character:marvin]]'s research suggests the sentient Deltans first arose in another, gorilloid-free part of their continent. They show little awe for the bawbe's divine authority and are skeptical and quick to question."
+    },
+    {
+      "entity_id": "location:delta-eridani-4",
+      "description": "The fourth inner rocky planet in the [[location:delta-eridani]] system, named Eden by [[character:bob-replicant]]'s group as the [[species:delta-eridani-natives|Deltans]]' birthplace. Slightly larger than [[location:earth]], with lower gravity, a somewhat denser atmosphere, and two moons, one of which looks twice as large in its sky as Earth's moon, it has meadows, rocky bluffs, forests of huge brownish trees, and an ecosystem as full as Earth's, including pack-hunting leopard-analogues."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead"
+    },
+    {
+      "character_id": "character:marvin",
+      "role": "other"
+    },
+    {
+      "character_id": "character:archimedes",
+      "role": "other",
+      "location_id": "location:camelot"
+    },
+    {
+      "character_id": "character:moses",
+      "role": "other",
+      "location_id": "location:camelot"
+    },
+    {
+      "character_id": "character:arnold",
+      "role": "other",
+      "location_id": "location:camelot"
+    },
+    {
+      "character_id": "character:diana",
+      "role": "other",
+      "location_id": "location:camelot"
+    }
+  ],
+  "mentions": [
+    "event:deltan-migration",
+    "technology:buster-drone",
+    "technology:planetary-exploration-drone",
+    "technology:pointy-sticks",
+    "technology:translation-routine"
+  ]
+}

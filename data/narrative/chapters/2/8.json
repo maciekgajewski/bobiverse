@@ -1,0 +1,108 @@
+{
+  "chapter": "2.8",
+  "title": "8 - Farming Satellites",
+  "summary": "Working from a holotank in his [[technology:vr]], [[character:howard]] has [[technology:guppi-interface|Guppy]] coordinate the drones that spin up Farm-3, the third orbital [[technology:kudzu-gardens|farm donut]], with [[character:homer]]'s old-school method of four drones tethered to the rim and flying in circles. Farm-1 and Farm-2 already run at 0.25 G, below which [[character:riker]] and Homer found crops do poorly, and with kudzu still up to half of everyone's calories until the colonies are self-sustaining, Farm-3 is planted with regular crops. There is no sign of [[organization:vehement]] sabotage, though no one knows how many of its members left on the colony ships. On a colony holiday, with Howard's displays broadcast to every TV in [[location:landing]], [[character:sam]] brings [[vessel:exodus-3]] to station-keeping beside the communication beacon at the L4 point shared by [[location:vulcan]] and [[location:romulus]]. Over drinks served by [[technology:jeeves]] in Sam's drawing-room VR, Sam reports that he has started decanting the setup crews, and Howard warns that Romulus, still shallow after a recent extinction event, must be treated gently by both colony groups. Two days after the first [[organization:free-american-independent-theocratic-hegemony|FAITH]] and [[organization:spitsbergen-refuge|Spits]] personnel are decanted, their old three-way feud with the [[organization:united-states-of-eurasia|USE]] flares up again in a videoconference. Howard tells President [[character:gudmund-valter|Valter]], Minister [[character:cranston]] and Colonel [[character:george-butterworth|Butterworth]] that isolationism will get them killed; when Cranston rejects his authority, Howard reminds them that he is a neutral volunteer who took no part in the war. Valter agrees to trade decanted livestock, with Howard adjudicating: Butterworth's colony gets breeding stock now, and Cranston's is to repay the Spits by running a large batch of artificial wombs. Later, Butterworth reports that an invasive native vine that even the brontos will not eat is becoming a serious problem, and Howard reflects that the colonists will have to learn to live alongside the native ecology.",
+  "date": "2189-04",
+  "location_id": "location:vulcan",
+  "introducing": [
+    {
+      "id": "character:sam",
+      "name": "Sam",
+      "description": "Sam flies the colony ship [[vessel:exodus-3]] and likens the job to driving a bus. His [[technology:vr]] is styled as an old English drawing room, where [[technology:jeeves]] serves drinks.",
+      "current_state": "With [[vessel:exodus-3]] at the L4 point shared by [[location:vulcan]] and [[location:romulus]], he is decanting its colonists and will leave in a month or two to pick up another load."
+    },
+    {
+      "id": "event:exodus-3-arrival",
+      "name": "Arrival of Exodus-3 at Omicron2 Eridani",
+      "date": "2189-04",
+      "location_id": "location:omicron2-eridani",
+      "description": "The arrival of the third colony ship, [[vessel:exodus-3]], flown by [[character:sam]], at the L4 point shared by [[location:vulcan]] and [[location:romulus]], bringing the [[organization:free-american-independent-theocratic-hegemony|FAITH]] and [[organization:spitsbergen-refuge|Spits]] colonists who are to settle Romulus. The Vulcan colony marked it with a holiday and watched it on every TV in [[location:landing]], and Sam began decanting the setup crews.",
+      "participant_ids": ["character:sam", "character:howard"]
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:howard",
+      "current_state": "From the L4 point between [[location:vulcan]] and [[location:romulus]] he runs three orbital [[technology:kudzu-gardens|farm donuts]] and supports both colonies as a self-described neutral volunteer, adjudicating livestock trades between their leaders."
+    },
+    {
+      "entity_id": "vessel:exodus-3",
+      "current_state": "Arrived at the L4 point shared by [[location:vulcan]] and [[location:romulus]], it is station-keeping beside the communication beacon while [[character:sam]] decants its colonists, starting with the setup crews."
+    },
+    {
+      "entity_id": "character:gudmund-valter",
+      "current_state": "Now addressed as President, he leads the newly decanted [[organization:spitsbergen-refuge|Spits]] colony and has agreed to trade some of its decanted livestock, with [[character:howard]] adjudicating such cases."
+    },
+    {
+      "entity_id": "character:cranston",
+      "current_state": "Leading the newly decanted [[organization:free-american-independent-theocratic-hegemony|FAITH]] colony, he rejects [[character:howard]]'s authority; Howard has asked his colony to run a large batch of artificial wombs to relieve the [[organization:spitsbergen-refuge|Spits]]."
+    },
+    {
+      "entity_id": "character:george-butterworth",
+      "current_state": "Leading the colony on [[location:vulcan]], he is getting breeding stock from [[character:gudmund-valter|Valter]]'s colony until animals force-grown in artificial wombs are ready, and is battling a highly invasive native vine that even brontos will not eat."
+    },
+    {
+      "entity_id": "organization:spitsbergen-refuge",
+      "current_state": "Brought by [[vessel:exodus-3]], it is being decanted to settle [[location:romulus]] alongside [[organization:free-american-independent-theocratic-hegemony|FAITH]]'s colony, and is trading some of its decanted livestock."
+    },
+    {
+      "entity_id": "organization:free-american-independent-theocratic-hegemony",
+      "current_state": "Its colony, led by [[character:cranston|Minister Cranston]], is being decanted from [[vessel:exodus-3]] to settle [[location:romulus]], and has been asked to repay livestock help by running a large batch of artificial wombs for the [[organization:spitsbergen-refuge|Spits]]."
+    },
+    {
+      "entity_id": "technology:kudzu-gardens",
+      "description": "Kudzu gardens, informally called donuts, are unpopulated farming stations proposed by [[character:homer]] to feed [[location:earth]]'s starving survivors and built with his printers. They grow gene-engineered, human-digestible kudzu bred for calories, or mixed crops in later designs; crops do poorly below the 0.25 G at the rim that [[character:riker]] and Homer settled on by trial and error, and new donuts are spun up by four drones tethered to the rim flying in circles."
+    },
+    {
+      "entity_id": "location:vulcan",
+      "state": "Its first colony, centered on [[location:landing]], is not yet self-sustaining, and up to half of everyone's calories still come from kudzu. A highly invasive native vine that even brontos will not eat is becoming a significant problem; so far no alien disease has proved compatible with humans."
+    },
+    {
+      "entity_id": "location:romulus",
+      "state": "[[vessel:exodus-3]]'s [[organization:free-american-independent-theocratic-hegemony|FAITH]] and [[organization:spitsbergen-refuge|Spits]] colonists are being decanted to settle it. A recent extinction event has left its ecosystem very shallow, so [[character:howard]] wants no large-scale clearing and no Terran biota let loose."
+    },
+    {
+      "entity_id": "location:landing",
+      "state": "Its town network can broadcast to every TV in town, and a couple of strings of electrified wire have stopped brontos from eating its fence."
+    },
+    {
+      "entity_id": "location:omicron2-eridani",
+      "state": "[[character:milo]]'s automation has mined the system for a couple of decades. Its first colony, [[location:landing]] on [[location:vulcan]], is fed partly by three orbital farm donuts, and [[vessel:exodus-3]] has arrived with colonists for [[location:romulus]]."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:howard",
+      "role": "lead",
+      "location_id": "location:omicron2-eridani"
+    },
+    {
+      "character_id": "character:sam",
+      "role": "other",
+      "location_id": "location:omicron2-eridani"
+    },
+    {
+      "character_id": "character:gudmund-valter",
+      "role": "other",
+      "location_id": "location:omicron2-eridani"
+    },
+    {
+      "character_id": "character:cranston",
+      "role": "other",
+      "location_id": "location:omicron2-eridani"
+    },
+    {
+      "character_id": "character:george-butterworth",
+      "role": "other"
+    }
+  ],
+  "mentions": [
+    "character:homer",
+    "character:riker",
+    "organization:united-states-of-eurasia",
+    "organization:vehement",
+    "technology:guppi-interface",
+    "technology:jeeves",
+    "technology:vr"
+  ]
+}

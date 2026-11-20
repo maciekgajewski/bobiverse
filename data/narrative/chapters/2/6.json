@@ -1,0 +1,44 @@
+{
+  "chapter": "2.6",
+  "title": "6 - Contacting Bill",
+  "summary": "[[character:mulder]] builds a [[technology:subspace-communications|SCUT]], a Subspace Communications Universal Transceiver, from the plans and operating instructions [[character:bill]] sent him by radio, its forced acronym continuing a tradition of bad ones. When he switches it on, he registers on the network and connects to [[location:epsilon-eridani]], and Bill at once pops into his [[technology:vr]] to welcome him to [[organization:bobnet]], instantaneous communication across interstellar space; it is Bill's standard entrance, and he keeps count. Mulder, just under twenty light-years away at [[location:eta-cassiopeiae]], sees that real-time contact ends decades-long turnaround times and changes everything. He shares a file on a colonization target he has found: Bill agrees it is not ideal, since colonists would have to establish a space presence immediately, but says they are in no position to be picky, and that [[character:riker]] has found something too, described on his BobNet blog. After Bill leaves, Mulder resolves to prepare the system for colonists, with the standard supply of refined metals in orbit and a detailed bestiary of its impressive creatures, the kraken above all.",
+  "date": "2171-04",
+  "location_id": "location:eta-cassiopeiae-3",
+  "updates": [
+    {
+      "entity_id": "character:mulder",
+      "current_state": "At [[location:eta-cassiopeiae]], now on [[organization:bobnet]] through a [[technology:subspace-communications|SCUT]] built from [[character:bill]]'s plans, he means to prepare the system for colonists with refined metals stockpiled in orbit and a detailed bestiary of its native creatures, and may make another round of Bobs."
+    },
+    {
+      "entity_id": "character:bill",
+      "current_state": "At [[location:epsilon-eridani]], he is still catching [[character:garfield]]'s ice chunks for [[location:ee-2|Ragnarök]], a program he expected in 2167 to last about ten more years, and he sent [[character:mulder]] the [[technology:subspace-communications|SCUT]] plans by radio. He welcomes newly connected Bobs to [[organization:bobnet]] by popping into their [[technology:vr|VR]]."
+    },
+    {
+      "entity_id": "organization:bobnet",
+      "description": "A SCUT-based network linking [[character:bob-replicant]] replicants across star systems. Newly contacted Bobs are welcomed into it, and it provides instant communications up to about twenty-five light-years. It also carries the Bobs' blogs."
+    },
+    {
+      "entity_id": "location:eta-cassiopeiae-3",
+      "name": "Poseidon"
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:mulder",
+      "role": "lead",
+      "location_id": "location:eta-cassiopeiae"
+    },
+    {
+      "character_id": "character:bill",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    }
+  ],
+  "mentions": [
+    "character:garfield",
+    "character:riker",
+    "location:ee-2",
+    "technology:subspace-communications",
+    "technology:vr"
+  ]
+}
