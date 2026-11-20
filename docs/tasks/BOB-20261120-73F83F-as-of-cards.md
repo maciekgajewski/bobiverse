@@ -1,6 +1,6 @@
 # BOB-20261120-73F83F: cards as of the soft ceiling
 
-Status: In progress
+Status: Done
 Phase: 2 (narrative foundation and chapter timeline)
 Last updated: 2026-11-20
 
@@ -127,3 +127,6 @@ sections, chapter-mode ordering) and constitution §5 item 7.
   passed, 4 skipped), firefox (95 passed, 4 skipped) and webkit (96 passed, 3
   skipped); the CSP check (3 passed).
 - Awaiting manager review.
+- Approved by the manager at `2ce9445` and landed on master with the no-ff
+  merge `e7eb26d` ("Merge T5: as-of cards and story-date activity order").
+  Done. Landed as `e7eb26d`. The view labels follow in BOB-20261120-RQSMDX (T6).
