@@ -525,12 +525,15 @@ export default function App() {
       ),
     [mapProjection.contextSystems, mapProjection.knownSystemIds],
   );
-  // Chapter view has no story-time cutoff (ADR-0028), so it names no date.
+  // The badge names the soft ceiling (design principles §1, §5 item 8): the
+  // selected chapter in chapter view (its soft ceiling is the chapter's latest
+  // date, §3.1, but the label names the chapter) and the selected date in Date
+  // view. The world itself is built from everything up to Read through.
   const viewStatus =
     progress.viewChapter && progress.displayDate
       ? progress.mode === "chapter"
-        ? `Latest known · Knowledge through Chapter ${progress.viewChapter}`
-        : `Universe in ${formatNarrativeDate(progress.displayDate)} · Knowledge through Chapter ${progress.viewChapter}`
+        ? `As of Chapter ${progress.viewChapter}`
+        : `As of ${formatNarrativeDate(progress.displayDate)}`
       : "Pre-book zero state";
   const selectedNarrativeItem =
     selection?.kind === "narrative"
@@ -1542,11 +1545,11 @@ export default function App() {
           )}
           <div className="map-top-chrome">
             <span className="map-narrative-badge" aria-live="polite">
-              {progress.viewChapter && progress.displayDate ? (
+              {progress.viewChapter &&
+              progress.displayDate &&
+              progress.mode === "chapter" ? (
                 <>
-                  {progress.mode === "chapter"
-                    ? "Latest known · Knowledge through "
-                    : `Universe in ${formatNarrativeDate(progress.displayDate)} · Knowledge through `}
+                  {"As of "}
                   <ChapterLink
                     chapter={progress.viewChapter}
                     readThroughChapter={progress.furthestChapterRead}

@@ -112,10 +112,11 @@ content in a keyboard-contained, non-animated modal panel; Escape and the visibl
 close control return focus to the command bar.
 
 Use **Read through** to set the confirmed reading ceiling; the application asks for
-confirmation before it reveals that chapter. **Knowledge through** may then revisit
-any chapter at or before that ceiling. Chapter mode represents the selected chapter's
-story year; Date mode keeps the same knowledge chapter but offers only meaningful,
-determinate dates already revealed by it. Click a year marker to select its only story
+confirmation before it reveals that chapter. **As of** may then revisit any chapter
+at or before that ceiling, showing the universe as of that chapter with everything read
+through; the map badge reads `As of Chapter X`. Date mode shows it as of a chosen date
+(`As of Y`) and offers only meaningful, determinate dates revealed up to Read
+through. Click a year marker to select its only story
 state; if several story states share that year, the marker opens a compact spoiler-safe
 choice list. Reader progress, selected mode, timeline zoom, and pan are stored in the
 versioned `bobiverse.app-state.v1` localStorage record.

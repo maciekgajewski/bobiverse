@@ -234,7 +234,7 @@ verify that no later knowledge, date, or selection remains. Select **Pre-book ze
 state** in the spoiler-limit selector and confirm that the confirmation hides every
 chapter-derived fact. Return to zero through the chapter-dot timeline and verify that
 it clears the chapter-derived facts immediately, without a confirmation, while the
-**Read through** selector retains its confirmed chapter and **Knowledge through** shows
+**Read through** selector retains its confirmed chapter and **As of** shows
 **Zero state**.
 
 When confirmation is visible, verify that it is centered above a blurred, noninteractive
@@ -317,7 +317,7 @@ Inspect the descriptions visible through the latest canonical chapter. They must
 state supported positive knowledge without reader-facing notices that a detail is
 unrevealed, unknown, unexplained, unavailable, or unspecified.
 
-With a Chapter 1.2-only narrative object selected, change **Knowledge through** to
+With a Chapter 1.2-only narrative object selected, change **As of** to
 Chapter 1.1. Its details must disappear in the same state transition, selection must
 clear, and an accessible status message must announce why. Repeat selection from the
 compact browser/inspector panels and confirm the same projection, relationship, and
@@ -426,7 +426,7 @@ mandatory.
 ## BOB-027 generalized narrative-moment ordering
 
 Run the development server and connect from a remote workstation in a real supported
-WebGL browser. Set **Read through** and **Knowledge through** to chapter 1.11, then
+WebGL browser. Set **Read through** and **As of** to chapter 1.11, then
 select Bob from **Characters**. Confirm Bob remains selected in the inspector and
 shows **Last seen** at New Handeltown, Chapter 1.11, 2133. On the map, Sol must receive
 the selected label and outer corner frame, and the camera must focus Sol without
@@ -449,7 +449,7 @@ visible. The map must remain wider than either rail, no horizontal page scrollba
 appear, and the context badge must remain wholly inside the map.
 
 Run one complete shared-projection flow. Confirm progress through Chapter 1.2, select
-it as **Knowledge through**, and verify the command status, map badge, browser active
+it as **As of**, and verify the command status, map badge, browser active
 counts, marker activity, and inspector context all represent Chapter 1.2 and 2133.
 Enter Date mode, select 2016, and verify all surfaces change together; any now
 ineligible selection must clear with an accessible announcement. Select an eligible
@@ -656,18 +656,18 @@ On a phone in portrait (about 390×844) and landscape (about 844×390), and on d
 
 On a phone in portrait (about 390×844) and on desktop (about 1280×800):
 
-- The phone menu has no **Knowledge through** select. It still has Chapter/Date
+- The phone menu has no **As of** select. It still has Chapter/Date
   mode, **Search**, **Inspect selection** (when something is selected),
   **Timeline and progress**, **Reset view** and **What is this?**.
 - Pick a later chapter in the **Read through** pill and confirm it: the pill, the map
-  badge (`Latest known · Knowledge through Chapter N`), the map and the object
+  badge (`As of Chapter N`), the map and the object
   browser all move to that chapter, in Chapter mode, even if you were looking at an
   earlier chapter, at a date, or at the zero state.
 - Pick an earlier chapter and confirm it: the view moves back to that chapter and
   nothing from later chapters stays visible.
 - Cancel leaves the pill and the view unchanged.
-- On desktop, and in the phone's **Timeline and progress** panel, **Knowledge
-  through** and the chapter track can still look back at an earlier chapter without
+- On desktop, and in the phone's **Timeline and progress** panel, **As of** and
+  the chapter track can still look back at an earlier chapter without
   changing the pill.
 
 ## BOB-20261115-7FQJCG Search rename and floating Search pill

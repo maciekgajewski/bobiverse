@@ -4,7 +4,7 @@ import path from "node:path";
 import { NEWEST_RELEASE_NOTES_VERSION } from "../../src/release-notes";
 
 // A3 eyebrow stepper (BOB-20261115-DJKAGQ): ‹ 1.2 › on the chapter card
-// changes Knowledge through via selectTimelineChapter and never Read through.
+// changes the As of chapter via selectTimelineChapter and never Read through.
 
 const PROGRESS_KEY = "bobiverse.app-state.v2";
 const SHOT_DIR = path.join(import.meta.dirname, "../../stepper-shots");
@@ -55,7 +55,7 @@ async function openChapterFromBadge(
   compact: boolean,
 ) {
   const badge = page.locator(".map-narrative-badge");
-  await expect(badge).toContainText(`Knowledge through Chapter ${chapter}`);
+  await expect(badge).toContainText(`As of Chapter ${chapter}`);
   await badge.getByRole("button", { name: `Chapter ${chapter}` }).click();
   const inspector = compact
     ? page.getByRole("dialog", { name: "Selected object" })
@@ -83,7 +83,7 @@ test("desktop: the eyebrow stepper walks chapters up to Read through", async ({
     .click();
   await expect(inspector.locator(".chapter-seq-current")).toHaveText("1.3");
   await expect(page.locator(".map-narrative-badge")).toContainText(
-    "Knowledge through Chapter 1.3",
+    "As of Chapter 1.3",
   );
   await expect(
     stepper.getByRole("button", {
@@ -158,7 +158,7 @@ test("phone 390x844: the eyebrow stepper walks chapters up to Read through", asy
     .click();
   await expect(sheet.locator(".chapter-seq-current")).toHaveText("1.3");
   await expect(page.locator(".map-narrative-badge")).toContainText(
-    "Knowledge through Chapter 1.3",
+    "As of Chapter 1.3",
   );
   await expect(
     stepper.getByRole("button", {

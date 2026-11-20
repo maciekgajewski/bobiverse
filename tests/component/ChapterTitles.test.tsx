@@ -132,9 +132,9 @@ describe("chapter titles", () => {
     expectNoFutureTitle();
   });
 
-  it("titles Knowledge through and Read through options only up to Read through", () => {
+  it("titles As of and Read through options only up to Read through", () => {
     renderDock(progressAt("2.2"));
-    const knowledge = screen.getByLabelText("Knowledge through");
+    const knowledge = screen.getByLabelText("As of");
     const beta = within(knowledge).getByRole("option", {
       name: "Chapter 2.2 · Fixture Title Beta",
     });

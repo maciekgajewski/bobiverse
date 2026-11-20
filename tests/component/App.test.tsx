@@ -712,9 +712,7 @@ describe("atlas shell", () => {
       const badge = document.querySelector<HTMLElement>(
         ".map-narrative-badge",
       )!;
-      expect(badge).toHaveTextContent(
-        "Latest known · Knowledge through Chapter 1.18",
-      );
+      expect(badge).toHaveTextContent("As of Chapter 1.18");
       await user.click(
         within(badge).getByRole("button", { name: "Chapter 1.18" }),
       );
@@ -1170,7 +1168,7 @@ describe("atlas shell", () => {
     await user.click(screen.getByRole("button", { name: "Chapter mode" }));
     expect(generate).toHaveBeenCalledTimes(++expectedCalls);
 
-    await user.selectOptions(screen.getByLabelText("Knowledge through"), "");
+    await user.selectOptions(screen.getByLabelText("As of"), "");
     expect(generate).toHaveBeenCalledTimes(expectedCalls + 1);
     expect(narrativeRuntimePreparationCount()).toBe(1);
   });
@@ -1341,7 +1339,7 @@ describe("atlas shell", () => {
     // Bob is read (Read through 1.2) but does not exist yet at 1.1's soft
     // ceiling: the card stays open with no state as of 1.1
     // (BOB-20261120-73F83F).
-    await user.selectOptions(screen.getByLabelText("Knowledge through"), "1.1");
+    await user.selectOptions(screen.getByLabelText("As of"), "1.1");
     expect(
       await within(inspector).findByText("as of Chapter 1.1"),
     ).toBeInTheDocument();
@@ -1430,9 +1428,7 @@ describe("atlas shell", () => {
     await user.click(menu);
     const drawer = screen.getByRole("dialog", { name: "Menu" });
     expect(within(drawer).getByRole("button", { name: "Close" })).toHaveFocus();
-    expect(
-      within(drawer).queryByLabelText("Knowledge through"),
-    ).not.toBeInTheDocument();
+    expect(within(drawer).queryByLabelText("As of")).not.toBeInTheDocument();
     expect(
       within(drawer).getByRole("button", { name: "Chapter mode" }),
     ).toHaveAttribute("aria-pressed", "true");
@@ -1936,7 +1932,7 @@ describe("atlas shell", () => {
     );
   });
 
-  it("has no Knowledge through select in the compact menu, in either mode", async () => {
+  it("has no As of select in the compact menu, in either mode", async () => {
     window.localStorage.setItem(
       "bobiverse.app-state.v2",
       JSON.stringify({
@@ -1953,9 +1949,7 @@ describe("atlas shell", () => {
     render(<App />);
     await user.click(screen.getByRole("button", { name: "Menu" }));
     let drawer = screen.getByRole("dialog", { name: "Menu" });
-    expect(
-      within(drawer).queryByLabelText("Knowledge through"),
-    ).not.toBeInTheDocument();
+    expect(within(drawer).queryByLabelText("As of")).not.toBeInTheDocument();
     expect(document.getElementById("menu-knowledge-through")).toBeNull();
     await user.click(within(drawer).getByRole("button", { name: "Date mode" }));
     if (!screen.queryByRole("dialog", { name: "Menu" })) {
@@ -1965,9 +1959,7 @@ describe("atlas shell", () => {
     expect(
       within(drawer).getByRole("button", { name: "Date mode" }),
     ).toHaveAttribute("aria-pressed", "true");
-    expect(
-      within(drawer).queryByLabelText("Knowledge through"),
-    ).not.toBeInTheDocument();
+    expect(within(drawer).queryByLabelText("As of")).not.toBeInTheDocument();
   });
 
   describe("read-through drives the view (BOB-20261114-CTS3FN)", () => {
@@ -1977,7 +1969,7 @@ describe("atlas shell", () => {
         JSON.stringify({ timelineZoom: 1, timelinePan: 0, ...progress }),
       );
     const dockKnowledge = () =>
-      screen.getByLabelText("Knowledge through", {
+      screen.getByLabelText("As of", {
         selector: "#desktop-knowledge-through",
       });
     const topbar = () => document.getElementById("topbar-read-through")!;
@@ -1995,9 +1987,7 @@ describe("atlas shell", () => {
     };
     const expectChapterView = (chapter: string) => {
       expect(
-        screen.getAllByText(
-          `Latest known · Knowledge through Chapter ${chapter}`,
-        ).length,
+        screen.getAllByText(`As of Chapter ${chapter}`).length,
       ).toBeGreaterThan(0);
       expect(
         screen.getByRole("button", { name: "Chapter mode" }),
@@ -2085,7 +2075,7 @@ describe("atlas shell", () => {
       expectChapterView("1.1");
     });
 
-    it("keeps dock Knowledge through able to look back without lowering the ceiling", async () => {
+    it("keeps the dock As of select able to look back without lowering the ceiling", async () => {
       storeProgress({
         furthestChapterRead: "1.2",
         viewChapter: "1.2",
@@ -2098,6 +2088,37 @@ describe("atlas shell", () => {
       expectChapterView("1.1");
       expect(topbar()).toHaveAccessibleName("Read through, Book 1 Chapter 2");
       expect(dockReadThrough()).toHaveValue("1.2");
+    });
+
+    it("labels the soft ceiling with As of in both views (T6, BOB-20261120-RQSMDX)", async () => {
+      storeProgress({
+        furthestChapterRead: "1.2",
+        viewChapter: "1.2",
+        displayDate: "2133",
+        mode: "chapter",
+      });
+      const user = userEvent.setup();
+      render(<App />);
+      const badge = document.querySelector<HTMLElement>(
+        ".map-narrative-badge",
+      )!;
+      const status = document.querySelector<HTMLElement>(".view-status")!;
+      expect(badge).toHaveTextContent(/^As of Chapter 1\.2\b/);
+      expect(status).toHaveTextContent(/^As of Chapter 1\.2$/);
+      expect(
+        within(badge).getByRole("button", { name: /^Chapter 1\.2\b/ }),
+      ).toBeInTheDocument();
+      expect(screen.getByRole("combobox", { name: "As of" })).toBe(
+        dockKnowledge(),
+      );
+      expect(document.body).not.toHaveTextContent(/Knowledge through/i);
+
+      await user.click(screen.getByRole("button", { name: "Date mode" }));
+      expect(badge).toHaveTextContent(/^As of (?!Chapter )[^·]*\d{4}$/);
+      expect(badge).not.toHaveTextContent(/Chapter/);
+      expect(within(badge).queryByRole("button")).not.toBeInTheDocument();
+      expect(status.textContent).toBe(badge.textContent);
+      expect(document.body).not.toHaveTextContent(/Knowledge through/i);
     });
 
     it("shows the chapter picked in the compact top bar", async () => {

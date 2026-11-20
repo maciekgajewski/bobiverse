@@ -196,6 +196,9 @@ The code and data do not yet follow this constitution in these places.
    through" select (`src/components/ProgressControls.tsx`) name the selected chapter
    as the knowledge bound. `docs/visual-testing.md` and
    `docs/design/phase-2-desktop-ui.md` quote these labels and change with them.
+   Done in BOB-20261120-RQSMDX: the badge reads "As of Chapter X" (the chapter a
+   link) in chapter view and "As of Y" in Date view, and the select is labelled
+   "As of".
 9. **Sentence-preservation check** (`src/narrative/sentence-preservation.ts`).
    Done in BOB-20261116-E87SYK: `state` and `current_state` use `same-date`, so a
    write is checked only against the latest-read earlier write of an equal or

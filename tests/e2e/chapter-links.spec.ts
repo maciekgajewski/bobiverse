@@ -47,9 +47,7 @@ test("desktop: the badge and an info card's recency chapter open chapter cards",
   await seed(page, "1.20");
   await page.goto("/");
   const badge = page.locator(".map-narrative-badge");
-  await expect(badge).toHaveText(
-    "Latest known · Knowledge through Chapter 1.20",
-  );
+  await expect(badge).toHaveText("As of Chapter 1.20");
   const badgeLink = badge.getByRole("button", { name: "Chapter 1.20" });
   await badgeLink.focus();
   await expect(badgeLink).toBeFocused();
@@ -81,9 +79,7 @@ test("desktop: the badge and an info card's recency chapter open chapter cards",
   await expect(inspector.locator(".chapter-seq-eyebrow-word")).toHaveText(
     "Chapter",
   );
-  await expect(badge).toHaveText(
-    `Latest known · Knowledge through Chapter ${chapter}`,
-  );
+  await expect(badge).toHaveText(`As of Chapter ${chapter}`);
   expect(await savedProgress(page)).toMatchObject({
     furthestChapterRead: "1.20",
     viewChapter: chapter,

@@ -35,7 +35,7 @@ const historyLength = (page: Page) =>
 
 async function openChapterFromBadge(page: Page, chapter: string) {
   const badge = page.locator(".map-narrative-badge");
-  await expect(badge).toContainText(`Knowledge through Chapter ${chapter}`);
+  await expect(badge).toContainText(`As of Chapter ${chapter}`);
   await badge.getByRole("button", { name: `Chapter ${chapter}` }).click();
 }
 

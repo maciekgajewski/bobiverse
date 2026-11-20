@@ -601,7 +601,7 @@ test("an idle map has no per-frame material or shader-program churn", async ({
   await expect(
     page
       .locator(".map-narrative-badge")
-      .filter({ hasText: "Knowledge through Chapter 1.61" }),
+      .filter({ hasText: "As of Chapter 1.61" }),
   ).toBeVisible();
   await page.waitForFunction(() => window.__bob034MapPerformance !== undefined);
   await settleMapCamera(page);
@@ -1365,7 +1365,7 @@ test("compact chapter inspection shares relationships and focus behavior", async
     inspector.getByRole("heading", { name: "New Handeltown" }),
   ).toBeVisible();
   await expect(page.locator(".map-narrative-badge")).toContainText(
-    "Knowledge through Chapter 1.2",
+    "As of Chapter 1.2",
   );
 
   await page.keyboard.press("Escape");
@@ -1401,9 +1401,9 @@ test("compact reflow keeps timeline progress reachable and traps focus", async (
     .getByRole("dialog", { name: "Confirm read progress" })
     .getByRole("button", { name: "Confirm read through" })
     .click();
-  await expect(panel.getByLabel("Knowledge through")).toHaveValue("1.2");
+  await expect(panel.getByLabel("As of", { exact: true })).toHaveValue("1.2");
   await expect(page.locator(".map-narrative-badge")).toContainText(
-    "Latest known · Knowledge through Chapter 1.2",
+    "As of Chapter 1.2",
   );
 
   await page.keyboard.press("Escape");
@@ -1897,7 +1897,7 @@ test("reader progress is confirmed before chapter data is unlocked", async ({
   await page.getByRole("button", { name: "Confirm read through" }).click();
   await expect(page.getByText("1 — Bob Version 1.0")).toBeVisible();
   await expect(page.locator(".map-narrative-badge")).toContainText(
-    "Latest known · Knowledge through Chapter 1.1",
+    "As of Chapter 1.1",
   );
   await expect(
     page.getByRole("button", { name: "Book 1, Chapter 2, locked" }),
@@ -1926,7 +1926,7 @@ test("reader progress is confirmed before chapter data is unlocked", async ({
     "Pre-book zero state",
   );
   await expect(dockReadThrough(page)).toHaveValue("1.1");
-  await expect(page.getByLabel("Knowledge through")).toHaveValue("");
+  await expect(page.getByLabel("As of", { exact: true })).toHaveValue("");
   await dockReadThrough(page).selectOption("");
   await page.getByRole("button", { name: "Confirm read through" }).click();
   await expect(page.locator(".map-narrative-badge")).toHaveText(
@@ -1956,7 +1956,7 @@ test("reader progress is confirmed before chapter data is unlocked", async ({
     chapterInspector.getByRole("heading", { name: "New Handeltown" }),
   ).toBeVisible();
   await expect(page.locator(".map-narrative-badge")).toContainText(
-    "Knowledge through Chapter 1.2",
+    "As of Chapter 1.2",
   );
   await page
     .getByRole("button", { name: "Book 1, 2 — Bob Version 2.0" })
@@ -2005,9 +2005,7 @@ test("reader progress is confirmed before chapter data is unlocked", async ({
   ).toBe(true);
   await page.getByRole("button", { name: "Date mode" }).click();
   await page.locator(".date-event-dot").first().click();
-  await expect(page.locator(".map-narrative-badge")).toContainText(
-    "Universe in 2016",
-  );
+  await expect(page.locator(".map-narrative-badge")).toHaveText("As of 2016");
 });
 
 test("progressive browser search preserves collapse state and inspects unmapped objects", async ({
@@ -2194,7 +2192,7 @@ test("desktop surfaces stay on one projection through chapter and date changes",
   await dockReadThrough(page).selectOption("1.2");
   await page.getByRole("button", { name: "Confirm read through" }).click();
 
-  const sharedChapterStatus = "Latest known · Knowledge through Chapter 1.2";
+  const sharedChapterStatus = "As of Chapter 1.2";
   // The badge's chapter link also names the read chapter's title
   // (BOB-20261116-35B47D); the top-bar status stays number-only.
   const badgeTitle = " · Bob Version 2.0";
@@ -2213,11 +2211,16 @@ test("desktop surfaces stay on one projection through chapter and date changes",
   await page
     .getByRole("button", { name: /Story state 1 of 1 · 2016 ·/ })
     .click();
-  const sharedDateStatus = "Universe in 2016 · Knowledge through Chapter 1.2";
+  // Date view names only the selected date: no chapter link (T6,
+  // BOB-20261120-RQSMDX).
+  const sharedDateStatus = "As of 2016";
   await expect(page.locator(".view-status")).toHaveText(sharedDateStatus);
   await expect(page.locator(".map-narrative-badge")).toHaveText(
-    sharedDateStatus + badgeTitle,
+    sharedDateStatus,
   );
+  await expect(
+    page.locator(".map-narrative-badge").getByRole("button"),
+  ).toHaveCount(0);
   // Bob does not exist yet in 2016, but his card is not cleared (rule (g),
   // BOB-20261120-73F83F); the date marker shows its Date context meanwhile.
   await expect(
@@ -2340,7 +2343,7 @@ for (const viewport of [
     ).toEqual({ height: viewport.height, width: viewport.width });
 
     // Read through stays in the bar as the compact chip; the mode and command
-    // set moves to the menu drawer, which has no Knowledge through select
+    // set moves to the menu drawer, which has no As of select
     // (BOB-20261114-CTS3FN).
     const readThrough = page.locator("#topbar-read-through");
     await expect(readThrough).toBeVisible();
@@ -2363,7 +2366,7 @@ for (const viewport of [
     const drawer = page.getByRole("dialog", { name: "Menu" });
     await expect(drawer).toBeVisible();
     await expect(drawer.getByRole("button", { name: "Close" })).toBeFocused();
-    await expect(drawer.getByLabel("Knowledge through")).toHaveCount(0);
+    await expect(drawer.getByLabel("As of", { exact: true })).toHaveCount(0);
     for (const name of [
       "Close",
       "Chapter mode",
@@ -2496,9 +2499,7 @@ for (const viewport of [
     const pill = map.getByRole("button", { name: "Search" });
     const reset = map.getByRole("button", { name: "Reset view" });
     const badge = page.locator(".map-narrative-badge");
-    await expect(badge).toHaveText(
-      "Latest known · Knowledge through Chapter 1.61",
-    );
+    await expect(badge).toHaveText("As of Chapter 1.61");
     await expect(pill).toBeVisible();
     const [pillBox, resetBox, badgeBox] = (await Promise.all([
       pill.boundingBox(),
@@ -2962,7 +2963,7 @@ test("desktop Read through chip opens a popover and confirms a chapter", async (
   await expect(chip).toBeFocused();
   await expect(dockReadThrough(page)).toHaveValue("1.2");
   await expect(page.locator(".map-narrative-badge")).toContainText(
-    "Latest known · Knowledge through Chapter 1.2",
+    "As of Chapter 1.2",
   );
   // Reopening highlights the confirmed chapter.
   await chip.click();
@@ -3024,7 +3025,7 @@ for (const viewport of [
     await chooseTopbarChapter(page, "Book 1 · Chapter 2");
     await expect(chip).toHaveText("1 · Ch 2");
     await expect(page.locator(".map-narrative-badge")).toContainText(
-      "Latest known · Knowledge through Chapter 1.2",
+      "As of Chapter 1.2",
     );
     await openMenuCommand(page, "Timeline and progress");
     await expect(
@@ -3036,7 +3037,7 @@ for (const viewport of [
 }
 
 // BOB-20261114-CTS3FN: confirming a Read through chapter, forwards or backwards,
-// shows that chapter's universe, and the phone menu has no Knowledge through.
+// shows that chapter's universe, and the phone menu has no As of select.
 for (const viewport of [
   { width: 390, height: 844 },
   { width: 1280, height: 800 },
@@ -3073,9 +3074,7 @@ for (const viewport of [
             mode: string;
           },
       );
-    await expect(badge).toContainText(
-      "Latest known · Knowledge through Chapter 1.1",
-    );
+    await expect(badge).toContainText("As of Chapter 1.1");
     await expect(chip).toHaveText("1 · Ch 3");
 
     if (compact) {
@@ -3084,12 +3083,12 @@ for (const viewport of [
       await expect(
         drawer.getByRole("button", { name: "Chapter mode" }),
       ).toBeVisible();
-      await expect(drawer.getByLabel("Knowledge through")).toHaveCount(0);
+      await expect(drawer.getByLabel("As of", { exact: true })).toHaveCount(0);
       await expect(drawer.locator("select")).toHaveCount(0);
       await page.keyboard.press("Escape");
       await expect(drawer).toHaveCount(0);
     } else {
-      // Desktop keeps the dock's Knowledge through select (out of scope).
+      // Desktop keeps the dock's As of select (out of scope).
       await expect(page.locator("#desktop-knowledge-through")).toHaveValue(
         "1.1",
       );
@@ -3098,9 +3097,7 @@ for (const viewport of [
     // Forwards, from an earlier knowledge view.
     await chooseTopbarChapter(page, "Book 1 · Chapter 5");
     await expect(chip).toHaveText("1 · Ch 5");
-    await expect(badge).toContainText(
-      "Latest known · Knowledge through Chapter 1.5",
-    );
+    await expect(badge).toContainText("As of Chapter 1.5");
     await expect.poll(stored).toMatchObject({
       furthestChapterRead: "1.5",
       viewChapter: "1.5",
@@ -3123,12 +3120,10 @@ for (const viewport of [
     } else {
       await page.getByRole("button", { name: "Date mode" }).click();
     }
-    await expect(badge).toContainText("Universe in");
+    await expect(badge).toHaveText(/^As of (?!Chapter )[^·]*\d{4}$/);
     await chooseTopbarChapter(page, "Book 1 · Chapter 2");
     await expect(chip).toHaveText("1 · Ch 2");
-    await expect(badge).toContainText(
-      "Latest known · Knowledge through Chapter 1.2",
-    );
+    await expect(badge).toContainText("As of Chapter 1.2");
     await expect.poll(stored).toMatchObject({
       furthestChapterRead: "1.2",
       viewChapter: "1.2",
@@ -3151,9 +3146,7 @@ for (const viewport of [
 
     // The choice survives a reload.
     await page.reload();
-    await expect(badge).toContainText(
-      "Latest known · Knowledge through Chapter 1.2",
-    );
+    await expect(badge).toContainText("As of Chapter 1.2");
     await expect(chip).toHaveText("1 · Ch 2");
   });
 }

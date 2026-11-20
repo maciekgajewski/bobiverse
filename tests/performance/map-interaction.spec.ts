@@ -274,7 +274,7 @@ async function loadFixture(page: Page): Promise<void> {
   }, fixture.chapter);
   await page.goto("/");
   await expect(page.locator(".map-narrative-badge")).toContainText(
-    `Knowledge through Chapter ${fixture.chapter}`,
+    `As of Chapter ${fixture.chapter}`,
   );
   await page.waitForFunction(() => window.__bob034MapPerformance !== undefined);
   const actual = await page.evaluate(

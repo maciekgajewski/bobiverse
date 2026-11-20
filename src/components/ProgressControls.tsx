@@ -112,7 +112,7 @@ export function KnowledgeThroughSelect({
 }: KnowledgeThroughSelectProps) {
   return (
     <div className="knowledge-control">
-      <label htmlFor={id}>Knowledge through</label>
+      <label htmlFor={id}>As of</label>
       <select
         id={id}
         value={progress.viewChapter ?? ""}

@@ -91,9 +91,9 @@ for (const layout of [
     await seed(page, "1.59", "1.60");
     await page.goto("/");
 
-    // Latest-known badge: number-only for untitled 1.59.
+    // Badge: number-only for untitled 1.59.
     const badge = page.locator(".map-narrative-badge");
-    await expect(badge).toContainText("Knowledge through Chapter 1.59");
+    await expect(badge).toContainText("As of Chapter 1.59");
     await expect(badge.locator(".chapter-link-title")).toHaveCount(0);
     await badge.getByRole("button", { name: "Chapter 1.59" }).click();
     const inspector = layout.compact
@@ -186,7 +186,7 @@ for (const layout of [
     await expect(picker).toHaveCount(0);
 
     if (!layout.compact) {
-      // Desktop dock: the Knowledge through selector and the timeline track.
+      // Desktop dock: the As of selector and the timeline track.
       const knowledge = page.locator("#desktop-knowledge-through");
       await expect(knowledge.locator('option[value="1.60"]')).toHaveAttribute(
         "title",

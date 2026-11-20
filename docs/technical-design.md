@@ -621,7 +621,7 @@ than creating a separate mobile application or a parallel feature stack. The
 application shell uses a map-first phone composition: one slim command bar holds the
 identity, the compact **Read through** chip and a menu button; the menu drawer opens the
 browser, **Timeline and progress**, Chapter/Date mode and a secondary **Reset
-view** (it has no separate **Knowledge through** select, because confirming
+view** (it has no separate **As of** select, because confirming
 **Read through** already shows that chapter;
 `tasks/BOB-20261114-CTS3FN-read-through-drives-view.md`); and a selected item's inspector opens as a non-animated,
 non-modal bottom sheet over the live map, with peek, half and full snaps, a 44px
@@ -878,7 +878,7 @@ to later increases and to lowering the ceiling, and from Date mode or the zero-s
 knowledge view alike (`tasks/BOB-20261114-CTS3FN-read-through-drives-view.md`, a
 Captain decision of 2026-11-14 that replaces the earlier rule that later increases
 left `viewChapter` unchanged). Lowering the ceiling still lowers it, and no later
-fact is retained. **Knowledge through** and the chapter track can afterwards move
+fact is retained. **As of** and the chapter track can afterwards move
 `viewChapter` back to an earlier chapter or the zero state without changing
 `furthestChapterRead`. Returning **Read through** to the pre-book zero state clears
 both.

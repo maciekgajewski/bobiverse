@@ -1,6 +1,6 @@
 # BOB-20261120-RQSMDX: view labels without "Knowledge through"
 
-Status: Blocked
+Status: In progress
 Phase: 2 (narrative foundation and chapter timeline)
 Last updated: 2026-11-20
 
@@ -46,11 +46,23 @@ the soft ceiling instead.
   confirmation, the timeline track, "Pre-book zero state", the release notes
   (`src/release-notes.ts` is edited in the release change, `../release-process.md`).
 
+## Decision
+
+The manager's call on 2026-11-20 (Europe/Warsaw), from the options in the
+blocked report; Maciej confirms it in the combined acceptance pass after T6:
+
+- Badge, chapter view: "As of Chapter X", the chapter kept as a link to its card.
+- Badge, Date view: "As of Y", the selected date in the app's date format.
+- The select's visible and accessible label is "As of"; its options stay "Zero
+  state" and "Chapter X". "Pre-book zero state" is unchanged.
+
 ## Acceptance criteria
 
-- No reader-facing label says "Knowledge through".
-- The badge names the soft ceiling: the selected chapter in chapter view and
-  the selected date in Date view, with the chapter link kept.
+- No reader-facing label or user-facing doc says "Knowledge through" (historical
+  ADR and task text may keep it).
+- The map badge and the top-bar status read "As of Chapter X" in chapter view
+  (the badge's chapter a link) and "As of Y" in Date view, with no chapter link.
+- The select is labelled "As of", visibly and accessibly.
 - Pre-book zero state is unchanged.
 
 ## Validation
@@ -77,13 +89,9 @@ The docs listed in scope item 4.
 
 ## Known risks or unresolved decisions
 
-- **Blocked on wording.** The constitution says only that view labels "drop
-  'Knowledge through' wording" (§6 step 3); it gives no replacement for the
-  badge or the select, and no UI Designer spec exists. Dropping the suffix alone
-  would leave the chapter-view badge as a bare "Latest known", which no longer
-  holds either: chapter view now cuts at the chapter's latest date (§3.1). The
-  select needs a new visible and accessible label. Options are recorded in the
-  report to the manager; the wording waits for a decision.
+- The Date-view badge no longer names or links a chapter; the Read through
+  control stays visible. Maciej may revisit the wording in acceptance.
+- The select still exists only in Chapter mode, as before.
 
 ## Log
 
@@ -91,4 +99,6 @@ The docs listed in scope item 4.
 
 - Created on master `e7eb26d` on local branch `bob-20261120-ceiling-labels` in
   the `~/src/bobiverse-t6` worktree. Marked BOB-20261120-73F83F Done.
-- Blocked before implementation: the replacement wording is not specified.
+- Blocked before implementation (`bb3f99b`): the replacement wording was not
+  specified. The manager decided it the same day (see Decision); status In
+  progress.
