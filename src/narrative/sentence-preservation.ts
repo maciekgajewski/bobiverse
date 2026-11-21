@@ -65,6 +65,15 @@ export const sentencePreservedFields = Object.freeze(
 );
 
 /**
+ * Fields a reviewed exception may excuse. `state` and `current_state` have
+ * only the `supersedes` marker route (BOB-20261121-5A8W76).
+ */
+export const sentencePreservationExceptionFields = Object.freeze([
+  "description",
+  "visual_description",
+] as const satisfies readonly SentencePreservedField[]);
+
+/**
  * Words that end with a full stop without ending a sentence. Compared
  * case-insensitively, without the final stop.
  */
@@ -382,7 +391,7 @@ export function formatUnusedSupersedesMarker(
 export interface SentencePreservationException {
   chapter: string;
   entity_id: string;
-  field: SentencePreservedField;
+  field: (typeof sentencePreservationExceptionFields)[number];
   reason: string;
 }
 
@@ -423,12 +432,12 @@ export function parseSentencePreservationExceptions(
     if (!/^[1-9][0-9]*\.[1-9][0-9]*$/.test(String(entry.chapter)))
       fail(`${label}.chapter must use book.chapter form.`);
     if (
-      !(sentencePreservedFields as readonly string[]).includes(
+      !(sentencePreservationExceptionFields as readonly string[]).includes(
         String(entry.field),
       )
     )
       fail(
-        `${label}.field must be one of ${sentencePreservedFields.join(", ")}.`,
+        `${label}.field must be one of ${sentencePreservationExceptionFields.join(", ")}.`,
       );
     const key = exceptionKey(entry as unknown as SentencePreservationException);
     if (seen.has(key)) fail(`${label} duplicates an earlier entry.`);

@@ -1235,6 +1235,37 @@ function chapterDate(chapter: NarrativeRecord): string {
   return asString(chapter.date, `Chapter ${chapterId(chapter)} date`);
 }
 
+/**
+ * A write that sets `death_date` must be dated no later than its death
+ * period (BOB-20261121-5A8W76). `death_date` is a soft-ceiling property
+ * (design principles §2.5, rule (e)): it shows from its write's story date, so
+ * a write dated after the death would show the character alive between the
+ * death and that date. The write must therefore be known at a soft ceiling
+ * equal to its own `death_date`: `isKnownAtCeiling(writeDate, death_date)`,
+ * which compares calendar ranges (a `2165-08` death allows any write dated in
+ * August 2165 or earlier). `writeDate` is the date the projection uses: an
+ * update's `effective_date ?? chapter date`, an introduction's chapter date.
+ */
+function assertDeathDateWriteDating(
+  chapter: string,
+  pointer: string,
+  write: NarrativeRecord,
+  writeDate: string,
+  isUpdate: boolean,
+): void {
+  const deathDate = write.death_date;
+  if (typeof deathDate !== "string" || isKnownAtCeiling(writeDate, deathDate))
+    return;
+  const remedy = isUpdate
+    ? `add "effective_date": "${deathDate}" (or another date no later than the death) to this update`
+    : `introduce the character without death_date and set it in a later update with "effective_date": "${deathDate}"`;
+  throw chapterSemanticError(
+    chapter,
+    `${pointer}/death_date`,
+    `death_date ${deathDate} is written at ${writeDate}, after the death, so the character would show alive between the death and ${writeDate}. Date the write no later than ${deathDate}: ${remedy}.`,
+  );
+}
+
 function chapterSemanticError(
   chapter: string,
   pointer: string,
@@ -1908,6 +1939,13 @@ function validateNarrativeCorpusSemantics(
           `Introduction ${entityId} has an unknown astronomy object ID.`,
         );
       }
+      assertDeathDateWriteDating(
+        id,
+        `/introducing/${introductionIndex}`,
+        introduced,
+        chapterDate(chapter),
+        false,
+      );
       introducedThisChapter.add(entityId);
       if (entityId.startsWith("species:")) allCanonicalSpeciesIds.add(entityId);
     }
@@ -1970,6 +2008,13 @@ function validateNarrativeCorpusSemantics(
           `${update.effective_date} must be on or before the chapter date ${chapterDate(chapter)}.`,
         );
       }
+      assertDeathDateWriteDating(
+        id,
+        `/updates/${updateIndex}`,
+        update,
+        updateEffectiveDate(update, chapter),
+        true,
+      );
       const roleMessage = pictureRoleMessage(
         update,
         `Update ${targetId} picture_id`,
