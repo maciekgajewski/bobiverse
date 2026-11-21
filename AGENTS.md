@@ -12,14 +12,16 @@ Read these documents before changing code or data:
 1. `docs/design-principles.md` is the app's constitution: the Captain's governing
    design principles. It supersedes any conflicting rule in the documents below,
    and its Implications section lists the known conflicts.
-2. The active file in `docs/tasks/` defines the current scope and acceptance
+2. `docs/engineering-principles.md` is how we build: the Captain's engineering
+   principles for everyday work. It does not override the constitution.
+3. The active file in `docs/tasks/` defines the current scope and acceptance
    criteria.
-3. Accepted ADRs in `docs/adrs/` define architectural decisions that have not yet
+4. Accepted ADRs in `docs/adrs/` define architectural decisions that have not yet
    been incorporated into the technical design.
-4. `docs/technical-design.md` defines the integrated architecture and invariants.
-5. `docs/implementation-plan.md` defines delivery order and phase boundaries.
-6. `docs/project-idea.md` records the product vision.
-7. `docs/development-process.md` defines roles, authority, and the merge gate.
+5. `docs/technical-design.md` defines the integrated architecture and invariants.
+6. `docs/implementation-plan.md` defines delivery order and phase boundaries.
+7. `docs/project-idea.md` records the product vision.
+8. `docs/development-process.md` defines roles, authority, and the merge gate.
 
 If these sources conflict, stop and surface the conflict. Do not silently choose one.
 An active task may narrow scope, but it may not override the technical design or an
