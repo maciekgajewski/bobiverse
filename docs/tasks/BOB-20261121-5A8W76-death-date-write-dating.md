@@ -1,6 +1,6 @@
 # BOB-20261121-5A8W76: date death_date writes no later than the death
 
-Status: In progress
+Status: Done
 Phase: 2 (narrative foundation and chapter timeline)
 Last updated: 2026-11-21
 
@@ -118,3 +118,5 @@ The docs in scope item 4. No generated artifact changes.
   the case this rule forbids; its death is now 2190-02, which keeps the test
   (hidden at the 2190-01 and 2185 soft ceilings, shown at 2190-02).
 - Marked BOB-20261121-3KH6B2 Done in a separate commit.
+- Approved by the manager and landed on master with the no-ff merge `607b55d`
+  ("Merge death_date write-dating validator"). Done. Landed as `607b55d`.

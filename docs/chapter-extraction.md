@@ -668,6 +668,47 @@ Resolve human-review questions one at a time, then present:
 - the exact canonical diff that approval would create, or the exact combined
   chapter-and-astronomy diff when isolated staging was required.
 
+## Final candidate-set check
+
+When a set of chapter candidates is ready for review, the Extractor builds the
+review branch and runs the repository checks plus per-chapter preflights with
+one command, instead of assembling and checking that branch by hand:
+
+```bash
+python3 scripts/extraction_check.py \
+  --candidates-dir /path/to/candidates \
+  --exceptions-file /path/to/sentence-preservation-exceptions.json \
+  --source-dir /path/to/source-split \
+  --approval-dir /path/to/approvals \
+  --base origin/master \
+  --branch check/book2-2.11-2.20 \
+  --out ~/extraction-checks/run \
+  --cleanup
+```
+
+`--candidates-dir` holds one `B.N.json` file per chapter. The optional
+`--exceptions-file` is the complete `sentence-preservation-exceptions.json` to
+install. Both are copied byte-for-byte into
+`data/narrative/chapters/<book>/<n>.json` and
+`data/narrative/sentence-preservation-exceptions.json` on a new worktree off
+`--base`, then committed once on a new local branch. The command never pushes
+and never writes into the main checkout.
+
+`--source-dir` and `--approval-dir` supply the per-chapter inputs for
+`scripts/extraction_preflight.py`, which is run once per chapter from the
+review worktree with no pending predecessors. The checks also include
+`npm run data:generate` and fail if it leaves a git diff.
+
+Logs go to `--out`, which must be outside the repository (default:
+`~/extraction-checks/<timestamp>/`). Read `summary.txt` for the pass/fail
+result; a failed step includes the first relevant lines of its log. Exit 0 if
+every step passed, 1 if a check or preflight failed, and 2 on a usage or setup
+error. `--cleanup` removes the worktree and keeps the local branch and the
+logs.
+
+This command does not write canonical data and does not replace
+`scripts/chapter_promotion.py`.
+
 ## Approval, promotion, and provenance
 
 ### Approval
