@@ -576,9 +576,10 @@ whole corpus with the candidate.
 
 Under ADR-0016, an exact normalized narrative name that is unique across one accepted
 astronomy system's effective name and aliases receives a deterministic source-backed
-bootstrap without separate Captain approval. Normalization only case-folds, trims,
-and collapses whitespace. Never remove punctuation or use fuzzy, partial, phonetic,
-coordinate, or model-confidence matching. If the accepted identity, adopted
+bootstrap without separate Captain approval. Normalization case-folds, trims, and
+collapses whitespace, and treats `Gliese N[suffix]` and `GJ N[suffix]` as the same
+designation, as defined in ADR-0016. Never remove punctuation or use fuzzy, partial,
+phonetic, coordinate, or model-confidence matching. If the accepted identity, adopted
 component, source-backed geometry, or pinned coverage cannot support the anchor,
 stop before any canonical write and report the required astronomy task.
 

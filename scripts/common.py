@@ -72,8 +72,26 @@ def read_gzip(path: Path) -> bytes:
         return handle.read()
 
 
+# After case-folding and whitespace collapse, a Gliese Catalogue designation
+# whose first token is "gliese" or "gj" is rewritten to the canonical "gj"
+# prefix. The number (including an optional decimal, e.g. 551.1) and an
+# optional letter-only component suffix (A, B, AB, ...) are otherwise kept
+# as written, so "Gliese 54" matches "GJ 54" but "Gliese 540" does not, and
+# "Gliese 54 A" matches "GJ 54 A" but not unsuffixed "GJ 54".
+_GLIESE_DESIGNATION = re.compile(
+    r"^(?:gliese|gj) (\d+(?:\.\d+)?)(?: ([a-z]+))?$"
+)
+
+
 def normalize_astronomy_name(value: str) -> str:
-    return " ".join(value.casefold().split())
+    normalized = " ".join(value.casefold().split())
+    match = _GLIESE_DESIGNATION.fullmatch(normalized)
+    if match is None:
+        return normalized
+    number, suffix = match.group(1), match.group(2)
+    if suffix:
+        return f"gj {number} {suffix}"
+    return f"gj {number}"
 
 
 def mapped_anchor_names(

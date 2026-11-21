@@ -435,9 +435,9 @@ clears an astronomy-only selection that has left the rendered union.
 A new non-Sol anchor is bootstrapped from an exact GCNS or CNS5 source identity before
 its acquisition sphere is planned. Under ADR-0016, the pipeline derives that
 bootstrap without separate review only when the mapped narrative name exactly matches
-the accepted effective system name or alias after case-folding and whitespace
-normalization, and the accepted candidate has one unambiguous adopted source-backed
-position. Mapped name-to-anchor pairs are discovered by replaying effective location
+the accepted effective system name or alias after ADR-0016 normalization (Unicode
+case-folding, whitespace collapse, and the Gliese/GJ designation-prefix rule), and
+the accepted candidate has one unambiguous adopted source-backed position. Mapped name-to-anchor pairs are discovered by replaying effective location
 state from zero state through chapter introductions and updates, so independent name
 or astronomy-ID updates receive the same check. All fuzzy, partial, multiple,
 unsupported, or otherwise ambiguous matches stop for explicit review. A coordinate

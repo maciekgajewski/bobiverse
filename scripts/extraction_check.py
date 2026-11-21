@@ -293,6 +293,24 @@ def remove_worktree(repo: Path, worktree: Path) -> None:
         run_git(repo, ["worktree", "prune"], check=False)
 
 
+
+REVIEW_COMMIT_NAME = "Bobiverse Extraction Check"
+REVIEW_COMMIT_EMAIL = "extraction-check@localhost"
+
+
+def review_commit_git_args(message: str) -> list[str]:
+    """Build a `git commit` invocation that does not need a global identity."""
+    return [
+        "-c",
+        f"user.name={REVIEW_COMMIT_NAME}",
+        "-c",
+        f"user.email={REVIEW_COMMIT_EMAIL}",
+        "commit",
+        "-m",
+        message,
+    ]
+
+
 def build_review_branch(
     repo: Path,
     worktree: Path,
@@ -322,7 +340,7 @@ def build_review_branch(
         f"check: candidate set {chapters} (local only, never push)\n\n"
         "Built by scripts/extraction_check.py as a review artefact. Do not push."
     )
-    run_git(worktree, ["commit", "-m", message])
+    run_git(worktree, review_commit_git_args(message))
     head = run_git(worktree, ["rev-parse", "HEAD"]).stdout.strip()
     if head == base_sha:
         raise RuntimeError("review commit did not advance HEAD")

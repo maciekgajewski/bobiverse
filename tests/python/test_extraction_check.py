@@ -5,6 +5,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import unittest.mock
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -222,3 +223,61 @@ class BranchBuildTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+class ReviewCommitIdentityTest(unittest.TestCase):
+    def test_review_commit_git_args_set_local_identity(self) -> None:
+        self.assertEqual(
+            extcheck.review_commit_git_args("msg"),
+            [
+                "-c",
+                "user.name=Bobiverse Extraction Check",
+                "-c",
+                "user.email=extraction-check@localhost",
+                "commit",
+                "-m",
+                "msg",
+            ],
+        )
+
+    def test_review_commit_works_without_global_git_identity(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            home = root / "empty-home"
+            home.mkdir()
+            repo = root / "repo"
+            repo.mkdir()
+            cleared = (
+                "GIT_AUTHOR_NAME",
+                "GIT_AUTHOR_EMAIL",
+                "GIT_COMMITTER_NAME",
+                "GIT_COMMITTER_EMAIL",
+                "GIT_AUTHOR_DATE",
+                "GIT_COMMITTER_DATE",
+                "EMAIL",
+            )
+            extra = {
+                "HOME": str(home),
+                "GIT_CONFIG_NOSYSTEM": "1",
+                "GIT_TERMINAL_PROMPT": "0",
+            }
+            with unittest.mock.patch.dict(os.environ, extra, clear=False):
+                for key in cleared:
+                    os.environ.pop(key, None)
+                subprocess.run(
+                    ["git", "init", "-q", "-b", "master"],
+                    cwd=repo,
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                    env=extcheck.command_env(),
+                )
+                (repo / "README").write_text("ok\n", encoding="utf-8")
+                extcheck.run_git(repo, ["add", "README"])
+                extcheck.run_git(repo, extcheck.review_commit_git_args("no identity"))
+                ident = extcheck.run_git(
+                    repo, ["log", "-1", "--format=%an <%ae>"]
+                ).stdout.strip()
+                self.assertEqual(
+                    ident,
+                    "Bobiverse Extraction Check <extraction-check@localhost>",
+                )
