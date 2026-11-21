@@ -889,9 +889,9 @@ describe("atlas shell", () => {
     );
     vi.spyOn(HTMLElement.prototype, "clientWidth", "get").mockReturnValue(640);
   };
-  const dateDot = (date: string, chapter: string) =>
+  const dateDot = (date: string, sources: string) =>
     screen.getByRole("button", {
-      name: `Story state 1 of 1 · ${date} · revealed in Chapter ${chapter}`,
+      name: `Story state 1 of 1 · ${date} · revealed in ${sources}`,
     });
 
   it("replaces details with the exact Date context without changing non-empty inspector history or progress", async () => {
@@ -913,7 +913,7 @@ describe("atlas shell", () => {
       within(inspector).getByRole("button", { name: "Forward" }),
     ).toBeEnabled();
 
-    await user.click(dateDot("24 June 2133", "1.2"));
+    await user.click(dateDot("24 June 2133", "Chapter 1.2"));
     expect(within(inspector).getByText("Date context")).toBeInTheDocument();
     expect(
       within(inspector).getByRole("heading", {
@@ -956,12 +956,12 @@ describe("atlas shell", () => {
     ).toBeDisabled();
     await user.click(within(inspector).getByRole("button", { name: "Back" }));
 
-    await user.click(dateDot("2016", "1.1"));
+    await user.click(dateDot("2016", "Chapters 1.1, 1.2"));
     expect(
       within(inspector).getByRole("heading", { name: "2016" }),
     ).toBeInTheDocument();
     expect(
-      within(inspector).getByText("Chapter 1.1", { exact: true }),
+      within(inspector).getByText("Chapter 1.1 · Chapter 1.2", { exact: true }),
     ).toBeInTheDocument();
     expect(
       within(inspector).queryByRole("heading", {
@@ -1071,7 +1071,7 @@ describe("atlas shell", () => {
     expect(
       within(inspector).getByRole("button", { name: "Back" }),
     ).toBeEnabled();
-    await user.click(dateDot("24 June 2133", "1.2"));
+    await user.click(dateDot("24 June 2133", "Chapter 1.2"));
     expect(within(inspector).getByText("Date context")).toBeInTheDocument();
     await user.click(screen.getByTestId("star-map-deselect"));
     expect(
@@ -1103,7 +1103,7 @@ describe("atlas shell", () => {
     seedDateProgress();
     const user = userEvent.setup();
     const view = render(<App />);
-    await user.click(dateDot("2016", "1.1"));
+    await user.click(dateDot("2016", "Chapters 1.1, 1.2"));
     expect(screen.getByRole("heading", { name: "2016" })).toBeInTheDocument();
     expect(
       JSON.parse(window.localStorage.getItem("bobiverse.app-state.v2")!),
@@ -1120,9 +1120,12 @@ describe("atlas shell", () => {
       "aria-pressed",
       "true",
     );
-    expect(dateDot("2016", "1.1")).toHaveAttribute("aria-pressed", "true");
+    expect(dateDot("2016", "Chapters 1.1, 1.2")).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
     expect(screen.queryByText("Date context")).not.toBeInTheDocument();
-    await user.click(dateDot("2016", "1.1"));
+    await user.click(dateDot("2016", "Chapters 1.1, 1.2"));
     expect(screen.getByText("Date context")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Chapter mode" }));
     expect(screen.queryByText("Date context")).not.toBeInTheDocument();
@@ -1136,10 +1139,10 @@ describe("atlas shell", () => {
     });
     await user.click(screen.getByRole("button", { name: "Date mode" }));
     expect(screen.queryByText("Date context")).not.toBeInTheDocument();
-    await user.click(dateDot("24 June 2133", "1.2"));
+    await user.click(dateDot("24 June 2133", "Chapter 1.2"));
     await user.click(screen.getByRole("button", { name: "Chapter mode" }));
     await user.click(screen.getByRole("button", { name: "Date mode" }));
-    expect(dateDot("24 June 2133", "1.2")).toHaveAttribute(
+    expect(dateDot("24 June 2133", "Chapter 1.2")).toHaveAttribute(
       "aria-pressed",
       "true",
     );

@@ -152,12 +152,6 @@
       "reason": "pre-existing, predates check; then Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
     },
     {
-      "chapter": "1.51",
-      "entity_id": "character:milo",
-      "field": "current_state",
-      "reason": "pre-existing, predates check"
-    },
-    {
       "chapter": "1.52",
       "entity_id": "technology:kudzu-gardens",
       "field": "description",

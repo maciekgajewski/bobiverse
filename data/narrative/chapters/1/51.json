@@ -12,6 +12,7 @@
     {
       "entity_id": "character:milo",
       "effective_date": "2165-08",
+      "supersedes": true,
       "current_state": "Lost at [[location:82-eridani]] when hostile missiles destroyed his vessel.",
       "death_date": "2165-08"
     },

@@ -43,6 +43,8 @@
   "updates": [
     {
       "entity_id": "character:robert-johansson",
+      "effective_date": "2016",
+      "supersedes": true,
       "current_state": "Dead.",
       "death_date": "2016",
       "death_event_id": "event:bob-road-incident"
