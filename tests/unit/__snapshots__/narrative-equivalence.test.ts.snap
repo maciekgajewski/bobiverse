@@ -7,6 +7,7 @@ exports[`canonical narrative equivalence > keeps the public zero-state, chapter,
       "date": "2016",
       "source_chapters": [
         "1.1",
+        "1.2",
       ],
     },
     {
@@ -610,6 +611,14 @@ exports[`canonical narrative equivalence > keeps the public zero-state, chapter,
             "source_chapter": "1.1",
           },
           {
+            "effective_date": "2016",
+            "entity_id": "character:robert-johansson",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
             "effective_date": "2133-06-24",
             "entity_id": "character:bob-replicant",
             "reasons": [
@@ -624,14 +633,6 @@ exports[`canonical narrative equivalence > keeps the public zero-state, chapter,
             "reasons": [
               "introduction",
               "appearance",
-            ],
-            "source_chapter": "1.2",
-          },
-          {
-            "effective_date": "2133-06-24",
-            "entity_id": "character:robert-johansson",
-            "reasons": [
-              "update",
             ],
             "source_chapter": "1.2",
           },
@@ -1906,6 +1907,14 @@ exports[`canonical narrative equivalence > keeps the public zero-state, chapter,
             "source_chapter": "1.1",
           },
           {
+            "effective_date": "2016",
+            "entity_id": "character:robert-johansson",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
             "effective_date": "2133-06-24",
             "entity_id": "character:bob-replicant",
             "reasons": [
@@ -1920,14 +1929,6 @@ exports[`canonical narrative equivalence > keeps the public zero-state, chapter,
             "reasons": [
               "introduction",
               "appearance",
-            ],
-            "source_chapter": "1.2",
-          },
-          {
-            "effective_date": "2133-06-24",
-            "entity_id": "character:robert-johansson",
-            "reasons": [
-              "update",
             ],
             "source_chapter": "1.2",
           },
@@ -3308,6 +3309,14 @@ exports[`canonical narrative equivalence > keeps the public zero-state, chapter,
             ],
             "source_chapter": "1.1",
           },
+          {
+            "effective_date": "2016",
+            "entity_id": "character:robert-johansson",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.2",
+          },
         ],
         "entities": [
           {
@@ -3706,7 +3715,9 @@ exports[`canonical narrative equivalence > keeps the public zero-state, chapter,
             "aliases": [
               "Bob",
             ],
-            "current_state": "Presumed dead after the road incident.",
+            "current_state": "Dead.",
+            "death_date": "2016",
+            "death_event_id": "event:bob-road-incident",
             "description": "A software engineer who founded InterGator Software and has just sold it, leaving him newly wealthy. A science-fiction fan with a minor in physics, he attends The Vortex convention in Las Vegas and signs a cryonics contract with CryoEterna Inc.. He is close to his family, including his father and his twin sisters, Andrea and Alaina.",
             "entity_type": "character",
             "id": "character:robert-johansson",
@@ -3792,6 +3803,14 @@ exports[`canonical narrative equivalence > keeps the public zero-state, chapter,
             "source_chapter": "1.1",
           },
           {
+            "effective_date": "2016",
+            "entity_id": "character:robert-johansson",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
             "effective_date": "2133-06-24",
             "entity_id": "character:bob-replicant",
             "reasons": [
@@ -3806,14 +3825,6 @@ exports[`canonical narrative equivalence > keeps the public zero-state, chapter,
             "reasons": [
               "introduction",
               "appearance",
-            ],
-            "source_chapter": "1.2",
-          },
-          {
-            "effective_date": "2133-06-24",
-            "entity_id": "character:robert-johansson",
-            "reasons": [
-              "update",
             ],
             "source_chapter": "1.2",
           },
@@ -4413,6 +4424,14 @@ exports[`canonical narrative equivalence > keeps the public zero-state, chapter,
             "source_chapter": "1.1",
           },
           {
+            "effective_date": "2016",
+            "entity_id": "character:robert-johansson",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
             "effective_date": "2133-06-24",
             "entity_id": "character:bob-replicant",
             "reasons": [
@@ -4427,14 +4446,6 @@ exports[`canonical narrative equivalence > keeps the public zero-state, chapter,
             "reasons": [
               "introduction",
               "appearance",
-            ],
-            "source_chapter": "1.2",
-          },
-          {
-            "effective_date": "2133-06-24",
-            "entity_id": "character:robert-johansson",
-            "reasons": [
-              "update",
             ],
             "source_chapter": "1.2",
           },
@@ -5103,6 +5114,14 @@ exports[`canonical narrative equivalence > keeps the public zero-state, chapter,
             "source_chapter": "1.1",
           },
           {
+            "effective_date": "2016",
+            "entity_id": "character:robert-johansson",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
             "effective_date": "2133-06-24",
             "entity_id": "character:bob-replicant",
             "reasons": [
@@ -5117,14 +5136,6 @@ exports[`canonical narrative equivalence > keeps the public zero-state, chapter,
             "reasons": [
               "introduction",
               "appearance",
-            ],
-            "source_chapter": "1.2",
-          },
-          {
-            "effective_date": "2133-06-24",
-            "entity_id": "character:robert-johansson",
-            "reasons": [
-              "update",
             ],
             "source_chapter": "1.2",
           },
@@ -5834,6 +5845,14 @@ exports[`canonical narrative equivalence > keeps the public zero-state, chapter,
             "source_chapter": "1.1",
           },
           {
+            "effective_date": "2016",
+            "entity_id": "character:robert-johansson",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
             "effective_date": "2133-06-24",
             "entity_id": "character:bob-replicant",
             "reasons": [
@@ -5848,14 +5867,6 @@ exports[`canonical narrative equivalence > keeps the public zero-state, chapter,
             "reasons": [
               "introduction",
               "appearance",
-            ],
-            "source_chapter": "1.2",
-          },
-          {
-            "effective_date": "2133-06-24",
-            "entity_id": "character:robert-johansson",
-            "reasons": [
-              "update",
             ],
             "source_chapter": "1.2",
           },
@@ -6665,6 +6676,14 @@ exports[`canonical narrative equivalence > keeps the public zero-state, chapter,
             "source_chapter": "1.1",
           },
           {
+            "effective_date": "2016",
+            "entity_id": "character:robert-johansson",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
             "effective_date": "2133-06-24",
             "entity_id": "character:bob-replicant",
             "reasons": [
@@ -6679,14 +6698,6 @@ exports[`canonical narrative equivalence > keeps the public zero-state, chapter,
             "reasons": [
               "introduction",
               "appearance",
-            ],
-            "source_chapter": "1.2",
-          },
-          {
-            "effective_date": "2133-06-24",
-            "entity_id": "character:robert-johansson",
-            "reasons": [
-              "update",
             ],
             "source_chapter": "1.2",
           },
@@ -7590,6 +7601,14 @@ exports[`canonical narrative equivalence > keeps the public zero-state, chapter,
             "source_chapter": "1.1",
           },
           {
+            "effective_date": "2016",
+            "entity_id": "character:robert-johansson",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
             "effective_date": "2133-06-24",
             "entity_id": "character:bob-replicant",
             "reasons": [
@@ -7604,14 +7623,6 @@ exports[`canonical narrative equivalence > keeps the public zero-state, chapter,
             "reasons": [
               "introduction",
               "appearance",
-            ],
-            "source_chapter": "1.2",
-          },
-          {
-            "effective_date": "2133-06-24",
-            "entity_id": "character:robert-johansson",
-            "reasons": [
-              "update",
             ],
             "source_chapter": "1.2",
           },
@@ -8665,6 +8676,14 @@ exports[`canonical narrative equivalence > keeps the public zero-state, chapter,
             "source_chapter": "1.1",
           },
           {
+            "effective_date": "2016",
+            "entity_id": "character:robert-johansson",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
             "effective_date": "2133-06-24",
             "entity_id": "character:bob-replicant",
             "reasons": [
@@ -8679,14 +8698,6 @@ exports[`canonical narrative equivalence > keeps the public zero-state, chapter,
             "reasons": [
               "introduction",
               "appearance",
-            ],
-            "source_chapter": "1.2",
-          },
-          {
-            "effective_date": "2133-06-24",
-            "entity_id": "character:robert-johansson",
-            "reasons": [
-              "update",
             ],
             "source_chapter": "1.2",
           },
@@ -9841,6 +9852,14 @@ exports[`canonical narrative equivalence > keeps the public zero-state, chapter,
             "source_chapter": "1.1",
           },
           {
+            "effective_date": "2016",
+            "entity_id": "character:robert-johansson",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
             "effective_date": "2133-06-24",
             "entity_id": "character:bob-replicant",
             "reasons": [
@@ -9855,14 +9874,6 @@ exports[`canonical narrative equivalence > keeps the public zero-state, chapter,
             "reasons": [
               "introduction",
               "appearance",
-            ],
-            "source_chapter": "1.2",
-          },
-          {
-            "effective_date": "2133-06-24",
-            "entity_id": "character:robert-johansson",
-            "reasons": [
-              "update",
             ],
             "source_chapter": "1.2",
           },
@@ -11087,6 +11098,14 @@ exports[`canonical narrative equivalence > keeps the public zero-state, chapter,
             "source_chapter": "1.1",
           },
           {
+            "effective_date": "2016",
+            "entity_id": "character:robert-johansson",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
             "effective_date": "2133-06-24",
             "entity_id": "character:bob-replicant",
             "reasons": [
@@ -11101,14 +11120,6 @@ exports[`canonical narrative equivalence > keeps the public zero-state, chapter,
             "reasons": [
               "introduction",
               "appearance",
-            ],
-            "source_chapter": "1.2",
-          },
-          {
-            "effective_date": "2133-06-24",
-            "entity_id": "character:robert-johansson",
-            "reasons": [
-              "update",
             ],
             "source_chapter": "1.2",
           },
@@ -12383,6 +12394,14 @@ exports[`canonical narrative equivalence > keeps the public zero-state, chapter,
             "source_chapter": "1.1",
           },
           {
+            "effective_date": "2016",
+            "entity_id": "character:robert-johansson",
+            "reasons": [
+              "update",
+            ],
+            "source_chapter": "1.2",
+          },
+          {
             "effective_date": "2133-06-24",
             "entity_id": "character:bob-replicant",
             "reasons": [
@@ -12397,14 +12416,6 @@ exports[`canonical narrative equivalence > keeps the public zero-state, chapter,
             "reasons": [
               "introduction",
               "appearance",
-            ],
-            "source_chapter": "1.2",
-          },
-          {
-            "effective_date": "2133-06-24",
-            "entity_id": "character:robert-johansson",
-            "reasons": [
-              "update",
             ],
             "source_chapter": "1.2",
           },
