@@ -1,6 +1,6 @@
 # BOB-20261121-3KH6B2: supersedes marker for back-dated state
 
-Status: In progress
+Status: Done
 Phase: 2 (narrative foundation and chapter timeline)
 Last updated: 2026-11-21
 
@@ -125,3 +125,7 @@ artifact changes.
   the 1.51 `character:milo` marker added as well and its row removed, it passes
   with no state exception rows left.
 - Awaiting manager review.
+- Approved by the manager and landed on master with the no-ff merge `0efecec`
+  ("Merge preservation supersedes marker"). The Extractor's 1.2 and 1.51
+  markers landed in `88fcb9c`, removing the last state exception rows. Done.
+  Landed as `0efecec`.
