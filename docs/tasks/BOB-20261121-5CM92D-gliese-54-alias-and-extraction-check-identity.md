@@ -158,3 +158,35 @@ ADR-0023 checksum acceptance.
   `mouse.wheel` test timeout 45000ms (48.2s). Unrelated to this alias or
   extraction-check change. CSP: 3 passed (chromium, firefox, webkit, 15.6s).
   Alt configs were deleted and not committed.
+- Scope change, Captain via the manager (2026-11-21, Europe/Warsaw): drop the
+  one-off "Gliese 54" reviewed alias in favour of an ADR-0016 rule that
+  `Gliese N[suffix]` and `GJ N[suffix]` are the same designation. The
+  extraction-check git identity fix is kept.
+- Reverted the `system-review.json` override and the `nearby-systems.json`
+  alternates change for stellar-system-000258.
+- Extended `normalize_astronomy_name` in `scripts/common.py` (the shared
+  ADR-0016 matcher used by refresh, validation, and generation). After the
+  existing Unicode case-fold and whitespace collapse, a name whose first
+  token is `gliese` or `gj`, followed by a catalogue number (digits with an
+  optional decimal) and an optional letter-only component suffix, is
+  rewritten to the canonical `gj` prefix. No TypeScript ADR-0016 matcher
+  exists; nothing under `src/` was changed.
+- Tests added in `AstronomyNameNormalizationTest` in
+  `tests/python/test_validate_data.py`. ADR-0016 updated; restatements in
+  `docs/chapter-extraction.md` and `docs/technical-design.md` brought in
+  line.
+- `data:generate` after the revert left runtime astronomy identical to
+  origin/master (`c2aeaf1`). Candidate checksum unchanged:
+  `12a630ee87df905739e5d9a6a44bfdcc5547d735f44e7ceb0efdd5f1d9965a84`.
+  `data:validate` passed (337 systems, six pinned sources).
+- Fast checks (21:28–21:31 Europe/Warsaw): tasks 119/33 ADRs; format:check;
+  lint 0 errors, 1 pre-existing AboutDialog.tsx warning; typecheck;
+  `npm test` 65 files / 848 passed; `data:test` 112 passed (6 new);
+  data:validate; narrative:validate 71 chapters; build; `git diff --check`.
+  The first format:check failed only because a temporary uncommitted
+  Playwright alt config sat at the repo root; that file was removed and
+  format:check then passed.
+- Full 3-browser e2e plus CSP skipped: no `src/` change (pipeline, tests,
+  and docs only). Reran only `tests/e2e/atlas.spec.ts:533` on chromium with
+  the same alt config (port 4211): PASS in 25.4s at 21:34–21:35 Europe/Warsaw.
+  Alt config was not committed.

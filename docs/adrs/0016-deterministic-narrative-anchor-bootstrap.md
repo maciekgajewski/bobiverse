@@ -35,9 +35,18 @@ of the following are true:
    state from zero state through chapter introductions and updates in reading order;
    name-only and astronomy-ID-only updates therefore cannot evade or break the
    pairing.
-3. Normalization consists only of Unicode-aware case folding, trimming, and
-   collapsing runs of whitespace. It does not remove punctuation, expand
-   abbreviations, or perform fuzzy, partial, phonetic, or positional matching.
+3. Normalization consists of Unicode-aware case folding, trimming, and
+   collapsing runs of whitespace, then one designation-prefix rule: if the
+   first token is `Gliese` or `GJ`, followed by a catalogue number (digits
+   with an optional decimal part, for example `54` or `551.1`) and an optional
+   letter-only component suffix (`A`, `B`, `AB`, or other letter-only
+   suffixes; comparison is case-insensitive), the `Gliese` and `GJ` prefixes
+   are treated as the same designation. The number and suffix stay as written,
+   so `Gliese 54` matches `GJ 54`, `Gliese 54 A` matches `GJ 54 A`,
+   `Gliese 540` does not match `GJ 54`, and `Gliese 54 A` does not match
+   unsuffixed `GJ 54`. Normalization does not remove punctuation, expand any
+   other abbreviations, or perform fuzzy, partial, phonetic, or positional
+   matching.
 4. The candidate has no unresolved review requirement or identity ambiguity; an
    accepted adopted-component override may resolve a candidate's original position
    review requirement.

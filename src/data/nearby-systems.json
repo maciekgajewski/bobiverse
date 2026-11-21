@@ -19812,7 +19812,7 @@
       }
     },
     {
-      "alternates": ["CNS5 326", "Gliese 54", "HIP 5496"],
+      "alternates": ["CNS5 326", "HIP 5496"],
       "components": [
         {
           "astrometry_quality": {

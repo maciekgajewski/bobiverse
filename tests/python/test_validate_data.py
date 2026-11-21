@@ -34,7 +34,9 @@ from common import (
     IDENTITY_REGISTRY_PATH,
     SOURCE_EXTRACT_SCHEMA_PATH,
     WDS_PATH,
+    REVIEW_PATH,
     mapped_anchor_names,
+    normalize_astronomy_name,
     read_gzip,
     read_json,
     resolve_anchor_bootstraps,
@@ -1365,6 +1367,128 @@ class MultiCatalogueContractTest(unittest.TestCase):
         review["accepted_candidate_sha256"] = value_sha256(candidates)
         with self.assertRaisesRegex(ValueError, "adopted member"):
             validate_candidates(candidates, review, self.registry)
+
+
+
+class AstronomyNameNormalizationTest(unittest.TestCase):
+    def test_gliese_and_gj_designations_are_the_same_name(self) -> None:
+        self.assertEqual(normalize_astronomy_name("Gliese 54"), "gj 54")
+        self.assertEqual(normalize_astronomy_name("GJ 54"), "gj 54")
+        self.assertEqual(normalize_astronomy_name("  gliese   54  "), "gj 54")
+        self.assertEqual(normalize_astronomy_name("gj 54"), "gj 54")
+
+    def test_gliese_decimal_and_component_suffix_are_preserved(self) -> None:
+        self.assertEqual(normalize_astronomy_name("Gliese 551.1"), "gj 551.1")
+        self.assertEqual(normalize_astronomy_name("GJ 551.1"), "gj 551.1")
+        self.assertEqual(normalize_astronomy_name("Gliese 54 A"), "gj 54 a")
+        self.assertEqual(normalize_astronomy_name("GJ 54 A"), "gj 54 a")
+        self.assertEqual(normalize_astronomy_name("gliese 54 ab"), "gj 54 ab")
+        self.assertEqual(normalize_astronomy_name("GJ 54 AB"), "gj 54 ab")
+        self.assertNotEqual(
+            normalize_astronomy_name("Gliese 54 A"),
+            normalize_astronomy_name("GJ 54"),
+        )
+
+    def test_gliese_numbers_are_not_partial_matches(self) -> None:
+        self.assertEqual(normalize_astronomy_name("Gliese 540"), "gj 540")
+        self.assertNotEqual(
+            normalize_astronomy_name("Gliese 540"),
+            normalize_astronomy_name("GJ 54"),
+        )
+        self.assertNotEqual(
+            normalize_astronomy_name("Gliese 5"),
+            normalize_astronomy_name("GJ 54"),
+        )
+
+    def test_non_gliese_catalogue_names_are_not_rewritten(self) -> None:
+        self.assertEqual(normalize_astronomy_name("HIP 5496"), "hip 5496")
+        self.assertEqual(normalize_astronomy_name("CNS5 326"), "cns5 326")
+        self.assertEqual(
+            normalize_astronomy_name("  Epsilon   Eridani  "),
+            "epsilon eridani",
+        )
+        self.assertEqual(normalize_astronomy_name("Gliese-54"), "gliese-54")
+
+    def test_gliese_54_matches_accepted_gj_54_system_000258(self) -> None:
+        candidates = read_json(CANDIDATES_PATH)
+        review = read_json(REVIEW_PATH)
+        expected = resolve_anchor_bootstraps(
+            {"stellar-system-000258": ["GJ 54"]},
+            review,
+            candidates,
+        )
+        self.assertEqual(expected[0]["anchor_id"], "stellar-system-000258")
+        self.assertEqual(
+            resolve_anchor_bootstraps(
+                {"stellar-system-000258": ["Gliese 54"]},
+                review,
+                candidates,
+            ),
+            expected,
+        )
+        self.assertEqual(
+            resolve_anchor_bootstraps(
+                {"stellar-system-000258": ["  GLIESE   54  "]},
+                review,
+                candidates,
+            ),
+            expected,
+        )
+        with self.assertRaisesRegex(ValueError, "not an exact accepted"):
+            resolve_anchor_bootstraps(
+                {"stellar-system-000258": ["Gliese 540"]},
+                review,
+                candidates,
+            )
+        with self.assertRaisesRegex(ValueError, "not an exact accepted"):
+            resolve_anchor_bootstraps(
+                {"stellar-system-000258": ["Gliese 54 A"]},
+                review,
+                candidates,
+            )
+
+    def test_gliese_component_suffix_matches_gj_with_the_same_suffix(self) -> None:
+        candidates = {
+            "systems": [
+                {
+                    "id": "stellar-system-fixture-1",
+                    "preferred_name_candidate": "GJ 54 A",
+                    "alternate_name_candidates": [],
+                    "component_ids": ["stellar-component-fixture-1"],
+                    "adopted_component_candidate": "stellar-component-fixture-1",
+                    "requires_review": False,
+                }
+            ],
+            "components": [
+                {
+                    "id": "stellar-component-fixture-1",
+                    "gaia_source_id": "5164707970261890560",
+                    "cns5_id": "905",
+                    "position_pc": {"xg": -2.0, "yg": -0.5, "zg": -2.4},
+                    "position_derivation": "gcns median Bayesian Cartesian geometry",
+                }
+            ],
+        }
+        review = {"overrides": [], "anchor_bootstraps": []}
+        expected = resolve_anchor_bootstraps(
+            {"stellar-system-fixture-1": ["GJ 54 A"]},
+            review,
+            candidates,
+        )
+        self.assertEqual(
+            resolve_anchor_bootstraps(
+                {"stellar-system-fixture-1": ["Gliese 54 A"]},
+                review,
+                candidates,
+            ),
+            expected,
+        )
+        with self.assertRaisesRegex(ValueError, "not an exact accepted"):
+            resolve_anchor_bootstraps(
+                {"stellar-system-fixture-1": ["Gliese 54"]},
+                review,
+                candidates,
+            )
 
 
 class TwentyParsecCensusContractTest(unittest.TestCase):
