@@ -1,8 +1,8 @@
 # BOB-20261120-RQSMDX: view labels without "Knowledge through"
 
-Status: In progress
+Status: Done
 Phase: 2 (narrative foundation and chapter timeline)
-Last updated: 2026-11-20
+Last updated: 2026-11-21
 
 ## Objective and user-visible outcome
 
@@ -109,3 +109,6 @@ The docs listed in scope item 4.
   passed, 4 skipped), firefox (95 passed, 4 skipped) and webkit (96 passed, 3
   skipped); the CSP check (3 passed).
 - Awaiting manager review.
+- Approved by the manager at `189d3e7` and landed on master with the no-ff
+  merge `1cce5d4` ("Merge T6: As of labels (BOB-20261120-RQSMDX)"). Done.
+  Landed as `1cce5d4`.
