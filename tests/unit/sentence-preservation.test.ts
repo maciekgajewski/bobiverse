@@ -7,7 +7,9 @@ import type { NarrativeRecord } from "../../src/narrative/model";
 import {
   applySentencePreservationExceptions,
   findSentencePreservationViolations,
+  findUnusedSupersedesMarkers,
   formatSentencePreservationViolation,
+  formatUnusedSupersedesMarker,
   parseSentencePreservationExceptions,
   sentenceOpening,
   splitSentences,
@@ -251,60 +253,199 @@ describe("findSentencePreservationViolations", () => {
     ).toEqual([]);
   });
 
-  it("checks state when the write has the same story date as the earlier one", () => {
-    const violations = findSentencePreservationViolations([
-      chapter("1.1", "2170", [
-        { entity_id: "location:moon", state: "Seeded. Promised transport." },
+  it("lets a later-read write dated at its chapter replace a same-date state", () => {
+    // Two chapters of the same month: the later-read write is the newer state,
+    // as when the soft-ceiling projection breaks a date tie by reading order.
+    expect(
+      findSentencePreservationViolations([
+        chapter("1.1", "2170", [
+          { entity_id: "location:moon", state: "Seeded. Promised transport." },
+        ]),
+        chapter("1.2", "2170", [
+          { entity_id: "location:moon", state: "Surveyed." },
+        ]),
+        chapter("1.3", "2170-05", [
+          { entity_id: "location:moon", state: "Abandoned." },
+        ]),
       ]),
-      chapter("1.2", "2170", [
-        { entity_id: "location:moon", state: "Surveyed." },
-      ]),
-    ]);
+    ).toEqual([]);
+  });
+
+  const backDated = (extra: NarrativeRecord = {}) => [
+    chapter("1.1", "2016", [
+      {
+        entity_id: "character:pilot",
+        current_state: "Missing after a crash. Search ongoing.",
+      },
+    ]),
+    chapter("1.2", "2133", [
+      {
+        entity_id: "character:pilot",
+        effective_date: "2016",
+        current_state: "Dead.",
+        ...extra,
+      },
+    ]),
+  ];
+
+  it("fails a back-dated write that drops a sentence of the same moment", () => {
+    const violations = findSentencePreservationViolations(backDated());
     expect(
       violations.map(
         (violation) =>
-          `${violation.chapter} ${violation.field} ${violation.sentence}`,
+          `${violation.chapter}<${violation.earlierChapter} ${violation.sentence}`,
       ),
-    ).toEqual(["1.2 state Seeded.", "1.2 state Promised transport."]);
+    ).toEqual(["1.2<1.1 Missing after a crash.", "1.2<1.1 Search ongoing."]);
+    expect(formatSentencePreservationViolation(violations[0]!)).toBe(
+      'Chapter 1.2 /updates/0/current_state: character:pilot.current_state drops sentence 1 of 2 of the earlier value from chapter 1.1 ("Missing after a crash."). Keep that sentence verbatim, or, if this back-dated update replaces that state, add "supersedes": true to it.',
+    );
+  });
+
+  it("passes a back-dated write marked supersedes, and uses its marker", () => {
+    const chapters = backDated({ supersedes: true });
+    expect(findSentencePreservationViolations(chapters)).toEqual([]);
+    expect(findUnusedSupersedesMarkers(chapters)).toEqual([]);
+  });
+
+  it.each([
+    [
+      "the update is dated at its chapter",
+      [
+        chapter("1.1", "2016", [
+          { entity_id: "character:pilot", current_state: "Missing. Hunted." },
+        ]),
+        chapter("1.2", "2016", [
+          {
+            entity_id: "character:pilot",
+            current_state: "Dead.",
+            supersedes: true,
+          },
+        ]),
+      ],
+    ],
+    [
+      "the back-dated update keeps every sentence",
+      [
+        chapter("1.1", "2016", [
+          { entity_id: "character:pilot", current_state: "Missing." },
+        ]),
+        chapter("1.2", "2133", [
+          {
+            entity_id: "character:pilot",
+            effective_date: "2016",
+            current_state: "Missing. Later found dead.",
+            supersedes: true,
+          },
+        ]),
+      ],
+    ],
+    [
+      "the update writes no state",
+      [
+        chapter("1.1", "2016", [
+          { entity_id: "character:pilot", current_state: "Missing." },
+        ]),
+        chapter("1.2", "2133", [
+          {
+            entity_id: "character:pilot",
+            effective_date: "2016",
+            name: "Pilot",
+            supersedes: true,
+          },
+        ]),
+      ],
+    ],
+  ])(
+    "reports a supersedes marker that excuses nothing: %s",
+    (_case, chapters) => {
+      const unused = findUnusedSupersedesMarkers(chapters);
+      expect(unused).toEqual([
+        {
+          entityId: "character:pilot",
+          chapter: "1.2",
+          pointer: "/updates/0/supersedes",
+        },
+      ]);
+      expect(formatUnusedSupersedesMarker(unused[0]!)).toMatch(
+        /^Chapter 1\.2 \/updates\/0\/supersedes: character:pilot is marked "supersedes": true but replaces no earlier sentence\..*remove it\.$/,
+      );
+    },
+  );
+
+  it("never lets supersedes excuse a dropped description sentence", () => {
+    const chapters = [
+      chapter("1.1", "2016", [
+        {
+          entity_id: "character:pilot",
+          description: "A pilot. Born on Earth.",
+          current_state: "Missing.",
+        },
+      ]),
+      chapter("1.2", "2133", [
+        {
+          entity_id: "character:pilot",
+          effective_date: "2016",
+          description: "A pilot.",
+          current_state: "Dead.",
+          supersedes: true,
+        },
+      ]),
+    ];
+    expect(findSentencePreservationViolations(chapters)).toMatchObject([
+      { field: "description", sentence: "Born on Earth." },
+    ]);
+    expect(findUnusedSupersedesMarkers(chapters)).toEqual([]);
   });
 
   it.each([
     ["a year, then a month in it", "2185", "2185-04"],
     ["a month, then its year", "2185-04", "2185"],
   ])(
-    "checks state for overlapping dates of different precision: %s",
+    "checks a back-dated write for overlapping dates of different precision: %s",
     (_case, first, second) => {
       expect(
         findSentencePreservationViolations([
           chapter("1.1", first, [
-            { entity_id: "location:moon", state: "Seeded. Surveyed." },
+            { entity_id: "character:pilot", current_state: "Docked. Idle." },
           ]),
-          chapter("1.2", second, [
-            { entity_id: "location:moon", state: "Seeded." },
+          chapter("1.2", "2190", [
+            {
+              entity_id: "character:pilot",
+              effective_date: second,
+              current_state: "Docked.",
+            },
           ]),
         ]),
       ).toMatchObject([
-        { chapter: "1.2", earlierChapter: "1.1", sentence: "Surveyed." },
+        { chapter: "1.2", earlierChapter: "1.1", sentence: "Idle." },
       ]);
     },
   );
 
-  it("compares state with the latest-read write of an equal or overlapping date", () => {
+  it("compares a back-dated write with the latest-read write of an equal or overlapping date", () => {
     // 1.2 is read in between but dated later, so 1.3 is compared with 1.1, the
     // same moment. 1.4 (2185) overlaps both 1.1 and 1.3 and is compared with 1.3,
     // the latest-read one, which it preserves.
     const violations = findSentencePreservationViolations([
       chapter("1.1", "2185-04", [
-        { entity_id: "location:moon", state: "Seeded. Surveyed." },
+        { entity_id: "character:pilot", current_state: "Docked. Idle." },
       ]),
       chapter("1.2", "2190", [
-        { entity_id: "location:moon", state: "Abandoned." },
+        { entity_id: "character:pilot", current_state: "Retired." },
       ]),
-      chapter("1.3", "2185-04", [
-        { entity_id: "location:moon", state: "Seeded." },
+      chapter("1.3", "2191", [
+        {
+          entity_id: "character:pilot",
+          effective_date: "2185-04",
+          current_state: "Docked.",
+        },
       ]),
-      chapter("1.4", "2185", [
-        { entity_id: "location:moon", state: "Seeded. Quiet." },
+      chapter("1.4", "2192", [
+        {
+          entity_id: "character:pilot",
+          effective_date: "2185",
+          current_state: "Docked. Quiet.",
+        },
       ]),
     ]);
     expect(
@@ -312,7 +453,7 @@ describe("findSentencePreservationViolations", () => {
         (violation) =>
           `${violation.chapter}<${violation.earlierChapter} ${violation.sentence}`,
       ),
-    ).toEqual(["1.3<1.1 Surveyed."]);
+    ).toEqual(["1.3<1.1 Idle."]);
   });
 
   it("checks description and visual_description whatever the story dates", () => {

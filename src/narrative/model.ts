@@ -1282,6 +1282,12 @@ function openingSummarySentence(summary: string): string {
 }
 
 /**
+ * Update keys that address or date the write, or mark it for editorial checks
+ * (`supersedes`, sentence preservation), rather than set an entity property.
+ */
+const updateMetadataKeys = ["entity_id", "effective_date", "supersedes"];
+
+/**
  * The story date from which a chapter-authored write takes effect. Reader order
  * (the chapter file) decides whether the write is revealed at all; this date only
  * places it in story time. Non-event updates may backdate it with `effective_date`
@@ -1346,7 +1352,7 @@ function assertTemporalWrites(chapters: NarrativeRecord[]): void {
       addWrites(
         update,
         { date: updateEffectiveDate(update, chapter), sourceChapter },
-        ["entity_id", "effective_date"],
+        updateMetadataKeys,
       );
     }
   }
@@ -2580,7 +2586,7 @@ function projectRevealedEntities(
         update,
         { date: factDate, sourceChapter },
         latestMoments,
-        ["entity_id", "effective_date"],
+        updateMetadataKeys,
         softCeiling,
       );
       if (target.entity_type === "location") {
@@ -3213,7 +3219,7 @@ export function collectNarrativeActivity(
       );
       const entity = byId.get(id);
       if (!entity) continue;
-      applySourceRecord(entity, update, ["entity_id", "effective_date"]);
+      applySourceRecord(entity, update, updateMetadataKeys);
       if (entity.entity_type === "event") {
         eventIds.add(id);
         add(

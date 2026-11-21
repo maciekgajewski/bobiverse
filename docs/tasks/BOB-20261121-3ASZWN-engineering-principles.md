@@ -1,6 +1,6 @@
 # BOB-20261121-3ASZWN: engineering principles (how we build)
 
-Status: In progress
+Status: Done
 Phase: process (contributor and agent docs)
 Last updated: 2026-11-21
 
@@ -76,3 +76,6 @@ git diff --check
   `bob-20261121-engineering-principles` in the
   `~/src/bobiverse-engprinciples` worktree. Docs only.
 - Marked BOB-20261120-RQSMDX Done in a separate commit.
+- Approved by the manager at `02b30a3` and landed on master with the no-ff
+  merge `dfc87c4` ("Merge engineering principles doc"). Done. Landed as
+  `dfc87c4`.

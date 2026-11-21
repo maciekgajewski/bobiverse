@@ -230,6 +230,10 @@ the identical listing below documents its shared definitions.
       "properties": {
         "entity_id": { "$ref": "#/$defs/character_id" },
         "effective_date": { "$ref": "#/$defs/date" },
+        "supersedes": {
+          "const": true,
+          "description": "Only on a back-dated update (effective_date earlier than the chapter date) whose current_state replaces, rather than keeps, the sentences of an earlier-read state of the same date. Checked by narrative:validate; never affects projection."
+        },
         "name": { "type": "string", "minLength": 1 },
         "gender": { "type": ["string", "null"], "minLength": 1 },
         "species_id": {
@@ -360,6 +364,10 @@ the identical listing below documents its shared definitions.
       "properties": {
         "entity_id": { "$ref": "#/$defs/organization_id" },
         "effective_date": { "$ref": "#/$defs/date" },
+        "supersedes": {
+          "const": true,
+          "description": "Only on a back-dated update (effective_date earlier than the chapter date) whose current_state replaces, rather than keeps, the sentences of an earlier-read state of the same date. Checked by narrative:validate; never affects projection."
+        },
         "name": { "type": "string", "minLength": 1 },
         "description": {
           "anyOf": [{ "$ref": "#/$defs/description" }, { "type": "null" }]
@@ -392,6 +400,10 @@ the identical listing below documents its shared definitions.
       "properties": {
         "entity_id": { "$ref": "#/$defs/vessel_id" },
         "effective_date": { "$ref": "#/$defs/date" },
+        "supersedes": {
+          "const": true,
+          "description": "Only on a back-dated update (effective_date earlier than the chapter date) whose current_state replaces, rather than keeps, the sentences of an earlier-read state of the same date. Checked by narrative:validate; never affects projection."
+        },
         "name": { "type": "string", "minLength": 1 },
         "description": {
           "anyOf": [{ "$ref": "#/$defs/description" }, { "type": "null" }]
@@ -1557,6 +1569,12 @@ update object has `entity_id` plus one or more ordinary properties of that entit
   the chapter that introduced the entity: entities show from their earliest known
   story date (`design-principles.md` rule (a)). An update must still supply at
   least one ordinary property.
+- A character, organization or vessel update with an `effective_date` earlier than
+  the chapter's `date` may carry `"supersedes": true`. Like `effective_date`, it is
+  not an entity property and never affects projection: it tells the
+  sentence-preservation check in `narrative:validate` that the update's
+  `current_state` replaces, rather than keeps, an earlier-read state of the same
+  date. The check rejects it on any other update.
 - An omitted property is unchanged.
 - A supplied scalar or object replaces its prior value.
 - A supplied list replaces the complete prior list.
