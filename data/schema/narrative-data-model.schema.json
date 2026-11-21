@@ -209,6 +209,10 @@
       "properties": {
         "entity_id": { "$ref": "#/$defs/character_id" },
         "effective_date": { "$ref": "#/$defs/date" },
+        "supersedes": {
+          "const": true,
+          "description": "Only on a back-dated update (effective_date earlier than the chapter date) whose current_state replaces, rather than keeps, the sentences of an earlier-read state of the same date. Checked by narrative:validate; never affects projection."
+        },
         "name": { "type": "string", "minLength": 1 },
         "gender": { "type": ["string", "null"], "minLength": 1 },
         "species_id": {
@@ -339,6 +343,10 @@
       "properties": {
         "entity_id": { "$ref": "#/$defs/organization_id" },
         "effective_date": { "$ref": "#/$defs/date" },
+        "supersedes": {
+          "const": true,
+          "description": "Only on a back-dated update (effective_date earlier than the chapter date) whose current_state replaces, rather than keeps, the sentences of an earlier-read state of the same date. Checked by narrative:validate; never affects projection."
+        },
         "name": { "type": "string", "minLength": 1 },
         "description": {
           "anyOf": [{ "$ref": "#/$defs/description" }, { "type": "null" }]
@@ -371,6 +379,10 @@
       "properties": {
         "entity_id": { "$ref": "#/$defs/vessel_id" },
         "effective_date": { "$ref": "#/$defs/date" },
+        "supersedes": {
+          "const": true,
+          "description": "Only on a back-dated update (effective_date earlier than the chapter date) whose current_state replaces, rather than keeps, the sentences of an earlier-read state of the same date. Checked by narrative:validate; never affects projection."
+        },
         "name": { "type": "string", "minLength": 1 },
         "description": {
           "anyOf": [{ "$ref": "#/$defs/description" }, { "type": "null" }]

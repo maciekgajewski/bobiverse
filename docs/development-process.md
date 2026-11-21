@@ -87,7 +87,9 @@ the Captain's approval of each chapter with its date and time, and the relay pat
 relayed. The independent review checks that the data is exactly the approved
 candidate, that the PR stays within the path allowlist, and that the required
 safety nets in [`chapter-extraction.md`](chapter-extraction.md) pass: the generic
-validators and the merged-text sentence-preservation check. A chapter that needs
+validators and the merged-text sentence-preservation check (a back-dated update that
+replaces the earlier state of its moment says so with `"supersedes": true`, not an
+exception row). A chapter that needs
 code or content-specific UI goes to the developer as a separate task.
 
 ## Merge gate checklist

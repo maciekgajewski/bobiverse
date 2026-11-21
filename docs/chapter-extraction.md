@@ -438,7 +438,8 @@ appending a sentence per chapter.
   "HEAVEN vessels" instead.
 - The review package includes a dropped-sentence table for every condensed write:
   dropped fact, reason, and where it lives (or the flag).
-- A condensed write that drops sentences of the earlier visible value needs one entry
+- A condensed `description` or `visual_description` write that drops sentences of
+  the earlier visible value needs one entry
   for that chapter, entity, and field in
   `data/narrative/sentence-preservation-exceptions.json`, with a reason citing
   "Maciej 2026-11-14 22:54, delegated condensation".
@@ -737,9 +738,13 @@ git diff --check
 These generic validators are required safety nets for every chapter, as is the
 merged-text sentence-preservation check: when a chapter writes a merged text for a
 field, the write keeps every sentence of the earlier canonical value that is visible
-for that field. For `state` and `current_state`, that earlier value is the latest-read
-write with an equal or overlapping story date (`effective_date ?? chapter date`); a
-state write whose date neither equals nor overlaps any earlier write's date is its
-own snapshot and is not checked. That check runs in `narrative:validate`. A reviewed exception in
-`data/narrative/sentence-preservation-exceptions.json` can excuse one write; a
-condensed description write (§Descriptions) is excused this way.
+for that field. `state` and `current_state` are checked only for a back-dated update
+(`effective_date` earlier than the chapter date): it keeps every sentence of the
+latest-read write with an equal or overlapping story date. A state write dated at its
+chapter is the newer state and replaces a same-date one, as the soft ceiling does when
+dates tie. When a back-dated update deliberately replaces the earlier state of its
+moment, add `"supersedes": true` to that update; the check fails a marker on an update
+that is not back-dated or drops no sentence, and the marker never excuses
+`description` or `visual_description`. That check runs in `narrative:validate`. A
+reviewed exception in `data/narrative/sentence-preservation-exceptions.json` can
+excuse one write; a condensed description write (§Descriptions) is excused this way.

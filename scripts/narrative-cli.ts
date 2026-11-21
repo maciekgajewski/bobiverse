@@ -30,7 +30,9 @@ import { iconSvgViolation } from "../src/narrative/icon-svg";
 import {
   applySentencePreservationExceptions,
   findSentencePreservationViolations,
+  findUnusedSupersedesMarkers,
   formatSentencePreservationViolation,
+  formatUnusedSupersedesMarker,
   parseSentencePreservationExceptions,
   sentencePreservationExceptionsPath,
   type SentencePreservationException,
@@ -321,24 +323,37 @@ async function sentencePreservationErrors(
       ];
     }
   }
+  const options = {
+    displayText: inlineLinkDisplayTextResolver(loaded.corpus),
+  };
   const { unexcused, unused } = applySentencePreservationExceptions(
-    findSentencePreservationViolations(loaded.corpus.chapters, {
-      displayText: inlineLinkDisplayTextResolver(loaded.corpus),
-    }),
+    findSentencePreservationViolations(loaded.corpus.chapters, options),
     exceptions,
   );
-  const errors = unexcused.map((violation) => {
-    const chapter = loaded.sources.find(
+  const chapterSource = (reference: string) =>
+    loaded.sources.find(
       (candidate) =>
         candidate.definition === "chapter_source" &&
-        candidate.value.chapter === violation.chapter,
+        candidate.value.chapter === reference,
     )!;
-    return errorAt(
-      chapter,
-      violation.pointer,
-      formatSentencePreservationViolation(violation),
-    ).message;
-  });
+  const errors = [
+    ...unexcused.map(
+      (violation) =>
+        errorAt(
+          chapterSource(violation.chapter),
+          violation.pointer,
+          formatSentencePreservationViolation(violation),
+        ).message,
+    ),
+    ...findUnusedSupersedesMarkers(loaded.corpus.chapters, options).map(
+      (marker) =>
+        errorAt(
+          chapterSource(marker.chapter),
+          marker.pointer,
+          formatUnusedSupersedesMarker(marker),
+        ).message,
+    ),
+  ];
   if (ownsFile && source) {
     for (const entry of unused) {
       const index = exceptions.indexOf(entry);

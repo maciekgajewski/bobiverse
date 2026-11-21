@@ -26,12 +26,6 @@
       "reason": "pre-existing, predates check; then Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
     },
     {
-      "chapter": "1.13",
-      "entity_id": "character:bob-replicant",
-      "field": "current_state",
-      "reason": "pre-existing, predates check"
-    },
-    {
       "chapter": "1.14",
       "entity_id": "technology:suddar",
       "field": "description",
@@ -50,12 +44,6 @@
       "reason": "pre-existing, predates check"
     },
     {
-      "chapter": "1.16",
-      "entity_id": "character:bob-replicant",
-      "field": "current_state",
-      "reason": "pre-existing, predates check"
-    },
-    {
       "chapter": "1.17",
       "entity_id": "technology:replicant-matrix",
       "field": "description",
@@ -66,18 +54,6 @@
       "entity_id": "technology:vr",
       "field": "description",
       "reason": "pre-existing, predates check; then Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
-    },
-    {
-      "chapter": "1.26",
-      "entity_id": "character:riker",
-      "field": "current_state",
-      "reason": "pre-existing, predates check"
-    },
-    {
-      "chapter": "1.26",
-      "entity_id": "character:homer",
-      "field": "current_state",
-      "reason": "pre-existing, predates check"
     },
     {
       "chapter": "1.27",
@@ -108,12 +84,6 @@
       "entity_id": "location:delta-eridani-4",
       "field": "description",
       "reason": "pre-existing, predates check; then Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
-    },
-    {
-      "chapter": "1.30",
-      "entity_id": "character:bob-replicant",
-      "field": "current_state",
-      "reason": "pre-existing, predates check"
     },
     {
       "chapter": "1.37",
@@ -184,24 +154,6 @@
     {
       "chapter": "1.51",
       "entity_id": "character:milo",
-      "field": "current_state",
-      "reason": "pre-existing, predates check"
-    },
-    {
-      "chapter": "1.53",
-      "entity_id": "character:bob-replicant",
-      "field": "current_state",
-      "reason": "pre-existing, predates check; then Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
-    },
-    {
-      "chapter": "1.53",
-      "entity_id": "character:marvin",
-      "field": "current_state",
-      "reason": "pre-existing, predates check; then Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
-    },
-    {
-      "chapter": "1.53",
-      "entity_id": "character:archimedes",
       "field": "current_state",
       "reason": "pre-existing, predates check"
     },
@@ -386,12 +338,6 @@
       "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
     },
     {
-      "chapter": "1.26",
-      "entity_id": "location:earth",
-      "field": "state",
-      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
-    },
-    {
       "chapter": "1.42",
       "entity_id": "location:ee-2",
       "field": "description",
@@ -453,38 +399,8 @@
     },
     {
       "chapter": "2.2",
-      "entity_id": "location:vulcan",
-      "field": "state",
-      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
-    },
-    {
-      "chapter": "2.2",
       "entity_id": "character:george-butterworth",
       "field": "description",
-      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
-    },
-    {
-      "chapter": "2.2",
-      "entity_id": "character:george-butterworth",
-      "field": "current_state",
-      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
-    },
-    {
-      "chapter": "2.2",
-      "entity_id": "character:howard",
-      "field": "current_state",
-      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
-    },
-    {
-      "chapter": "2.2",
-      "entity_id": "vessel:exodus-1",
-      "field": "current_state",
-      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
-    },
-    {
-      "chapter": "2.2",
-      "entity_id": "vessel:exodus-2",
-      "field": "current_state",
       "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
     },
     {

@@ -68,6 +68,10 @@ sealed-ledger SHA-256, read `references/reconciliation-exceptions.md` and
 reconcile under contract §Pass 2 reconciliation and §Reading order and story dates.
 Write every description update as a condensed summary under contract §Descriptions
 (length guideline, dropped-sentence table, sentence-preservation exception).
+A back-dated update (`effective_date` earlier than the chapter date) keeps the
+sentences of the earlier-read state of the same date; when it deliberately replaces
+that state, add `"supersedes": true` to the update instead of an exception row, and
+only then (contract §Post-write validation).
 Model a single-star system as one `star_system` location under contract §Star
 systems: do not create a separate star entity; planets and belts take
 `parent_relation` `orbits` on the system directly. Sol is a permanent, valid
