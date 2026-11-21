@@ -200,9 +200,12 @@ The code and data do not yet follow this constitution in these places.
    link) in chapter view and "As of Y" in Date view, and the select is labelled
    "As of".
 9. **Sentence-preservation check** (`src/narrative/sentence-preservation.ts`).
-   Done in BOB-20261116-E87SYK: `state` and `current_state` use `same-date`, so a
-   write is checked only against the latest-read earlier write of an equal or
-   overlapping date. `description` and `visual_description` stay `always`.
+   Done in BOB-20261121-3KH6B2: `state` and `current_state` use `back-dated`. A
+   write dated at its chapter replaces an earlier-read state of the same date, as
+   the soft ceiling does when dates tie, and is not checked. A back-dated write
+   (`effective_date` earlier than the chapter date) keeps every sentence of the
+   latest-read earlier write of an equal or overlapping date, or its update says
+   `"supersedes": true`. `description` and `visual_description` stay `always`.
 10. **Schema text** (`data/schema/narrative-data-model.schema.json`, mirrored in
     `docs/data-model-definition.md`). Done in BOB-20261116-E87SYK: state is described
     as the condition as of the write's effective date.
