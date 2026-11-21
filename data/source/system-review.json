@@ -427,6 +427,12 @@
       "candidate_system_id": "stellar-system-003124",
       "name": "36 Ophiuchi",
       "alternates": []
+    },
+    {
+      "candidate_system_id": "stellar-system-000258",
+      "name": "GJ 54",
+      "alternates": ["CNS5 326", "HIP 5496", "Gliese 54"],
+      "reason": "Reviewed alias authorized by the Captain on 2026-11-21 (relayed by the manager): the chapter 2.13 name Gliese 54 maps to GJ 54. Wikipedia identifies Gliese 54 as GJ 54 = HIP 5496 = LHS 1208 (https://en.wikipedia.org/wiki/Gliese_54)."
     }
   ],
   "component_overrides": [
