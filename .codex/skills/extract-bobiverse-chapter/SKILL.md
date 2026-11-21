@@ -92,3 +92,9 @@ package, including, for this adapter:
 - the actual configuration each spawned agent reported, when available.
 
 Write canonical JSON only under contract §Approval, promotion, and provenance.
+
+For a set of candidates ready for review, build the review branch and run the
+repository checks plus per-chapter preflights with
+`scripts/extraction_check.py` (contract §Final candidate-set check), instead of
+assembling that branch by hand. Read `summary.txt`. The command does not write
+canonical data and does not replace `scripts/chapter_promotion.py`.
