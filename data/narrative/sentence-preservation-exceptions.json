@@ -1,5 +1,5 @@
 {
-  "about": "Reviewed opt-outs from the merged-text sentence-preservation check (narrative:validate). One entry excuses one chapter's write to one field of one entity. Every new entry needs a specific reason, such as a real state change; remove an entry once its write keeps the earlier sentences.",
+  "about": "Reviewed opt-outs from the merged-text sentence-preservation check (narrative:validate). One entry excuses one chapter's write to one field of one entity. Only description and visual_description writes can be excused (state has the supersedes marker instead). Every new entry needs a specific reason; remove an entry once its write keeps the earlier sentences.",
   "exceptions": [
     {
       "chapter": "1.6",

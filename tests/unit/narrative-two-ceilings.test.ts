@@ -116,7 +116,7 @@ function corpus() {
     // Other soft-ceiling properties: a death and a colony written in 2190-02.
     chapter("1.7", "2190-02", {
       updates: [
-        { entity_id: alex, death_date: "2190-01" },
+        { entity_id: alex, death_date: "2190-02" },
         { entity_id: mars, colony_of: [human] },
       ],
     }),
@@ -210,7 +210,7 @@ describe("two-ceiling narrative projection", () => {
     // Read, but dated after the soft ceiling: the same as unread for state.
     expect(find(at("1.7", "2185"), alex)).not.toHaveProperty("death_date");
     const after = at("1.7", "2190-02");
-    expect(find(after, alex)?.death_date).toBe("2190-01");
+    expect(find(after, alex)?.death_date).toBe("2190-02");
     expect(find(after, mars)?.colony_of).toEqual([human]);
     expect(softCeilingProperties.has("death_date")).toBe(true);
     expect(softCeilingProperties.has("colony_of")).toBe(true);

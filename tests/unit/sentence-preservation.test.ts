@@ -613,6 +613,19 @@ describe("sentence-preservation exceptions", () => {
       {
         exceptions: [
           {
+            chapter: "1.2",
+            entity_id: "character:a",
+            field: "current_state",
+            reason: "r",
+          },
+        ],
+      },
+      "field must be one of description, visual_description",
+    ],
+    [
+      {
+        exceptions: [
+          {
             chapter: "2",
             entity_id: "character:a",
             field: "state",
@@ -628,13 +641,13 @@ describe("sentence-preservation exceptions", () => {
           {
             chapter: "1.2",
             entity_id: "character:a",
-            field: "state",
+            field: "description",
             reason: "r",
           },
           {
             chapter: "1.2",
             entity_id: "character:a",
-            field: "state",
+            field: "description",
             reason: "s",
           },
         ],

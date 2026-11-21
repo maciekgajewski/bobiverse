@@ -1874,7 +1874,12 @@ replaces the complete previous list. A
 character introduction or update must not use a reference until its target entity has
 been seeded or introduced. When both `death_date` and the referenced event's own
 `date` are present, their canonical values must be identical. No ordering comparison is
-imposed between `birth_date` and `death_date`.
+imposed between `birth_date` and `death_date`. A write that sets `death_date` must be
+dated no later than its death period: its date (an update's `effective_date ?? chapter
+date`, an introduction's chapter date) must be known at a soft ceiling equal to the
+`death_date` (`isKnownAtCeiling`, comparing calendar ranges), or the character would
+show alive between the death and the write. Back-date such an update with
+`effective_date`.
 
 `birth_chapter` is allowed only on chapter-authored characters. It names the current
 or an earlier canonical chapter whose structured facts explicitly place the birth or
@@ -2039,6 +2044,7 @@ layer. It rejects at least:
 - invalid update `null` use, invalid list replacement values, or invalid references;
 - an invalid character ID, name, aliases list, or typed species, asset, or death-event
   reference; a character death date that conflicts with its referenced event date;
+  a write that sets `death_date` dated after its death period;
 - an invalid species ID, name, description, picture, or homeworld reference, including
   a homeworld that is transit or has not been seeded or introduced;
 - an invalid technology, organization, or vessel ID; a cross-type ID; an empty

@@ -334,7 +334,7 @@ describe("backdated updates and chapter-view latest known state", () => {
           "1.4": [
             {
               entity_id: alex,
-              death_date: "2165-09",
+              current_state: "lost",
               effective_date: "2174-01",
             },
           ],

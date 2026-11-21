@@ -747,4 +747,8 @@ moment, add `"supersedes": true` to that update; the check fails a marker on an 
 that is not back-dated or drops no sentence, and the marker never excuses
 `description` or `visual_description`. That check runs in `narrative:validate`. A
 reviewed exception in `data/narrative/sentence-preservation-exceptions.json` can
-excuse one write; a condensed description write (§Descriptions) is excused this way.
+excuse one `description` or `visual_description` write (never `state` or
+`current_state`, which have only the marker); a condensed description write
+(§Descriptions) is excused this way. `narrative:validate` also rejects a write that
+sets `death_date` dated after its death period: date the update no later than the
+death with `effective_date`.

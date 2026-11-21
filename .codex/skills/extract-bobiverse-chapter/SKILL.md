@@ -71,7 +71,9 @@ Write every description update as a condensed summary under contract §Descripti
 A back-dated update (`effective_date` earlier than the chapter date) keeps the
 sentences of the earlier-read state of the same date; when it deliberately replaces
 that state, add `"supersedes": true` to the update instead of an exception row, and
-only then (contract §Post-write validation).
+only then (contract §Post-write validation); exception rows cover only `description`
+and `visual_description`. An update that sets `death_date` must be dated no later
+than the death: give it `"effective_date"` no later than the `death_date`.
 Model a single-star system as one `star_system` location under contract §Star
 systems: do not create a separate star entity; planets and belts take
 `parent_relation` `orbits` on the system directly. Sol is a permanent, valid
