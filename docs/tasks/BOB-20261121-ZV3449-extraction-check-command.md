@@ -104,3 +104,9 @@ artifact changes.
   `bob-20261121-extraction-check` in the `~/src/bobiverse-extcheck`
   worktree.
 - Marked BOB-20261121-5A8W76 Done in a separate commit.
+- Proof run on the Extractor's 2.11–2.20 candidates against `607b55d`:
+  logs in `~/extraction-checks/book2-2.11-2.20-20261121T153430Z`. The
+  exceptions file still has 15 `state`/`current_state` rows, which the
+  field-narrowing rule now rejects. A first pass also treated the
+  `node_modules` worktree symlink as dirt; that false positive is fixed
+  by a worktree-local exclude.

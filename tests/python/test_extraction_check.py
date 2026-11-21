@@ -168,6 +168,8 @@ class BranchBuildTest(unittest.TestCase):
             )
             self.assertEqual(result.exceptions_sha256, extcheck.sha256_bytes(exceptions_bytes))
             self.assertTrue((worktree / "node_modules").is_symlink())
+            status = git(worktree, "status", "--porcelain", "--untracked-files=all").stdout
+            self.assertEqual(status.strip(), "")
             self.assertNotEqual(result.head, result.base)
             committed = git(worktree, "show", "HEAD:data/narrative/chapters/2/11.json").stdout.encode()
             self.assertEqual(committed, payload)

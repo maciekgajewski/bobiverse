@@ -227,9 +227,19 @@ def run_git(repo: Path, args: list[str], *, check: bool = True) -> subprocess.Co
     return result
 
 
+TOOLING_STATUS_NAMES = frozenset({"node_modules", "node_modules/", ".venv", ".venv/"})
+
+
 def worktree_changes(worktree: Path) -> str:
-    result = run_git(worktree, ["status", "--porcelain"], check=True)
-    return result.stdout
+    """Return status lines that count as a leftover git diff after data:generate."""
+    result = run_git(worktree, ["status", "--porcelain", "--untracked-files=all"], check=True)
+    kept: list[str] = []
+    for line in result.stdout.splitlines():
+        path = line[3:] if len(line) >= 3 else line
+        if path.rstrip("/") in {"node_modules", ".venv"} or path in TOOLING_STATUS_NAMES:
+            continue
+        kept.append(line)
+    return "\n".join(kept) + ("\n" if kept else "")
 
 
 def symlink_tooling(worktree: Path, tooling_root: Path) -> None:
@@ -241,6 +251,25 @@ def symlink_tooling(worktree: Path, tooling_root: Path) -> None:
         if link.exists() or link.is_symlink():
             continue
         link.symlink_to(target)
+    ignore_tooling_links(worktree)
+
+
+def ignore_tooling_links(worktree: Path) -> None:
+    """Ignore the node_modules and .venv symlinks in this worktree only.
+
+    The repository gitignore uses 'node_modules/', which does not match a
+    symlink, and preflight item 5 treats any porcelain entry as a dirty tree.
+    """
+    raw = run_git(worktree, ["rev-parse", "--git-path", "info/exclude"]).stdout.strip()
+    exclude = Path(raw) if Path(raw).is_absolute() else worktree / raw
+    exclude.parent.mkdir(parents=True, exist_ok=True)
+    existing = exclude.read_text(encoding="utf-8") if exclude.exists() else ""
+    lines = existing.splitlines()
+    additions = [name for name in ("node_modules", ".venv") if name not in lines]
+    if not additions:
+        return
+    prefix = "" if not existing or existing.endswith("\n") else "\n"
+    exclude.write_text(existing + prefix + "\n".join(additions) + "\n", encoding="utf-8")
 
 
 def create_worktree(repo: Path, worktree: Path, branch: str, base: str) -> None:
