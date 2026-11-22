@@ -14,8 +14,17 @@
       "kind": "character",
       "name": "Axler",
       "aliases": [],
-      "mentions": ["2.11"],
+      "mentions": ["2.11", "2.19"],
       "note": "Seeded from Maciej's 2.11-2.20 review (ADR-0032 Decided 3).",
+      "promotion": null
+    },
+    {
+      "id": "candidate:battle-of-sol",
+      "kind": "event",
+      "name": "Battle of Sol",
+      "aliases": [],
+      "mentions": ["2.19"],
+      "note": "2.19: past battle named in passing; no entity exists.",
       "promotion": null
     },
     {
@@ -28,12 +37,75 @@
       "promotion": null
     },
     {
+      "id": "candidate:fence-construction-group",
+      "kind": "organization",
+      "name": "Fence Construction group",
+      "aliases": [],
+      "mentions": ["2.16"],
+      "note": "2.16: Landing colony work group named once in passing; below the modelling threshold.",
+      "promotion": null
+    },
+    {
+      "id": "candidate:florianopolis",
+      "kind": "location",
+      "name": "Florianópolis",
+      "aliases": [],
+      "mentions": ["2.18"],
+      "note": "2.18: Brazilian city named in passing; attack city only implied (claim 021). Earlier: plain text in the 2.7 data (bombings), so first_mentioned should be 2.7 if promoted.",
+      "promotion": null
+    },
+    {
+      "id": "candidate:groggery",
+      "kind": "location",
+      "name": "Groggery",
+      "aliases": [],
+      "mentions": ["2.16"],
+      "note": "2.16: a named drinking spot, placed in Landing per chapter context (not stated); incidental place below location granularity (claim 023).",
+      "promotion": null
+    },
+    {
       "id": "candidate:maldives",
       "kind": "location",
       "name": "Maldives",
       "aliases": [],
-      "mentions": ["2.14"],
-      "note": "Seeded from Maciej's 2.11-2.20 review (ADR-0032 Decided 3).",
+      "mentions": ["2.14", "2.18"],
+      "note": "Seeded from Maciej's 2.11-2.20 review (ADR-0032 Decided 3). Earlier: plain text in the 2.7 data, so first_mentioned should be 2.7 if promoted.",
+      "promotion": null
+    },
+    {
+      "id": "candidate:new-zealand",
+      "kind": "location",
+      "name": "New Zealand",
+      "aliases": [],
+      "mentions": ["2.18"],
+      "note": "2.18: delegate affiliation only; no entity exists. Earlier: plain text in the 1.41 and 1.49 data, so first_mentioned should be 1.41 if promoted.",
+      "promotion": null
+    },
+    {
+      "id": "candidate:philip",
+      "kind": "character",
+      "name": "Philip",
+      "aliases": [],
+      "mentions": ["2.20"],
+      "note": "2.20: named once in a question (surname unknown); borderline, not modelled (claims 031/036).",
+      "promotion": null
+    },
+    {
+      "id": "candidate:pi3-orionis",
+      "kind": "location",
+      "name": "Pi(3) Orionis",
+      "aliases": [],
+      "mentions": ["2.15"],
+      "note": "2.15: one of the ten systems on the SCUT connection list; bare list entry, no role (claim 016).",
+      "promotion": null
+    },
+    {
+      "id": "candidate:tau-ceti",
+      "kind": "location",
+      "name": "Tau Ceti",
+      "aliases": [],
+      "mentions": ["2.15"],
+      "note": "2.15 S-list: one of the ten systems on Mario's SCUT connection list; bare list entry, no role (claim 016).",
       "promotion": null
     }
   ]

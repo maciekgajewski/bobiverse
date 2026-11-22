@@ -1,0 +1,54 @@
+{
+  "chapter": "2.14",
+  "title": "14 - Sabotage",
+  "summary": "[[character:riker]] reviews the latest strike by [[organization:vehement]], its third act of terrorism on [[location:earth]] that month and the first to kill: fifty cattle, half of a Maldives herd, poisoned through their feed. Privately he counts it an act of war. [[character:sharma]], the Maldives' [[organization:united-nations|UN]] representative, condemns the attack and will move to set up a UN task force, ending the policy of ignoring the group. The loss is damaging rather than life-threatening, but food is ever more critical, over half of the remaining enclaves rely on subsidies from the Bobs' orbital [[technology:kudzu-gardens|farms]], and the Maldives will need short-term help. Riker reads VEHEMENT's manifesto, which calls on humanity to bow out so the universe can recover and promises to help it along, and forwards it to the other Bobs. [[character:homer]] admits he has quietly built a small surplus by under-reporting farm production, enough to cover the lost calories, but Riker expects the attacks to get worse.",
+  "date": "2170-12",
+  "location_id": "location:sol",
+  "introducing": [
+    {
+      "id": "character:sharma",
+      "name": "Ms. Sharma",
+      "description": "The [[organization:united-nations|UN]] representative for the Maldives, a surviving community on [[location:earth]] that is still nominally self-supporting for food.",
+      "current_state": "After VEHEMENT poisons half of a Maldives cattle herd, she plans to move at the next day's UN meeting to set up a task force against the group."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:riker",
+      "current_state": "At [[location:sol]], he privately treats [[organization:vehement]]'s escalating sabotage as an act of war and expects it to get worse; after it poisons a Maldives cattle herd, he and [[character:homer]] rework schedules to replace the lost calories."
+    },
+    {
+      "entity_id": "character:homer",
+      "current_state": "Running the space-farm program, he has quietly under-reported production to build a small surplus, which he can now reveal to replace the calories lost when [[organization:vehement]] poisoned a Maldives cattle herd."
+    },
+    {
+      "entity_id": "organization:vehement",
+      "description": "VEHEMENT, whose name stands for Voluntary Extinction of Human Existence Means Earth's Natural Transformation, is an anonymous movement that advocates human extinction. It threatens violence and guerrilla tactics to stop people reproducing and attacks food production and supply, at first mostly as token gestures. Its manifesto says humanity has ruined the solar system and should bow out so the universe can recover, and that VEHEMENT will help it do so.",
+      "current_state": "Escalating from a nuisance to a full-blown threat, it has made three terror attacks on [[location:earth]] this month, the latest poisoning half of a Maldives cattle herd, its first attack to kill."
+    },
+    {
+      "entity_id": "organization:united-nations",
+      "current_state": "Its bickering delegates are united in contempt for [[organization:vehement]], and the Maldives' representative, [[character:sharma]], will move at the next day's meeting to set up a task force against the group."
+    },
+    {
+      "entity_id": "location:earth",
+      "state": "As its climate deteriorates, food supply grows ever more critical: over half of the thirty-five remaining enclaves depend at least partly on food subsidies from the Bobs' orbital [[technology:kudzu-gardens|farms]]."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:riker",
+      "role": "lead",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:sharma",
+      "role": "other"
+    },
+    {
+      "character_id": "character:homer",
+      "role": "other"
+    }
+  ],
+  "mentions": ["technology:kudzu-gardens"]
+}

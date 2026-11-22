@@ -1,0 +1,41 @@
+{
+  "chapter": "2.17",
+  "title": "17 - We’ve Lost a Drone",
+  "summary": "News from [[character:bill]] leaves [[character:bob-replicant]] taking stock: [[species:human|humanity]] is down to about fifteen million people, Bill has made real-time subspace communication between Bobs possible, the two are merging their separately developed [[technology:vr|VR]] code, and Bill's [[technology:bullwinkle|android project]] is still making little headway. Now holding the official First Contact position, Bob has the local station periodically rebroadcast the [[technology:subspace-communications|SCUT]] plans along the flight paths of [[character:luke]] and [[character:bender]], who have not yet come online. [[character:marvin]] deploys newly delivered squads of [[technology:planetary-exploration-drone|exploration drones]] in a search grid over the [[species:delta-eridani-natives|Deltans]]' original territory on [[location:delta-eridani-4|Eden]], a survey he expects to take about three months. During the search one drone's video feed spins and breaks up within half a second; [[technology:guppi-interface|Guppy]] receives no telemetry, and Marvin's enhanced image of the attacker suggests a large, toothed beak or muzzle. With [[technology:suddar|SUDDAR]], Marvin finds the wreck several kilometers south of its last position: the light, unarmored drone was bitten almost in half and clawed by something airborne, and old Deltan bones carry similar bite marks. Bob wonders whether this predator drove the Deltans from their original range, making the gorilloids the smaller danger, while Marvin suggests the gorilloids may instead have chased them over the mountains to where Bob found them.",
+  "date": "2171-05",
+  "location_id": "location:delta-eridani",
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "He has joined [[organization:bobnet]] with a [[technology:subspace-communications|SCUT]] built from [[character:bill]]'s broadcast plans; Bill judges his [[technology:vr|VR]] more advanced than his own and plans to merge its features before upgrading him to full BobNet compatibility. Heavily invested in the [[species:delta-eridani-natives|Deltans]]' lives, he wants an android so he can visit [[location:delta-eridani-4|Eden]] in person. He holds the official First Contact position, and he and Bill are merging the code of their independently developed VR branches."
+    },
+    {
+      "entity_id": "character:marvin",
+      "current_state": "With [[character:bob-replicant]] at [[location:delta-eridani]], he is deploying newly delivered squads of [[technology:planetary-exploration-drone|exploration drones]] in a search grid over the [[species:delta-eridani-natives|Deltans]]' original territory on [[location:delta-eridani-4|Eden]], a survey expected to take about three months. An airborne predator big enough to eat a Deltan has destroyed one drone, and bite marks on old Deltan bones show that it once preyed on them, but he cannot yet narrow the search for it."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead"
+    },
+    {
+      "character_id": "character:marvin",
+      "role": "other"
+    }
+  ],
+  "mentions": [
+    "character:bender",
+    "character:bill",
+    "character:luke",
+    "location:delta-eridani-4",
+    "species:delta-eridani-natives",
+    "species:human",
+    "technology:bullwinkle",
+    "technology:guppi-interface",
+    "technology:planetary-exploration-drone",
+    "technology:subspace-communications",
+    "technology:suddar",
+    "technology:vr"
+  ]
+}

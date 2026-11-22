@@ -1,0 +1,40 @@
+{
+  "chapter": "2.15",
+  "title": "15 - A Visit From Bill",
+  "summary": "At [[location:gliese-54]], [[character:mario]] intercepts plans that [[character:bill]] has radioed from [[location:epsilon-eridani]] for the [[technology:subspace-communications|SCUT]], a faster-than-light transceiver, and sets every other project aside to build one. When he switches it on, connections from ten systems confirm almost at once; he registers on the Bobs' global directory and calls Bill, who joins him in VR across twenty-three light-years. Mario hands over his evidence that the [[species:others|Others]] have destroyed whole planets and an intelligent species. Shaken, Bill promises weapons-related files, priority for anything that can be weaponized and an alert to every Bob on the directory, but warns that physical help would take decades to arrive. He adds that Bob has already made a friendlier first contact and that he has humans of his own to worry about. Mario tells him about the four Bobs he has built, [[character:bashful]], [[character:dopey]], [[character:sleepy]] and [[character:hungry]], and afterwards delays his next cohort to give it SCUTs and a version-3 upgrade, so it can intercept his first cohort's reports and relay them years sooner.",
+  "date": "2180-11",
+  "location_id": "location:gliese-54",
+  "updates": [
+    {
+      "entity_id": "character:mario",
+      "current_state": "At [[location:gliese-54]], he has built a [[technology:subspace-communications|SCUT]] from [[character:bill]]'s broadcast plans and briefed Bill directly on the [[species:others|Others]]. He is delaying his next cohort of Bobs to give them SCUTs and a version-3 upgrade, so they can intercept his first cohort's reports and relay them to him."
+    },
+    {
+      "entity_id": "character:bill",
+      "current_state": "At [[location:epsilon-eridani]], he has radioed [[technology:subspace-communications|SCUT]] plans to the surrounding stars and talks with distant Bobs through the global directory. After [[character:mario]] shows him evidence of the [[species:others|Others]]' destruction, he promises weapons-related files and research and will alert every Bob, though physical help is decades away."
+    },
+    {
+      "entity_id": "technology:subspace-communications",
+      "description": "SCUT, the Subspace Communications Universal Transceiver, carries signals instantaneously through subspace across interstellar distances, using the same object and [[technology:vr]] interfaces as earlier tests and handling its own discovery, routing and encryption. Those tests predicted dropouts at about twenty-five light-years, so longer links must be relayed; its console offers a global directory for email, instant messaging and chat. No unit is yet small enough to fit inside [[character:bill]]'s moose-sized android prototype, and its bandwidth is too unreliable for dependable backups."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:mario",
+      "role": "lead",
+      "location_id": "location:gliese-54"
+    },
+    {
+      "character_id": "character:bill",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    }
+  ],
+  "mentions": [
+    "character:bashful",
+    "character:dopey",
+    "character:hungry",
+    "character:sleepy",
+    "species:others"
+  ]
+}
