@@ -1,6 +1,6 @@
 # BOB-20261122-K5R8W9: extraction-check candidate-entities file option
 
-Status: In progress
+Status: Done
 Phase: 4 (LLM-assisted editorial pipeline)
 Last updated: 2026-11-22
 
@@ -18,6 +18,9 @@ The manager authorised this work on 2026-11-22 at 15:45 (Europe/Warsaw), as a
 small task before or alongside the 18:00 GJ 54 retry, so the Extractor's
 2.11–2.20 rerun can be checked against the candidate-entities file that will
 land.
+
+The manager approved reviewed head `fbab04c8a36ffd9fe73760dada853a1167b0a829`
+at 15:57 (Europe/Warsaw) on 2026-11-22 and gave the go to land.
 
 ## Binding references
 
@@ -102,3 +105,7 @@ None. The option is additive and default-off.
   files), `data:test` (134 tests), `data:validate`, `narrative:validate`
   (71 chapters, 4 candidates), `build`, and `git diff --check` all passed.
   No e2e (no UI change). Not landed or pushed.
+
+- The manager approved reviewed head `fbab04c8a36ffd9fe73760dada853a1167b0a829`
+  at 15:57 (Europe/Warsaw) on 2026-11-22. Status set to Done in this docs-only
+  recording commit; landing follows.
