@@ -1,7 +1,10 @@
 # ADR-0032: candidate-entity dataset for minor first mentions
 
-Status: Proposed
+Status: Accepted
 Date: 2026-11-22
+
+Accepted 2026-11-22 by Maciej ("ok, accept"), relayed by the manager, as
+proposed at f5e99ae: §2.3, rule (a) and this ADR.
 
 ## Context
 
@@ -134,8 +137,8 @@ then becomes central in 2.30 (dated 2195).
    list does not derive from the principles. The fix is at principle level: §2.3
    says an entity exists from the earliest story date of any fact about it in the
    data up to the hard ceiling, a mention included, and rule (a) becomes a corollary
-   with no list. **This edits `docs/design-principles.md`, needs Maciej's own OK,
-   and is applied on this branch only, pending that OK** (see Decision for Maciej).
+   with no list. **This edits `docs/design-principles.md`; Maciej approved it on
+   2026-11-22 ("ok, accept")** (see Decision for Maciej).
    As a consequence, supplemental mentions (ADR-0017) also count, so
    `entityEarliestDates` must consider them. §5 item 5 records that as open work.
 2. **§2.4 "the map shows the entities known".** Before promotion, a candidate read at
@@ -189,12 +192,12 @@ what the principles and source already settle.
 
 ## Decision for Maciej
 
-**Entity existence derived from the principles (S3). PENDING MACIEJ'S OK: this
-changes `docs/design-principles.md`, and the change is applied on this branch only,
-not on master.** Recommend yes. Rule (a)'s closed field list is the only part of §3
-that does not derive from the principles. The edit states existence once, in §2.3,
-and shortens rule (a) to a corollary. Without it, the entity exists only from its
-promotion chapter's date, and "first mentioned in 2.13" is just a label.
+**Entity existence derived from the principles (S3). APPROVED by Maciej on
+2026-11-22 ("ok, accept"): this changes `docs/design-principles.md`.** Recommend
+yes. Rule (a)'s closed field list is the only part of §3 that does not derive
+from the principles. The edit states existence once, in §2.3, and shortens rule
+(a) to a corollary. Without it, the entity exists only from its promotion chapter's
+date, and "first mentioned in 2.13" is just a label.
 
 Audit of §3 (each rule against the principles):
 
