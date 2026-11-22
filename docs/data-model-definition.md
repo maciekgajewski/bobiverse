@@ -950,7 +950,10 @@ the identical listing below documents its shared definitions.
         "locations": { "$ref": "#/$defs/zero_state_solar_system" },
         "entities": {
           "type": "array",
-          "items": { "$ref": "#/$defs/non_location_introduced_entity" }
+          "items": {
+            "$ref": "#/$defs/non_location_introduced_entity",
+            "properties": { "first_mentioned": false }
+          }
         }
       },
       "additionalProperties": false
@@ -1590,7 +1593,8 @@ ADR-0032). It is written when a promotion introduces an entity that was first
 recorded in the candidate-entity dataset (`data/candidates/candidate-entities.json`),
 and it equals that candidate's first mention. It names an earlier chapter in the
 corpus, strictly before the introducing chapter, and its story date is that chapter's
-header `date`, with no override. Zero-state entities and updates cannot carry it.
+header `date`, with no override. Zero-state entities (the schema rejects it there)
+and updates cannot carry it.
 Revealing stays with the introducing chapter: the entity is invisible at any
 read-through earlier than its introduction, whatever `first_mentioned` says. From the
 introduction on, the first mention is a dated fact about the entity, so a non-event

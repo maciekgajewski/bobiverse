@@ -944,7 +944,10 @@
         "locations": { "$ref": "#/$defs/zero_state_solar_system" },
         "entities": {
           "type": "array",
-          "items": { "$ref": "#/$defs/non_location_introduced_entity" }
+          "items": {
+            "$ref": "#/$defs/non_location_introduced_entity",
+            "properties": { "first_mentioned": false }
+          }
         }
       },
       "additionalProperties": false

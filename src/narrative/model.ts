@@ -1767,11 +1767,6 @@ function validateNarrativeCorpusSemantics(
         `Zero-state character ${entity.id} cannot define birth_chapter.`,
       );
     }
-    if (Object.hasOwn(entity, "first_mentioned")) {
-      throw new Error(
-        `Zero-state entity ${entity.id} cannot define first_mentioned.`,
-      );
-    }
   }
   const assets = corpus.assets.assets;
   const assetIds = new Set<string>();

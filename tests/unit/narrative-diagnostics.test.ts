@@ -78,8 +78,42 @@ describe("narrative schema diagnostics", () => {
     expect(diagnostics).toContainEqual({
       location: { line: 24, column: 32 },
       message:
-        '/entities/0/homeworld_location_id: unexpected property "homeworld_location_id"; did you mean: homeworld_id, first_mentioned, description',
+        '/entities/0/homeworld_location_id: unexpected property "homeworld_location_id"; did you mean: homeworld_id, description, picture_id',
     });
+  });
+
+  it("rejects first_mentioned on a zero-state entity (ADR-0032)", () => {
+    const document = parseJsonDocument(`{
+  "locations": {
+    "id": "location:solar-system",
+    "name": "Solar System",
+    "kind": "star_system",
+    "astronomy_object_id": "sol",
+    "children": [{
+      "id": "location:sol",
+      "name": "Sol",
+      "kind": "star",
+      "parent_relation": "member_of_system"
+    }]
+  },
+  "entities": [
+    {
+      "id": "species:fixture",
+      "name": "Fixture species",
+      "first_mentioned": "1.1"
+    }
+  ]
+}`);
+
+    const diagnostics = formatSchemaDiagnostics(
+      narrativeSchemaErrors("zero_state_source", document.value),
+      document.value,
+      document.locations,
+    );
+
+    expect(diagnostics.map((diagnostic) => diagnostic.message)).toContain(
+      "/entities/0/first_mentioned: is not allowed here",
+    );
   });
 
   it("reports invalid character parents and suggests a misspelled parent field", () => {

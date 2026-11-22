@@ -79,8 +79,7 @@ describe("first_mentioned (ADR-0032)", () => {
       ...zeroState.entities[0]!,
       first_mentioned: "1.1",
     };
-    expect(() => prepareNarrativeCorpus(base)).toThrow(
-      /cannot define first_mentioned/,
-    );
+    // The schema rejects it: first_mentioned is chapter-only.
+    expect(() => prepareNarrativeCorpus(base)).toThrow(/first_mentioned/);
   });
 });
