@@ -31,6 +31,7 @@ EXCERPT_LIMIT = 20
 LINE_CHAR_LIMIT = 300
 COMMAND_TIMEOUT_SECONDS = 1800
 EXCEPTIONS_RELATIVE = Path("data/narrative/sentence-preservation-exceptions.json")
+CANDIDATE_ENTITIES_RELATIVE = Path("data/candidates/candidate-entities.json")
 NPM_CHECKS = (
     "narrative:manifest",
     "narrative:validate",
@@ -72,6 +73,7 @@ class Candidate:
 class InstallResult:
     candidates: list[tuple[Candidate, str]]
     exceptions_sha256: str | None
+    candidate_entities_sha256: str | None
     head: str
     branch: str
     base: str
@@ -160,6 +162,14 @@ def find_approval_file(approval_dir: Path, chapter: str) -> Path:
 def resolve_existing(path: Path, kind: str) -> Path:
     if not path.exists():
         raise UsageError(f"{kind} does not exist: {path}")
+    return path.resolve()
+
+
+def resolve_existing_file(path: Path, kind: str) -> Path:
+    if not path.exists():
+        raise UsageError(f"{kind} does not exist: {path}")
+    if not path.is_file():
+        raise UsageError(f"{kind} is not a file: {path}")
     return path.resolve()
 
 
@@ -319,6 +329,7 @@ def build_review_branch(
     candidates: list[Candidate],
     exceptions_file: Path | None,
     tooling_root: Path | None = None,
+    candidate_entities_file: Path | None = None,
 ) -> InstallResult:
     create_worktree(repo, worktree, branch, base)
     symlink_tooling(worktree, tooling_root or repo)
@@ -333,6 +344,12 @@ def build_review_branch(
     if exceptions_file is not None:
         exceptions_sha = copy_bytes(exceptions_file, worktree / EXCEPTIONS_RELATIVE)
         paths.append(str(EXCEPTIONS_RELATIVE))
+    candidate_entities_sha: str | None = None
+    if candidate_entities_file is not None:
+        candidate_entities_sha = copy_bytes(
+            candidate_entities_file, worktree / CANDIDATE_ENTITIES_RELATIVE
+        )
+        paths.append(str(CANDIDATE_ENTITIES_RELATIVE))
     base_sha = run_git(worktree, ["rev-parse", "--verify", base]).stdout.strip()
     run_git(worktree, ["add", "--", *paths])
     chapters = ", ".join(candidate.chapter for candidate, _ in installed)
@@ -347,6 +364,7 @@ def build_review_branch(
     return InstallResult(
         candidates=installed,
         exceptions_sha256=exceptions_sha,
+        candidate_entities_sha256=candidate_entities_sha,
         head=head,
         branch=branch,
         base=base_sha,
@@ -493,6 +511,11 @@ def format_summary(
         lines.append(f"  {candidate.chapter} sha256={digest} -> {candidate.relative_dest}")
     if install.exceptions_sha256:
         lines.append(f"exceptions sha256={install.exceptions_sha256} -> {EXCEPTIONS_RELATIVE}")
+    if install.candidate_entities_sha256:
+        lines.append(
+            "candidate-entities sha256="
+            f"{install.candidate_entities_sha256} -> {CANDIDATE_ENTITIES_RELATIVE}"
+        )
     for step in run.steps:
         lines.append(f"{step.name} rc={step.rc}")
         if step.rc != 0:
@@ -537,6 +560,14 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("--candidates-dir", type=Path, required=True)
     parser.add_argument("--exceptions-file", type=Path)
+    parser.add_argument(
+        "--candidate-entities-file",
+        type=Path,
+        help=(
+            "candidate-entities.json to install into the review worktree "
+            "instead of the file on --base (default: leave the file from --base unchanged)"
+        ),
+    )
     parser.add_argument("--source-dir", type=Path, required=True)
     parser.add_argument("--approval-dir", type=Path, required=True)
     parser.add_argument("--base", default="origin/master")
@@ -598,6 +629,15 @@ def main(argv: list[str] | None = None) -> int:
                 repo,
                 "exceptions file",
             )
+        candidate_entities_file = None
+        if args.candidate_entities_file is not None:
+            candidate_entities_file = refuse_inside_repo(
+                resolve_existing_file(
+                    args.candidate_entities_file, "candidate-entities file"
+                ),
+                repo,
+                "candidate-entities file",
+            )
         stamp = utc_stamp()
         out = args.out or (Path.home() / "extraction-checks" / stamp)
         out = refuse_inside_repo(out, repo, "output directory")
@@ -623,6 +663,7 @@ def main(argv: list[str] | None = None) -> int:
                 candidates,
                 exceptions_file,
                 tooling_root=tooling_root,
+                candidate_entities_file=candidate_entities_file,
             )
             run = CheckRun(node=node_version(), start=utc_now())
             run.steps.extend(run_repo_checks(worktree, out, install.base))
