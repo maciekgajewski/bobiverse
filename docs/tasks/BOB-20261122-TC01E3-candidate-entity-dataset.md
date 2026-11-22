@@ -103,3 +103,17 @@ Before review, once: the three-browser Playwright suite and the CSP suite.
   canonical chapters; the validator accepts any chapter inside the book catalogue
   and checks the name rule against the entities visible at the first mention in the
   chapters that exist.
+
+## Validation results
+
+Full run on 5d2d4c7, 2026-11-22. The fast checks and the Chromium run read the tree
+of 9cd4309 plus 5d2d4c7's only change (a unit-test expectation), which the unit-test
+re-run covers.
+
+- `python3 scripts/tasks.py check`, `format:check`, `lint`, `typecheck`,
+  `data:test` (127 tests), `data:validate`, `narrative:validate` (71 chapters,
+  4 candidates), `build`, `git diff --check`: pass.
+- `npm run test`: 66 files, 856 tests passed (re-run after 5d2d4c7).
+- Playwright, one worker, no retries: Chromium 95 passed, 4 skipped; Firefox 95
+  passed, 4 skipped; WebKit 96 passed, 3 skipped.
+- CSP suite: 3 passed.
