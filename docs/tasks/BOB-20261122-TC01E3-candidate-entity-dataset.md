@@ -1,6 +1,6 @@
 # BOB-20261122-TC01E3: candidate-entity dataset
 
-Status: In progress
+Status: Done
 Phase: 2 (narrative foundation and chapter timeline)
 Last updated: 2026-11-22
 
@@ -23,6 +23,11 @@ User-visible outcome:
 The Captain (Maciej) accepted ADR-0032 and the §2.3 and rule (a) change on
 2026-11-22 ("ok, accept"), and authorised this implementation task on 2026-11-22
 11:55 (Europe/Warsaw), relayed by the manager.
+
+The Captain approved the constitution edit (`../design-principles.md` §5 item 5) on
+2026-11-22 at 14:38 CET, relayed by the manager, verbatim: "Yes, remove "Mentions do
+not count yet." from §5 item 5". The manager relayed the independent review's
+approval of c4cc54d, with the review nits fixed in b6cd459, and gave the go to land.
 
 ## Binding references
 
