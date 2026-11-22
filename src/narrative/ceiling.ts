@@ -127,10 +127,19 @@ export function chapterLatestDate(chapter: NarrativeRecord): string {
  * - an introduction by the chapter's header date, or an event's own `date`;
  * - an update by its `effective_date ?? chapter date`; an update to an event by
  *   the `date` it supplies, else the event's current date, else the chapter date;
- * - an appearance of a character by the chapter's header date.
+ * - an appearance of a character by the chapter's header date;
+ * - a supplemental mention (ADR-0017) by the mentioning chapter's header date;
+ * - an introduction's `first_mentioned` (ADR-0032) by the header date of the
+ *   chapter it names. That chapter is earlier than the introduction, so it is
+ *   already read.
  *
- * Undated facts take the revealing chapter's date (rule (c)). Mentions and
- * entity fields such as `birth_date` do not count. Zero-state (pre-book)
+ * An event exists from its own date when it has one (§2.3), so mentions and
+ * `first_mentioned` do not date events; for an event, `first_mentioned` only
+ * gives the card line (ADR-0032 S3).
+ *
+ * Mentions count because an entity exists from the earliest story date of any
+ * fact about it, a mention included (§2.3). Undated facts take the revealing
+ * chapter's date (rule (c)). Entity fields such as `birth_date` do not count. Zero-state (pre-book)
  * entities exist at every ceiling; they appear in the map only when a chapter
  * writes about them, so callers should not hide an entity that is missing from
  * the map.
@@ -162,12 +171,21 @@ export function entityEarliestDates(
     .sort((left, right) =>
       compareNarrativeChapters(chapterRef(left), chapterRef(right)),
     );
+  const headerDates = new Map(
+    revealed.map((chapter) => [chapterRef(chapter), headerDate(chapter)]),
+  );
   // An event's date as the facts read so far leave it; an update may set or clear it.
   const eventDates = new Map<string, string | null>();
   for (const chapter of revealed) {
     const date = headerDate(chapter);
     for (const introduced of records(chapter.introducing)) {
       const id = introduced.id;
+      const firstMentioned =
+        typeof introduced.first_mentioned === "string"
+          ? headerDates.get(introduced.first_mentioned)
+          : undefined;
+      if (firstMentioned !== undefined && !isEventId(id))
+        consider(id, firstMentioned);
       if (isEventId(id)) {
         const eventDate =
           typeof introduced.date === "string" ? introduced.date : null;
@@ -194,6 +212,10 @@ export function entityEarliestDates(
     }
     for (const appearance of records(chapter.appearances)) {
       consider(appearance.character_id, date);
+    }
+    if (Array.isArray(chapter.mentions)) {
+      for (const target of chapter.mentions as unknown[])
+        if (!isEventId(target)) consider(target, date);
     }
   }
   return earliest;

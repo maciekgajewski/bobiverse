@@ -56,11 +56,31 @@ const entityProperties = {
     "birth_chapter",
     "death_date",
     "death_event_id",
+    "first_mentioned",
   ]),
-  species: new Set(["id", "name", "description", "picture_id", "homeworld_id"]),
-  technology: new Set(["id", "name", "description"]),
-  organization: new Set(["id", "name", "description", "current_state"]),
-  vessel: new Set(["id", "name", "description", "current_state"]),
+  species: new Set([
+    "id",
+    "name",
+    "description",
+    "picture_id",
+    "homeworld_id",
+    "first_mentioned",
+  ]),
+  technology: new Set(["id", "name", "description", "first_mentioned"]),
+  organization: new Set([
+    "id",
+    "name",
+    "description",
+    "current_state",
+    "first_mentioned",
+  ]),
+  vessel: new Set([
+    "id",
+    "name",
+    "description",
+    "current_state",
+    "first_mentioned",
+  ]),
   event: new Set([
     "id",
     "name",
@@ -69,6 +89,7 @@ const entityProperties = {
     "date",
     "description",
     "participant_ids",
+    "first_mentioned",
   ]),
   location: new Set([
     "id",
@@ -87,6 +108,7 @@ const entityProperties = {
     "astronomy_object_id",
     "origin_location_id",
     "destination_location_id",
+    "first_mentioned",
   ]),
 } as const;
 
