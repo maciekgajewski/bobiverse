@@ -1,6 +1,6 @@
 # BOB-20261122-9QM6T9: record the 15 Nov passing-mention rule in ADR-0017
 
-Status: In progress
+Status: Done
 Phase: 4 (LLM-assisted editorial pipeline)
 Last updated: 2026-11-22
 
@@ -28,6 +28,11 @@ say it was relayed by the manager. The amendment itself is the in-repo record.
 Also apply the same minimal qualifier to the parallel sentences in
 `docs/data-model-definition.md` and `docs/technical-design.md`. No behaviour,
 code, or data changes. Do not edit `docs/design-principles.md`.
+
+The manager approved reviewed head
+`56adadd6071ae6204c4851f4d8d649ab6039a9af` at 17:49 (Europe/Warsaw) on
+2026-11-22, agreed that no constitution clause is needed, and gave the go
+to land. Do not edit `docs/design-principles.md`.
 
 ## Binding references
 
@@ -116,3 +121,8 @@ the constitution is not edited.
   already fail Prettier on origin and were not reformatted. No lint, unit
   tests, or e2e (docs-only; `scripts/tasks.py check` only verifies ADR
   filenames). Not landed or pushed.
+
+- The manager approved reviewed head
+  `56adadd6071ae6204c4851f4d8d649ab6039a9af` at 17:49 (Europe/Warsaw) on
+  2026-11-22, and agreed that no constitution clause is needed. Status set
+  to Done in this docs-only recording commit; landing follows.
