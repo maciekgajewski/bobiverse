@@ -68,10 +68,5 @@
       "role": "other"
     }
   ],
-  "mentions": [
-    "character:homer",
-    "organization:brazilian-empire",
-    "technology:mining-drones",
-    "technology:vr"
-  ]
+  "mentions": ["character:homer", "technology:mining-drones", "technology:vr"]
 }
