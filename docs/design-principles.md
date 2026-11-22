@@ -49,13 +49,15 @@ chronologically, for a different perspective on the story.
 
 ### 2.3 The soft ceiling: the world as of a point in time
 
-Chapters and entities carry the chapter that introduced them plus a chapter date
-point. The chapter selector or the date selector (currently years; arbitrary time
-points possibly later) picks a chronological point. This is the **soft ceiling**.
+Chapters carry a story date point, and so does every fact in them. The chapter
+selector or the date selector (currently years; arbitrary time points possibly
+later) picks a chronological point. This is the **soft ceiling**.
 
 The world is shown as of the soft ceiling, built from all data up to the hard
-ceiling. So going back to chapter 10 after reading chapter 27 can show facts revealed
-in chapter 27 that are dated at or before chapter 10's time.
+ceiling. An entity exists from the earliest story date of any fact about it in that
+data, a mention included; an event, from its own date when it has one. So going back
+to chapter 10 after reading chapter 27 can show facts and entities revealed in
+chapter 27 that are dated at or before chapter 10's time.
 
 ### 2.4 Map
 
@@ -81,10 +83,7 @@ knowledge up to the hard ceiling.
 These rules settle cases the principles leave open. Maciej accepted them on
 2026-11-16.
 
-- **(a) Entities show from their earliest known story date.** Once read, an entity
-  appears at every soft ceiling at or after the earliest story date of any revealed
-  fact about it: its introduction, its updates (`effective_date ?? chapter date`),
-  its appearances (the chapter's date) and, for an event, its own `date`. An entity
+- **(a) Entities show from their earliest known story date** (§2.3). An entity
   introduced later in reading but earlier in story therefore appears at the earlier
   soft ceiling.
 - **(b) No known state.** When an entity has no known state at or before the soft
@@ -178,7 +177,7 @@ The code and data do not yet follow this constitution in these places.
    BOB-20261116-E87SYK: an `effective_date` may now be earlier than the introducing
    chapter's date (ADR-0028, `docs/data-model-definition.md`). Projection done in
    BOB-20261116-TB1C66: entities appear from `entityEarliestDates`, events from
-   their current date.
+   their current date. Mentions (§2.3) do not count yet.
 6. **Undated facts.** `generateNarrativeWorld` drops undated events in Date view, and
    generated activity for an undated event has `effective_date: null`. Both must use
    the revealing chapter's date (rule (c)). The projection part is done in
