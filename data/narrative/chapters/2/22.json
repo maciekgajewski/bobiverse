@@ -1,0 +1,42 @@
+{
+  "chapter": "2.22",
+  "title": "22 - Fallout",
+  "summary": "Banished by the council of the [[species:delta-eridani-natives|Deltans]], [[character:bob-replicant]] meets [[character:archimedes]] in secret through a camouflaged drone. He has killed six hippogriffs heading for the village since then, but warns that the [[event:destruction-of-the-hippogriff-island|island strike]] wiped out only the local nest, leaving the area unclaimed hippogriff territory; he urges a stock of spare spears and coaches Archimedes on a laminated bow, whose arrows Archimedes passes off as small spears for Buster, a cub of his family. Archimedes is still shunned and other cubs have begun teasing Buster; after they talk over new weapons, ideas for the medicine woman and basic math, he heads back to [[location:camelot]]. Later [[character:marvin]] tells Bob he will soon leave [[location:delta-eridani]], arguing that the Deltans now need only a caretaker and are better off deciding their own destiny without a sky god, and that [[technology:subspace-communications|SCUT]] will keep them in touch. Bob, who had been thinking the same, agrees, worries about the long-silent Luke and Bender, and resolves to shake off a bad year.",
+  "date": "2173-12",
+  "location_id": "location:delta-eridani",
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "Banished by the council of the [[species:delta-eridani-natives|Deltans]], who are not talking to him, he still guards them, has since killed six hippogriffs and secretly coaches [[character:archimedes]] through a camouflaged drone. He has accepted [[character:marvin]]'s plan to leave him as the Deltans' sole caretaker."
+    },
+    {
+      "entity_id": "character:archimedes",
+      "current_state": "Still given the cold shoulder by his people since [[character:bob-replicant]]'s banishment, he meets Bob in secret away from [[location:camelot]] and experiments with bow and arrows, passing the arrows off as small spears for Buster, a teased cub of his family."
+    },
+    {
+      "entity_id": "character:marvin",
+      "current_state": "At [[location:delta-eridani]], he has told [[character:bob-replicant]] he will soon leave, judging that the [[species:delta-eridani-natives|Deltans]] now need only a caretaker and are better off without a sky god; [[technology:subspace-communications|SCUT]] will keep the two in touch."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead"
+    },
+    {
+      "character_id": "character:archimedes",
+      "role": "other",
+      "location_id": "location:delta-eridani-4"
+    },
+    {
+      "character_id": "character:marvin",
+      "role": "other"
+    }
+  ],
+  "mentions": [
+    "event:destruction-of-the-hippogriff-island",
+    "location:camelot",
+    "species:delta-eridani-natives",
+    "technology:subspace-communications"
+  ]
+}

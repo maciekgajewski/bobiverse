@@ -1,0 +1,66 @@
+{
+  "chapter": "2.29",
+  "title": "29 - Emergency",
+  "summary": "When [[technology:guppi-interface|Guppy]] puts through an urgent call, [[character:howard]] cuts short a video call with [[character:dr-sheehy|Dr. Sheehy]]: [[character:stephane-brodeur|Stéphane Brodeur]] reports that a pack of raptors has got through the fence of [[location:landing]] on [[location:vulcan]] and is running through town looking for prey. Howard sends two [[technology:buster-drone|busters]], the colony's surveillance [[technology:planetary-exploration-drone|drones]] and backup units, frame-jacking to juggle eighteen units; the pack hides in a storage shed and destroys a drone, which Howard counts as intelligent behavior, then breaks out when surrounded and escapes through a hole dug under the perimeter fence. No one is killed, Howard lets the raptors go, and the fences are to be upgraded with metal rods driven twenty feet down, six inches apart. Over drinks in [[technology:vr|VR]] with a weary [[character:george-butterworth|Colonel Butterworth]], Howard notes that Sheehy has nearly perfected an odor-based parasite detector for building entrances and has named the parasite the Cupid Bug, and that the council has approved bronto meat. Afterwards he flies a drone up to watch a spectacular sunset under [[location:omicron-eridani-a|Vulcan's sun]].",
+  "date": "2190-04",
+  "location_id": "location:vulcan",
+  "updates": [
+    {
+      "entity_id": "character:howard",
+      "current_state": "From the L4 point near [[location:vulcan]], he runs the colony's automated surveillance drones and his [[technology:buster-drone|busters]], and has just used them to drive a raptor pack out of [[location:landing]] without casualties; he judges the raptors' tactics intelligent."
+    },
+    {
+      "entity_id": "character:george-butterworth",
+      "current_state": "Leading the colony on [[location:vulcan]], he is weary of its mounting complications after a raptor pack broke into [[location:landing]], though no one was killed and the fences are being reinforced; the council has given in on bronto meat."
+    },
+    {
+      "entity_id": "character:stephane-brodeur",
+      "current_state": "Heading security in [[location:landing]], he called in [[character:howard]] when a raptor pack got through the fence; the pack escaped under the perimeter fence without killing anyone."
+    },
+    {
+      "entity_id": "character:dr-sheehy",
+      "aliases": ["Bridget"],
+      "current_state": "She has nearly perfected a device that detects parasite infection from body odor without blood tests, to be installed at all building entrances, and has named the parasite the Cupid Bug because it goes for the heart."
+    },
+    {
+      "entity_id": "location:landing",
+      "state": "Raptors that got through its fence hid in a storage shed, then escaped through a hole dug seven or eight feet deep under the perimeter fence, killing no one. Its fences are being upgraded with metal rods driven twenty feet down, six inches apart."
+    },
+    {
+      "entity_id": "location:vulcan",
+      "description": "The larger member of a double planet with [[location:romulus]], also designated OE-1A, with a day of 22 hours 13 minutes. On the cool side of the habitable zone but warmed by a thicker, carbon-dioxide-rich atmosphere, it has oceans, oxygen, large green land areas, and trees close enough to Terran ones to serve as building timber; its ecosystem is confirmed to be biocompatible with [[species:human|humans]]. Its prolific, competitive ecosystem demands defenses: it includes theropod-like predators with shark-like teeth that colonists call raptors, which hunt in ambush packs, and large herd animals they call brontos. Forest-jungle blankets its hills, bird-like flyers swoop in huge flocks, and its raptors can dig under fences.",
+      "state": "Its colony aims to thin the egg-laying parasite, now nicknamed the Cupid Bug, toward extinction, with odor-based detectors soon at building entrances. The council has approved bronto meat; one bronto keeps the colony in steaks for a couple of weeks."
+    },
+    {
+      "entity_id": "location:omicron-eridani-a",
+      "description": "The somewhat smaller primary star of [[location:omicron2-eridani]]. It is a possible, though nonideal, host for habitable planets. A K-type star, seen from [[location:vulcan]] it looks almost a third larger than the Sun, with a slightly orange cast and extra red light that makes sunsets spectacular."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:howard",
+      "role": "lead",
+      "location_id": "location:omicron2-eridani"
+    },
+    {
+      "character_id": "character:stephane-brodeur",
+      "role": "other",
+      "location_id": "location:landing"
+    },
+    {
+      "character_id": "character:dr-sheehy",
+      "role": "other",
+      "location_id": "location:vulcan"
+    },
+    {
+      "character_id": "character:george-butterworth",
+      "role": "other"
+    }
+  ],
+  "mentions": [
+    "technology:buster-drone",
+    "technology:guppi-interface",
+    "technology:planetary-exploration-drone",
+    "technology:vr"
+  ]
+}

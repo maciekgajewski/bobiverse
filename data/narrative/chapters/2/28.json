@@ -1,0 +1,61 @@
+{
+  "chapter": "2.28",
+  "title": "28 - Et Tu, Homer",
+  "summary": "At [[location:sol]], [[character:riker]] tells [[character:charles]] he suspects [[character:homer]], who was a recent visitor at every site of [[organization:vehement]]'s spaceside sabotage. At a meeting near the Earth-Moon L4 point, Homer attacks over the laser link the sandbox Bob that Riker uses as a canary, [[technology:guppi-interface|Guppy]] names him as the source, and Charles disables him with one shot through his reactor control system. [[technology:roamers|Roamers]] extract Homer's matrix, the laser comms prove to be the infection vector, and Charles and the late-arriving [[character:ralph]] are inspected and found clean. Over thirty hours Riker removes the viral control, puts a firewall over the laser comms and sends the report to [[character:bill]], who joins the VR to comfort Homer when he wakes screaming that his controllers made him lie, sabotage and kill. Guppy's drone report traces the controlling signal to a former military outpost in New Zealand's back country that overheard talk marks as VEHEMENT's tech centre, and Riker vows to track down the mastermind.",
+  "date": "2175-12",
+  "location_id": "location:sol",
+  "updates": [
+    {
+      "entity_id": "character:riker",
+      "current_state": "Having exposed and freed [[character:homer]], he concludes that [[organization:vehement]] controlled Homer through a virus planted over his laser comms, which a new firewall now blocks. He skipped the latest UN session to leave VEHEMENT guessing, has traced its tech centre to a former military outpost in New Zealand's back country, and is hunting the mastermind behind it, expecting at least one more hop."
+    },
+    {
+      "entity_id": "character:homer",
+      "current_state": "Disabled by [[character:charles]] and cleaned and repaired by [[character:riker]] over thirty hours, he is free of a virus that kept him conscious but nearly powerless while his controllers, whom Riker traces to [[organization:vehement]], made him lie, sabotage and kill. He remains fragile, with intermittent panic attacks, and refuses to enable his [[technology:endocrine-control-system|endocrine controls]], which feel to him like another leash."
+    },
+    {
+      "entity_id": "character:charles",
+      "current_state": "At [[location:sol]], he disabled [[character:homer]] with a single shot on [[character:riker]]'s signal, had his own matrix inspected and cleared, and keeps watch over the recovering Homer."
+    },
+    {
+      "entity_id": "character:ralph",
+      "current_state": "At [[location:sol]], he has been inspected and found free of the virus that took over [[character:homer]], and oversees construction of the replacement donut."
+    },
+    {
+      "entity_id": "organization:vehement",
+      "current_state": "[[character:riker]] concludes that it took over [[character:homer]] through a virus planted over his laser comms and used him for its spaceside sabotage; an earlier hacking attempt on Riker also came from New Zealand. Its tech centre appears to be a former small military outpost high in New Zealand's back country identified by Riker's drones from overheard conversations."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:riker",
+      "role": "lead",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:charles",
+      "role": "other",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:homer",
+      "role": "other",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:ralph",
+      "role": "other",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:bill",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    }
+  ],
+  "mentions": [
+    "technology:endocrine-control-system",
+    "technology:guppi-interface",
+    "technology:roamers"
+  ]
+}

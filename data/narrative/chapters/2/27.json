@@ -1,0 +1,63 @@
+{
+  "chapter": "2.27",
+  "title": "27 - Luke Returns",
+  "summary": "At [[location:delta-eridani]], [[character:bob-replicant]] watches the [[species:delta-eridani-natives|Deltan]] village through a real-time [[technology:vr|VR]], six years after being expelled from Camelot, and sees his tent design catch on. [[character:luke]] drops into the VR from [[location:kappa-ceti]], where [[character:spike]] sniffs at him, and reports a 3 g super-Earth teeming with life and a new batch of Bobs. [[character:archimedes]] and his son [[character:buster]] return from hunting with bows, and Bob says [[character:marvin]] keeps in touch while [[character:bender]] has gone silent.",
+  "date": "2178-03",
+  "location_id": "location:delta-eridani",
+  "introducing": [
+    {
+      "id": "character:buster",
+      "name": "Buster",
+      "species_id": "species:delta-eridani-natives",
+      "parent_id": "character:archimedes",
+      "first_mentioned": "2.19",
+      "description": "A Deltan of [[location:delta-eridani-4|Eden]] and the son of [[character:archimedes]]. As a teased cub he was the cover for his father's first arrows, which Archimedes passed off as small spears for him.",
+      "current_state": "Almost as tall as his father and still growing, he now hunts with bow, quiver and arrows alongside him and brings back small game."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "At [[location:delta-eridani]], he watches the Deltan village through a real-time [[technology:vr|VR]] fed by hidden cameras and camouflaged drones, much improved over six years of exile. [[character:marvin]] keeps in touch, but he has heard nothing from [[character:bender]] and has sent one of his clones along Bender's flight plan."
+    },
+    {
+      "entity_id": "character:luke",
+      "current_state": "At [[location:kappa-ceti]], he has found a super-Earth with a full ecosystem and gravity just over 3 g, unfit for colonization, and is cataloguing its life. He has started another batch of Bobs and, after Bill's surprise [[technology:vr|VR]] visit, visits [[character:bob-replicant]] the same way, meaning to look up [[character:marvin]]."
+    },
+    {
+      "entity_id": "character:archimedes",
+      "current_state": "Now in full adulthood and no longer bookish, he has finally taken up [[character:bob-replicant]]'s tent design, which about half a dozen other couples have copied. He hunts with bow and quiver alongside his son [[character:buster]], bringing back small game."
+    },
+    {
+      "entity_id": "character:bender",
+      "current_state": "Out of contact with [[character:bob-replicant]] for reasons unknown. One of Bob's clones is following his flight plan and should report within a year or two."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead",
+      "location_id": "location:delta-eridani"
+    },
+    {
+      "character_id": "character:luke",
+      "role": "other",
+      "location_id": "location:kappa-ceti"
+    },
+    {
+      "character_id": "character:spike",
+      "role": "other"
+    },
+    {
+      "character_id": "character:archimedes",
+      "role": "other",
+      "location_id": "location:delta-eridani-4"
+    },
+    {
+      "character_id": "character:buster",
+      "role": "other",
+      "location_id": "location:delta-eridani-4"
+    }
+  ],
+  "mentions": ["character:marvin", "technology:vr"]
+}

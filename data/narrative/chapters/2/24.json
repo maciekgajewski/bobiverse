@@ -1,0 +1,50 @@
+{
+  "chapter": "2.24",
+  "title": "24 - Visiting Marvin",
+  "summary": "At [[location:delta-eridani]], [[character:bob-replicant]] has gone months without killing a hippogriff and now runs all the drones alone, because [[character:marvin]] has left for Pi3 Orionis, capping his speed so he can stay on [[technology:subspace-communications|SCUT]]. Marvin frame-jacks up and Bob slows down until their time-rates match, and Bob visits him in his [[technology:vr|VR]], a hilltop ranch house copied from a science-fiction setting, with a near horizon, low gravity and Earth in the sky; by a growing custom the senior Bob in a system plays host, but here Marvin does. They discuss Bob's two newest clones, [[character:pete]] and [[character:victor]], who are almost ready to leave. Pete insists on choosing his own direction, while Victor is willing to follow the trail of [[character:luke]] or [[character:bender]], who set out for different stars in the same general direction and of whom they have no news. They leave the choice to Victor, who will transmit constantly over SCUT so the others know if anything happens to him, and Marvin ends the visit worried.",
+  "date": "2174-03",
+  "location_id": "location:delta-eridani",
+  "introducing": [
+    {
+      "id": "character:pete",
+      "name": "Pete",
+      "parent_id": "character:bob-replicant",
+      "description": "A Bob replicant, one of the two newest clones [[character:bob-replicant]] made at [[location:delta-eridani]]. He refuses to follow another Bob's trail and is adamant that he will choose his own direction.",
+      "current_state": "At [[location:delta-eridani]], almost ready to leave, set on going in whatever direction he chooses."
+    },
+    {
+      "id": "character:victor",
+      "name": "Victor",
+      "parent_id": "character:bob-replicant",
+      "description": "A Bob replicant, one of the two newest clones [[character:bob-replicant]] made at [[location:delta-eridani]]. Unlike his sibling [[character:pete]], he is willing to follow the trail of an earlier Bob.",
+      "current_state": "At [[location:delta-eridani]], almost ready to leave; he will choose whether to follow [[character:luke]]'s or [[character:bender]]'s trail and will transmit constantly over [[technology:subspace-communications|SCUT]] so the others know if anything happens to him."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "At [[location:delta-eridani]], the system's senior Bob, he has not had to kill a hippogriff in months and handles all the drones alone since [[character:marvin]] left. His two newest clones, [[character:pete]] and [[character:victor]], are almost ready to leave."
+    },
+    {
+      "entity_id": "character:marvin",
+      "current_state": "Having left [[location:delta-eridani]], he is travelling toward Pi3 Orionis, keeping his top speed low enough to stay on [[technology:subspace-communications|SCUT]] as promised. He hosts [[character:bob-replicant]] in a luxurious [[technology:vr|VR]] modelled on science fiction."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead",
+      "location_id": "location:delta-eridani"
+    },
+    {
+      "character_id": "character:marvin",
+      "role": "other"
+    }
+  ],
+  "mentions": [
+    "character:bender",
+    "character:luke",
+    "technology:subspace-communications",
+    "technology:vr"
+  ]
+}
