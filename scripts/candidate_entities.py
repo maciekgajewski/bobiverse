@@ -27,6 +27,15 @@ SOURCE_ROOT = ROOT / "src"
 # The structural check (ADR-0032 §4, principle 2): no runtime path may read
 # candidate data.
 FORBIDDEN_REFERENCES = ("data/candidates", "candidate-entities")
+# ADR-0016 anchor tooling: it derives narrative anchors from narrative data only.
+ANCHOR_TOOLING = (
+    ROOT / "scripts" / "common.py",
+    ROOT / "scripts" / "astronomy_pipeline.py",
+    ROOT / "scripts" / "extraction_preflight.py",
+    ROOT / "scripts" / "generate_nearby_systems.py",
+    ROOT / "scripts" / "refresh_gaia_snapshot.py",
+    ROOT / "scripts" / "validate_data.py",
+)
 SOURCE_SUFFIXES = {".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".json", ".css", ".html"}
 
 _CHAPTER = re.compile(r"^([1-9][0-9]*)\.([1-9][0-9]*)$")
@@ -105,6 +114,44 @@ def visible_names(
     return names
 
 
+def anchor_names(narrative_root: Path, chapters: list[dict[str, Any]]) -> dict[str, str]:
+    """Normalized name -> location ID for every narrative anchor (ADR-0016).
+
+    An anchor is a narrative location that carries an `astronomy_object_id` in
+    the zero state or in any chapter. Every name and alias it has held counts.
+    """
+    names: dict[str, set[str]] = {}
+    anchored: set[str] = set()
+
+    def note(location: dict[str, Any], location_id: str) -> None:
+        names.setdefault(location_id, set()).update(_names(location))
+        if location.get("astronomy_object_id"):
+            anchored.add(location_id)
+
+    def walk(location: dict[str, Any]) -> None:
+        location_id = location.get("id")
+        if isinstance(location_id, str) and location_id.startswith("location:"):
+            note(location, location_id)
+        for child in location.get("children", []) or []:
+            if isinstance(child, dict):
+                walk(child)
+
+    walk(read_json(narrative_root / "baseline" / "zero-state.json")["locations"])
+    for chapter in chapters:
+        for introduced in chapter.get("introducing", []) or []:
+            if isinstance(introduced, dict):
+                walk(introduced)
+        for update in chapter.get("updates", []) or []:
+            target = update.get("entity_id") if isinstance(update, dict) else None
+            if isinstance(target, str) and target.startswith("location:"):
+                note(update, target)
+    return {
+        normalize_astronomy_name(name): location_id
+        for location_id in sorted(anchored)
+        for name in sorted(names.get(location_id, ()))
+    }
+
+
 def validate_candidates(
     document: Any,
     *,
@@ -133,6 +180,7 @@ def validate_candidates(
     if duplicates:
         errors.append(f"duplicate candidate ids: {', '.join(duplicates)}")
 
+    anchors = anchor_names(narrative_root, chapters)
     promoted: dict[tuple[str, str], str] = {}
     for candidate in candidates:
         cid = candidate["id"]
@@ -155,6 +203,17 @@ def validate_candidates(
 
         promotion = candidate["promotion"]
         if promotion is None:
+            # ADR-0032 §4: a candidate location never becomes a narrative anchor;
+            # astronomy acquisition happens with its promotion chapter.
+            if candidate["kind"] == "location":
+                for name in _names(candidate):
+                    anchor = anchors.get(normalize_astronomy_name(name))
+                    if anchor is not None:
+                        errors.append(
+                            f"{cid}: unpromoted candidate location {name!r} matches "
+                            f"narrative anchor {anchor}; promote it in the chapter "
+                            "that acquires its astronomy instead"
+                        )
             continue
         chapter, entity_id = promotion["chapter"], promotion["entity_id"]
         if not entity_id.startswith(f"{candidate['kind']}:"):
@@ -177,7 +236,14 @@ def validate_candidates(
             errors.append(
                 f"{cid}: {entity_id} first_mentioned must equal the first mention {first}"
             )
-        promoted[(chapter, entity_id)] = cid
+        key = (chapter, entity_id)
+        if key in promoted:
+            errors.append(
+                f"{cid}: duplicate promotion; {promoted[key]} is already promoted "
+                f"to {entity_id} in chapter {chapter}"
+            )
+            continue
+        promoted[key] = cid
 
     for chapter in chapters:
         for introduced in chapter.get("introducing", []) or []:
@@ -193,16 +259,18 @@ def validate_candidates(
 
 
 def structural_violations(
-    source_root: Path = SOURCE_ROOT, manifest: Path = MANIFEST_FILE
+    source_root: Path = SOURCE_ROOT,
+    manifest: Path = MANIFEST_FILE,
+    anchor_tooling: Iterable[Path] = ANCHOR_TOOLING,
 ) -> list[str]:
-    """Files under `src/`, and the narrative manifest, that reference candidate data."""
+    """Files under `src/`, the narrative manifest, and the anchor tooling that
+    reference candidate data."""
     files = [
         path
         for path in sorted(source_root.rglob("*"))
         if path.is_file() and path.suffix in SOURCE_SUFFIXES
     ]
-    if manifest.is_file():
-        files.append(manifest)
+    files += [path for path in (manifest, *anchor_tooling) if path.is_file()]
     violations = []
     for path in files:
         text = path.read_text(encoding="utf-8", errors="replace")
@@ -238,7 +306,7 @@ def main(argv: list[str] | None = None) -> int:
     except CandidateError as error:
         errors = [str(error)]
     errors += [
-        f"{path} references candidate data; the app must never read it (ADR-0032 S1)"
+        f"{path} references candidate data; only validation and extraction tooling may read it (ADR-0032 S1, §4)"
         for path in structural_violations()
     ]
     if errors:

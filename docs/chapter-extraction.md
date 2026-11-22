@@ -205,7 +205,9 @@ candidate in `data/source/system-candidates.json`.
   typed references or supplemental mentions. References to a candidate before its
   promotion are never supplemental mentions and are not backfilled.
 - A candidate location never becomes a narrative anchor; astronomy acquisition for
-  a star system happens with its promotion chapter.
+  a star system happens with its promotion chapter. `narrative:validate` rejects an
+  unpromoted candidate location whose name matches a narrative anchor (a location
+  with an `astronomy_object_id`), and the anchor tooling never reads candidate data.
 
 ### Identity, names, and ordering
 

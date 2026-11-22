@@ -138,6 +138,46 @@ class CandidateValidationTest(unittest.TestCase):
         promoted = candidate(promotion={"chapter": "1.3", "entity_id": "character:fixture-dana"})
         self.assertIn("must equal the first mention", " ".join(self.errors(promoted)))
 
+    def test_rejects_a_duplicate_promotion(self) -> None:
+        self.promote()
+        promotion = {"chapter": "1.3", "entity_id": "character:fixture-dana"}
+        first = candidate(promotion=promotion)
+        second = candidate(id="candidate:fixture-dana-two", name="Fixture Dana Two", promotion=promotion)
+        self.assertIn("duplicate promotion", " ".join(self.errors(first, second)))
+
+    def test_rejects_an_unpromoted_candidate_location_that_is_an_anchor(self) -> None:
+        # A later chapter maps a location of the candidate's name without promoting it.
+        self.chapters["1.3"] = chapter(
+            "1.3",
+            introducing=[{"id": "location:fixture-vega", "name": "Fixture Vega", "astronomy_object_id": "vega"}],
+        )
+        location = candidate(id="candidate:fixture-vega", kind="location", name="Fixture Vega")
+        self.assertIn("narrative anchor location:fixture-vega", " ".join(self.errors(location)))
+        # An update that maps a renamed location counts too.
+        self.chapters["1.3"] = chapter(
+            "1.3",
+            updates=[{"entity_id": "location:mars", "name": "Fixture Vega", "astronomy_object_id": "vega"}],
+        )
+        self.assertIn("narrative anchor location:mars", " ".join(self.errors(location)))
+
+    def test_accepts_candidate_locations_that_are_not_anchors(self) -> None:
+        # An unmapped location of the same name is not an anchor (the name rule
+        # covers it only when visible at the first mention), and a promoted
+        # candidate location may be mapped in its promotion chapter.
+        self.chapters["1.3"] = chapter(
+            "1.3",
+            introducing=[{"id": "location:fixture-vega", "name": "Fixture Vega", "astronomy_object_id": "vega", "first_mentioned": "1.2"}],
+        )
+        promoted = candidate(
+            id="candidate:fixture-vega",
+            kind="location",
+            name="Fixture Vega",
+            promotion={"chapter": "1.3", "entity_id": "location:fixture-vega"},
+        )
+        self.assertEqual(self.errors(promoted), [])
+        self.chapters["1.3"] = chapter("1.3", introducing=[{"id": "location:other", "name": "Fixture Vega"}])
+        self.assertEqual(self.errors(candidate(id="candidate:fixture-vega", kind="location", name="Fixture Vega")), [])
+
     def test_rejects_first_mentioned_without_a_promoted_candidate(self) -> None:
         self.promote()
         self.assertIn("no promoted candidate", " ".join(self.errors(candidate(id="candidate:other", name="Other"))))
@@ -155,8 +195,10 @@ class StructuralCheckTest(unittest.TestCase):
             (src / "bad.ts").write_text('import c from "../data/candidates/candidate-entities.json";\n')
             manifest = Path(tmp) / "manifest.json"
             manifest.write_text('{"candidate-entities": true}')
-            violations = cand.structural_violations(src, manifest)
-            self.assertEqual(len(violations), 2)
+            tooling = Path(tmp) / "common.py"
+            tooling.write_text('CANDIDATES = "data/candidates/candidate-entities.json"\n')
+            violations = cand.structural_violations(src, manifest, [tooling])
+            self.assertEqual(len(violations), 3)
             self.assertTrue(any(v.endswith("bad.ts") for v in violations))
 
 
