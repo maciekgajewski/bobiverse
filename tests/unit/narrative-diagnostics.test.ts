@@ -35,7 +35,7 @@ describe("narrative schema diagnostics", () => {
       {
         location: { line: 11, column: 32 },
         message:
-          '/introducing/0/homeworld_location_id: unexpected property "homeworld_location_id"; did you mean: homeworld_id, description, picture_id',
+          '/introducing/0/homeworld_location_id: unexpected property "homeworld_location_id"; did you mean: homeworld_id, first_mentioned, description',
       },
     ]);
   });
@@ -78,7 +78,7 @@ describe("narrative schema diagnostics", () => {
     expect(diagnostics).toContainEqual({
       location: { line: 24, column: 32 },
       message:
-        '/entities/0/homeworld_location_id: unexpected property "homeworld_location_id"; did you mean: homeworld_id, description, picture_id',
+        '/entities/0/homeworld_location_id: unexpected property "homeworld_location_id"; did you mean: homeworld_id, first_mentioned, description',
     });
   });
 
