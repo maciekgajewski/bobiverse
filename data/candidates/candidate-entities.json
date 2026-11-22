@@ -1,0 +1,40 @@
+{
+  "candidates": [
+    {
+      "id": "candidate:archimedes-son",
+      "kind": "character",
+      "name": "Archimedes' son",
+      "aliases": [],
+      "mentions": ["2.19"],
+      "note": "Seeded from Maciej's 2.11-2.20 review (ADR-0032 Decided 3).",
+      "promotion": null
+    },
+    {
+      "id": "candidate:axler",
+      "kind": "character",
+      "name": "Axler",
+      "aliases": [],
+      "mentions": ["2.11"],
+      "note": "Seeded from Maciej's 2.11-2.20 review (ADR-0032 Decided 3).",
+      "promotion": null
+    },
+    {
+      "id": "candidate:camelot-attack",
+      "kind": "event",
+      "name": "Camelot attack",
+      "aliases": [],
+      "mentions": ["2.19"],
+      "note": "Seeded from Maciej's 2.11-2.20 review (ADR-0032 Decided 3).",
+      "promotion": null
+    },
+    {
+      "id": "candidate:maldives",
+      "kind": "location",
+      "name": "Maldives",
+      "aliases": [],
+      "mentions": ["2.14"],
+      "note": "Seeded from Maciej's 2.11-2.20 review (ADR-0032 Decided 3).",
+      "promotion": null
+    }
+  ]
+}

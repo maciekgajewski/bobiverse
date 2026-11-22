@@ -56,11 +56,31 @@ const entityProperties = {
     "birth_chapter",
     "death_date",
     "death_event_id",
+    "first_mentioned",
   ]),
-  species: new Set(["id", "name", "description", "picture_id", "homeworld_id"]),
-  technology: new Set(["id", "name", "description"]),
-  organization: new Set(["id", "name", "description", "current_state"]),
-  vessel: new Set(["id", "name", "description", "current_state"]),
+  species: new Set([
+    "id",
+    "name",
+    "description",
+    "picture_id",
+    "homeworld_id",
+    "first_mentioned",
+  ]),
+  technology: new Set(["id", "name", "description", "first_mentioned"]),
+  organization: new Set([
+    "id",
+    "name",
+    "description",
+    "current_state",
+    "first_mentioned",
+  ]),
+  vessel: new Set([
+    "id",
+    "name",
+    "description",
+    "current_state",
+    "first_mentioned",
+  ]),
   event: new Set([
     "id",
     "name",
@@ -69,6 +89,7 @@ const entityProperties = {
     "date",
     "description",
     "participant_ids",
+    "first_mentioned",
   ]),
   location: new Set([
     "id",
@@ -87,13 +108,30 @@ const entityProperties = {
     "astronomy_object_id",
     "origin_location_id",
     "destination_location_id",
+    "first_mentioned",
   ]),
 } as const;
+
+/**
+ * The properties an entity at `pointer` may carry. Zero-state entities
+ * (`/entities/…`) cannot carry the chapter-only `first_mentioned` (ADR-0032).
+ */
+function entityPropertiesAt(
+  entityType: keyof typeof entityProperties,
+  pointer: string,
+): ReadonlySet<string> {
+  const properties = entityProperties[entityType];
+  if (!pointer.startsWith("/entities/")) return properties;
+  return new Set([...properties].filter((name) => name !== "first_mentioned"));
+}
 
 function isRelevantEntityError(
   error: ErrorObject,
   candidate: unknown,
 ): boolean {
+  // A property the schema forbids outright, such as a zero-state
+  // `first_mentioned`, always describes the input.
+  if (error.keyword === "false schema") return true;
   const pointer = errorPointer(error);
   const itemMatch = /^\/(?:introducing|entities)\/(\d+)(?:\/([^/]+))?/.exec(
     pointer,
@@ -112,8 +150,10 @@ function isRelevantEntityError(
   if (typeof id !== "string") return true;
   const entityType = id.split(":", 1)[0];
   if (!(entityType in entityProperties)) return true;
-  const properties =
-    entityProperties[entityType as keyof typeof entityProperties];
+  const properties = entityPropertiesAt(
+    entityType as keyof typeof entityProperties,
+    pointer,
+  );
   const parameters = error.params as SchemaErrorParameters;
   if (error.keyword === "required")
     return properties.has(parameters.missingProperty ?? "");
@@ -172,7 +212,10 @@ function knownProperties(error: ErrorObject, candidate: unknown): string[] {
       const entityType = id.split(":", 1)[0];
       if (entityType in entityProperties)
         return [
-          ...entityProperties[entityType as keyof typeof entityProperties],
+          ...entityPropertiesAt(
+            entityType as keyof typeof entityProperties,
+            error.instancePath,
+          ),
         ];
     }
   }
@@ -205,6 +248,7 @@ function humanMessage(error: ErrorObject, candidate: unknown): string {
     return `missing required property "${parameters.missingProperty}"`;
   }
   if (error.keyword === "minLength") return "must not be empty";
+  if (error.keyword === "false schema") return "is not allowed here";
   return error.message ?? "is invalid";
 }
 

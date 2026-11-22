@@ -30,6 +30,10 @@ const scripts = [
     argumentsList: ["scripts/chapter_promotion.py", "--help"],
   },
   {
+    command: "./.venv/bin/python",
+    argumentsList: ["scripts/candidate_entities.py", "--help"],
+  },
+  {
     command: "bash",
     argumentsList: ["scripts/convert_galactic_starfield.sh", "--help"],
   },

@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bobiverse.local/schema/candidate-entities.schema.json",
+  "title": "Candidate entities (ADR-0032)",
+  "description": "Minor first mentions kept outside the narrative data. Only narrative:validate and the extraction tooling read this file; the app never does.",
+  "type": "object",
+  "required": ["candidates"],
+  "properties": {
+    "candidates": {
+      "description": "Candidate records, sorted by id.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/candidate" }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "chapter": {
+      "type": "string",
+      "pattern": "^[1-9][0-9]*\\.[1-9][0-9]*$"
+    },
+    "candidate": {
+      "type": "object",
+      "required": ["id", "kind", "name", "aliases", "mentions", "promotion"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^candidate:[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "kind": {
+          "description": "One of the kinds a supplemental mention can target.",
+          "enum": [
+            "character",
+            "species",
+            "technology",
+            "organization",
+            "vessel",
+            "event",
+            "location"
+          ]
+        },
+        "name": { "type": "string", "minLength": 1 },
+        "aliases": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "mentions": {
+          "description": "Canonical chapters that refer to it, in reading order; the first is the first mention.",
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/chapter" },
+          "uniqueItems": true
+        },
+        "note": {
+          "description": "Original one-line reviewer note; never shown in the app. No book text.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "promotion": {
+          "description": "null until promotion; then the chapter that introduces the entity and its ID.",
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "required": ["chapter", "entity_id"],
+              "properties": {
+                "chapter": { "$ref": "#/$defs/chapter" },
+                "entity_id": {
+                  "type": "string",
+                  "pattern": "^(character|species|technology|organization|vessel|event|location):[a-z0-9]+(?:-[a-z0-9]+)*$"
+                }
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

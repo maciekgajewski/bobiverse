@@ -181,6 +181,10 @@
       "required": ["id", "name"],
       "properties": {
         "id": { "$ref": "#/$defs/character_id" },
+        "first_mentioned": {
+          "$ref": "#/$defs/chapter",
+          "description": "Chapter introductions only (ADR-0032): the chapter of this entity's first mention, copied from its promoted candidate's first mention. Its story date is that chapter's header date. It must be earlier than the introducing chapter. Zero-state entities never carry it."
+        },
         "name": { "type": "string", "minLength": 1 },
         "gender": { "type": "string", "minLength": 1 },
         "species_id": { "$ref": "#/$defs/species_id" },
@@ -270,6 +274,10 @@
       "required": ["id", "name"],
       "properties": {
         "id": { "$ref": "#/$defs/species_id" },
+        "first_mentioned": {
+          "$ref": "#/$defs/chapter",
+          "description": "Chapter introductions only (ADR-0032): the chapter of this entity's first mention, copied from its promoted candidate's first mention. Its story date is that chapter's header date. It must be earlier than the introducing chapter. Zero-state entities never carry it."
+        },
         "name": { "type": "string", "minLength": 1 },
         "description": { "$ref": "#/$defs/description" },
         "picture_id": { "$ref": "#/$defs/asset_id" },
@@ -307,6 +315,10 @@
       "required": ["id", "name"],
       "properties": {
         "id": { "$ref": "#/$defs/technology_id" },
+        "first_mentioned": {
+          "$ref": "#/$defs/chapter",
+          "description": "Chapter introductions only (ADR-0032): the chapter of this entity's first mention, copied from its promoted candidate's first mention. Its story date is that chapter's header date. It must be earlier than the introducing chapter. Zero-state entities never carry it."
+        },
         "name": { "type": "string", "minLength": 1 },
         "description": { "$ref": "#/$defs/description" }
       },
@@ -331,6 +343,10 @@
       "required": ["id", "name"],
       "properties": {
         "id": { "$ref": "#/$defs/organization_id" },
+        "first_mentioned": {
+          "$ref": "#/$defs/chapter",
+          "description": "Chapter introductions only (ADR-0032): the chapter of this entity's first mention, copied from its promoted candidate's first mention. Its story date is that chapter's header date. It must be earlier than the introducing chapter. Zero-state entities never carry it."
+        },
         "name": { "type": "string", "minLength": 1 },
         "description": { "$ref": "#/$defs/description" },
         "current_state": { "$ref": "#/$defs/state" }
@@ -367,6 +383,10 @@
       "required": ["id", "name"],
       "properties": {
         "id": { "$ref": "#/$defs/vessel_id" },
+        "first_mentioned": {
+          "$ref": "#/$defs/chapter",
+          "description": "Chapter introductions only (ADR-0032): the chapter of this entity's first mention, copied from its promoted candidate's first mention. Its story date is that chapter's header date. It must be earlier than the introducing chapter. Zero-state entities never carry it."
+        },
         "name": { "type": "string", "minLength": 1 },
         "description": { "$ref": "#/$defs/description" },
         "current_state": { "$ref": "#/$defs/state" }
@@ -403,6 +423,10 @@
       "required": ["id", "name"],
       "properties": {
         "id": { "$ref": "#/$defs/event_id" },
+        "first_mentioned": {
+          "$ref": "#/$defs/chapter",
+          "description": "Chapter introductions only (ADR-0032): the chapter of this entity's first mention, copied from its promoted candidate's first mention. Its story date is that chapter's header date. It must be earlier than the introducing chapter. Zero-state entities never carry it."
+        },
         "name": { "type": "string", "minLength": 1 },
         "location_id": { "$ref": "#/$defs/location_id" },
         "picture_id": { "$ref": "#/$defs/asset_id" },
@@ -683,6 +707,10 @@
       "required": ["id", "name", "kind"],
       "properties": {
         "id": { "$ref": "#/$defs/location_id" },
+        "first_mentioned": {
+          "$ref": "#/$defs/chapter",
+          "description": "Chapter introductions only (ADR-0032): the chapter of this entity's first mention, copied from its promoted candidate's first mention. Its story date is that chapter's header date. It must be earlier than the introducing chapter. Zero-state entities never carry it."
+        },
         "name": { "type": "string", "minLength": 1 },
         "kind": { "$ref": "#/$defs/location_kind" },
         "description": { "$ref": "#/$defs/description" },
@@ -916,7 +944,10 @@
         "locations": { "$ref": "#/$defs/zero_state_solar_system" },
         "entities": {
           "type": "array",
-          "items": { "$ref": "#/$defs/non_location_introduced_entity" }
+          "items": {
+            "$ref": "#/$defs/non_location_introduced_entity",
+            "properties": { "first_mentioned": false }
+          }
         }
       },
       "additionalProperties": false

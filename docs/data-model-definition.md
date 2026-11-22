@@ -202,6 +202,10 @@ the identical listing below documents its shared definitions.
       "required": ["id", "name"],
       "properties": {
         "id": { "$ref": "#/$defs/character_id" },
+        "first_mentioned": {
+          "$ref": "#/$defs/chapter",
+          "description": "Chapter introductions only (ADR-0032): the chapter of this entity's first mention, copied from its promoted candidate's first mention. Its story date is that chapter's header date. It must be earlier than the introducing chapter. Zero-state entities never carry it."
+        },
         "name": { "type": "string", "minLength": 1 },
         "gender": { "type": "string", "minLength": 1 },
         "species_id": { "$ref": "#/$defs/species_id" },
@@ -291,6 +295,10 @@ the identical listing below documents its shared definitions.
       "required": ["id", "name"],
       "properties": {
         "id": { "$ref": "#/$defs/species_id" },
+        "first_mentioned": {
+          "$ref": "#/$defs/chapter",
+          "description": "Chapter introductions only (ADR-0032): the chapter of this entity's first mention, copied from its promoted candidate's first mention. Its story date is that chapter's header date. It must be earlier than the introducing chapter. Zero-state entities never carry it."
+        },
         "name": { "type": "string", "minLength": 1 },
         "description": { "$ref": "#/$defs/description" },
         "picture_id": { "$ref": "#/$defs/asset_id" },
@@ -328,6 +336,10 @@ the identical listing below documents its shared definitions.
       "required": ["id", "name"],
       "properties": {
         "id": { "$ref": "#/$defs/technology_id" },
+        "first_mentioned": {
+          "$ref": "#/$defs/chapter",
+          "description": "Chapter introductions only (ADR-0032): the chapter of this entity's first mention, copied from its promoted candidate's first mention. Its story date is that chapter's header date. It must be earlier than the introducing chapter. Zero-state entities never carry it."
+        },
         "name": { "type": "string", "minLength": 1 },
         "description": { "$ref": "#/$defs/description" }
       },
@@ -352,6 +364,10 @@ the identical listing below documents its shared definitions.
       "required": ["id", "name"],
       "properties": {
         "id": { "$ref": "#/$defs/organization_id" },
+        "first_mentioned": {
+          "$ref": "#/$defs/chapter",
+          "description": "Chapter introductions only (ADR-0032): the chapter of this entity's first mention, copied from its promoted candidate's first mention. Its story date is that chapter's header date. It must be earlier than the introducing chapter. Zero-state entities never carry it."
+        },
         "name": { "type": "string", "minLength": 1 },
         "description": { "$ref": "#/$defs/description" },
         "current_state": { "$ref": "#/$defs/state" }
@@ -388,6 +404,10 @@ the identical listing below documents its shared definitions.
       "required": ["id", "name"],
       "properties": {
         "id": { "$ref": "#/$defs/vessel_id" },
+        "first_mentioned": {
+          "$ref": "#/$defs/chapter",
+          "description": "Chapter introductions only (ADR-0032): the chapter of this entity's first mention, copied from its promoted candidate's first mention. Its story date is that chapter's header date. It must be earlier than the introducing chapter. Zero-state entities never carry it."
+        },
         "name": { "type": "string", "minLength": 1 },
         "description": { "$ref": "#/$defs/description" },
         "current_state": { "$ref": "#/$defs/state" }
@@ -424,6 +444,10 @@ the identical listing below documents its shared definitions.
       "required": ["id", "name"],
       "properties": {
         "id": { "$ref": "#/$defs/event_id" },
+        "first_mentioned": {
+          "$ref": "#/$defs/chapter",
+          "description": "Chapter introductions only (ADR-0032): the chapter of this entity's first mention, copied from its promoted candidate's first mention. Its story date is that chapter's header date. It must be earlier than the introducing chapter. Zero-state entities never carry it."
+        },
         "name": { "type": "string", "minLength": 1 },
         "location_id": { "$ref": "#/$defs/location_id" },
         "picture_id": { "$ref": "#/$defs/asset_id" },
@@ -701,6 +725,10 @@ the identical listing below documents its shared definitions.
       "required": ["id", "name", "kind"],
       "properties": {
         "id": { "$ref": "#/$defs/location_id" },
+        "first_mentioned": {
+          "$ref": "#/$defs/chapter",
+          "description": "Chapter introductions only (ADR-0032): the chapter of this entity's first mention, copied from its promoted candidate's first mention. Its story date is that chapter's header date. It must be earlier than the introducing chapter. Zero-state entities never carry it."
+        },
         "name": { "type": "string", "minLength": 1 },
         "kind": { "$ref": "#/$defs/location_kind" },
         "description": { "$ref": "#/$defs/description" },
@@ -922,7 +950,10 @@ the identical listing below documents its shared definitions.
         "locations": { "$ref": "#/$defs/zero_state_solar_system" },
         "entities": {
           "type": "array",
-          "items": { "$ref": "#/$defs/non_location_introduced_entity" }
+          "items": {
+            "$ref": "#/$defs/non_location_introduced_entity",
+            "properties": { "first_mentioned": false }
+          }
         }
       },
       "additionalProperties": false
@@ -1239,7 +1270,10 @@ records. Its controlled reasons are `introduction`, `update`, `appearance`,
 Non-event introductions and updates, appearances, default chapter locations,
 supplemental mentions, and their mapped-system ancestry use the enclosing chapter
 date. `mention` is the supplemental reference's only direct reason; a mentioned mapped
-location also derives `mapped_system_ancestry`. Event
+location also derives `mapped_system_ancestry`. A supplemental mention is also a dated fact
+about its target: a non-event entity exists from the earliest such date read
+(`entityEarliestDates`, `design-principles.md` §2.3); an event exists from its own
+date. Event
 introductions and updates use the event's own date when it is known; otherwise they
 are dated as defined in `design-principles.md`. Event locations and
 participants use that same effective event date. Every active narrative location also
@@ -1553,6 +1587,22 @@ is present before chapter 1; a non-seeded entity is introduced exactly once and 
 part of reader-visible knowledge in every later view. Their state-bearing properties
 contribute to temporal world state only when their effective story dates are at or
 before the requested display date.
+
+Any chapter introduction may carry the optional `first_mentioned` field (a `chapter`,
+ADR-0032). It is written when a promotion introduces an entity that was first
+recorded in the candidate-entity dataset (`data/candidates/candidate-entities.json`),
+and it equals that candidate's first mention. It names an earlier chapter in the
+corpus, strictly before the introducing chapter, and its story date is that chapter's
+header `date`, with no override. Zero-state entities (the schema rejects it there)
+and updates cannot carry it.
+Revealing stays with the introducing chapter: the entity is invisible at any
+read-through earlier than its introduction, whatever `first_mentioned` says. From the
+introduction on, the first mention is a dated fact about the entity, so a non-event
+entity exists from that date (`design-principles.md` §2.3, rule (a)); for an event,
+which exists from its own date, it only gives the card line. The card shows "First
+mentioned in Chapter X" as a chapter link; the earlier chapter's own record and card
+are unchanged. `narrative:validate` checks that every introduction carrying
+`first_mentioned` matches exactly one promoted candidate.
 
 ### Updates
 

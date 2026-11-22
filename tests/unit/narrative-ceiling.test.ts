@@ -318,6 +318,46 @@ describe("entityEarliestDate (rule (a))", () => {
     expect(entityEarliestDates(appeared, "1.2").get(alex)).toBe("2163");
   });
 
+  it("counts supplemental mentions at the mentioning chapter's date (§2.3)", () => {
+    const mentioned = [
+      chapter("1.1", "2160", {
+        introducing: [
+          { id: sam, name: "Fixture Sam" },
+          { id: battle, name: "Fixture battle", date: "2161" },
+        ],
+      }),
+      // A non-linear chapter set before Sam's introduction mentions Sam.
+      chapter("1.2", "2150", { mentions: [sam, battle] }),
+    ];
+    expect(entityEarliestDate(mentioned, sam, "1.1")).toBe("2160");
+    expect(entityEarliestDate(mentioned, sam, "1.2")).toBe("2150");
+    // An event exists from its own date; a mention does not date it.
+    expect(entityEarliestDate(mentioned, battle, "1.2")).toBe("2161");
+  });
+
+  it("counts first_mentioned at the named chapter's header date (ADR-0032)", () => {
+    const promoted = [
+      chapter("1.1", "2150"),
+      chapter("1.2", "2155"),
+      chapter("1.3", "2170", {
+        introducing: [
+          { id: kai, name: "Fixture Kai", first_mentioned: "1.1" },
+          {
+            id: battle,
+            name: "Fixture battle",
+            date: "2165",
+            first_mentioned: "1.2",
+          },
+        ],
+      }),
+    ];
+    // The hard ceiling: nothing before the promotion chapter is read.
+    expect(entityEarliestDate(promoted, kai, "1.2")).toBeNull();
+    expect(entityEarliestDate(promoted, kai, "1.3")).toBe("2150");
+    // For an event, first_mentioned only gives the card line.
+    expect(entityEarliestDate(promoted, battle, "1.3")).toBe("2165");
+  });
+
   it("prefers the earliest start, then the earliest end, then the lower suffix", () => {
     const tied = (dates: string[]) =>
       entityEarliestDate(

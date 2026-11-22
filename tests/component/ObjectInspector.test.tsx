@@ -95,6 +95,49 @@ describe("object inspector", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("links a promoted entity's first mention (ADR-0032 S5)", async () => {
+    const promoted: NarrativeEntity = {
+      id: "character:promoted",
+      entity_type: "character",
+      name: "Promoted character",
+      first_mentioned: "1.1",
+    };
+    const onChapterSelect = vi.fn();
+    render(
+      <ObjectInspector
+        selection={{ kind: "narrative", id: promoted.id }}
+        narrativeItem={item(promoted)}
+        world={{ ...world, entities: [promoted] }}
+        systems={[]}
+        assets={{ assets: [] }}
+        onSelect={vi.fn()}
+        readThroughChapter="1.3"
+        onChapterSelect={onChapterSelect}
+      />,
+    );
+    const line = screen.getByText(/First mentioned in/);
+    await userEvent.click(
+      within(line).getByRole("button", { name: "Chapter 1.1" }),
+    );
+    expect(onChapterSelect).toHaveBeenCalledWith("1.1");
+  });
+
+  it("omits the first-mention line for an entity without one", () => {
+    const entity = sparseEntities[0]!;
+    render(
+      <ObjectInspector
+        selection={{ kind: "narrative", id: entity.id }}
+        narrativeItem={item(entity)}
+        world={world}
+        systems={[]}
+        assets={{ assets: [] }}
+        onSelect={vi.fn()}
+        readThroughChapter="1.3"
+      />,
+    );
+    expect(screen.queryByText(/First mentioned in/)).not.toBeInTheDocument();
+  });
+
   it("omits the in-body history controls when the host renders them", () => {
     const entity = sparseEntities[0]!;
     const props = {

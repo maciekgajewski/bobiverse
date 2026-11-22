@@ -1931,6 +1931,20 @@ function validateNarrativeCorpusSemantics(
           `Introduction ${entityId} references unavailable birth chapter ${introduced.birth_chapter}.`,
         );
       }
+      if (typeof introduced.first_mentioned === "string") {
+        // ADR-0032: the first mention names an earlier chapter, whose header
+        // date dates it.
+        if (
+          !chapterIds.has(introduced.first_mentioned) ||
+          compareNarrativeChapters(introduced.first_mentioned, id) >= 0
+        ) {
+          throw chapterSemanticError(
+            id,
+            `/introducing/${introductionIndex}/first_mentioned`,
+            `first_mentioned must name an available chapter earlier than ${id}: ${introduced.first_mentioned}.`,
+          );
+        }
+      }
       if (
         typeof introduced.astronomy_object_id === "string" &&
         !corpus.knownAstronomyObjectIds.includes(introduced.astronomy_object_id)

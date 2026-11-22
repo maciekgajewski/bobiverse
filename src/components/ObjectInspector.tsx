@@ -458,6 +458,19 @@ function NarrativeDetails({
           or Last active, and a location's Map context says whether it is
           explicitly unmapped. */}
       {recency && <p className="recency-context">{recency}</p>}
+      {/* ADR-0032 S5: a promoted entity names its first mention. The chapter
+          before promotion is unchanged, so only this card points back to it. */}
+      {stringValue(entity.first_mentioned) && (
+        <p className="recency-context first-mentioned">
+          First mentioned in{" "}
+          <ChapterLink
+            chapter={String(entity.first_mentioned)}
+            readThroughChapter={readThroughChapter}
+            onChapterSelect={onChapterSelect}
+            chapters={chapters}
+          />
+        </p>
+      )}
       {entity.entity_type === "character" ? (
         <CharacterSection
           title="Overview"

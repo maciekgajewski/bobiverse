@@ -168,11 +168,46 @@ the adjudication in that registry; the original sealed ledger is never rewritten
 ### Classification
 
 Classify each claim as `introducing`, `update`, `appearance`, `supplemental-mention`,
-`already-known`, `not-modeled`, `unsupported`, or `ambiguous`. Use `not-modeled`
-only for a source-supported claim intentionally omitted from the companion model
-because it is incidental, redundant at the chapter-object level, or lacks enough
-identity to support a durable entity. Record the editorial reason. Never use it to
-hide an unresolved contradiction or weak evidence.
+`candidate`, `already-known`, `not-modeled`, `unsupported`, or `ambiguous`. Use
+`not-modeled` only for a source-supported claim intentionally omitted from the
+companion model because it is incidental, redundant at the chapter-object level, or
+lacks enough identity to support a durable entity. Record the editorial reason. Never
+use it to hide an unresolved contradiction or weak evidence.
+
+### Candidate entities
+
+ADR-0032 keeps minor first mentions in `data/candidates/candidate-entities.json`,
+outside the narrative data. Here *candidate* means a record in that dataset (ID
+prefix `candidate:`), not a chapter candidate awaiting approval and not an astronomy
+candidate in `data/source/system-candidates.json`.
+
+- **Mention.** Classify as `candidate` every named reference of a kind that
+  `mentions` accepts (character, species, technology, organization, vessel, event,
+  location) that falls below the modelling thresholds (§Event significance,
+  ADR-0014 incidental places, and the like) and names nothing already visible. There
+  is no importance threshold. A new reference adds a candidate record (`id`,
+  `kind`, `name`, `aliases`, `mentions: [<chapter>]`, an optional original one-line
+  `note`, `promotion: null`), kept sorted by `id`; a repeat reference to an
+  unpromoted candidate appends its chapter to `mentions`. The change goes in the
+  same data-only chapter change. Unnamed or identity-poor claims stay `not-modeled`.
+  A reference whose name matches an entity visible at that chapter (ADR-0016
+  exact-name rule, Gliese/GJ normalization included) is a supplemental mention or an
+  update instead; `narrative:validate` rejects such a candidate.
+- **Promote.** When a later chapter meets the modelling threshold, introduce the
+  entity in that chapter in the ordinary way, with its description fusing everything
+  read up to that chapter, mentions included. Copy the candidate's `mentions[0]`
+  into the introduction's `first_mentioned`, and set the candidate's `promotion` to
+  `{ "chapter": <promotion chapter>, "entity_id": <new ID> }`. The promotion change
+  touches only the promotion chapter and the candidate file; earlier chapter files
+  stay byte-identical. The first promotion is done by hand and proved; a small
+  script for this step is committed after it (ADR-0032 §2).
+- **After promotion** the candidate record is frozen. Later references are ordinary
+  typed references or supplemental mentions. References to a candidate before its
+  promotion are never supplemental mentions and are not backfilled.
+- A candidate location never becomes a narrative anchor; astronomy acquisition for
+  a star system happens with its promotion chapter. `narrative:validate` rejects an
+  unpromoted candidate location whose name matches a narrative anchor (a location
+  with an `astronomy_object_id`), and the anchor tooling never reads candidate data.
 
 ### Identity, names, and ordering
 
@@ -660,6 +695,9 @@ Resolve human-review questions one at a time, then present:
   decision, classification, and sealed evidence ID, including qualifying
   supplemental mentions, structurally represented references, later or unresolved
   targets, and intentionally unmodeled mentions;
+- one row per `candidate` reference: its candidate ID, whether it is new or a repeat
+  mention, its kind and name, and its sealed evidence ID; and one row per promotion:
+  the candidate ID, the new entity ID and the `first_mentioned` chapter;
 - evidence IDs with bounded excerpts rendered by `source_evidence.py review`; these
   stay on the extraction host;
 - unresolved or low-confidence items and applied exceptions;
