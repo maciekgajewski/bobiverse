@@ -1,0 +1,96 @@
+{
+  "chapter": "2.16",
+  "title": "16 - Hunted",
+  "summary": "On [[location:vulcan]], a raptor pack ambushes one of [[location:landing]]'s hunting parties, the third such ambush in a week; [[character:howard]] breaks it up with a [[technology:buster-drone|buster]] dropped from orbit, and [[character:stephane-brodeur|Stéphane]]'s party kills the rest. Since the raptors learned that humans are edible they have grown bolder, so hunting parties have been doubled and the cleared ground beyond the fence widened. [[character:george-butterworth|Colonel Butterworth]] orders an automated aerial surveillance system that will find and kill approaching raptors day or night. At a campfire in Howard's [[technology:vr]], [[character:bob-replicant]], who designed the system to run on a dedicated [[technology:guppi-interface|GUPPI]], admits that watching friends such as [[character:archimedes]] age is starting to disturb him; [[character:bill]] judges the raptors' tactics instinctive, [[vessel:exodus-3]] is nearly decanted, and Howard plans to have [[character:riker]] scan oak so that he can print barrels for a distillery. Howard then briefs a furious Butterworth on the [[species:others|Others]], who kill all life in a system and strip it of metals: [[character:mario]]'s scouts are mapping their attacks, Bill is working on weapons, and [[location:earth]], which has advertised itself by radio, lies slightly closer to them than Vulcan does. The farms' success means the [[organization:spitsbergen-refuge|Spits]] and [[organization:free-american-independent-theocratic-hegemony|FAITH]] colonies can be set up ahead of schedule.",
+  "date": "2189-09",
+  "location_id": "location:vulcan",
+  "updates": [
+    {
+      "entity_id": "character:howard",
+      "current_state": "From the L4 point between [[location:vulcan]] and [[location:romulus]] he drops [[technology:buster-drone|busters]] to protect the colony's hunting parties from raptors until an automated surveillance system is running. He plans to print oak barrels for a distillery from a scan by [[character:riker]]."
+    },
+    {
+      "entity_id": "character:stephane-brodeur",
+      "current_state": "He leads one of [[location:landing]]'s hunting parties, now doubled to six people after repeated raptor ambushes; with [[character:howard]]'s help, his party has just come through the third ambush in a week."
+    },
+    {
+      "entity_id": "character:george-butterworth",
+      "current_state": "Leading the colony on [[location:vulcan]], he has ordered an automated aerial surveillance system with night thermal imaging to kill approaching raptors, and an artificial womb is being built to stock a secure ranching area. He is furious after being briefed on the [[species:others|Others]]."
+    },
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "Watching people he knows age, such as [[character:archimedes]], who now has a growing family, is starting to disturb him, and he finds his human relatives too painful to contact because they remind him of his sisters. He designed the automated raptor surveillance system for [[location:vulcan]]."
+    },
+    {
+      "entity_id": "character:bill",
+      "current_state": "At [[location:epsilon-eridani]], he is developing weapons against the [[species:others|Others]], and has improved the orbital [[technology:kudzu-gardens|farm donuts]] while breeding plant stock to seed Ragnarök."
+    },
+    {
+      "entity_id": "vessel:exodus-3",
+      "current_state": "At the L4 point shared by [[location:vulcan]] and [[location:romulus]], it is expected to finish decanting its settlers this week."
+    },
+    {
+      "entity_id": "organization:spitsbergen-refuge",
+      "current_state": "Decanted from [[vessel:exodus-3]], its colony on [[location:romulus]] can be set up on an accelerated schedule now that the orbital farms are exceeding expectations."
+    },
+    {
+      "entity_id": "organization:free-american-independent-theocratic-hegemony",
+      "current_state": "Its colony on [[location:romulus]], brought by [[vessel:exodus-3]], can be set up on an accelerated schedule now that the orbital farms are exceeding expectations."
+    },
+    {
+      "entity_id": "location:vulcan",
+      "description": "The larger member of a double planet with [[location:romulus]], also designated OE-1A, with a day of 22 hours 13 minutes. On the cool side of the habitable zone but warmed by a thicker, carbon-dioxide-rich atmosphere, it has oceans, oxygen, large green land areas, and trees close enough to Terran ones to serve as building timber; its ecosystem is confirmed to be biocompatible with [[species:human|humans]]. Its prolific, competitive ecosystem demands defenses: it includes theropod-like predators with shark-like teeth that colonists call raptors, which hunt in ambush packs, and large herd animals they call brontos.",
+      "state": "Its colony, centered on [[location:landing]], looks established and stable, but raptors, having found humans edible, ambush its hunting parties more often; an automated aerial surveillance system is being set up against them."
+    },
+    {
+      "entity_id": "location:romulus",
+      "description": "The smaller member of the double planet with [[location:vulcan]] at 0.81 AU from [[location:omicron-eridani-a]], with about 0.7 [[location:earth]] masses, orbiting Vulcan every 20 days at about 364,000 km. On the cool side of the habitable zone, it has an atmosphere with oxygen, extensive oceans, large green land areas and possibly seasonal ice caps; its year lasts 285 Earth days and its day 31 hours 49 minutes. Its sparse ecosystems have no animal life larger than a wolf, and cellular analysis indicates that its life is probably related to Vulcan's."
+    },
+    {
+      "entity_id": "location:landing",
+      "description": "The town, also called Landing City, laid out for the [[organization:united-states-of-eurasia|USE]] colony on [[location:vulcan]]; its official name was not thought inventive, but everyone considered it appropriate. Built like a suburb, it has a central administrative hub with an airport and two manufacturing centers in a triangle around it, inside a large perimeter fence backed by sonic stunners. Its colonists abolished private vehicles, moving people and goods in communal [[technology:ami|AMI]]-driven vehicles.",
+      "state": "Trees have been cleared an extra half kilometer beyond its fence, and a secure ranching area is under construction."
+    },
+    {
+      "entity_id": "species:others",
+      "description": "A species that [[character:mario]] holds responsible for killing the life on the planets of [[location:beta-hydri]] and [[location:zeta-tucanae]] and extracting their metals and rare elements; on Zeta Tucanae's habitable-zone planet they killed billions of sentient beings and collected the bodies, and on [[location:gl19-4]] they left almost no animal life. Mario believes they mine metal on a vast scale to build something, probably more of themselves, and [[character:howard]] judges them probably more advanced technologically."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:howard",
+      "role": "lead",
+      "location_id": "location:omicron2-eridani"
+    },
+    {
+      "character_id": "character:stephane-brodeur",
+      "role": "other",
+      "location_id": "location:vulcan"
+    },
+    {
+      "character_id": "character:george-butterworth",
+      "role": "other"
+    },
+    {
+      "character_id": "character:bob-replicant",
+      "role": "other",
+      "location_id": "location:delta-eridani"
+    },
+    {
+      "character_id": "character:bill",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    }
+  ],
+  "mentions": [
+    "character:archimedes",
+    "character:mario",
+    "character:riker",
+    "location:earth",
+    "technology:ami",
+    "technology:buster-drone",
+    "technology:guppi-interface",
+    "technology:kudzu-gardens",
+    "technology:vr"
+  ]
+}

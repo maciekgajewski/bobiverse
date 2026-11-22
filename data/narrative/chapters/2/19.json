@@ -1,0 +1,94 @@
+{
+  "chapter": "2.19",
+  "title": "19 - Prey",
+  "summary": "Through a drone, [[character:bob-replicant]] watches [[character:archimedes]] teach his young son the sailing knots Bob once taught him; the boy has not yet earned the naming ceremony a Deltan child receives on speaking its first word. At the [[technology:autofactory|autofactories]], four [[technology:replicant-matrix|replicant matrices]] are nearly finished for version-3 HEAVEN vessels. Then a large, nearly invisible flyer carries off a forager near [[location:camelot]], and Bob and [[character:marvin]] conclude it is a giant form of the color-changing flying predator Bob named the hippogriff, whose rookery they find on a steep volcanic island a kilometer or two offshore. The elders hold a council without Bob, the tribe splits over him, and Archimedes' standing falls. About two weeks after the abduction, [[technology:buster-drone|busters]] kill a lone hippogriff nearing Camelot, and less than a day later fourteen attack the mesa, which has no cover from the air: Bob and Marvin meet them with twenty busters while [[technology:guppi-interface|Guppy]] brings more from orbit, and Deltan spearmen kill two, one with [[character:arnold]]'s point-blank throw, but three Deltans die and only two busters survive. At a second council [[character:hoffa]] suggests offering Archimedes to the hippogriffs; Bob vows to remove them, throws Marvin out of his [[technology:vr|VR]] when he objects to dropping a rock on the island, then makes up with him and uses a [[technology:ship-busters|ship-buster]] instead. The strike hits harder than intended and destroys the island and its hippogriffs, but the first earthquake the Deltans have known and the falling debris terrify the tribe, and next morning the council, through Hoffa, asks Bob to leave; he tells Archimedes he will go for now.",
+  "date": "2172-06",
+  "location_id": "location:delta-eridani",
+  "introducing": [
+    {
+      "id": "event:destruction-of-the-hippogriff-island",
+      "name": "Destruction of the hippogriff island",
+      "date": "2172-06",
+      "location_id": "location:delta-eridani-4",
+      "description": "[[character:bob-replicant]]'s strike with a thousand-pound [[technology:ship-busters|ship-buster]] on a steep volcanic island a kilometer or two offshore, the rookery of the giant hippogriffs that had attacked the [[species:delta-eridani-natives|Deltans]] at [[location:camelot]]. It hit harder than intended, raising a mushroom cloud and wiping out the island and its hippogriffs, and its ground shock and falling debris so frightened the Deltans that their council asked Bob to leave.",
+      "participant_ids": ["character:bob-replicant", "character:marvin"]
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "Orbiting [[location:delta-eridani-4|Eden]], he has destroyed the hippogriffs' island rookery with a [[technology:ship-busters|ship-buster]] after their attack on [[location:camelot]], but the frightened council of the [[species:delta-eridani-natives|Deltans]] has asked him to leave, and he has agreed to go for now."
+    },
+    {
+      "entity_id": "character:marvin",
+      "current_state": "Orbiting [[location:delta-eridani-4|Eden]] with [[character:bob-replicant]], he helped fight off the hippogriffs and, after first objecting to the strike on their island, has made up with Bob and advises him to let the [[species:delta-eridani-natives|Deltans]] cool off."
+    },
+    {
+      "entity_id": "character:archimedes",
+      "current_state": "At [[location:camelot]], he is raising a young son and teaching him knots, but his standing has fallen with [[character:bob-replicant]]'s: [[character:hoffa]] has suggested offering him to the hippogriffs, and Bob has told him he will leave for now."
+    },
+    {
+      "entity_id": "character:diana",
+      "current_state": "At [[location:camelot]], more protective now that she has a child, she still dislikes [[character:bob-replicant]] and his drones, and she looks satisfied when the council sends him away."
+    },
+    {
+      "entity_id": "character:arnold",
+      "current_state": "Having killed a landed hippogriff with a point-blank spear throw during the hippogriffs' attack on [[location:camelot]], he now sits on the tribal council."
+    },
+    {
+      "entity_id": "character:hoffa",
+      "current_state": "Speaking for the tribal council at [[location:camelot]], he is hostile to [[character:bob-replicant]]: he suggested offering [[character:archimedes]] to the hippogriffs and has told Bob that he is no longer welcome."
+    },
+    {
+      "entity_id": "location:camelot",
+      "state": "Fourteen giant hippogriffs attacked its mesa, which has no cover from the air; [[character:bob-replicant]] and [[character:marvin]] met them with twenty [[technology:buster-drone|busters]] and Deltan spearmen killed two, but three villagers died. Debris from Bob's strike on the hippogriffs' island fell on it overnight, causing minor damage and no injuries."
+    },
+    {
+      "entity_id": "species:delta-eridani-natives",
+      "description": "An intelligent, fire-using native people of [[location:delta-eridani-4|Eden]], named Deltans by [[character:bob-replicant]]. They have bat- and pig-like faces, long spiderish limbs, brownish-gray to orangey-tan fur, patterned heads, mobile expressive ears and a guttural language, and live in hearth-based family groups called hexghi. In an annual breeding season, males compete for females through mostly harmless wrestling, mock battles, tests of skill and bluster, and a child is named in a ceremony when it speaks its first word, since they see language as what sets them apart from animals. Some have built an altar to Bob, whom they call the bawbe, but they show little awe for his divine authority and are quick to question; [[character:marvin]]'s research suggests they first arose in a gorilloid-free part of their continent, where a predator much bigger than a gorilloid, which Bob and Marvin take to be the giant hippogriff, once hunted them almost to extinction."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead"
+    },
+    {
+      "character_id": "character:marvin",
+      "role": "other"
+    },
+    {
+      "character_id": "character:archimedes",
+      "role": "other",
+      "location_id": "location:camelot"
+    },
+    {
+      "character_id": "character:diana",
+      "role": "other",
+      "location_id": "location:camelot"
+    },
+    {
+      "character_id": "character:arnold",
+      "role": "other",
+      "location_id": "location:camelot"
+    },
+    {
+      "character_id": "character:hoffa",
+      "role": "other",
+      "location_id": "location:camelot"
+    }
+  ],
+  "mentions": [
+    "character:moses",
+    "technology:3d-printers",
+    "technology:autofactory",
+    "technology:buster-drone",
+    "technology:guppi-interface",
+    "technology:planetary-exploration-drone",
+    "technology:replicant-matrix",
+    "technology:ship-busters",
+    "technology:suddar",
+    "technology:translation-routine",
+    "technology:vr"
+  ]
+}

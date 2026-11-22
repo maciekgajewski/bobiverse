@@ -1,0 +1,87 @@
+{
+  "chapter": "2.20",
+  "title": "20 - Parasite",
+  "summary": "[[character:howard]] and [[character:george-butterworth|Colonel Butterworth]] watch a video of a doctor cutting a cluster of eggs out of a colonist on [[location:vulcan]], where a large insect parasite has killed four people and two cattle: its larvae make for the host's heart unless the eggs are removed within a day of the swelling, and no adult has yet been caught. Butterworth asks for surveillance drones, and Howard has [[technology:guppi-interface|Guppy]] reschedule his [[technology:autofactory]] to build them with pickups tuned to insect sound and movement. On [[location:romulus]], the [[organization:spitsbergen-refuge|Spits]] and [[organization:free-american-independent-theocratic-hegemony|FAITH]] colonies have finished offloading onto separate continents and live in temporary quarters while [[technology:ami|AMI]] equipment clears land for their towns and a fence goes up at once. Howard is one of more than thirty Bobs watching [[character:riker]]'s video call with [[character:julia-hendricks]] and her family, now awake; young [[character:justin-hendricks|Justin]] recounts the voyage, and Riker says two more colony ships, [[vessel:exodus-4]] and [[vessel:exodus-5]], are on their way, with Romulus looking more attractive since news of the raptors spread. Then the first adult parasite is caught, a hornet-and-spider-like insect with two pairs of wings and a retractable stinger that injects eggs, and after its necropsy Howard readies a couple dozen [[technology:planetary-exploration-drone|drones]] to hunt for more, while Butterworth quietly worries that such small pests could confine the colonists to their homes.",
+  "date": "2189-10",
+  "location_id": "location:vulcan",
+  "updates": [
+    {
+      "entity_id": "character:howard",
+      "current_state": "Supporting the [[location:vulcan]] colony against an egg-laying insect parasite, he has switched his [[technology:autofactory]] to building surveillance drones tuned to insect sound and movement, and has a couple dozen ready to program with data from the first captured adult and send out to scan for more."
+    },
+    {
+      "entity_id": "character:george-butterworth",
+      "current_state": "Leading the colony on [[location:vulcan]], he is fighting an insect parasite that has killed four people and two cattle, has asked [[character:howard]] for surveillance drones, and has just had the first adult caught. Outwardly calm, he fears that such small pests could confine the colonists to their homes."
+    },
+    {
+      "entity_id": "character:riker",
+      "current_state": "He hosts video calls with [[character:julia-hendricks]]'s family, now awake on [[location:romulus]], that more than thirty Bobs subscribe to, and reports that two more colony ships, [[vessel:exodus-4]] and [[vessel:exodus-5]], are heading for the system; their enclave leaders will choose between Romulus and [[location:vulcan]]."
+    },
+    {
+      "entity_id": "character:julia-hendricks",
+      "current_state": "Awake after the voyage, she is on [[location:romulus]] with her family in temporary quarters. The family owns a communicator, so she can call [[character:riker]] without booking time on the colony system, and she has promised to call him once they move into private residences."
+    },
+    {
+      "entity_id": "character:justin-hendricks",
+      "current_state": "Awake after the voyage, which he recounts as a dull big-ship ride, a hated needle and being put to sleep in a box, he is on [[location:romulus]] with his mother, [[character:julia-hendricks]], and still adores [[character:riker]] as his Uncle Will. She says he has two speeds, asleep and full tilt."
+    },
+    {
+      "entity_id": "organization:spitsbergen-refuge",
+      "current_state": "Its colony has finished offloading onto [[location:romulus]], on a different continent from [[organization:free-american-independent-theocratic-hegemony|FAITH]]'s, and lives in temporary quarters while its town is built."
+    },
+    {
+      "entity_id": "organization:free-american-independent-theocratic-hegemony",
+      "current_state": "Its colony has finished offloading onto [[location:romulus]], on a different continent from the [[organization:spitsbergen-refuge|Spits]], and lives in temporary quarters while its town is built."
+    },
+    {
+      "entity_id": "location:vulcan",
+      "state": "Its colony is fighting a native insect parasite, about hummingbird-sized or smaller, whose stinger injects eggs under the skin; unless they are cut out within a day of the swelling, the larvae reach the heart and kill the host in about two days. It has killed four people and two cattle, and the first adult has just been caught and dissected."
+    },
+    {
+      "entity_id": "location:romulus",
+      "description": "The smaller member of the double planet with [[location:vulcan]] at 0.81 AU from [[location:omicron-eridani-a]], with about 0.7 [[location:earth]] masses, orbiting Vulcan every 20 days at about 364,000 km. On the cool side of the habitable zone, it has an atmosphere with oxygen, extensive oceans and possibly seasonal ice caps, and its land is divided into eight land masses, each about the size of Australia, plus several smaller archipelagos; its year lasts 285 Earth days and its day 31 hours 49 minutes. Its sparse ecosystems have no animal life larger than a wolf, and cellular analysis indicates that its life is probably related to Vulcan's.",
+      "colony_of": ["species:human"],
+      "possible_colony_target": false,
+      "state": "The [[organization:spitsbergen-refuge|Spits]] and [[organization:free-american-independent-theocratic-hegemony|FAITH]] colonies have finished offloading onto separate continents and live in temporary quarters while [[technology:ami|AMI]] construction equipment clears land and lays out street plans; a fence is going up at once. Two more colony ships are heading for the system, and with news of [[location:vulcan]]'s raptors spreading, it is looking more attractive as a destination."
+    },
+    {
+      "entity_id": "vessel:exodus-4",
+      "current_state": "On its way to [[location:omicron2-eridani]] with [[vessel:exodus-5]]; its enclave leaders will choose between [[location:romulus]] and [[location:vulcan]] for their colony."
+    },
+    {
+      "entity_id": "vessel:exodus-5",
+      "current_state": "On its way to [[location:omicron2-eridani]] with [[vessel:exodus-4]]; its enclave leaders will choose between [[location:romulus]] and [[location:vulcan]] for their colony."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:howard",
+      "role": "lead",
+      "location_id": "location:omicron2-eridani"
+    },
+    {
+      "character_id": "character:george-butterworth",
+      "role": "other"
+    },
+    {
+      "character_id": "character:riker",
+      "role": "other"
+    },
+    {
+      "character_id": "character:julia-hendricks",
+      "role": "other",
+      "location_id": "location:romulus"
+    },
+    {
+      "character_id": "character:justin-hendricks",
+      "role": "other",
+      "location_id": "location:romulus"
+    }
+  ],
+  "mentions": [
+    "technology:ami",
+    "technology:autofactory",
+    "technology:guppi-interface",
+    "technology:planetary-exploration-drone"
+  ]
+}

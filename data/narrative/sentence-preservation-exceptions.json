@@ -438,6 +438,72 @@
       "entity_id": "species:delta-eridani-natives",
       "field": "description",
       "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "2.11",
+      "entity_id": "species:delta-eridani-natives",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "2.11",
+      "entity_id": "technology:buster-drone",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "2.13",
+      "entity_id": "technology:mechanical-ants",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "2.14",
+      "entity_id": "organization:vehement",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "2.15",
+      "entity_id": "technology:subspace-communications",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "2.16",
+      "entity_id": "location:vulcan",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "2.16",
+      "entity_id": "location:romulus",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "2.16",
+      "entity_id": "location:landing",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "2.16",
+      "entity_id": "species:others",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "2.19",
+      "entity_id": "species:delta-eridani-natives",
+      "field": "description",
+      "reason": "Fused rewrite under the description guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "2.20",
+      "entity_id": "location:romulus",
+      "field": "description",
+      "reason": "Fused rewrite under the description guideline (Maciej 2026-11-14 22:54, delegated condensation)"
     }
   ]
 }

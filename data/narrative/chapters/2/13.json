@@ -1,0 +1,102 @@
+{
+  "chapter": "2.13",
+  "title": "13 - Investigating the Others",
+  "summary": "[[character:mario]] reaches [[location:gliese-54]], a sparse system that the [[species:others|Others]] who stripped [[location:beta-hydri]] and [[location:zeta-tucanae]] have not touched. Over a couple of months he builds a [[technology:relay-station|relay station]] that can forward his transmissions from nearby stars to [[location:epsilon-eridani]], sends [[character:bill]] everything he knows about the Others, and, not wanting to be alone, builds four new Bobs, who name themselves after dwarves: [[character:bashful]], [[character:dopey]], [[character:sleepy]] and [[character:hungry]]. Around the desk in Mario's treehouse they plan how to learn the size and heading of the Others' advance: each Bob will pick a system farther out and travel there, keeping a channel open back to Bill, building relays where needed and sending regular differential backups. They weigh the metal the Others are gathering, which would make a massive fleet if it goes into ships, the harvest Mario found, and the [[technology:mechanical-ants|ants]] he has learned from. Mario proposes a built-in self-destruct, perhaps on a dead-man trigger, so that a captured Bob teaches the Others nothing, and the meeting ends with each Bob to choose a destination.",
+  "date": "2180-05",
+  "location_id": "location:gliese-54",
+  "introducing": [
+    {
+      "id": "location:gliese-54",
+      "name": "Gliese 54",
+      "kind": "star_system",
+      "map_status": "unmapped",
+      "description": "A single-star system whose primary is a small K star, almost a red dwarf. Its metallicity is low and most of its material never aggregated into planets, leaving a single close-in planet and a great deal of space debris; [[character:mario]] finds it not particularly interesting.",
+      "state": "The [[species:others|Others]] have not touched it. [[character:mario]] has built a [[technology:relay-station|relay station]] here that forwards his transmissions to [[location:epsilon-eridani]]."
+    },
+    {
+      "id": "location:gliese-54-1",
+      "name": "Gliese 54 1",
+      "kind": "planet",
+      "parent_location_id": "location:gliese-54",
+      "parent_relation": "orbits",
+      "orbital_order": 1024,
+      "description": "The only planet of [[location:gliese-54]], orbiting close to its star."
+    },
+    {
+      "id": "character:bashful",
+      "name": "Bashful",
+      "parent_id": "character:mario",
+      "description": "A Bob replicant from [[character:mario]]'s first cohort, built at [[location:gliese-54]], one of four new Bobs who named themselves after dwarves and agreed to help Mario investigate the [[species:others|Others]].",
+      "current_state": "At [[location:gliese-54]], preparing to pick a system farther out and travel there to look for the [[species:others|Others]]."
+    },
+    {
+      "id": "character:dopey",
+      "name": "Dopey",
+      "parent_id": "character:mario",
+      "description": "A Bob replicant from [[character:mario]]'s first cohort, built at [[location:gliese-54]], one of four new Bobs who named themselves after dwarves and agreed to help Mario investigate the [[species:others|Others]]. At their first planning meeting he raised the food the Others had gathered.",
+      "current_state": "At [[location:gliese-54]], preparing to pick a system farther out and travel there to look for the [[species:others|Others]]."
+    },
+    {
+      "id": "character:sleepy",
+      "name": "Sleepy",
+      "parent_id": "character:mario",
+      "description": "A Bob replicant from [[character:mario]]'s first cohort, built at [[location:gliese-54]], one of four new Bobs who named themselves after dwarves and agreed to help Mario investigate the [[species:others|Others]]. He opened their first planning meeting and worries that a Bob restored from backup would not really be the same Bob.",
+      "current_state": "At [[location:gliese-54]], preparing to pick a system farther out and travel there to look for the [[species:others|Others]]."
+    },
+    {
+      "id": "character:hungry",
+      "name": "Hungry",
+      "parent_id": "character:mario",
+      "description": "A Bob replicant from [[character:mario]]'s first cohort, built at [[location:gliese-54]], one of four new Bobs who named themselves after dwarves and agreed to help Mario investigate the [[species:others|Others]]; his name is not one of the original dwarves'. He prefers coffee to tropical drinks and bickers with [[character:sleepy]].",
+      "current_state": "At [[location:gliese-54]], preparing to pick a system farther out and travel there to look for the [[species:others|Others]]."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:mario",
+      "current_state": "At [[location:gliese-54]], he has built a [[technology:relay-station|relay station]] that forwards his transmissions to [[location:epsilon-eridani]], reported everything on the [[species:others|Others]] to [[character:bill]], and built four new Bobs to help him find them."
+    },
+    {
+      "entity_id": "species:others",
+      "description": "A species to which [[character:mario]] attributes the stripping of metals from [[location:beta-hydri]] and [[location:zeta-tucanae]] and the killing of life found there. On [[location:gl19-4]] they left almost no animal life; on Zeta Tucanae's habitable-zone planet they killed billions of sentient beings and collected the bodies. Mario believes they mine metal on a vast scale to build something, probably more of themselves."
+    },
+    {
+      "entity_id": "technology:mechanical-ants",
+      "description": "Ant-sized alien machines of the [[species:others|Others]], first found aboard a crashed [[vessel:alien-cargo-carrier]] at [[location:gl19-4]]. Once activated they swarm over metal objects, dismantle them with small cutters on their front appendages and sort the material by element, ignoring plastic and ceramic parts. They draw power from [[technology:suddar]] beams received through subspace, so scanning wakes them and they go dormant when it stops. [[character:mario]] has studied their technology closely, judges them surprisingly efficient and has learned from them."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:mario",
+      "role": "lead",
+      "location_id": "location:gliese-54"
+    },
+    {
+      "character_id": "character:bashful",
+      "role": "other",
+      "location_id": "location:gliese-54"
+    },
+    {
+      "character_id": "character:dopey",
+      "role": "other",
+      "location_id": "location:gliese-54"
+    },
+    {
+      "character_id": "character:sleepy",
+      "role": "other",
+      "location_id": "location:gliese-54"
+    },
+    {
+      "character_id": "character:hungry",
+      "role": "other",
+      "location_id": "location:gliese-54"
+    }
+  ],
+  "mentions": [
+    "character:bill",
+    "location:beta-hydri",
+    "location:epsilon-eridani",
+    "location:zeta-tucanae",
+    "technology:relay-station"
+  ]
+}

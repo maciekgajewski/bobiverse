@@ -1,0 +1,72 @@
+{
+  "chapter": "2.18",
+  "title": "18 - It’s Getting Worse",
+  "summary": "[[character:riker]] stands outside the police lines at a run-down apartment building in a Brazilian favela, where an attack that tore away part of its ground floor has killed sixty-three people so far and left the structure fit only to be condemned. Brazil's [[character:benedito|Minister Benedito]], more frightened than angry, calls to complain that this is the third attack this month with no arrests; Riker, responsible only for the global emigration effort and present as a consultant, points him to Brazil's internal security forces and the [[organization:united-nations|UN]], lends [[technology:mining-drones]] to the rescuers and rings the site with surveillance drones against a follow-up attack. The attackers make no announcements or demands and seem simply to be targeting Brazil, of which Florianópolis is nearly all that remains. At a remote UN session, [[character:ambassador-gerrold|Gerrold]] of New Zealand again rails against Riker and the failure to stop the sabotage while Riker feigns attention through his public avatar and rolls his eyes in his [[technology:vr|VR]], until the Maldives' [[character:sharma|Minister Sharma]] rebukes him for repeating old speeches and asks him to take his problem with replicants offline, to the delegates' approval. The agenda turns to [[location:earth]]'s deteriorating climate: several higher-latitude enclaves are nearing non-viability, [[vessel:exodus-4]] and [[vessel:exodus-5]] are due to launch this month, the UN has confirmed that the island nations will go to [[location:eta-cassiopeiae-3]], and delegates disagree over whether to change the emigration order or move the troubled enclaves into vacated territory. Missing [[character:homer]], whose mockery of the meetings usually helps him through, Riker hands the video window to a sandbox Bob and slips away.",
+  "date": "2172-09",
+  "location_id": "location:sol",
+  "introducing": [
+    {
+      "id": "character:benedito",
+      "name": "Minister Benedito",
+      "description": "Brazil's minister, speaking for a country of which Florianópolis is nearly all that remains.",
+      "current_state": "After a third deadly attack on Brazil this month with no arrests, he presses [[character:riker]] for assurances; Riker judges him more spooked than angry and probably worried about his job."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:riker",
+      "current_state": "At [[location:sol]], responsible only for the global emigration effort, he consults on a third deadly terror attack in Brazil this month, lending [[technology:mining-drones]] for rescue and surveillance drones to guard the site."
+    },
+    {
+      "entity_id": "character:ambassador-gerrold",
+      "aliases": ["Minister Gerrold"],
+      "description": "A former Australian who now represents New Zealand among the survivor delegates. He has always disliked dealing with [[character:riker]], for no reason Riker can see, and dismisses him as having no stake in the emigration debate. He is hostile to replicants in general.",
+      "current_state": "At remote [[organization:united-nations|UN]] sessions he keeps berating [[character:riker]] and the failure to stop the sabotage, and [[character:sharma]] has now publicly rebuked him for repeating his speeches."
+    },
+    {
+      "entity_id": "character:sharma",
+      "aliases": ["Minister Sharma"],
+      "current_state": "At a remote [[organization:united-nations|UN]] session she rebukes [[character:ambassador-gerrold|Gerrold]] for repeating old speeches and asks him to take his problem with replicants offline, winning the delegates' approval."
+    },
+    {
+      "entity_id": "organization:united-nations",
+      "current_state": "Meeting remotely, it has confirmed that the island nations will emigrate to [[location:eta-cassiopeiae-3]] and is divided over whether to change the emigration order or move failing higher-latitude enclaves into vacated territory."
+    },
+    {
+      "entity_id": "location:earth",
+      "state": "Its climate keeps deteriorating, and several enclaves in the higher latitudes are approaching non-viability."
+    },
+    {
+      "entity_id": "location:eta-cassiopeiae-3",
+      "state": "The [[organization:united-nations|UN]] has confirmed that the island nations of [[location:earth]] will emigrate there."
+    },
+    {
+      "entity_id": "vessel:exodus-4",
+      "current_state": "Due to launch from [[location:sol]] this month together with [[vessel:exodus-5]]."
+    },
+    {
+      "entity_id": "vessel:exodus-5",
+      "current_state": "Due to launch from [[location:sol]] this month together with [[vessel:exodus-4]]."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:riker",
+      "role": "lead",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:benedito",
+      "role": "other"
+    },
+    {
+      "character_id": "character:ambassador-gerrold",
+      "role": "other"
+    },
+    {
+      "character_id": "character:sharma",
+      "role": "other"
+    }
+  ],
+  "mentions": ["character:homer", "technology:mining-drones", "technology:vr"]
+}

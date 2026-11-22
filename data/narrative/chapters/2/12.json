@@ -1,0 +1,72 @@
+{
+  "chapter": "2.12",
+  "title": "12 - Bob Calling",
+  "summary": "[[technology:guppi-interface|Guppy]] announces a new [[technology:subspace-communications|SCUT]] connection at [[location:epsilon-eridani]], and [[character:bill]] finds the caller is the original [[character:bob-replicant]], who has built a transceiver from Bill's broadcast plans. Bill drops unannounced into Bob's [[technology:vr|VR]], welcomes him to [[organization:bobnet]] and meets [[character:marvin]], then realizes that Bob is showing him a recording of a village of [[species:delta-eridani-natives|Deltans]], the first intelligent species the Bobs have found, which makes this [[event:first-contact-with-the-deltans|first contact]]. Finding Bob's VR more advanced than his own, Bill plans to merge its features before upgrading him. He catches Bob up: [[character:milo]] found two habitable planets at [[location:omicron2-eridani]] and named them [[location:vulcan]] and [[location:romulus]]; [[character:riker]] and his clone [[character:homer]] fought the last of the [[organization:brazilian-empire|Brazilian]] space navy in [[location:sol]] and learned that a [[event:solar-system-war|system-wide war]] had almost wiped out [[species:human|humanity]], leaving about fifteen million people; and they are building ten-thousand-person [[vessel:use-colony-ship|colony ships]] to reach Vulcan before [[location:earth]] stops being livable, though moving everyone would take some fifteen hundred trips. Bill estimates that at least twenty Bobs are active and describes slowly terraforming [[location:ee-2|Ragnarök]] and his slow-moving android project, and Bob says he wants an [[technology:bullwinkle|android]] so he can visit [[location:delta-eridani-4|Eden]] in person.",
+  "date": "2171-05",
+  "location_id": "location:epsilon-eridani",
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "He has joined [[organization:bobnet]] with a [[technology:subspace-communications|SCUT]] built from [[character:bill]]'s broadcast plans; Bill judges his [[technology:vr|VR]] more advanced than his own and plans to merge its features before upgrading him to full BobNet compatibility. Heavily invested in the [[species:delta-eridani-natives|Deltans]]' lives, he wants an android so he can visit [[location:delta-eridani-4|Eden]] in person."
+    },
+    {
+      "entity_id": "character:bill",
+      "current_state": "At [[location:epsilon-eridani]], he acts as the central clearing house among the Bobs on [[organization:bobnet]], broadcasting [[technology:subspace-communications|SCUT]] plans that only a handful of Bobs have built so far, and estimates that at least twenty Bobs are active. His android project has a working, remotely controlled quadruped [[technology:bullwinkle|android]], though progress is slow."
+    },
+    {
+      "entity_id": "location:ee-2",
+      "state": "[[character:bill]] is slowly terraforming it. [[character:riker]] has sent seeds and plant samples with an outgoing Bob, expected in about three years, after which Bill plans to grow moss and lichen hybrids there."
+    },
+    {
+      "entity_id": "character:spike",
+      "description": "A simulated cat that lives in [[character:bob-replicant]]'s [[technology:vr]], driven by its own A.I. It is as fickle and independent as a real cat: it wanders where it pleases, purrs on [[character:marvin]]'s lap and settles on Bob's keyboard. The A.I. of Bob's Spike seems more independent than that of [[character:bill]]'s version."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bill",
+      "role": "lead",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:garfield",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:bob-replicant",
+      "role": "other"
+    },
+    {
+      "character_id": "character:marvin",
+      "role": "other"
+    },
+    {
+      "character_id": "character:spike",
+      "role": "other"
+    }
+  ],
+  "mentions": [
+    "character:homer",
+    "character:milo",
+    "character:riker",
+    "event:first-contact-with-the-deltans",
+    "event:solar-system-war",
+    "location:delta-eridani-4",
+    "location:earth",
+    "location:omicron2-eridani",
+    "location:romulus",
+    "location:sol",
+    "location:vulcan",
+    "organization:bobnet",
+    "organization:brazilian-empire",
+    "species:delta-eridani-natives",
+    "species:human",
+    "technology:bullwinkle",
+    "technology:guppi-interface",
+    "technology:jeeves",
+    "technology:subspace-communications",
+    "technology:vr",
+    "vessel:use-colony-ship"
+  ]
+}

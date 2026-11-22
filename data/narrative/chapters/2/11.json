@@ -1,0 +1,75 @@
+{
+  "chapter": "2.11",
+  "title": "11 - Mating Dance",
+  "summary": "With [[technology:buster-drone|busters]] keeping gorilloids away from [[location:camelot]], tension rises through the [[species:delta-eridani-natives|Deltans]]' breeding season. When rival males challenge [[character:archimedes]] to contests of strength, [[character:bob-replicant]] teaches him a few jujitsu locks and throws adapted to Deltan anatomy; Archimedes starts winning and pairs with [[character:diana]], who shuns Bob's drones, while Bob hopes Archimedes' descendants will raise the whole tribe's intelligence. As the season ends, [[character:marvin]] finds Deltan bones marked by the mystery predator less than a mile from Camelot, and Bob fears he has led the tribe back into its range. Archimedes wonders whether they were safer at their old site, and [[character:moses]] recalls that the elder who once doubted that gorilloids had driven the tribe away is now dead. Bob swears both to secrecy and sets drones on a wide perimeter guard under cover of a gorilloid count. Marvin splits the continent into drone search segments for [[technology:guppi-interface|Guppy]] to run, and Bob realizes that diverting the [[technology:3d-printers|printers]] to extra [[technology:planetary-exploration-drone|exploration drones]] has left him fewer than a dozen busters.",
+  "date": "2169-11",
+  "location_id": "location:delta-eridani",
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "Orbiting [[location:delta-eridani-4|Eden]] as the [[species:delta-eridani-natives|Deltans]]' sky god, he has widened the drone search for the predator after its marks turned up on Deltan bones near [[location:camelot]], and his [[technology:buster-drone|buster]] stock is down to fewer than a dozen."
+    },
+    {
+      "entity_id": "character:marvin",
+      "current_state": "Orbiting [[location:delta-eridani-4|Eden]] with [[character:bob-replicant]], he has found predator-marked Deltan bones less than a mile from [[location:camelot]] and divided the continent into drone search segments, which [[technology:guppi-interface|Guppy]] is implementing."
+    },
+    {
+      "entity_id": "character:archimedes",
+      "current_state": "Still [[character:bob-replicant]]'s main spokesperson at [[location:camelot]], he has won standing in the breeding season with jujitsu throws Bob adapted for him and has formalized his mating with [[character:diana]]. He has agreed to keep the predator threat secret."
+    },
+    {
+      "entity_id": "character:diana",
+      "current_state": "At [[location:camelot]], she has formalized her mating with [[character:archimedes]]. She intensely dislikes [[character:bob-replicant]]'s drones and stays away whenever Bob is with Archimedes."
+    },
+    {
+      "entity_id": "character:moses",
+      "current_state": "At [[location:camelot]], he spends his afternoons easing his stiff joints in the sun at a favorite spot on the south side of the bluff, apparently in the long decline of old age. He has agreed to keep the predator threat secret."
+    },
+    {
+      "entity_id": "location:camelot",
+      "state": "No gorilloid has attacked for almost a month, but fewer than a dozen [[technology:buster-drone|busters]] remain to guard it. Predator-marked Deltan bones have been found less than a mile away, and drones now keep a wide perimeter guard under cover of a gorilloid count."
+    },
+    {
+      "entity_id": "species:delta-eridani-natives",
+      "description": "An intelligent, fire-using native people of [[location:delta-eridani-4|Eden]], named Deltans by [[character:bob-replicant]]. They have bat- and pig-like faces, long spiderish limbs, brownish-gray to orangey-tan fur, patterned heads, mobile expressive ears and a guttural language, and live in hearth-based family groups called hexghi. In an annual breeding season, males compete for females through mostly harmless wrestling, mock battles, tests of skill and bluster. Some have built an altar to Bob, whom they call the bawbe, but they show little awe for his divine authority and are quick to question; [[character:marvin]]'s research suggests they first arose in a gorilloid-free part of their continent, where an unidentified predator much bigger than a gorilloid once hunted them almost to extinction."
+    },
+    {
+      "entity_id": "technology:buster-drone",
+      "description": "An observation drone reinforced internally and fitted with steel impact caps, striking with forty pounds of high-tensile steel at twice rifle-bullet speed for a lethal blow with a sonic boom; a slow strike only stuns, and a surface target takes about ten minutes of controlled descent. Standby units strike within seconds, AMI-controlled sentries meet approaching gorilloids head-on in an encounter that destroys both, and units can be produced faster than gorilloids breed. One survives about a dozen strikes before needing repair; [[character:bob-replicant]] sees it as an imprecise, theatrical weapon that endangers anyone near the target."
+    },
+    {
+      "entity_id": "technology:translation-routine",
+      "description": "A software routine for interpreting speech. One version interprets the standard twenty-second-century accent so smoothly that differing speech patterns become effectively transparent; another lets its user converse in English with the [[species:delta-eridani-natives|Deltans]], converting idiom and metaphor as well as their more guttural language. It renders Deltan names as human-pronounceable sounds and keeps each rendering permanently tied to its name."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead"
+    },
+    {
+      "character_id": "character:marvin",
+      "role": "other"
+    },
+    {
+      "character_id": "character:archimedes",
+      "role": "other",
+      "location_id": "location:camelot"
+    },
+    {
+      "character_id": "character:diana",
+      "role": "other",
+      "location_id": "location:camelot"
+    },
+    {
+      "character_id": "character:moses",
+      "role": "other",
+      "location_id": "location:camelot"
+    }
+  ],
+  "mentions": [
+    "technology:3d-printers",
+    "technology:guppi-interface",
+    "technology:planetary-exploration-drone"
+  ]
+}
