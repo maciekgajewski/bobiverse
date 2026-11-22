@@ -33,6 +33,9 @@ clear boundary between supplemental activity and structured facts.
   2. resolves to one stable canonical ID; and
   3. is absent from every other typed direct narrative-entity or location reference
      in the authored chapter record.
+- A reference only in passing, or in a bare list, does not become a supplemental
+  mention. That exception governs those references even though extraction applies
+  no importance or curation threshold to other qualifying references.
 - `mentions` remains an optional, nonempty, duplicate-free set of stable IDs. Each
   qualifying object appears once regardless of how many times the source references
   it.
@@ -107,3 +110,15 @@ activity, and `source_mentions` distinction remain binding.
   and Chapter `1.14`.
 - Future extraction reviews treat supplemental-mention completeness as a required
   source-evidence audit.
+
+## Amendment (2026-11-22)
+
+On 15 Nov 2026, answering whether chapter 1.40 should record a supplemental mention
+for Medeiros (named there only in passing), Maciej ruled, relayed by the manager:
+
+> Skip mentions "in passing".
+
+A reference only in passing, or in a bare list, does not become a supplemental
+mention. That rule governs the Decision above for those references, including over
+the rejection of an importance or curation threshold. This amendment is the in-repo
+record of that rule.

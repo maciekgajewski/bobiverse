@@ -800,7 +800,8 @@ records then introduce book-specific entities and record ordered visible patches
 appearances, events, and optional supplemental references in `mentions`. Beginning
 with Chapter `1.14`, every source-supported reference to a previously visible direct
 narrative object is included when the object is absent from every other typed chapter
-reference. A mention creates no relationship or state change. The stable entity registry
+reference, except a reference only in passing or in a bare list (ADR-0017).
+A mention creates no relationship or state change. The stable entity registry
 and every selected-chapter state are deterministic generated projections, never
 manually edited snapshots. ADR-0001 establishes chapter-authored patches; ADR-0003
 supersedes its sole-source boundary with the zero state; ADR-0004 establishes the
@@ -926,7 +927,8 @@ presence, or coordinates, and UI code must not reconstruct it independently.
 From Chapter `1.14` onward, supplemental mentions target only an already visible
 direct narrative entity or location absent from every other typed direct narrative
 reference in that chapter, and every qualifying source-supported reference is
-required. Chapters `1.1` through `1.13` retain ADR-0008's accepted boundary.
+required. A reference only in passing, or in a bare list, does not qualify
+(ADR-0017). Chapters `1.1` through `1.13` retain ADR-0008's accepted boundary.
 They do not assert presence, participation, ownership, membership, location, or use.
 `mention` is their only direct activity reason; a mentioned mapped location also
 derives `mapped_system_ancestry`.
