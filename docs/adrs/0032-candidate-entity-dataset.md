@@ -125,8 +125,8 @@ then becomes central in 2.30 (dated 2195).
 1. **Rule (a) versus "first mentioned in 2.13".** Rule (a) dates existence from an
    entity's introduction, updates, appearances and event date. Mentions are excluded,
    in code and in the documentation. S3 adds `first_mentioned` to that list. **This
-   edits `docs/design-principles.md` rule (a) and needs Maciej's own OK** (decision
-   2). Without the edit, the entity exists only from 2.30's date, and "first
+   edits `docs/design-principles.md` rule (a) and needs Maciej's own OK** (see Decision for
+   Maciej). Without the edit, the entity exists only from 2.30's date, and "first
    mentioned in 2.13" is just a label.
 2. **§2.4 "the map shows the entities known".** Before promotion, a candidate read at
    2.13 is known but not shown. This is not a conflict if candidates are editorial
@@ -136,7 +136,8 @@ then becomes central in 2.30 (dated 2195).
    mentions, because the target is not visible, and they are not backfilled after
    promotion. They live only in `mentions`.
 4. **The name "candidate"** already means a chapter candidate (extraction) and
-   `system-candidates.json` (astronomy) (decision 1).
+   `system-candidates.json` (astronomy); settled
+   as Decided 1.
 
 ## Consequences
 
@@ -155,30 +156,61 @@ for each candidate. A candidate that is never promoted stays invisible forever, 
   adds a second source of truth that the hard ceiling must guard.
 - **A `mentions` backfill on promotion:** rejected. It rewrites earlier chapters.
 
-## Decisions for Maciej
+## Decided
 
-1. **Name.** Recommend `candidate` in the docs, as you asked, with the file and IDs
-   as `data/candidates/` and `candidate:`. The ADR glossary would distinguish it from
-   chapter candidates. The alternative is "minor mention".
-2. **Existence from the first mention (S3, constitution rule (a)).** Recommend yes.
-   It is what "first mentioned in 2.13" means in a chronological view, and it is
-   revealed only at 2.30. It needs your OK to edit rule (a).
-3. **Coverage.** Recommend exhaustive recording of named references of mentionable
-   kinds, with no importance threshold (consistent with ADR-0017), so promotion is
-   mechanical.
-4. **Cut-over.** Recommend starting with the first chapter batch extracted after
-   acceptance, with no retroactive audit of 1.1–2.20 (as ADR-0017 did at 1.14).
-   Earlier entities can still be promoted by hand from old `not-modeled` notes.
-5. **Chapter card back-reference.** Recommend no: 2.13's card stays as it was read,
-   and only the entity card names 2.13.
-6. **Activity for the first mention.** Recommend none (principle 7). The card line
-   and the existence date are enough.
-7. **First-mention date.** Recommend the chapter header date only, with no override.
-   If a non-linear first mention needs a different date, revisit this.
+The manager settled these on 2026-11-22 under Maciej's rule that the team decides
+what the principles and source already settle.
+
+1. **Name.** `candidate`, with the file and IDs as `data/candidates/` and
+   `candidate:`. A glossary note in the docs separates it from chapter candidates
+   and `system-candidates.json`.
+2. **Coverage.** Exhaustive: every named reference of a mentionable kind, with no
+   importance threshold (consistent with ADR-0017), so promotion is mechanical.
+3. **Cut-over.** No retroactive audit of 1.1–2.20. The implementation seeds the
+   candidate file with the references Maciej already ruled out of 2.11–2.20, as
+   names and chapters only: Axler (2.11), the Maldives (2.14), Archimedes' son
+   (2.19) and the Camelot attack (2.19).
+4. **Chapter card back-reference.** No: 2.13's card stays as it was read, and only
+   the entity card names 2.13.
+5. **Activity for the first mention.** None (principle 7).
+6. **First-mention date.** The mentioning chapter's header date only, with no
+   override.
+
+## Decision for Maciej
+
+**Existence from the first mention (S3), an edit to constitution rule (a).**
+Recommend yes: it is what "first mentioned in 2.13" means in a chronological view,
+and it is revealed only at the promotion chapter. It needs Maciej's own OK, word for
+word. Without it, the entity exists only from its promotion chapter's date, and
+"first mentioned in 2.13" is just a label.
+
+Current text (`docs/design-principles.md` §3, rule (a)):
+
+```markdown
+- **(a) Entities show from their earliest known story date.** Once read, an entity
+  appears at every soft ceiling at or after the earliest story date of any revealed
+  fact about it: its introduction, its updates (`effective_date ?? chapter date`),
+  its appearances (the chapter's date) and, for an event, its own `date`. An entity
+  introduced later in reading but earlier in story therefore appears at the earlier
+  soft ceiling.
+```
+
+Proposed text:
+
+```markdown
+- **(a) Entities show from their earliest known story date.** Once read, an entity
+  appears at every soft ceiling at or after the earliest story date of any revealed
+  fact about it: its introduction, its updates (`effective_date ?? chapter date`),
+  its appearances (the chapter's date), its first mention (`first_mentioned`, that
+  chapter's date) and, for an event, its own `date`. An entity introduced later in
+  reading but earlier in story therefore appears at the earlier soft ceiling.
+```
 
 ## Follow-up
 
 On acceptance: a task to add the schema, validation and structural check, the
-`first_mentioned` field (data-model doc and schema), the rule (a) edit if decision 2
-is approved, the card line, and an extraction-contract update (new classification,
-review row, promotion script).
+`first_mentioned` field (data-model doc and schema), the rule (a) edit if Maciej
+approves it, the card line, the glossary note, an extraction-contract update (new
+classification, review row, promotion script), and seeding the candidate file with
+Axler (2.11), the Maldives (2.14), Archimedes' son (2.19) and the Camelot attack
+(2.19), as names and chapters only.
