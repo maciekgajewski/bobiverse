@@ -717,6 +717,7 @@ one command, instead of assembling and checking that branch by hand:
 python3 scripts/extraction_check.py \
   --candidates-dir /path/to/candidates \
   --exceptions-file /path/to/sentence-preservation-exceptions.json \
+  --candidate-entities-file /path/to/candidate-entities.json \
   --source-dir /path/to/source-split \
   --approval-dir /path/to/approvals \
   --base origin/master \
@@ -727,11 +728,14 @@ python3 scripts/extraction_check.py \
 
 `--candidates-dir` holds one `B.N.json` file per chapter. The optional
 `--exceptions-file` is the complete `sentence-preservation-exceptions.json` to
-install. Both are copied byte-for-byte into
-`data/narrative/chapters/<book>/<n>.json` and
-`data/narrative/sentence-preservation-exceptions.json` on a new worktree off
-`--base`, then committed once on a new local branch. The command never pushes
-and never writes into the main checkout.
+install. The optional `--candidate-entities-file` is the complete
+`candidate-entities.json` to install in place of the file on `--base`; without
+it, that file is left unchanged. The path must exist and be a file. These are
+copied byte-for-byte into `data/narrative/chapters/<book>/<n>.json`,
+`data/narrative/sentence-preservation-exceptions.json`, and
+`data/candidates/candidate-entities.json` on a new worktree off `--base`, then
+committed once on a new local branch. The command never pushes and never writes
+into the main checkout.
 
 `--source-dir` and `--approval-dir` supply the per-chapter inputs for
 `scripts/extraction_preflight.py`, which is run once per chapter from the

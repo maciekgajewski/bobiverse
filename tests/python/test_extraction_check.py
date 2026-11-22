@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import contextlib
+import io
 import os
 import subprocess
 import sys
@@ -12,6 +14,13 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 import extraction_check as extcheck
+
+MASTER_CANDIDATE_ENTITIES = (
+    b'{"candidates":[{"id":"candidate:from-master","kind":"character","name":"Master Only","aliases":[],"mentions":["2.1"],"note":"master","promotion":null}]}\n'
+)
+GIVEN_CANDIDATE_ENTITIES = (
+    b'{"candidates":[{"id":"candidate:only-in-given","kind":"character","name":"Given Only","aliases":[],"mentions":["2.11"],"note":"given","promotion":null}]}\n'
+)
 
 
 def git(repo: Path, *args: str, check: bool = True) -> subprocess.CompletedProcess[str]:
@@ -41,6 +50,10 @@ def init_repo(root: Path) -> Path:
     (repo / "data" / "narrative" / "chapters" / "2").mkdir(parents=True)
     (repo / "data" / "narrative" / "sentence-preservation-exceptions.json").write_bytes(
         b'{"about":"base","exceptions":[]}\n'
+    )
+    (repo / "data" / "candidates").mkdir(parents=True)
+    (repo / "data" / "candidates" / "candidate-entities.json").write_bytes(
+        MASTER_CANDIDATE_ENTITIES
     )
     (repo / "node_modules").mkdir()
     (repo / ".venv" / "bin").mkdir(parents=True)
@@ -115,6 +128,7 @@ class ExcerptAndSummaryTest(unittest.TestCase):
         install = extcheck.InstallResult(
             candidates=[(candidate, "abc")],
             exceptions_sha256="def",
+            candidate_entities_sha256=None,
             head="aaa111",
             branch="check/test",
             base="bbb222",
@@ -219,6 +233,130 @@ class BranchBuildTest(unittest.TestCase):
         self.assertNotIn("git push", source)
         self.assertNotIn('"push"', source)
         self.assertNotIn("'push'", source)
+
+    def test_installs_given_candidate_entities_file(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            repo = init_repo(root)
+            candidates_dir = root / "candidates"
+            candidates_dir.mkdir()
+            payload = b'{"chapter":"2.11","ok":true}\n'
+            (candidates_dir / "2.11.json").write_bytes(payload)
+            given = root / "candidate-entities.json"
+            given.write_bytes(GIVEN_CANDIDATE_ENTITIES)
+            worktree = root / "wt"
+            result = extcheck.build_review_branch(
+                repo,
+                worktree,
+                "check/cand-entities",
+                "HEAD",
+                extcheck.list_candidates(candidates_dir),
+                None,
+                candidate_entities_file=given,
+            )
+            installed = worktree / extcheck.CANDIDATE_ENTITIES_RELATIVE
+            self.assertEqual(installed.read_bytes(), GIVEN_CANDIDATE_ENTITIES)
+            self.assertIn(b"candidate:only-in-given", installed.read_bytes())
+            self.assertNotIn(b"candidate:from-master", installed.read_bytes())
+            self.assertEqual(
+                result.candidate_entities_sha256,
+                extcheck.sha256_bytes(GIVEN_CANDIDATE_ENTITIES),
+            )
+            committed = git(
+                worktree, "show", "HEAD:data/candidates/candidate-entities.json"
+            ).stdout.encode()
+            self.assertEqual(committed, GIVEN_CANDIDATE_ENTITIES)
+            self.assertNotIn(b"candidate:from-master", committed)
+            # Master's checkout is unchanged.
+            self.assertEqual(
+                (repo / extcheck.CANDIDATE_ENTITIES_RELATIVE).read_bytes(),
+                MASTER_CANDIDATE_ENTITIES,
+            )
+            extcheck.remove_worktree(repo, worktree)
+
+    def test_omitting_candidate_entities_file_leaves_masters_unchanged(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            repo = init_repo(root)
+            candidates_dir = root / "candidates"
+            candidates_dir.mkdir()
+            (candidates_dir / "2.11.json").write_bytes(b'{"chapter":"2.11"}\n')
+            worktree = root / "wt"
+            result = extcheck.build_review_branch(
+                repo,
+                worktree,
+                "check/no-cand-entities",
+                "HEAD",
+                extcheck.list_candidates(candidates_dir),
+                None,
+            )
+            installed = worktree / extcheck.CANDIDATE_ENTITIES_RELATIVE
+            self.assertEqual(installed.read_bytes(), MASTER_CANDIDATE_ENTITIES)
+            self.assertIsNone(result.candidate_entities_sha256)
+            committed = git(
+                worktree, "show", "HEAD:data/candidates/candidate-entities.json"
+            ).stdout.encode()
+            self.assertEqual(committed, MASTER_CANDIDATE_ENTITIES)
+            extcheck.remove_worktree(repo, worktree)
+
+    def test_missing_candidate_entities_file_errors(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            missing = root / "missing-candidate-entities.json"
+            with self.assertRaises(extcheck.UsageError) as ctx:
+                extcheck.resolve_existing_file(missing, "candidate-entities file")
+            self.assertIn("does not exist", str(ctx.exception))
+            self.assertIn(str(missing), str(ctx.exception))
+
+            repo = init_repo(root)
+            candidates_dir = root / "candidates"
+            candidates_dir.mkdir()
+            (candidates_dir / "2.11.json").write_bytes(b'{"chapter":"2.11"}\n')
+            source_dir = root / "source"
+            source_dir.mkdir()
+            (source_dir / "2.11 - Dummy.txt").write_bytes(b"dummy")
+            approval_dir = root / "approval"
+            approval_dir.mkdir()
+            (approval_dir / "approval-2.11.json").write_text("{}\n", encoding="utf-8")
+            stderr = io.StringIO()
+            with contextlib.redirect_stderr(stderr):
+                rc = extcheck.main(
+                    [
+                        "--repo",
+                        str(repo),
+                        "--candidates-dir",
+                        str(candidates_dir),
+                        "--source-dir",
+                        str(source_dir),
+                        "--approval-dir",
+                        str(approval_dir),
+                        "--base",
+                        "HEAD",
+                        "--branch",
+                        "check/missing-ce",
+                        "--out",
+                        str(root / "out"),
+                        "--candidate-entities-file",
+                        str(missing),
+                    ]
+                )
+            self.assertEqual(rc, 2)
+            self.assertIn("does not exist", stderr.getvalue())
+            self.assertIn(str(missing), stderr.getvalue())
+            self.assertFalse((root / "out" / "worktree").exists())
+            missing_branch = git(
+                repo, "show-ref", "--verify", "--quiet", "refs/heads/check/missing-ce", check=False
+            )
+            self.assertNotEqual(missing_branch.returncode, 0)
+
+    def test_candidate_entities_path_must_be_a_file(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            directory = Path(raw) / "not-a-file"
+            directory.mkdir()
+            with self.assertRaises(extcheck.UsageError) as ctx:
+                extcheck.resolve_existing_file(directory, "candidate-entities file")
+            self.assertIn("is not a file", str(ctx.exception))
+            self.assertIn(str(directory), str(ctx.exception))
 
 
 if __name__ == "__main__":
