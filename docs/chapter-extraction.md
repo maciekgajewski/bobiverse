@@ -236,13 +236,16 @@ For Chapter `1.14` and later (ADR-0017), classify every resolved source mention
 against supplemental-mention completeness. Promote it to `supplemental-mention` when
 it is a source-supported reference to an already visible direct narrative entity or
 location and the target is absent from every other typed direct narrative reference
-in the chapter. Structural references include introduction/update targets,
+in the chapter, and the reference is not only in passing or in a bare list.
+Structural references include introduction/update targets,
 appearances, chapter locations, event participants and locations, character
 `species_id`, `death_event_id`, and `parent_id`, species `homeworld_id`, and location
 `parent_location_id`, `origin_location_id`, and `destination_location_id`. Asset and
 astronomy IDs are not mention targets, and ID-shaped prose is not structural. Do not
-apply an importance or curation threshold. A supplemental mention advances otherwise
-absent narrative activity; do not infer presence, participation, ownership,
+apply an importance or curation threshold. A reference only in passing, or in a
+bare list, does not become a supplemental mention; that rule governs those
+references (ADR-0017, 2026-11-22 amendment). A supplemental mention advances
+otherwise absent narrative activity; do not infer presence, participation, ownership,
 membership, location, use, relationship, or state from it. Each qualifying canonical
 `mentions` entry is mandatory, requires sealed evidence, and receives its own
 explicit row in the human-review table. A mentioned mapped location retains derived

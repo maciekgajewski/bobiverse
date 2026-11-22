@@ -1233,7 +1233,8 @@ There are exactly three sources of domain truth:
    seeded or previously introduced entities, appearances, events, optional
    supplemental `mentions`, and chapter reveal order. Beginning with Chapter `1.14`,
    a mention is an exhaustive source-supported reference otherwise absent from typed
-   chapter data, not a relationship or state assertion.
+   chapter data, not a relationship or state assertion, except that a reference only
+   in passing, or in a bare list, does not become a mention (ADR-0017).
 
 The following are generated data and must never be edited manually: the stable entity
 registry, an entity's state at a selected chapter, location child lists, character
@@ -1249,7 +1250,8 @@ IDs. Its targets may be locations and the direct character, event, species, tech
 organization, and vessel entity forms; assets are not valid targets. Beginning with
 Chapter `1.14`, an author includes every source-supported reference to a previously
 visible target that is absent from all other typed direct narrative references in the
-chapter. Structural references include introduction and update targets, appearances,
+chapter, except a reference only in passing or in a bare list (ADR-0017).
+Structural references include introduction and update targets, appearances,
 chapter locations, event participants and locations, character species, death
 events, and direct parents, species homeworlds, and location
 parent/origin/destination fields. Explicit typed fields, not ID-shaped prose, define
