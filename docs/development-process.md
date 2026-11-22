@@ -71,11 +71,13 @@ and no manual browser checklist. Per-chapter facts in
 fixture facts stay; changing an existing one is a disputed book fact and needs the
 Captain's recorded decision.
 
-A data-only PR may change only this path:
+A data-only PR may change only these paths:
 
 - `data/narrative/chapters/` — the canonical chapter JSON that
   `scripts/chapter_promotion.py promote` writes, at
   `data/narrative/chapters/<book>/<number>.json`.
+- `data/candidates/candidate-entities.json` — the chapter's new candidates, repeat
+  mentions and promotions (ADR-0032, `chapter-extraction.md` §Candidate entities).
 
 `npm run narrative:manifest`, which `promote` runs in post-write validation, also
 rewrites `generated/narrative/chapter-manifest.json`. That file is gitignored and

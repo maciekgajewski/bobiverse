@@ -853,8 +853,9 @@ known at `softCeiling` (`isKnownAtCeiling`, later-read winning ties) and are abs
 when none is known; every other property, including `name`, `description`,
 `visual_description`, `picture_id`, structural location fields and every event field,
 takes the latest-read write. An entity is in `entities` only from its earliest known
-date (`entityEarliestDates`; an event from its current date, an undated one from its
-revealing chapter), the ancestors of a shown location are shown too, and entities read
+date (`entityEarliestDates`, which dates introductions, updates, appearances,
+supplemental mentions and an introduction's `first_mentioned` chapter (ADR-0032); an
+event from its current date, an undated one from its revealing chapter), the ancestors of a shown location are shown too, and entities read
 but not existing yet are available from `narrativeEntitiesBeforeExistence`; their cards
 still open (`narrativeItemBeforeExistence`, rule (g)), and cards label current state
 with `narrativeSoftCeilingLabel` ("Chapter X" or the selected date) or show "No known
@@ -1169,6 +1170,21 @@ ADR-0020 adds body-surface assets and optional reader-projected
 assignment resolves only an equirectangular body-surface asset, may select a generic
 preset or a dedicated custom surface, and has no physical or astronomy-authority
 meaning.
+
+**Candidate entities (ADR-0032).** Minor first mentions that fall below the modelling thresholds are recorded in
+`data/candidates/candidate-entities.json` (schema
+`data/schema/candidate-entities.schema.json`), outside `data/narrative/`. Only
+`npm run narrative:validate` (`scripts/candidate_entities.py validate`) and the
+extraction tooling read it; no runtime path does, and the same validator fails if any
+`src/` file or the narrative manifest references `data/candidates/`. A candidate is
+promoted when a later chapter introduces it in the ordinary way with
+`first_mentioned`; earlier chapters are never rewritten. Unpromoted candidates are
+absent from every view at every Read through.
+
+**Term.** A *candidate* (`candidate:` ID) is a record in this dataset. It is not a
+*chapter candidate* (an extracted chapter object awaiting approval,
+`docs/chapter-extraction.md`) and not an astronomy candidate in
+`data/source/system-candidates.json`.
 
 ## 13. LLM-assisted extraction
 

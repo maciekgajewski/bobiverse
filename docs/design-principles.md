@@ -1,7 +1,7 @@
 # Design principles: the companion's constitution
 
 Status: Accepted 2026-11-16 (Maciej; ADR-0031)
-Last updated: 2026-11-20
+Last updated: 2026-11-22
 
 These are Maciej's governing design principles for the Bobiverse companion, in his
 words, made coherent. They are written for developers, agents and readers alike.
@@ -177,7 +177,7 @@ The code and data do not yet follow this constitution in these places.
    BOB-20261116-E87SYK: an `effective_date` may now be earlier than the introducing
    chapter's date (ADR-0028, `docs/data-model-definition.md`). Projection done in
    BOB-20261116-TB1C66: entities appear from `entityEarliestDates`, events from
-   their current date. Mentions (§2.3) do not count yet.
+   their current date.
 6. **Undated facts.** `generateNarrativeWorld` drops undated events in Date view, and
    generated activity for an undated event has `effective_date: null`. Both must use
    the revealing chapter's date (rule (c)). The projection part is done in
