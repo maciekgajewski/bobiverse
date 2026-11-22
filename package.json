@@ -24,7 +24,7 @@
     "data:generate": "./.venv/bin/python scripts/generate_nearby_systems.py && prettier --write src/data/nearby-systems.json",
     "data:test": "./.venv/bin/python -m unittest discover -s tests/python -p 'test_*.py'",
     "data:validate": "./.venv/bin/python scripts/validate_data.py",
-    "narrative:validate": "tsx scripts/narrative-cli.ts validate",
+    "narrative:validate": "tsx scripts/narrative-cli.ts validate && ./.venv/bin/python scripts/candidate_entities.py validate",
     "narrative:manifest": "tsx scripts/narrative-cli.ts manifest",
     "narrative:generate": "tsx scripts/narrative-cli.ts generate",
     "pretest": "npm run narrative:manifest",
