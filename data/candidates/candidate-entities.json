@@ -28,15 +28,6 @@
       "promotion": null
     },
     {
-      "id": "candidate:brazil",
-      "kind": "location",
-      "name": "Brazil",
-      "aliases": [],
-      "mentions": ["2.18"],
-      "note": "2.18: the post-empire country named in passing; organization:brazilian-empire not mentioned.",
-      "promotion": null
-    },
-    {
       "id": "candidate:camelot-attack",
       "kind": "event",
       "name": "Camelot attack",
@@ -46,12 +37,21 @@
       "promotion": null
     },
     {
+      "id": "candidate:fence-construction-group",
+      "kind": "organization",
+      "name": "Fence Construction group",
+      "aliases": [],
+      "mentions": ["2.16"],
+      "note": "2.16: Landing colony work group named once in passing; below the modelling threshold.",
+      "promotion": null
+    },
+    {
       "id": "candidate:florianopolis",
       "kind": "location",
       "name": "Florianópolis",
       "aliases": [],
       "mentions": ["2.18"],
-      "note": "2.18: Brazilian city named in passing; attack city only implied (claim 021); plain text in summary.",
+      "note": "2.18: Brazilian city named in passing; attack city only implied (claim 021). Earlier: plain text in the 2.7 data (bombings), so first_mentioned should be 2.7 if promoted.",
       "promotion": null
     },
     {
@@ -60,16 +60,7 @@
       "name": "Groggery",
       "aliases": [],
       "mentions": ["2.16"],
-      "note": "2.16: a named building in Landing; incidental place below location granularity (claim 023).",
-      "promotion": null
-    },
-    {
-      "id": "candidate:jameson",
-      "kind": "character",
-      "name": "Jameson",
-      "aliases": [],
-      "mentions": ["2.16", "2.20"],
-      "note": "Named in an anecdote in 2.16 (claim 027) and in passing in 2.20; no entity exists.",
+      "note": "2.16: a named drinking spot, placed in Landing per chapter context (not stated); incidental place below location granularity (claim 023).",
       "promotion": null
     },
     {
@@ -78,7 +69,7 @@
       "name": "Maldives",
       "aliases": [],
       "mentions": ["2.14", "2.18"],
-      "note": "Seeded from Maciej's 2.11-2.20 review (ADR-0032 Decided 3).",
+      "note": "Seeded from Maciej's 2.11-2.20 review (ADR-0032 Decided 3). Earlier: plain text in the 2.7 data, so first_mentioned should be 2.7 if promoted.",
       "promotion": null
     },
     {
@@ -87,7 +78,7 @@
       "name": "New Zealand",
       "aliases": [],
       "mentions": ["2.18"],
-      "note": "2.18: delegate affiliation only; no entity exists.",
+      "note": "2.18: delegate affiliation only; no entity exists. Earlier: plain text in the 1.41 and 1.49 data, so first_mentioned should be 1.41 if promoted.",
       "promotion": null
     },
     {
@@ -115,15 +106,6 @@
       "aliases": [],
       "mentions": ["2.15"],
       "note": "2.15 S-list: one of the ten systems on Mario's SCUT connection list; bare list entry, no role (claim 016).",
-      "promotion": null
-    },
-    {
-      "id": "candidate:yucatan",
-      "kind": "location",
-      "name": "Yucatan",
-      "aliases": [],
-      "mentions": ["2.19"],
-      "note": "2.19: named in passing alongside the Battle of Sol; no entity exists.",
       "promotion": null
     }
   ]
