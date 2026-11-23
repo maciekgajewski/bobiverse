@@ -54,8 +54,7 @@ const entityProperties = {
     "aliases",
     "birth_date",
     "birth_chapter",
-    "death_date",
-    "death_event_id",
+    "status_events",
     "first_mentioned",
   ]),
   species: new Set([

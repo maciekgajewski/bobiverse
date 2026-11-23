@@ -42,8 +42,15 @@ interface Expectation {
   kind: Kind;
   subject: string;
   field?: string;
-  expected?: string;
+  expected?: string | StatusEventExpected;
   basis: string;
+}
+
+interface StatusEventExpected {
+  date: string;
+  kind: "died" | "restored_from_backup";
+  event_id?: string;
+  backup_date?: string;
 }
 
 const CHAPTER = /^[1-9][0-9]*\.[1-9][0-9]*$/;
@@ -57,6 +64,39 @@ const HASHED = /^sha256:[0-9a-f]{16}$/;
 
 function shortHash(text: string): string {
   return `sha256:${createHash("sha256").update(text, "utf8").digest("hex").slice(0, 16)}`;
+}
+
+function isStatusEventExpected(value: unknown): value is StatusEventExpected {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const record = value as Record<string, unknown>;
+  const allowed = new Set(["date", "kind", "event_id", "backup_date"]);
+  if (Object.keys(record).some((key) => !allowed.has(key))) return false;
+  if (typeof record.date !== "string" || !VALUE.test(record.date)) return false;
+  if (record.kind !== "died" && record.kind !== "restored_from_backup")
+    return false;
+  if (record.event_id !== undefined) {
+    if (typeof record.event_id !== "string" || !ID.test(record.event_id))
+      return false;
+  }
+  if (record.backup_date !== undefined) {
+    if (
+      typeof record.backup_date !== "string" ||
+      !VALUE.test(record.backup_date)
+    )
+      return false;
+  }
+  return true;
+}
+
+function canonicalJson(value: unknown): string {
+  if (value && typeof value === "object" && !Array.isArray(value)) {
+    const record = value as Record<string, unknown>;
+    return `{${Object.keys(record)
+      .sort()
+      .map((key) => `${JSON.stringify(key)}:${canonicalJson(record[key])}`)
+      .join(",")}}`;
+  }
+  return JSON.stringify(value);
 }
 
 /** Return the problems with raw fixture entries; empty when every entry is valid. */
@@ -86,11 +126,22 @@ function entryProblems(raw: unknown): string[] {
     check("chapter", CHAPTER, true);
     check("subject", ID, true);
     check("basis", BASIS, true);
-    check(
-      "expected",
-      VALUE,
-      kind === "location" || kind === "field" || kind === "effective_date",
-    );
+    const expectedRequired =
+      kind === "location" || kind === "field" || kind === "effective_date";
+    if (record.expected === undefined) {
+      if (expectedRequired) problems.push(`${at}: missing expected`);
+    } else if (
+      kind === "field" &&
+      record.field === "status_event" &&
+      isStatusEventExpected(record.expected)
+    ) {
+      // Object pin for projected status_event (ADR-0033).
+    } else if (
+      typeof record.expected !== "string" ||
+      !VALUE.test(record.expected)
+    ) {
+      problems.push(`${at}: expected is not a short ID-like string`);
+    }
     check(
       "field",
       FIELD,
@@ -173,7 +224,7 @@ function evaluate(entry: Expectation, worldAt: WorldAt): string | null {
     return actual === undefined || actual === null
       ? null
       : `${label}: expected ${entry.field} unset, but it is set`;
-  if (entry.expected !== undefined && HASHED.test(entry.expected)) {
+  if (typeof entry.expected === "string" && HASHED.test(entry.expected)) {
     // Hash the display text, not inline entity link markup (ADR-0029). Report
     // only the hash, never the projected text.
     const got =
@@ -184,10 +235,20 @@ function evaluate(entry: Expectation, worldAt: WorldAt): string | null {
       ? null
       : `${label}: expected ${entry.expected}, got ${got}`;
   }
+  if (
+    actual &&
+    typeof actual === "object" &&
+    entry.expected &&
+    typeof entry.expected === "object"
+  ) {
+    return canonicalJson(actual) === canonicalJson(entry.expected)
+      ? null
+      : `${label}: expected ${JSON.stringify(entry.expected)}, got ${JSON.stringify(actual)}`;
+  }
   const comparable = typeof actual === "boolean" ? String(actual) : actual;
   return comparable === entry.expected
     ? null
-    : `${label}: expected ${entry.expected}, got ${String(actual)}`;
+    : `${label}: expected ${String(entry.expected)}, got ${String(actual)}`;
 }
 
 /** IDs introduced in a chapter that are already visible before it. */
@@ -301,7 +362,7 @@ describe("Milo's backdated death (1.51, ADR-0028)", () => {
       throw new Error("Canonical narrative preparation failed.");
     return generateNarrativeWorld(narrativeCorpus, chapter, date).entities.find(
       (entity) => entity.id === milo,
-    )?.death_date;
+    )?.status_event?.date;
   };
   const datesAt = (chapter: string) =>
     [...meaningfulNarrativeDates(narrativeCorpus!, chapter)].sort(
@@ -483,10 +544,10 @@ describe("meaning-level checks catch breakage (synthetic entries)", () => {
         chapter: "1.51",
         kind: "no_write",
         subject: "character:milo",
-        field: "death_date",
+        field: "status_events",
         basis: "synthetic",
       },
-      "1.51 / no_write / character:milo: expected no death_date write, but the chapter writes it",
+      "1.51 / no_write / character:milo: expected no status_events write, but the chapter writes it",
     ],
     [
       {
@@ -598,7 +659,7 @@ describe("meaning-level checks catch breakage (synthetic entries)", () => {
         chapter: "1.51",
         kind: "no_write",
         subject: "character:milo",
-        field: "death_date",
+        field: "status_events",
         expected: "x",
         basis: "ok",
       },

@@ -114,19 +114,19 @@ implementation lands.
 Authored `status_events` are not a replacing soft-ceiling property and must
 stay off the generic `softCeilingProperties` / `applyRevealedWrite` path,
 which would keep only the latest write's array. They accumulate from every
-write at or before Read through (the hard ceiling). The view then keeps only
-events whose `date` is known at the soft ceiling (`isKnownAtCeiling`,
-rule (e)).
+write at or before Read through (the hard ceiling). The view then takes the
+longest prefix of that list whose `date` is known at the soft ceiling
+(`isKnownAtCeiling`, rule (e)), stopping at the first event not yet known.
 
 The projected character carries an optional `status_event` field: the latest
-remaining event after that accumulation and date filtering, or the field is
-absent when none remain. The character card
-(`src/components/ObjectInspector.tsx`) and the narrative-equivalence
-snapshots read `status_event` (`kind`, `date`, and `event_id` when present).
+event of that prefix, or the field is absent when the prefix is empty. The
+character card (`src/components/ObjectInspector.tsx`) and the
+narrative-equivalence snapshots read `status_event` (`kind`, `date`, and
+`event_id` when present).
 
 **Alive at the view** means: `status_event` is absent, or its `kind` is
-`restored_from_backup`. "Latest" is the last event in the list's total order
-(section 4) among the events known at the soft ceiling.
+`restored_from_backup`. "Latest" is the last event of the known prefix, in
+the list's total order (section 4).
 
 That is the existing two-ceiling rule, applied to a list instead of a single
 field: a later chapter cannot affect any view until it is inside Read through,
@@ -193,11 +193,12 @@ On each event:
 
 On the merged list:
 
-- it is totally ordered by `compareNarrativeMoments` on
-  `{ date, sourceChapter: the revealing write's chapter }`: first by date,
-  then by source chapter; any remaining ties (same revealing chapter, i.e.
-  events from one write, including overlapping calendar ranges under
-  rule (e)) use the order of that write's `status_events` array;
+- consecutive events must be comparable by `compareNarrativeDates`: the
+  result is non-null and ≤ 0 (the later event is after, or at the same
+  date as, the earlier one). Overlapping unequal-precision dates are
+  rejected; they cannot be ordered. On equal dates, source chapter order
+  breaks the tie, and events from one write use that write's
+  `status_events` array order;
 - `restored_from_backup` is allowed only immediately after `died`;
 - `died` is allowed when the list is empty so far, or immediately after
   `restored_from_backup`.
@@ -255,8 +256,8 @@ authors `character:loki` (`parent_id` `character:khan`). It is not a
   above.
 - `softCeilingProperties` loses `death_date` and `death_event_id`. Authored
   `status_events` stay off that path. Current status is the projected
-  `status_event` field: the latest remaining event after hard-ceiling
-  accumulation and soft-ceiling date filtering.
+  `status_event` field: the latest event of the longest prefix known at
+  the soft ceiling after hard-ceiling accumulation.
 - Constitution §3.1 is unchanged in substance: status-event dates do not
   count toward a chapter's latest date, the same as `death_date` today,
   because each event date is required to be on or before the revealing

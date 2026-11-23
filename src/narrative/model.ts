@@ -33,6 +33,13 @@ export interface PreparedNarrativeCorpus extends NarrativeCorpus {
   readonly [preparedNarrativeCorpusBrand]: true;
 }
 
+export interface NarrativeStatusEvent {
+  date: string;
+  kind: "died" | "restored_from_backup";
+  backup_date?: string;
+  event_id?: string;
+}
+
 export interface NarrativeEntity extends NarrativeRecord {
   id: string;
   entity_type:
@@ -48,6 +55,7 @@ export interface NarrativeEntity extends NarrativeRecord {
     source_chapter: string;
     effective_date: string;
   };
+  status_event?: NarrativeStatusEvent;
 }
 
 export const narrativeActivityReasons = [
@@ -1169,7 +1177,6 @@ function collectReferences(record: NarrativeRecord): string[] {
     "species_id",
     "parent_id",
     "picture_id",
-    "death_event_id",
     "homeworld_id",
     "colony_of",
     "location_id",
@@ -1178,6 +1185,13 @@ function collectReferences(record: NarrativeRecord): string[] {
     "destination_location_id",
   ]) {
     if (typeof record[field] === "string") references.push(record[field]);
+  }
+  if (Array.isArray(record.status_events)) {
+    for (const candidate of record.status_events) {
+      if (!candidate || typeof candidate !== "object") continue;
+      const eventId = (candidate as NarrativeRecord).event_id;
+      if (typeof eventId === "string") references.push(eventId);
+    }
   }
   if (Array.isArray(record.participant_ids)) {
     for (const id of record.participant_ids)
@@ -1235,35 +1249,335 @@ function chapterDate(chapter: NarrativeRecord): string {
   return asString(chapter.date, `Chapter ${chapterId(chapter)} date`);
 }
 
-/**
- * A write that sets `death_date` must be dated no later than its death
- * period (BOB-20261121-5A8W76). `death_date` is a soft-ceiling property
- * (design principles §2.5, rule (e)): it shows from its write's story date, so
- * a write dated after the death would show the character alive between the
- * death and that date. The write must therefore be known at a soft ceiling
- * equal to its own `death_date`: `isKnownAtCeiling(writeDate, death_date)`,
- * which compares calendar ranges (a `2165-08` death allows any write dated in
- * August 2165 or earlier). `writeDate` is the date the projection uses: an
- * update's `effective_date ?? chapter date`, an introduction's chapter date.
- */
-function assertDeathDateWriteDating(
-  chapter: string,
-  pointer: string,
-  write: NarrativeRecord,
-  writeDate: string,
-  isUpdate: boolean,
+const authoredStatusEventsKey = "status_events";
+
+type AuthoredStatusEvent = NarrativeStatusEvent;
+
+interface AccumulatedStatusEvent extends AuthoredStatusEvent {
+  sourceChapter: string;
+  index: number;
+}
+
+function publicStatusEvent(event: AuthoredStatusEvent): AuthoredStatusEvent {
+  const published: AuthoredStatusEvent = {
+    date: event.date,
+    kind: event.kind,
+  };
+  if (event.backup_date !== undefined)
+    published.backup_date = event.backup_date;
+  if (event.event_id !== undefined) published.event_id = event.event_id;
+  return published;
+}
+
+function characterStatusWriteSources(chapter: NarrativeRecord): Array<{
+  write: NarrativeRecord;
+  entityId: string;
+  pointer: string;
+}> {
+  const sources: Array<{
+    write: NarrativeRecord;
+    entityId: string;
+    pointer: string;
+  }> = [];
+  const sourceChapter = chapterId(chapter);
+  for (const [index, candidate] of (
+    (chapter.introducing as unknown[] | undefined) ?? []
+  ).entries()) {
+    const write = asRecord(candidate, `Introduction in ${sourceChapter}`);
+    const entityId = asString(write.id, `Introduction ID in ${sourceChapter}`);
+    if (entityId.startsWith("character:")) {
+      sources.push({
+        write,
+        entityId,
+        pointer: `/introducing/${index}`,
+      });
+    }
+  }
+  for (const [index, candidate] of (
+    (chapter.updates as unknown[] | undefined) ?? []
+  ).entries()) {
+    const write = asRecord(candidate, `Update in ${sourceChapter}`);
+    const entityId = asString(
+      write.entity_id,
+      `Update target in ${sourceChapter}`,
+    );
+    if (entityId.startsWith("character:")) {
+      sources.push({
+        write,
+        entityId,
+        pointer: `/updates/${index}`,
+      });
+    }
+  }
+  return sources;
+}
+
+function applyEventDateWrites(
+  chapter: NarrativeRecord,
+  eventDates: Map<string, string>,
 ): void {
-  const deathDate = write.death_date;
-  if (typeof deathDate !== "string" || isKnownAtCeiling(writeDate, deathDate))
-    return;
-  const remedy = isUpdate
-    ? `add "effective_date": "${deathDate}" (or another date no later than the death) to this update`
-    : `introduce the character without death_date and set it in a later update with "effective_date": "${deathDate}"`;
-  throw chapterSemanticError(
+  for (const candidate of (chapter.introducing as unknown[] | undefined) ??
+    []) {
+    const record = asRecord(candidate, "Event introduction");
+    const id = record.id;
+    if (typeof id === "string" && id.startsWith("event:")) {
+      if (typeof record.date === "string") eventDates.set(id, record.date);
+    }
+  }
+  for (const candidate of (chapter.updates as unknown[] | undefined) ?? []) {
+    const record = asRecord(candidate, "Event update");
+    const id = record.entity_id;
+    if (typeof id === "string" && id.startsWith("event:")) {
+      if (record.date === null) eventDates.delete(id);
+      else if (typeof record.date === "string") eventDates.set(id, record.date);
+    }
+  }
+}
+
+/**
+ * Status events take effect at their own date once their revealing chapter is
+ * inside the hard ceiling (ADR-0033). The chapter file is the reveal key;
+ * event dates must be on or before the chapter header date.
+ */
+function assertAndAccumulateStatusEvents(
+  chapter: NarrativeRecord,
+  availableIds: ReadonlySet<string>,
+  eventDates: ReadonlyMap<string, string>,
+  history: Map<string, AccumulatedStatusEvent[]>,
+): void {
+  const sourceChapter = chapterId(chapter);
+  const headerDate = chapterDate(chapter);
+  for (const { write, entityId, pointer } of characterStatusWriteSources(
     chapter,
-    `${pointer}/death_date`,
-    `death_date ${deathDate} is written at ${writeDate}, after the death, so the character would show alive between the death and ${writeDate}. Date the write no later than ${deathDate}: ${remedy}.`,
-  );
+  )) {
+    if (!Object.hasOwn(write, authoredStatusEventsKey)) continue;
+    const raw = write.status_events;
+    if (!Array.isArray(raw) || raw.length === 0) {
+      throw chapterSemanticError(
+        sourceChapter,
+        `${pointer}/status_events`,
+        "status_events must be a nonempty array of events this write reveals.",
+      );
+    }
+    const list = history.get(entityId) ?? [];
+    for (const [index, candidate] of raw.entries()) {
+      const eventPointer = `${pointer}/status_events/${index}`;
+      const event = asRecord(
+        candidate,
+        `Chapter ${sourceChapter} ${eventPointer}`,
+      );
+      const date = event.date;
+      const kind = event.kind;
+      if (typeof date !== "string") {
+        throw chapterSemanticError(
+          sourceChapter,
+          `${eventPointer}/date`,
+          "status event requires a date.",
+        );
+      }
+      if (kind !== "died" && kind !== "restored_from_backup") {
+        throw chapterSemanticError(
+          sourceChapter,
+          `${eventPointer}/kind`,
+          `status event kind must be died or restored_from_backup, not ${String(kind)}.`,
+        );
+      }
+      if (!isKnownAtCeiling(date, headerDate)) {
+        throw chapterSemanticError(
+          sourceChapter,
+          `${eventPointer}/date`,
+          `status event date ${date} must be on or before the chapter date ${headerDate}.`,
+        );
+      }
+      if (Object.hasOwn(event, "backup_date")) {
+        if (kind !== "restored_from_backup") {
+          throw chapterSemanticError(
+            sourceChapter,
+            `${eventPointer}/backup_date`,
+            "backup_date is allowed only on restored_from_backup.",
+          );
+        }
+        const backupDate = event.backup_date;
+        if (typeof backupDate !== "string") {
+          throw chapterSemanticError(
+            sourceChapter,
+            `${eventPointer}/backup_date`,
+            "backup_date must be a date.",
+          );
+        }
+        if (!isKnownAtCeiling(backupDate, date)) {
+          throw chapterSemanticError(
+            sourceChapter,
+            `${eventPointer}/backup_date`,
+            `backup_date ${backupDate} must be on or before the restore date ${date}.`,
+          );
+        }
+      }
+      if (Object.hasOwn(event, "event_id")) {
+        if (kind !== "died") {
+          throw chapterSemanticError(
+            sourceChapter,
+            `${eventPointer}/event_id`,
+            "event_id is allowed only on died.",
+          );
+        }
+        const eventId = event.event_id;
+        if (typeof eventId !== "string") {
+          throw chapterSemanticError(
+            sourceChapter,
+            `${eventPointer}/event_id`,
+            "event_id must be an event id.",
+          );
+        }
+        if (!availableIds.has(eventId) || !eventId.startsWith("event:")) {
+          throw chapterSemanticError(
+            sourceChapter,
+            `${eventPointer}/event_id`,
+            `event_id ${eventId} is unavailable.`,
+          );
+        }
+        const referencedDate = eventDates.get(eventId);
+        if (referencedDate !== undefined && referencedDate !== date) {
+          throw chapterSemanticError(
+            sourceChapter,
+            `${eventPointer}/event_id`,
+            `event_id ${eventId} has date ${referencedDate}, which must be identical to the death date ${date}.`,
+          );
+        }
+      }
+      const previous = list.at(-1);
+      if (previous) {
+        const dateOrdering = compareNarrativeDates(previous.date, date);
+        if (dateOrdering === null) {
+          throw chapterSemanticError(
+            sourceChapter,
+            eventPointer,
+            `status event at ${date} overlaps the previous event at ${previous.date} (${previous.sourceChapter}) and cannot be ordered.`,
+          );
+        }
+        const chapterOrdering = compareNarrativeChapters(
+          previous.sourceChapter,
+          sourceChapter,
+        );
+        const afterInChapterOrArray =
+          chapterOrdering < 0 ||
+          (chapterOrdering === 0 && previous.index < index);
+        if (
+          dateOrdering > 0 ||
+          (dateOrdering === 0 && !afterInChapterOrArray)
+        ) {
+          throw chapterSemanticError(
+            sourceChapter,
+            eventPointer,
+            `status event at ${date} is not after the previous event at ${previous.date} (${previous.sourceChapter}).`,
+          );
+        }
+        if (kind === "restored_from_backup" && previous.kind !== "died") {
+          throw chapterSemanticError(
+            sourceChapter,
+            `${eventPointer}/kind`,
+            "restored_from_backup is allowed only immediately after died.",
+          );
+        }
+        if (kind === "died" && previous.kind !== "restored_from_backup") {
+          throw chapterSemanticError(
+            sourceChapter,
+            `${eventPointer}/kind`,
+            "died is allowed only when the list is empty or immediately after restored_from_backup.",
+          );
+        }
+      } else if (kind === "restored_from_backup") {
+        throw chapterSemanticError(
+          sourceChapter,
+          `${eventPointer}/kind`,
+          "restored_from_backup is allowed only immediately after died.",
+        );
+      }
+      const accumulated: AccumulatedStatusEvent = {
+        date,
+        kind,
+        sourceChapter,
+        index,
+      };
+      if (typeof event.backup_date === "string") {
+        accumulated.backup_date = event.backup_date;
+      }
+      if (typeof event.event_id === "string") {
+        accumulated.event_id = event.event_id;
+      }
+      list.push(accumulated);
+    }
+    history.set(entityId, list);
+  }
+}
+
+function accumulateWriteStatusEvents(
+  accumulated: Map<string, AccumulatedStatusEvent[]>,
+  entityId: string,
+  write: NarrativeRecord,
+  sourceChapter: string,
+): void {
+  if (
+    !entityId.startsWith("character:") ||
+    !Array.isArray(write.status_events)
+  ) {
+    return;
+  }
+  const list = accumulated.get(entityId) ?? [];
+  for (const [index, candidate] of write.status_events.entries()) {
+    const record = asRecord(candidate, `Status event in ${sourceChapter}`);
+    const event: AccumulatedStatusEvent = {
+      date: asString(record.date, "Status event date"),
+      kind: record.kind as NarrativeStatusEvent["kind"],
+      sourceChapter,
+      index,
+    };
+    if (typeof record.backup_date === "string") {
+      event.backup_date = record.backup_date;
+    }
+    if (typeof record.event_id === "string") event.event_id = record.event_id;
+    list.push(event);
+  }
+  accumulated.set(entityId, list);
+}
+
+/**
+ * Latest event of the longest prefix known at the soft ceiling, stopping at
+ * the first event not yet known. Exported so tests can pin the overlapping-
+ * precision repro without preparing an invalid corpus.
+ */
+export function projectedStatusEventAtCeiling(
+  events: readonly NarrativeStatusEvent[],
+  softCeiling: string,
+): NarrativeStatusEvent | undefined {
+  const latest = latestKnownStatusEventInPrefix(events, softCeiling);
+  return latest ? publicStatusEvent(latest) : undefined;
+}
+
+function latestKnownStatusEventInPrefix<T extends { date: string }>(
+  list: readonly T[],
+  softCeiling: string,
+): T | undefined {
+  let latest: T | undefined;
+  for (const event of list) {
+    if (!isKnownAtCeiling(event.date, softCeiling)) break;
+    latest = event;
+  }
+  return latest;
+}
+
+function assignProjectedStatusEvents(
+  byId: Map<string, NarrativeEntity>,
+  accumulated: Map<string, AccumulatedStatusEvent[]>,
+  softCeiling: string,
+): void {
+  for (const [id, list] of accumulated) {
+    const entity = byId.get(id);
+    if (!entity) continue;
+    const latest = latestKnownStatusEventInPrefix(list, softCeiling);
+    if (latest) entity.status_event = publicStatusEvent(latest);
+    else delete entity.status_event;
+  }
 }
 
 function chapterSemanticError(
@@ -1337,7 +1651,9 @@ function sourceProperties(
   record: NarrativeRecord,
   excludes: readonly string[],
 ): string[] {
-  return Object.keys(record).filter((key) => !excludes.includes(key));
+  return Object.keys(record).filter(
+    (key) => !excludes.includes(key) && key !== authoredStatusEventsKey,
+  );
 }
 
 function assertTemporalWrites(chapters: NarrativeRecord[]): void {
@@ -1737,7 +2053,7 @@ function validateNarrativeCorpusSemantics(
       if (
         (key === "date" ||
           key === "birth_date" ||
-          key === "death_date" ||
+          key === "backup_date" ||
           key === "effective_date") &&
         typeof entry === "string"
       ) {
@@ -1765,6 +2081,11 @@ function validateNarrativeCorpusSemantics(
     if (Object.hasOwn(entity, "birth_chapter")) {
       throw new Error(
         `Zero-state character ${entity.id} cannot define birth_chapter.`,
+      );
+    }
+    if (Object.hasOwn(entity, "status_events")) {
+      throw new Error(
+        `Zero-state character ${entity.id} cannot define status_events.`,
       );
     }
   }
@@ -1805,6 +2126,13 @@ function validateNarrativeCorpusSemantics(
     }
   };
   const availableIds = new Set(zeroStateEntities.map((entity) => entity.id));
+  const eventDates = new Map<string, string>();
+  for (const entity of zeroStateEntities) {
+    if (entity.entity_type === "event" && typeof entity.date === "string") {
+      eventDates.set(entity.id, entity.date);
+    }
+  }
+  const statusHistory = new Map<string, AccumulatedStatusEvent[]>();
   const allCanonicalSpeciesIds = new Set(
     zeroStateEntities
       .filter((entity) => entity.entity_type === "species")
@@ -1953,13 +2281,6 @@ function validateNarrativeCorpusSemantics(
           `Introduction ${entityId} has an unknown astronomy object ID.`,
         );
       }
-      assertDeathDateWriteDating(
-        id,
-        `/introducing/${introductionIndex}`,
-        introduced,
-        chapterDate(chapter),
-        false,
-      );
       introducedThisChapter.add(entityId);
       if (entityId.startsWith("species:")) allCanonicalSpeciesIds.add(entityId);
     }
@@ -2022,13 +2343,6 @@ function validateNarrativeCorpusSemantics(
           `${update.effective_date} must be on or before the chapter date ${chapterDate(chapter)}.`,
         );
       }
-      assertDeathDateWriteDating(
-        id,
-        `/updates/${updateIndex}`,
-        update,
-        updateEffectiveDate(update, chapter),
-        true,
-      );
       const roleMessage = pictureRoleMessage(
         update,
         `Update ${targetId} picture_id`,
@@ -2149,6 +2463,13 @@ function validateNarrativeCorpusSemantics(
         );
       }
     }
+    applyEventDateWrites(chapter, eventDates);
+    assertAndAccumulateStatusEvents(
+      chapter,
+      availableAfterIntroductions,
+      eventDates,
+      statusHistory,
+    );
     for (const entityId of introducedThisChapter) {
       availableIds.add(entityId);
     }
@@ -2509,8 +2830,6 @@ export const softCeilingProperties: ReadonlySet<string> = new Set([
   "current_state",
   "colony_of",
   "possible_colony_target",
-  "death_date",
-  "death_event_id",
 ]);
 
 /**
@@ -2575,6 +2894,7 @@ function projectRevealedEntities(
   const byId = new Map(entities.map((entity) => [entity.id, entity]));
   const revealingDates = new Map<string, string>();
   const latestMoments = new Map<string, NarrativeMoment>();
+  const accumulatedStatusEvents = new Map<string, AccumulatedStatusEvent[]>();
   const locations = () =>
     new Map(
       [...byId.values()]
@@ -2610,6 +2930,12 @@ function projectRevealedEntities(
         latestMoments,
         ["id"],
         softCeiling,
+      );
+      accumulateWriteStatusEvents(
+        accumulatedStatusEvents,
+        id,
+        introduced,
+        sourceChapter,
       );
       byId.set(id, entity);
       entities.push(entity);
@@ -2648,6 +2974,12 @@ function projectRevealedEntities(
         updateMetadataKeys,
         softCeiling,
       );
+      accumulateWriteStatusEvents(
+        accumulatedStatusEvents,
+        targetId,
+        update,
+        sourceChapter,
+      );
       if (target.entity_type === "location") {
         orbitalWrites.push({
           id: targetId,
@@ -2671,6 +3003,7 @@ function projectRevealedEntities(
       sourceChapter,
       orbitDisplayDate,
     );
+    assignProjectedStatusEvents(byId, accumulatedStatusEvents, softCeiling);
     if (
       afterChapter &&
       !afterChapter(chapterIndex, { entities, byId, revealingDates })

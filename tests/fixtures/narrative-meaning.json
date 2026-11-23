@@ -242,7 +242,7 @@
     "chapter": "1.46",
     "kind": "unset",
     "subject": "character:milo",
-    "field": "death_date",
+    "field": "status_event",
     "basis": "Captain approval 2026-11-13 (1.46)"
   },
   {
@@ -344,15 +344,11 @@
     "chapter": "1.47",
     "kind": "field",
     "subject": "character:arthur",
-    "field": "death_date",
-    "expected": "2166-01",
-    "basis": "Captain approval 2026-11-13 (1.47)"
-  },
-  {
-    "chapter": "1.47",
-    "kind": "unset",
-    "subject": "character:arthur",
-    "field": "death_event_id",
+    "field": "status_event",
+    "expected": {
+      "date": "2166-01",
+      "kind": "died"
+    },
     "basis": "Captain approval 2026-11-13 (1.47)"
   },
   {
@@ -694,7 +690,7 @@
     "chapter": "1.50",
     "kind": "unset",
     "subject": "character:milo",
-    "field": "death_date",
+    "field": "status_event",
     "basis": "Captain approval 2026-11-13 (1.50)"
   },
   {
@@ -725,8 +721,11 @@
     "chapter": "1.51",
     "kind": "field",
     "subject": "character:milo",
-    "field": "death_date",
-    "expected": "2165-08",
+    "field": "status_event",
+    "expected": {
+      "date": "2165-08",
+      "kind": "died"
+    },
     "basis": "Captain approval 2026-11-13 (1.51)"
   },
   {
@@ -827,8 +826,11 @@
     "chapter": "1.52",
     "kind": "field",
     "subject": "character:milo",
-    "field": "death_date",
-    "expected": "2165-08",
+    "field": "status_event",
+    "expected": {
+      "date": "2165-08",
+      "kind": "died"
+    },
     "basis": "Captain approval 2026-11-13 (1.52)"
   },
   {
@@ -925,8 +927,11 @@
     "chapter": "1.53",
     "kind": "field",
     "subject": "character:milo",
-    "field": "death_date",
-    "expected": "2165-08",
+    "field": "status_event",
+    "expected": {
+      "date": "2165-08",
+      "kind": "died"
+    },
     "basis": "Captain approval 2026-11-13 (1.53)"
   },
   {

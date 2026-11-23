@@ -10,14 +10,24 @@
       "name": "Hal",
       "description": "A Bob replicant who reports to [[character:mario]], sent to [[location:gliese-877]] to follow up on [[character:bashful]]'s discovery of the [[species:others|Others]]. His VR is a room with an easy chair and a tall window onto a winter forest where the snow never piles up. His [[technology:guppi-interface|GUPPI]] has version-3 memory but appears as a fish and avoids small talk.",
       "current_state": "At [[location:gliese-877]], after spying on the [[species:others|Others]] with probes and shaking off one pursuit by going dark, he tested his suspicion that they detect radio use itself; they ran him down, and with his controller replicant offline his self-destruct protocol set his reactor to overload. His latest data and differential backups had already reached [[character:mario]] over [[technology:subspace-communications|SCUT]].",
-      "death_date": "2188-05"
+      "status_events": [
+        {
+          "date": "2188-05",
+          "kind": "died"
+        }
+      ]
     }
   ],
   "updates": [
     {
       "entity_id": "character:bashful",
       "effective_date": "2187-11",
-      "death_date": "2187-11"
+      "status_events": [
+        {
+          "date": "2187-11",
+          "kind": "died"
+        }
+      ]
     },
     {
       "entity_id": "character:mario",

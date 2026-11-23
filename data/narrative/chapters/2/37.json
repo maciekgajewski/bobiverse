@@ -8,7 +8,12 @@
     {
       "entity_id": "character:homer",
       "current_state": "Dead by his own hand: he deleted every backup and then overloaded his reactor, so he cannot be restored. His farewell file to the other Bobs says he could not live with constant flashbacks of being controlled by [[organization:vehement]], which he could not edit out, or with what he had done, and asks them to find those responsible and strike them.",
-      "death_date": "2176-08"
+      "status_events": [
+        {
+          "date": "2176-08",
+          "kind": "died"
+        }
+      ]
     },
     {
       "entity_id": "character:riker",

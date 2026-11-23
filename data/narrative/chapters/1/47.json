@@ -8,7 +8,12 @@
     {
       "entity_id": "character:arthur",
       "current_state": "Killed by a booby-trapped nuclear detonation while working on wreckage near [[location:saturn]], with no backup stored off his ship.",
-      "death_date": "2166-01"
+      "status_events": [
+        {
+          "date": "2166-01",
+          "kind": "died"
+        }
+      ]
     },
     {
       "entity_id": "character:riker",

@@ -39,7 +39,12 @@
     {
       "entity_id": "character:dr-landers",
       "current_state": "Killed when [[organization:brazilian-empire]] forces bombed the Newhaven facility.",
-      "death_date": "2133"
+      "status_events": [
+        {
+          "date": "2133",
+          "kind": "died"
+        }
+      ]
     },
     {
       "entity_id": "technology:roamers",

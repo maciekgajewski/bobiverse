@@ -1937,7 +1937,7 @@ describe("narrative corpus validation and projection", () => {
       chapter1World.entities.find(
         (entity) => entity.id === "character:robert-johansson",
       ),
-    ).not.toHaveProperty("death_date");
+    ).not.toHaveProperty("status_event");
 
     const chapter2World = generateNarrativeWorld(
       prepareNarrativeCorpus(corpus),
@@ -1956,8 +1956,11 @@ describe("narrative corpus validation and projection", () => {
       ),
     ).toMatchObject({
       current_state: "Dead.",
-      death_date: "2016",
-      death_event_id: "event:bob-road-incident",
+      status_event: {
+        date: "2016",
+        kind: "died",
+        event_id: "event:bob-road-incident",
+      },
     });
     expect(
       chapter2World.entities.find(
@@ -2018,8 +2021,11 @@ describe("narrative corpus validation and projection", () => {
       ),
     ).toMatchObject({
       current_state: "Dead.",
-      death_date: "2016",
-      death_event_id: "event:bob-road-incident",
+      status_event: {
+        date: "2016",
+        kind: "died",
+        event_id: "event:bob-road-incident",
+      },
     });
     expect(canonicalChapter2.mentions).toContain("event:bob-road-incident");
   });
@@ -2361,7 +2367,13 @@ describe("narrative corpus validation and projection", () => {
         chapter.updates = [
           {
             entity_id: "character:fixture-alex",
-            death_event_id: "event:fixture-known",
+            status_events: [
+              {
+                date: "2201",
+                kind: "died",
+                event_id: "event:fixture-known",
+              },
+            ],
           },
         ];
       },

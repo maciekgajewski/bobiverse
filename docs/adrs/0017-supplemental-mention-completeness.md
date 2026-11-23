@@ -122,3 +122,12 @@ A reference only in passing, or in a bare list, does not become a supplemental
 mention. That rule governs the Decision above for those references, including over
 the rejection of an importance or curation threshold. This amendment is the in-repo
 record of that rule.
+
+## Amendment (2026-11-23)
+
+ADR-0033 replaces character `death_event_id` with optional `event_id` on a
+`died` status event. The structural nonredundancy list in the 2026-07-29
+Decision still names `death_event_id`; that bullet is left as written. From
+the implementation of ADR-0033, a typed `event_id` on a `died` event in
+`status_events` is a structural reference in the same role, and
+`death_event_id` is no longer a character field.

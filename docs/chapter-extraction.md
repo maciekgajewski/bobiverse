@@ -177,7 +177,7 @@ use it to hide an unresolved contradiction or weak evidence.
 ### Candidate entities
 
 ADR-0032 keeps minor first mentions in `data/candidates/candidate-entities.json`,
-outside the narrative data. Here *candidate* means a record in that dataset (ID
+outside the narrative data. Here _candidate_ means a record in that dataset (ID
 prefix `candidate:`), not a chapter candidate awaiting approval and not an astronomy
 candidate in `data/source/system-candidates.json`.
 
@@ -239,7 +239,7 @@ location and the target is absent from every other typed direct narrative refere
 in the chapter, and the reference is not only in passing or in a bare list.
 Structural references include introduction/update targets,
 appearances, chapter locations, event participants and locations, character
-`species_id`, `death_event_id`, and `parent_id`, species `homeworld_id`, and location
+`species_id`, `event_id` on a `died` status event, and `parent_id`, species `homeworld_id`, and location
 `parent_location_id`, `origin_location_id`, and `destination_location_id`. Asset and
 astronomy IDs are not mention targets, and ID-shaped prose is not structural. Do not
 apply an importance or curation threshold. A reference only in passing, or in a
@@ -836,6 +836,9 @@ that is not back-dated or drops no sentence, and the marker never excuses
 reviewed exception in `data/narrative/sentence-preservation-exceptions.json` can
 excuse one `description` or `visual_description` write (never `state` or
 `current_state`, which have only the marker); a condensed description write
-(§Descriptions) is excused this way. `narrative:validate` also rejects a write that
-sets `death_date` dated after its death period: date the update no later than the
-death with `effective_date`.
+(§Descriptions) is excused this way. `narrative:validate` also checks character `status_events` (ADR-0033): each event
+date must be on or before the revealing chapter's header date; `backup_date` is
+allowed only on `restored_from_backup` and must be on or before the restore date;
+`event_id` is allowed only on `died` and must match the referenced event's date
+when that event has one; and the merged list must alternate `died` and
+`restored_from_backup`.

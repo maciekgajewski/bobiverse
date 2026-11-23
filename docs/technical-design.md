@@ -849,11 +849,13 @@ in `design-principles.md`.
 `generateNarrativeWorld` (`src/narrative/model.ts`) implements them. It takes
 `{ readThrough, softCeiling, chapter? }`: only chapters at or before `readThrough` are
 used; the properties in `softCeilingProperties` (`state`, `current_state`, `colony_of`,
-`possible_colony_target`, `death_date`, `death_event_id`) take the latest-dated write
-known at `softCeiling` (`isKnownAtCeiling`, later-read winning ties) and are absent
-when none is known; every other property, including `name`, `description`,
-`visual_description`, `picture_id`, structural location fields and every event field,
-takes the latest-read write. An entity is in `entities` only from its earliest known
+`possible_colony_target`) take the latest-dated write known at `softCeiling`
+(`isKnownAtCeiling`, later-read winning ties) and are absent when none is known;
+a character's `status_event` is the latest event of the longest prefix of
+accumulated status events known at the soft ceiling (ADR-0033), not a
+replacing soft-ceiling property; every other property, including `name`,
+`description`, `visual_description`, `picture_id`, structural location fields
+and every event field, takes the latest-read write. An entity is in `entities` only from its earliest known
 date (`entityEarliestDates`, which dates introductions, updates, appearances,
 supplemental mentions and an introduction's `first_mentioned` chapter (ADR-0032); an
 event from its current date, an undated one from its revealing chapter), the ancestors of a shown location are shown too, and entities read
@@ -1183,8 +1185,8 @@ promoted when a later chapter introduces it in the ordinary way with
 `first_mentioned`; earlier chapters are never rewritten. Unpromoted candidates are
 absent from every view at every Read through.
 
-**Term.** A *candidate* (`candidate:` ID) is a record in this dataset. It is not a
-*chapter candidate* (an extracted chapter object awaiting approval,
+**Term.** A _candidate_ (`candidate:` ID) is a record in this dataset. It is not a
+_chapter candidate_ (an extracted chapter object awaiting approval,
 `docs/chapter-extraction.md`) and not an astronomy candidate in
 `data/source/system-candidates.json`.
 

@@ -1,6 +1,6 @@
 # BOB-20261123-E3JBNR: character life status events
 
-Status: Ready
+Status: Done
 Phase: 2 (narrative foundation and chapter timeline)
 Last updated: 2026-11-23
 
@@ -308,3 +308,57 @@ has no hits.
   after Maciej's 12:32 decision.
 - Independent review APPROVED `741be4b` with six nits; all six fixed in
   the ADR and this task (docs only, master not merged).
+- Implemented on branch `bob-20261123-life-status` from `origin/master`
+  `cf219fb`, worktree `~/src/bobiverse-lifestatus-impl`, after the manager
+  relayed "Go ahead with E3JBNR on its own branch". 2.31–2.40 had already
+  landed, so the mechanical migration includes 2.37 and 2.38. Elmer 2.34
+  and Hal 2.39 restore events were not authored.
+- Status-event `date` (and restore `backup_date`) are checked with
+  `isKnownAtCeiling` so a year-dated event is known throughout that year
+  (rule (e)). That accepts the existing 1.13 write (`date` 2133, chapter
+  header 2133-08-17), which `isNarrativeDateEligible` would reject.
+- No new e2e specs. Temporary Playwright configs used ports 4211 and 4210,
+  then were deleted.
+- Review of `5155f22` requested changes (one blocker): the merged-list
+  check now requires `compareNarrativeDates` to be non-null and ≤ 0, and
+  projection takes the longest known prefix (tests include the 2185-06 /
+  2185 repro). The `test_extraction_check.py` sample log line now uses a
+  current validator message, and `migrate_record` raises if a write has
+  only `death_event_id`. Optional Date-view stepper stops were skipped to
+  keep the review-fix scope small.
+
+## Validation results
+
+Full run on this branch, 2026-11-23, worktree
+`~/src/bobiverse-lifestatus-impl`, base `cf219fb`.
+
+- `python3 scripts/tasks.py check`, `format:check`, `lint` (0 errors; the
+  pre-existing AboutDialog react-refresh warning only), `typecheck`,
+  `data:test` (134 tests), `data:validate` (337 reconciled systems),
+  `narrative:manifest` then `narrative:validate` (101 chapter source
+  files, 27 candidates), `build`, `git diff --check`: pass.
+- `npm test`: 66 files, 864 tests passed.
+- Playwright, one worker, no retries, temporary configs on ports 4211
+  (e2e) and 4210 (CSP), never 5173: Chromium 95 passed, 4 skipped;
+  Firefox 95 passed, 4 skipped; WebKit 96 passed, 3 skipped. CSP suite:
+  3 passed. Temporary configs deleted afterwards.
+- Migration proof
+  (`scripts/migrate_death_date_to_status_events.py --prove --base cf219fb`):
+  7 chapter files, 14 old non-null `death_date` writes and 14 `died`
+  events, 1:1 mapping, no other chapter-data meaning changes. Files:
+  `1/2.json`, `1/13.json`, `1/47.json`, `1/51.json`, `1/60.json`,
+  `2/37.json`, `2/38.json`.
+
+Review fix on the same branch, 2026-11-23, after `5155f22`:
+
+- Fast checks: `python3 scripts/tasks.py check`, `format:check`, `lint`
+  (same pre-existing AboutDialog warning), `typecheck`, `data:test`
+  (136 tests), `data:validate`, `narrative:manifest` then
+  `narrative:validate` (101 chapters, 27 candidates), `build`,
+  `git diff --check`: pass. `npm test`: 66 files, 867 tests passed.
+- Playwright, one worker, no retries, temporary configs on ports 4211
+  and 4210, never 5173: Chromium 95 passed, 4 skipped; Firefox 95
+  passed, 4 skipped; WebKit 96 passed, 3 skipped. CSP suite: 3 passed.
+  Temporary configs deleted afterwards.
+- Migration proof (`--prove --base cf219fb`): still 7 files, 14=14,
+  PROOF OK.

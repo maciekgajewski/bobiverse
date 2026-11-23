@@ -14,25 +14,45 @@
       "id": "character:hannibal",
       "name": "Hannibal",
       "current_state": "Destroyed at [[location:82-eridani]] by a cloaked nuclear bomb, leaving only a radioactive cloud.",
-      "death_date": "2185-04"
+      "status_events": [
+        {
+          "date": "2185-04",
+          "kind": "died"
+        }
+      ]
     },
     {
       "id": "character:tom",
       "name": "Tom",
       "current_state": "Lost at [[location:82-eridani]] when his signal cut off without warning, probably caught by a nuclear bomb.",
-      "death_date": "2185-04"
+      "status_events": [
+        {
+          "date": "2185-04",
+          "kind": "died"
+        }
+      ]
     },
     {
       "id": "character:barney",
       "name": "Barney",
       "current_state": "Lost at [[location:82-eridani]]; he dropped out during the final fighting, and how is not stated.",
-      "death_date": "2185-04"
+      "status_events": [
+        {
+          "date": "2185-04",
+          "kind": "died"
+        }
+      ]
     },
     {
       "id": "character:fred",
       "name": "Fred",
       "current_state": "Lost at [[location:82-eridani]] when a nearby detonation crippled his ship and its [[technology:dead-man-switch]] overloaded the reactor.",
-      "death_date": "2185-04"
+      "status_events": [
+        {
+          "date": "2185-04",
+          "kind": "died"
+        }
+      ]
     },
     {
       "id": "character:kyle",
@@ -46,19 +66,34 @@
       "id": "character:elmer",
       "name": "Elmer",
       "current_state": "Destroyed at [[location:82-eridani]] after his drive failed, having stayed behind to keep jamming [[technology:suddar]] so that [[character:khan]] could escape. His last differential backup reached [[character:bill]] intact.",
-      "death_date": "2185-04"
+      "status_events": [
+        {
+          "date": "2185-04",
+          "kind": "died"
+        }
+      ]
     },
     {
       "id": "character:jackson",
       "name": "Jackson",
       "current_state": "Lost at [[location:82-eridani]] when a nearby detonation crippled his ship and its [[technology:dead-man-switch]] overloaded the reactor.",
-      "death_date": "2185-04"
+      "status_events": [
+        {
+          "date": "2185-04",
+          "kind": "died"
+        }
+      ]
     },
     {
       "id": "character:hector",
       "name": "Hector",
       "current_state": "Lost at [[location:82-eridani]] when his signal cut off without warning, probably caught by a nuclear bomb.",
-      "death_date": "2185-04"
+      "status_events": [
+        {
+          "date": "2185-04",
+          "kind": "died"
+        }
+      ]
     },
     {
       "id": "event:battle-at-82-eridani",

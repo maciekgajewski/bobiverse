@@ -77,7 +77,7 @@ function corpus(
         {
           entity_id: alex,
           current_state: "lost",
-          death_date: "2165-09",
+          status_events: [{ date: "2165-09", kind: "died" }],
           effective_date: "2165-09",
         },
       ],
@@ -114,25 +114,25 @@ function entity(knowledge: string, date: string | null, id: string) {
 
 describe("backdated updates and chapter-view latest known state", () => {
   it("hides a backdated write before its reveal chapter in both views and at every date", () => {
-    expect(entity("1.3", null, alex).death_date).toBeUndefined();
+    expect(entity("1.3", null, alex).status_event?.date).toBeUndefined();
     expect(entity("1.3", null, alex).current_state).toBe("ambushed");
     const dates = meaningfulNarrativeDates(prepared, "1.3");
     expect(dates).not.toContain("2165-09");
     for (const date of dates) {
-      expect(entity("1.3", date, alex).death_date).toBeUndefined();
+      expect(entity("1.3", date, alex).status_event?.date).toBeUndefined();
     }
   });
 
   it("shows it in chapter view at its reveal chapter and in date view from its effective date", () => {
     const shown = entity("1.4", null, alex);
-    expect(shown.death_date).toBe("2165-09");
+    expect(shown.status_event?.date).toBe("2165-09");
     expect(shown.current_state).toBe("lost");
     expect(shown).not.toHaveProperty("effective_date");
     const dates = meaningfulNarrativeDates(prepared, "1.4");
     expect(dates).toContain("2165-09");
     for (const date of dates) {
       const dead = ["2165-09", "2170-03", "2174-01"].includes(date);
-      expect(entity("1.4", date, alex).death_date, date).toBe(
+      expect(entity("1.4", date, alex).status_event?.date, date).toBe(
         dead ? "2165-09" : undefined,
       );
     }
@@ -162,13 +162,13 @@ describe("backdated updates and chapter-view latest known state", () => {
     // Read-through 1.5 (latest date 2168-06) after 1.4 (2174-01): 1.4's
     // backdated write (2165-09) is known at 1.5's soft ceiling.
     expect(entity("1.5", null, alex)).toMatchObject({
-      death_date: "2165-09",
+      status_event: { date: "2165-09", kind: "died" },
       current_state: "lost",
     });
     expect(entity("1.5", null, kai).current_state).toBe("found");
     // Date view still cuts at the requested date among revealed chapters.
     expect(entity("1.5", "2166-02", sam).current_state).toBe("repairing");
-    expect(entity("1.5", "2166-02", alex).death_date).toBe("2165-09");
+    expect(entity("1.5", "2166-02", alex).status_event?.date).toBe("2165-09");
     expect(entity("1.5", "2165-08", sam).current_state).toBe("active");
     expect(entity("1.5", "2165-08", kai).current_state).toBe("active");
     expect(entity("1.5", "2168-06", kai).current_state).toBe("found");
@@ -189,7 +189,7 @@ describe("backdated updates and chapter-view latest known state", () => {
     const alexAt14 = generateNarrativeWorld(shadowed, "1.4").entities.find(
       (candidate) => candidate.id === alex,
     )!;
-    expect(alexAt14.death_date).toBe("2165-09");
+    expect(alexAt14.status_event?.date).toBe("2165-09");
     expect(alexAt14.current_state).toBe("seen");
   });
 
@@ -211,7 +211,7 @@ describe("backdated updates and chapter-view latest known state", () => {
       )!;
     expect(alexAt("2165-09").current_state).toBe("lost");
     expect(alexAt("2174-01")).toMatchObject({
-      death_date: "2165-09",
+      status_event: { date: "2165-09", kind: "died" },
       current_state: "seen",
     });
   });
@@ -296,7 +296,7 @@ describe("backdated updates and chapter-view latest known state", () => {
             "1.4": [
               {
                 entity_id: alex,
-                death_date: "2165-09",
+                status_events: [{ date: "2165-09", kind: "died" }],
                 effective_date: effective,
               },
             ],
