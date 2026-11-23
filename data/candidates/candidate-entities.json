@@ -1,6 +1,15 @@
 {
   "candidates": [
     {
+      "id": "candidate:11-leonis-minoris",
+      "kind": "location",
+      "name": "11 Leonis Minoris",
+      "aliases": [],
+      "mentions": ["2.57"],
+      "note": "2.57: system Bruce calls in from; the Bobs' distance record, 37 ly from Earth (claims 009-010). Named off-screen; no record (pi3-orionis/tau-ceti precedent).",
+      "promotion": null
+    },
+    {
       "id": "candidate:archimedes-son",
       "kind": "character",
       "name": "Archimedes' son",
@@ -35,8 +44,8 @@
       "kind": "event",
       "name": "Bob-moot",
       "aliases": [],
-      "mentions": ["2.32", "2.34", "2.39", "2.44"],
-      "note": "2.39: Bill's VR gathering of 43 SCUT-linked Bobs, a debate with a vote pending (claims 004-005, 029, 041). 2.44: a social moot, VR baseball then a pub in the moot matrix (claims 012, 028).",
+      "mentions": ["2.32", "2.34", "2.39", "2.44", "2.52", "2.55", "2.57"],
+      "note": "Bill's Bob gatherings. 2.39: VR moot of 43 SCUT-linked Bobs (004-005). 2.44: VR baseball, pub (012). 2.52: pub moot (020). 2.55: Bill wants one (034). 2.57: moot on the Others (004-005, 035).",
       "promotion": null
     },
     {
@@ -46,6 +55,15 @@
       "aliases": [],
       "mentions": ["2.25", "2.29"],
       "note": "2.25: native Vulcan animal; one killed, meat on the menu (claims 018-022, 026). 2.29: council approves bronto meat (claims 035-036). Earlier: plain text in 2.2 data; first_mentioned 2.2.",
+      "promotion": null
+    },
+    {
+      "id": "candidate:bruce",
+      "kind": "character",
+      "name": "Bruce",
+      "aliases": [],
+      "mentions": ["2.57"],
+      "note": "2.57: Bob of Calvin and Goku's first cohort, named at the moot as the new distance-record holder, calling in from 11 Leonis Minoris (claims 007-010). Off-screen; parent not given.",
       "promotion": null
     },
     {
@@ -98,8 +116,8 @@
       "kind": "vessel",
       "name": "Death Asteroid",
       "aliases": [],
-      "mentions": ["2.39"],
-      "note": "2.39: Garfield's name for the Others' weapon platform: gamma-ray beam, likely fusion reactors and accumulators, never fired twice in one encounter (claims 011, 018-021, 025-027, 034).",
+      "mentions": ["2.39", "2.53", "2.54", "2.55", "2.57"],
+      "note": "The Others' gamma-ray weapon platform (2.39: 011). 2.53: hit Decoy-1 (027). 2.54: drone risk (017). 2.55: GL 54 convoy (013). 2.57: self-charges in a day or via SUDDAR; living space (021-023, 026).",
       "promotion": null
     },
     {
@@ -109,6 +127,15 @@
       "aliases": ["Chief Draper"],
       "mentions": ["2.49"],
       "note": "2.49: off-screen Poseidon colony figure, expected to take a kraken death and the six-month net delay badly, as Butterworth would (claims 038, 048). Role unstated.",
+      "promotion": null
+    },
+    {
+      "id": "candidate:exodus-7",
+      "kind": "vessel",
+      "name": "Exodus-7",
+      "aliases": [],
+      "mentions": ["2.51"],
+      "note": "2.51: colony ship that Dexter escorted to Vulcan before he stayed on as resident Bob (claim 017). Named once, off-screen; no record.",
       "promotion": null
     },
     {
@@ -136,6 +163,15 @@
       "aliases": [],
       "mentions": ["2.18", "2.21", "2.23"],
       "note": "2.18: Brazilian city named in passing; attack city only implied (claim 021). Earlier: plain text in the 2.7 data (bombings), so first_mentioned should be 2.7 if promoted.",
+      "promotion": null
+    },
+    {
+      "id": "candidate:gorilloid",
+      "kind": "species",
+      "name": "Gorilloid",
+      "aliases": [],
+      "mentions": ["2.56"],
+      "note": "2.56: reduced threat has cut Deltan child mortality (claim 016). Earlier: plain text in 1.35-2.19 data; first_mentioned 1.35 if promoted.",
       "promotion": null
     },
     {

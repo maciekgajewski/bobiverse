@@ -1,0 +1,33 @@
+{
+  "chapter": "2.54",
+  "title": "54 - Stuff is Happening",
+  "summary": "Eighteen months out from [[location:gliese-877]] on the way back to [[location:gliese-54]], [[character:hal]] is travelling too fast for real-time contact, even frame-jacked, so news reaches him by email. [[character:bill]] writes that a squad of [[species:others|Others]] vessels has left GL 877 for GL 54, possibly just to scavenge, and that Bob scouts find closer systems already stripped. [[character:mario]] is pulling out with all his equipment. The Bobs will leave drones to watch and one to try talking to the Others, to be blown up if a Death Asteroid is turned on it. Bill expects formal first contact and suggests Hal re-route.",
+  "date": "2197-10",
+  "location_id": "location:gliese-877",
+  "updates": [
+    {
+      "entity_id": "character:hal",
+      "current_state": "Eighteen months out from [[location:gliese-877]] toward [[location:gliese-54]], too fast for real-time talk even frame-jacked, he got [[character:bill]]'s email: an [[species:others|Others]] squad left GL 877 for GL 54, [[character:mario]] is pulling out, and Bill suggests he re-route."
+    },
+    {
+      "entity_id": "character:mario",
+      "current_state": "With a squad of [[species:others|Others]] vessels heading from [[location:gliese-877]] toward [[location:gliese-54]], he has decided to leave, taking every piece of equipment he has."
+    },
+    {
+      "entity_id": "character:bill",
+      "current_state": "He emailed [[character:hal]] that an [[species:others|Others]] squad is heading for [[location:gliese-54]]. The Bobs will leave drones there to watch and one to try talking to the Others, to be blown up if a Death Asteroid is turned on it; he expects formal first contact."
+    },
+    {
+      "entity_id": "location:gliese-54",
+      "state": "In 2197 a squad of [[species:others|Others]] vessels was seen heading here from [[location:gliese-877]]. [[character:mario]] is leaving with all his equipment; the Bobs will leave drones to watch and to try contacting the Others. Mario's [[technology:relay-station|relay station]] was built here."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:hal",
+      "role": "lead",
+      "location_id": "location:gliese-877"
+    }
+  ],
+  "mentions": ["species:others"]
+}

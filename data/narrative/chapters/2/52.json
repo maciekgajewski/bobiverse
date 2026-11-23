@@ -1,0 +1,90 @@
+{
+  "chapter": "2.52",
+  "title": "52 - Bullwinkle",
+  "summary": "At [[location:epsilon-eridani]], [[character:bill]] is touring [[location:ee-2|Ragnarök]] in [[technology:bullwinkle]], which no longer needs a drone trailing it, when [[character:garfield]] brings the report from [[location:82-eridani]] after the [[event:second-battle-at-82-eridani|second battle]]: three likely colony targets pending biocompatibility checks, wreckage that [[character:loki]] is studying for its cloaking, and unexploded fission bombs that a [[technology:suddar|SUDDAR]] pulse might scan safely. Bill still fears the sheer numbers of the [[species:others|Others]]. At the moot in the pub, [[character:monty]] reports that underwater defenses are deterring the [[species:kraken|krakens]] at [[location:eta-cassiopeiae-3|Poseidon]] and that he wants to leave once the colony can stand on its own, while Bobs quiz [[character:riker]] about Earth. Bill notes [[character:howard]]'s absence and worries that newer Bobs are tiring of humans. [[character:marvin]] and [[character:luke]] hear that [[character:bender]] is still silent and that [[character:victor]] found nothing along his vector, and they plan an expedition to follow the thinned-gas trail his ship would have left.",
+  "date": "2195-12",
+  "location_id": "location:epsilon-eridani",
+  "updates": [
+    {
+      "entity_id": "character:bill",
+      "current_state": "At [[location:epsilon-eridani]] he tours [[location:ee-2|Ragnarök]] in [[technology:bullwinkle]], which no longer needs a trailing drone but is still far from human size. Given [[character:garfield]]'s 82 Eridani report, he fears the Others' numbers; at the moot he worries newer Bobs tire of humans."
+    },
+    {
+      "entity_id": "character:garfield",
+      "current_state": "At [[location:epsilon-eridani]] he brings [[character:bill]] the [[location:82-eridani]] report: three likely colony targets pending biocompatibility checks, wreckage [[character:loki]] is studying for cloaking, and unexploded fission bombs to scan with a V4 [[technology:suddar|SUDDAR]] pulse."
+    },
+    {
+      "entity_id": "character:monty",
+      "current_state": "At [[location:eta-cassiopeiae-3|Poseidon]], new underwater defenses are slowly deterring the krakens after some bad months, and the floating-city plans go ahead. He means to leave once the colony has enough infrastructure and redundancy, having had enough of shepherding humans."
+    },
+    {
+      "entity_id": "character:marvin",
+      "current_state": "At the moot he asks [[character:bill]] for news of his cohort-mate [[character:bender]], still in vain. With [[character:luke]] he plans an expedition to trace Bender from his heading on leaving [[location:delta-eridani-4|Eden]], following the thinned-gas trail a Heaven vessel leaves."
+    },
+    {
+      "entity_id": "character:luke",
+      "current_state": "Nearly thirty years after he and [[character:bender]] left [[location:delta-eridani]], he joins [[character:marvin]] at the moot to plan an expedition after Bender: a Heaven vessel's scooping leaves slightly thinner gas along its path, so even a mid-flight course change can be followed."
+    },
+    {
+      "entity_id": "character:bender",
+      "current_state": "Still silent nearly thirty years after leaving [[location:delta-eridani]]; [[character:bill]] thinks something most likely happened to him. [[character:victor]] found nothing along his departure vector, and [[character:marvin]] and [[character:luke]] are planning an expedition to trace his trail."
+    },
+    {
+      "entity_id": "character:victor",
+      "current_state": "Following [[character:bender]]'s departure vector, he has found nothing so far and thinks Bender may have changed course along the way. He is unwilling to backtrack, so [[character:marvin]] and [[character:luke]] are thinking of mounting their own search."
+    },
+    {
+      "entity_id": "character:loki",
+      "current_state": "At [[location:82-eridani]] after the [[event:second-battle-at-82-eridani|second battle]], he has [[technology:hunter-seekers]] sweeping the system and is studying the destroyed vessels' wreckage, where he thinks he may already be getting a handle on their cloaking technology."
+    },
+    {
+      "entity_id": "location:82-eridani",
+      "state": "[[character:ernesto-medeiros|Medeiros]]' forces were cleared by [[character:loki]]'s squad, and [[technology:hunter-seekers]] sweep the system. By December the survey points to three new colony targets pending biocompatibility checks, and the wreckage and unexploded fission bombs are under study."
+    },
+    {
+      "entity_id": "location:eta-cassiopeiae-3",
+      "state": "Its first colony lives on two plant mats in the north tropical current, with colonists from Micronesia, the Maldives, Vanuatu and Saint Lucia. After bad months of [[species:kraken|kraken]] visits, new underwater defenses are deterring them; floating cities are planned."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bill",
+      "role": "lead",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:garfield",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:monty",
+      "role": "other",
+      "location_id": "location:eta-cassiopeiae-3"
+    },
+    {
+      "character_id": "character:riker",
+      "role": "other",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:marvin",
+      "role": "other",
+      "location_id": "location:delta-eridani"
+    },
+    {
+      "character_id": "character:luke",
+      "role": "other",
+      "location_id": "location:kappa-ceti"
+    }
+  ],
+  "mentions": [
+    "character:howard",
+    "event:second-battle-at-82-eridani",
+    "location:ee-2",
+    "species:kraken",
+    "species:others",
+    "technology:bullwinkle",
+    "technology:suddar"
+  ]
+}

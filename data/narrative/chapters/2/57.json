@@ -1,0 +1,59 @@
+{
+  "chapter": "2.57",
+  "title": "57 - Moot",
+  "summary": "[[character:bill]] chairs a moot on the [[species:others|Others]]: they captured the Chinese probe, speak Mandarin and know where [[location:earth]] and Epsilon Eridani are. Bruce is hailed as the new distance champion, [[character:hal]] is thanked for testing the new HEAVEN design, [[character:garfield]] explains the armada's SUDDAR power beaming and the Others' hive biology, and Bill unveils images of an Other. Afterwards [[character:mario]] reports the Others' fast harvest of [[location:gliese-54]] and Bill urges preparing for an attack on Earth.",
+  "date": "2204-10",
+  "location_id": "location:epsilon-eridani",
+  "updates": [
+    {
+      "entity_id": "character:bill",
+      "current_state": "At [[location:epsilon-eridani]] he chairs a moot on the [[species:others|Others]]: they took the Chinese probe's data, speak Mandarin and know where [[location:earth]] and Epsilon Eridani are. He unveils scans of an Other and urges fast preparation, though [[character:mario]] thinks there is time."
+    },
+    {
+      "entity_id": "character:mario",
+      "current_state": "En route to [[location:zeta-tucanae]], he watches the [[species:others|Others]] strip [[location:gliese-54]], calls his exit a strategic retreat and expects the system emptied within a year. He tells [[character:bill]] many systems lie closer to the Others than [[location:earth]]."
+    },
+    {
+      "entity_id": "character:hal",
+      "current_state": "At [[character:bill]]'s moot he is cheered for proving the new HEAVEN design against the Death Asteroids, and suggests that the [[species:others|Others]]' need to live in large groups explains their building a Dyson sphere."
+    },
+    {
+      "entity_id": "character:garfield",
+      "current_state": "At [[character:bill]]'s moot he admits he underrated the Death Asteroids: the [[species:others|Others]] beam power by [[technology:suddar|SUDDAR]] from reactors on their cargo carriers to run [[technology:mechanical-ants|ants]] and recharge them. He argues the Others are a hive organism."
+    },
+    {
+      "entity_id": "location:gliese-54",
+      "state": "An [[species:others|Others]] convoy of Death Asteroids and cargo carriers is stripping the system: carriers land on metal deposits and release [[technology:mechanical-ants|ants]] that mine ore and build more ants. [[character:mario]]'s drones watch; he expects it cleaned out within a year."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bill",
+      "role": "lead",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:garfield",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:hal",
+      "role": "other",
+      "location_id": "location:gliese-877"
+    },
+    {
+      "character_id": "character:mario",
+      "role": "other",
+      "location_id": "location:gliese-54"
+    }
+  ],
+  "mentions": [
+    "species:others",
+    "event:first-contact-with-the-others",
+    "technology:subspace-communications",
+    "technology:suddar",
+    "technology:mechanical-ants",
+    "location:earth"
+  ]
+}

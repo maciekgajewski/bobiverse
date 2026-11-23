@@ -1,0 +1,75 @@
+{
+  "chapter": "2.56",
+  "title": "56 - Descendants",
+  "summary": "[[character:bob-replicant|Bob]] watches [[character:buster]] beat [[character:arnold]]'s son [[character:donald]] in an archery contest. With the gorilloid threat reduced, the Deltans number over 1,100, [[character:archimedes]]' family is growing and [[character:moses]] has died of old age. The council still upholds Bob's banishment, and stories of the bawbe are darkening.",
+  "date": "2183-01",
+  "location_id": "location:delta-eridani",
+  "introducing": [
+    {
+      "id": "character:donald",
+      "name": "Donald",
+      "species_id": "species:delta-eridani-natives",
+      "parent_id": "character:arnold",
+      "description": "A Deltan of [[location:delta-eridani-4|Eden]] and the son of [[character:arnold]].",
+      "current_state": "At [[location:camelot]], he loses an archery contest to [[character:buster]] before the whole hexghi: uneasy but unwilling to back down, he lands a shot on the target's edge that would have crippled rather than killed."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "At [[location:delta-eridani]], he watches [[character:buster]] beat [[character:donald]] in an archery contest and counts the Deltans at over 1,100. Still banished by the council, he has told [[character:archimedes]] to stop arguing his case, and notes that stories of the bawbe are turning darker."
+    },
+    {
+      "entity_id": "character:archimedes",
+      "current_state": "At [[location:camelot]], the tribe's foremost toolmaker cheers [[character:buster]]'s winning archery shot. He has three children and a fourth on the way. He twice raised [[character:bob-replicant]]'s banishment with the council and was rebuffed, until Bob told him to drop it."
+    },
+    {
+      "entity_id": "character:buster",
+      "current_state": "At [[location:camelot]], he beats [[character:donald]], son of [[character:arnold]], in an archery contest before the whole hexghi, cheered on by his father [[character:archimedes]] while his younger brother and sister heckle the loser."
+    },
+    {
+      "entity_id": "character:arnold",
+      "current_state": "At [[location:camelot]], he shrugs and shouts encouragement after his son [[character:donald]]'s arrow strikes only the edge of the target in an archery contest won by [[character:buster]]."
+    },
+    {
+      "entity_id": "character:moses",
+      "current_state": "Died a few years before January 2183, aged between sixty and seventy Earth-years, a lifespan [[character:bob-replicant]] judges about equal to or a little better than a human's."
+    },
+    {
+      "entity_id": "location:camelot",
+      "state": "With the gorilloid threat reduced, child mortality has fallen sharply and many new young faces have grown up; the Deltans now number over 1,100. The council still upholds [[character:bob-replicant]]'s banishment, and stories of the bawbe are growing darker."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead",
+      "location_id": "location:delta-eridani"
+    },
+    {
+      "character_id": "character:marvin",
+      "role": "other",
+      "location_id": "location:delta-eridani"
+    },
+    {
+      "character_id": "character:archimedes",
+      "role": "other",
+      "location_id": "location:camelot"
+    },
+    {
+      "character_id": "character:buster",
+      "role": "other",
+      "location_id": "location:camelot"
+    },
+    {
+      "character_id": "character:arnold",
+      "role": "other",
+      "location_id": "location:camelot"
+    },
+    {
+      "character_id": "character:donald",
+      "role": "other",
+      "location_id": "location:camelot"
+    }
+  ]
+}

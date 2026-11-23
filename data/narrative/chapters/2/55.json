@@ -1,0 +1,47 @@
+{
+  "chapter": "2.55",
+  "title": "55 - Contact",
+  "summary": "With [[character:mario]] gone toward [[location:zeta-tucanae]], [[character:bill]], working from [[location:epsilon-eridani]] over [[technology:subspace-communications|SCUT]], uses the drones Mario left at [[location:gliese-54]] to hail the arriving [[species:others|Others]] convoy. The Others reply in Mandarin, call Bobs food, say they strip systems to feed a hive ruled by a Prime and avoid colonies because a new hive means a new Prime and war, admit the [[event:zeta-tucanae-genocide|Zeta Tucanae killings]] and say they will come for [[location:sol]]. They destroy the contact drone while a stealth drone scans their ships; Bill decides a moot is needed.",
+  "date": "2204-10",
+  "location_id": "location:gliese-54",
+  "introducing": [
+    {
+      "id": "event:first-contact-with-the-others",
+      "name": "First contact with the Others",
+      "date": "2204-10",
+      "location_id": "location:gliese-54",
+      "description": "[[character:bill]], from [[location:epsilon-eridani]], hails the [[species:others|Others]] convoy at [[location:gliese-54]] via a contact drone. They call Bobs food, admit the [[location:zeta-tucanae]] killings and vow to reach [[location:sol]]. They destroy it; a stealth drone scans their ships.",
+      "participant_ids": ["character:bill"]
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bill",
+      "current_state": "From [[location:epsilon-eridani]] he used [[character:mario]]'s drones at [[location:gliese-54]] to make first contact with the [[species:others|Others]]: they call Bobs food, reject coexistence and plan to reach [[location:sol]]. He scanned their ships and wants a moot."
+    },
+    {
+      "entity_id": "character:mario",
+      "current_state": "En route from [[location:gliese-54]] to [[location:zeta-tucanae]]. Before leaving he set up four stealth observation drones and a deliberately conspicuous contact drone for the Bobs' first contact with the [[species:others|Others]]."
+    },
+    {
+      "entity_id": "location:gliese-54",
+      "state": "An [[species:others|Others]] convoy arrived: ten Death Asteroids, some 200 attendants and twenty huge cylindrical hulks, likely cargo ships. [[character:mario]] has left; his stealth drones watch, the contact drone was destroyed. His [[technology:relay-station|relay station]] was built here."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bill",
+      "role": "lead",
+      "location_id": "location:epsilon-eridani"
+    }
+  ],
+  "mentions": [
+    "species:others",
+    "technology:subspace-communications",
+    "technology:suddar",
+    "event:zeta-tucanae-genocide",
+    "location:zeta-tucanae",
+    "location:sol",
+    "character:hal"
+  ]
+}
