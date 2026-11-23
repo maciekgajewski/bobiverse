@@ -24,7 +24,13 @@
     },
     {
       "entity_id": "character:elmer",
-      "current_state": "After his destruction at [[location:82-eridani]], [[character:bill]] restored him from his backup into one of the new vessels built at [[location:epsilon-eridani]], and he greeted his reboot with the customary Bob movie line."
+      "current_state": "After his destruction at [[location:82-eridani]], [[character:bill]] restored him from his backup into one of the new vessels built at [[location:epsilon-eridani]], and he greeted his reboot with the customary Bob movie line.",
+      "status_events": [
+        {
+          "date": "2185-06",
+          "kind": "restored_from_backup"
+        }
+      ]
     },
     {
       "entity_id": "character:henry-roberts",
