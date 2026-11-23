@@ -14,7 +14,12 @@
       "effective_date": "2165-08",
       "supersedes": true,
       "current_state": "Lost at [[location:82-eridani]] when hostile missiles destroyed his vessel.",
-      "death_date": "2165-08"
+      "status_events": [
+        {
+          "date": "2165-08",
+          "kind": "died"
+        }
+      ]
     },
     {
       "entity_id": "location:82-eridani",

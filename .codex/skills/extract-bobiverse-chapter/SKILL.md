@@ -72,8 +72,11 @@ A back-dated update (`effective_date` earlier than the chapter date) keeps the
 sentences of the earlier-read state of the same date; when it deliberately replaces
 that state, add `"supersedes": true` to the update instead of an exception row, and
 only then (contract §Post-write validation); exception rows cover only `description`
-and `visual_description`. An update that sets `death_date` must be dated no later
-than the death: give it `"effective_date"` no later than the `death_date`.
+and `visual_description`. Character life status is an ordered `status_events`
+list (`died` or `restored_from_backup`, ADR-0033). A write adds only the events
+it reveals; each event `date` must be on or before the chapter's header date.
+A restore is `restored_from_backup` on the same character after a `died` event,
+never a new character (that is `parent_id`) and never a cleared death field.
 Model a single-star system as one `star_system` location under contract §Star
 systems: do not create a separate star entity; planets and belts take
 `parent_relation` `orbits` on the system directly. Sol is a permanent, valid

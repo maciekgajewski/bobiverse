@@ -494,16 +494,23 @@ function NarrativeDetails({
                 {displayDate(String(entity.birth_date))}
               </Detail>
             )}
-            {stringValue(entity.death_date) && (
-              <Detail label="Death date">
-                {displayDate(String(entity.death_date))}
+            {entity.status_event && (
+              <Detail
+                label={
+                  entity.status_event.kind === "died"
+                    ? "Died"
+                    : "Restored from backup"
+                }
+              >
+                {displayDate(entity.status_event.date)}
               </Detail>
             )}
-            {relationship(entity.death_event_id) && (
-              <Detail label="Death event">
-                {relationship(entity.death_event_id)}
-              </Detail>
-            )}
+            {entity.status_event?.kind === "died" &&
+              relationship(entity.status_event.event_id) && (
+                <Detail label="Death event">
+                  {relationship(entity.status_event.event_id)}
+                </Detail>
+              )}
             {entity.last_known_location &&
               relationship(entity.last_known_location.location_id) && (
                 <Detail label="Last seen">

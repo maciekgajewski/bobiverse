@@ -193,7 +193,7 @@ describe("blind Pass 1 boundary", () => {
       "`surface_gravity_g = surface_gravity_m_s2 / 9.80665`",
       "Count-only children are `Moon 1` through `Moon 4`",
       "Treat numbering and child order as decorative inventory, not physical orbital order or distance.",
-      "character `species_id`, `death_event_id`, and `parent_id`, species `homeworld_id`",
+      "character `species_id`, `event_id` on a `died` status event, and `parent_id`, species `homeworld_id`",
       "the character state or backup from which the child was copied",
       "Description updates replace the complete field. Preserve useful prior reviewed knowledge and integrate the newly revealed information rather than emitting only the latest chapter fact.",
       "If the conforming profile, or any part of it, is unavailable for either pass, stop and ask the Captain before substituting another configuration.",

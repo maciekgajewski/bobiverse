@@ -46,8 +46,13 @@
       "effective_date": "2016",
       "supersedes": true,
       "current_state": "Dead.",
-      "death_date": "2016",
-      "death_event_id": "event:bob-road-incident"
+      "status_events": [
+        {
+          "date": "2016",
+          "kind": "died",
+          "event_id": "event:bob-road-incident"
+        }
+      ]
     }
   ],
   "appearances": [

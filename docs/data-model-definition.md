@@ -223,8 +223,7 @@ the identical listing below documents its shared definitions.
         },
         "birth_date": { "$ref": "#/$defs/date" },
         "birth_chapter": { "$ref": "#/$defs/chapter" },
-        "death_date": { "$ref": "#/$defs/date" },
-        "death_event_id": { "$ref": "#/$defs/event_id" }
+        "status_events": { "$ref": "#/$defs/status_events" }
       },
       "additionalProperties": false
     },
@@ -267,12 +266,7 @@ the identical listing below documents its shared definitions.
         "birth_chapter": {
           "anyOf": [{ "$ref": "#/$defs/chapter" }, { "type": "null" }]
         },
-        "death_date": {
-          "anyOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }]
-        },
-        "death_event_id": {
-          "anyOf": [{ "$ref": "#/$defs/event_id" }, { "type": "null" }]
-        }
+        "status_events": { "$ref": "#/$defs/status_events" }
       },
       "anyOf": [
         { "required": ["name"] },
@@ -285,8 +279,7 @@ the identical listing below documents its shared definitions.
         { "required": ["aliases"] },
         { "required": ["birth_date"] },
         { "required": ["birth_chapter"] },
-        { "required": ["death_date"] },
-        { "required": ["death_event_id"] }
+        { "required": ["status_events"] }
       ],
       "additionalProperties": false
     },
@@ -1252,8 +1245,8 @@ Chapter `1.14`, an author includes every source-supported reference to a previou
 visible target that is absent from all other typed direct narrative references in the
 chapter, except a reference only in passing or in a bare list (ADR-0017).
 Structural references include introduction and update targets, appearances,
-chapter locations, event participants and locations, character species, death
-events, and direct parents, species homeworlds, and location
+chapter locations, event participants and locations, character species, `event_id`
+on a `died` status event, and direct parents, species homeworlds, and location
 parent/origin/destination fields. Explicit typed fields, not ID-shaped prose, define
 this boundary. A target introduced in the same or a later chapter is invalid. A
 mention does not assert presence,
@@ -1901,21 +1894,20 @@ identity, and colour is reinforced by a shape-distinct silhouette.
 A character introduction uses the `character` schema above. Its only required fields
 are a canonical `character:` ID and a nonempty reader-visible `name`.
 
-| Field            | Type                                      | Meaning                                                                                                                                                                                  |
-| ---------------- | ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `id`             | `character_id`                            | Immutable stable identifier.                                                                                                                                                             |
-| `name`           | nonempty string                           | Reader-visible display name.                                                                                                                                                             |
-| `gender`         | optional nonempty string                  | Reader-visible free text; no global gender vocabulary is imposed.                                                                                                                        |
-| `species_id`     | optional `species_id`                     | Reference to an introduced species entity.                                                                                                                                               |
-| `parent_id`      | optional `character_id`                   | One source-supported direct parent character.                                                                                                                                            |
-| `description`    | optional nonempty string                  | Who the character is: a stable identity blurb (about 300 characters as a guideline, not a hard limit). Optional inline `[[kind:slug]]` links are allowed. Distinct from `current_state`. |
-| `current_state`  | optional nonempty string                  | One or two concise sentences describing only the character's condition as of its date.                                                                                                   |
-| `picture_id`     | optional `asset_id`                       | Chapter-controlled assignment of a manually curated image asset.                                                                                                                         |
-| `aliases`        | optional array of unique nonempty strings | Additional reader-visible names that become searchable only when introduced or updated.                                                                                                  |
-| `birth_date`     | optional `date`                           | Known birth date at the available story-time precision.                                                                                                                                  |
-| `birth_chapter`  | optional `chapter`                        | Chapter that explicitly depicts or establishes the character's birth or cloning.                                                                                                         |
-| `death_date`     | optional `date`                           | Known death date at the available story-time precision.                                                                                                                                  |
-| `death_event_id` | optional `event_id`                       | Reference to the event that records the death.                                                                                                                                           |
+| Field           | Type                                      | Meaning                                                                                                                                                                                  |
+| --------------- | ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`            | `character_id`                            | Immutable stable identifier.                                                                                                                                                             |
+| `name`          | nonempty string                           | Reader-visible display name.                                                                                                                                                             |
+| `gender`        | optional nonempty string                  | Reader-visible free text; no global gender vocabulary is imposed.                                                                                                                        |
+| `species_id`    | optional `species_id`                     | Reference to an introduced species entity.                                                                                                                                               |
+| `parent_id`     | optional `character_id`                   | One source-supported direct parent character.                                                                                                                                            |
+| `description`   | optional nonempty string                  | Who the character is: a stable identity blurb (about 300 characters as a guideline, not a hard limit). Optional inline `[[kind:slug]]` links are allowed. Distinct from `current_state`. |
+| `current_state` | optional nonempty string                  | One or two concise sentences describing only the character's condition as of its date.                                                                                                   |
+| `picture_id`    | optional `asset_id`                       | Chapter-controlled assignment of a manually curated image asset.                                                                                                                         |
+| `aliases`       | optional array of unique nonempty strings | Additional reader-visible names that become searchable only when introduced or updated.                                                                                                  |
+| `birth_date`    | optional `date`                           | Known birth date at the available story-time precision.                                                                                                                                  |
+| `birth_chapter` | optional `chapter`                        | Chapter that explicitly depicts or establishes the character's birth or cloning.                                                                                                         |
+| `status_events` | optional nonempty array of status events  | Events this write reveals (`died` or `restored_from_backup`). See below.                                                                                                                 |
 
 The `character_update` schema permits every character field except `id`. `name` must
 remain a nonempty string; every optional field, including `description`, may be
@@ -1924,14 +1916,21 @@ previous one; the latest value in effect at the viewed chapter wins, under the s
 reader-order and story-time rules as `current_state`. A list supplied for `aliases`
 replaces the complete previous list. A
 character introduction or update must not use a reference until its target entity has
-been seeded or introduced. When both `death_date` and the referenced event's own
-`date` are present, their canonical values must be identical. No ordering comparison is
-imposed between `birth_date` and `death_date`. A write that sets `death_date` must be
-dated no later than its death period: its date (an update's `effective_date ?? chapter
-date`, an introduction's chapter date) must be known at a soft ceiling equal to the
-`death_date` (`isKnownAtCeiling`, comparing calendar ranges), or the character would
-show alive between the death and the write. Back-date such an update with
-`effective_date`.
+been seeded or introduced. Character life status is an ordered `status_events` list
+(ADR-0033). A write may include one or more events that write reveals; it does not
+repeat earlier events and cannot clear the list with `null`. Each event has a `date`,
+a `kind` of `died` or `restored_from_backup`, an optional `backup_date` on a restore,
+and an optional `event_id` on a death. The event takes effect at its own `date` once
+its revealing chapter is inside Read through; current status is the latest remaining
+event known at the soft ceiling (`status_event` on the projected character). The
+chapter file is the reveal key. Each event `date` must be on or before the revealing
+chapter's header `date`. `backup_date`, when present, must be on or before the
+restore date. When a `died` event names an `event_id` and that event has a `date`,
+the two canonical dates must be identical. `restored_from_backup` is allowed only
+immediately after `died`; `died` is allowed when the list is empty so far or
+immediately after a restore. No ordering comparison is imposed between `birth_date`
+and a death date. A new replicant made from someone else's backup is a new character
+with `parent_id`, not a restore.
 
 `birth_chapter` is allowed only on chapter-authored characters. It names the current
 or an earlier canonical chapter whose structured facts explicitly place the birth or
@@ -2096,7 +2095,9 @@ layer. It rejects at least:
 - invalid update `null` use, invalid list replacement values, or invalid references;
 - an invalid character ID, name, aliases list, or typed species, asset, or death-event
   reference; a character death date that conflicts with its referenced event date;
-  a write that sets `death_date` dated after its death period;
+  a status event dated after its revealing chapter's header date; a
+  `restored_from_backup` without a preceding `died`; a `backup_date` after the
+  restore date; or an `event_id` on anything but `died`;
 - an invalid species ID, name, description, picture, or homeworld reference, including
   a homeworld that is transit or has not been seeded or introduced;
 - an invalid technology, organization, or vessel ID; a cross-type ID; an empty

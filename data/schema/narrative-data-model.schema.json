@@ -176,6 +176,25 @@
       },
       "additionalProperties": false
     },
+    "status_event": {
+      "type": "object",
+      "required": ["date", "kind"],
+      "properties": {
+        "date": { "$ref": "#/$defs/date" },
+        "kind": {
+          "type": "string",
+          "enum": ["died", "restored_from_backup"]
+        },
+        "backup_date": { "$ref": "#/$defs/date" },
+        "event_id": { "$ref": "#/$defs/event_id" }
+      },
+      "additionalProperties": false
+    },
+    "status_events": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/status_event" }
+    },
     "character": {
       "type": "object",
       "required": ["id", "name"],
@@ -202,8 +221,7 @@
         },
         "birth_date": { "$ref": "#/$defs/date" },
         "birth_chapter": { "$ref": "#/$defs/chapter" },
-        "death_date": { "$ref": "#/$defs/date" },
-        "death_event_id": { "$ref": "#/$defs/event_id" }
+        "status_events": { "$ref": "#/$defs/status_events" }
       },
       "additionalProperties": false
     },
@@ -246,12 +264,7 @@
         "birth_chapter": {
           "anyOf": [{ "$ref": "#/$defs/chapter" }, { "type": "null" }]
         },
-        "death_date": {
-          "anyOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }]
-        },
-        "death_event_id": {
-          "anyOf": [{ "$ref": "#/$defs/event_id" }, { "type": "null" }]
-        }
+        "status_events": { "$ref": "#/$defs/status_events" }
       },
       "anyOf": [
         { "required": ["name"] },
@@ -264,8 +277,7 @@
         { "required": ["aliases"] },
         { "required": ["birth_date"] },
         { "required": ["birth_chapter"] },
-        { "required": ["death_date"] },
-        { "required": ["death_event_id"] }
+        { "required": ["status_events"] }
       ],
       "additionalProperties": false
     },

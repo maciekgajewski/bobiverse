@@ -113,7 +113,7 @@ record:
    header `date`, so they never raise it.
 
 Undated events, appearances, mentions, locations and entity fields such as
-`birth_date` or `death_date` do not count. "Latest" compares the end of each
+`birth_date` or character status-event dates do not count. "Latest" compares the end of each
 calendar range (ADR-0026 calendar ranges, in
 `adrs/0026-calendar-precision-narrative-dates.md`); among dates that end together,
 the one with the latest start wins, then the higher ordering suffix. The chapter
