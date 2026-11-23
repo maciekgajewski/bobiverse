@@ -1,6 +1,6 @@
 # BOB-20261123-6E912S: ADR-0033 life-status follow-ups
 
-Status: In progress
+Status: Done
 Phase: 2 (narrative foundation and chapter timeline)
 Last updated: 2026-11-23
 
@@ -134,3 +134,9 @@ close the review gaps and keep the script and ordering rules ready.
   systems), `narrative:manifest` then `narrative:validate` (111 chapters,
   32 candidates), `build`, and `git diff --check` passed. `npm test`: 66
   files, 870 tests passed. No e2e.
+
+- The manager approved reviewed head
+  `02068bc7e0f48cc1350b717738d0aca26257d68a` on 2026-11-23 and gave the go
+  to land. The optional --prove nit is deferred; no code changes after
+  approval. Status set to Done in this docs-only recording commit; landing
+  follows.
