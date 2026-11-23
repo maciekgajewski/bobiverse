@@ -386,10 +386,27 @@ describe("narrative corpus validation and projection", () => {
     counted.books = {
       books: {
         "1": { title: "Fixture volume", chapter_count: 3 },
-        "2": { title: "Later fixture volume", chapter_count: 57 },
+        "2": { title: "Later fixture volume", chapter_count: 77 },
       },
     };
     expect(() => validateNarrativeCorpus(counted)).not.toThrow();
+
+    const atLimit = structuredClone(counted);
+    atLimit.chapters.push({
+      chapter: "2.77",
+      title: "Fixture book two close",
+      summary: "A fictional later-book chapter sits at the catalogue count.",
+      date: "2201.0",
+      location_id: "location:earth",
+      appearances: [{ character_id: "character:fixture-alex", role: "lead" }],
+    });
+    expect(() => validateNarrativeCorpus(atLimit)).not.toThrow();
+
+    const pastLimit = structuredClone(atLimit);
+    pastLimit.chapters[pastLimit.chapters.length - 1]!.chapter = "2.78";
+    expect(() => validateNarrativeCorpus(pastLimit)).toThrow(
+      "Chapter 2.78 is past the 77 chapters that books.json records for book 2.",
+    );
 
     const overflow = createNarrativeFixtureCorpus();
     overflow.books = {

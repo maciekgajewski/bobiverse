@@ -808,7 +808,7 @@ describe("extraction preflight", () => {
 
   describe("item 7 across a book boundary", () => {
     // Synthetic counts: book 1 has 3 chapters and book 2 has 4 (the real
-    // catalogue records 61 and 57; the rule is the same).
+    // catalogue records 61 and 77; the rule is the same).
     const twoBooks = {
       "1": { title: "Synthetic book one", chapter_count: 3 },
       "2": { title: "Synthetic book two", chapter_count: 4 },

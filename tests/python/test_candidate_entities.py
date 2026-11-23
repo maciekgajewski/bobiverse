@@ -83,6 +83,14 @@ class CandidateValidationTest(unittest.TestCase):
     def test_accepts_catalogued_chapters_whose_data_has_not_landed(self) -> None:
         self.assertEqual(self.errors(candidate(mentions=["1.5", "1.9"])), [])
 
+    def test_catalogued_reads_chapter_count_from_books_json(self) -> None:
+        books = {"2": {"title": "Fixture Two", "chapter_count": 77}}
+        self.assertTrue(cand.catalogued("2.1", books))
+        self.assertTrue(cand.catalogued("2.77", books))
+        self.assertFalse(cand.catalogued("2.78", books))
+        self.assertFalse(cand.catalogued("3.1", books))
+        self.assertFalse(cand.catalogued("2.77", {"2": {"title": "Fixture Two"}}))
+
     def test_rejects_schema_violations(self) -> None:
         self.assertTrue(self.errors(candidate(id="dana")))
         self.assertTrue(self.errors(candidate(kind="planet")))
