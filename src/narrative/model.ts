@@ -1256,7 +1256,7 @@ type AuthoredStatusEvent = NarrativeStatusEvent;
 interface AccumulatedStatusEvent extends AuthoredStatusEvent {
   sourceChapter: string;
   /** Position of the source write in the chapter: introducing, then updates. */
-  writeIndex: number;
+  writeIndex: number; // unused on the projector side; projection trusts walk order
   /** Index of this event in that write's status_events array. */
   index: number;
 }
@@ -1588,8 +1588,9 @@ export function assertAccumulatedStatusEventsInChapter(
 }
 
 /**
- * Project current status from one chapter's writes in the same chapter-global
- * write order the projector uses. Exported for the two-write equal-date test.
+ * Project current status from one chapter's writes. Mirrors the
+ * introducing-then-updates walk in projectRevealedEntities, including
+ * chapterWriteIndex, so the two-write test uses the same order.
  */
 export function projectedStatusEventFromChapterWrites(
   chapter: NarrativeRecord,

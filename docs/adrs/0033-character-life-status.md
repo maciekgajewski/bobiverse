@@ -151,8 +151,12 @@ event on that same write:
 - `death_date` and `death_event_id` are then removed.
 
 Writes that only clear `death_date` to `null` are dropped; a return to life
-is a `restored_from_backup` event, not a cleared field. No current write on
-master or on the approved 2.31–2.40 head (`23d6306`) clears `death_date`.
+is a `restored_from_backup` event, not a cleared field. If such a write is
+an update and, after the death fields are removed, only `entity_id` remains,
+the whole update is dropped. An introducing record, or a write that still
+has other fields, keeps the record and drops only the death fields. No
+current write on master or on the approved 2.31–2.40 head (`23d6306`)
+clears `death_date`.
 
 The migration is mechanical and incomplete for returns that today live only
 in `current_state`. After it, `character:elmer` would still show as dead

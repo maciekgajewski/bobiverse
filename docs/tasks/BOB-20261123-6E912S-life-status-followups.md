@@ -87,7 +87,9 @@ No e2e (no rendered-output change).
 ## Documentation and generated artifacts
 
 Update `docs/adrs/0033-character-life-status.md` §4 if the equal-date order
-wording changes. No generated artifact changes.
+wording changes, and §3 if null-clearing write-drop behaviour is specified.
+The migrate script's `--prove --base cf219fb` only reproduces at the original
+migration commit. No generated artifact changes.
 
 ## Known risks or unresolved decisions
 
@@ -117,3 +119,18 @@ close the review gaps and keep the script and ordering rules ready.
   files, 32 candidates), `build`, and `git diff --check` passed.
   `npm test`: 66 files, 869 tests passed. No e2e (no rendered-output
   change).
+
+- Review of `a81cc70` requested changes (one blocker, six nits). All fixed
+  in this follow-up. `migrate_tree` writes a file only when a death field
+  was removed, a died event was added, or a now-empty update was dropped,
+  not when re-dumped JSON differs from Prettier. A scratch rerun on a copy
+  of the current 111-chapter corpus in `~/lifestatus-followups-verify/scratch-corpus/`
+  reported "migrated 0 death_date write(s) in 0 file(s)" with unchanged
+  hashes; the worktree data was not modified. Fast checks, 22:22
+  (Europe/Warsaw), logs in `~/lifestatus-followups-verify/` (`*-review.log`):
+  `python3 scripts/tasks.py check` (125 task files, 35 ADRs),
+  `format:check`, `lint` (same pre-existing AboutDialog warning),
+  `typecheck`, `data:test` (144 tests), `data:validate` (337 reconciled
+  systems), `narrative:manifest` then `narrative:validate` (111 chapters,
+  32 candidates), `build`, and `git diff --check` passed. `npm test`: 66
+  files, 870 tests passed. No e2e.

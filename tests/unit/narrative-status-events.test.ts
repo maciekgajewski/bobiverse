@@ -366,6 +366,19 @@ describe("status event validation (ADR-0033)", () => {
       assertAccumulatedStatusEventsInChapter(introThenUpdate),
     ).not.toThrow();
   });
+
+  it("rejects a same-date restore in the first update followed by a death in the second", () => {
+    // Write order is not a kind reorder: a restore still requires a preceding died.
+    const restoreThenDied = chapter("1.2", "2185-06", {
+      updates: [
+        { entity_id: alex, status_events: [restored("2185-06")] },
+        { entity_id: alex, status_events: [died("2185-06")] },
+      ],
+    });
+    expect(() =>
+      assertAccumulatedStatusEventsInChapter(restoreThenDied),
+    ).toThrow(/restored_from_backup is allowed only immediately after died/);
+  });
 });
 
 describe("status event projection (ADR-0033)", () => {
