@@ -1,0 +1,42 @@
+{
+  "chapter": "2.26",
+  "title": "26 - Selling Poseidon",
+  "summary": "At a remote session of Earth's survivor delegates, [[character:riker]], present through an avatar, trades barbs with [[character:ambassador-gerrold|Ambassador Gerrold]] over the failure to stop the attacks. He reports that the destroyed [[technology:kudzu-gardens|farm donut]] will take a few months to replace and the farm must be regrown, so rations will be short but no one will starve, and he publicly belittles [[organization:vehement]] as merely lucky, as bait to provoke it, while Guppy monitors every communication. The emigration debate goes nowhere: the Maldives and Micronesia have nearly secured [[location:eta-cassiopeiae-3|Poseidon]] but cannot recruit the six hundred more colonists they need, and others want the unfinished colony ships for Vulcan or Romulus. Guppy finds one anomalous tight-beam signal, sent from a remote part of New Zealand to [[character:homer]]; recalling how withdrawn and humourless Homer has become, Riker suspects he is helping the attackers, or is not Homer at all, and asks Charles to meet in person.",
+  "date": "2175-12",
+  "location_id": "location:sol",
+  "updates": [
+    {
+      "entity_id": "character:riker",
+      "current_state": "He told the delegates the destroyed farm donut needs months to replace, with short rations meanwhile, and is baiting [[organization:vehement]] by downplaying it while monitoring all communications. A tight-beam signal to [[character:homer]] makes him suspect Homer is aiding the attackers or is not Homer, and he has asked Charles to meet."
+    },
+    {
+      "entity_id": "character:homer",
+      "current_state": "He has stopped joking entirely and withdrawn from the other Bobs, very unlike himself. An anomalous tight-beam signal from a remote part of New Zealand was sent to him, and [[character:riker]] suspects he may be helping the attackers or may not be Homer at all."
+    },
+    {
+      "entity_id": "character:ambassador-gerrold",
+      "current_state": "At the remote delegates' session he again accuses [[character:riker]] of being unable to stop the attackers, seeming to enjoy the situation more than his anger suggests, and Riker, tired of his jibes, now answers back."
+    },
+    {
+      "entity_id": "location:eta-cassiopeiae-3",
+      "state": "The Maldives and Micronesia have largely cemented their claim to settle it, helped by other enclaves' lack of interest in so specialized a world. They still need about six hundred more colonists for a full colony-ship complement and are struggling to recruit them."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:riker",
+      "role": "lead",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:ambassador-gerrold",
+      "role": "other",
+      "location_id": "location:sol"
+    }
+  ],
+  "mentions": [
+    "organization:vehement",
+    "technology:guppi-interface",
+    "technology:kudzu-gardens"
+  ]
+}

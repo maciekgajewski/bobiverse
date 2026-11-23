@@ -1,0 +1,49 @@
+{
+  "chapter": "2.21",
+  "title": "21 - Attacks Continue",
+  "summary": "A bomb waiting at the landing site destroys a cargo drone carrying food to Vancouver Island as it touches down, losing the whole shipment and its equipment, and [[organization:vehement]] claims responsibility. [[character:charles]] reports the loss to [[character:riker]], and on a video call [[character:grady|Premier Grady]] tells Riker he does not blame him; [[character:homer]] arranges a replacement delivery over a short-range laser link that cannot be intercepted, and Riker concludes that VEHEMENT is now a major threat. Charles also raises the continuing terrorist attacks in Florianópolis, which Riker puts down to people who still blame Brazil for the war and which a task force is investigating. Then chemicals in the irrigation system of one of the Bobs' [[technology:kudzu-gardens|space-farm donuts]] kill three sections of kudzu before automated systems shut it down for inspection. Since only the Bobs have legitimate access to the farms, Riker sets his [[technology:ami|AMI]] monitors to comb a month of traffic and studies cryptography to find VEHEMENT's communications.",
+  "date": "2174-12",
+  "location_id": "location:sol",
+  "introducing": [
+    {
+      "id": "character:grady",
+      "name": "Premier Grady",
+      "description": "A premier on Earth whose people depend on the Bobs' food deliveries, including shipments to Vancouver Island. He deals with [[character:riker]] by video call.",
+      "current_state": "After a VEHEMENT bomb destroys a food delivery to Vancouver Island, he tells [[character:riker]] he does not blame him and accepts a replacement delivery that [[character:homer]] arranges over a secure laser link."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:riker",
+      "current_state": "At [[location:sol]], he now treats [[organization:vehement]] as a major threat and, after it reaches a space farm, has his [[technology:ami|AMI]] monitors review a month of traffic while he studies cryptography to find its communications."
+    },
+    {
+      "entity_id": "character:charles",
+      "current_state": "Still helping [[character:riker]] at [[location:sol]], he reports [[organization:vehement]]'s attacks on supply deliveries and keeps raising the continuing Florianópolis terror attacks, which a task force is investigating."
+    },
+    {
+      "entity_id": "organization:vehement",
+      "current_state": "Now a major threat rather than a nuisance, it has claimed a bomb that destroyed a food delivery to Vancouver Island and has poisoned crops on one of the Bobs' [[technology:kudzu-gardens|space-farm donuts]], which only the Bobs can legitimately reach."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:riker",
+      "role": "lead",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:charles",
+      "role": "other"
+    },
+    {
+      "character_id": "character:grady",
+      "role": "other"
+    },
+    {
+      "character_id": "character:homer",
+      "role": "other"
+    }
+  ],
+  "mentions": ["technology:ami", "technology:kudzu-gardens"]
+}

@@ -1,0 +1,39 @@
+{
+  "chapter": "2.25",
+  "title": "25 - Rabbits",
+  "summary": "Returning a call from the [[location:vulcan]] colony, [[character:howard]] talks by video with the biologist [[character:dr-sheehy|Dr. Sheehy]], whom [[character:george-butterworth|Colonel Butterworth]] asked to brief him. Her team has found that Terran rabbits eat the toxic native vine and, breeding fast, could keep it in check; Howard accepts bringing a Terran pest to the planet since it attacked first, and Butterworth expects the council, humbled for now, to approve the release. She also reports that brontos tried to eat the fence again the day before, and one that had learned to avoid the electrified wires was killed; its meat passed toxicology and a barbecue test, so bronto is now on the colony's menu despite the unfinished impact studies, which may cut into Howard's kudzu sales. Howard welcomes the colony's growing self-sufficiency, thinks he could leave in a decade or so, and goes back to building a GUPPI-controlled surveillance system.",
+  "date": "2189-11",
+  "location_id": "location:vulcan",
+  "introducing": [
+    {
+      "id": "character:dr-sheehy",
+      "name": "Dr. Sheehy",
+      "species_id": "species:human",
+      "description": "A biologist with the [[location:vulcan]] colony, with thick red hair, freckles and dimples. She and her staff advised [[character:george-butterworth|Colonel Butterworth]] that the raptors are very smart animals rather than sentient beings, and at his request she briefs [[character:howard]] on the colony's biology work.",
+      "current_state": "On [[location:vulcan]], her team has found that Terran rabbits eat the toxic native vine and could control it by breeding, pending the council's approval. She reports that bronto meat has passed testing and is now on the colony's menu."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:howard",
+      "current_state": "Supporting the [[location:vulcan]] colony, he welcomes its growing self-sufficiency, though bronto meat may cut into his kudzu sales there, and thinks he could leave in a decade or so. He is building a GUPPI-controlled surveillance system."
+    },
+    {
+      "entity_id": "location:vulcan",
+      "state": "Its colony of about twenty thousand is growing more self-sufficient; its biologists propose releasing Terran rabbits, which eat the toxic invasive native vine, pending council approval. A bronto that got past the electrified fence was killed, and its tested meat is now on the menu before impact studies are done."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:howard",
+      "role": "lead",
+      "location_id": "location:omicron2-eridani"
+    },
+    {
+      "character_id": "character:dr-sheehy",
+      "role": "other",
+      "location_id": "location:vulcan"
+    }
+  ],
+  "mentions": ["character:george-butterworth"]
+}

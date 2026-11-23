@@ -1,0 +1,68 @@
+{
+  "chapter": "2.30",
+  "title": "30 - Found Something",
+  "summary": "Searching for the [[species:others|Others]] after [[character:mario]]'s group scattered on his orders, [[character:bashful]] heads for [[location:gliese-877|GL-877]], an unremarkable star whose artificial radio traffic, flagged by [[technology:guppi-interface|Guppy]], reveals an intelligent presence. Taking every precaution, he releases two stealth probes he built in transit to coast through the system for just under two weeks while he takes a powered path around the inner system to a rendezvous on the far side, then relays their data to Mario before analysing it. The picture: two rocky planets and a small Jovian, and a system almost clear of debris except for a vast, diffuse ring of mass and activity around one inner orbit that produces most of its electromagnetic emissions and that Guppy rules out as a planet or moon. Far out from the star, [[technology:suddar]] picks up six fast vessels with well-shielded reactors; unable to outrun them, Bashful angles away to slip past and spends almost a day scanning them: five closely resemble the [[vessel:alien-cargo-carrier|wrecked alien cargo carrier]], and the sixth is a sphere almost half a kilometre across with a flat grid section. As he passes within ten kilometres, the sphere turns its grid on him and waits out his evasive manoeuvres; the grid glows, and Guppy reports his controller replicant and [[technology:surge-drive|SURGE drive]] offline and his self-destruct protocol engaged, with reactor overload under way.",
+  "date": "2187-11",
+  "location_id": "location:gliese-877",
+  "introducing": [
+    {
+      "id": "location:gliese-877",
+      "name": "Gliese 877",
+      "kind": "star_system",
+      "map_status": "unmapped",
+      "description": "A single-star system, also written GL-877, around a nondescript star in an unremarkable patch of sky. It has two inner rocky planets and a single small Jovian farther out, and apart from one orbit it is unusually clear of debris.",
+      "state": "Artificial radio traffic shows an intelligent presence. A vast, diffuse ring of mass and activity circles the star at about 80% of the orbital radius of [[location:gliese-877-1|its innermost planet]] and produces most of the system's electromagnetic emissions. Six unidentified vessels intercepted [[character:bashful]] on its outskirts."
+    },
+    {
+      "id": "location:gliese-877-1",
+      "name": "Gliese 877 1",
+      "kind": "planet",
+      "parent_location_id": "location:gliese-877",
+      "parent_relation": "orbits",
+      "orbital_order": 1,
+      "body_class": "rocky",
+      "description": "The inner of the two rocky planets of [[location:gliese-877]]. It appears to have an atmosphere."
+    },
+    {
+      "id": "location:gliese-877-2",
+      "name": "Gliese 877 2",
+      "kind": "planet",
+      "parent_location_id": "location:gliese-877",
+      "parent_relation": "orbits",
+      "orbital_order": 2,
+      "body_class": "rocky",
+      "description": "The outer of the two rocky planets of [[location:gliese-877]]. It has been surveyed only from a distance, but appears to have a surprisingly high albedo."
+    },
+    {
+      "id": "location:gliese-877-3",
+      "name": "Gliese 877 3",
+      "kind": "planet",
+      "parent_location_id": "location:gliese-877",
+      "parent_relation": "orbits",
+      "orbital_order": 3,
+      "body_class": "gas_giant",
+      "description": "The only gas giant of [[location:gliese-877]], a small Jovian orbiting beyond its two rocky planets."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bashful",
+      "current_state": "At [[location:gliese-877]], searching for the [[species:others|Others]], he scouted the system with two stealth probes and relayed their data to [[character:mario]]. Six unidentified vessels then intercepted him; the largest hit him with a weapon, leaving his controller replicant offline and his self-destruct protocol engaged with reactor overload."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bashful",
+      "role": "lead",
+      "location_id": "location:gliese-877"
+    }
+  ],
+  "mentions": [
+    "character:mario",
+    "species:others",
+    "technology:guppi-interface",
+    "technology:suddar",
+    "technology:surge-drive",
+    "vessel:alien-cargo-carrier"
+  ]
+}

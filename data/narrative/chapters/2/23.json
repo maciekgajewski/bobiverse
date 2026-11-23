@@ -1,0 +1,33 @@
+{
+  "chapter": "2.23",
+  "title": "23 - VEHEMENT",
+  "summary": "In Sol, [[character:riker]] surveys the wreckage of Farm-6, one of [[character:homer]]'s [[technology:kudzu-gardens|space-farm donuts]], destroyed just after coming online at the cost of six months' work, while [[organization:vehement]] issues its usual announcement that humanity is a cancer the universe is better off without. Homer, grieving and angry, has long stopped teasing Riker and become all business; the farms' redundancy means the loss is not crippling, though less food for the planet means short rations or more kudzu, and he ends the call. [[technology:guppi-interface|Guppy]] finds no related transmissions and no nearby activity except Heaven vessels, and Riker concludes VEHEMENT is covering its tracks. The same week, Brazilian terrorists strike Florianópolis several times, one attack knocking out its power system for a couple of days. Having seen VEHEMENT's actions and the Brazilian attacks line up more than once, Riker judges them two separate groups that may share intelligence; with every channel he can think of watched and clean, he reasons that they must hide messages by steganography in some high-bandwidth medium, and retires to his VR to think.",
+  "date": "2175-09",
+  "location_id": "location:sol",
+  "updates": [
+    {
+      "entity_id": "character:riker",
+      "current_state": "At [[location:sol]], after [[organization:vehement]] destroys a new farm donut and Brazilian terrorists knock out Florianópolis' power, he suspects the two groups share intelligence and, with every channel he watches clean, is hunting for the covert medium they use."
+    },
+    {
+      "entity_id": "character:homer",
+      "current_state": "Still running the space-farm program, he has been withdrawn and all business for months, no longer teasing [[character:riker]], and is grieving and angry after losing Farm-6, a newly commissioned [[technology:kudzu-gardens|farm donut]] that took six months to build."
+    },
+    {
+      "entity_id": "organization:vehement",
+      "current_state": "Organized in cells and covering its tracks well, it issued its usual announcement over the destruction of Farm-6, a newly commissioned [[technology:kudzu-gardens|space-farm donut]]; its actions have more than once seemed coordinated with Brazilian terrorist attacks on Florianópolis."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:riker",
+      "role": "lead",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:homer",
+      "role": "other"
+    }
+  ],
+  "mentions": ["technology:guppi-interface", "technology:kudzu-gardens"]
+}

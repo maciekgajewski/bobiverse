@@ -4,10 +4,13 @@
       "id": "candidate:archimedes-son",
       "kind": "character",
       "name": "Archimedes' son",
-      "aliases": [],
-      "mentions": ["2.19"],
-      "note": "Seeded from Maciej's 2.11-2.20 review (ADR-0032 Decided 3).",
-      "promotion": null
+      "aliases": ["Buster"],
+      "mentions": ["2.19", "2.22"],
+      "note": "Seeded from Maciej's 2.11-2.20 review (ADR-0032 Decided 3). 2.22: named Buster, a teased cub. 2.27: stated to be Archimedes' son (claim 027); promoted. Merged from draft candidate:buster.",
+      "promotion": {
+        "chapter": "2.27",
+        "entity_id": "character:buster"
+      }
     },
     {
       "id": "candidate:axler",
@@ -28,12 +31,39 @@
       "promotion": null
     },
     {
+      "id": "candidate:bronto",
+      "kind": "species",
+      "name": "Bronto",
+      "aliases": [],
+      "mentions": ["2.25", "2.29"],
+      "note": "2.25: native Vulcan animal; one killed, meat on the menu (claims 018-022, 026). 2.29: council approves bronto meat (claims 035-036). Earlier: plain text in 2.2 data; first_mentioned 2.2.",
+      "promotion": null
+    },
+    {
       "id": "candidate:camelot-attack",
       "kind": "event",
       "name": "Camelot attack",
       "aliases": [],
       "mentions": ["2.19"],
       "note": "Seeded from Maciej's 2.11-2.20 review (ADR-0032 Decided 3).",
+      "promotion": null
+    },
+    {
+      "id": "candidate:cupid-bug",
+      "kind": "species",
+      "name": "Cupid Bug",
+      "aliases": [],
+      "mentions": ["2.29"],
+      "note": "2.29: Dr. Sheehy's name for the egg-laying Vulcan parasite; detector, extinction aim (claims 029-033). Earlier: unnamed, plain text in 2.20 data; first_mentioned 2.20.",
+      "promotion": null
+    },
+    {
+      "id": "candidate:farm-6",
+      "kind": "location",
+      "name": "Farm-6",
+      "aliases": [],
+      "mentions": ["2.23"],
+      "note": "2.23: newly commissioned kudzu-gardens donut destroyed, VEHEMENT announcement (claims 005-011, 019). Named installation below granularity; kept as text.",
       "promotion": null
     },
     {
@@ -50,7 +80,7 @@
       "kind": "location",
       "name": "Florianópolis",
       "aliases": [],
-      "mentions": ["2.18"],
+      "mentions": ["2.18", "2.21", "2.23"],
       "note": "2.18: Brazilian city named in passing; attack city only implied (claim 021). Earlier: plain text in the 2.7 data (bombings), so first_mentioned should be 2.7 if promoted.",
       "promotion": null
     },
@@ -64,12 +94,30 @@
       "promotion": null
     },
     {
+      "id": "candidate:hippogriff",
+      "kind": "species",
+      "name": "Hippogriff",
+      "aliases": [],
+      "mentions": ["2.22"],
+      "note": "2.22: Deltan predator; local nest gone, area unclaimed (claims 009, 014). Earlier: plain text in the 1.27 data, so first_mentioned should be 1.27 if promoted.",
+      "promotion": null
+    },
+    {
       "id": "candidate:maldives",
       "kind": "location",
       "name": "Maldives",
       "aliases": [],
-      "mentions": ["2.14", "2.18"],
+      "mentions": ["2.14", "2.18", "2.26"],
       "note": "Seeded from Maciej's 2.11-2.20 review (ADR-0032 Decided 3). Earlier: plain text in the 2.7 data, so first_mentioned should be 2.7 if promoted.",
+      "promotion": null
+    },
+    {
+      "id": "candidate:micronesia",
+      "kind": "location",
+      "name": "Micronesia",
+      "aliases": [],
+      "mentions": ["2.26"],
+      "note": "2.26: with the Maldives, has largely secured the claim to settle Poseidon but lacks colonists (claims 017-020). Island group on Earth below location granularity.",
       "promotion": null
     },
     {
@@ -77,8 +125,8 @@
       "kind": "location",
       "name": "New Zealand",
       "aliases": [],
-      "mentions": ["2.18"],
-      "note": "2.18: delegate affiliation only; no entity exists. Earlier: plain text in the 1.41 and 1.49 data, so first_mentioned should be 1.41 if promoted.",
+      "mentions": ["2.18", "2.28"],
+      "note": "2.18: delegate affiliation. 2.28: source of the signal controlling Homer; site of VEHEMENT's apparent tech centre (claims 039, 041-042). Earlier: plain text in 1.41, 1.49 data; first_mentioned 1.41.",
       "promotion": null
     },
     {
@@ -95,8 +143,17 @@
       "kind": "location",
       "name": "Pi(3) Orionis",
       "aliases": [],
-      "mentions": ["2.15"],
-      "note": "2.15: one of the ten systems on the SCUT connection list; bare list entry, no role (claim 016).",
+      "mentions": ["2.15", "2.24"],
+      "note": "2.15: one of the ten systems on the SCUT connection list; bare list entry, no role (claim 016). 2.24: Marvin's destination, not yet reached (claim 010).",
+      "promotion": null
+    },
+    {
+      "id": "candidate:raptor",
+      "kind": "species",
+      "name": "Raptor",
+      "aliases": [],
+      "mentions": ["2.29"],
+      "note": "2.29: pack breaches Landing's fence, downs a drone, digs out (claims 007, 017-023). Earlier: plain text in 2.2, 2.5, 2.16, 2.25 data; first_mentioned 2.2.",
       "promotion": null
     },
     {
@@ -106,6 +163,15 @@
       "aliases": [],
       "mentions": ["2.15"],
       "note": "2.15 S-list: one of the ten systems on Mario's SCUT connection list; bare list entry, no role (claim 016).",
+      "promotion": null
+    },
+    {
+      "id": "candidate:vancouver-island",
+      "kind": "location",
+      "name": "Vancouver Island",
+      "aliases": [],
+      "mentions": ["2.21"],
+      "note": "2.21: destination of the bombed food delivery (claims 007-008); place on Earth below location granularity, plain text in summary and states.",
       "promotion": null
     }
   ]
