@@ -33,7 +33,13 @@
     },
     {
       "entity_id": "character:hal",
-      "current_state": "He is active again, by means not stated; his data on the [[species:others|Others]]' weapon set off debate among the Bobs. Wanting to get back at the Others for killing him, he has volunteered for [[character:mario]]'s probe test of [[character:thor]]'s shielding design, and he estimates their Dyson sphere needs about another hundred systems."
+      "current_state": "He is active again; his data on the [[species:others|Others]]' weapon set off debate among the Bobs. Wanting to get back at the Others for killing him, he has volunteered for [[character:mario]]'s probe test of [[character:thor]]'s shielding design, and he estimates their Dyson sphere needs about another hundred systems.",
+      "status_events": [
+        {
+          "date": "2188-08",
+          "kind": "restored_from_backup"
+        }
+      ]
     },
     {
       "entity_id": "character:mario",
