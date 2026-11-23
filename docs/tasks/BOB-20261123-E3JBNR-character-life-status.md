@@ -65,17 +65,28 @@ chapters 2.31–2.40 are landing in parallel.
    whatever such writes are on the implementation branch at the time
    (master today: 1.2, 1.13, 1.47, 1.51, 1.60; 2.31–2.40, once landed:
    2.37, 2.38).
-3. Projection: accumulate revealed `status_events` up to Read through;
-   apply those whose `date` is known at the soft ceiling; current status is
-   the latest remaining event. Remove `death_date` and `death_event_id` from
-   `softCeilingProperties`. Replace the BOB-20261121-5A8W76 write-dating
-   check with the ADR-0033 event-date and merged-list checks.
+3. Projection and references: accumulate revealed `status_events` up to
+   Read through; filter by `date` at the soft ceiling; set the projected
+   optional `status_event` to the latest remaining event (the field the
+   card and equivalence snapshots read). Keep authored `status_events` off
+   `softCeilingProperties` and `applyRevealedWrite`. Remove `death_date`
+   and `death_event_id` from `softCeilingProperties`. Replace the
+   BOB-20261121-5A8W76 write-dating check with the ADR-0033 event-date and
+   merged-list checks. In `src/narrative/model.ts`, add `backup_date` to
+   the Gregorian date walk (~1738–1742) and walk `status_events[].event_id`
+   in `collectReferences` (~1172).
 4. UI: in `src/components/ObjectInspector.tsx`, replace "Death date" /
    "Death event" with the current-status row from ADR-0033 §5 ("Died" /
-   "Restored from backup"). No history on the card.
-5. Docs and Extractor-facing guidance listed under Consumers, including a
-   wording-only update to constitution §3.1 (`death_date` → status-event
-   dates; same rule).
+   "Restored from backup"), reading the projected `status_event`. No
+   history on the card.
+5. Docs and Extractor-facing guidance listed under Consumers, including
+   the wording-only §3.1 swap (`death_date` → status-event dates, rule
+   unchanged). This ADR and Maciej's 12:32 (Europe/Warsaw) decision already
+   authorise that swap; it is not a reserved constitution edit and must not
+   leave a dangling `death_date` mention. ADR-0017's structural list is
+   updated by an Amendment citing ADR-0033, not by silently editing the
+   2026-07-29 Decision bullet. Update the same list in
+   `docs/data-model-definition.md` (~1255–1256, "death events").
 6. Tests for the validator, projection (including a die/restore cycle),
    migration of existing data, and the card labels.
 
@@ -87,7 +98,8 @@ chapters 2.31–2.40 are landing in parallel.
   as dead after the migration.
 - A `retired` kind, an authored `effective_chapter`, status history on the
   card, or a per-entity chronicle.
-- Any constitution rule change.
+- Any constitution rule change. The wording-only §3.1 swap is in scope and
+  already authorised; it is not a reserved constitution edit.
 - Landing or merging chapters 2.31–2.40, a LAN deploy, or a production tag.
 
 ## Acceptance criteria
@@ -197,12 +209,16 @@ chapter files.
 
 ### Source
 
-- `src/narrative/model.ts` — `collectReferences` (`death_event_id`),
-  `assertDeathDateWriteDating`, Gregorian date walk (`death_date`),
-  `softCeilingProperties`
+- `src/narrative/model.ts` — `collectReferences` walks
+  `status_events[].event_id` (replacing `death_event_id`); the Gregorian
+  date walk includes `backup_date` and drops `death_date` (~1738–1742);
+  `assertDeathDateWriteDating` is replaced; `softCeilingProperties` drops
+  `death_date` and `death_event_id`; projection sets `status_event` and
+  keeps authored `status_events` off `applyRevealedWrite`
 - `src/narrative/schema-diagnostics.ts` — character property allow-list
 - `src/components/ObjectInspector.tsx` — "Death date" and "Death event"
-  rows (the only UI consumer)
+  rows become the current-status row, reading projected `status_event`
+  (the only UI consumer)
 
 ### Tests
 
@@ -216,7 +232,8 @@ chapter files.
 - `tests/unit/narrative-meaning.test.ts` and
   `tests/fixtures/narrative-meaning.json` — meaning-regression field names
 - `tests/unit/__snapshots__/narrative-equivalence.test.ts.snap` — projected
-  `death_date` / `death_event_id` on `character:robert-johansson`
+  `status_event` on `character:robert-johansson` (today `death_date` /
+  `death_event_id`)
 - `tests/unit/source-evidence-helper.test.ts` — quotes the structural
   reference list that names `death_event_id`
 - `tests/python/test_extraction_check.py` — sample log line
@@ -229,17 +246,23 @@ No e2e file currently asserts "Death date".
 ### Live docs and Extractor-facing guidance
 
 - `docs/data-model-definition.md` — schema excerpts, character field table,
-  death-date / death-event identity and write-dating rules, validator list
-- `docs/technical-design.md` — `softCeilingProperties` list
-- `docs/design-principles.md` §3.1 — `death_date` in the "do not count"
-  list (wording only)
+  death-date / death-event identity and write-dating rules (~1927–1934),
+  validator list, and the supplemental-mention structural list
+  (~1255–1256, "death events")
+- `docs/technical-design.md` — `softCeilingProperties` list only (~852)
+- `docs/design-principles.md` §3.1 — wording-only swap already authorised
+  by ADR-0033 and Maciej's 12:32 (Europe/Warsaw) decision: replace
+  `death_date` in the "do not count" list with status-event dates; not a
+  reserved constitution edit; do not leave a dangling `death_date`
+  mention
 - `docs/chapter-extraction.md` — structural mention targets
   (`death_event_id`); write-dating paragraph
 - `.codex/skills/extract-bobiverse-chapter/SKILL.md` — write-dating
   guidance for updates that set `death_date`
-- `docs/adrs/0017-supplemental-mention-completeness.md` — structural
-  reference list names `death_event_id` (update to `event_id` on a `died`
-  event, in line with chapter-extraction.md)
+- `docs/adrs/0017-supplemental-mention-completeness.md` — add an Amendment
+  citing ADR-0033 so the structural list names `event_id` on a `died`
+  event; do not silently edit the 2026-07-29 Decision bullet
+  (`docs/adrs/README.md`)
 
 ### Tooling that has no direct field reference
 
@@ -283,3 +306,5 @@ has no hits.
 - Created on branch `bob-20261123-life-status-adr` in
   `~/src/bobiverse-lifestatus`, alongside the Accepted text of ADR-0033,
   after Maciej's 12:32 decision.
+- Independent review APPROVED `741be4b` with six nits; all six fixed in
+  the ADR and this task (docs only, master not merged).

@@ -29,8 +29,8 @@ alive between the death and the write.
 
 That model cannot record a life that continues after a death, or a second death
 after a return, without forgetting the earlier event. Two cases already in the
-narrative data, inspected on `origin/master` (`dadef16`) and read-only
-`origin/chapters/book2-2.31-2.40` (`b57814c`), make this concrete:
+narrative data, inspected on `origin/master` (`dadef16`) and the approved
+2.31–2.40 head (`23d6306`), make this concrete:
 
 - `character:elmer` is introduced in 1.60 (header date `2185-04`) with
   `death_date` `2185-04`. Chapter 2.34 (header date `2185-06`) updates
@@ -111,15 +111,22 @@ implementation lands.
 
 ### 2. Projection
 
-Status events are not a replacing soft-ceiling property. They accumulate from
-every write at or before Read through (the hard ceiling). The view then keeps
-only events whose `date` is known at the soft ceiling (`isKnownAtCeiling`,
+Authored `status_events` are not a replacing soft-ceiling property and must
+stay off the generic `softCeilingProperties` / `applyRevealedWrite` path,
+which would keep only the latest write's array. They accumulate from every
+write at or before Read through (the hard ceiling). The view then keeps only
+events whose `date` is known at the soft ceiling (`isKnownAtCeiling`,
 rule (e)).
 
-**Alive at the view** means: among those remaining events, the latest is not
-`died`. A character with no remaining event, or whose latest event is
-`restored_from_backup`, is alive. "Latest" is the last event in the list's
-total order (section 4) among the events known at the soft ceiling.
+The projected character carries an optional `status_event` field: the latest
+remaining event after that accumulation and date filtering, or the field is
+absent when none remain. The character card
+(`src/components/ObjectInspector.tsx`) and the narrative-equivalence
+snapshots read `status_event` (`kind`, `date`, and `event_id` when present).
+
+**Alive at the view** means: `status_event` is absent, or its `kind` is
+`restored_from_backup`. "Latest" is the last event in the list's total order
+(section 4) among the events known at the soft ceiling.
 
 That is the existing two-ceiling rule, applied to a list instead of a single
 field: a later chapter cannot affect any view until it is inside Read through,
@@ -145,7 +152,7 @@ event on that same write:
 
 Writes that only clear `death_date` to `null` are dropped; a return to life
 is a `restored_from_backup` event, not a cleared field. No current write on
-master or on `origin/chapters/book2-2.31-2.40` clears `death_date`.
+master or on the approved 2.31–2.40 head (`23d6306`) clears `death_date`.
 
 The migration is mechanical and incomplete for returns that today live only
 in `current_state`. After it, `character:elmer` would still show as dead
@@ -167,7 +174,10 @@ introductions of `character:hannibal`, `character:tom`, `character:barney`,
 ### 4. Validator
 
 `narrative:validate` checks each event on its write, then the merged list for
-each character, in reading order.
+each character, in reading order. The Gregorian date walk in
+`src/narrative/model.ts` includes `backup_date` and the event `date`, and
+drops `death_date`. `collectReferences` walks `status_events[].event_id` in
+place of `death_event_id`.
 
 On each event:
 
@@ -184,9 +194,10 @@ On each event:
 On the merged list:
 
 - it is totally ordered by `compareNarrativeMoments` on
-  `{ date, sourceChapter: the revealing write's chapter }`, with authored
-  order breaking ties at the same moment (including overlapping calendar
-  ranges under rule (e));
+  `{ date, sourceChapter: the revealing write's chapter }`: first by date,
+  then by source chapter; any remaining ties (same revealing chapter, i.e.
+  events from one write, including overlapping calendar ranges under
+  rule (e)) use the order of that write's `status_events` array;
 - `restored_from_backup` is allowed only immediately after `died`;
 - `died` is allowed when the list is empty so far, or immediately after
   `restored_from_backup`.
@@ -242,13 +253,17 @@ authors `character:loki` (`parent_id` `character:khan`). It is not a
 - `death_date` and `death_event_id` go away; BOB-20261121-5A8W76's
   write-dating rule is replaced by the event-date and merged-list checks
   above.
-- `softCeilingProperties` loses `death_date` and `death_event_id`. Current
-  status is derived from the accumulated, date-filtered list.
-- Constitution §3.1 is unchanged: status-event dates do not count toward a
-  chapter's latest date, the same as `death_date` today, because each event
-  date is required to be on or before the revealing chapter's header date.
-  When `death_date` is removed, §3.1's wording should name status-event dates
-  instead; that is a wording update, not a rule change.
+- `softCeilingProperties` loses `death_date` and `death_event_id`. Authored
+  `status_events` stay off that path. Current status is the projected
+  `status_event` field: the latest remaining event after hard-ceiling
+  accumulation and soft-ceiling date filtering.
+- Constitution §3.1 is unchanged in substance: status-event dates do not
+  count toward a chapter's latest date, the same as `death_date` today,
+  because each event date is required to be on or before the revealing
+  chapter's header date. Implementation replaces the `death_date` wording in
+  §3.1 with status-event dates. This ADR and Maciej's 12:32 (Europe/Warsaw)
+  decision already authorise that wording-only swap; it is not a reserved
+  constitution edit, and it must not leave a dangling `death_date` mention.
 - Mechanical migration is not enough for Elmer 2.34 or Hal 2.39; the
   Extractor authors those `restored_from_backup` events after the
   implementation lands.
@@ -287,14 +302,27 @@ authors `character:loki` (`parent_id` `character:khan`). It is not a
 Implementation is [BOB-20261123-E3JBNR](../tasks/BOB-20261123-E3JBNR-character-life-status.md),
 to land before chapter 2.53:
 
-- `docs/data-model-definition.md`, `data/schema/narrative-data-model.schema.json`,
+- `docs/data-model-definition.md` (character fields; the death-date
+  write-dating and death-event identity rules at ~1927–1934; the
+  supplemental-mention "death events" list at ~1255–1256; the validator
+  list), `data/schema/narrative-data-model.schema.json`,
   `docs/chapter-extraction.md`, the extraction skill, and
-  `docs/technical-design.md` (`softCeilingProperties` and the death-date
-  write-dating paragraph);
+  `docs/technical-design.md` (`softCeilingProperties` only, ~852);
 - a wording-only update to constitution §3.1, replacing the `death_date`
-  mention with status-event dates (same rule);
-- `src/narrative/model.ts`, `src/narrative/schema-diagnostics.ts`,
-  `src/components/ObjectInspector.tsx`, and the death-date validator tests;
+  mention with status-event dates (same rule). This ADR and Maciej's 12:32
+  (Europe/Warsaw) decision already authorise that swap; it is not a reserved
+  constitution edit, and it must not leave a dangling `death_date` mention;
+- an Amendment to [ADR-0017](0017-supplemental-mention-completeness.md)
+  citing this ADR, so the structural reference list names `event_id` on a
+  `died` event; do not silently edit the 2026-07-29 Decision bullet
+  (`docs/adrs/README.md`);
+- `src/narrative/model.ts` (the Gregorian date walk includes `backup_date`
+  and drops `death_date`; `collectReferences` walks
+  `status_events[].event_id`; projection sets `status_event` and keeps
+  authored `status_events` off `softCeilingProperties` /
+  `applyRevealedWrite`), `src/narrative/schema-diagnostics.ts`,
+  `src/components/ObjectInspector.tsx` (reads `status_event`), and the
+  death-date validator tests and equivalence snapshots;
 - a mechanical migration of existing `death_date` writes, then Extractor
   authoring of the 2.34 Elmer and 2.39 Hal `restored_from_backup` events
   (the latter after 2.31–2.40 has landed).
