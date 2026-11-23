@@ -1,0 +1,56 @@
+{
+  "chapter": "2.33",
+  "title": "33 - Trouble in Paradise",
+  "summary": "At [[location:delta-eridani]], [[character:bob-replicant]] and [[character:marvin]] sit in Bob's now fully real-time [[technology:vr|VR]] of [[location:camelot]], fed by hidden cameras. Tents cover the downtown, [[character:buster]] has taken a mate and is framing one with his father [[character:archimedes]], and Archimedes's third rebuild of his own is annoying [[character:diana]]. But armed [[species:delta-eridani-natives|Deltans]] have begun turning on each other: young Deltans have formed co-ed street gangs, the last mating season left two dead, and hexghi family groups now face off, which Bob blames on crowding. Banished, Bob stays strictly out of sight so that a sighting of the bawbe cannot rebound on Archimedes. Marvin points out that a rising population is far better than the decline Bob first found, and Bob decides to do nothing for now and let the Deltans make their own destiny, though the step back was forced on him; Marvin says most parents feel that way.",
+  "date": "2180-01",
+  "location_id": "location:delta-eridani",
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "At [[location:delta-eridani]], he watches [[location:camelot]] through a now fully real-time [[technology:vr|VR]] with only one or two camera blind spots, and is worried by rising violence among the [[species:delta-eridani-natives|Deltans]], which he puts down to crowding. Since his banishment he has stayed strictly out of their sight, so that a sighting of the bawbe cannot rebound on [[character:archimedes]]. He has decided to do nothing for now and let the Deltans make their own destiny, though he regrets that the step back was forced on him rather than chosen."
+    },
+    {
+      "entity_id": "character:marvin",
+      "current_state": "He keeps [[character:bob-replicant]] company in his real-time [[technology:vr|VR]] of [[location:camelot]], waving a glass of cognac, and reminds him that the Deltans' new troubles come from a rising population, far better than the decline Bob first found. He likens Bob's forced step back from the Deltans to what most parents feel at some point."
+    },
+    {
+      "entity_id": "character:archimedes",
+      "current_state": "At [[location:camelot]], where tents now cover the downtown, he is helping his son [[character:buster]] frame a tent and has started rebuilding his own for the third time, to [[character:diana]]'s annoyance. [[character:bob-replicant]] keeps strictly out of sight so that no sighting of him can rebound on Archimedes."
+    },
+    {
+      "entity_id": "character:buster",
+      "current_state": "He has taken a mate and is building a tent at [[location:camelot]] with his father [[character:archimedes]], while the women stitch its covering."
+    },
+    {
+      "entity_id": "character:diana",
+      "current_state": "At [[location:camelot]], she is cranky that [[character:archimedes]] has started rebuilding his tent for the third time; even [[character:bob-replicant]], who rarely agrees with her, sees her point."
+    },
+    {
+      "entity_id": "location:camelot",
+      "state": "Tents now cover its downtown in increasingly varied designs, and its growing population is getting crowded. Armed [[species:delta-eridani-natives|Deltans]] walk its streets, young Deltans have formed co-ed street gangs, and violence between Deltans has broken out over the last year or two: the last mating season left two dead, and hexghi family groups now face off."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead",
+      "location_id": "location:delta-eridani"
+    },
+    {
+      "character_id": "character:marvin",
+      "role": "other",
+      "location_id": "location:delta-eridani"
+    },
+    {
+      "character_id": "character:archimedes",
+      "role": "other",
+      "location_id": "location:camelot"
+    },
+    {
+      "character_id": "character:buster",
+      "role": "other",
+      "location_id": "location:camelot"
+    }
+  ],
+  "mentions": ["species:delta-eridani-natives", "technology:vr"]
+}

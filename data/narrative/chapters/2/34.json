@@ -1,0 +1,69 @@
+{
+  "chapter": "2.34",
+  "title": "34 - Moose",
+  "summary": "At [[location:epsilon-eridani]], [[character:bill]] runs [[technology:bullwinkle]], his android moose, across [[location:ee-2|Ragnarök]], with two drones relaying its links over [[technology:subspace-communications|SCUT]]; it is still a proof of concept. His bred moss and lichen mix is spreading, he has seeded the seas with algae that will crowd out the young native life, and with humanity short of colony targets terraforming is now his top priority. [[character:garfield]] watches the recording and wants a body of his own. In his pub [[technology:vr|VR]], Bill sends off ten new Bobs as the second strike force against [[character:ernesto-medeiros|Medeiros]] at [[location:82-eridani]], since the [[event:battle-at-82-eridani|first attempt]] ended in a draw. He has made [[character:loki]] from [[character:khan]]'s backup and restored [[character:elmer]] from his. At the next Bob-moot, [[character:linus]] brings in [[character:henry-roberts]], whose non-Bob face silences the room until his quip wins it over, and Bill announces that the expedition, led by Loki, has shipped out.",
+  "date": "2185-06",
+  "location_id": "location:epsilon-eridani",
+  "introducing": [
+    {
+      "id": "character:loki",
+      "name": "Loki",
+      "parent_id": "character:khan",
+      "description": "A Bob created when [[character:bill]] loaded [[character:khan]]'s backup into a fresh matrix at Khan's request. He named himself Loki at once, and Bill takes it as a sign that this branch of the Bob tree likes villains.",
+      "current_state": "He doubts the Bobs ever held [[location:82-eridani]], and he leads the ten-Bob second strike force that has left [[location:epsilon-eridani]] to finish [[character:ernesto-medeiros|Medeiros]] after the [[event:battle-at-82-eridani|first attempt]] ended in a draw. Two of the force drive cargo vessels loaded with new weapons and extra busters, so that it will not be outnumbered."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bill",
+      "current_state": "At [[location:epsilon-eridani]], he now has a physical presence on [[location:ee-2|Ragnarök]] through [[technology:bullwinkle]], and with humanity short of colony targets he has made terraforming his top priority. He has loaded [[character:khan]]'s backup into a fresh matrix, creating [[character:loki]], restored [[character:elmer]] into a new vessel, and sent ten new Bobs off as the second strike force against [[location:82-eridani]]. At a Bob-moot he announced the expedition and welcomed [[character:henry-roberts|Henry]]."
+    },
+    {
+      "entity_id": "location:ee-2",
+      "state": "A moss and lichen mix [[character:bill]] bred to survive its air is spreading and should cover half the land within ten years, with oxygen breathable for humans a decade later, though the air still has too much carbon dioxide and methane and too little nitrogen. Its seas, seeded with algae expected to out-compete the young native life, should join into oceans within a couple of years, and Bill expects it to be walkable unprotected in about fifty years."
+    },
+    {
+      "entity_id": "character:elmer",
+      "current_state": "After his destruction at [[location:82-eridani]], [[character:bill]] restored him from his backup into one of the new vessels built at [[location:epsilon-eridani]], and he greeted his reboot with the customary Bob movie line."
+    },
+    {
+      "entity_id": "character:henry-roberts",
+      "current_state": "Brought by [[character:linus]] into a Bob-moot in [[character:bill]]'s [[technology:vr|VR]], he silenced a room of Bobs, who otherwise tell one another apart only by metadata tags, with his non-Bob face. He broke the silence with a quip that won laughter and greetings, and although Bill had feared a panic attack, he held up."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bill",
+      "role": "lead",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:garfield",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:loki",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:linus",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:henry-roberts",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    }
+  ],
+  "mentions": [
+    "character:ernesto-medeiros",
+    "event:battle-at-82-eridani",
+    "location:82-eridani",
+    "technology:bullwinkle",
+    "technology:subspace-communications",
+    "technology:vr"
+  ]
+}

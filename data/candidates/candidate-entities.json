@@ -31,12 +31,30 @@
       "promotion": null
     },
     {
+      "id": "candidate:bob-moot",
+      "kind": "event",
+      "name": "Bob-moot",
+      "aliases": [],
+      "mentions": ["2.32", "2.34", "2.39"],
+      "note": "2.39: Bill's term for his VR gathering of 43 SCUT-linked Bobs (also a town hall); a debate with a vote pending, below event significance (claims 004-005, 029, 041).",
+      "promotion": null
+    },
+    {
       "id": "candidate:bronto",
       "kind": "species",
       "name": "Bronto",
       "aliases": [],
       "mentions": ["2.25", "2.29"],
       "note": "2.25: native Vulcan animal; one killed, meat on the menu (claims 018-022, 026). 2.29: council approves bronto meat (claims 035-036). Earlier: plain text in 2.2 data; first_mentioned 2.2.",
+      "promotion": null
+    },
+    {
+      "id": "candidate:bullseye",
+      "kind": "location",
+      "name": "Bullseye",
+      "aliases": [],
+      "mentions": ["2.36"],
+      "note": "2.36: Bill's name for a new sea slowly forming on Ragnarok in a crater left by an earlier iceberg he missed (claims 020-022); natural feature below locale granularity.",
       "promotion": null
     },
     {
@@ -49,12 +67,39 @@
       "promotion": null
     },
     {
+      "id": "candidate:clan-bob",
+      "kind": "organization",
+      "name": "Clan Bob",
+      "aliases": [],
+      "mentions": ["2.31"],
+      "note": "2.31: the Bobs' sister's descendants, on Romulus; Julia is its spokesperson (claims 004-007, 013). Earlier: plain text in 1.54 data.",
+      "promotion": null
+    },
+    {
       "id": "candidate:cupid-bug",
       "kind": "species",
       "name": "Cupid Bug",
       "aliases": [],
-      "mentions": ["2.29"],
-      "note": "2.29: Dr. Sheehy's name for the egg-laying Vulcan parasite; detector, extinction aim (claims 029-033). Earlier: unnamed, plain text in 2.20 data; first_mentioned 2.20.",
+      "mentions": ["2.29", "2.31"],
+      "note": "2.29: Dr. Sheehy's name for the egg-laying Vulcan parasite; detector (claims 029-033). 2.31: apex predator, hunter drones planned (claims 037-039, 051-052). Earlier: plain text in 2.20 data.",
+      "promotion": null
+    },
+    {
+      "id": "candidate:cupid-bug-hunter",
+      "kind": "technology",
+      "name": "Cupid Bug hunter",
+      "aliases": [],
+      "mentions": ["2.31"],
+      "note": "2.31: Howard's small autonomous drone for hunting the adult Cupid Bug, to join the Landing surveillance system (claims 036-038, 051, 053).",
+      "promotion": null
+    },
+    {
+      "id": "candidate:death-asteroid",
+      "kind": "vessel",
+      "name": "Death Asteroid",
+      "aliases": [],
+      "mentions": ["2.39"],
+      "note": "2.39: Garfield's name for the Others' weapon platform: gamma-ray beam, likely fusion reactors and accumulators, never fired twice in one encounter (claims 011, 018-021, 025-027, 034).",
       "promotion": null
     },
     {
@@ -130,6 +175,15 @@
       "promotion": null
     },
     {
+      "id": "candidate:peter-project",
+      "kind": "event",
+      "name": "Peter Project",
+      "aliases": [],
+      "mentions": ["2.31"],
+      "note": "2.31: Dr. Sheehy's release of Terran rabbits on Vulcan; they eat the vine, raptors eat them (claims 048-050, 062). Earlier: proposal plain text in 2.25 data.",
+      "promotion": null
+    },
+    {
       "id": "candidate:philip",
       "kind": "character",
       "name": "Philip",
@@ -157,12 +211,30 @@
       "promotion": null
     },
     {
+      "id": "candidate:richard",
+      "kind": "character",
+      "name": "Richard",
+      "aliases": [],
+      "mentions": ["2.31"],
+      "note": "2.31: family member on Riker's call; an environmental crank per Julia, he doubts the colonies' care (claims 017-018, 020, 025). Surname unknown.",
+      "promotion": null
+    },
+    {
       "id": "candidate:tau-ceti",
       "kind": "location",
       "name": "Tau Ceti",
       "aliases": [],
       "mentions": ["2.15"],
       "note": "2.15 S-list: one of the ten systems on Mario's SCUT connection list; bare list entry, no role (claim 016).",
+      "promotion": null
+    },
+    {
+      "id": "candidate:the-shaded-green",
+      "kind": "location",
+      "name": "The Shaded Green",
+      "aliases": [],
+      "mentions": ["2.35"],
+      "note": "2.35: a named restaurant in Landing where Dr. Sheehy dines and Howard joins by tablet (claims 020-021); incidental place below location granularity.",
       "promotion": null
     },
     {

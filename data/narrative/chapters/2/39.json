@@ -1,0 +1,76 @@
+{
+  "chapter": "2.39",
+  "title": "39 - Bob-Moot",
+  "summary": "[[character:bill]] hosts a VR Bob-moot of 43 SCUT-linked Bobs at [[location:epsilon-eridani]] after [[character:hal]]'s data on the [[species:others|Others]]' gamma-ray weapon. [[character:thor]] outlines the beam and a shielding design that [[character:mario]] will have tested with probes, [[character:garfield]] argues their Death Asteroid needs long recharges, and the Bobs weigh war against wiping out a species, with a vote still to come.",
+  "date": "2188-08",
+  "location_id": "location:epsilon-eridani",
+  "introducing": [
+    {
+      "id": "character:thor",
+      "name": "Thor",
+      "description": "A Bob replicant who goes by Thor, though he has neither altered his physiology nor taken to carrying a hammer. Among the SCUT-linked Bobs he holds the best-regarded thesis on the [[species:others|Others]]' weapon.",
+      "current_state": "At [[character:bill]]'s Bob-moot he presented the Others' weapon as a very high-energy gamma-ray beam, fatal to life and probably used in numbers to kill planetary ecosystems, and proposed layered depleted-uranium and electrostatic shielding with hardened electronics. He expects the Bobs to get exactly one chance at a surprise attack."
+    },
+    {
+      "id": "character:wally",
+      "name": "Wally",
+      "description": "A Bob replicant linked into the SCUT network who takes part in [[character:bill]]'s Bob-moots on the threat from the [[species:others|Others]].",
+      "current_state": "At the 2188 Bob-moot he pressed the Bobs to decide whether, and how far, to go to war with the Others, and pointed out that they are building a Dyson sphere."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bill",
+      "current_state": "At [[location:epsilon-eridani]] he hosts and chairs a VR Bob-moot of the 43 Bobs with SCUTs, some up to thirty light-years away, and argues for a more concerted, overt investigation of the [[species:others|Others]]. He had assumed all-out war but now questions wiping out an intelligent species; a vote is due later, and the moot meets again in a week."
+    },
+    {
+      "entity_id": "character:garfield",
+      "current_state": "At [[character:bill]]'s Bob-moot he named the [[species:others|Others]]' big weapon platform the Death Asteroid, guessing it is mostly fusion reactors and accumulators; since it has never fired twice in one encounter, he wants to bait it with a decoy. He expects the Others to keep raiding systems for their Dyson sphere."
+    },
+    {
+      "entity_id": "character:hungry",
+      "current_state": "Linked into [[character:bill]]'s Bob-moot after happening to travel on a heading in line with one of Bill's transmissions, he puts a margin of plus or minus fifty systems on [[character:hal]]'s estimate of the [[species:others|Others]]' further raids."
+    },
+    {
+      "entity_id": "character:hal",
+      "current_state": "He is active again, by means not stated; his data on the [[species:others|Others]]' weapon set off debate among the Bobs. Wanting to get back at the Others for killing him, he has volunteered for [[character:mario]]'s probe test of [[character:thor]]'s shielding design, and he estimates their Dyson sphere needs about another hundred systems."
+    },
+    {
+      "entity_id": "character:mario",
+      "current_state": "He has received [[character:bill]]'s summary and [[character:thor]]'s diagrams for shielding against the [[species:others|Others]]' gamma-ray weapon and plans to send one of his Bobs to test the design with probes; [[character:hal]] has volunteered."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bill",
+      "role": "lead",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:bob-replicant",
+      "role": "other",
+      "location_id": "location:delta-eridani"
+    },
+    {
+      "character_id": "character:garfield",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:hungry",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:thor",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:wally",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    }
+  ],
+  "mentions": ["species:others"]
+}
