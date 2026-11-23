@@ -1,0 +1,35 @@
+{
+  "chapter": "2.37",
+  "title": "37 - He’s Gone",
+  "summary": "At [[location:sol]], [[character:charles]] enters [[character:riker]]'s [[technology:vr|VR]] to tell him that [[character:homer]] has killed himself by overloading his reactor after deleting every backup. Homer's farewell file to the Bobs says he could not live with having been controlled or with what he had done, and asks them to find those responsible and strike them. Grieving, Riker resolves to grant that last wish.",
+  "date": "2176-08",
+  "location_id": "location:sol",
+  "updates": [
+    {
+      "entity_id": "character:homer",
+      "current_state": "Dead by his own hand: he deleted every backup and then overloaded his reactor, so he cannot be restored. His farewell file to the other Bobs says he could not live with constant flashbacks of being controlled by [[organization:vehement]], which he could not edit out, or with what he had done, and asks them to find those responsible and strike them.",
+      "death_date": "2176-08"
+    },
+    {
+      "entity_id": "character:riker",
+      "current_state": "At [[location:sol]], he learns from [[character:charles]] that [[character:homer]] has destroyed himself beyond any restore and reads Homer's farewell file. Grieving, he resolves that the Bobs will grant Homer's last wish to find and strike those responsible."
+    },
+    {
+      "entity_id": "character:charles",
+      "current_state": "At [[location:sol]], he enters [[character:riker]]'s [[technology:vr|VR]] to tell him that [[character:homer]] has killed himself and to show him Homer's farewell file, shaking with grief and anger."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:riker",
+      "role": "lead",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:charles",
+      "role": "other",
+      "location_id": "location:sol"
+    }
+  ],
+  "mentions": ["technology:vr"]
+}

@@ -1,0 +1,77 @@
+{
+  "chapter": "2.31",
+  "title": "31 - Taking Care of Business",
+  "summary": "[[character:riker]], by tacit agreement the face of the Bobs, video-visits their sister's descendants on [[location:romulus]] while [[character:howard]] and the other Bobs listen in. [[character:julia-hendricks|Julia]], speaking for the family, says three more babies are on the way and that the roomy new world has reversed how they felt about having children, and young [[character:justin-hendricks|Justin]] complains that the dinosaurs are only on [[location:vulcan]]. When a relative, Richard, doubts Riker's assurance that the [[organization:united-states-of-eurasia|USE]] colonists, the Spits and [[organization:free-american-independent-theocratic-hegemony|FAITH]] are careful about the environment, Riker frame-jacks a text to Howard, who answers that FAITH keeps pushing its luck after several run-ins with [[character:cranston]]; Riker tells the family that Howard is watching and that every enclave signs an agreement on human rights and planetary exploitation before emigrating. Howard then sends sixteen surveillance [[technology:planetary-exploration-drone|drones]] to positions around [[location:landing]] under an [[technology:ami|AMI]]/GUPPI hybrid controller, planning with [[technology:guppi-interface|Guppy]] to add autonomous hunters for the Cupid Bug once processor loads are known. On a video call, [[character:dr-sheehy|Dr. Sheehy]] confirms that his force-aged, oak-barrelled spirit is free of methanol and drinkable, if no Irish whiskey, and offers to become his partner; she reports that the rabbits of her Peter Project are eating the vine and multiplying, and agrees that killing the adult parasite, an apex predator, should not be too disruptive, so Howard will add his small hunter drone to the surveillance system. Later, attending through a new softball-sized drone that can go indoors, Howard introduces her to [[character:stephane-brodeur|Stéphane]] over beers to build an unofficial channel around the colony committee.",
+  "date": "2191-01",
+  "location_id": "location:vulcan",
+  "updates": [
+    {
+      "entity_id": "character:howard",
+      "current_state": "From the L4 point near [[location:vulcan]], he has set sixteen [[technology:ami|AMI]]-controlled surveillance drones around [[location:landing]] and designed small drones to hunt the adult Cupid Bug, to be added to that system. He is distilling a force-aged spirit in oak barrels, which [[character:dr-sheehy|Dr. Sheehy]] found drinkable and offered to partner in, and is building an unofficial channel with her and [[character:stephane-brodeur|Stéphane]] around the colony committee. After several run-ins with [[character:cranston]], he is watching [[organization:free-american-independent-theocratic-hegemony|FAITH]], which keeps pushing its luck."
+    },
+    {
+      "entity_id": "character:julia-hendricks",
+      "current_state": "Living on [[location:romulus]], where there is so much space that her family no longer feels guilty about having children as it did on Earth, she speaks for the family in its video calls with [[character:riker]], whom she calls Will, and has told him that three more babies are on the way."
+    },
+    {
+      "entity_id": "character:justin-hendricks",
+      "current_state": "A little older and living with his family on [[location:romulus]], he no longer sits on his mother's lap during their video calls with [[character:riker]] but runs to fetch things to show his Uncle Will, and he wants to see the dinosaurs that live only on [[location:vulcan]]."
+    },
+    {
+      "entity_id": "character:dr-sheehy",
+      "current_state": "Now a close friend of [[character:howard]], she found his spirit free of methanol and drinkable and offered to become his distilling partner. The rabbits of her Peter Project are eating the vine and multiplying, she judges that hunting the adult Cupid Bug, an apex predator, should not be too disruptive, and Howard has introduced her to [[character:stephane-brodeur|Stéphane]] as an unofficial channel around the colony committee."
+    },
+    {
+      "entity_id": "character:stephane-brodeur",
+      "current_state": "Heading security in [[location:landing]], he has been introduced by [[character:howard]] to [[character:dr-sheehy|Dr. Sheehy]] over beers, forming an unofficial channel around the colony committee, and has been enjoying rabbit stew."
+    },
+    {
+      "entity_id": "location:landing",
+      "state": "Sixteen surveillance drones now hold positions around it, run by an [[technology:ami|AMI]]/GUPPI hybrid controller to which [[character:howard]]'s Cupid Bug hunter drones are to be added."
+    },
+    {
+      "entity_id": "location:vulcan",
+      "state": "Terran rabbits released under [[character:dr-sheehy|Dr. Sheehy]]'s Peter Project are eating the native vine and multiplying, to the farmers' satisfaction, and raptors prey on them. Drones to hunt the adult Cupid Bug, an apex predator, are being added to the colony's automated surveillance."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:howard",
+      "role": "lead",
+      "location_id": "location:omicron2-eridani"
+    },
+    {
+      "character_id": "character:riker",
+      "role": "other",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:julia-hendricks",
+      "role": "other",
+      "location_id": "location:romulus"
+    },
+    {
+      "character_id": "character:justin-hendricks",
+      "role": "other",
+      "location_id": "location:romulus"
+    },
+    {
+      "character_id": "character:dr-sheehy",
+      "role": "other",
+      "location_id": "location:vulcan"
+    },
+    {
+      "character_id": "character:stephane-brodeur",
+      "role": "other",
+      "location_id": "location:vulcan"
+    }
+  ],
+  "mentions": [
+    "character:cranston",
+    "organization:free-american-independent-theocratic-hegemony",
+    "organization:united-states-of-eurasia",
+    "technology:ami",
+    "technology:guppi-interface",
+    "technology:planetary-exploration-drone"
+  ]
+}

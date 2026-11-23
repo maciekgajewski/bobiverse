@@ -1,0 +1,21 @@
+{
+  "chapter": "2.40",
+  "title": "40 - Gotcha",
+  "summary": "On [[location:vulcan]], [[character:riker]] secretly watches an unnamed man who monitors screens from a remote farmhouse north of [[organization:vehement]] central. Having caught the man's maser signal by passive detection, he listens in while his drones stay hidden behind encrypted SCUT links, and decides it is time for payback, though first he wants the man to know he has been found.",
+  "date": "2178-02",
+  "location_id": "location:vulcan",
+  "updates": [
+    {
+      "entity_id": "character:riker",
+      "current_state": "At [[location:vulcan]], he is covertly surveilling an unnamed watcher linked to [[organization:vehement]], having caught the watcher's maser signal by passive detection and listened in while his drones stay hidden behind encrypted SCUT links. He has decided it is time for payback, but first wants the watcher to know he has been caught."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:riker",
+      "role": "lead",
+      "location_id": "location:vulcan"
+    }
+  ],
+  "mentions": ["organization:vehement"]
+}
