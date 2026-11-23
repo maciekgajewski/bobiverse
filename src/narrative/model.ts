@@ -1255,6 +1255,9 @@ type AuthoredStatusEvent = NarrativeStatusEvent;
 
 interface AccumulatedStatusEvent extends AuthoredStatusEvent {
   sourceChapter: string;
+  /** Position of the source write in the chapter: introducing, then updates. */
+  writeIndex: number; // unused on the projector side; projection trusts walk order
+  /** Index of this event in that write's status_events array. */
   index: number;
 }
 
@@ -1269,20 +1272,30 @@ function publicStatusEvent(event: AuthoredStatusEvent): AuthoredStatusEvent {
   return published;
 }
 
+function chapterWriteIndex(
+  introducingCount: number,
+  section: "introducing" | "updates",
+  index: number,
+): number {
+  return section === "introducing" ? index : introducingCount + index;
+}
+
 function characterStatusWriteSources(chapter: NarrativeRecord): Array<{
   write: NarrativeRecord;
   entityId: string;
   pointer: string;
+  writeIndex: number;
 }> {
   const sources: Array<{
     write: NarrativeRecord;
     entityId: string;
     pointer: string;
+    writeIndex: number;
   }> = [];
   const sourceChapter = chapterId(chapter);
-  for (const [index, candidate] of (
-    (chapter.introducing as unknown[] | undefined) ?? []
-  ).entries()) {
+  const introducing = (chapter.introducing as unknown[] | undefined) ?? [];
+  const updates = (chapter.updates as unknown[] | undefined) ?? [];
+  for (const [index, candidate] of introducing.entries()) {
     const write = asRecord(candidate, `Introduction in ${sourceChapter}`);
     const entityId = asString(write.id, `Introduction ID in ${sourceChapter}`);
     if (entityId.startsWith("character:")) {
@@ -1290,12 +1303,11 @@ function characterStatusWriteSources(chapter: NarrativeRecord): Array<{
         write,
         entityId,
         pointer: `/introducing/${index}`,
+        writeIndex: chapterWriteIndex(introducing.length, "introducing", index),
       });
     }
   }
-  for (const [index, candidate] of (
-    (chapter.updates as unknown[] | undefined) ?? []
-  ).entries()) {
+  for (const [index, candidate] of updates.entries()) {
     const write = asRecord(candidate, `Update in ${sourceChapter}`);
     const entityId = asString(
       write.entity_id,
@@ -1306,6 +1318,7 @@ function characterStatusWriteSources(chapter: NarrativeRecord): Array<{
         write,
         entityId,
         pointer: `/updates/${index}`,
+        writeIndex: chapterWriteIndex(introducing.length, "updates", index),
       });
     }
   }
@@ -1347,9 +1360,12 @@ function assertAndAccumulateStatusEvents(
 ): void {
   const sourceChapter = chapterId(chapter);
   const headerDate = chapterDate(chapter);
-  for (const { write, entityId, pointer } of characterStatusWriteSources(
-    chapter,
-  )) {
+  for (const {
+    write,
+    entityId,
+    pointer,
+    writeIndex,
+  } of characterStatusWriteSources(chapter)) {
     if (!Object.hasOwn(write, authoredStatusEventsKey)) continue;
     const raw = write.status_events;
     if (!Array.isArray(raw) || raw.length === 0) {
@@ -1461,7 +1477,9 @@ function assertAndAccumulateStatusEvents(
         );
         const afterInChapterOrArray =
           chapterOrdering < 0 ||
-          (chapterOrdering === 0 && previous.index < index);
+          (chapterOrdering === 0 &&
+            (previous.writeIndex < writeIndex ||
+              (previous.writeIndex === writeIndex && previous.index < index)));
         if (
           dateOrdering > 0 ||
           (dateOrdering === 0 && !afterInChapterOrArray)
@@ -1497,6 +1515,7 @@ function assertAndAccumulateStatusEvents(
         date,
         kind,
         sourceChapter,
+        writeIndex,
         index,
       };
       if (typeof event.backup_date === "string") {
@@ -1516,6 +1535,7 @@ function accumulateWriteStatusEvents(
   entityId: string,
   write: NarrativeRecord,
   sourceChapter: string,
+  writeIndex: number,
 ): void {
   if (
     !entityId.startsWith("character:") ||
@@ -1530,6 +1550,7 @@ function accumulateWriteStatusEvents(
       date: asString(record.date, "Status event date"),
       kind: record.kind as NarrativeStatusEvent["kind"],
       sourceChapter,
+      writeIndex,
       index,
     };
     if (typeof record.backup_date === "string") {
@@ -1552,6 +1573,61 @@ export function projectedStatusEventAtCeiling(
 ): NarrativeStatusEvent | undefined {
   const latest = latestKnownStatusEventInPrefix(events, softCeiling);
   return latest ? publicStatusEvent(latest) : undefined;
+}
+
+/**
+ * Run the ADR-0033 merged-list checks for one chapter, including equal-date
+ * order by write position then array index. Exported so tests can cover two
+ * writes for one character in a chapter; the corpus validator rejects that
+ * shape (no second update; no update of a same-chapter introduction).
+ */
+export function assertAccumulatedStatusEventsInChapter(
+  chapter: NarrativeRecord,
+): void {
+  assertAndAccumulateStatusEvents(chapter, new Set(), new Map(), new Map());
+}
+
+/**
+ * Project current status from one chapter's writes. Mirrors the
+ * introducing-then-updates walk in projectRevealedEntities, including
+ * chapterWriteIndex, so the two-write test uses the same order.
+ */
+export function projectedStatusEventFromChapterWrites(
+  chapter: NarrativeRecord,
+  entityId: string,
+  softCeiling: string,
+): NarrativeStatusEvent | undefined {
+  const accumulated = new Map<string, AccumulatedStatusEvent[]>();
+  const sourceChapter = chapterId(chapter);
+  const introducingWrites =
+    (chapter.introducing as unknown[] | undefined) ?? [];
+  for (const [index, candidate] of introducingWrites.entries()) {
+    const write = asRecord(candidate, `Introduction in ${sourceChapter}`);
+    const id = asString(write.id, `Introduction ID in ${sourceChapter}`);
+    accumulateWriteStatusEvents(
+      accumulated,
+      id,
+      write,
+      sourceChapter,
+      chapterWriteIndex(introducingWrites.length, "introducing", index),
+    );
+  }
+  const updates = (chapter.updates as unknown[] | undefined) ?? [];
+  for (const [index, candidate] of updates.entries()) {
+    const write = asRecord(candidate, `Update in ${sourceChapter}`);
+    const id = asString(write.entity_id, `Update target in ${sourceChapter}`);
+    accumulateWriteStatusEvents(
+      accumulated,
+      id,
+      write,
+      sourceChapter,
+      chapterWriteIndex(introducingWrites.length, "updates", index),
+    );
+  }
+  return projectedStatusEventAtCeiling(
+    accumulated.get(entityId) ?? [],
+    softCeiling,
+  );
 }
 
 function latestKnownStatusEventInPrefix<T extends { date: string }>(
@@ -2908,9 +2984,9 @@ function projectRevealedEntities(
       [...locations()].map(([id, location]) => [id, structuredClone(location)]),
     );
     const orbitalWrites: OrbitalLocationWrite[] = [];
-    for (const [index, candidate] of (
-      (chapter.introducing as unknown[] | undefined) ?? []
-    ).entries()) {
+    const introducingWrites =
+      (chapter.introducing as unknown[] | undefined) ?? [];
+    for (const [index, candidate] of introducingWrites.entries()) {
       const introduced = asRecord(
         candidate,
         `Introduction in ${sourceChapter}`,
@@ -2936,6 +3012,7 @@ function projectRevealedEntities(
         id,
         introduced,
         sourceChapter,
+        chapterWriteIndex(introducingWrites.length, "introducing", index),
       );
       byId.set(id, entity);
       entities.push(entity);
@@ -2979,6 +3056,7 @@ function projectRevealedEntities(
         targetId,
         update,
         sourceChapter,
+        chapterWriteIndex(introducingWrites.length, "updates", index),
       );
       if (target.entity_type === "location") {
         orbitalWrites.push({

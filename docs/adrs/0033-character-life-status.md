@@ -151,8 +151,12 @@ event on that same write:
 - `death_date` and `death_event_id` are then removed.
 
 Writes that only clear `death_date` to `null` are dropped; a return to life
-is a `restored_from_backup` event, not a cleared field. No current write on
-master or on the approved 2.31–2.40 head (`23d6306`) clears `death_date`.
+is a `restored_from_backup` event, not a cleared field. If such a write is
+an update and, after the death fields are removed, only `entity_id` remains,
+the whole update is dropped. An introducing record, or a write that still
+has other fields, keeps the record and drops only the death fields. No
+current write on master or on the approved 2.31–2.40 head (`23d6306`)
+clears `death_date`.
 
 The migration is mechanical and incomplete for returns that today live only
 in `current_state`. After it, `character:elmer` would still show as dead
@@ -197,8 +201,9 @@ On the merged list:
   result is non-null and ≤ 0 (the later event is after, or at the same
   date as, the earlier one). Overlapping unequal-precision dates are
   rejected; they cannot be ordered. On equal dates, source chapter order
-  breaks the tie, and events from one write use that write's
-  `status_events` array order;
+  breaks the tie. Events from the same chapter are ordered by the write's
+  position in that chapter (introducing, then updates, in array order),
+  then by the event's index in that write's `status_events` array;
 - `restored_from_backup` is allowed only immediately after `died`;
 - `died` is allowed when the list is empty so far, or immediately after
   `restored_from_backup`.
