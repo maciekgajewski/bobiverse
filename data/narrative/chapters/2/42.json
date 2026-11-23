@@ -1,0 +1,47 @@
+{
+  "chapter": "2.42",
+  "title": "42 - Business",
+  "summary": "At [[location:vulcan]], [[character:howard]] joins [[character:dr-sheehy|Bridget]] and [[character:stephane-brodeur|Stéphane]] by phone to go over the [[organization:enniscorthy-distillery-company]], which is doing well, barely keeping up with orders and selling only cash on delivery; the partners have decided on a planetbound distillery and brought Stéphane in to set it up. When Stéphane tells Bridget to see a doctor about her backache, she asks Howard about life as a replicant. He explains that Bobs feel pain only if they choose to, that his memories run back through earlier Bobs to Original Bob's childhood for about sixty years of experienced life, and that a clone starts from its parent's [[technology:backup]] and then diverges. He brings up [[character:henry-roberts]], the one non-Bob replicant, whose early sensory-deprivation trouble is now understood, and asks whether Bridget is thinking of applying; she says she is only curious.",
+  "date": "2193-03",
+  "location_id": "location:vulcan",
+  "introducing": [
+    {
+      "id": "organization:enniscorthy-distillery-company",
+      "name": "Enniscorthy Distillery Company",
+      "description": "A liquor business at [[location:vulcan]] that [[character:howard]] is part of.",
+      "current_state": "Doing well and only just keeping up with orders, it sells strictly cash on delivery, so it has no receivables problems. Its partners have decided it needs a planetbound distillery and have brought in [[character:stephane-brodeur|Stéphane]] to set one up."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:howard",
+      "current_state": "Joining [[character:dr-sheehy|Bridget]] and [[character:stephane-brodeur|Stéphane]] at [[location:vulcan]] by phone, he reviews the books of the [[organization:enniscorthy-distillery-company]], which is doing well. He has existed for eight subjective years as Howard, but with memories reaching back through earlier Bobs to Original Bob, he counts about sixty years of experienced life."
+    },
+    {
+      "entity_id": "character:dr-sheehy",
+      "current_state": "With [[character:howard]] and [[character:stephane-brodeur|Stéphane]] at [[location:vulcan]], she has a recurring backache; Stéphane tells her to see the doctor, and she answers noncommittally. She asks Howard about life as a replicant, but says she is only curious, not thinking of applying."
+    },
+    {
+      "entity_id": "character:stephane-brodeur",
+      "current_state": "He has been brought into the [[organization:enniscorthy-distillery-company]] to set up its planetbound distillery. Seeing [[character:dr-sheehy|Bridget]]'s backache return, he tells her to see the doctor, and he remarks that immortality sounds good."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:howard",
+      "role": "lead",
+      "location_id": "location:omicron2-eridani"
+    },
+    {
+      "character_id": "character:dr-sheehy",
+      "role": "other",
+      "location_id": "location:vulcan"
+    },
+    {
+      "character_id": "character:stephane-brodeur",
+      "role": "other",
+      "location_id": "location:vulcan"
+    }
+  ],
+  "mentions": ["character:henry-roberts"]
+}

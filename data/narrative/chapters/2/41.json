@@ -1,0 +1,77 @@
+{
+  "chapter": "2.41",
+  "title": "41 - Casualties",
+  "summary": "At [[location:delta-eridani]], alerted by [[technology:guppi-interface|GUPPI]], [[character:bob-replicant]] watches through his [[technology:vr|VR]] as a riot of [[species:delta-eridani-natives|Deltans]] against Deltans tears through [[location:camelot]], while [[character:archimedes]], [[character:buster]], [[character:belinda]] and [[character:diana]] stand armed by Archimedes' tent and are spared. [[character:marvin]] joins him and takes control of a couple of [[technology:buster-drone|busters]] as a precaution. The fight, over how to share a small kill, leaves seventeen Deltans motionless and many more wounded. Blaming overcrowding, Bob talks to Archimedes through a rock-like [[technology:planetary-exploration-drone|drone]], with the [[technology:translation-routine]] rendering one of his idioms literally, and proposes reverse psychology: talk openly, with council members, about resettling the old village sites so the gangs decide to go first.",
+  "date": "2182-07",
+  "location_id": "location:delta-eridani",
+  "introducing": [
+    {
+      "id": "character:belinda",
+      "name": "Belinda",
+      "species_id": "species:delta-eridani-natives",
+      "description": "A Deltan of [[location:camelot]] who had shown no interest in weapons until a riot in the village, when Belinda took up a spear beside [[character:archimedes]]' tent.",
+      "current_state": "At [[location:camelot]], Belinda stands with a spear beside [[character:archimedes]]' tent with [[character:diana]] while a riot rages around it, to the unease of [[character:bob-replicant]]."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "At [[location:delta-eridani]], he watches the [[location:camelot]] riot through his [[technology:vr|VR]], ready to send a [[technology:buster-drone|buster]] against anyone threatening [[character:archimedes]] but unable to help the wounded without exposing himself. Blaming population pressure, he proposes open talk of resettling the old village sites so the gangs choose to go first."
+    },
+    {
+      "entity_id": "character:marvin",
+      "current_state": "In [[character:bob-replicant]]'s [[technology:vr|VR]] at [[location:delta-eridani]], he watches the riot at [[location:camelot]] with Bob, takes control of a couple of [[technology:buster-drone|busters]] as a precaution, and hopes the village's medicine people can cope with the wounded. The riot's petty cause leaves him and Bob disillusioned about Deltan intelligence."
+    },
+    {
+      "entity_id": "character:archimedes",
+      "current_state": "At [[location:camelot]], he stands armed with a bow by his family's tent with [[character:buster]] as a riot rages around it but spares it. Meeting [[character:bob-replicant]] through a rock-like drone while pretending to knap a flint core, he notes the village is tensest when everyone is home, but doubts Bob's plan to talk up resettling the old village sites and declines his bet."
+    },
+    {
+      "entity_id": "character:buster",
+      "current_state": "At [[location:camelot]], he stands armed with a bow beside his father [[character:archimedes]] by the family tent during a riot; father and son are reputed expert shots."
+    },
+    {
+      "entity_id": "location:camelot",
+      "state": "A riot of [[species:delta-eridani-natives|Deltans]] against Deltans, fought with spears, clubs and axes and sparked by a dispute over sharing a small kill, destroyed all property in the area it swept through; seventeen Deltans were left motionless, some possibly dead, and more than twice as many were wounded. [[character:archimedes]]' family tent, at its edge, was spared."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead",
+      "location_id": "location:delta-eridani"
+    },
+    {
+      "character_id": "character:marvin",
+      "role": "other",
+      "location_id": "location:delta-eridani"
+    },
+    {
+      "character_id": "character:archimedes",
+      "role": "other",
+      "location_id": "location:camelot"
+    },
+    {
+      "character_id": "character:buster",
+      "role": "other",
+      "location_id": "location:camelot"
+    },
+    {
+      "character_id": "character:belinda",
+      "role": "other",
+      "location_id": "location:camelot"
+    },
+    {
+      "character_id": "character:diana",
+      "role": "other",
+      "location_id": "location:camelot"
+    }
+  ],
+  "mentions": [
+    "technology:buster-drone",
+    "technology:guppi-interface",
+    "technology:planetary-exploration-drone",
+    "technology:translation-routine",
+    "technology:vr"
+  ]
+}
