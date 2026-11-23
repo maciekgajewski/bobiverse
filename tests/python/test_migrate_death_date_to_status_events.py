@@ -39,6 +39,43 @@ class MigrateRecordTest(unittest.TestCase):
         self.assertEqual(record.get("death_event_id"), "event:fixture-known")
         self.assertNotIn("status_events", record)
 
+    def test_drops_null_death_date_without_adding_status_events(self) -> None:
+        record = {
+            "entity_id": "character:fixture-alex",
+            "death_date": None,
+            "current_state": "Alive again.",
+        }
+        event = migrate.migrate_record(record)
+        self.assertIsNone(event)
+        self.assertNotIn("death_date", record)
+        self.assertNotIn("death_event_id", record)
+        self.assertNotIn("status_events", record)
+        self.assertEqual(record["current_state"], "Alive again.")
+
+    def test_drops_null_death_date_and_death_event_id(self) -> None:
+        record = {
+            "entity_id": "character:fixture-alex",
+            "death_date": None,
+            "death_event_id": None,
+        }
+        event = migrate.migrate_record(record)
+        self.assertIsNone(event)
+        self.assertNotIn("death_date", record)
+        self.assertNotIn("death_event_id", record)
+        self.assertNotIn("status_events", record)
+
+    def test_migrate_chapter_rewrites_null_clearing_writes(self) -> None:
+        data = {
+            "chapter": "1.2",
+            "updates": [
+                {"entity_id": "character:fixture-alex", "death_date": None},
+            ],
+        }
+        events = migrate.migrate_chapter(data)
+        self.assertEqual(events, [])
+        self.assertNotIn("death_date", data["updates"][0])
+        self.assertNotIn("status_events", data["updates"][0])
+
 
 if __name__ == "__main__":
     unittest.main()

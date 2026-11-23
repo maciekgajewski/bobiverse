@@ -197,8 +197,9 @@ On the merged list:
   result is non-null and ≤ 0 (the later event is after, or at the same
   date as, the earlier one). Overlapping unequal-precision dates are
   rejected; they cannot be ordered. On equal dates, source chapter order
-  breaks the tie, and events from one write use that write's
-  `status_events` array order;
+  breaks the tie. Events from the same chapter are ordered by the write's
+  position in that chapter (introducing, then updates, in array order),
+  then by the event's index in that write's `status_events` array;
 - `restored_from_backup` is allowed only immediately after `died`;
 - `died` is allowed when the list is empty so far, or immediately after
   `restored_from_backup`.

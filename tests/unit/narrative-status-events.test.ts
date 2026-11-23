@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { chapterLatestDate } from "../../src/narrative/ceiling";
 import {
+  assertAccumulatedStatusEventsInChapter,
   generateNarrativeWorld,
   prepareNarrativeCorpus,
   projectedStatusEventAtCeiling,
+  projectedStatusEventFromChapterWrites,
   softCeilingProperties,
   type NarrativeCorpus,
   type NarrativeRecord,
@@ -335,6 +337,35 @@ describe("status event validation (ADR-0033)", () => {
       ]),
     ).not.toThrow();
   });
+
+  it("orders equal-date events from two writes in one chapter by write position", () => {
+    // The corpus rejects two writes for one character in one chapter (no
+    // second update; no update of a same-chapter introduction). Exercise the
+    // status-event checks directly.
+    const twoUpdates = chapter("1.2", "2185-06", {
+      updates: [
+        { entity_id: alex, status_events: [died("2185-06")] },
+        { entity_id: alex, status_events: [restored("2185-06")] },
+      ],
+    });
+    expect(() =>
+      assertAccumulatedStatusEventsInChapter(twoUpdates),
+    ).not.toThrow();
+    const introThenUpdate = chapter("1.2", "2185-06", {
+      introducing: [
+        {
+          id: kai,
+          name: "Fixture Kai",
+          species_id: human,
+          status_events: [died("2185-06")],
+        },
+      ],
+      updates: [{ entity_id: kai, status_events: [restored("2185-06")] }],
+    });
+    expect(() =>
+      assertAccumulatedStatusEventsInChapter(introThenUpdate),
+    ).not.toThrow();
+  });
 });
 
 describe("status event projection (ADR-0033)", () => {
@@ -413,6 +444,21 @@ describe("status event projection (ADR-0033)", () => {
       }).entities.find((entity) => entity.id === alex)?.status_event;
     expect(at("2185-04")).toEqual({ date: "2185-04", kind: "died" });
     expect(at("2185-06")).toEqual({
+      date: "2185-06",
+      kind: "restored_from_backup",
+    });
+  });
+
+  it("projects two equal-date writes in one chapter in chapter write order", () => {
+    const twoWrites = chapter("1.2", "2185-06", {
+      updates: [
+        { entity_id: alex, status_events: [died("2185-06")] },
+        { entity_id: alex, status_events: [restored("2185-06")] },
+      ],
+    });
+    expect(
+      projectedStatusEventFromChapterWrites(twoWrites, alex, "2185-06"),
+    ).toEqual({
       date: "2185-06",
       kind: "restored_from_backup",
     });

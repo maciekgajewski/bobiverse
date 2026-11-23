@@ -3,7 +3,9 @@
 
 Each write that sets a non-null death_date becomes one died event on that same
 write (date from death_date, event_id from a present non-null death_event_id).
-No other fields are changed. Run from the repository root:
+Writes that clear death_date or death_event_id to null are dropped (the fields
+are removed and no status_events entry is added). No other fields are changed.
+Run from the repository root:
 
     python3 scripts/migrate_death_date_to_status_events.py
     python3 scripts/migrate_death_date_to_status_events.py --prove --base cf219fb
@@ -27,12 +29,19 @@ def status_event_from_death(record: dict[str, Any]) -> dict[str, Any] | None:
     death_date = record.get("death_date")
     death_event_id = record.get("death_event_id")
     label = record.get("id") or record.get("entity_id")
+    # ADR-0033: writes that clear death_date (or death_event_id) to null are
+    # dropped; a return to life is a restored_from_backup event, not a cleared
+    # field.
+    if "death_date" in record and death_date is None:
+        return None
+    if "death_date" not in record:
+        if death_event_id is None:
+            return None
+        raise SystemExit(
+            f"cannot migrate write {label}: "
+            f"death_event_id is present without death_date"
+        )
     if not isinstance(death_date, str):
-        if "death_event_id" in record and "death_date" not in record:
-            raise SystemExit(
-                f"cannot migrate write {label}: "
-                f"death_event_id is present without death_date"
-            )
         raise SystemExit(
             f"cannot migrate write {label}: "
             f"expected a non-null death_date, got {death_date!r}"
@@ -88,11 +97,10 @@ def migrate_tree() -> list[tuple[Path, list[dict[str, Any]]]]:
         original = path.read_text(encoding="utf-8")
         data = json.loads(original)
         events = migrate_chapter(data)
-        if not events:
-            continue
         new_text = dump_json(data)
-        if new_text != original:
-            path.write_text(new_text, encoding="utf-8")
+        if new_text == original:
+            continue
+        path.write_text(new_text, encoding="utf-8")
         changed.append((path, events))
     return changed
 
