@@ -3,10 +3,16 @@
 
 Each write that sets a non-null death_date becomes one died event on that same
 write (date from death_date, event_id from a present non-null death_event_id).
-No other fields are changed. Run from the repository root:
+Writes that clear death_date to null (with no non-null death_event_id) are
+dropped: an update left with only entity_id is removed entirely; an
+introduction, or a write that still has other fields, keeps the record and
+drops only the death fields. A null death_date with a non-null death_event_id
+is an error. No other fields are changed. Run from the repository root:
 
     python3 scripts/migrate_death_date_to_status_events.py
     python3 scripts/migrate_death_date_to_status_events.py --prove --base cf219fb
+
+`--prove --base cf219fb` only reproduces at the original migration commit.
 """
 
 from __future__ import annotations
@@ -27,12 +33,24 @@ def status_event_from_death(record: dict[str, Any]) -> dict[str, Any] | None:
     death_date = record.get("death_date")
     death_event_id = record.get("death_event_id")
     label = record.get("id") or record.get("entity_id")
-    if not isinstance(death_date, str):
-        if "death_event_id" in record and "death_date" not in record:
+    # ADR-0033: writes that clear death_date to null are dropped; a return to
+    # life is a restored_from_backup event, not a cleared field. A null
+    # death_date with a non-null death_event_id is inconsistent and errors.
+    if "death_date" in record and death_date is None:
+        if "death_event_id" in record and death_event_id is not None:
             raise SystemExit(
                 f"cannot migrate write {label}: "
-                f"death_event_id is present without death_date"
+                f"death_date is null but death_event_id is present"
             )
+        return None
+    if "death_date" not in record:
+        if death_event_id is None:
+            return None
+        raise SystemExit(
+            f"cannot migrate write {label}: "
+            f"death_event_id is present without death_date"
+        )
+    if not isinstance(death_date, str):
         raise SystemExit(
             f"cannot migrate write {label}: "
             f"expected a non-null death_date, got {death_date!r}"
@@ -60,39 +78,62 @@ def migrate_record(record: dict[str, Any]) -> dict[str, Any] | None:
     return event
 
 
-def migrate_chapter(data: dict[str, Any]) -> list[dict[str, Any]]:
+def migrate_chapter(data: dict[str, Any]) -> tuple[list[dict[str, Any]], bool]:
+    """Migrate writes in one chapter.
+
+    Returns (died events added, True if a death_date or death_event_id key was
+    removed, a died event was added, or a now-empty update write was dropped).
+    """
     events: list[dict[str, Any]] = []
+    changed = False
     for key in ("introducing", "updates"):
         writes = data.get(key)
         if not isinstance(writes, list):
             continue
+        kept: list[Any] = []
+        dropped_any = False
         for write in writes:
-            if isinstance(write, dict):
-                event = migrate_record(write)
-                if event is not None:
-                    events.append(event)
-    return events
+            if not isinstance(write, dict):
+                kept.append(write)
+                continue
+            had_death_keys = "death_date" in write or "death_event_id" in write
+            event = migrate_record(write)
+            if event is not None:
+                events.append(event)
+            if had_death_keys:
+                changed = True
+            if (
+                key == "updates"
+                and had_death_keys
+                and set(write.keys()) == {"entity_id"}
+            ):
+                dropped_any = True
+                continue
+            kept.append(write)
+        if dropped_any:
+            data[key] = kept
+    return events, changed
 
 
-def chapter_files() -> list[Path]:
-    return sorted(CHAPTERS_ROOT.rglob("*.json"))
+def chapter_files(root: Path = CHAPTERS_ROOT) -> list[Path]:
+    return sorted(root.rglob("*.json"))
 
 
 def dump_json(data: Any) -> str:
     return json.dumps(data, indent=2, ensure_ascii=False) + "\n"
 
 
-def migrate_tree() -> list[tuple[Path, list[dict[str, Any]]]]:
+def migrate_tree(
+    root: Path = CHAPTERS_ROOT,
+) -> list[tuple[Path, list[dict[str, Any]]]]:
     changed: list[tuple[Path, list[dict[str, Any]]]] = []
-    for path in chapter_files():
+    for path in chapter_files(root):
         original = path.read_text(encoding="utf-8")
         data = json.loads(original)
-        events = migrate_chapter(data)
-        if not events:
+        events, touched = migrate_chapter(data)
+        if not touched:
             continue
-        new_text = dump_json(data)
-        if new_text != original:
-            path.write_text(new_text, encoding="utf-8")
+        path.write_text(dump_json(data), encoding="utf-8")
         changed.append((path, events))
     return changed
 
