@@ -1,0 +1,41 @@
+{
+  "chapter": "2.36",
+  "title": "36 - Asteroid Movers",
+  "summary": "At [[location:epsilon-eridani]], [[character:bill]] and [[character:garfield]] run the first live field trial of a new [[technology:asteroid-mover|asteroid mover]], whose twenty segments hold station around an iceberg on their own [[technology:surge-drive|SURGE drives]] and redirect it without touching it. The trial stays within specification, and the berg is set to skim [[location:ee-2|Ragnarök]]'s atmosphere and come down as rain, while a new sea Bill named Bullseye slowly forms in a crater left by an earlier iceberg he missed.",
+  "date": "2187-03",
+  "location_id": "location:epsilon-eridani",
+  "introducing": [
+    {
+      "id": "technology:asteroid-mover",
+      "name": "asteroid mover",
+      "description": "A device that moves an asteroid without touching it: twenty saucer-shaped segments spaced evenly around its centre of gravity, each held in place by its own [[technology:surge-drive|SURGE drive]], generate a further SURGE field acting on the whole body. Collected, they stack like plates. It followed several failed designs."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bill",
+      "current_state": "At [[location:epsilon-eridani]], he and [[character:garfield]] have run the first live field trial of the new [[technology:asteroid-mover|asteroid mover]]: it stayed within specification and put an iceberg on course to skim [[location:ee-2|Ragnarök]]'s atmosphere and fall as rain. He named the sea forming in a Ragnarök crater, left by an earlier iceberg he missed, Bullseye."
+    },
+    {
+      "entity_id": "character:garfield",
+      "current_state": "At [[location:epsilon-eridani]], he operated the first live field trial of the new [[technology:asteroid-mover|asteroid mover]] with [[character:bill]], redirecting an iceberg toward [[location:ee-2|Ragnarök]] without contact. He announced completion and shut the mover down, and after a short wait for drift its segments were collected."
+    },
+    {
+      "entity_id": "location:ee-2",
+      "state": "Icebergs from [[character:bill]]'s group keep arriving; the latest, redirected by the new [[technology:asteroid-mover|asteroid mover]], will skim its atmosphere and be broken by explosions into ice that falls as rain over weeks. A new sea Bill named Bullseye is slowly forming in a large crater left by an earlier iceberg he missed."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bill",
+      "role": "lead",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:garfield",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    }
+  ],
+  "mentions": ["technology:surge-drive"]
+}

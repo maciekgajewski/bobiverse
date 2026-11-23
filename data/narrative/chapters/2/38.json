@@ -1,0 +1,47 @@
+{
+  "chapter": "2.38",
+  "title": "38 - Following up",
+  "summary": "At [[location:gliese-877]], [[character:hal]] follows up on [[character:bashful]]'s death by spying on the [[species:others|Others]] with probes and surveying the inner system: a metal-clad planet, a polluted world he takes for their home and the start of a Dyson sphere. After shaking off one pursuit by going dark, he tests whether they detect radio itself; they run him down and his self-destruct engages, his backups already sent to [[character:mario]].",
+  "date": "2188-05",
+  "location_id": "location:gliese-877",
+  "introducing": [
+    {
+      "id": "character:hal",
+      "name": "Hal",
+      "description": "A Bob replicant who reports to [[character:mario]], sent to [[location:gliese-877]] to follow up on [[character:bashful]]'s discovery of the [[species:others|Others]]. His VR is a room with an easy chair and a tall window onto a winter forest where the snow never piles up. His [[technology:guppi-interface|GUPPI]] has version-3 memory but appears as a fish and avoids small talk.",
+      "current_state": "At [[location:gliese-877]], after spying on the [[species:others|Others]] with probes and shaking off one pursuit by going dark, he tested his suspicion that they detect radio use itself; they ran him down, and with his controller replicant offline his self-destruct protocol set his reactor to overload. His latest data and differential backups had already reached [[character:mario]] over [[technology:subspace-communications|SCUT]].",
+      "death_date": "2188-05"
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bashful",
+      "effective_date": "2187-11",
+      "death_date": "2187-11"
+    },
+    {
+      "entity_id": "character:mario",
+      "current_state": "He receives [[character:hal]]'s reports, raw telemetry and differential backups from [[location:gliese-877]] over [[technology:subspace-communications|SCUT]]. Hal has warned him that a captured station could let the [[species:others|Others]] trace the link back to [[location:epsilon-eridani]] and urged him to booby-trap his station if he is still manning it."
+    },
+    {
+      "entity_id": "location:gliese-877",
+      "state": "The [[species:others|Others]] are building the start of a Dyson sphere, massive structures spaced evenly around the star on a spherical shell, and the orbit just inside [[location:gliese-877-1|the innermost planet]] teems with fusion drives, radio and SUDDAR traffic and bright craft. Their flotillas destroyed [[character:hal]]'s probes and later ran Hal himself down."
+    },
+    {
+      "entity_id": "location:gliese-877-1",
+      "state": "Shrouded in a breathable but heavily polluted atmosphere, with temperatures close to lethal for humans. [[character:hal]] suspects it is the [[species:others|Others]]' home world, which they nearly warmed to extinction before reaching space."
+    },
+    {
+      "entity_id": "location:gliese-877-2",
+      "state": "Completely encased in metal, or perhaps metal all the way through; [[character:hal]] cannot tell whether a planet lies underneath."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:hal",
+      "role": "lead",
+      "location_id": "location:gliese-877"
+    }
+  ],
+  "mentions": ["species:others", "technology:guppi-interface"]
+}

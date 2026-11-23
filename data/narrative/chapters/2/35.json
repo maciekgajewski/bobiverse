@@ -1,0 +1,43 @@
+{
+  "chapter": "2.35",
+  "title": "35 - Sales Call",
+  "summary": "On [[location:vulcan]], [[character:howard]], present by video, and [[character:dr-sheehy|Bridget]] have [[character:george-butterworth|Colonel Butterworth]] taste their Irish whiskey; he judges it saleable but, because of his position, settles for being a customer rather than a partner. Over dinner at The Shaded Green in [[location:landing]], which Howard joins through Bridget's tablet, they discuss [[character:cranston]]'s ban on liquor sales into [[organization:free-american-independent-theocratic-hegemony|FAITH]] territory, Howard's plan for a local distributor and his hope of vodka within six months from his potato crop. Bridget asks whether the dinner is business or a date, and Howard answers both.",
+  "date": "2192-09",
+  "location_id": "location:vulcan",
+  "updates": [
+    {
+      "entity_id": "character:howard",
+      "current_state": "He and [[character:dr-sheehy|Bridget]] are now in the liquor business: [[character:george-butterworth|the colonel]] judged their Irish whiskey saleable, he plans a local distributor to get around [[character:cranston]]'s ban on sales into [[organization:free-american-independent-theocratic-hegemony|FAITH]] territory, and he hopes for vodka within six months from his private potato crop. Joining her dinner at The Shaded Green in [[location:landing]] by tablet, he told her it was both business and a date."
+    },
+    {
+      "entity_id": "character:dr-sheehy",
+      "current_state": "Now [[character:howard]]'s partner in the liquor business, which for her means extra income, she calls herself a liquor baroness after [[character:george-butterworth|Colonel Butterworth]] judged their Irish whiskey saleable. Over dinner at The Shaded Green in [[location:landing]], she asked Howard whether it was business or a date, and he answered both."
+    },
+    {
+      "entity_id": "character:george-butterworth",
+      "current_state": "With the colony's Jameson run out, he tasted [[character:howard]] and [[character:dr-sheehy|Bridget]]'s Irish whiskey and judged it saleable, the first hard liquor on [[location:vulcan]] that is not a public hazard. His position rules out a partnership, so he will be a customer instead."
+    },
+    {
+      "entity_id": "organization:free-american-independent-theocratic-hegemony",
+      "current_state": "Its colonists are ultra-religious and disapprove of strong drink, and [[character:cranston|Minister Cranston]] has forbidden liquor sales into its territory."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:howard",
+      "role": "lead",
+      "location_id": "location:omicron2-eridani"
+    },
+    {
+      "character_id": "character:dr-sheehy",
+      "role": "other",
+      "location_id": "location:landing"
+    },
+    {
+      "character_id": "character:george-butterworth",
+      "role": "other",
+      "location_id": "location:vulcan"
+    }
+  ],
+  "mentions": ["character:cranston"]
+}

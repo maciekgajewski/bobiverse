@@ -1,0 +1,58 @@
+{
+  "chapter": "2.32",
+  "title": "32 - Linus",
+  "summary": "At [[location:epsilon-eridani]], [[character:bill]] hears again from [[character:linus]], out of touch since leaving [[location:epsilon-indi]] in 2150, whose radio report described an odd habitable moon he calls [[location:klown-kar-planet|KKP]] and his rescue of [[character:henry-roberts]], the replicant of [[organization:australia]]'s unacknowledged probe. Bill sends him thirty years of [[technology:vr]] updates and starts building him a [[technology:subspace-communications|SCUT]] unit. Once Linus arrives, he visits Bill's VR office and explains the moon's tilted orbit and axis and Henry's recovery: driven psychotic without a VR, Henry now lives in reality but is fragile, agoraphobic and afraid of [[technology:guppi-interface|Guppy]], since imagined fish tormented him and his own probe's interface shared the GUPPI name. Henry joins them, the first non-Bob Bill has met in person in years; Bill gives him his own domain, a firewall and [[organization:bobnet]] access, has [[technology:jeeves]] pour him a whiskey, and explains that his hosting system has run baseball games and Bob-moots. Bill is building a new vessel for each of them, Henry is shaken to learn that replicants are immortal, and after Bill asks to see Henry's sailboat some day, the two leave together.",
+  "date": "2178-05",
+  "location_id": "location:epsilon-eridani",
+  "introducing": [
+    {
+      "id": "location:klown-kar-planet",
+      "name": "Klown Kar Planet",
+      "kind": "moon",
+      "parent_location_id": "location:epsilon-indi-1",
+      "parent_relation": "orbits",
+      "description": "A moon of [[location:epsilon-indi-1]], named by [[character:linus]] and called KKP for short, whose orbit and axis are both tilted ninety degrees from normal, so its sun follows an odd path through the year. It is technically habitable, with the right air and gravity and biocompatible life, though Linus would not want to live there.",
+      "state": "Habitable worlds are scarce, so [[character:bill]] expects one of the emigrating human enclaves to choose it as a colony target."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bill",
+      "current_state": "At [[location:epsilon-eridani]], he hosts [[technology:vr]] sessions, from baseball games to Bob-moots, on a huge system built for the purpose. He has welcomed [[character:linus]] back and given [[character:henry-roberts|Henry]] his own domain, a firewall and [[organization:bobnet]] access, and is building a [[technology:subspace-communications|SCUT]] unit for Linus and a latest-generation vessel for each of them. He finds some later Bobs' dismissive name for humans dehumanizing."
+    },
+    {
+      "entity_id": "character:linus",
+      "current_state": "Back in touch after leaving [[location:epsilon-indi]] in 2150, he has reached [[location:epsilon-eridani]] and caught up on thirty years of [[technology:vr]] updates. He named [[location:klown-kar-planet]] and has given [[character:henry-roberts|Henry]] home-brew therapy, upgrading his VR and hardware, and [[character:bill]] is building him a [[technology:subspace-communications|SCUT]] unit and a latest-generation vessel."
+    },
+    {
+      "entity_id": "character:henry-roberts",
+      "current_state": "Rescued by [[character:linus]], he now understands what happened to him and lives in reality, but he remains fragile: agoraphobic yet at ease alone at sea, he has sudden panic attacks and retreats to his sailboat in [[technology:vr]]. He fears [[technology:guppi-interface|Guppy]], because imagined fish tormented him and his own probe's interface also bore the GUPPI name, which [[character:bill]] says [[organization:australia]] used first. Bill has given him his own domain, a firewall and [[organization:bobnet]] access, is building him a new vessel, and has told him that replicants are immortal."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bill",
+      "role": "lead",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:linus",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:henry-roberts",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    }
+  ],
+  "mentions": [
+    "location:epsilon-indi",
+    "organization:australia",
+    "organization:bobnet",
+    "technology:guppi-interface",
+    "technology:jeeves",
+    "technology:subspace-communications",
+    "technology:vr"
+  ]
+}
