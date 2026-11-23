@@ -1,0 +1,50 @@
+{
+  "chapter": "2.45",
+  "title": "45 - Replication",
+  "summary": "At [[location:vulcan]], [[character:howard]] asks [[character:riker]] in VR for any information on turning a living person into a replicant, calling it a gap in the Bobs' knowledge that only the current human generation can fill. Riker suspects it concerns [[character:dr-sheehy|Dr. Sheehy]] but agrees to raise it, keen to go around [[character:cranston]], who had demanded concessions before saying whether [[organization:free-american-independent-theocratic-hegemony|FAITH]] still holds anything; alone, Howard studies an intercepted medical scan of hers again. Later President Cranston protests by video that Howard's whiskey is being smuggled into New Jerusalem and that he profits from colony equipment, and threatens his access to his families. Howard points out that he made his own [[technology:kudzu-gardens|donut]] and cites the colonists' rights agreement and Cranston's personal agreement with Riker, and Cranston backs down for now. Afterwards Riker suggests removing Cranston, which Howard welcomes.",
+  "date": "2193-08",
+  "location_id": "location:vulcan",
+  "updates": [
+    {
+      "entity_id": "character:howard",
+      "current_state": "He asks [[character:riker]] how to turn a living person into a replicant, a process the Bobs lack and [[organization:free-american-independent-theocratic-hegemony|FAITH]] may still hold, while privately studying an intercepted scan of [[character:dr-sheehy|Bridget]]'s. He faces down [[character:cranston]]'s protests over smuggled whiskey and his private [[technology:kudzu-gardens|donut]] by citing the colonists' rights agreement."
+    },
+    {
+      "entity_id": "character:riker",
+      "current_state": "He agrees to put [[character:howard]]'s request for the replication process to the right people, keen to get around [[character:cranston]], though he suspects it concerns [[character:dr-sheehy|Dr. Sheehy]]. After watching Cranston threaten Howard's access to their family, he suggests removing Cranston."
+    },
+    {
+      "entity_id": "character:dr-sheehy",
+      "current_state": "[[character:howard]], who insists they are only friends, has intercepted a medical report on her and keeps re-examining its scan, hoping it will read differently. [[character:riker]] suspects Howard's question about the replication process concerns her."
+    },
+    {
+      "entity_id": "character:cranston",
+      "current_state": "Now President, he protests to [[character:howard]] that Howard's whiskey reaches his New Jerusalem territory despite his ban and that Howard profits from colony equipment, and threatens his access to his families. Reminded of the colony rights agreement and his personal deal with [[character:riker]], he backs down for now."
+    },
+    {
+      "entity_id": "organization:enniscorthy-distillery-company",
+      "current_state": "Its products, whiskey among them, are not sold in New Jerusalem, but a ban there has pushed prices up enough that they are smuggled in from Spitsbergen. Production is gradually moving planetside, after which [[character:howard]] will add the [[technology:kudzu-gardens|donut]] he built for his own use to the colony inventory."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:howard",
+      "role": "lead",
+      "location_id": "location:omicron2-eridani"
+    },
+    {
+      "character_id": "character:riker",
+      "role": "other",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:cranston",
+      "role": "other",
+      "location_id": "location:omicron2-eridani"
+    }
+  ],
+  "mentions": [
+    "organization:free-american-independent-theocratic-hegemony",
+    "technology:kudzu-gardens"
+  ]
+}

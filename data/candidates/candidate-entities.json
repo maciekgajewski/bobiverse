@@ -35,8 +35,8 @@
       "kind": "event",
       "name": "Bob-moot",
       "aliases": [],
-      "mentions": ["2.32", "2.34", "2.39"],
-      "note": "2.39: Bill's term for his VR gathering of 43 SCUT-linked Bobs (also a town hall); a debate with a vote pending, below event significance (claims 004-005, 029, 041).",
+      "mentions": ["2.32", "2.34", "2.39", "2.44"],
+      "note": "2.39: Bill's VR gathering of 43 SCUT-linked Bobs, a debate with a vote pending (claims 004-005, 029, 041). 2.44: a social moot, VR baseball then a pub in the moot matrix (claims 012, 028).",
       "promotion": null
     },
     {
@@ -80,7 +80,7 @@
       "kind": "species",
       "name": "Cupid Bug",
       "aliases": [],
-      "mentions": ["2.29", "2.31"],
+      "mentions": ["2.29", "2.31", "2.46"],
       "note": "2.29: Dr. Sheehy's name for the egg-laying Vulcan parasite; detector (claims 029-033). 2.31: apex predator, hunter drones planned (claims 037-039, 051-052). Earlier: plain text in 2.20 data.",
       "promotion": null
     },
@@ -100,6 +100,15 @@
       "aliases": [],
       "mentions": ["2.39"],
       "note": "2.39: Garfield's name for the Others' weapon platform: gamma-ray beam, likely fusion reactors and accumulators, never fired twice in one encounter (claims 011, 018-021, 025-027, 034).",
+      "promotion": null
+    },
+    {
+      "id": "candidate:draper",
+      "kind": "character",
+      "name": "Draper",
+      "aliases": ["Chief Draper"],
+      "mentions": ["2.49"],
+      "note": "2.49: off-screen Poseidon colony figure, expected to take a kraken death and the six-month net delay badly, as Butterworth would (claims 038, 048). Role unstated.",
       "promotion": null
     },
     {
@@ -152,8 +161,8 @@
       "kind": "location",
       "name": "Maldives",
       "aliases": [],
-      "mentions": ["2.14", "2.18", "2.26"],
-      "note": "Seeded from Maciej's 2.11-2.20 review (ADR-0032 Decided 3). Earlier: plain text in the 2.7 data, so first_mentioned should be 2.7 if promoted.",
+      "mentions": ["2.14", "2.18", "2.26", "2.49"],
+      "note": "Seeded from Maciej's 2.11-2.20 review (ADR-0032 Decided 3). 2.49: enclaves among Poseidon's first colonists (claim 030). Plain text in the 2.7 data, so first_mentioned should be 2.7 if promoted.",
       "promotion": null
     },
     {
@@ -161,8 +170,17 @@
       "kind": "location",
       "name": "Micronesia",
       "aliases": [],
-      "mentions": ["2.26"],
-      "note": "2.26: with the Maldives, has largely secured the claim to settle Poseidon but lacks colonists (claims 017-020). Island group on Earth below location granularity.",
+      "mentions": ["2.26", "2.49"],
+      "note": "2.26: with the Maldives, has largely secured the claim to settle Poseidon but lacks colonists (claims 017-020). 2.49: enclaves among its first colonists (claim 030). Island group on Earth.",
+      "promotion": null
+    },
+    {
+      "id": "candidate:new-jerusalem",
+      "kind": "location",
+      "name": "New Jerusalem",
+      "aliases": [],
+      "mentions": ["2.45"],
+      "note": "2.45: Cranston's territory, where Howard's whiskey arrives despite Cranston's ban (claims 018, 020-021). Kind of place and host system not stated; plain text in 2.45 data.",
       "promotion": null
     },
     {
@@ -170,8 +188,8 @@
       "kind": "location",
       "name": "New Zealand",
       "aliases": [],
-      "mentions": ["2.18", "2.28"],
-      "note": "2.18: delegate affiliation. 2.28: source of the signal controlling Homer; site of VEHEMENT's apparent tech centre (claims 039, 041-042). Earlier: plain text in 1.41, 1.49 data; first_mentioned 1.41.",
+      "mentions": ["2.18", "2.28", "2.43"],
+      "note": "2.18: delegate affiliation. 2.28: source of Homer's control signal; VEHEMENT tech centre (claims 039, 041-042). 2.43: both ship-buster strikes (claims 021, 026). Plain text in 1.41, 1.49 data.",
       "promotion": null
     },
     {
@@ -220,6 +238,24 @@
       "promotion": null
     },
     {
+      "id": "candidate:rocky",
+      "kind": "technology",
+      "name": "Rocky",
+      "aliases": [],
+      "mentions": ["2.44"],
+      "note": "2.44: Garfield's winged android, his answer to Bullwinkle, flown by moving his mind into it; wrecked in a crash on its first test flight on Ragnarök (claims 029-035).",
+      "promotion": null
+    },
+    {
+      "id": "candidate:saint-lucia",
+      "kind": "location",
+      "name": "Saint Lucia",
+      "aliases": [],
+      "mentions": ["2.49"],
+      "note": "2.49: enclaves among Poseidon's first colonists, with Micronesia, the Maldives and Vanuatu (claim 030). Island nation on Earth below location granularity.",
+      "promotion": null
+    },
+    {
       "id": "candidate:tau-ceti",
       "kind": "location",
       "name": "Tau Ceti",
@@ -244,6 +280,15 @@
       "aliases": [],
       "mentions": ["2.21"],
       "note": "2.21: destination of the bombed food delivery (claims 007-008); place on Earth below location granularity, plain text in summary and states.",
+      "promotion": null
+    },
+    {
+      "id": "candidate:vanuatu",
+      "kind": "location",
+      "name": "Vanuatu",
+      "aliases": [],
+      "mentions": ["2.49"],
+      "note": "2.49: enclaves among Poseidon's first colonists, with Micronesia, the Maldives and Saint Lucia (claim 030). Island nation on Earth below location granularity.",
       "promotion": null
     }
   ]

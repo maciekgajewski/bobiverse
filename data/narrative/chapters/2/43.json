@@ -1,0 +1,67 @@
+{
+  "chapter": "2.43",
+  "title": "43 - An Exchange of Words",
+  "summary": "From [[location:sol]], [[character:riker]] calls [[character:vickers]], who admits he was behind the attacks on Brazil, says he invented the replicant systems that [[organization:free-american-independent-theocratic-hegemony|FAITH]] took without credit, calls [[organization:vehement]] his tool for ending replicant existence, and names [[character:ambassador-gerrold|Ambassador Gerrold]] as a former collaborator. Riker has already aimed [[technology:ship-busters|ship-busters]] at Vickers' farmhouse hideout and at VEHEMENT's headquarters in New Zealand; the impacts vaporize both sites while [[character:bill]], [[character:charles]] and [[character:ralph]] watch by video. Riker then preempts a [[organization:united-nations|UN]] session to announce VEHEMENT's effective end, accuses Gerrold of knowingly backing Vickers, whose campaign drove [[character:homer]] to suicide, and threatens him before cutting the call, telling Charles it was for Homer.",
+  "date": "2178-03",
+  "location_id": "location:sol",
+  "introducing": [
+    {
+      "id": "character:vickers",
+      "name": "Vickers",
+      "species_id": "species:human",
+      "description": "A man on [[location:earth]] who claims to have invented the replicant systems that replicants inhabit and resents [[organization:free-american-independent-theocratic-hegemony|FAITH]] for taking them without credit. He wants replicants gone, uses [[organization:vehement]] as his tool to that end, and was behind the attacks on Brazil.",
+      "current_state": "Hiding in a farmhouse in New Zealand, he admits his part in the Brazil attacks to [[character:riker]] and vows to keep working against replicants. Moments later Riker's [[technology:ship-busters|ship-buster]] vaporizes the area around him, so he is presumed dead, though his death is not stated outright."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:riker",
+      "current_state": "At [[location:sol]], after [[character:vickers]] admits to the Brazil attacks, he destroys Vickers' farmhouse hideout and [[organization:vehement]]'s headquarters in New Zealand with ship-busters. He then announces VEHEMENT's effective end to a [[organization:united-nations|UN]] session and threatens [[character:ambassador-gerrold|Gerrold]] for backing Vickers, acting for [[character:homer]]."
+    },
+    {
+      "entity_id": "organization:vehement",
+      "current_state": "Effectively ended, as [[character:riker]] announces to the [[organization:united-nations|UN]], after his ship-buster strikes destroy its headquarters in New Zealand and the nearby hideout of [[character:vickers]], who used it as his tool against replicants."
+    },
+    {
+      "entity_id": "character:ambassador-gerrold",
+      "current_state": "[[character:vickers]] names him as a former co-worker on replicant systems in Australia. When he accuses [[character:riker]] of striking Earth, Riker answers before the [[organization:united-nations|UN]] by charging him with knowingly backing Vickers, whose campaign drove [[character:homer]] to suicide, and threatens him."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:riker",
+      "role": "lead",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:vickers",
+      "role": "other",
+      "location_id": "location:earth"
+    },
+    {
+      "character_id": "character:ambassador-gerrold",
+      "role": "other",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:bill",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:charles",
+      "role": "other",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:ralph",
+      "role": "other",
+      "location_id": "location:sol"
+    }
+  ],
+  "mentions": [
+    "organization:free-american-independent-theocratic-hegemony",
+    "organization:united-nations",
+    "technology:ship-busters"
+  ]
+}

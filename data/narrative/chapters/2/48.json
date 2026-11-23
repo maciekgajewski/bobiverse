@@ -1,0 +1,44 @@
+{
+  "chapter": "2.48",
+  "title": "48 - Operation",
+  "summary": "At [[location:vulcan]], [[character:dr-sheehy|Bridget]]'s cancer surgery runs long because the tumour has spread further than expected. [[character:howard]] frets from afar, texting [[character:stephane-brodeur|Stéphane]], who has blocked his voice calls, and learns from [[technology:guppi-interface|Guppy]] that [[character:bill]] is busy running [[technology:bullwinkle]]. When the doctors call the outlook positive, Howard breaks down; cancer is curable if caught early, but surgery is still often the only real treatment, and he resolves to look into it. Dialled in on the room phone as Bridget wakes, he sees how close she and Stéphane have become, realises he is an outsider to human life, emails Bill to hurry up with the androids, and vents in his [[technology:vr]].",
+  "date": "2193-09",
+  "location_id": "location:vulcan",
+  "updates": [
+    {
+      "entity_id": "character:howard",
+      "current_state": "Following [[character:dr-sheehy|Bridget]]'s long cancer surgery from afar, he breaks down at the good news and resolves to look into cancer treatment. Seeing her with [[character:stephane-brodeur|Stéphane]], he realises they are a couple and he is an outsider to human life, and emails [[character:bill]] to hurry up with the androids."
+    },
+    {
+      "entity_id": "character:dr-sheehy",
+      "current_state": "At [[location:vulcan]], her surgery for the tumour [[character:howard]] had seen on her scan ran long because it had spread further than expected, but the doctors call the outlook positive. She wakes with [[character:stephane-brodeur|Stéphane]] at her bedside and Howard on the room phone; she and Stéphane are plainly close."
+    },
+    {
+      "entity_id": "character:stephane-brodeur",
+      "current_state": "At [[location:vulcan]], he keeps vigil through [[character:dr-sheehy|Bridget]]'s long cancer surgery, answering [[character:howard]]'s texts after blocking his voice calls, and dials Howard in on the room phone when she wakes. He is plainly attached to her, holding her hand at her bedside."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:howard",
+      "role": "lead",
+      "location_id": "location:omicron2-eridani"
+    },
+    {
+      "character_id": "character:dr-sheehy",
+      "role": "other",
+      "location_id": "location:vulcan"
+    },
+    {
+      "character_id": "character:stephane-brodeur",
+      "role": "other",
+      "location_id": "location:vulcan"
+    }
+  ],
+  "mentions": [
+    "character:bill",
+    "technology:bullwinkle",
+    "technology:guppi-interface",
+    "technology:vr"
+  ]
+}

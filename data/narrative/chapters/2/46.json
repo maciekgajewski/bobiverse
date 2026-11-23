@@ -1,0 +1,59 @@
+{
+  "chapter": "2.46",
+  "title": "46 - Klown Kar Planet",
+  "summary": "[[character:rudy]] reaches [[location:epsilon-indi]] ahead of [[character:edwin]] and, by Bob custom, counts his arrival from his first live [[technology:vr|VR]] session with [[character:riker]], who asks for a report once Rudy has seen [[location:klown-kar-planet|KKP]] up close. From [[character:linus]]'s notes and his own drone flights, Rudy finds the moon's life astonishingly varied, colourful and fiercely competitive, its light and heat partly supplied by the Jovian [[location:epsilon-indi-1]], which Linus has tentatively named Big Top; Linus's automated mining has also left a large stockpile of refined metal in orbit. Visiting Edwin, who is closing on Big Top with the colonists, Rudy proposes domes to keep out the [[species:ickies|ickies]], a flying, leech-like species, and Edwin looks forward to heading back to Earth once he unloads, while Rudy stays.",
+  "date": "2190-02",
+  "location_id": "location:epsilon-indi",
+  "introducing": [
+    {
+      "id": "character:rudy",
+      "name": "Rudy",
+      "description": "A Bob who travels ahead of [[character:edwin]] to [[location:epsilon-indi]] to survey [[location:klown-kar-planet|KKP]] for the colony bound there, and who is to stay on in the system after Edwin leaves.",
+      "current_state": "Arrived at [[location:epsilon-indi]], counting his arrival by Bob custom from his first live session with [[character:riker]], he surveys [[location:klown-kar-planet]] from [[character:linus]]'s notes and his own drones. He judges its ecosystem fiercely competitive and leans towards domes for the colony."
+    },
+    {
+      "id": "character:edwin",
+      "name": "Edwin",
+      "description": "A Bob who carries colonists to [[location:epsilon-indi]], with [[character:rudy]] scouting ahead. His VR is a living area whose huge windows show the real view outside his vessel.",
+      "current_state": "Several million miles out and approaching orbital insertion around [[location:epsilon-indi-1|Big Top]], he jokes that the colonists may demand to be taken back once they see [[location:klown-kar-planet|KKP]]. Once he unloads them, he is to return to Earth."
+    },
+    {
+      "id": "species:ickies",
+      "name": "Ickies",
+      "homeworld_id": "location:klown-kar-planet",
+      "description": "A flying, leech-like creature with multiple suckers on [[location:klown-kar-planet|KKP]], given its species name by [[character:linus]]. [[character:rudy]] finds the name apt and wants domes for the colony partly to keep them out."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "location:klown-kar-planet",
+      "state": "Its odd light cycles have bred life in a huge range of phyla, with several kinds of photosynthesis and a riot of colours, even in its oceans. Lit and warmed by its Jovian primary too, it barely separates day, night and season. With colonists arriving, [[character:rudy]] leans towards domes against [[species:ickies]]."
+    },
+    {
+      "entity_id": "location:epsilon-indi-1",
+      "state": "[[character:linus]] has tentatively named it Big Top, though [[character:rudy]] doubts that name, or Klown Kar Planet, will survive the colony's first general meeting."
+    },
+    {
+      "entity_id": "location:epsilon-indi",
+      "state": "Though the system is not rich, mining drones and an autofactory that [[character:linus]] left in orbit with a beacon have refined asteroid ore into several hundred thousand tons of metal, a good start for the colony."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:rudy",
+      "role": "lead",
+      "location_id": "location:epsilon-indi"
+    },
+    {
+      "character_id": "character:riker",
+      "role": "other",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:edwin",
+      "role": "other",
+      "location_id": "location:epsilon-indi"
+    }
+  ],
+  "mentions": ["character:linus", "technology:vr"]
+}

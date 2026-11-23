@@ -1,0 +1,75 @@
+{
+  "chapter": "2.49",
+  "title": "49 - Arrival",
+  "summary": "In polar orbit over [[location:eta-cassiopeiae-3|Poseidon]], an all-ocean world whose sea life includes huge tentacled [[species:kraken|krakens]], [[character:mulder]] hosts [[character:marcus]] and [[character:monty]] in his [[technology:vr]], where [[technology:jeeves]] serves coffee and [[character:spike]] gets a scratch. Monty arrives with the first colonists and wakes the setup team, who pick two huge plant mats drifting in the north tropical current, among those Mulder had tagged with beacons, and start ferrying supplies down; colonists from four island communities are to be woken in small groups as living space is built. Floating cities are the long-term plan, and with no land all industry must be in space. When krakens keep killing settlers, Marcus jokes about flying cities built from an [[technology:asteroid-mover]], then adapts plans for an electrified net that adds six months to the schedule and keeps Monty there longer.",
+  "date": "2195-03",
+  "location_id": "location:eta-cassiopeiae-3",
+  "introducing": [
+    {
+      "id": "character:marcus",
+      "name": "Marcus",
+      "description": "Supports the first colony on [[location:eta-cassiopeiae-3|Poseidon]] with [[character:mulder]] and will stay on to help set it up after [[character:monty]] leaves. He plans to build a fleet of human-crewed spaceships so the colonists can travel space on their own, and prefers a virtual Coke to coffee.",
+      "current_state": "After krakens kill settlers on the colony's mats, he adapts library plans for an electrified net that shocks on contact. Building it adds six months to the schedule, and he goes to break the delay to the colonists."
+    },
+    {
+      "id": "character:monty",
+      "name": "Monty",
+      "description": "The colony transport that carries the first colonists to [[location:eta-cassiopeiae-3|Poseidon]]. The setup teams work from him for a long time while the colony is built, and he is to head home once he can leave.",
+      "current_state": "Arrived at Poseidon, he wakes the Setup Management team to begin decanting the colonists. Expecting to be held there about a year, he is now stuck six months longer while the kraken net is built."
+    },
+    {
+      "id": "species:kraken",
+      "name": "Kraken",
+      "homeworld_id": "location:eta-cassiopeiae-3",
+      "description": "A huge tentacled predator of [[location:eta-cassiopeiae-3|Poseidon]]'s ocean, up to about a hundred metres long, that grabs animals off the edges of the floating plant mats and can push a tentacle through a mat to seize prey further in. Noise draws it, and it grows bolder around the colony."
+    },
+    {
+      "id": "event:poseidon-colony-arrival",
+      "name": "Arrival of the first colonists at Poseidon",
+      "date": "2195-03",
+      "location_id": "location:eta-cassiopeiae-3",
+      "description": "The arrival of the colony transport [[character:monty]] at [[location:eta-cassiopeiae-3|Poseidon]] with its first colonists, from enclaves of four island regions. Supported by [[character:mulder]] and [[character:marcus]], the setup team chose two plant mats in the north tropical current, ferried supplies down and would wake colonists in small groups as housing rose.",
+      "participant_ids": [
+        "character:monty",
+        "character:mulder",
+        "character:marcus"
+      ]
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:mulder",
+      "current_state": "In polar orbit over [[location:eta-cassiopeiae-3|Poseidon]], he supports its first colony: he had tagged the largest plant mats with beacons, and he works with [[character:marcus]] and [[character:monty]] as krakens attack the settlers and an electrified net is planned."
+    },
+    {
+      "entity_id": "location:eta-cassiopeiae-3",
+      "state": "Its first colony is set up on two plant mats in the north tropical current; colonists from Micronesia, the Maldives, Vanuatu and Saint Lucia wake in small groups. Krakens have killed settlers, so a net is planned (six more months). Floating cities will follow; with no land, industry is in space."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:mulder",
+      "role": "lead",
+      "location_id": "location:eta-cassiopeiae-3"
+    },
+    {
+      "character_id": "character:marcus",
+      "role": "other",
+      "location_id": "location:eta-cassiopeiae-3"
+    },
+    {
+      "character_id": "character:monty",
+      "role": "other",
+      "location_id": "location:eta-cassiopeiae-3"
+    },
+    {
+      "character_id": "character:spike",
+      "role": "other"
+    }
+  ],
+  "mentions": [
+    "technology:asteroid-mover",
+    "technology:jeeves",
+    "technology:vr"
+  ]
+}

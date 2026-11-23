@@ -1,0 +1,52 @@
+{
+  "chapter": "2.47",
+  "title": "47 - New Village",
+  "summary": "At [[location:delta-eridani]], [[character:bob-replicant]] and [[character:marvin]] watch through a spy drone as almost a hundred of the most troublesome [[species:delta-eridani-natives|Deltan]] adolescents march out of [[location:camelot]] to repopulate one of the old abandoned village sites, sure the idea was their own. The council, [[character:archimedes]] and [[character:arnold]] among it, feigns dismay; Archimedes gets the credit for the plan, though Arnold privately tells him he suspects the bawbe's hand. Bob and Marvin enjoy the reverse psychology, but Marvin fears the new group may one day go to war with Camelot, and Bob privately concedes he may be right.",
+  "date": "2182-09",
+  "location_id": "location:delta-eridani",
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "At [[location:delta-eridani]], he watches through a spy drone with [[character:marvin]] as his reverse-psychology plan sends almost a hundred troublemakers from [[location:camelot]] to an old village site, with [[character:archimedes]] credited. He shrugs off Marvin's fear of a future war but privately agrees."
+    },
+    {
+      "entity_id": "character:marvin",
+      "current_state": "At [[location:delta-eridani]], he watches with [[character:bob-replicant]] through a spy drone as the troublesome adolescents leave [[location:camelot]] for an old village site, and laughs at how well the reverse psychology worked. He worries about side effects, such as the new group going to war with Camelot in a few years."
+    },
+    {
+      "entity_id": "character:archimedes",
+      "current_state": "At [[location:camelot]], the council credits him with conceiving and masterminding the plan that sent almost a hundred troublesome adolescents off to resettle an old village site. He looks alarmed when [[character:arnold]] privately says he suspects the [[character:bob-replicant|bawbe]] was behind it."
+    },
+    {
+      "entity_id": "character:arnold",
+      "current_state": "Still on the council at [[location:camelot]], he congratulates [[character:archimedes]] on sending the troublesome adolescents off to an old village site. Privately he tells Archimedes he suspects the [[character:bob-replicant|bawbe]] had a hand in it, but wants to know no more and is glad it worked."
+    },
+    {
+      "entity_id": "location:camelot",
+      "state": "Two months after the riot, almost a hundred of its most troublesome adolescents, convinced the idea was theirs, have marched off into the bush to repopulate one of the old abandoned village sites, while the council feigned dismay. [[character:archimedes]] is credited with the plan."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead",
+      "location_id": "location:delta-eridani"
+    },
+    {
+      "character_id": "character:marvin",
+      "role": "other",
+      "location_id": "location:delta-eridani"
+    },
+    {
+      "character_id": "character:archimedes",
+      "role": "other",
+      "location_id": "location:camelot"
+    },
+    {
+      "character_id": "character:arnold",
+      "role": "other",
+      "location_id": "location:camelot"
+    }
+  ],
+  "mentions": ["species:delta-eridani-natives"]
+}

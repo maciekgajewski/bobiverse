@@ -1,0 +1,63 @@
+{
+  "chapter": "2.44",
+  "title": "44 - Baseball",
+  "summary": "At [[location:epsilon-eridani]], [[character:bill]] plays a VR game of Scrub baseball with [[character:howard]], [[character:loki]], [[character:marvin]], [[character:dopey]] and other Bobs, then moves to a pub hosted in the Bob-moot matrix, where [[character:thor]], Howard and [[character:mario]] talk shop: [[technology:bullwinkle]], Howard's wish for a physical presence among humans, how far the plates of Bill's [[technology:asteroid-mover|asteroid mover]] can scale, and the Bobiverse's slow growth. Later [[character:garfield]] shows Bill Rocky, a winged android that is his answer to Bullwinkle, and test-flies it on [[location:ee-2|Ragnarök]] by moving his consciousness into it; turbulence breaks its wings, the neural feedback hurts him, and it crashes and is wrecked. Bill and Garfield agree to limit the feedback, and Garfield muses about android bodies replacing HEAVEN hulls, a possible new species he calls Homo siderea.",
+  "date": "2189-03",
+  "location_id": "location:epsilon-eridani",
+  "updates": [
+    {
+      "entity_id": "character:bill",
+      "current_state": "At [[location:epsilon-eridani]] he plays VR baseball with other Bobs and reports in the moot pub that his [[technology:asteroid-mover|asteroid mover]]'s plates could push a body about 500 km across at a hundredth of a gee, with no maximum yet found. He then watches [[character:garfield]]'s android Rocky crash on [[location:ee-2|Ragnarök]] and agrees to limit its neural feedback."
+    },
+    {
+      "entity_id": "character:garfield",
+      "current_state": "At [[location:epsilon-eridani]] he unveils Rocky, a winged android that is his answer to [[technology:bullwinkle]], and test-flies it on [[location:ee-2|Ragnarök]] from inside it; turbulence snaps its wings, the neural feedback hurts him, and it crashes and is wrecked. He and [[character:bill]] agree to limit the feedback."
+    },
+    {
+      "entity_id": "location:ee-2",
+      "state": "Its surface is still bare rock under relatively thin air. On its first test flight there, [[character:garfield]]'s winged android Rocky lost its wings in turbulence and crashed, and [[character:bill]] sent the cargo drone that had landed it to collect the wreck."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bill",
+      "role": "lead",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:howard",
+      "role": "other",
+      "location_id": "location:omicron2-eridani"
+    },
+    {
+      "character_id": "character:loki",
+      "role": "other"
+    },
+    {
+      "character_id": "character:marvin",
+      "role": "other",
+      "location_id": "location:delta-eridani"
+    },
+    {
+      "character_id": "character:dopey",
+      "role": "other",
+      "location_id": "location:gliese-54"
+    },
+    {
+      "character_id": "character:thor",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:mario",
+      "role": "other",
+      "location_id": "location:gliese-54"
+    },
+    {
+      "character_id": "character:garfield",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    }
+  ],
+  "mentions": ["technology:asteroid-mover", "technology:bullwinkle"]
+}

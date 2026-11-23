@@ -1,0 +1,163 @@
+{
+  "chapter": "2.50",
+  "title": "50 - Second Expedition",
+  "summary": "[[character:loki]] leads twelve stealthy Version-4 Bobs back into [[location:82-eridani]] to finish the job the first expedition began, scouting with [[technology:suddar]], drones and [[technology:ship-busters|busters]] linked by [[technology:subspace-communications|SCUT]]. In the [[event:second-battle-at-82-eridani|second battle]], [[character:ernesto-medeiros|Medeiros]] answers with cloaked nukes, drones that shrug off [[technology:plasma-spike|plasma spikes]] and a passive barrage that destroys [[character:jeffrey]], [[character:milton]] and [[character:zeke]]. [[character:verne]] works out how Medeiros steers his [[organization:brazilian-empire|Brazilian]] [[technology:ami|AMIs]]; split tactics and jamming confuse them until Medeiros gives himself away, and a buster death squad released by Verne and [[character:surly]] destroys his two vessels. After an eighteen-hour mop-up [[character:elmer]] declares the system clear, Surly sends out [[technology:hunter-seekers]], and [[character:hank]] identifies the wrecks as an Alpha Centauri design, proof of at least three separate Medeiros launches. The survey finds two habitable planets and a barely habitable moon, and colony ships bound for Vulcan may be redirected here.",
+  "date": "2195-11",
+  "location_id": "location:82-eridani",
+  "introducing": [
+    {
+      "id": "technology:hunter-seekers",
+      "name": "hunter-seekers",
+      "description": "Drones built for long-distance searching, whose [[technology:suddar]] reaches almost four light-hours. Overlapping fields sharpen the picture, so a swarm covers a system in about a week, finds refined metal down to a kilometre underground and passes targets to [[technology:ship-busters|busters]]."
+    },
+    {
+      "id": "character:verne",
+      "name": "Verne",
+      "description": "A Bob in [[character:loki]]'s twelve-Bob squad that returned to [[location:82-eridani]] in November 2195.",
+      "current_state": "He worked out that [[character:ernesto-medeiros|Medeiros]] runs canned battle plans and switches his AMIs between them with commands too short to triangulate. With [[character:surly]] he jammed them and released the death squad, and he later presented the survey of the system's habitable worlds."
+    },
+    {
+      "id": "character:surly",
+      "name": "Surly",
+      "description": "A Bob in [[character:loki]]'s twelve-Bob squad that returned to [[location:82-eridani]] in November 2195.",
+      "current_state": "With [[character:verne]] he ran the radio jammers and released the buster death squad that destroyed [[character:ernesto-medeiros|Medeiros]]' two vessels, then sent out the [[technology:hunter-seekers]] to sweep the system for any remaining Medeiros hardware."
+    },
+    {
+      "id": "character:hank",
+      "name": "Hank",
+      "description": "A Bob in [[character:loki]]'s twelve-Bob squad that returned to [[location:82-eridani]] in November 2195.",
+      "current_state": "He identified the vessels destroyed in the [[event:second-battle-at-82-eridani|second battle]] as the [[character:ernesto-medeiros|Medeiros]] design recorded at Alpha Centauri, one of several slightly different Medeiros designs."
+    },
+    {
+      "id": "event:second-battle-at-82-eridani",
+      "name": "Second Battle at 82 Eridani",
+      "date": "2195-11",
+      "location_id": "location:82-eridani",
+      "description": "The return of [[character:loki]]'s twelve stealthy Version-4 Bobs to [[location:82-eridani]]. Cloaked nukes, spike-proof drones and a passive barrage cost three Bobs, but jamming confused [[character:ernesto-medeiros|Medeiros]]' AMIs until he revealed himself; a buster death squad destroyed his two vessels and an eighteen-hour mop-up followed.",
+      "participant_ids": [
+        "character:loki",
+        "character:elmer",
+        "character:verne",
+        "character:surly",
+        "character:hank",
+        "character:ernesto-medeiros"
+      ]
+    },
+    {
+      "id": "character:jeffrey",
+      "name": "Jeffrey",
+      "description": "A Bob in [[character:loki]]'s twelve-Bob squad that returned to [[location:82-eridani]] in November 2195.",
+      "current_state": "Destroyed in the [[event:second-battle-at-82-eridani|second battle]] when a passive barrage of dense projectiles reached the squad before it could scatter.",
+      "status_events": [
+        {
+          "date": "2195-11",
+          "kind": "died",
+          "event_id": "event:second-battle-at-82-eridani"
+        }
+      ]
+    },
+    {
+      "id": "character:milton",
+      "name": "Milton",
+      "description": "A Bob in [[character:loki]]'s twelve-Bob squad that returned to [[location:82-eridani]] in November 2195.",
+      "current_state": "Destroyed in the [[event:second-battle-at-82-eridani|second battle]] when a passive barrage of dense projectiles reached the squad before it could scatter.",
+      "status_events": [
+        {
+          "date": "2195-11",
+          "kind": "died",
+          "event_id": "event:second-battle-at-82-eridani"
+        }
+      ]
+    },
+    {
+      "id": "character:zeke",
+      "name": "Zeke",
+      "description": "A Bob in [[character:loki]]'s twelve-Bob squad that returned to [[location:82-eridani]] in November 2195.",
+      "current_state": "Destroyed in the [[event:second-battle-at-82-eridani|second battle]] when a passive barrage of dense projectiles reached the squad before it could scatter.",
+      "status_events": [
+        {
+          "date": "2195-11",
+          "kind": "died",
+          "event_id": "event:second-battle-at-82-eridani"
+        }
+      ]
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:loki",
+      "current_state": "Back at [[location:82-eridani]] with twelve Version-4 Bobs, he won the [[event:second-battle-at-82-eridani|second battle]] for the loss of three, destroying both [[character:ernesto-medeiros|Medeiros]] vessels and his drones. He set [[technology:hunter-seekers]] sweeping the system and ordered the survey that may redirect Vulcan-bound colony ships."
+    },
+    {
+      "entity_id": "character:elmer",
+      "current_state": "Flying in [[character:loki]]'s squad at [[location:82-eridani]], he reasoned that a defensive magnetic field made [[character:ernesto-medeiros|Medeiros]]' drones spike-proof and that busters were needed; after the mop-up he declared the system clear and called for phase three."
+    },
+    {
+      "entity_id": "character:ernesto-medeiros",
+      "current_state": "Two of his vessels, and the copies of him running them, were destroyed at [[location:82-eridani]] in November 2195 after jamming made him reveal himself. They match his Alpha Centauri design, and at least three separate launches from Earth with distinct designs mean the number of copies still out there is unknown."
+    },
+    {
+      "entity_id": "location:82-eridani",
+      "state": "[[character:ernesto-medeiros|Medeiros]]' forces were cleared in November 2195 when [[character:loki]]'s squad destroyed his two vessels, and [[technology:hunter-seekers]] are sweeping the system. A survey found two habitable planets and a barely habitable moon; biocompatibility analysis is prioritised before colony ships are possibly redirected here."
+    },
+    {
+      "entity_id": "location:82-eridani-1",
+      "possible_colony_target": true
+    },
+    {
+      "entity_id": "location:82-eridani-2",
+      "state": "Habitable at the outer edge of the zone. One of its two moons is barely habitable, with very thin air that settlers would need to acclimatise to; the air would leak away over geological time but could be topped up with ongoing upkeep.",
+      "possible_colony_target": true
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:loki",
+      "role": "lead",
+      "location_id": "location:82-eridani"
+    },
+    {
+      "character_id": "character:elmer",
+      "role": "other",
+      "location_id": "location:82-eridani"
+    },
+    {
+      "character_id": "character:verne",
+      "role": "other",
+      "location_id": "location:82-eridani"
+    },
+    {
+      "character_id": "character:surly",
+      "role": "other",
+      "location_id": "location:82-eridani"
+    },
+    {
+      "character_id": "character:hank",
+      "role": "other",
+      "location_id": "location:82-eridani"
+    },
+    {
+      "character_id": "character:jeffrey",
+      "role": "other",
+      "location_id": "location:82-eridani"
+    },
+    {
+      "character_id": "character:milton",
+      "role": "other",
+      "location_id": "location:82-eridani"
+    },
+    {
+      "character_id": "character:zeke",
+      "role": "other",
+      "location_id": "location:82-eridani"
+    }
+  ],
+  "mentions": [
+    "organization:brazilian-empire",
+    "technology:ami",
+    "technology:plasma-spike",
+    "technology:ship-busters",
+    "technology:subspace-communications",
+    "technology:suddar"
+  ]
+}
