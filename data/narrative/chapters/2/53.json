@@ -1,0 +1,54 @@
+{
+  "chapter": "2.53",
+  "title": "53 - Testing",
+  "summary": "[[character:hal]] returns to [[location:gliese-877]], where he once died, in a faster new body with a [[technology:surge-drive|SURGE drive]]. He seeds the system with stealthy early-warning drones and sends [[vessel:decoy-1]], an [[technology:ami|AMI]]-run decoy carrying [[character:thor]]'s layered shielding, to lure the [[species:others|Others]]' battle group toward the Death Asteroid. [[character:mario]] watches the live [[technology:subspace-communications|SCUT]] feed with him in [[technology:vr|VR]]. The Death Asteroid strikes sooner than [[character:garfield]] had estimated; the decoy relays a last [[technology:suddar|SUDDAR]] scan showing a puzzling amount of living space, then destroys itself, its shielding having mostly held. Hal sends the results to [[character:bill]] and heads home to [[location:gliese-54]].",
+  "date": "2196-04",
+  "location_id": "location:gliese-877",
+  "introducing": [
+    {
+      "id": "vessel:decoy-1",
+      "name": "Decoy-1",
+      "description": "An [[technology:ami|AMI]]-driven HEAVEN decoy vessel built with [[character:thor]]'s suggested shielding: two depleted-uranium layers alternating with two electrostatic layers. It has redundant control systems with automatic failover, several independent self-destruct mechanisms and booby-traps.",
+      "current_state": "Destroyed at [[location:gliese-877]] in April 2196. Fleeing an Others battle group at 10 G, it was hit by the Death Asteroid sooner than expected, relayed a full [[technology:suddar|SUDDAR]] scan of its pursuers to [[character:hal]], then blew itself up. Its shielding largely held."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:hal",
+      "current_state": "Back at [[location:gliese-877]] in a new body that swaps buster storage for a bigger reactor and [[technology:surge-drive|SURGE drive]] (15 G), he seeded the system with stealth warning drones and saw [[vessel:decoy-1|Decoy-1]] fall to the Death Asteroid; now heading home to [[location:gliese-54]]."
+    },
+    {
+      "entity_id": "character:mario",
+      "current_state": "He joined [[character:hal]] in VR to watch Hal's shielded decoy test at [[location:gliese-877]]. The Death Asteroid struck sooner than [[character:garfield]] had estimated, and he wants [[character:thor]] and Garfield to weigh in on the results at the next moot."
+    },
+    {
+      "entity_id": "location:gliese-877",
+      "state": "The [[species:others|Others]] are building a Dyson sphere here, and craft swarm the orbit inside [[location:gliese-877-1|the innermost planet]]. A battle group with a Death Asteroid guards the inner system. Since 2196 about a hundred stealthy Bob drones watch the periphery for early warning."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:hal",
+      "role": "lead",
+      "location_id": "location:gliese-877"
+    },
+    {
+      "character_id": "character:mario",
+      "role": "other",
+      "location_id": "location:gliese-54"
+    }
+  ],
+  "mentions": [
+    "character:bill",
+    "character:garfield",
+    "character:thor",
+    "species:others",
+    "technology:ami",
+    "technology:jeeves",
+    "technology:ship-busters",
+    "technology:subspace-communications",
+    "technology:suddar",
+    "technology:surge-drive",
+    "technology:vr"
+  ]
+}

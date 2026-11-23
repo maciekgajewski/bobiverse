@@ -1,0 +1,72 @@
+{
+  "chapter": "2.51",
+  "title": "51 - Wedding",
+  "summary": "At [[location:vulcan]], [[character:dr-sheehy|Bridget]] marries [[character:stephane-brodeur|Stéphane]]. [[character:howard]] attends from afar, wishes them well and leaves early, unhappy; [[character:bill]] talks him out of altering his [[technology:vr|VR]] so that he can get drunk. Because his legal standing is unsettled, [[character:ms-benning|Ms. Benning]], a lawyer in [[location:landing]], files his papers in two versions, giving the couple all of the [[organization:enniscorthy-distillery-company|distillery]] as a wedding gift. [[character:dexter]], the Bob who escorted Exodus-7 to Vulcan, accepts Howard's offer to stay on as resident Bob. With no target system chosen yet, and promising to stay reachable by [[technology:subspace-communications|SCUT]], Howard says goodbye: Stéphane asks why he is giving it all up, and a tearful Bridget tells him he is human where it matters.",
+  "date": "2195-04",
+  "location_id": "location:vulcan",
+  "introducing": [
+    {
+      "id": "character:dexter",
+      "name": "Dexter",
+      "description": "A Bob who escorted the colony ship Exodus-7 to [[location:vulcan]] and stayed on there as resident Bob at [[character:howard]]'s invitation.",
+      "current_state": "At [[location:omicron2-eridani]], he takes over from [[character:howard]] as resident Bob for [[location:vulcan]], ready to step in after reading Howard's detailed blog. Visiting Howard in VR, he teases him about joining the Foreign Legion."
+    },
+    {
+      "id": "character:ms-benning",
+      "name": "Ms. Benning",
+      "species_id": "species:human",
+      "description": "One of the two lawyers doing business in [[location:landing]] on [[location:vulcan]].",
+      "current_state": "She completed and filed [[character:howard]]'s papers for his wedding gift to [[character:dr-sheehy|Bridget]] and [[character:stephane-brodeur|Stéphane]] in two versions, one assuming he has legal standing and one assuming he does not."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:howard",
+      "current_state": "After [[character:dr-sheehy|Bridget]] weds [[character:stephane-brodeur|Stéphane]], he gives them all of the [[organization:enniscorthy-distillery-company|distillery]] as a wedding gift, makes [[character:dexter]] resident Bob of Vulcan and says goodbye, leaving to explore with no target chosen yet."
+    },
+    {
+      "entity_id": "character:dr-sheehy",
+      "current_state": "Newly married to [[character:stephane-brodeur|Stéphane]], she is to own the [[organization:enniscorthy-distillery-company|distillery]] with him once they sign [[character:howard]]'s gift papers. Near tears at his leaving, she tells him he is human where it matters and wishes she had met him alive."
+    },
+    {
+      "entity_id": "character:stephane-brodeur",
+      "current_state": "Newly married to [[character:dr-sheehy|Bridget]], he calls [[character:howard]]'s gift of the [[organization:enniscorthy-distillery-company|distillery]] generous but asks why Howard is giving it up, says he will miss him and leaves with the papers."
+    },
+    {
+      "entity_id": "organization:enniscorthy-distillery-company",
+      "current_state": "[[character:howard]] is giving it to [[character:dr-sheehy|Bridget]] and [[character:stephane-brodeur|Stéphane]] as a wedding gift; once they sign, the couple will own all of it. It is becoming one of the biggest companies on [[location:vulcan]]."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:howard",
+      "role": "lead",
+      "location_id": "location:omicron2-eridani"
+    },
+    {
+      "character_id": "character:dr-sheehy",
+      "role": "other",
+      "location_id": "location:vulcan"
+    },
+    {
+      "character_id": "character:stephane-brodeur",
+      "role": "other",
+      "location_id": "location:vulcan"
+    },
+    {
+      "character_id": "character:dexter",
+      "role": "other",
+      "location_id": "location:omicron2-eridani"
+    },
+    {
+      "character_id": "character:ms-benning",
+      "role": "other",
+      "location_id": "location:landing"
+    }
+  ],
+  "mentions": [
+    "character:bill",
+    "technology:subspace-communications",
+    "technology:vr"
+  ]
+}
