@@ -3,6 +3,7 @@ import { chapterLatestDate } from "../../src/narrative/ceiling";
 import {
   generateNarrativeWorld,
   prepareNarrativeCorpus,
+  projectedStatusEventAtCeiling,
   softCeilingProperties,
   type NarrativeCorpus,
   type NarrativeRecord,
@@ -282,6 +283,58 @@ describe("status event validation (ADR-0033)", () => {
       ]),
     ).toThrow(/is not after the previous event/);
   });
+
+  it("rejects overlapping-precision dates that cannot be ordered", () => {
+    // Repro: died 2185-06 then restored 2185 would otherwise be accepted via
+    // chapter order and project as restored at a ceiling that hides the death.
+    expect(() =>
+      prepare([
+        chapter("1.2", "2185-06", {
+          updates: [{ entity_id: alex, status_events: [died("2185-06")] }],
+        }),
+        chapter("1.3", "2185-08", {
+          updates: [{ entity_id: alex, status_events: [restored("2185")] }],
+        }),
+      ]),
+    ).toThrow(/overlaps the previous event at 2185-06.*cannot be ordered/);
+    expect(() =>
+      prepare([
+        chapter("1.2", "2185-08", {
+          updates: [
+            {
+              entity_id: alex,
+              status_events: [died("2185"), restored("2185-06")],
+            },
+          ],
+        }),
+      ]),
+    ).toThrow(/overlaps the previous event at 2185.*cannot be ordered/);
+  });
+
+  it("accepts equal dates in chapter or array order", () => {
+    expect(() =>
+      prepare([
+        chapter("1.2", "2185-06", {
+          updates: [
+            {
+              entity_id: alex,
+              status_events: [died("2185-06"), restored("2185-06")],
+            },
+          ],
+        }),
+      ]),
+    ).not.toThrow();
+    expect(() =>
+      prepare([
+        chapter("1.2", "2185-06", {
+          updates: [{ entity_id: alex, status_events: [died("2185-06")] }],
+        }),
+        chapter("1.3", "2185-08", {
+          updates: [{ entity_id: alex, status_events: [restored("2185-06")] }],
+        }),
+      ]),
+    ).not.toThrow();
+  });
 });
 
 describe("status event projection (ADR-0033)", () => {
@@ -363,6 +416,32 @@ describe("status event projection (ADR-0033)", () => {
       date: "2185-06",
       kind: "restored_from_backup",
     });
+  });
+
+  it("stops projection at the first event not known at the ceiling", () => {
+    // Repro: at read-through 1.3 with soft ceiling 2185-03, a year-dated
+    // restore must not show while the preceding month-dated death is hidden.
+    expect(
+      projectedStatusEventAtCeiling(
+        [died("2185-06"), restored("2185")],
+        "2185-03",
+      ),
+    ).toBeUndefined();
+    // On a comparable later restore, stop at the first unknown event rather
+    // than skipping to a still-later known one (there is none here; the
+    // restore itself is the cut).
+    expect(
+      projectedStatusEventAtCeiling(
+        [died("2185-06"), restored("2186-01")],
+        "2185-06",
+      ),
+    ).toEqual({ date: "2185-06", kind: "died" });
+    expect(
+      projectedStatusEventAtCeiling(
+        [died("2185-06"), restored("2186-01")],
+        "2186-01",
+      ),
+    ).toEqual({ date: "2186-01", kind: "restored_from_backup" });
   });
 
   it("does not treat authored status_events as a replacing soft-ceiling property", () => {

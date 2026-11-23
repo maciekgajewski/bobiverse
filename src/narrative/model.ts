@@ -1446,13 +1446,26 @@ function assertAndAccumulateStatusEvents(
         }
       }
       const previous = list.at(-1);
-      const moment = { date, sourceChapter };
       if (previous) {
-        const ordering = compareNarrativeMoments(
-          { date: previous.date, sourceChapter: previous.sourceChapter },
-          moment,
+        const dateOrdering = compareNarrativeDates(previous.date, date);
+        if (dateOrdering === null) {
+          throw chapterSemanticError(
+            sourceChapter,
+            eventPointer,
+            `status event at ${date} overlaps the previous event at ${previous.date} (${previous.sourceChapter}) and cannot be ordered.`,
+          );
+        }
+        const chapterOrdering = compareNarrativeChapters(
+          previous.sourceChapter,
+          sourceChapter,
         );
-        if (ordering === null || ordering > 0) {
+        const afterInChapterOrArray =
+          chapterOrdering < 0 ||
+          (chapterOrdering === 0 && previous.index < index);
+        if (
+          dateOrdering > 0 ||
+          (dateOrdering === 0 && !afterInChapterOrArray)
+        ) {
           throw chapterSemanticError(
             sourceChapter,
             eventPointer,
@@ -1528,6 +1541,31 @@ function accumulateWriteStatusEvents(
   accumulated.set(entityId, list);
 }
 
+/**
+ * Latest event of the longest prefix known at the soft ceiling, stopping at
+ * the first event not yet known. Exported so tests can pin the overlapping-
+ * precision repro without preparing an invalid corpus.
+ */
+export function projectedStatusEventAtCeiling(
+  events: readonly NarrativeStatusEvent[],
+  softCeiling: string,
+): NarrativeStatusEvent | undefined {
+  const latest = latestKnownStatusEventInPrefix(events, softCeiling);
+  return latest ? publicStatusEvent(latest) : undefined;
+}
+
+function latestKnownStatusEventInPrefix<T extends { date: string }>(
+  list: readonly T[],
+  softCeiling: string,
+): T | undefined {
+  let latest: T | undefined;
+  for (const event of list) {
+    if (!isKnownAtCeiling(event.date, softCeiling)) break;
+    latest = event;
+  }
+  return latest;
+}
+
 function assignProjectedStatusEvents(
   byId: Map<string, NarrativeEntity>,
   accumulated: Map<string, AccumulatedStatusEvent[]>,
@@ -1536,10 +1574,7 @@ function assignProjectedStatusEvents(
   for (const [id, list] of accumulated) {
     const entity = byId.get(id);
     if (!entity) continue;
-    const remaining = list.filter((event) =>
-      isKnownAtCeiling(event.date, softCeiling),
-    );
-    const latest = remaining.at(-1);
+    const latest = latestKnownStatusEventInPrefix(list, softCeiling);
     if (latest) entity.status_event = publicStatusEvent(latest);
     else delete entity.status_event;
   }

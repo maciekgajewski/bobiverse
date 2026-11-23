@@ -851,8 +851,8 @@ in `design-principles.md`.
 used; the properties in `softCeilingProperties` (`state`, `current_state`, `colony_of`,
 `possible_colony_target`) take the latest-dated write known at `softCeiling`
 (`isKnownAtCeiling`, later-read winning ties) and are absent when none is known;
-a character's `status_event` is the latest remaining status event after
-hard-ceiling accumulation and soft-ceiling date filtering (ADR-0033), not a
+a character's `status_event` is the latest event of the longest prefix of
+accumulated status events known at the soft ceiling (ADR-0033), not a
 replacing soft-ceiling property; every other property, including `name`,
 `description`, `visual_description`, `picture_id`, structural location fields
 and every event field, takes the latest-read write. An entity is in `entities` only from its earliest known

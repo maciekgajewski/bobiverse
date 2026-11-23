@@ -101,7 +101,7 @@ class ExcerptAndSummaryTest(unittest.TestCase):
             [
                 "Checking formatting...",
                 "All good so far",
-                "Error: death_date write is dated after the death",
+                "Error: status event date 2165-09 must be on or before the chapter date 2165-08",
                 "FAIL src/narrative/model.ts",
                 "more context",
             ]
@@ -110,7 +110,7 @@ class ExcerptAndSummaryTest(unittest.TestCase):
         self.assertEqual(
             excerpt,
             [
-                "Error: death_date write is dated after the death",
+                "Error: status event date 2165-09 must be on or before the chapter date 2165-08",
                 "FAIL src/narrative/model.ts",
             ],
         )

@@ -319,6 +319,13 @@ has no hits.
   header 2133-08-17), which `isNarrativeDateEligible` would reject.
 - No new e2e specs. Temporary Playwright configs used ports 4211 and 4210,
   then were deleted.
+- Review of `5155f22` requested changes (one blocker): the merged-list
+  check now requires `compareNarrativeDates` to be non-null and ≤ 0, and
+  projection takes the longest known prefix (tests include the 2185-06 /
+  2185 repro). The `test_extraction_check.py` sample log line now uses a
+  current validator message, and `migrate_record` raises if a write has
+  only `death_event_id`. Optional Date-view stepper stops were skipped to
+  keep the review-fix scope small.
 
 ## Validation results
 
@@ -341,3 +348,17 @@ Full run on this branch, 2026-11-23, worktree
   events, 1:1 mapping, no other chapter-data meaning changes. Files:
   `1/2.json`, `1/13.json`, `1/47.json`, `1/51.json`, `1/60.json`,
   `2/37.json`, `2/38.json`.
+
+Review fix on the same branch, 2026-11-23, after `5155f22`:
+
+- Fast checks: `python3 scripts/tasks.py check`, `format:check`, `lint`
+  (same pre-existing AboutDialog warning), `typecheck`, `data:test`
+  (136 tests), `data:validate`, `narrative:manifest` then
+  `narrative:validate` (101 chapters, 27 candidates), `build`,
+  `git diff --check`: pass. `npm test`: 66 files, 867 tests passed.
+- Playwright, one worker, no retries, temporary configs on ports 4211
+  and 4210, never 5173: Chromium 95 passed, 4 skipped; Firefox 95
+  passed, 4 skipped; WebKit 96 passed, 3 skipped. CSP suite: 3 passed.
+  Temporary configs deleted afterwards.
+- Migration proof (`--prove --base cf219fb`): still 7 files, 14=14,
+  PROOF OK.

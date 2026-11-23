@@ -22,13 +22,19 @@ CHAPTERS_ROOT = Path("data/narrative/chapters")
 
 
 def status_event_from_death(record: dict[str, Any]) -> dict[str, Any] | None:
+    if "death_date" not in record and "death_event_id" not in record:
+        return None
     death_date = record.get("death_date")
     death_event_id = record.get("death_event_id")
-    if death_date is None and death_event_id is None:
-        return None
+    label = record.get("id") or record.get("entity_id")
     if not isinstance(death_date, str):
+        if "death_event_id" in record and "death_date" not in record:
+            raise SystemExit(
+                f"cannot migrate write {label}: "
+                f"death_event_id is present without death_date"
+            )
         raise SystemExit(
-            f"cannot migrate write {record.get('id') or record.get('entity_id')}: "
+            f"cannot migrate write {label}: "
             f"expected a non-null death_date, got {death_date!r}"
         )
     event: dict[str, Any] = {"date": death_date, "kind": "died"}

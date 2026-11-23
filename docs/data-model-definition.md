@@ -1921,10 +1921,14 @@ been seeded or introduced. Character life status is an ordered `status_events` l
 repeat earlier events and cannot clear the list with `null`. Each event has a `date`,
 a `kind` of `died` or `restored_from_backup`, an optional `backup_date` on a restore,
 and an optional `event_id` on a death. The event takes effect at its own `date` once
-its revealing chapter is inside Read through; current status is the latest remaining
-event known at the soft ceiling (`status_event` on the projected character). The
+its revealing chapter is inside Read through; current status is the latest event of
+the longest prefix of accumulated events known at the soft ceiling (`status_event`
+on the projected character), stopping at the first event not yet known. The
 chapter file is the reveal key. Each event `date` must be on or before the revealing
-chapter's header `date`. `backup_date`, when present, must be on or before the
+chapter's header `date`. Consecutive events in the merged list must have comparable
+dates (`compareNarrativeDates` non-null and ≤ 0); overlapping unequal-precision
+dates are rejected, and equal dates fall back to chapter or array order.
+`backup_date`, when present, must be on or before the
 restore date. When a `died` event names an `event_id` and that event has a `date`,
 the two canonical dates must be identical. `restored_from_backup` is allowed only
 immediately after `died`; `died` is allowed when the list is empty so far or
