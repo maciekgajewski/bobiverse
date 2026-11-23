@@ -1,6 +1,6 @@
 # BOB-20261123-28975N: correct Book 2 chapter_count to 77
 
-Status: In progress
+Status: Done
 Phase: 2 (narrative foundation and chapter timeline; responsive shell)
 Last updated: 2026-11-23
 
@@ -83,3 +83,8 @@ wrong.
 ## Log
 
 - 2026-11-23: implemented on a branch from master `96bc6d4`.
+
+- The manager approved reviewed head
+  `8e14f09a3048e4aec24aa72923fc8a74a07a7ee7` on 2026-11-23 and gave the go
+  to land. Status set to Done in this docs-only recording commit; landing
+  follows.
