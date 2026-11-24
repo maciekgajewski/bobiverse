@@ -36,8 +36,14 @@
       "current_state": "In polar orbit over [[location:eta-cassiopeiae-3|Poseidon]], he supports its first colony: he had tagged the largest plant mats with beacons, and he works with [[character:marcus]] and [[character:monty]] as krakens attack the settlers and an electrified net is planned."
     },
     {
+      "entity_id": "location:eta-cassiopeiae",
+      "description": "A binary system 19.5 light-years from [[location:epsilon-eridani|Epsilon Eridani]], with the Sun-like [[location:eta-cassiopeiae-a|EC-A]] and [[location:eta-cassiopeiae-b|a long-period companion]]. It has five rocky planets and no Jovians; [[character:mulder]] thinks the companion and the missing Jovian swept it clean. Its third planet, [[location:eta-cassiopeiae-3|Poseidon]], now hosts a human colony on floating plant mats."
+    },
+    {
       "entity_id": "location:eta-cassiopeiae-3",
-      "state": "Its first colony is set up on two plant mats in the north tropical current; colonists from Micronesia, the Maldives, Vanuatu and Saint Lucia wake in small groups. Krakens have killed settlers, so a net is planned (six more months). Floating cities will follow; with no land, industry is in space."
+      "state": "Its first colony is set up on two plant mats in the north tropical current; colonists from Micronesia, the Maldives, Vanuatu and Saint Lucia wake in small groups. Krakens have killed settlers, so a net is planned (six more months). Floating cities will follow; with no land, industry is in space.",
+      "colony_of": ["species:human"],
+      "possible_colony_target": false
     }
   ],
   "appearances": [

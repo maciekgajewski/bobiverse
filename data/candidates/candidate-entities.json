@@ -95,15 +95,6 @@
       "promotion": null
     },
     {
-      "id": "candidate:bronto",
-      "kind": "species",
-      "name": "Bronto",
-      "aliases": [],
-      "mentions": ["2.25", "2.29"],
-      "note": "2.25: native Vulcan animal; one killed, meat on the menu (claims 018-022, 026). 2.29: council approves bronto meat (claims 035-036). Earlier: plain text in 2.2 data; first_mentioned 2.2.",
-      "promotion": null
-    },
-    {
       "id": "candidate:bruce",
       "kind": "character",
       "name": "Bruce",
@@ -284,15 +275,6 @@
       "promotion": null
     },
     {
-      "id": "candidate:gorilloid",
-      "kind": "species",
-      "name": "Gorilloid",
-      "aliases": [],
-      "mentions": ["2.56", "2.65", "2.71"],
-      "note": "2.56: threat down, fewer child deaths (016). 2.65: fewer gorilloids, Caerleon safer (019). 2.71: may deter village splits (021). Plain text 1.35-2.19; first_mentioned 1.35 if promoted.",
-      "promotion": null
-    },
-    {
       "id": "candidate:groggery",
       "kind": "location",
       "name": "Groggery",
@@ -320,15 +302,6 @@
       "aliases": [],
       "mentions": ["2.59"],
       "note": "2.59: one of Bill's guesses for the setting of Claude's VR beach, which he decides is made up (claim 024).",
-      "promotion": null
-    },
-    {
-      "id": "candidate:hippogriff",
-      "kind": "species",
-      "name": "Hippogriff",
-      "aliases": [],
-      "mentions": ["2.22", "2.71"],
-      "note": "2.22: Deltan predator; nest gone and area unclaimed (009, 014). 2.71: may deter village splits (021). Plain text in 1.27; first_mentioned 1.27 if promoted.",
       "promotion": null
     },
     {
@@ -434,15 +407,6 @@
       "aliases": [],
       "mentions": ["2.15", "2.24"],
       "note": "2.15: one of the ten systems on the SCUT connection list; bare list entry, no role (claim 016). 2.24: Marvin's destination, not yet reached (claim 010).",
-      "promotion": null
-    },
-    {
-      "id": "candidate:raptor",
-      "kind": "species",
-      "name": "Raptor",
-      "aliases": [],
-      "mentions": ["2.29"],
-      "note": "2.29: pack breaches Landing's fence, downs a drone, digs out (claims 007, 017-023). Earlier: plain text in 2.2, 2.5, 2.16, 2.25 data; first_mentioned 2.2.",
       "promotion": null
     },
     {

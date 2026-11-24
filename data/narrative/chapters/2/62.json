@@ -18,13 +18,7 @@
       "current_state": "He is staying to support the [[location:eta-cassiopeiae-3|Poseidon]] colony. He expects to test a small airborne-city prototype with triple redundancy and other fail-safes in about six months."
     },
     {
-      "entity_id": "location:eta-cassiopeiae",
-      "description": "A binary system 19.5 light-years from [[location:epsilon-eridani|Epsilon Eridani]], with the Sun-like [[location:eta-cassiopeiae-a|EC-A]] and [[location:eta-cassiopeiae-b|a long-period companion]]. It has five rocky planets and no Jovians; [[character:mulder]] thinks the companion and the missing Jovian swept it clean. Its third planet, [[location:eta-cassiopeiae-3|Poseidon]], now hosts a human colony on floating plant mats."
-    },
-    {
       "entity_id": "location:eta-cassiopeiae-3",
-      "colony_of": ["species:human"],
-      "possible_colony_target": false,
       "state": "Three colonies on floating plant mats are operating, and two cities on the ocean surface are almost finished. No kraken attacks have been reported for three months."
     },
     {
