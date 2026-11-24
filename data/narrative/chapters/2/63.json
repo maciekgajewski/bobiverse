@@ -16,10 +16,10 @@
       "id": "location:delta-pavonis",
       "name": "Delta Pavonis",
       "kind": "star_system",
-      "map_status": "unmapped",
       "first_mentioned": "2.59",
       "description": "A metal-rich star system near [[location:gamma-pavonis]], about as far from it as [[location:gliese-877]]. An easily mined asteroid belt lies inside its first gas giant; its fourth planet is home to the [[species:pav|Pav]]. [[character:bill]] flagged it as a likely [[species:others|Others]] target before [[character:jacques]] came.",
-      "state": "[[character:jacques]] has found ample resources and is building up industry."
+      "state": "[[character:jacques]] has found ample resources and is building up industry.",
+      "astronomy_object_id": "stellar-system-004824"
     },
     {
       "id": "location:delta-pavonis-4",
