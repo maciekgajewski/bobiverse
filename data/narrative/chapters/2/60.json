@@ -1,0 +1,49 @@
+{
+  "chapter": "2.60",
+  "title": "60 - Arrival",
+  "summary": "[[character:claude]] reaches [[location:gamma-pavonis]] half hoping, after his talk with [[character:bill]], to find nothing worth defending. Instead its F8V star, much like [[location:sol|Sol]], has a beautiful blue-green planet with four moons in its habitable zone. Orbital checks show no sign of an industrial civilization; he emails Bill and deploys [[technology:planetary-exploration-drone|exploration drones]], which the newest Heaven vessels carry by [[character:mario]]'s decision so a system can be surveyed before mining and manufacturing begin. After five days he reports no intelligence and an exceptionally rich biosphere: an ideal colony target, but on the [[species:others|Others]]' doorstep. He suspects the star's low metallicity is why the Others chose NN 4285 instead, but with GL 902 more than two light-years farther out he doubts they will pass Gamma Pavonis again. Confident of finding enough resources, he moves on to his next phase. Bill visits in VR. From Bobs' reports and Mario's own observations at [[location:zeta-tucanae]] and [[location:beta-hydri]], the Others seem to harvest roughly one system each decade or two, though how long they have been doing so is unclear. Jacques will reach Delta Pavonis within a year and a half, and since it lies about as far from Gamma Pavonis as [[location:gliese-877|GL 877]], anything he launches could arrive as soon as the Others, giving Claude hope of reinforcements.",
+  "date": "2205-05",
+  "location_id": "location:gamma-pavonis",
+  "introducing": [
+    {
+      "id": "location:gamma-pavonis",
+      "name": "Gamma Pavonis",
+      "kind": "star_system",
+      "map_status": "unmapped",
+      "first_mentioned": "2.59",
+      "description": "A star system with a relatively metal-poor F8V star slightly larger and hotter than [[location:sol|Sol]], so its habitable zone lies a little farther out. Its main planet, about 100 million miles out, is blue-green with white cloud, one large and three small moons, active plate tectonics, mild UV and a rich, varied biosphere without intelligent life. [[character:bill]] flagged it as a likely [[species:others|Others]] target; [[character:claude]] surveyed it first.",
+      "state": "[[character:claude]]'s survey marks it as an ideal colony target with no intelligent life, but he and [[character:bill]] expect the [[species:others|Others]] to come for it."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:claude",
+      "current_state": "At [[location:gamma-pavonis]] after a five-day survey, he has reported a rich, intelligence-free colony world to [[character:bill]] and is moving on to his next phase, expecting enough resources despite the star's low metallicity."
+    },
+    {
+      "entity_id": "character:bill",
+      "current_state": "From scout reports and [[character:mario]]'s observations he estimates the [[species:others|Others]] harvest roughly one system each decade or two. He tells [[character:claude]] that Jacques, due at Delta Pavonis within a year and a half, could send reinforcements in time."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:claude",
+      "role": "lead",
+      "location_id": "location:gamma-pavonis"
+    },
+    {
+      "character_id": "character:bill",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    }
+  ],
+  "mentions": [
+    "location:sol",
+    "technology:planetary-exploration-drone",
+    "character:mario",
+    "species:others",
+    "location:zeta-tucanae",
+    "location:beta-hydri",
+    "location:gliese-877"
+  ]
+}

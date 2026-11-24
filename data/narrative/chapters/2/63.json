@@ -1,0 +1,75 @@
+{
+  "chapter": "2.63",
+  "title": "63 - The Pav",
+  "summary": "From orbit [[character:jacques]] sees city lights on the night side of [[location:delta-pavonis-4]]: an industrial civilization, roughly Victorian in level and already pouring smoke into the air, that he fears the [[species:others|Others]] will soon wipe out. Lacking a better word, he calls its people the [[species:pav|Pav]]. [[character:bill]] answers his survey report in [[technology:vr|VR]]. He thinks [[location:gamma-pavonis]], with no sentient life found by [[character:claude]], will probably be hit first, and that Jacques could then help; meanwhile he should build [[vessel:version-5-heaven|Oliver's dreadnoughts]]. Jacques agrees but will also construct two colony ships to [[character:riker]]'s design, which Riker's experience should let him finish in half the time, to get some Pav away if the Others come. Bill, unsure whether the idea is brilliant or foolish, wants to put it to a moot. Jacques has [[technology:guppi-interface|GUPPI]], unchanged in manner since Heaven-1, send every scout except the planetary exploration ones to find autofactory sites; better [[technology:suddar|SUDDAR]] and [[technology:ami|AMIs]] let him delegate the search, and his [[technology:planetary-exploration-drone|exploration scouts]] are already on the planet. The Pav look like six-foot meerkats, walk upright or on all fours, wear clothes mostly for ornament and pockets, live in states with human-like governments, and form households of as many as eight adults rather than couples. In a large city of a country like early America, [[technology:roamers|ROAMers]] scan bookstore stock at night and drones listen in at reading clubs that serve the many who cannot read; within a month Jacques has a working vocabulary of Tinozj, the language of the people who call themselves Zjentfen. His scouts find easy pickings in the asteroid belt inside the first gas giant, and, as [[character:bob-replicant|Bob]] taught, he has his [[technology:3d-printers|printers]] make printers first. He will hear the moot out, but he will build the colony ships regardless.",
+  "date": "2207-02",
+  "location_id": "location:delta-pavonis",
+  "introducing": [
+    {
+      "id": "character:jacques",
+      "name": "Jacques",
+      "first_mentioned": "2.59",
+      "description": "A Bob scout in [[character:mario]]'s survey program, sent to Delta Pavonis. On arrival he finds the industrial [[species:pav|Pav]] and resolves to help [[character:claude]] at [[location:gamma-pavonis]] and to save some Pav from the [[species:others|Others]].",
+      "current_state": "He is studying the [[species:pav|Pav]] covertly, has a working vocabulary of Tinozj, the Zjentfen language, and has started multiplying printers. He plans warships and, whatever the moot says, colony ships to evacuate some Pav."
+    },
+    {
+      "id": "location:delta-pavonis",
+      "name": "Delta Pavonis",
+      "kind": "star_system",
+      "map_status": "unmapped",
+      "first_mentioned": "2.59",
+      "description": "A metal-rich star system near [[location:gamma-pavonis]], about as far from it as [[location:gliese-877]]. An easily mined asteroid belt lies inside its first gas giant; its fourth planet is home to the [[species:pav|Pav]]. [[character:bill]] flagged it as a likely [[species:others|Others]] target before [[character:jacques]] came.",
+      "state": "[[character:jacques]] has found ample resources and is building up industry."
+    },
+    {
+      "id": "location:delta-pavonis-4",
+      "name": "Delta Pavonis 4",
+      "kind": "planet",
+      "parent_location_id": "location:delta-pavonis",
+      "parent_relation": "orbits",
+      "orbital_order": 4,
+      "description": "The fourth planet of [[location:delta-pavonis]] and homeworld of the [[species:pav|Pav]], an industrial civilization of many states whose lights mark the night side and whose smoke is starting to warm the planet.",
+      "state": "[[character:jacques]]'s scouts and drones are studying the Pav in secret."
+    },
+    {
+      "id": "species:pav",
+      "name": "Pav",
+      "homeworld_id": "location:delta-pavonis-4",
+      "description": "The industrial people of [[location:delta-pavonis-4]], provisionally named by [[character:jacques]]. Like six-foot meerkats, they walk upright or on all fours and wear clothing mostly for decoration and pockets. Their states, governments and societies resemble humanity's, but households hold up to eight adults rather than couples. Many are illiterate."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bill",
+      "current_state": "He expects the [[species:others|Others]] to hit Gamma Pavonis first and wants [[character:jacques]] to build dreadnoughts; he is unsure Jacques's evacuation plan is workable and wants to bring it to a moot."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:jacques",
+      "role": "lead",
+      "location_id": "location:delta-pavonis"
+    },
+    {
+      "character_id": "character:bill",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    }
+  ],
+  "mentions": [
+    "technology:vr",
+    "location:gamma-pavonis",
+    "character:claude",
+    "species:others",
+    "vessel:version-5-heaven",
+    "character:riker",
+    "technology:autofactory",
+    "technology:guppi-interface",
+    "technology:suddar",
+    "technology:ami",
+    "technology:planetary-exploration-drone",
+    "technology:roamers",
+    "technology:3d-printers",
+    "character:bob-replicant"
+  ]
+}

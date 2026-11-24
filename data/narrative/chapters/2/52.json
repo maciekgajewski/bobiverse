@@ -35,7 +35,7 @@
     },
     {
       "entity_id": "character:loki",
-      "current_state": "At [[location:82-eridani]] after the [[event:second-battle-at-82-eridani|second battle]], he has [[technology:hunter-seekers]] sweeping the system and is studying the destroyed vessels' wreckage, where he thinks he may already be getting a handle on their cloaking technology."
+      "current_state": "At [[location:82-eridani]] after the [[event:second-battle-at-82-eridani|second battle]], he has [[technology:hunter-seekers]] sweeping the system and is studying the destroyed vessels' wreckage, which he hopes will show how the enemy's cloaking works."
     },
     {
       "entity_id": "location:82-eridani",
@@ -79,6 +79,7 @@
     }
   ],
   "mentions": [
+    "character:cranston",
     "character:howard",
     "event:second-battle-at-82-eridani",
     "location:ee-2",

@@ -1,0 +1,51 @@
+{
+  "chapter": "2.58",
+  "title": "58 - News",
+  "summary": "With under a third of his journey behind him, [[character:howard]] reads an email from [[character:dexter]]. [[character:george-butterworth|Butterworth]] has retired, the system's population has reached about 100,000, ships with human crews are becoming common and the [[technology:kudzu-gardens|farm donuts]] supply a shrinking share of its food. With unexpected spare time, Dexter is building several of [[character:bill]]'s [[technology:asteroid-mover|asteroid movers]]. New Jerusalem is now a democracy: after incriminating videos leaked, [[character:cranston|Cranston]] was forced to resign and the citizens again separated religious from civil authority. Howard is amused, sure that nothing can be traced to him or [[character:riker|Will]], and emails Will for more. Apart from the [[species:others|Others]], he thinks humanity is doing well. Finally he reads the news he had put off: [[character:dr-sheehy|Bridget]] and [[character:stephane-brodeur|Stéphane]] have had a son and named him Howard. Moved to tears, he plans a short note of thanks.",
+  "date": "2198-07",
+  "location_id": "location:omicron2-eridani",
+  "updates": [
+    {
+      "entity_id": "character:howard",
+      "current_state": "Less than one third into his voyage, he hears from [[character:dexter]] about the colony, emails [[character:riker|Will]] for more on New Jerusalem and is moved that [[character:dr-sheehy|Bridget]] and [[character:stephane-brodeur|Stéphane]] named their son Howard; he plans to thank them."
+    },
+    {
+      "entity_id": "character:dexter",
+      "current_state": "He keeps [[character:howard]] informed by email and uses his new spare time to build several of [[character:bill]]'s [[technology:asteroid-mover|asteroid movers]]."
+    },
+    {
+      "entity_id": "character:george-butterworth",
+      "current_state": "He has retired, according to [[character:dexter]]'s report to [[character:howard]]."
+    },
+    {
+      "entity_id": "location:omicron2-eridani",
+      "state": "The colony population has reached about 100,000. Ships with human crews are becoming common, and the [[technology:kudzu-gardens|farm donuts]] provide a shrinking share of its food."
+    },
+    {
+      "entity_id": "character:cranston",
+      "current_state": "Incriminating videos leaked and he was forced to resign; New Jerusalem has since become a democracy with religious and civil authority separated again. He may suspect [[character:howard]] and [[character:riker|Will]], but nothing can be traced to them."
+    },
+    {
+      "entity_id": "character:dr-sheehy",
+      "current_state": "She and [[character:stephane-brodeur|Stéphane]] have had a son and named him Howard."
+    },
+    {
+      "entity_id": "character:stephane-brodeur",
+      "current_state": "He and [[character:dr-sheehy|Bridget]] have had a son and named him Howard."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:howard",
+      "role": "lead",
+      "location_id": "location:omicron2-eridani"
+    }
+  ],
+  "mentions": [
+    "technology:kudzu-gardens",
+    "character:bill",
+    "technology:asteroid-mover",
+    "character:riker",
+    "species:others"
+  ]
+}

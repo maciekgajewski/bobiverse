@@ -1,0 +1,82 @@
+{
+  "chapter": "2.67",
+  "title": "67 - Bad News",
+  "summary": "At [[location:hip-14101]], [[character:howard]] finds no planet worth settling, only a Jovian on the far rim of the habitable zone, and enjoys probing it, since WikiBob shows no one has surveyed a gas giant closely; each new atmospheric drone goes deeper, but about a third are lost. An update from [[character:dexter]] on the colonies, now past a million people with new cities and space industry, also reports that [[character:stephane-brodeur|Stéphane]] is dying of Haliburton’s Encephalopathy, a disease found on [[location:vulcan]] that can attack Earth life, has no cure and kills within six months. Still Stéphane’s friend despite the Bridget affair, Howard writes to the couple and calls on [[character:bill]] and [[character:garfield]], both downcast as the Bobs ready for the [[species:others|Others]] at [[location:delta-pavonis]]. Their mannequin-like android prototype can walk; with proper printer plans one could be built in three months, and Howard asks for the plans to go to Dexter. When the unit is done, Howard calls [[character:dr-sheehy|Bridget]]: worn out and grey, she says Stéphane is rarely lucid, has a couple of weeks at most, and that they have said goodbye. Howard grieves the farewell he will miss and realizes for the first time how strongly he feels for her. In Dexter’s plain library [[technology:vr|VR]], a sign that later Bobs care less about their VR, Dexter shows the finished [[technology:manny|Manny]], tested and left for Howard to activate: a carbon-fiber skeleton with memory-plastic muscles and neural feedback, but bald, pale and stiff-faced.",
+  "date": "2210-12",
+  "location_id": "location:hip-14101",
+  "introducing": [
+    {
+      "id": "location:hip-14101",
+      "name": "HIP 14101",
+      "kind": "star_system",
+      "map_status": "unmapped",
+      "description": "A star system with an appealing star and plenty of metal. A Jovian on the far rim of the habitable zone leaves no room for a terrestrial planet.",
+      "state": "[[character:howard]] is surveying the gas giant. Successive probe designs descend farther into its atmosphere, with roughly one probe in three lost."
+    },
+    {
+      "id": "technology:manny",
+      "name": "Manny",
+      "description": "A humanoid android, the latest prototype of [[character:bill]]’s 65-year on-and-off Android Project, built under [[character:dexter]] for remote operation with neural feedback: memory-plastic muscles on a carbon-fiber skeleton, hairless and mannequin-like, with pale skin, gray eyes and spotty facial control."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:howard",
+      "current_state": "At [[location:hip-14101]] he studies the gas giant. With [[character:stephane-brodeur|Stéphane]] dying, he plans to attend the funeral through the [[technology:manny|Manny]] android, and he now admits to himself his feelings for [[character:dr-sheehy|Bridget]]."
+    },
+    {
+      "entity_id": "character:dexter",
+      "aliases": ["Dex"],
+      "current_state": "He keeps [[character:howard]] informed about the colonies. He has a tested [[technology:manny|android]] ready and is leaving its initial activation to Howard."
+    },
+    {
+      "entity_id": "location:omicron2-eridani",
+      "state": "[[character:dexter]] reports that the colonies have more than a million residents, several new cities and industries operating in space."
+    },
+    {
+      "entity_id": "character:stephane-brodeur",
+      "current_state": "He has untreatable Haliburton’s Encephalopathy and is seldom lucid. [[character:dr-sheehy|Bridget]] says doctors give him at most about two more weeks."
+    },
+    {
+      "entity_id": "character:bill",
+      "current_state": "With [[character:garfield]] he runs the Android Project alongside weapons work for the Delta Pavonis defense; given formal printer plans, a walking prototype could be built in three months."
+    },
+    {
+      "entity_id": "character:garfield",
+      "current_state": "Downcast, he works with [[character:bill]] on the Android Project and other projects while the Bobs prepare for the [[species:others|Others]] at [[location:delta-pavonis]]."
+    },
+    {
+      "entity_id": "character:dr-sheehy",
+      "aliases": ["Bridget", "Bridge"],
+      "current_state": "She is exhausted and grieving as [[character:stephane-brodeur|Stéphane]] declines. They have already said goodbye to each other."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:howard",
+      "role": "lead",
+      "location_id": "location:hip-14101"
+    },
+    {
+      "character_id": "character:bill",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:garfield",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:dr-sheehy",
+      "role": "other",
+      "location_id": "location:vulcan"
+    },
+    {
+      "character_id": "character:dexter",
+      "role": "other",
+      "location_id": "location:omicron2-eridani"
+    }
+  ],
+  "mentions": ["species:others", "location:delta-pavonis", "technology:vr"]
+}
