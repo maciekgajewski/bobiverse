@@ -32,6 +32,14 @@
     {
       "entity_id": "character:diana",
       "current_state": "Now a grandmother. She would report any drone to the elders, and [[character:bob-replicant|Bob]] dislikes her."
+    },
+    {
+      "entity_id": "location:delta-eridani",
+      "description": "A stellar system centered on an orange star cooler than [[location:sol]] but more than two and a half times as large. [[character:bob-replicant]] chose it for its lack of a binary companion, low ultraviolet emissions, long-lived stellar type, and wide potential habitable zone; [[character:bill]] considered it a likely source of habitable planets. Its five inner rocky planets, including [[location:delta-eridani-4|Delta Eridani 4]], lie inside an ore-bearing [[location:delta-eridani-asteroid-belt|asteroid belt]], with five gas giants beyond it. That fourth planet, named Eden, is the homeworld of the [[species:delta-eridani-natives|Deltans]] and the site of the [[event:deltan-colony-battle|battle at the Deltan colony]] and of [[event:first-contact-with-the-deltans|first contact]] with them. Eden is home to the Deltan village of [[location:camelot]]. Eden also hosts the breakaway Deltan village of [[location:caerleon]]."
+    },
+    {
+      "entity_id": "location:delta-eridani-4",
+      "description": "The fourth inner rocky planet in the [[location:delta-eridani]] system, named Eden by [[character:bob-replicant]]'s group as the [[species:delta-eridani-natives|Deltans]]' birthplace. Slightly larger than [[location:earth]], with lower gravity, a somewhat denser atmosphere, and two moons, one of which looks twice as large in its sky as Earth's moon, it has meadows, rocky bluffs, forests of huge brownish trees, and an ecosystem as full as Earth's, including pack-hunting leopard-analogues. The Deltans live at [[location:camelot]], and Eden was the site of [[event:first-contact-with-the-deltans|first contact with the Deltans]], the [[event:deltan-migration]], and the [[event:gorilloid-raid-on-deltan-migration|gorilloid raid]] on the migration. It was the site of the [[event:destruction-of-the-hippogriff-island|destruction of the hippogriff island]]. The second Deltan village is [[location:caerleon]]."
     }
   ],
   "appearances": [

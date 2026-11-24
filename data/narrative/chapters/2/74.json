@@ -34,12 +34,14 @@
     },
     {
       "entity_id": "location:delta-pavonis",
-      "state": "The Others reached the Pav homeworld and left the remaining defenders alone. Bob stealth drones are monitoring the harvest."
+      "state": "The Others reached the Pav homeworld and left the remaining defenders alone. Bob stealth drones are monitoring the harvest.",
+      "description": "A metal-rich star system near [[location:gamma-pavonis]], about as far from it as [[location:gliese-877]]. An easily mined asteroid belt lies inside its first gas giant; [[location:delta-pavonis-4|its fourth planet]] is home to the [[species:pav|Pav]]. [[character:bill]] flagged it as a likely [[species:others|Others]] target before [[character:jacques]] came. Its Pav towns include [[location:mheijrkva]]. It was the site of the [[event:battle-for-delta-pavonis]], in which Jacques was killed. The [[event:pav-evacuation-collection|forced evacuation]] of twenty thousand Pav preceded the [[event:devastation-of-delta-pavonis-4|devastation of the Pav homeworld]]."
     },
     {
       "entity_id": "location:delta-pavonis-4",
       "state": "The Others have swept the entire planet with asteroid weapons and set up large printing operations. Jacques estimates that 90 percent of its biological diversity is permanently lost.",
-      "colony_of": []
+      "colony_of": [],
+      "description": "The fourth planet of [[location:delta-pavonis]] and homeworld of the [[species:pav|Pav]], an industrial civilization of many states whose lights mark the night side and whose smoke is starting to warm the planet. Its towns include the rural settlement of [[location:mheijrkva]]. Ahead of the arrival of the [[species:others|Others]], a [[event:pav-evacuation-collection|forced evacuation]] removed Pav from towns including Mheijrkva. The Others [[event:devastation-of-delta-pavonis-4|devastated the planet]] with asteroid weapons, killing an estimated 500 million to one billion Pav."
     },
     {
       "entity_id": "location:ee-2",

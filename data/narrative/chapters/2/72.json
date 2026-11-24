@@ -53,7 +53,8 @@
     },
     {
       "entity_id": "location:delta-pavonis",
-      "state": "The Others' fleet is still approaching after surviving the Bobs' interception, with power remaining on eight Death Asteroids and on eleven of the carriers."
+      "state": "The Others' fleet is still approaching after surviving the Bobs' interception, with power remaining on eight Death Asteroids and on eleven of the carriers.",
+      "description": "A metal-rich star system near [[location:gamma-pavonis]], about as far from it as [[location:gliese-877]]. An easily mined asteroid belt lies inside its first gas giant; [[location:delta-pavonis-4|its fourth planet]] is home to the [[species:pav|Pav]]. [[character:bill]] flagged it as a likely [[species:others|Others]] target before [[character:jacques]] came. Its Pav towns include [[location:mheijrkva]]. It was the site of the [[event:battle-for-delta-pavonis]], in which Jacques was killed."
     },
     {
       "entity_id": "location:delta-pavonis-4",

@@ -29,7 +29,12 @@
     },
     {
       "entity_id": "location:delta-pavonis-4",
-      "state": "Jacques's covert survey records its life, landscapes, Pav societies and languages ahead of the [[species:others|Others]]. A couple of sightings of his equipment have fed conspiracy rumors among the Pav."
+      "state": "Jacques's covert survey records its life, landscapes, Pav societies and languages ahead of the [[species:others|Others]]. A couple of sightings of his equipment have fed conspiracy rumors among the Pav.",
+      "description": "The fourth planet of [[location:delta-pavonis]] and homeworld of the [[species:pav|Pav]], an industrial civilization of many states whose lights mark the night side and whose smoke is starting to warm the planet. Its towns include the rural settlement of [[location:mheijrkva]]."
+    },
+    {
+      "entity_id": "location:delta-pavonis",
+      "description": "A metal-rich star system near [[location:gamma-pavonis]], about as far from it as [[location:gliese-877]]. An easily mined asteroid belt lies inside its first gas giant; [[location:delta-pavonis-4|its fourth planet]] is home to the [[species:pav|Pav]]. [[character:bill]] flagged it as a likely [[species:others|Others]] target before [[character:jacques]] came. Its Pav towns include [[location:mheijrkva]]."
     }
   ],
   "appearances": [

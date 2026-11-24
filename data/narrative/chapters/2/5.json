@@ -51,11 +51,13 @@
     },
     {
       "entity_id": "location:omicron2-eridani",
-      "state": "[[character:milo]]'s automation has mined the system for a couple of decades. Its first colony, [[location:landing]] on [[location:vulcan]], is ready and receiving the rest of its colonists by shuttle, and [[vessel:exodus-3]] is due in mid-2189."
+      "state": "[[character:milo]]'s automation has mined the system for a couple of decades. Its first colony, [[location:landing]] on [[location:vulcan]], is ready and receiving the rest of its colonists by shuttle, and [[vessel:exodus-3]] is due in mid-2189.",
+      "description": "A triple-star system whose B and C stars orbit each other and whose pair orbits [[location:omicron-eridani-a]] at about 470 AU. Its survey identifies several outer Jovian planets, a probable asteroid belt, and the double planets [[location:vulcan]] and [[location:romulus]]. Vulcan is the site of [[species:human|humanity]]'s first colony beyond the [[location:solar-system]], founded with the [[event:first-colony-ships-arrival|arrival of the first colony ships]] in 2188. The colony's town is [[location:landing]] on Vulcan."
     },
     {
       "entity_id": "location:vulcan",
-      "state": "Its first colony, the town of [[location:landing]], is ready to take in the remaining colonists, who are starting to come down by shuttle. Colonists kill the native raptors that threaten them, and raptors recently killed two people."
+      "state": "Its first colony, the town of [[location:landing]], is ready to take in the remaining colonists, who are starting to come down by shuttle. Colonists kill the native raptors that threaten them, and raptors recently killed two people.",
+      "description": "The larger member of a double planet with [[location:romulus]] in the [[location:omicron2-eridani]] system, also designated OE-1A. On the cool side of the habitable zone but warmed by a thicker, carbon-dioxide-rich atmosphere, it has oceans, oxygen, large green land areas, and trees close enough to Terran ones to serve as building timber; its ecosystem is confirmed to be biocompatible with [[species:human|humans]]. [[character:milo]]'s planetary catalog warned that its prolific, competitive ecosystem would demand defenses; it includes theropod-like predators with shark-like teeth that colonists call raptors and large animals they call brontos. It hosts the first human colony beyond the [[location:solar-system]], founded in 2188 by the [[event:first-colony-ships-arrival|first colony ships]]. Its town is [[location:landing]]."
     }
   ],
   "appearances": [

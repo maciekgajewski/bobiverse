@@ -35,7 +35,8 @@
     },
     {
       "entity_id": "location:gliese-877",
-      "state": "The [[species:others|Others]] are building the start of a Dyson sphere, massive structures spaced evenly around the star on a spherical shell, and the orbit just inside [[location:gliese-877-1|the innermost planet]] teems with fusion drives, radio and SUDDAR traffic and bright craft. Their flotillas destroyed [[character:hal]]'s probes and later ran Hal himself down."
+      "state": "The [[species:others|Others]] are building the start of a Dyson sphere, massive structures spaced evenly around the star on a spherical shell, and the orbit just inside [[location:gliese-877-1|the innermost planet]] teems with fusion drives, radio and SUDDAR traffic and bright craft. Their flotillas destroyed [[character:hal]]'s probes and later ran Hal himself down.",
+      "description": "A single-star system, also written GL-877, around a nondescript star in an unremarkable patch of sky. It has two inner rocky planets, [[location:gliese-877-1]] and [[location:gliese-877-2]], and a single small Jovian, [[location:gliese-877-3]], farther out, and apart from one orbit it is unusually clear of debris. The [[species:others|Others]] are building the first structures of a Dyson sphere around its star, and their flotillas destroyed [[character:hal]]'s probes and ran him down."
     },
     {
       "entity_id": "location:gliese-877-1",
