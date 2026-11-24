@@ -10,14 +10,14 @@
       "name": "Rosa",
       "species_id": "species:delta-eridani-natives",
       "parent_id": "character:archimedes",
-      "description": "A Deltan of [[location:delta-eridani-4|Eden]], child of [[character:archimedes]] and sibling of [[character:buster]] and Pete. Mourns with her father and siblings at [[character:diana]]'s burial, where each of the children lays a white flower in the grave."
+      "description": "A Deltan of [[location:delta-eridani-4|Eden]], a child of [[character:archimedes]] and a sibling of [[character:buster]] and Pete. Mourns with Archimedes and the other children at [[character:diana]]'s burial, where each child lays a white flower in the grave."
     },
     {
       "id": "character:pete-deltan",
       "name": "Pete",
       "species_id": "species:delta-eridani-natives",
       "parent_id": "character:archimedes",
-      "description": "A Deltan of [[location:delta-eridani-4|Eden]], child of [[character:archimedes]] and sibling of [[character:buster]] and [[character:rosa]]. Not the Bob clone Pete. Mourns with his father and siblings at [[character:diana]]'s burial."
+      "description": "A Deltan of [[location:delta-eridani-4|Eden]], a child of [[character:archimedes]] and a sibling of [[character:buster]] and [[character:rosa]]. Not the Bob clone Pete. Mourns with Archimedes and the other children at [[character:diana]]'s burial."
     }
   ],
   "updates": [

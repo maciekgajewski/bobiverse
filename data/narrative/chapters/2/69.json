@@ -47,7 +47,13 @@
     },
     {
       "entity_id": "character:stephane-brodeur",
-      "current_state": "He has died. His funeral mass has taken place and friends and family have gathered to remember him."
+      "current_state": "He has died. His funeral mass has taken place and friends and family have gathered to remember him.",
+      "status_events": [
+        {
+          "date": "2211-01",
+          "kind": "died"
+        }
+      ]
     },
     {
       "entity_id": "character:bill",

@@ -15,7 +15,7 @@
       "name": "Aizzilkva",
       "aliases": [],
       "mentions": ["2.68"],
-      "note": "2.68: Rural Pav town just below ten thousand residents, selected for the planned evacuation (claim 017).",
+      "note": "2.68: Rural Pav town just below ten thousand residents, listed with Mheijrkva (claim 017).",
       "promotion": null
     },
     {
@@ -87,9 +87,11 @@
         "2.64",
         "2.66",
         "2.70",
-        "2.72"
+        "2.72",
+        "2.74",
+        "2.77"
       ],
-      "note": "2.39: VR, 43 Bobs (004). 2.44: baseball (012). 2.52: pub (020). 2.57: Others (035). 2.64: no plan (021). 2.70: weekly (026). 2.72: Bill briefs approaching crews in VR (006).",
+      "note": "Bob gatherings. 2.39 VR, 43 Bobs (004); 2.44 baseball (012); 2.52 pub (020); 2.55 (034); 2.57 Others (035); 2.59 Claude; 2.63 due; 2.64 no plan; 2.66 gloomy; 2.70 weekly; 2.72 VR; 2.74; 2.77.",
       "promotion": null
     },
     {
@@ -220,8 +222,8 @@
       "kind": "location",
       "name": "Dyson Sphere",
       "aliases": [],
-      "mentions": ["2.77"],
-      "note": "2.77: Andrew expects the Others to continue building it despite their plans against Sol (claim 058)",
+      "mentions": ["2.38", "2.39", "2.55", "2.57", "2.77"],
+      "note": "Others' megastructure. Plain mentions 2.38, 2.39, 2.55, 2.57. 2.77: Andrew expects the Others to keep building it despite their Sol plans (claim 058).",
       "promotion": null
     },
     {
@@ -326,7 +328,7 @@
       "name": "Hippogriff",
       "aliases": [],
       "mentions": ["2.22", "2.71"],
-      "note": "2.22: Deltan predator; nest gone and area unclaimed (009, 014). 2.71: Bob wonders if fear of attacks discourages village splits (021).",
+      "note": "2.22: Deltan predator; nest gone and area unclaimed (009, 014). 2.71: may deter village splits (021). Plain text in 1.27; first_mentioned 1.27 if promoted.",
       "promotion": null
     },
     {

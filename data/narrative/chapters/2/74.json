@@ -24,7 +24,13 @@
     },
     {
       "entity_id": "character:jacques",
-      "current_state": "Active again aboard a colony ship, he has no ship of his own. He inventories surviving Bobs and equipment and has enough seed stock to rebuild a basic ecosystem. His two colony ships carry 20,000 Pav in stasis."
+      "current_state": "Active again aboard a colony ship, he has no ship of his own. He inventories surviving Bobs and equipment and has enough seed stock to rebuild a basic ecosystem. His two colony ships carry 20,000 Pav in stasis.",
+      "status_events": [
+        {
+          "date": "2217-05",
+          "kind": "restored_from_backup"
+        }
+      ]
     },
     {
       "entity_id": "location:delta-pavonis",
