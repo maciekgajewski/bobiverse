@@ -2,6 +2,7 @@ import assets from "../../data/narrative/assets.json";
 import speciesPresentation from "../../data/presentation/species.json";
 import zeroState from "../../data/narrative/baseline/zero-state.json";
 import books from "../../data/narrative/books.json";
+import unmappedStarAllowlist from "../../data/config/unmapped-star-allowlist.json";
 import manifest from "../../generated/narrative/chapter-manifest.json";
 import { nearbySystems } from "../domain/data";
 import {
@@ -61,6 +62,8 @@ const rawNarrativeCorpus: NarrativeCorpus = (() => {
     chapters,
     knownAstronomyObjectIds:
       nearbySystems?.systems.map((system) => system.id) ?? [],
+    astronomyCatalogue: nearbySystems?.systems ?? [],
+    unmappedStarAllowlist: unmappedStarAllowlist.entries,
   };
 })();
 
