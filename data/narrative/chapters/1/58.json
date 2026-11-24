@@ -68,6 +68,10 @@
     {
       "entity_id": "technology:vr",
       "description": "A virtual-reality interface developed aboard [[vessel:heaven-1]] to give a bodiless mind sensory input and an embodied experience; its software is still being refined. It provides convincing sensations, a humanlike avatar and shared environments such as libraries, parks and command decks, where users can create objects and play games. [[character:bill]] regards such embodied activity as important to keeping a human sense of self. Bill's upgrades let Bobs interact physically rather than only through video windows, and proprioception can be switched off."
+    },
+    {
+      "entity_id": "location:solar-system",
+      "description": "The planetary system of Sol, home to [[species:human|humanity]] on [[location:earth]], with seven other planets, the [[location:asteroid-belt|asteroid belt]], [[location:kuiper-belt|Kuiper belt]], [[location:oort-cloud|Oort cloud]] and a [[organization:united-states-of-eurasia|USE]] station on [[location:titan]]. Site of the [[event:four-asteroid-diversion|asteroid diversion]] and the [[event:solar-system-war|solar-system war]], it launched the [[event:first-colony-ships-departure|first colony ships]] in 2171."
     }
   ],
   "appearances": [

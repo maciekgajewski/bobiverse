@@ -31,7 +31,7 @@
     },
     {
       "entity_id": "location:alpha-centauri",
-      "description": "A nearby stellar system considered an obvious first destination for an interstellar probe. It is good for resources but has no colonizable or livable planets.",
+      "description": "A nearby stellar system considered an obvious first destination for an interstellar probe. It is good for resources but has no colonizable or livable planets. It pairs [[location:alpha-centauri-a]], with one planet in its comfort zone, and [[location:alpha-centauri-b]], with a small inner planet and two asteroid belts, where the wreckage of a [[organization:united-states-of-eurasia|USE]] vessel is found. [[character:calvin]] and [[character:goku]] destroy a [[organization:brazilian-empire|Brazilian]] probe factory at the A star in a sneak attack.",
       "state": "Overseen by [[character:bart]], a Bob from the Bob factory that [[character:calvin]] and [[character:goku]] set up after destroying the Brazilian installation; early warning systems now monitor the system."
     },
     {

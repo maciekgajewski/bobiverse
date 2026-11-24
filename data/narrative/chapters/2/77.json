@@ -9,7 +9,7 @@
       "id": "location:hip-84051",
       "name": "HIP 84051",
       "kind": "star_system",
-      "description": "A star system in Ara, over forty light-years from [[location:sol|Sol]]. A roaming Bob identified a world there suitable for Pav resettlement.",
+      "description": "A star system in Ara, over forty light-years from [[location:sol|Sol]]. A roaming Bob identified a world there suitable for Pav resettlement. The Pav refugees [[event:pav-refugees-choose-new-world|chose]] its planet [[location:hip-84051-2]] as their new home.",
       "astronomy_object_id": "stellar-system-004437"
     },
     {
@@ -20,7 +20,7 @@
       "parent_relation": "orbits",
       "orbital_order": 2,
       "possible_colony_target": true,
-      "description": "A world with a living ecosystem suitable for the [[species:pav|Pav]]. Its surface gravity is slightly greater than Aszjan's and its atmosphere is thicker. Its life would be unfamiliar to the Pav, but the Bobs expect them to manage.",
+      "description": "A world in [[location:hip-84051]] with a living ecosystem suitable for the [[species:pav|Pav]]. Its surface gravity is slightly greater than Aszjan's and its atmosphere is thicker. Its life would be unfamiliar to the Pav, but the Bobs expect them to manage. The Pav refugees [[event:pav-refugees-choose-new-world|chose it as their new home]].",
       "state": "The UN approved the planet for Pav resettlement, and the refugees’ representatives accepted the offer. Their ships are on the way and the Bobs have promised a temporary camp."
     },
     {
@@ -50,11 +50,13 @@
   "updates": [
     {
       "entity_id": "location:delta-pavonis",
-      "state": "The Others departed after just over four years of extraction, stripping the belt as well as any small moons. Both refugee ships have left. Two Bobs volunteered to stay and survey the damage."
+      "state": "The Others departed after just over four years of extraction, stripping the belt as well as any small moons. Both refugee ships have left. Two Bobs volunteered to stay and survey the damage.",
+      "description": "A metal-rich star system near [[location:gamma-pavonis]], about as far from it as [[location:gliese-877]]. An easily mined asteroid belt lies inside its first gas giant; [[location:delta-pavonis-4|its fourth planet]] is home to the [[species:pav|Pav]]. [[character:bill]] flagged it as a likely [[species:others|Others]] target before [[character:jacques]] came. Its Pav towns include [[location:mheijrkva]]. It was the site of the [[event:battle-for-delta-pavonis]], in which Jacques was killed. The [[event:pav-evacuation-collection|forced evacuation]] of twenty thousand Pav preceded the [[event:devastation-of-delta-pavonis-4|devastation of the Pav homeworld]]. The Others stripped the system for just over four years, and the refugees [[event:pav-refugees-choose-new-world|chose a new home]] in [[location:hip-84051]]."
     },
     {
       "entity_id": "location:delta-pavonis-4",
-      "state": "Known to the Pav as Aszjan. Its major cities lie in ruins. Once-green areas have turned brown, oceans appear blotchy gray, and the ice caps have either melted or been covered by dust and soot."
+      "state": "Known to the Pav as Aszjan. Its major cities lie in ruins. Once-green areas have turned brown, oceans appear blotchy gray, and the ice caps have either melted or been covered by dust and soot.",
+      "description": "The fourth planet of [[location:delta-pavonis]] and homeworld of the [[species:pav|Pav]], an industrial civilization of many states whose lights mark the night side and whose smoke is starting to warm the planet. Its towns include the rural settlement of [[location:mheijrkva]]. Ahead of the arrival of the [[species:others|Others]], a [[event:pav-evacuation-collection|forced evacuation]] removed Pav from towns including Mheijrkva. The Others [[event:devastation-of-delta-pavonis-4|devastated the planet]] with asteroid weapons, killing an estimated 500 million to one billion Pav. It is known to the Pav as Aszjan."
     },
     {
       "entity_id": "character:bill",

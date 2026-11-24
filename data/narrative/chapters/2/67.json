@@ -9,7 +9,7 @@
       "id": "location:hip-14101",
       "name": "HIP 14101",
       "kind": "star_system",
-      "description": "A star system with an appealing star and plenty of metal. A Jovian on the far rim of the habitable zone leaves no room for a terrestrial planet.",
+      "description": "A star system with an appealing star and plenty of metal. A Jovian on the far rim of the habitable zone leaves no room for a terrestrial planet. [[character:howard]] surveys its gas giant with successive atmospheric probes.",
       "state": "[[character:howard]] is surveying the gas giant. Successive probe designs descend farther into its atmosphere, with roughly one probe in three lost.",
       "astronomy_object_id": "stellar-system-005581"
     },

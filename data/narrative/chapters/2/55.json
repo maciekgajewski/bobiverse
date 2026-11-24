@@ -25,7 +25,8 @@
     },
     {
       "entity_id": "location:gliese-54",
-      "state": "An [[species:others|Others]] convoy arrived: ten Death Asteroids, some 200 attendants and twenty huge cylindrical hulks, likely cargo ships. [[character:mario]] has left; his stealth drones watch, the contact drone was destroyed. His [[technology:relay-station|relay station]] was built here."
+      "state": "An [[species:others|Others]] convoy arrived: ten Death Asteroids, some 200 attendants and twenty huge cylindrical hulks, likely cargo ships. [[character:mario]] has left; his stealth drones watch, the contact drone was destroyed. His [[technology:relay-station|relay station]] was built here.",
+      "description": "A single-star system whose primary is a small K star, almost a red dwarf. Its metallicity is low and most of its material never aggregated into planets, leaving a single close-in planet and a great deal of space debris; [[character:mario]] finds it not particularly interesting. It was the site of [[event:first-contact-with-the-others|first contact with the Others]], made when their convoy arrived."
     }
   ],
   "appearances": [

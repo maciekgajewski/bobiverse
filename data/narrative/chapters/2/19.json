@@ -46,6 +46,10 @@
     {
       "entity_id": "species:delta-eridani-natives",
       "description": "An intelligent, fire-using native people of [[location:delta-eridani-4|Eden]], named Deltans by [[character:bob-replicant]]. They have bat- and pig-like faces, long spiderish limbs, brownish-gray to orangey-tan fur, patterned heads, mobile expressive ears and a guttural language, and live in hearth-based family groups called hexghi. In an annual breeding season, males compete for females through mostly harmless wrestling, mock battles, tests of skill and bluster, and a child is named in a ceremony when it speaks its first word, since they see language as what sets them apart from animals. Some have built an altar to Bob, whom they call the bawbe, but they show little awe for his divine authority and are quick to question; [[character:marvin]]'s research suggests they first arose in a gorilloid-free part of their continent, where a predator much bigger than a gorilloid, which Bob and Marvin take to be the giant hippogriff, once hunted them almost to extinction."
+    },
+    {
+      "entity_id": "location:delta-eridani-4",
+      "description": "The fourth inner rocky planet in the [[location:delta-eridani]] system, named Eden by [[character:bob-replicant]]'s group as the [[species:delta-eridani-natives|Deltans]]' birthplace. Slightly larger than [[location:earth]], with lower gravity, a somewhat denser atmosphere, and two moons, one of which looks twice as large in its sky as Earth's moon, it has meadows, rocky bluffs, forests of huge brownish trees, and an ecosystem as full as Earth's, including pack-hunting leopard-analogues. The Deltans live at [[location:camelot]], and Eden was the site of [[event:first-contact-with-the-deltans|first contact with the Deltans]], the [[event:deltan-migration]], and the [[event:gorilloid-raid-on-deltan-migration|gorilloid raid]] on the migration. It was the site of the [[event:destruction-of-the-hippogriff-island|destruction of the hippogriff island]]."
     }
   ],
   "appearances": [

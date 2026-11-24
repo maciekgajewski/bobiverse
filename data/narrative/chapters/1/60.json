@@ -142,7 +142,8 @@
     },
     {
       "entity_id": "location:82-eridani",
-      "state": "[[character:ernesto-medeiros|Medeiros]], entrenched here for about thirty-five years and responsible for [[character:milo]]'s loss, fought off eight version-3 Bobs in April 2185; three probes believed to be him were destroyed, but his [[technology:ami]] units remain active and only one [[character:bob-replicant]] escaped."
+      "state": "[[character:ernesto-medeiros|Medeiros]], entrenched here for about thirty-five years and responsible for [[character:milo]]'s loss, fought off eight version-3 Bobs in April 2185; three probes believed to be him were destroyed, but his [[technology:ami]] units remain active and only one [[character:bob-replicant]] escaped.",
+      "description": "A system around a G5V star, smaller and dimmer than [[location:sol]] but a yellow sun [[species:human|humans]] would prefer, with the comfort-zone planets [[location:82-eridani-1]] and [[location:82-eridani-2]]. [[character:milo]], arriving from [[location:omicron2-eridani]], was destroyed here by [[character:ernesto-medeiros|Medeiros]], who entrenched himself and was the target of the [[event:battle-at-82-eridani]]."
     },
     {
       "entity_id": "technology:ship-busters",

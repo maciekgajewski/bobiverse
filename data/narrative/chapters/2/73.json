@@ -33,7 +33,8 @@
     },
     {
       "entity_id": "location:delta-pavonis-4",
-      "state": "Forced evacuation is underway ahead of the Others. Collection teams have targeted two towns, and Phineas has also taken people from three nearby bases."
+      "state": "Forced evacuation is underway ahead of the Others. Collection teams have targeted two towns, and Phineas has also taken people from three nearby bases.",
+      "description": "The fourth planet of [[location:delta-pavonis]] and homeworld of the [[species:pav|Pav]], an industrial civilization of many states whose lights mark the night side and whose smoke is starting to warm the planet. Its towns include the rural settlement of [[location:mheijrkva]]. Ahead of the arrival of the [[species:others|Others]], a [[event:pav-evacuation-collection|forced evacuation]] removed Pav from towns including Mheijrkva."
     }
   ],
   "appearances": [

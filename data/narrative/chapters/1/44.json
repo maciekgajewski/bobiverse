@@ -58,6 +58,10 @@
     {
       "entity_id": "technology:translation-routine",
       "description": "A software routine for interpreting speech. One version interprets the standard twenty-second-century accent so smoothly that differing speech patterns become effectively transparent to its user. Another lets its user converse in English with the [[species:delta-eridani-natives|Deltans]], whose language is far more guttural than human speech."
+    },
+    {
+      "entity_id": "location:delta-eridani",
+      "description": "An orange-star system whose star is cooler than [[location:sol]] but more than two and a half times as large, with five rocky planets inside an ore-bearing [[location:delta-eridani-asteroid-belt|asteroid belt]] and five gas giants beyond. Its fourth planet, [[location:delta-eridani-4|Eden]], is the homeworld of the [[species:delta-eridani-natives|Deltans]] and the site of the [[event:deltan-colony-battle|battle at the Deltan colony]] and of [[event:first-contact-with-the-deltans|first contact]]."
     }
   ],
   "appearances": [

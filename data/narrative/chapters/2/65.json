@@ -32,6 +32,14 @@
     {
       "entity_id": "character:diana",
       "current_state": "Now a grandmother. She would report any drone to the elders, and [[character:bob-replicant|Bob]] dislikes her."
+    },
+    {
+      "entity_id": "location:delta-eridani",
+      "description": "An orange-star system whose star is cooler than [[location:sol]] but more than two and a half times as large, with five rocky planets inside an ore-bearing [[location:delta-eridani-asteroid-belt|asteroid belt]] and five gas giants beyond. Its fourth planet, [[location:delta-eridani-4|Eden]], is the homeworld of the [[species:delta-eridani-natives|Deltans]], with the villages [[location:camelot]] and [[location:caerleon]], and the site of the [[event:deltan-colony-battle|battle at the Deltan colony]] and of [[event:first-contact-with-the-deltans|first contact]]."
+    },
+    {
+      "entity_id": "location:delta-eridani-4",
+      "description": "The fourth rocky planet of [[location:delta-eridani]], named Eden, homeworld of the [[species:delta-eridani-natives|Deltans]]: slightly larger than [[location:earth]], with two moons and a full ecosystem. Its Deltan villages are [[location:camelot]] and [[location:caerleon]]; it saw [[event:first-contact-with-the-deltans|first contact]], the [[event:deltan-migration|migration]], the [[event:gorilloid-raid-on-deltan-migration|gorilloid raid]] and the [[event:destruction-of-the-hippogriff-island|destruction of the hippogriff island]]."
     }
   ],
   "appearances": [
