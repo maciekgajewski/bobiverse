@@ -87,5 +87,7 @@ export function createNarrativeFixtureCorpus(): NarrativeCorpus {
       },
     ],
     knownAstronomyObjectIds: ["sol"],
+    astronomyCatalogue: [],
+    unmappedStarAllowlist: [],
   };
 }

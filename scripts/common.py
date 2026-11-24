@@ -11,6 +11,10 @@ ROOT = Path(__file__).resolve().parent.parent
 SOURCE_DIR = ROOT / "data" / "source"
 CONFIG_PATH = ROOT / "data" / "config" / "map-display.json"
 CONFIG_SCHEMA_PATH = ROOT / "data" / "schema" / "map-display.schema.json"
+UNMAPPED_STAR_ALLOWLIST_PATH = ROOT / "data" / "config" / "unmapped-star-allowlist.json"
+UNMAPPED_STAR_ALLOWLIST_SCHEMA_PATH = (
+    ROOT / "data" / "schema" / "unmapped-star-allowlist.schema.json"
+)
 SOURCE_EXTRACT_SCHEMA_PATH = (
     ROOT / "data" / "schema" / "astronomy-source-extract.schema.json"
 )
