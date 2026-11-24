@@ -14,6 +14,7 @@ import io
 import json
 import math
 import re
+import http.client
 import html
 import urllib.parse
 import urllib.request
@@ -78,7 +79,6 @@ from classical_names import (
     CLASSICAL_NAMES_QUERY,
     CLASSICAL_NAMES_RELEASE,
     CLASSICAL_NAMES_TABLE,
-    CLASSICAL_NAMES_TAP_URL,
     exact_classical_matches,
 )
 
@@ -88,6 +88,13 @@ WDS_URL = "https://www.astro.gsu.edu/wds/Webtextfiles/wds_precise.txt"
 WDS_FORMAT_URL = "https://www.astro.gsu.edu/wds/Webtextfiles/wdsweb_format.txt"
 LY_PER_PC = 3.261563777
 GCNS_LIMIT_PC = 100.0
+VIZIER_ASU_URL = "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv"
+VIZIER_TRANSPORTS = (
+    ("tap", C20PC_TAP_URL),
+    ("asu", VIZIER_ASU_URL),
+)
+VIZIER_TAP_CONNECT_TIMEOUT = 25
+CLASSICAL_NAMES_EXPECTED_ROW_COUNT = 3569
 
 GCNS_COLUMNS = [
     "source_id", "ra", "dec", "ra_error", "dec_error", "parallax",
@@ -207,15 +214,188 @@ def distance(first: dict[str, float], second: dict[str, float]) -> float:
     return math.sqrt(sum((first[axis] - second[axis]) ** 2 for axis in ("xg", "yg", "zg")))
 
 
-def tap_csv(endpoint: str, query: str) -> list[dict[str, str]]:
+class _ConnectTimeoutHTTPSConnection(http.client.HTTPSConnection):
+    """Use a short TCP/TLS connection timeout without shortening body reads."""
+
+    def connect(self) -> None:
+        original_timeout = self.timeout
+        self.timeout = VIZIER_TAP_CONNECT_TIMEOUT
+        try:
+            super().connect()
+        finally:
+            self.timeout = original_timeout
+        if self.sock is not None:
+            self.sock.settimeout(original_timeout)
+
+
+class _ConnectTimeoutHTTPSHandler(urllib.request.HTTPSHandler):
+    def https_open(self, request: urllib.request.Request):
+        return self.do_open(_ConnectTimeoutHTTPSConnection, request)
+
+
+def tap_csv(
+    endpoint: str, query: str, *, connect_timeout: float | None = None
+) -> list[dict[str, str]]:
     body = urllib.parse.urlencode({"REQUEST": "doQuery", "LANG": "ADQL", "FORMAT": "csv", "QUERY": query}).encode()
     request = urllib.request.Request(endpoint, data=body, headers={"User-Agent": "bobiverse-astronomy-import/2.0"})
-    with urllib.request.urlopen(request, timeout=180) as response:
+    opener = (
+        urllib.request.build_opener(_ConnectTimeoutHTTPSHandler())
+        if connect_timeout is not None
+        else None
+    )
+    open_request = opener.open if opener is not None else urllib.request.urlopen
+    with open_request(request, timeout=180) as response:
         raw = response.read()
     reader = csv.DictReader(io.StringIO(raw.decode("utf-8-sig")))
     if reader.fieldnames is None:
         raise ValueError("TAP response has no CSV header")
     return list(reader)
+
+
+def parse_vizier_asu_tsv(
+    raw: bytes, required_columns: list[str]
+) -> list[dict[str, str]]:
+    """Parse an ASU TSV response without accepting its silent row caps."""
+    text = raw.decode("utf-8-sig", errors="replace")
+    data_lines: list[str] = []
+    for line in text.splitlines():
+        stripped = line.strip()
+        if not stripped:
+            continue
+        if stripped.startswith("#"):
+            lowered = stripped.lower()
+            if "truncat" in lowered or re.search(
+                r"(?:-out\.max|out\.max)\s*(?:=|:|is)?\s*\d+", lowered
+            ):
+                raise ValueError("VizieR ASU response reports a truncated or capped result")
+            continue
+        cells = next(csv.reader([line], delimiter="\t"))
+        if cells and all(re.fullmatch(r"-+", cell.strip()) for cell in cells):
+            continue
+        data_lines.append(line)
+    if not data_lines:
+        raise ValueError("VizieR ASU response has no TSV header")
+    header = [cell.strip() for cell in next(csv.reader([data_lines[0]], delimiter="\t"))]
+    missing = [column for column in required_columns if column not in header]
+    if missing:
+        raise ValueError(f"VizieR ASU TSV header is missing required columns: {', '.join(missing)}")
+    rows: list[dict[str, str]] = []
+    recno_required = "recno" in required_columns
+    for line in data_lines[1:]:
+        cells = next(csv.reader([line], delimiter="\t"))
+        if len(cells) > len(header):
+            raise ValueError("VizieR ASU TSV row has more cells than its header")
+        cells += [""] * (len(header) - len(cells))
+        row = {key: value.strip() for key, value in zip(header, cells)}
+        # VizieR ASU inserts a units line (e.g. IMass=Msun) after the header.
+        # It is not a catalogue row and must not reach the normalisers.
+        if recno_required and not str(row.get("recno") or "").strip().isdecimal():
+            continue
+        rows.append(row)
+    return rows
+
+
+_SEXAGESIMAL_RE = re.compile(
+    r"^(?P<sign>[+-])?(?P<first>\d+)\s+(?P<second>\d+)\s+(?P<third>\d+(?:\.\d+)?)$"
+)
+
+
+def sexagesimal_to_degrees(text: str, *, hours: bool) -> str:
+    """Convert a VizieR h:m:s or d:m:s string to a degree string that float()-round-trips."""
+    match = _SEXAGESIMAL_RE.fullmatch(text.strip())
+    if match is None:
+        raise ValueError(f"VizieR ASU coordinate is not sexagesimal: {text!r}")
+    first, second, third = (float(match.group(name)) for name in ("first", "second", "third"))
+    degrees = first + second / 60 + third / 3600
+    if hours:
+        degrees *= 15
+    if match.group("sign") == "-":
+        degrees = -degrees
+    return format(degrees, ".17g")
+
+
+def convert_vizier_asu_coordinates(rows: list[dict[str, str]]) -> list[dict[str, str]]:
+    """Turn ASU sexagesimal RAJ2000/DEJ2000 cells into decimal degrees, matching TAP."""
+    converted: list[dict[str, str]] = []
+    for row in rows:
+        out = dict(row)
+        for key, hours in (("RAJ2000", True), ("DEJ2000", False)):
+            value = out.get(key, "").strip()
+            if value and _SEXAGESIMAL_RE.fullmatch(value):
+                out[key] = sexagesimal_to_degrees(value, hours=hours)
+        converted.append(out)
+    return converted
+
+
+def asu_tsv(table: str, columns: list[str]) -> tuple[list[dict[str, str]], dict[str, Any]]:
+    request_fields = {"-source": table, "-out": ",".join(columns), "-out.max": "unlimited"}
+    endpoint = f"{VIZIER_ASU_URL}?{urllib.parse.urlencode(request_fields)}"
+    request = urllib.request.Request(
+        endpoint, headers={"User-Agent": "bobiverse-astronomy-import/3.0"}
+    )
+    with urllib.request.urlopen(request, timeout=180) as response:
+        raw = response.read()
+    return convert_vizier_asu_coordinates(parse_vizier_asu_tsv(raw, columns)), {
+        "source": table,
+        "columns": columns,
+        "out_max": "unlimited",
+        "endpoint": VIZIER_ASU_URL,
+    }
+
+
+def fetch_vizier_snapshot(
+    requests: list[tuple[str, list[str], str]],
+) -> tuple[list[list[dict[str, str]]], str, dict[str, Any] | None]:
+    """Fetch all related VizieR tables through the first complete transport."""
+    failures: list[str] = []
+    for transport, endpoint in VIZIER_TRANSPORTS:
+        try:
+            if transport == "tap":
+                return (
+                    [tap_csv(endpoint, query, connect_timeout=VIZIER_TAP_CONNECT_TIMEOUT) for _, _, query in requests],
+                    endpoint,
+                    None,
+                )
+            rows_and_requests = [asu_tsv(table, columns) for table, columns, _ in requests]
+            return (
+                [rows for rows, _ in rows_and_requests],
+                endpoint,
+                {"kind": "asu", "endpoint": endpoint, "requests": [request for _, request in rows_and_requests]},
+            )
+        except Exception as error:
+            failures.append(f"{endpoint}: {error}")
+    raise RuntimeError("All VizieR transports failed: " + "; ".join(failures))
+
+
+def fetch_c20pc_readme() -> tuple[bytes, dict[str, str] | None]:
+    request = urllib.request.Request(
+        C20PC_README_URL,
+        headers={"User-Agent": "bobiverse-astronomy-import/3.0"},
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=180) as response:
+            readme = response.read()
+    except Exception as error:
+        readme = C20PC_README_PATH.read_bytes()
+        provenance = {
+            "fetch": "failed",
+            "pin": "reused",
+            "url": C20PC_README_URL,
+            "reason": f"{C20PC_README_URL}: {error}",
+        }
+    else:
+        provenance = None
+    readme_text = readme.decode("utf-8")
+    if C20PC_README_HISTORY_DATE not in readme_text or C20PC_BIBCODE not in readme_text:
+        raise ValueError("20-pc ReadMe does not identify the pinned catalogue version")
+    return readme, provenance
+
+
+def write_fetched_c20pc_readme(
+    readme: bytes, provenance: dict[str, str] | None
+) -> None:
+    if provenance is None:
+        C20PC_README_PATH.write_bytes(readme)
 
 
 def gavo_upstream_updated_at(table: str) -> str:
@@ -315,24 +495,16 @@ def read_c20pc() -> tuple[
 
 
 def refresh_c20pc_snapshot() -> None:
+    transport_rows, endpoint, transport = fetch_vizier_snapshot([
+        (f"{C20PC_CATALOGUE}/table4", C20PC_TABLE_COLUMNS, C20PC_TABLE_QUERY),
+        (f"{C20PC_CATALOGUE}/notes4", C20PC_NOTES_COLUMNS, C20PC_NOTES_QUERY),
+        (f"{C20PC_CATALOGUE}/refs", C20PC_REFS_COLUMNS, C20PC_REFS_QUERY),
+    ])
     table, notes, references = normalize_census_tables(
-        tap_csv(C20PC_TAP_URL, C20PC_TABLE_QUERY),
-        tap_csv(C20PC_TAP_URL, C20PC_NOTES_QUERY),
-        tap_csv(C20PC_TAP_URL, C20PC_REFS_QUERY),
+        *transport_rows,
     )
-    request = urllib.request.Request(
-        C20PC_README_URL,
-        headers={"User-Agent": "bobiverse-astronomy-import/3.0"},
-    )
-    with urllib.request.urlopen(request, timeout=180) as response:
-        readme = response.read()
-    readme_text = readme.decode("utf-8")
-    if (
-        C20PC_README_HISTORY_DATE not in readme_text
-        or C20PC_BIBCODE not in readme_text
-    ):
-        raise ValueError("20-pc ReadMe does not identify the pinned catalogue version")
-    C20PC_README_PATH.write_bytes(readme)
+    readme, readme_provenance = fetch_c20pc_readme()
+    write_fetched_c20pc_readme(readme, readme_provenance)
     queries = {
         "table4": {
             "table": f"{C20PC_CATALOGUE}/table4",
@@ -371,7 +543,7 @@ def refresh_c20pc_snapshot() -> None:
                 "catalogue_doi": C20PC_CATALOGUE_DOI,
                 "publication_doi": C20PC_PUBLICATION_DOI,
                 "publication_bibcode": C20PC_BIBCODE,
-                "endpoint": C20PC_TAP_URL,
+                "endpoint": endpoint,
                 "readme_url": C20PC_README_URL,
                 "readme_history_date": C20PC_README_HISTORY_DATE,
                 "readme_media_type": "text/plain; charset=utf-8",
@@ -380,6 +552,12 @@ def refresh_c20pc_snapshot() -> None:
                 "acknowledgement": C20PC_ACKNOWLEDGEMENT,
                 "external_reference_codes": EXPECTED_EXTERNAL_REFERENCE_CODES,
                 "queries": queries,
+                **({"transport": transport} if transport is not None else {}),
+                **(
+                    {"readme_provenance": readme_provenance}
+                    if readme_provenance is not None
+                    else {}
+                ),
             },
             "table4": table,
             "notes4": notes,
@@ -389,23 +567,35 @@ def refresh_c20pc_snapshot() -> None:
 
 
 def refresh_classical_names_snapshot() -> None:
+    transport_rows, endpoint, transport = fetch_vizier_snapshot([
+        (CLASSICAL_NAMES_TABLE, CLASSICAL_NAMES_COLUMNS, CLASSICAL_NAMES_QUERY),
+    ])
+    source_rows = [
+        row for row in transport_rows[0]
+        if str(row.get("HIP") or "").strip()
+    ]
     rows = normalise_rows(
         CLASSICAL_NAMES_COLUMNS,
-        tap_csv(CLASSICAL_NAMES_TAP_URL, CLASSICAL_NAMES_QUERY),
+        source_rows,
         "recno",
     )
+    if len(rows) != CLASSICAL_NAMES_EXPECTED_ROW_COUNT:
+        raise ValueError("IV/27A row count differs from the pinned baseline")
     write_extract(
         "classical_names",
         CLASSICAL_NAMES_COLUMNS,
         rows,
         manifest(
             "classical_names",
-            endpoint=CLASSICAL_NAMES_TAP_URL,
+            endpoint=endpoint,
             table=CLASSICAL_NAMES_TABLE,
             query=CLASSICAL_NAMES_QUERY,
             rows=rows,
             columns=CLASSICAL_NAMES_COLUMNS,
-            extra={"release": CLASSICAL_NAMES_RELEASE},
+            extra={
+                "release": CLASSICAL_NAMES_RELEASE,
+                **({"transport": transport} if transport is not None else {}),
+            },
         ),
     )
 

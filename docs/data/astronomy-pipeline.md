@@ -252,17 +252,27 @@ Double Star Catalog maintained at the U.S. Naval Observatory.”
 ### VizieR 20-pc census snapshot
 
 The census refresh pins the catalogue ReadMe with history date `04-Jun-2024` and the
-exact Table 4, notes, and references ADQL projections specified by BOB-026. The
-logical baseline is 4,407 Table 4 rows, 4,407 notes, and 688 references. VizieR TAP
-currently transports the long `BD+39 2376 AB` note as two adjacent rows, so the
-manifest records 4,408 transport rows and deterministic normalization reconstructs
-one logical note using continuation `recno` 1980. `recno` is source sequence only and
-never becomes an identity.
+exact Table 4, notes, and references ADQL projections specified by BOB-026. It tries
+VizieR TAP first (`https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync`), then falls
+back only on transport failure to CFA VizieR ASU
+(`https://vizier.cfa.harvard.edu/viz-bin/asu-tsv`) with the same catalogue tables,
+projected column order, and `-out.max=unlimited`. The ADQL selection remains the
+logical contract; ASU responses are rejected when their metadata reports truncation
+or a lowered row cap. The logical baseline is 4,407 Table 4 rows, 4,407 notes, and
+688 references. VizieR TAP currently transports the long `BD+39 2376 AB` note as two
+adjacent rows, so the manifest records 4,408 transport rows and deterministic
+normalization reconstructs one logical note using continuation `recno` 1980. `recno`
+is source sequence only and never becomes an identity.
 
-The committed artifact records exact query bytes, projected columns, endpoint,
-catalogue and publication DOIs, publication bibcode, retrieval timestamp, counts,
-checksums, and the required VizieR acknowledgement. Identity uses a content-derived
-`c20pc-2024:<sha256>` key. The source is:
+The committed artifact records exact query bytes, projected columns, the endpoint
+actually used, catalogue and publication DOIs, publication bibcode, retrieval
+timestamp, counts, checksums, and the required VizieR acknowledgement. An ASU-backed
+manifest also records its actual source/columns/`-out.max` request in optional
+transport provenance. `data:validate` accepts either of these two VizieR endpoints
+for this source. If the official cdsarc ReadMe fetch is unavailable, refresh reuses
+the committed pin without overwriting it, still guards its date and bibcode, and
+records the failed fetch and reuse reason in optional provenance. Identity uses a
+content-derived `c20pc-2024:<sha256>` key. The source tables are:
 
 ```text
 https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
@@ -278,7 +288,10 @@ the pinned references table or the exact source-documented external-code baselin
 
 ### VizieR IV/27A classical-name snapshot
 
-The name-only refresh uses the VizieR synchronous TAP endpoint and this exact ADQL:
+The name-only refresh tries the VizieR synchronous TAP endpoint first and CFA VizieR
+ASU second only when TAP transport fails. Both use the same `IV/27A/catalog` table
+and projected columns; ASU requests use `-out.max=unlimited`, and the existing HIP
+filter and ADQL ordering remain the logical selection contract:
 
 ```sql
 SELECT recno, HD, HR, HIP, Fl, Bayer, Cst, SimbadName
@@ -287,10 +300,13 @@ WHERE HIP IS NOT NULL
 ORDER BY recno
 ```
 
-The normalized extract and manifest record release `IV/27A (Kostjuk 2002)`, endpoint,
-query, projected columns, retrieval timestamp, row count, normalized checksum, and
-the VizieR acknowledgement. `recno` is source sequence only. The committed snapshot,
-not a later live response, is the reproducible authority.
+The normalized extract and manifest record release `IV/27A (Kostjuk 2002)`, the
+endpoint actually used, query, projected columns, retrieval timestamp, row count,
+normalized checksum, and the VizieR acknowledgement. An ASU-backed manifest also
+records its actual source/columns/`-out.max` request in optional transport
+provenance. `data:validate` accepts the TAP or CFA ASU endpoint for this source.
+`recno` is source sequence only. The committed snapshot, not a later live response,
+is the reproducible authority.
 
 ## Pinned acquisition artifacts
 

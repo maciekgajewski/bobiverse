@@ -83,7 +83,10 @@ EXPECTED_SOURCE_CONTRACTS = {
         "https://gea.esac.esa.int/tap-server/tap/sync",
         "gaiadr3.gaia_source + pinned left joins",
     ),
-    "classical_names": (CLASSICAL_NAMES_TAP_URL, CLASSICAL_NAMES_TABLE),
+    "classical_names": (
+        (CLASSICAL_NAMES_TAP_URL, "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv"),
+        CLASSICAL_NAMES_TABLE,
+    ),
 }
 
 
@@ -113,9 +116,11 @@ def validate_extract(key: str, columns: list[str], id_key: str) -> tuple[dict[st
     validate_schema(read_json(path), SOURCE_EXTRACT_SCHEMA_PATH, key)
     if manifest.get("catalogue") != key or manifest.get("columns") != columns:
         raise ValueError(f"{key} manifest does not identify the pinned source contract")
-    expected_endpoint, expected_table = EXPECTED_SOURCE_CONTRACTS[key]
+    expected_endpoints, expected_table = EXPECTED_SOURCE_CONTRACTS[key]
+    if isinstance(expected_endpoints, str):
+        expected_endpoints = (expected_endpoints,)
     if (
-        manifest.get("endpoint") != expected_endpoint
+        manifest.get("endpoint") not in expected_endpoints
         or manifest.get("table") != expected_table
         or not manifest.get("adql")
         or not manifest.get("retrieved_at")
@@ -177,7 +182,6 @@ def validate_c20pc() -> tuple[dict[str, Any], list[dict[str, Any]]]:
     validate_schema(document, C20PC_SCHEMA_PATH, "20-pc census")
     source = document["source"]
     expected_source = {
-        "endpoint": C20PC_TAP_URL,
         "catalogue": C20PC_CATALOGUE,
         "catalogue_doi": C20PC_CATALOGUE_DOI,
         "publication_doi": C20PC_PUBLICATION_DOI,
@@ -188,7 +192,11 @@ def validate_c20pc() -> tuple[dict[str, Any], list[dict[str, Any]]]:
         "acknowledgement": C20PC_ACKNOWLEDGEMENT,
         "external_reference_codes": EXPECTED_EXTERNAL_REFERENCE_CODES,
     }
-    if any(source.get(key) != value for key, value in expected_source.items()):
+    if (
+        source.get("endpoint")
+        not in (C20PC_TAP_URL, "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv")
+        or any(source.get(key) != value for key, value in expected_source.items())
+    ):
         raise ValueError("20-pc census source provenance differs from its contract")
     if (
         not source.get("retrieved_at")

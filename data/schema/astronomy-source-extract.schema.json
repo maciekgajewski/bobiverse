@@ -61,6 +61,38 @@
           "type": "array",
           "items": { "type": "string", "pattern": "^[0-9]+$" },
           "uniqueItems": true
+        },
+        "transport": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "endpoint", "requests"],
+          "properties": {
+            "kind": { "const": "asu" },
+            "endpoint": {
+              "const": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv"
+            },
+            "requests": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["source", "columns", "out_max", "endpoint"],
+                "properties": {
+                  "source": { "type": "string", "minLength": 1 },
+                  "columns": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": { "type": "string" }
+                  },
+                  "out_max": { "const": "unlimited" },
+                  "endpoint": {
+                    "const": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv"
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -222,7 +254,10 @@
           "properties": {
             "catalogue": { "const": "classical_names" },
             "endpoint": {
-              "const": "https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync"
+              "enum": [
+                "https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync",
+                "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv"
+              ]
             },
             "table": { "const": "IV/27A/catalog" },
             "release": { "const": "IV/27A (Kostjuk 2002)" },
