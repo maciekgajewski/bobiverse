@@ -1,8 +1,18 @@
 {
   "schema_version": "1.0.0",
-  "accepted_candidate_sha256": "12a630ee87df905739e5d9a6a44bfdcc5547d735f44e7ceb0efdd5f1d9965a84",
-  "reviewer": "Independent agent astronomy snapshot review (ADR-0023, combined 003237+003706 option-A refresh) under Captain-delegated authority",
-  "reviewed_at": "2026-11-20",
+  "accepted_candidate_sha256": "14692b9f0c0122ca0165b83afd26aeca61859c0b5ca3dad3edb32035854dbe40",
+  "reviewer": "Independent agent astronomy snapshot review (ADR-0023, catalogue-C six-anchor refresh) under Captain-delegated authority, with manager confirmation of both checksums and a recorded ruling on stellar-system-004175",
+  "reviewed_at": "2026-11-24",
+  "notes": {
+    "kind": "adr-0023-acceptance",
+    "previous_accepted_candidate_sha256": "12a630ee87df905739e5d9a6a44bfdcc5547d735f44e7ceb0efdd5f1d9965a84",
+    "accepted_candidate_sha256": "14692b9f0c0122ca0165b83afd26aeca61859c0b5ca3dad3edb32035854dbe40",
+    "reviewers": "A Codex read-only run plus the manager; the manager recomputed both checksums.",
+    "source_commit": "c216070fd044e93534fa5baadd7f082d73b46035",
+    "permitted_changes": "GCNS context-sphere growth 507 to 644 rows around six newly mapped anchors; 136 components adopted ADR-0011 GCNS median Bayesian Cartesian geometry in place of CNS5/Astropy (median 0.0071 pc, max 0.354 pc at stellar-component-005946); refresh metadata; WDS membership extraction grew from the same unchanged WDS catalogue bytes.",
+    "adopted_component_004175": "stellar-system-004175 (GJ 11192): adopted_component_candidate changed from None to stellar-component-005030. ADR-0023 reserves adopted-component changes for the Captain. The manager ruled this mechanical under Maciej's standing rule of 22 Nov 2026 (astronomy is physical data; the more precise data is used; accepted positions and checksums are updated without asking him; bots do the ADR-0023 review), because 005030 is the system's only component and gained its first position.",
+    "standing_rule_22_nov_2026": "Maciej, 22 Nov 2026: astronomy is physical data, the more precise data is used, accepted positions and checksums are updated without asking him, and bots do the ADR-0023 review."
+  },
   "anchor_bootstraps": [],
   "identity_transitions": [],
   "cns5_astrometry_overrides": [],
