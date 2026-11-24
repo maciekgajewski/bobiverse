@@ -1,7 +1,10 @@
 # ADR-0034: catalogued star mapping guard
 
-Status: Proposed
+Status: Accepted
 Date: 2026-11-24
+
+Accepted 2026-11-24 after the manager checked `ccadb0b` (OK) and approved the
+landing, following the Captain's 24 Nov authorisation of plan step (A).
 
 ## Context
 

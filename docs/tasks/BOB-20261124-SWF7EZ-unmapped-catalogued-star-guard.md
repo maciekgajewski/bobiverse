@@ -1,6 +1,6 @@
 # BOB-20261124-SWF7EZ: Pav icon assignment and catalogued-star mapping guard
 
-Status: In progress
+Status: Done
 Phase: 2 (narrative foundation and chapter timeline)
 Last updated: 2026-11-24
 
@@ -33,7 +33,7 @@ continues to pass validation. The Pav assignment is the only reader-visible chan
 ## Binding references
 
 - `../adrs/0024-species-presentation-registry.md`
-- `../adrs/0034-catalogued-star-mapping-guard.md` (this task; Proposed)
+- `../adrs/0034-catalogued-star-mapping-guard.md` (this task; Accepted)
 - `../data-model-definition.md` (`map_status`, `astronomy_object_id`, unmapped
   locations)
 - `../chapter-extraction.md`
@@ -146,7 +146,7 @@ configs on ports 4211 and 4210.
 
 - One short paragraph in `docs/data-model-definition.md` (near the `map_status`
   / mapped `star_system` rules) and a matching note in `docs/chapter-extraction.md`.
-- ADR-0034, Status: Proposed, recording the unique-match rule, conservative
+- ADR-0034, Status: Accepted, recording the unique-match rule, conservative
   normalisation, and allowlist-with-stale-entry check. Conventions require an
   ADR here because this is a narrative data-authority rule (when an unmapped
   star system is allowed to remain unmapped).
@@ -163,3 +163,16 @@ configs on ports 4211 and 4210.
 - Matching inspects only the runtime 337-system catalogue, not
   `system-candidates.json`. HIP 84051 therefore needs the standing allowlist
   until plan C puts `stellar-system-004437` in `nearby-systems.json`.
+
+## Log
+
+### 2026-11-24 (Europe/Warsaw)
+
+- Implemented on branch `bob-20261124-unmapped-guard` from `77c9394`, worktree
+  `~/src/bobiverse-guard`. Head `cdf3dcc` added the Pav assignment and
+  catalogued-star mapping guard; review nits were folded in `ccadb0b`.
+- The manager checked `ccadb0b` (OK) and approved the landing after (B) landed
+  on origin/master as `a091a7f`. Merged `origin/master` (`a091a7f`) into this
+  branch (no rebase).
+- ADR-0034 set to Accepted (date 2026-11-24). Status set to Done in this
+  docs-only recording commit; landing follows.
