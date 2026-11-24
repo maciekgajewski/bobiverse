@@ -35709,7 +35709,7 @@
     "endpoint": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv",
     "normalised_sha256": "64279ff81b83e607afa56b3655cad56baf1afea7c115461fb617f28c1d9f6faf",
     "release": "IV/27A (Kostjuk 2002)",
-    "retrieved_at": "2026-11-24T16:28:15+00:00",
+    "retrieved_at": "2026-11-24T18:53:45+00:00",
     "row_count": 3569,
     "table": "IV/27A/catalog",
     "transport": {

@@ -24525,7 +24525,7 @@
         "stage": "coverage"
       },
       {
-        "adql": "SELECT source_id, ra, dec, ra_error, dec_error, parallax, parallax_error, pmra, pmra_error, pmdec, pmdec_error, phot_g_mean_mag, phot_bp_mean_mag, phot_rp_mean_mag, phot_bp_rp_excess_factor, ruwe, ipd_frac_multi_peak, adoptedrv, adoptedrv_error, adoptedrv_refname, radial_velocity_is_valid, gcns_prob, wd_prob, dist_1, dist_16, dist_50, dist_84, xcoord_16, xcoord_50, xcoord_84, ycoord_16, ycoord_50, ycoord_84, zcoord_16, zcoord_50, zcoord_84\nFROM gcns.main\nWHERE source_id IN (3195919528989223040, 3269362645115584640, 425040000962559616, 4683897617110115200, 4900108950849461248, 5164120762333028736, 6378584028690858496, 6401464693867773568, 6427464123776727168, 4847957293278177024, 5153091836072107136, 5164707970261890560, 6412595290592307840)\nORDER BY source_id",
+        "adql": "SELECT source_id, ra, dec, ra_error, dec_error, parallax, parallax_error, pmra, pmra_error, pmdec, pmdec_error, phot_g_mean_mag, phot_bp_mean_mag, phot_rp_mean_mag, phot_bp_rp_excess_factor, ruwe, ipd_frac_multi_peak, adoptedrv, adoptedrv_error, adoptedrv_refname, radial_velocity_is_valid, gcns_prob, wd_prob, dist_1, dist_16, dist_50, dist_84, xcoord_16, xcoord_50, xcoord_84, ycoord_16, ycoord_50, ycoord_84, zcoord_16, zcoord_50, zcoord_84\nFROM gcns.main\nWHERE source_id IN (3195919528989223040, 3269362645115584640, 425040000962559616, 4683897617110115200, 4900108950849461248, 5164120762333028736, 5924187617032756736, 6378584028690858496, 6401464693867773568, 6427464123776727168, 4847957293278177024, 5153091836072107136, 5164707970261890560, 6412595290592307840)\nORDER BY source_id",
         "anchor_ids": [
           "stellar-system-002424",
           "stellar-system-002480",
@@ -24533,6 +24533,7 @@
           "stellar-system-003557",
           "stellar-system-003706",
           "stellar-system-003918",
+          "stellar-system-004437",
           "stellar-system-004786",
           "stellar-system-004803",
           "stellar-system-004824",
@@ -24579,7 +24580,7 @@
         "stage": "coverage"
       },
       {
-        "adql": "SELECT source_id, ra, dec, ra_error, dec_error, parallax, parallax_error, pmra, pmra_error, pmdec, pmdec_error, phot_g_mean_mag, phot_bp_mean_mag, phot_rp_mean_mag, phot_bp_rp_excess_factor, ruwe, ipd_frac_multi_peak, adoptedrv, adoptedrv_error, adoptedrv_refname, radial_velocity_is_valid, gcns_prob, wd_prob, dist_1, dist_16, dist_50, dist_84, xcoord_16, xcoord_50, xcoord_84, ycoord_16, ycoord_50, ycoord_84, zcoord_16, zcoord_50, zcoord_84\nFROM gcns.main\nWHERE (xcoord_16 <= 17.760469160759 OR xcoord_84 <= 17.760469160759)\n  AND (xcoord_16 >= 5.496413408707 OR xcoord_84 >= 5.496413408707)\n  AND (ycoord_16 <= 1.124873240012 OR ycoord_84 <= 1.124873240012)\n  AND (ycoord_16 >= -11.139182512040 OR ycoord_84 >= -11.139182512040)\n  AND (zcoord_16 <= 4.446698300810 OR zcoord_84 <= 4.446698300810)\n  AND (zcoord_16 >= -7.817357451242 OR zcoord_84 >= -7.817357451242)\nORDER BY source_id",
+        "adql": "SELECT source_id, ra, dec, ra_error, dec_error, parallax, parallax_error, pmra, pmra_error, pmdec, pmdec_error, phot_g_mean_mag, phot_bp_mean_mag, phot_rp_mean_mag, phot_bp_rp_excess_factor, ruwe, ipd_frac_multi_peak, adoptedrv, adoptedrv_error, adoptedrv_refname, radial_velocity_is_valid, gcns_prob, wd_prob, dist_1, dist_16, dist_50, dist_84, xcoord_16, xcoord_50, xcoord_84, ycoord_16, ycoord_50, ycoord_84, zcoord_16, zcoord_50, zcoord_84\nFROM gcns.main\nWHERE (xcoord_16 <= 17.766221876026 OR xcoord_84 <= 17.766221876026)\n  AND (xcoord_16 >= 5.502166123974 OR xcoord_84 >= 5.502166123974)\n  AND (ycoord_16 <= 1.122394876026 OR ycoord_84 <= 1.122394876026)\n  AND (ycoord_16 >= -11.141660876026 OR ycoord_84 >= -11.141660876026)\n  AND (zcoord_16 <= 4.445865176026 OR zcoord_84 <= 4.445865176026)\n  AND (zcoord_16 >= -7.818190576026 OR zcoord_84 >= -7.818190576026)\nORDER BY source_id",
         "anchor_id": "stellar-system-004437",
         "stage": "coverage"
       },
@@ -24625,7 +24626,7 @@
       }
     ],
     "release": "Gaia EDR3 GCNS",
-    "retrieved_at": "2026-11-24T16:20:47+00:00",
+    "retrieved_at": "2026-11-24T18:45:13+00:00",
     "row_count": 644,
     "table": "gcns.main",
     "upstream_updated_at": "2024-02-06T09:10:02Z"

@@ -43912,7 +43912,7 @@
     "readme_url": "https://cdsarc.cds.unistra.fr/ftp/J/ApJS/271/55/ReadMe",
     "retrieved_at": "2026-08-05T19:23:53+00:00",
     "reuse_provenance": {
-      "attempted_at": "2026-11-24T16:28:40+00:00",
+      "attempted_at": "2026-11-24T18:54:11+00:00",
       "fetch": "not_attempted",
       "pin": "reused",
       "reason": "https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync: <urlopen error timed out>",
