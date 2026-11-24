@@ -46,7 +46,6 @@
     {
       "id": "character:hungry",
       "name": "Hungry",
-      "aliases": ["Surly"],
       "parent_id": "character:mario",
       "description": "A Bob replicant from [[character:mario]]'s first cohort, built at [[location:gliese-54]], one of four new Bobs who named themselves after dwarves and agreed to help Mario investigate the [[species:others|Others]]; his name is not one of the original dwarves'. He prefers coffee to tropical drinks and bickers with [[character:sleepy]].",
       "current_state": "At [[location:gliese-54]], preparing to pick a system farther out and travel there to look for the [[species:others|Others]]."
