@@ -11,7 +11,8 @@
       "kind": "locale",
       "parent_location_id": "location:earth",
       "parent_relation": "located_on",
-      "map_status": "unmapped"
+      "map_status": "unmapped",
+      "description": "A city on [[location:earth]], formerly Portland, Oregon, where [[character:bob-replicant|Bob]] is revived as a replicant in June 2133 under the [[organization:free-american-independent-theocratic-hegemony|FAITH]] regime."
     },
     {
       "id": "character:bob-replicant",

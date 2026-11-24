@@ -17,7 +17,7 @@
       "id": "location:alpha-centauri-a-1",
       "name": "Alpha Centauri A 1",
       "kind": "planet",
-      "description": "A planet in [[location:alpha-centauri-a]]'s comfort zone, identified on [[character:goku]]'s first survey pass.",
+      "description": "A planet in [[location:alpha-centauri-a]]'s comfort zone in the [[location:alpha-centauri]] system, identified on [[character:goku]]'s first survey pass.",
       "parent_location_id": "location:alpha-centauri-a",
       "parent_relation": "orbits"
     },
@@ -34,7 +34,7 @@
       "name": "Alpha Centauri B 1",
       "kind": "planet",
       "body_class": "rocky",
-      "description": "A small Mercury-like planet in an inner orbit around [[location:alpha-centauri-b]].",
+      "description": "A small Mercury-like planet in an inner orbit around [[location:alpha-centauri-b]] in the [[location:alpha-centauri]] system.",
       "parent_location_id": "location:alpha-centauri-b",
       "parent_relation": "orbits"
     },

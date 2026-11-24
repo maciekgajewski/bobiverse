@@ -209,6 +209,12 @@ candidate in `data/source/system-candidates.json`.
   unpromoted candidate location whose name matches a narrative anchor (a location
   with an `astronomy_object_id`), and the anchor tooling never reads candidate data.
 
+For an unmapped `star_system`, check the final accumulated state against the runtime
+catalogue: an exact unique match by name, slug, or supported designation must be
+mapped or recorded in the reasoned unmapped-star allowlist. The aliases path is reserved
+but unused until the location schema allows aliases. Remove an allowlist entry
+when the location is mapped; validation also rejects entries for missing or non-system IDs.
+
 ### Identity, names, and ordering
 
 Resolve `source_mentions` against known entities and aliases. Entity names preserve

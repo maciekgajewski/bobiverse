@@ -10,7 +10,8 @@
       "name": "Las Vegas",
       "kind": "locale",
       "parent_location_id": "location:earth",
-      "parent_relation": "located_on"
+      "parent_relation": "located_on",
+      "description": "A city on [[location:earth]] where [[character:robert-johansson|Bob]] attends an annual science-fiction convention, and the scene of the [[event:bob-road-incident|road incident]] in which he dies in 2016."
     },
     {
       "id": "event:bob-road-incident",
@@ -44,6 +45,16 @@
       "character_id": "character:robert-johansson",
       "role": "lead",
       "location_id": "location:las-vegas"
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "location:solar-system",
+      "description": "The planetary system of Sol is home to [[species:human|humanity]] on [[location:earth]]. Its other planets are [[location:mercury]], [[location:venus]], [[location:mars]], [[location:jupiter]], [[location:saturn]], [[location:uranus]] and [[location:neptune]], and it includes the [[location:asteroid-belt|asteroid belt]], [[location:kuiper-belt|Kuiper belt]] and [[location:oort-cloud|Oort cloud]]."
+    },
+    {
+      "entity_id": "location:sol",
+      "description": "The star at the center of the [[location:solar-system]], [[location:earth]]'s sun."
     }
   ]
 }

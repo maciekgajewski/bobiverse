@@ -52,7 +52,8 @@
     },
     {
       "entity_id": "location:omicron2-eridani",
-      "state": "[[character:milo]]'s automation has mined the system for a couple of decades, and an AMI-built farming donut awaits seeding as a backup food source. The first colony ships arrived in September 2188, and a colony is being set up on [[location:vulcan]]."
+      "state": "[[character:milo]]'s automation has mined the system for a couple of decades, and an AMI-built farming donut awaits seeding as a backup food source. The first colony ships arrived in September 2188, and a colony is being set up on [[location:vulcan]].",
+      "description": "A triple-star system whose B and C stars orbit each other and whose pair orbits [[location:omicron-eridani-a]] at about 470 AU. Its survey identifies several outer Jovian planets, a probable asteroid belt, and the double planets [[location:vulcan]] and [[location:romulus]]. Vulcan is the site of [[species:human|humanity]]'s first colony beyond the [[location:solar-system]], founded with the [[event:first-colony-ships-arrival|arrival of the first colony ships]] in 2188."
     },
     {
       "entity_id": "location:omicron2-asteroid-belt",
@@ -60,7 +61,7 @@
     },
     {
       "entity_id": "location:vulcan",
-      "description": "The larger member of a double planet at 0.81 AU from [[location:omicron-eridani-a]], also designated OE-1A, with about 0.9 [[location:earth]] masses, orbiting [[location:romulus]] every 20 days. On the cool side of the habitable zone but warmed by a thicker, carbon-dioxide-rich atmosphere, it has oceans, oxygen and large green land areas, with animals nearly as large as dinosaurs and life probably related to Romulus's. Its ecosystem is confirmed to be biocompatible with [[species:human|humans]].",
+      "description": "The larger member of a double planet at 0.81 AU from [[location:omicron-eridani-a]] in the [[location:omicron2-eridani]] system, also designated OE-1A, with about 0.9 [[location:earth]] masses, orbiting [[location:romulus]] every 20 days. On the cool side of the habitable zone but warmed by a thicker, carbon-dioxide-rich atmosphere, it has oceans, oxygen and large green land areas, with animals nearly as large as dinosaurs and life probably related to Romulus's. Its ecosystem is confirmed to be biocompatible with [[species:human|humans]]. The [[event:first-colony-ships-arrival|arrival of the first colony ships]] in 2188 makes it the site of the first human colony beyond the [[location:solar-system]].",
       "state": "Chosen in September 2188 as the site of the first colony from the colony ships, it has setup crews, roamers and AMI-controlled ground equipment building modular housing on the surface, and the first civilians are about to be woken and brought down.",
       "colony_of": ["species:human"],
       "possible_colony_target": false
