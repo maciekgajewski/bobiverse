@@ -79,7 +79,35 @@ class VizierFallbackTest(unittest.TestCase):
                 ["recno"],
             )
 
+    def test_asu_tsv_rejects_info_error_page_after_mime_preamble(self) -> None:
+        # Shape taken from the CFA VizieR ASU probe: HTTP 200 and a TSV
+        # Content-Type, but the body is a MIME/VOTable error document with
+        # #INFO Error= and #INFO QUERY_STATUS=ERROR after a leading MIME line.
+        raw = (
+            b"Content-Type: application/x-votable+xml\n"
+            b"Content-Disposition: attachment; filename=vizier_votable.vot\n"
+            b"DocumentRef: VOTx185134\n"
+            b"#\n"
+            b"#   VizieR Astronomical Server vizier.cfa.harvard.edu\n"
+            b"#\n"
+            b"#INFO\tError=The database is not currently reachable.\t\n"
+            b"#INFO\tError= \t\n"
+            b"#INFO\tQUERY_STATUS=ERROR\t\n"
+            b"#\n"
+        )
+        with self.assertRaises(ValueError) as ctx:
+            pipeline.parse_vizier_asu_tsv(
+                raw,
+                ["recno", "HD", "HR", "HIP", "Fl", "Bayer", "Cst", "SimbadName"],
+            )
+        message = str(ctx.exception)
+        self.assertRegex(message, r"ASU query failed")
+        self.assertRegex(message, r"QUERY_STATUS=ERROR")
+        self.assertIn("database is not currently reachable", message)
+        self.assertNotIn("missing required columns", message)
+
     def test_asu_tsv_requires_projected_columns_and_rejects_cap(self) -> None:
+
 
 
         with self.assertRaisesRegex(ValueError, "missing required columns: HIP"):

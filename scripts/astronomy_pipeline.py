@@ -249,6 +249,39 @@ def tap_csv(
     return list(reader)
 
 
+def vizier_asu_query_failure_message(text: str) -> str | None:
+    """Return an error message if the body is a failed ASU query.
+
+    CFA VizieR can respond HTTP 200 with a TSV Content-Type whose body is a
+    MIME/VOTable error page: a leading MIME line, then #INFO comments with
+    QUERY_STATUS=ERROR or Error=. Detect that before treating any line as a
+    TSV header. Successful #INFO lines such as "query accepted" are ignored.
+    """
+    status_error = False
+    saw_error_field = False
+    errors: list[str] = []
+    for line in text.splitlines():
+        match = re.match(r"#INFO\s+(.*)$", line.strip(), flags=re.IGNORECASE)
+        if not match:
+            continue
+        rest = match.group(1).strip()
+        if re.match(r"QUERY_STATUS\s*=\s*ERROR\b", rest, flags=re.IGNORECASE):
+            status_error = True
+        elif re.match(r"Error\s*=", rest, flags=re.IGNORECASE):
+            saw_error_field = True
+            value = rest.split("=", 1)[1].strip()
+            if value and value not in errors:
+                errors.append(value)
+    if not status_error and not saw_error_field:
+        return None
+    parts: list[str] = []
+    if status_error:
+        parts.append("QUERY_STATUS=ERROR")
+    parts.extend(errors)
+    detail = "; ".join(parts) if parts else "QUERY_STATUS=ERROR or Error="
+    return f"VizieR ASU query failed: {detail}"
+
+
 def parse_vizier_asu_tsv(
     raw: bytes, required_columns: list[str]
 ) -> list[dict[str, str]]:
@@ -257,6 +290,9 @@ def parse_vizier_asu_tsv(
     if leading.startswith(b"<html") or leading.startswith(b"<!doctype"):
         raise ValueError("VizieR ASU response is HTML, not TSV")
     text = raw.decode("utf-8-sig", errors="replace")
+    asu_failure = vizier_asu_query_failure_message(text)
+    if asu_failure:
+        raise ValueError(asu_failure)
     data_lines: list[str] = []
     for line in text.splitlines():
         stripped = line.strip()
