@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-import json
+import csv
 import http.client
 import io
+import json
 import shutil
 import sys
 import tempfile
@@ -129,13 +130,16 @@ class VizierFallbackTest(unittest.TestCase):
             self.assertEqual(pipeline.prepare_classical_names_rows(rows), rows)
             with self.assertRaisesRegex(ValueError, "checksum"):
                 pipeline.prepare_classical_names_rows(changed)
+            wrong_count_pin = {**self.classical_pin(rows), "row_count": len(rows) + 1}
+            with patch.object(pipeline, "read_extract", return_value=(wrong_count_pin, [])):
+                with self.assertRaisesRegex(ValueError, "row count"):
+                    pipeline.prepare_classical_names_rows(rows)
 
     def test_tap_failures_fall_back_to_asu_and_cfa_pin_failure_raises(self) -> None:
         rows = self.classical_rows()
         for error in (
             http.client.IncompleteRead(b"partial", 1),
             http.client.HTTPException("TAP error"),
-            ValueError("TAP CSV is invalid"),
         ):
             with self.subTest(error=type(error).__name__), patch.object(
                 pipeline, "tap_csv", side_effect=error
@@ -150,6 +154,34 @@ class VizierFallbackTest(unittest.TestCase):
                 self.assertEqual(fetched, rows)
                 self.assertEqual(endpoint, pipeline.VIZIER_ASU_URL)
                 asu.assert_called_once()
+
+        class Response:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args: object) -> None:
+                return None
+
+            def read(self) -> bytes:
+                return b"recno\n" + b"x" * (csv.field_size_limit() + 1)
+
+        class Opener:
+            def open(self, request: object, timeout: int) -> Response:
+                return Response()
+
+        with patch.object(
+            pipeline.urllib.request, "build_opener", return_value=Opener()
+        ), patch.object(
+            pipeline, "asu_tsv", return_value=(rows, {"source": "IV/27A/catalog", "columns": pipeline.CLASSICAL_NAMES_COLUMNS, "out_max": "unlimited", "endpoint": pipeline.VIZIER_ASU_URL})
+        ) as asu, patch.object(
+            pipeline, "read_extract", return_value=(self.classical_pin(rows), [])
+        ):
+            fetched, endpoint, _ = pipeline.fetch_classical_names_snapshot(
+                (pipeline.CLASSICAL_NAMES_TABLE, pipeline.CLASSICAL_NAMES_COLUMNS, pipeline.CLASSICAL_NAMES_QUERY)
+            )
+            self.assertEqual(fetched, rows)
+            self.assertEqual(endpoint, pipeline.VIZIER_ASU_URL)
+            asu.assert_called_once()
 
         with patch.object(pipeline, "tap_csv", return_value=rows), patch.object(
             pipeline, "asu_tsv", return_value=(rows, {"source": "IV/27A/catalog", "columns": pipeline.CLASSICAL_NAMES_COLUMNS, "out_max": "unlimited", "endpoint": pipeline.VIZIER_ASU_URL})
@@ -169,6 +201,28 @@ class VizierFallbackTest(unittest.TestCase):
                 pipeline.fetch_classical_names_snapshot(
                     (pipeline.CLASSICAL_NAMES_TABLE, pipeline.CLASSICAL_NAMES_COLUMNS, pipeline.CLASSICAL_NAMES_QUERY)
                 )
+
+    def test_classical_refresh_does_not_write_when_cfa_fails_pin_check(self) -> None:
+        rows = self.classical_rows()
+        with tempfile.TemporaryDirectory() as directory:
+            source_dir = Path(directory)
+            json_path = source_dir / "classical-star-names.json"
+            csv_path = source_dir / "classical-star-names.csv"
+            shutil.copyfile(pipeline.CLASSICAL_NAMES_PATH, json_path)
+            shutil.copyfile(pipeline.SOURCE_DIR / "classical-star-names.csv", csv_path)
+            original_json = json_path.read_bytes()
+            original_csv = csv_path.read_bytes()
+            with patch.object(pipeline, "CLASSICAL_NAMES_PATH", json_path), patch.object(
+                pipeline, "SOURCE_DIR", source_dir
+            ), patch.object(
+                pipeline, "tap_csv", side_effect=OSError("TAP unavailable")
+            ), patch.object(
+                pipeline, "asu_tsv", return_value=(rows, {"source": "IV/27A/catalog", "columns": pipeline.CLASSICAL_NAMES_COLUMNS, "out_max": "unlimited", "endpoint": pipeline.VIZIER_ASU_URL})
+            ):
+                with self.assertRaisesRegex(ValueError, "checksum"):
+                    pipeline.refresh_classical_names_snapshot()
+            self.assertEqual(json_path.read_bytes(), original_json)
+            self.assertEqual(csv_path.read_bytes(), original_csv)
 
     def test_unreachable_readme_reuses_valid_pin_without_writing(self) -> None:
         pinned = f"{C20PC_README_HISTORY_DATE}\n{C20PC_BIBCODE}\n".encode()
@@ -256,6 +310,26 @@ class VizierFallbackTest(unittest.TestCase):
                 validate_data, "C20PC_README_PATH", readme_path
             ):
                 validate_data.validate_c20pc()
+
+    def test_validate_c20pc_rejects_incomplete_reuse_provenance(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            census_path = Path(directory) / "twenty-parsec-census.json"
+            readme_path = Path(directory) / "ReadMe"
+            shutil.copyfile(pipeline.C20PC_PATH, census_path)
+            shutil.copyfile(pipeline.C20PC_README_PATH, readme_path)
+            document = json.loads(census_path.read_text(encoding="utf-8"))
+            document["source"]["reuse_provenance"] = {
+                "fetch": "not_attempted",
+                "pin": "reused",
+                "url": pipeline.C20PC_TAP_URL,
+                "attempted_at": "2026-11-24T00:00:00+00:00",
+            }
+            census_path.write_text(json.dumps(document), encoding="utf-8")
+            with patch.object(validate_data, "C20PC_PATH", census_path), patch.object(
+                validate_data, "C20PC_README_PATH", readme_path
+            ):
+                with self.assertRaisesRegex(ValueError, "schema validation failed"):
+                    validate_data.validate_c20pc()
 
     def test_c20pc_tap_success_writes_extract(self) -> None:
         table, notes, references = (

@@ -58,15 +58,16 @@ ADR-0023 independent review.
    still validate without new required fields.
 2. `refresh_c20pc_snapshot`: TAP only. If TAPVizieR is unreachable or does
    not produce a usable census, do not fetch from CFA or any other mirror.
-   Reuse the committed extract and ReadMe byte-for-byte (do not overwrite
-   those files). Record reuse provenance (no fetch, pin reused, the reason,
-   the timestamp of the attempt). The guard still checks the committed
+   Reuse the committed data rows and ReadMe byte-for-byte. Record reuse
+   provenance (no fetch, pin reused, the reason, the timestamp of the attempt)
+   in the census manifest; that manifest update is the only allowed census JSON
+   change. The guard still checks the committed
    ReadMe for `04-Jun-2024` and bibcode `2024ApJS..271...55K`. If TAP
    succeeds but the official cdsarc ReadMe is unreachable, reuse the
    committed ReadMe the same way. `data:validate` accepts both the original
    TAP-only manifest and the optional reuse-provenance form.
 3. Lean Python unit tests: ASU TSV parsing, classical fallback order, and
-   the 20-pc / ReadMe reuse-without-write paths.
+   the 20-pc data-row / ReadMe reuse paths.
 4. Short documentation in `docs/data/astronomy-pipeline.md`. No new ADR;
    catalogue authority is unchanged.
 
@@ -92,16 +93,17 @@ ADR-0023 independent review.
   `https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync` or
   `https://vizier.cfa.harvard.edu/viz-bin/asu-tsv` for IV/27A. Today's
   committed TAP manifests still pass `npm run data:validate`.
-- The 20-pc refresh has no CFA path. A TAP failure reuses the committed
-  extract and ReadMe without writing them, records reuse provenance, and
-  still applies the date and bibcode guard.
+- The 20-pc refresh has no CFA path. A TAP failure leaves the committed data
+  rows/extract and ReadMe byte-identical, changes only reuse provenance in the
+  census manifest, and still applies the date and bibcode guard.
 - Unit tests cover TSV parsing, classical fallback order, and the 20-pc
-  reuse-without-write path.
+  reuse-provenance path.
 - Gate (must pass before the review commit, and must not write tracked
   data files): a CFA pull of IV/27A matches pin
   `64279ff81b83e607afa56b3655cad56baf1afea7c115461fb617f28c1d9f6faf`,
-  3569 rows; the 20-pc reuse path leaves the committed 20-pc files
-  byte-identical. Confirm the exact pins from the manifests. If the
+  3569 rows; the 20-pc reuse path leaves the committed data rows/extract and
+  ReadMe byte-identical, changing only reuse provenance in the census manifest.
+  Confirm the exact pins from the manifests. If the
   classical hash differs, stop and report counts and first differing
   rows. Do not commit re-pinned data.
 
@@ -127,9 +129,9 @@ files under `data/` (or revert any accidental writes afterwards):
 2. Pull IV/27A from CFA ASU (`-out.max=unlimited`, existing HIP filter
    and normaliser) and compare `normalised_sha256` and `row_count` to
    `64279ff8…` / 3569.
-3. Exercise the 20-pc TAP-failure reuse path and confirm
-   `data/source/twenty-parsec-census.json` and the committed ReadMe remain
-   byte-identical.
+3. Exercise the 20-pc TAP-failure reuse path and confirm the census data
+   rows/extract and committed ReadMe remain byte-identical; only
+   `source.reuse_provenance` changes in `data/source/twenty-parsec-census.json`.
 4. After the code change, confirm `npm run data:validate` still passes on
    the unchanged TAP-pinned manifests.
 
@@ -180,3 +182,11 @@ files under `data/` (or revert any accidental writes afterwards):
   (Europe/Warsaw, 15:43): `data:test` 160 OK; `data:validate` 337 systems
   and six sources; `tasks.py check` 126 tasks / 35 ADRs; prettier on
   `data/schema/*.json` OK.
+- Approved follow-up: TAP CSV parser errors also fall back to CFA; regression
+  coverage pins the classical row count, prevents writes after CFA pin rejection,
+  and rejects incomplete 20-pc reuse provenance. The current TAP-pinned source
+  artifacts remain unchanged. Fast checks (Europe/Warsaw, 15:55): `data:test`
+  162 OK; `data:validate` 337 systems and six sources; `tasks.py check`
+  126 tasks / 35 ADRs; prettier on `data/schema/*.json` OK. Deleting the
+  local row-count pin check made the new same-hash/different-count test fail;
+  the check was restored before commit.

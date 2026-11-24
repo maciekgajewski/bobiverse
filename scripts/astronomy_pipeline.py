@@ -324,7 +324,7 @@ def fetch_classical_names_snapshot(
                 connect_timeout=VIZIER_TAP_CONNECT_TIMEOUT,
             )
         )
-    except (OSError, http.client.HTTPException, ValueError):
+    except (OSError, http.client.HTTPException, ValueError, csv.Error):
         rows, asu_request = asu_tsv(table, columns)
         return prepare_classical_names_rows(rows), VIZIER_ASU_URL, {
             "kind": "asu",
