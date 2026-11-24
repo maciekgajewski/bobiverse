@@ -37,13 +37,14 @@
     },
     {
       "entity_id": "location:eta-cassiopeiae",
-      "description": "A binary system 19.5 light-years from [[location:epsilon-eridani|Epsilon Eridani]], with the Sun-like [[location:eta-cassiopeiae-a|EC-A]] and [[location:eta-cassiopeiae-b|a long-period companion]]. It has five rocky planets and no Jovians; [[character:mulder]] thinks the companion and the missing Jovian swept it clean. Its third planet, [[location:eta-cassiopeiae-3|Poseidon]], now hosts a human colony on floating plant mats."
+      "description": "A binary system 19.5 light-years from [[location:epsilon-eridani|Epsilon Eridani]], with the Sun-like [[location:eta-cassiopeiae-a|EC-A]] and [[location:eta-cassiopeiae-b|a long-period companion]]. It has five rocky planets and no Jovians; [[character:mulder]] thinks the companion and the missing Jovian swept it clean. It has no significant asteroid belt and only a few eccentric asteroids, and its metal content, slightly richer than Sol's, lies almost entirely in the planets. Its third planet, [[location:eta-cassiopeiae-3|Poseidon]], now hosts a [[event:poseidon-colony-arrival|human colony]] on floating plant mats."
     },
     {
       "entity_id": "location:eta-cassiopeiae-3",
       "state": "Its first colony is set up on two plant mats in the north tropical current; colonists from Micronesia, the Maldives, Vanuatu and Saint Lucia wake in small groups. Krakens have killed settlers, so a net is planned (six more months). Floating cities will follow; with no land, industry is in space.",
       "colony_of": ["species:human"],
-      "possible_colony_target": false
+      "possible_colony_target": false,
+      "description": "The habitable-zone third planet of [[location:eta-cassiopeiae]], slightly smaller than Earth, with a 26-hour day, an Earth-like slightly oxygen-rich atmosphere, and a global ocean about 800 km deep. Floating symbiotic plant mats kilometers across produce its oxygen, host animal life, and are exceptionally biocompatible with humans; a rich ecosystem lives below the surface. [[character:mulder]] has suggested the name Poseidon; the planet has four moons, two larger ones about half and a fifth the size of Earth's moon and two small inner rocks. It hosts a human colony on floating plant mats, founded with the [[event:poseidon-colony-arrival|arrival of the first colonists at Poseidon]]."
     }
   ],
   "appearances": [

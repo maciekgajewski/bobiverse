@@ -67,7 +67,8 @@
     },
     {
       "entity_id": "location:omicron2-eridani",
-      "state": "[[character:milo]]'s automation has mined the system for a couple of decades. Its first colony, [[location:landing]] on [[location:vulcan]], is fed partly by three orbital farm donuts, and [[vessel:exodus-3]] has arrived with colonists for [[location:romulus]]."
+      "state": "[[character:milo]]'s automation has mined the system for a couple of decades. Its first colony, [[location:landing]] on [[location:vulcan]], is fed partly by three orbital farm donuts, and [[vessel:exodus-3]] has arrived with colonists for [[location:romulus]].",
+      "description": "A triple-star system whose B and C stars orbit each other and whose pair orbits [[location:omicron-eridani-a]] at about 470 AU. Its survey identifies several outer Jovian planets, a probable asteroid belt, and the double planets [[location:vulcan]] and [[location:romulus]]. Vulcan is the site of [[species:human|humanity]]'s first colony beyond the [[location:solar-system]], founded with the [[event:first-colony-ships-arrival|arrival of the first colony ships]] in 2188. The colony's town is [[location:landing]] on Vulcan. The [[event:exodus-3-arrival|arrival of Exodus-3]] brought [[organization:free-american-independent-theocratic-hegemony|FAITH]] and [[organization:spitsbergen-refuge|Spits]] colonists to settle Romulus."
     }
   ],
   "appearances": [

@@ -10,7 +10,7 @@
       "name": "Gliese 877",
       "kind": "star_system",
       "map_status": "unmapped",
-      "description": "A single-star system, also written GL-877, around a nondescript star in an unremarkable patch of sky. It has two inner rocky planets and a single small Jovian farther out, and apart from one orbit it is unusually clear of debris.",
+      "description": "A single-star system, also written GL-877, around a nondescript star in an unremarkable patch of sky. It has two inner rocky planets, [[location:gliese-877-1]] and [[location:gliese-877-2]], and a single small Jovian, [[location:gliese-877-3]], farther out, and apart from one orbit it is unusually clear of debris.",
       "state": "Artificial radio traffic shows an intelligent presence. A vast, diffuse ring of mass and activity circles the star at about 80% of the orbital radius of [[location:gliese-877-1|its innermost planet]] and produces most of the system's electromagnetic emissions. Six unidentified vessels intercepted [[character:bashful]] on its outskirts."
     },
     {

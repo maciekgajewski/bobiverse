@@ -131,15 +131,6 @@
       "promotion": null
     },
     {
-      "id": "candidate:cupid-bug",
-      "kind": "species",
-      "name": "Cupid Bug",
-      "aliases": [],
-      "mentions": ["2.29", "2.31", "2.46"],
-      "note": "2.29: Dr. Sheehy's name for the egg-laying Vulcan parasite; detector (claims 029-033). 2.31: apex predator, hunter drones planned (claims 037-039, 051-052). Earlier: plain text in 2.20 data.",
-      "promotion": null
-    },
-    {
       "id": "candidate:cupid-bug-hunter",
       "kind": "technology",
       "name": "Cupid Bug hunter",

@@ -98,7 +98,8 @@
     },
     {
       "entity_id": "location:82-eridani",
-      "state": "[[character:ernesto-medeiros|Medeiros]]' forces were cleared in November 2195 when [[character:loki]]'s squad destroyed his two vessels, and [[technology:hunter-seekers]] are sweeping the system. A survey found two habitable planets and a barely habitable moon; biocompatibility analysis is prioritised before colony ships are possibly redirected here."
+      "state": "[[character:ernesto-medeiros|Medeiros]]' forces were cleared in November 2195 when [[character:loki]]'s squad destroyed his two vessels, and [[technology:hunter-seekers]] are sweeping the system. A survey found two habitable planets and a barely habitable moon; biocompatibility analysis is prioritised before colony ships are possibly redirected here.",
+      "description": "A system around a G5V star, smaller and dimmer than [[location:sol]] but a yellow sun [[species:human|humans]] would prefer, with the comfort-zone planets [[location:82-eridani-1]] and [[location:82-eridani-2]]. [[character:milo]] was destroyed here by [[character:ernesto-medeiros|Medeiros]], who entrenched himself until the [[event:battle-at-82-eridani]] and the [[event:second-battle-at-82-eridani|second battle]], in which [[character:loki]]'s Bobs destroyed his two vessels."
     },
     {
       "entity_id": "location:82-eridani-1",

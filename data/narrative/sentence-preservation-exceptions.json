@@ -510,6 +510,54 @@
       "entity_id": "location:delta-eridani-4",
       "field": "description",
       "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation); batch D1 encyclopedia-entry pass (Piotr 2026-11-24 14:13)"
+    },
+    {
+      "chapter": "1.58",
+      "entity_id": "location:solar-system",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation); batch D3 condensation approved by Piotr 2026-11-24 15:05 and 15:45 CET"
+    },
+    {
+      "chapter": "1.61",
+      "entity_id": "location:vulcan",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation); batch D3 condensation approved by Piotr 2026-11-24 15:05 and 15:45 CET"
+    },
+    {
+      "chapter": "1.44",
+      "entity_id": "location:delta-eridani",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation); batch D3 condensation approved by Piotr 2026-11-24 15:05 and 15:45 CET"
+    },
+    {
+      "chapter": "2.65",
+      "entity_id": "location:delta-eridani",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation); batch D3 condensation approved by Piotr 2026-11-24 15:05 and 15:45 CET"
+    },
+    {
+      "chapter": "1.60",
+      "entity_id": "location:82-eridani",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation); batch D3 condensation approved by Piotr 2026-11-24 15:05 and 15:45 CET"
+    },
+    {
+      "chapter": "2.50",
+      "entity_id": "location:82-eridani",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation); batch D3 condensation approved by Piotr 2026-11-24 15:05 and 15:45 CET"
+    },
+    {
+      "chapter": "2.29",
+      "entity_id": "location:vulcan",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation); batch D3 condensation approved by Piotr 2026-11-24 15:05 and 15:45 CET"
+    },
+    {
+      "chapter": "2.65",
+      "entity_id": "location:delta-eridani-4",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation); batch D3 condensation approved by Piotr 2026-11-24 15:05 and 15:45 CET"
     }
   ]
 }
