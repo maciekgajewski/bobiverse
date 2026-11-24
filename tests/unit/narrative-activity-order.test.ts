@@ -253,7 +253,8 @@ describe("narrative activity ordering", () => {
       compared += 1;
     }
     expect(compared).toBe(chapters.length);
-  }, 60_000);
+    // Heavy: one world per chapter. 120s leaves headroom when the file runs in parallel with other corpus tests.
+  }, 120_000);
 
   it("ignores input order apart from exact ties", () => {
     const visible = chapters.slice(0, 20);

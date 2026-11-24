@@ -1744,6 +1744,12 @@ mapping context is inherited from its system ancestor. An unmapped location has 
 astronomy reference. It may be a root or a child, but every descendant below an
 unmapped location must explicitly be `"unmapped"` as well.
 
+At the latest accumulated narrative state, an unmapped `star_system` must not exactly
+and uniquely match a runtime-catalogue system by its name, ID slug, aliases, or supported
+catalogue designations. Documented exceptions belong in the reasoned unmapped-star
+allowlist; validation rejects allowlist entries that are mapped, missing, or no longer a
+`star_system`.
+
 Every non-root location requires both `parent_location_id` and `parent_relation`.
 Roots are `star_system`, `transit`, and explicitly unmapped locations. The shared
 semantic parent table is:

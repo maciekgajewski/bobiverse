@@ -189,6 +189,38 @@ async function assertAssetFiles(assetsSource: LoadedJson): Promise<void> {
   }
 }
 
+function unmappedStarAllowlistPath(root: string): string {
+  return path.basename(root) === "narrative"
+    ? path.join(path.dirname(root), "config", "unmapped-star-allowlist.json")
+    : path.join(root, "config", "unmapped-star-allowlist.json");
+}
+
+async function loadUnmappedStarAllowlist(root: string): Promise<{
+  entries: Array<{ location_id: string; reason: string }>;
+  requireTargets: boolean;
+}> {
+  const localPath = unmappedStarAllowlistPath(root);
+  const canonicalPath = path.join(
+    repositoryRoot,
+    "data/config/unmapped-star-allowlist.json",
+  );
+  const ownsFile = await pathExists(localPath);
+  const filePath = ownsFile ? localPath : canonicalPath;
+  if (!ownsFile && !(await pathExists(canonicalPath))) {
+    return { entries: [], requireTargets: false };
+  }
+  const source = await readJson(filePath);
+  const record = source.value as {
+    entries?: Array<{ location_id: string; reason: string }>;
+  };
+  if (!Array.isArray(record.entries)) {
+    throw new Error(
+      `${displayPath(filePath)} is missing a valid unmapped-star allowlist entries array.`,
+    );
+  }
+  return { entries: record.entries, requireTargets: ownsFile };
+}
+
 async function loadCorpus(rootArgument: string): Promise<LoadedCorpus> {
   const root = path.resolve(repositoryRoot, rootArgument);
   const presentationPath =
@@ -196,13 +228,14 @@ async function loadCorpus(rootArgument: string): Promise<LoadedCorpus> {
       ? path.join(path.dirname(root), "presentation", "species.json")
       : path.join(root, "presentation", "species.json");
   if (!nearbySystems) throw new Error("Nearby astronomy data is invalid.");
-  const [zeroState, assets, speciesPresentation, books, chapters] =
+  const [zeroState, assets, speciesPresentation, books, chapters, allowlist] =
     await Promise.all([
       readJson(path.join(root, "baseline", "zero-state.json")),
       readJson(path.join(root, "assets.json")),
       readJson(presentationPath),
       readJson(path.join(root, "books.json")),
       readChapters(root),
+      loadUnmappedStarAllowlist(root),
     ]);
   await assertAssetFiles(assets);
   return {
@@ -213,6 +246,9 @@ async function loadCorpus(rootArgument: string): Promise<LoadedCorpus> {
       books: books.value,
       chapters: chapters.map((chapter) => chapter.value),
       knownAstronomyObjectIds: nearbySystems.systems.map((system) => system.id),
+      astronomyCatalogue: nearbySystems.systems,
+      unmappedStarAllowlist: allowlist.entries,
+      requireUnmappedStarAllowlistTargets: allowlist.requireTargets,
     },
     sources: [
       { ...zeroState, definition: "zero_state_source" },

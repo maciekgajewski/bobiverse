@@ -18,6 +18,29 @@ import {
 
 export type NarrativeRecord = Record<string, unknown>;
 
+export interface NarrativeCatalogueComponent {
+  designation?: string;
+  identifiers?: {
+    bayer_designation?: string | null;
+    flamsteed_designation?: string | null;
+    gj_id?: string | null;
+    hip_id?: string | null;
+    published_name?: string | null;
+  };
+}
+
+export interface NarrativeCatalogueSystem {
+  id: string;
+  name: string;
+  alternates: readonly string[];
+  components: readonly NarrativeCatalogueComponent[];
+}
+
+export interface UnmappedStarAllowlistEntry {
+  location_id: string;
+  reason: string;
+}
+
 export interface NarrativeCorpus {
   assets: NarrativeRecord;
   speciesPresentation: NarrativeRecord;
@@ -25,6 +48,10 @@ export interface NarrativeCorpus {
   books: NarrativeRecord;
   chapters: NarrativeRecord[];
   knownAstronomyObjectIds: readonly string[];
+  astronomyCatalogue: readonly NarrativeCatalogueSystem[];
+  unmappedStarAllowlist: readonly UnmappedStarAllowlistEntry[];
+  /** When false, missing allowlist IDs are ignored (non-canonical CLI roots). Default true. */
+  requireUnmappedStarAllowlistTargets?: boolean;
 }
 
 declare const preparedNarrativeCorpusBrand: unique symbol;
@@ -1168,6 +1195,156 @@ function assertZeroStateSemantics(
     }
   }
   return flattened;
+}
+
+const glieseDesignation = /^(?:gliese|gj) (\d+(?:\.\d+)?)(?: ([a-z]+))?$/;
+const hipDesignation = /^hip ?(\d+)$/;
+
+function normalizeCatalogueKey(value: string): string {
+  const normalized = value
+    .normalize("NFKC")
+    .toLowerCase()
+    .replace(/[‐‑‒–—-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  const gliese = glieseDesignation.exec(normalized);
+  if (gliese) {
+    const [, number, suffix] = gliese;
+    return suffix ? `gj ${number} ${suffix}` : `gj ${number}`;
+  }
+  const hip = hipDesignation.exec(normalized);
+  return hip ? `hip ${hip[1]}` : normalized;
+}
+
+function catalogueKeys(system: NarrativeCatalogueSystem): string[] {
+  const keys = [system.name, ...system.alternates];
+  for (const component of system.components) {
+    if (component.designation) keys.push(component.designation);
+    const identifiers = component.identifiers;
+    if (!identifiers) continue;
+    for (const value of [
+      identifiers.bayer_designation,
+      identifiers.flamsteed_designation,
+      identifiers.published_name,
+    ]) {
+      if (value) keys.push(value);
+    }
+    if (identifiers.hip_id) keys.push(`HIP ${identifiers.hip_id}`);
+    if (identifiers.gj_id) keys.push(`GJ ${identifiers.gj_id}`);
+  }
+  return keys.map(normalizeCatalogueKey).filter(Boolean);
+}
+
+function finalAccumulatedEntities(
+  zeroStateEntities: readonly NarrativeEntity[],
+  chapters: readonly NarrativeRecord[],
+): Map<string, NarrativeEntity> {
+  const entities = new Map(
+    zeroStateEntities.map((entity) => [entity.id, structuredClone(entity)]),
+  );
+  for (const chapter of chapters) {
+    for (const candidate of (chapter.introducing as unknown[] | undefined) ??
+      []) {
+      const introduced = asRecord(
+        candidate,
+        `Introduction in ${chapterId(chapter)}`,
+      );
+      const id = asString(
+        introduced.id,
+        `Introduction ID in ${chapterId(chapter)}`,
+      );
+      entities.set(id, {
+        ...structuredClone(introduced),
+        id,
+        entity_type: entityType(id),
+      });
+    }
+    for (const candidate of (chapter.updates as unknown[] | undefined) ?? []) {
+      const update = asRecord(candidate, `Update in ${chapterId(chapter)}`);
+      const target = entities.get(
+        asString(update.entity_id, `Update target in ${chapterId(chapter)}`),
+      );
+      if (!target) continue;
+      for (const property of sourceProperties(update, updateMetadataKeys)) {
+        target[property] = structuredClone(update[property]);
+      }
+    }
+  }
+  return entities;
+}
+
+function assertUnmappedCatalogueStars(
+  zeroStateEntities: readonly NarrativeEntity[],
+  chapters: readonly NarrativeRecord[],
+  catalogue: readonly NarrativeCatalogueSystem[],
+  allowlist: readonly UnmappedStarAllowlistEntry[],
+  requireAllowlistTargets = true,
+): void {
+  const finalEntities = finalAccumulatedEntities(zeroStateEntities, chapters);
+  const allowlistedIds = new Set<string>();
+  for (const entry of allowlist) {
+    if (allowlistedIds.has(entry.location_id)) {
+      throw new Error(
+        `Unmapped star allowlist has a duplicate entry for ${entry.location_id}.`,
+      );
+    }
+    allowlistedIds.add(entry.location_id);
+    const entity = finalEntities.get(entry.location_id);
+    if (!entity) {
+      if (!requireAllowlistTargets) continue;
+      throw new Error(
+        `Unmapped star allowlist entry ${entry.location_id} does not exist.`,
+      );
+    }
+    if (entity.entity_type !== "location" || entity.kind !== "star_system") {
+      throw new Error(
+        `Unmapped star allowlist entry ${entry.location_id} is not a star_system.`,
+      );
+    }
+    if (typeof entity.astronomy_object_id === "string") {
+      throw new Error(
+        `Unmapped star allowlist entry ${entry.location_id} is mapped.`,
+      );
+    }
+  }
+
+  const systemIdsByKey = new Map<string, Set<string>>();
+  for (const system of catalogue) {
+    for (const key of catalogueKeys(system)) {
+      const ids = systemIdsByKey.get(key) ?? new Set<string>();
+      ids.add(system.id);
+      systemIdsByKey.set(key, ids);
+    }
+  }
+  for (const entity of finalEntities.values()) {
+    if (
+      entity.entity_type !== "location" ||
+      entity.kind !== "star_system" ||
+      typeof entity.astronomy_object_id === "string" ||
+      allowlistedIds.has(entity.id)
+    ) {
+      continue;
+    }
+    const rawKeys = [
+      typeof entity.name === "string" ? entity.name : "",
+      entity.id.replace(/^location:/, "").replace(/-/g, " "),
+      ...(Array.isArray(entity.aliases)
+        ? entity.aliases.filter(
+            (alias): alias is string => typeof alias === "string",
+          )
+        : []),
+    ];
+    for (const key of new Set(
+      rawKeys.map(normalizeCatalogueKey).filter(Boolean),
+    )) {
+      const systemIds = systemIdsByKey.get(key);
+      if (systemIds?.size === 1) {
+        throw new Error(
+          `Unmapped star_system ${entity.id} uniquely matches catalogue system ${[...systemIds][0]}.`,
+        );
+      }
+    }
+  }
 }
 
 function collectReferences(record: NarrativeRecord): string[] {
@@ -2555,6 +2732,13 @@ function validateNarrativeCorpusSemantics(
     zeroStateEntities,
     chapters,
     introductionChapters,
+  );
+  assertUnmappedCatalogueStars(
+    zeroStateEntities,
+    chapters,
+    corpus.astronomyCatalogue,
+    corpus.unmappedStarAllowlist,
+    corpus.requireUnmappedStarAllowlistTargets,
   );
   assertTemporalWrites(chapters);
   if (!options.skipProjectedLocationConstraints) {

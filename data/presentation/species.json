@@ -48,6 +48,10 @@
       "style_id": "species-style:deltan"
     },
     {
+      "species_id": "species:pav",
+      "style_id": "species-style:pav"
+    },
+    {
       "species_id": "species:others",
       "style_id": "species-style:others"
     }

@@ -8,6 +8,7 @@ import {
   narrativeSchemaErrors,
 } from "../../src/narrative/model";
 import { resolveSpeciesPresentations } from "../../src/narrative/species-presentation";
+import { narrativeCorpus } from "../../src/narrative/runtime";
 import { createNarrativeFixtureCorpus } from "../fixtures/narrative";
 
 describe("species presentation registry", () => {
@@ -38,6 +39,10 @@ describe("species presentation registry", () => {
       {
         species_id: "species:delta-eridani-natives",
         style_id: "species-style:deltan",
+      },
+      {
+        species_id: "species:pav",
+        style_id: "species-style:pav",
       },
       {
         species_id: "species:others",
@@ -78,6 +83,21 @@ describe("species presentation registry", () => {
     expect(second.get("species:fixture-later")?.styleId).toBe(
       "species-style:fixture",
     );
+  });
+
+  it("resolves the canonical Pav assignment instead of the unknown style", () => {
+    expect(narrativeCorpus).not.toBeNull();
+
+    expect(
+      resolveSpeciesPresentations(
+        narrativeCorpus!,
+        generateNarrativeWorld(narrativeCorpus!, "2.77"),
+      ).get("species:pav"),
+    ).toMatchObject({
+      styleId: "species-style:pav",
+      iconPath: "/assets/species-icons/pav.svg",
+      colour: "#FFB347",
+    });
   });
 
   it("rejects duplicate, unknown, missing-default, and wrong-role presentation data", () => {

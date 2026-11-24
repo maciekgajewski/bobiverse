@@ -41,6 +41,7 @@ from common import (
     C20PC_PATH, C20PC_README_PATH, C20PC_SCHEMA_PATH, CANDIDATES_PATH, CLASSICAL_NAMES_PATH, CNS5_PATH, CONFIG_PATH, CONFIG_SCHEMA_PATH, GAIA_ENRICHMENT_PATH,
     GCNS_PATH, GENERATED_PATH, IDENTITY_REGISTRY_PATH, LANDMARKS_PATH, REVIEW_PATH,
     ROOT, SOURCE_DIR, SOURCE_EXTRACT_SCHEMA_PATH, WDS_FORMAT_PATH, WDS_PATH,
+    UNMAPPED_STAR_ALLOWLIST_PATH, UNMAPPED_STAR_ALLOWLIST_SCHEMA_PATH,
     mapped_anchor_names, read_gzip, read_json, resolve_anchor_bootstraps, sha256,
     sha256_bytes, value_sha256,
 )
@@ -1858,6 +1859,11 @@ def main() -> None:
     args = parser.parse_args()
     config = read_json(CONFIG_PATH)
     validate_schema(config, CONFIG_SCHEMA_PATH, "Map display configuration")
+    validate_schema(
+        read_json(UNMAPPED_STAR_ALLOWLIST_PATH),
+        UNMAPPED_STAR_ALLOWLIST_SCHEMA_PATH,
+        "Unmapped star allowlist",
+    )
     gcns_manifest, gcns_rows = validate_extract("gcns", GCNS_COLUMNS, "source_id")
     cns5_manifest, cns5_rows = validate_extract("cns5", CNS5_COLUMNS, "cns5_id")
     gaia_manifest, gaia_rows = validate_extract("gaia_dr3", GAIA_COLUMNS, "source_id")
