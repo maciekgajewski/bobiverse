@@ -147,7 +147,7 @@
     },
     {
       "entity_id": "location:delta-eridani",
-      "description": "A stellar system centered on an orange star cooler than [[location:sol]] but more than two and a half times as large. [[character:bob-replicant]] chose it for its lack of a binary companion, low ultraviolet emissions, long-lived stellar type, and wide potential habitable zone; [[character:bill]] considered it a likely source of habitable planets."
+      "description": "A stellar system centered on an orange star cooler than [[location:sol]] but more than two and a half times as large. [[character:bob-replicant]] chose it for its lack of a binary companion, low ultraviolet emissions, long-lived stellar type, and wide potential habitable zone; [[character:bill]] considered it a likely source of habitable planets. Its five inner rocky planets, including [[location:delta-eridani-4|Delta Eridani 4]], lie inside an ore-bearing [[location:delta-eridani-asteroid-belt|asteroid belt]], with five gas giants beyond it."
     },
     {
       "entity_id": "technology:planetary-exploration-drone",

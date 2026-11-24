@@ -10,14 +10,14 @@
       "name": "Kappa Ceti",
       "kind": "star_system",
       "astronomy_object_id": "stellar-system-002480",
-      "description": "Kappa Ceti is a named destination star described as a G5eV star slightly smaller than [[location:sol]]. [[character:luke]] leaves [[location:delta-eridani]] intending to travel there."
+      "description": "A stellar system centered on a G5eV star slightly smaller than [[location:sol]]. [[character:luke]] chooses it as his destination when he leaves [[location:delta-eridani]]."
     },
     {
       "id": "location:gamma-leporis-a",
       "name": "Gamma Leporis A",
       "kind": "star_system",
       "map_status": "unmapped",
-      "description": "Gamma Leporis A is a named destination star described as an F6V star bigger and brighter than [[location:sol]]. [[character:bender]] chooses it as his destination, more than sixteen light-years away."
+      "description": "A stellar system centered on an F6V star, bigger and brighter than [[location:sol]], more than sixteen light-years away. [[character:bender]] chooses it as his destination."
     },
     {
       "id": "event:gorilloid-attack-on-deltan-colony",

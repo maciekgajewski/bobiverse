@@ -504,6 +504,12 @@
       "entity_id": "location:romulus",
       "field": "description",
       "reason": "Fused rewrite under the description guideline (Maciej 2026-11-14 22:54, delegated condensation)"
+    },
+    {
+      "chapter": "1.55",
+      "entity_id": "location:delta-eridani-4",
+      "field": "description",
+      "reason": "Condensed rewrite under the description-length guideline (Maciej 2026-11-14 22:54, delegated condensation); batch D1 encyclopedia-entry pass (Piotr 2026-11-24 14:13)"
     }
   ]
 }

@@ -32,7 +32,7 @@
     },
     {
       "entity_id": "location:delta-eridani-4",
-      "description": "The fourth inner rocky planet in the [[location:delta-eridani]] system, also called Delta Eridani 4 and DE-4, and named Eden by [[character:bob-replicant]]'s group as the [[species:delta-eridani-natives|Deltans]]' birthplace. It is slightly larger than [[location:earth]], with lower gravity and a somewhat denser atmosphere. Its temperate-to-subtropical landscape mixes meadows, rocky bluffs and forests of huge brownish trees, and its ecosystem is as full as Earth's, with several apex predators such as pack-hunting leopard-analogues. A mountainous spine runs down the Deltans' home continent, crossed by only a couple of useful passes. Gorilloids, omnivores living mainly on a local tree's hard seedpods, are dense around the flint site and drawn to protein-rich Deltans."
+      "description": "The fourth inner rocky planet in the [[location:delta-eridani]] system, also called Delta Eridani 4 and DE-4, and named Eden by [[character:bob-replicant]]'s group as the [[species:delta-eridani-natives|Deltans]]' birthplace. Slightly larger than [[location:earth]] and temperate to subtropical, it has an ecosystem as full as Earth's, with apex predators and gorilloids that prey on the Deltans. It is the site of [[event:first-contact-with-the-deltans|first contact]] with the Deltans, the [[event:deltan-migration|Deltan migration]] across their home continent's mountain spine, and the [[event:gorilloid-raid-on-deltan-migration|gorilloid raid]] on it."
     },
     {
       "entity_id": "technology:buster-drone",

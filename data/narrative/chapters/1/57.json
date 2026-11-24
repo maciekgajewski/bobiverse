@@ -15,7 +15,7 @@
       "body_class": "rocky",
       "color": "brown, with gray oceans",
       "visual_description": "A muddy brown planet with gray oceans under a dense, murky atmosphere.",
-      "description": "The fourth planet of [[location:beta-hydri]], a muddy rocky world with gray oceans and a dense, murky atmosphere. Its surface looks shaped by heavy volcanic activity, though without obvious rings or chains of volcanoes. It has a magnetic field and therefore a metallic core, but its crust holds almost no metal, only scattered patches not worth mining.",
+      "description": "The fourth planet of [[location:beta-hydri]], a muddy rocky world with gray oceans and a dense, murky atmosphere. Its surface looks shaped by heavy volcanic activity, though without obvious rings or chains of volcanoes. It has a magnetic field and therefore a metallic core, but its crust holds almost no metal, only scattered patches not worth mining. A radiation surge killed all its life at once in the [[event:gl19-4-die-off|die-off]], leaving standing dead forests.",
       "state": "Once covered by an ecosystem of trees, bushes and animals, it is now lifeless: the vegetation stands dried out and weathered, and very few animal carcasses remain. A crashed [[vessel:alien-cargo-carrier]] lies split open on its surface."
     },
     {
@@ -43,7 +43,7 @@
     },
     {
       "entity_id": "location:beta-hydri",
-      "description": "A stellar system whose rocky inner planets include [[location:gl19-4]], the fourth planet. Its star's spectral lines show about two-thirds of [[location:sol]]'s metallicity, so its planets would be expected to share a similar metal content. [[character:bill]] considers it suitable, though distant compared with nearer stars of comparable potential.",
+      "description": "A stellar system whose rocky inner planets include [[location:gl19-4]], the fourth planet. Its star's spectral lines show about two-thirds of [[location:sol]]'s metallicity, so its planets would be expected to share a similar metal content. [[character:bill]] considers it suitable, though distant compared with nearer stars of comparable potential. GL19-4 is the site of a [[event:gl19-4-die-off|planet-wide die-off]].",
       "state": "No metal ore remains anywhere in the system, though other elements are in normal ratios, which known formation theories cannot explain. A crashed [[vessel:alien-cargo-carrier]] full of pure ingots lies on [[location:gl19-4]], and [[character:mario]] tentatively concludes that aliens mined the system."
     },
     {

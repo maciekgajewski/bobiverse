@@ -59,11 +59,16 @@
     },
     {
       "entity_id": "location:earth",
-      "state": "Cloud and dust hide a surface scarred by dozens of asteroid and nuclear impacts that have disrupted the weather. A survivor group estimates the population at under twenty million, with recovery taking five to ten thousand years."
+      "state": "Cloud and dust hide a surface scarred by dozens of asteroid and nuclear impacts that have disrupted the weather. A survivor group estimates the population at under twenty million, with recovery taking five to ten thousand years.",
+      "description": "Mostly harmless. The homeworld of [[species:human|humanity]]. Its places include [[location:las-vegas]], where [[character:robert-johansson|Bob]] dies in the [[event:bob-road-incident|road incident]] of 2016; [[location:new-handeltown]], formerly Portland, where he is revived as a replicant in 2133; and [[location:old-handeltown]], formerly Salem, Oregon, whose memorial to Handel was destroyed by a nuclear weapon. [[event:four-asteroid-diversion|Four asteroids]] aimed at it are diverted, but the [[event:solar-system-war|solar-system war]] scars its surface with asteroid and nuclear impacts and disrupts its weather."
     },
     {
       "entity_id": "location:epsilon-eridani",
-      "description": "A stellar system estimated to be about one billion years old and selected as [[vessel:heaven-1]]'s destination. It is not suitable for an unprotected human settlement, though people could live there under a dome."
+      "description": "A stellar system estimated to be about one billion years old and selected as [[vessel:heaven-1]]'s destination. It is not suitable for an unprotected human settlement, though people could live there under a dome. Its planets are the hot, airless [[location:ee-1|EE-1]], the marginally livable [[location:ee-2]], the moon-rich giant [[location:ee-3]] and [[location:ee-4]]. It hosts [[character:bill]]'s [[location:bill-skunkworks|skunkworks]], the workshop for the system's manufacturing and research."
+    },
+    {
+      "entity_id": "location:solar-system",
+      "description": "The planetary system of Sol is home to [[species:human|humanity]] on [[location:earth]]. Its other planets are [[location:mercury]], [[location:venus]], [[location:mars]], [[location:jupiter]], [[location:saturn]], [[location:uranus]] and [[location:neptune]], and it includes the [[location:asteroid-belt|asteroid belt]], [[location:kuiper-belt|Kuiper belt]] and [[location:oort-cloud|Oort cloud]]. The [[organization:united-states-of-eurasia|USE]] built a station on [[location:titan]] to study the primitive life found there. It is the site of the [[event:four-asteroid-diversion|diversion of four asteroids]] aimed at Earth and of the [[event:solar-system-war|solar-system war]], which devastated Earth."
     }
   ],
   "appearances": [

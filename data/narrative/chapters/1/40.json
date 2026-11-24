@@ -10,7 +10,7 @@
       "name": "Epsilon Indi",
       "kind": "star_system",
       "astronomy_object_id": "stellar-system-005631",
-      "description": "A stellar system centered on a cooler, smaller K-type star than [[location:sol]]. Potentially livable worlds would orbit close to the star and would be likely to be tidally locked."
+      "description": "A stellar system centered on a cooler, smaller K-type star than [[location:sol]]. Potentially livable worlds would orbit close to the star and would be likely to be tidally locked. Its only notable planet is the Jovian [[location:epsilon-indi-1]], just outside the habitable zone. [[character:linus]] arrives in 2165; the system lies eleven light-years from [[location:earth]] and fourteen from [[location:epsilon-eridani]]."
     },
     {
       "id": "location:epsilon-indi-1",

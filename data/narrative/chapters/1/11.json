@@ -22,7 +22,7 @@
       "kind": "locale",
       "parent_location_id": "location:earth",
       "parent_relation": "located_on",
-      "description": "A historic Oregon city identified as Salem, Oregon and as Handel's birthplace. After Handel's death, the city changed its name and a large memorial was established in his honor. An unidentified person later destroyed the memorial with a pocket nuclear weapon after objecting. It was the only nuclear weapon deployed in North America, and advanced radiation treatment limited the resulting deaths."
+      "description": "A historic Oregon city identified as Salem, Oregon and as Handel's birthplace. After Handel's death, the city changed its name and a large memorial was established in his honor. An unidentified person later destroyed the memorial with a pocket nuclear weapon after objecting. It was the only nuclear weapon deployed in North America, and advanced radiation treatment limited the resulting deaths. The Handeltown name then moved to Portland as [[location:new-handeltown]]."
     }
   ],
   "appearances": [
@@ -49,6 +49,10 @@
     {
       "entity_id": "technology:roamers",
       "description": "Remote observation and manipulation devices directed through [[technology:guppi-interface|GUPPI]]. They come in varied sizes, coordinate across scales and, once their tasks are defined, need little supervision. They can climb floors, walls and ceilings, carry video cameras and pick up vibrations through a wall. Reusable scripts automate routine work, leaving assembly largely self-directed."
+    },
+    {
+      "entity_id": "location:earth",
+      "description": "Mostly harmless. The homeworld of [[species:human|humanity]]. Its places include [[location:las-vegas]], where [[character:robert-johansson|Bob]] dies in the [[event:bob-road-incident|road incident]] of 2016; [[location:new-handeltown]], formerly Portland, where he is revived as a replicant in 2133; and [[location:old-handeltown]], formerly Salem, Oregon, whose memorial to Handel was destroyed by a nuclear weapon."
     }
   ],
   "mentions": ["organization:ministry-of-proper-thought"]
