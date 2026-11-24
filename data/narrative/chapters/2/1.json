@@ -50,7 +50,7 @@
     },
     {
       "entity_id": "location:delta-eridani",
-      "description": "A stellar system centered on an orange star cooler than [[location:sol]] but more than two and a half times as large. [[character:bob-replicant]] chose it for its lack of a binary companion, low ultraviolet emissions, long-lived stellar type, and wide potential habitable zone; [[character:bill]] considered it a likely source of habitable planets. Its five inner rocky planets, including [[location:delta-eridani-4|Delta Eridani 4]], lie inside an ore-bearing [[location:delta-eridani-asteroid-belt|asteroid belt]], with five gas giants beyond it. That fourth planet, named Eden, is the homeworld of the [[species:delta-eridani-natives|Deltans]] and the site of the [[event:deltan-colony-battle|battle at the Deltan colony]] and of [[event:first-contact-with-the-deltans|first contact]] with them. Eden is home to the Deltan village of [[location:camelot]]."
+      "description": "An orange-star system whose star is cooler than [[location:sol]] but more than two and a half times as large, with five rocky planets inside an ore-bearing [[location:delta-eridani-asteroid-belt|asteroid belt]] and five gas giants beyond. Its fourth planet, [[location:delta-eridani-4|Eden]], is the homeworld of the [[species:delta-eridani-natives|Deltans]] and the site of the [[event:deltan-colony-battle|battle at the Deltan colony]] and of [[event:first-contact-with-the-deltans|first contact]]. Eden's Deltans live in the village of [[location:camelot]]."
     },
     {
       "entity_id": "location:delta-eridani-4",

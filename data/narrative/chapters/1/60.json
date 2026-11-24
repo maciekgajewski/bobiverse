@@ -143,7 +143,7 @@
     {
       "entity_id": "location:82-eridani",
       "state": "[[character:ernesto-medeiros|Medeiros]], entrenched here for about thirty-five years and responsible for [[character:milo]]'s loss, fought off eight version-3 Bobs in April 2185; three probes believed to be him were destroyed, but his [[technology:ami]] units remain active and only one [[character:bob-replicant]] escaped.",
-      "description": "A stellar system centered on a G5V star that is smaller and less luminous than [[location:sol]] but within the range of yellow suns [[species:human|humans]] would prefer. Astronomical data marked it as a very good candidate for a habitable planet, and [[character:milo]] selected it as his next destination from [[location:omicron2-eridani]]. [[location:82-eridani-1]] lies at the inner edge of its comfort zone and [[location:82-eridani-2]], with large bodies of water and two moons, near the outer edge. Milo is destroyed here by [[character:ernesto-medeiros|Medeiros]], who entrenches himself in the system and is the target of the [[event:battle-at-82-eridani]]."
+      "description": "A system around a G5V star, smaller and dimmer than [[location:sol]] but a yellow sun [[species:human|humans]] would prefer, with the comfort-zone planets [[location:82-eridani-1]] and [[location:82-eridani-2]]. [[character:milo]], arriving from [[location:omicron2-eridani]], was destroyed here by [[character:ernesto-medeiros|Medeiros]], who entrenched himself and was the target of the [[event:battle-at-82-eridani]]."
     },
     {
       "entity_id": "technology:ship-busters",
