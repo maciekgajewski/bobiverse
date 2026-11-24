@@ -141,6 +141,77 @@ describe("narrative generator output", () => {
     }
   });
 
+  it("schema-validates a root-owned unmapped-star allowlist override", async () => {
+    const root = await createZeroStateCorpus();
+    try {
+      await mkdir(path.join(root, "config"));
+      await writeFile(
+        path.join(root, "config", "unmapped-star-allowlist.json"),
+        '{"entries":[]}\n',
+      );
+
+      const result = runCli("validate", root);
+
+      expect(result.status).toBe(1);
+      expect(result.stderr).toMatch(
+        /config\/unmapped-star-allowlist\.json:\d+:\d+: error: \/: missing required property "schema_version"/,
+      );
+      expect(result.stderr).not.toContain(
+        "data/config/unmapped-star-allowlist.json",
+      );
+    } finally {
+      await rm(root, { recursive: true, force: true });
+    }
+  });
+
+  it("attributes an unmapped catalogue-star guard error to its introducing chapter", async () => {
+    const root = await createZeroStateCorpus();
+    try {
+      await mkdir(path.join(root, "chapters", "1"), { recursive: true });
+      await mkdir(path.join(root, "config"));
+      await writeFile(
+        path.join(root, "config", "unmapped-star-allowlist.json"),
+        '{"schema_version":"1.0.0","entries":[]}\n',
+      );
+      await writeFile(
+        path.join(root, "books.json"),
+        '{"books":{"1":{"title":"Fixture volume"}}}\n',
+      );
+      await writeFile(
+        path.join(root, "chapters", "1", "1.json"),
+        `${JSON.stringify(
+          {
+            chapter: "1.1",
+            title: "Fixture chapter",
+            summary: "A fictional catalogue-star diagnostic fixture.",
+            date: "2200",
+            location_id: "location:earth",
+            introducing: [
+              {
+                id: "location:delta-pavonis",
+                name: "Delta Pavonis",
+                kind: "star_system",
+                map_status: "unmapped",
+              },
+            ],
+          },
+          null,
+          2,
+        )}\n`,
+      );
+
+      const result = runCli("validate", root);
+
+      expect(result.status).toBe(1);
+      expect(result.stderr).toMatch(
+        /chapters\/1\/1\.json:\d+:\d+: error: Unmapped star_system location:delta-pavonis uniquely matches catalogue system/,
+      );
+      expect(result.stderr).not.toContain("baseline/zero-state.json");
+    } finally {
+      await rm(root, { recursive: true, force: true });
+    }
+  });
+
   it.each([
     ["chapter", { picture_id: "asset:species-human" }, "/picture_id"],
     [

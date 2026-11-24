@@ -51,6 +51,28 @@ describe("unmapped catalogued-star guard", () => {
     );
   });
 
+  it("accepts an entity whose name and ID slug match different catalogue systems", () => {
+    const corpus = withLocations(
+      [unmappedStar("location:id-slug-system", "Named system")],
+      catalogue([
+        {
+          id: "stellar-system-named",
+          name: "Named system",
+          alternates: [],
+          components: [],
+        },
+        {
+          id: "stellar-system-slug",
+          name: "Id slug system",
+          alternates: [],
+          components: [],
+        },
+      ]),
+    );
+
+    expect(() => validateNarrativeCorpus(corpus)).not.toThrow();
+  });
+
   it("accepts a uniquely catalogued unmapped star_system on the allowlist", () => {
     const corpus = withLocations(
       [unmappedStar("location:fixture-star", "Fixture Star")],

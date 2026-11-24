@@ -1328,21 +1328,24 @@ function assertUnmappedCatalogueStars(
     const rawKeys = [
       typeof entity.name === "string" ? entity.name : "",
       entity.id.replace(/^location:/, "").replace(/-/g, " "),
+      // Location schemas do not currently allow aliases; retain this for that future extension.
       ...(Array.isArray(entity.aliases)
         ? entity.aliases.filter(
             (alias): alias is string => typeof alias === "string",
           )
         : []),
     ];
+    const matchedSystemIds = new Set<string>();
     for (const key of new Set(
       rawKeys.map(normalizeCatalogueKey).filter(Boolean),
     )) {
       const systemIds = systemIdsByKey.get(key);
-      if (systemIds?.size === 1) {
-        throw new Error(
-          `Unmapped star_system ${entity.id} uniquely matches catalogue system ${[...systemIds][0]}.`,
-        );
-      }
+      for (const systemId of systemIds ?? []) matchedSystemIds.add(systemId);
+    }
+    if (matchedSystemIds.size === 1) {
+      throw new Error(
+        `Unmapped star_system ${entity.id} uniquely matches catalogue system ${[...matchedSystemIds][0]}.`,
+      );
     }
   }
 }

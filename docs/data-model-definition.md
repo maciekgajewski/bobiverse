@@ -1745,8 +1745,9 @@ astronomy reference. It may be a root or a child, but every descendant below an
 unmapped location must explicitly be `"unmapped"` as well.
 
 At the latest accumulated narrative state, an unmapped `star_system` must not exactly
-and uniquely match a runtime-catalogue system by its name, ID slug, aliases, or supported
-catalogue designations. Documented exceptions belong in the reasoned unmapped-star
+and uniquely match a runtime-catalogue system by its name, ID slug, or supported
+catalogue designations. The aliases matching path is reserved but unused until the
+location schema allows aliases. Documented exceptions belong in the reasoned unmapped-star
 allowlist; validation rejects allowlist entries that are mapped, missing, or no longer a
 `star_system`.
 

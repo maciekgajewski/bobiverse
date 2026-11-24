@@ -32,19 +32,22 @@ each entry.
 
 Matching is conservative and exact after normalisation, never fuzzy:
 
-- Narrative keys: location `name`, `id` slug (`location:` stripped, hyphens
-  become spaces), and `aliases`.
+- Narrative keys: location `name` and `id` slug (`location:` stripped, hyphens
+  become spaces). The `aliases` path is reserved but unused until the location
+  schema allows aliases.
 - Catalogue keys: system `name`, `alternates`, component `designation`, and
   HIP / GJ / Bayer / Flamsteed / published-name identifier fields (including
   constructed `HIP <id>` and `GJ <id>`).
-- Normalisation: Unicode case-fold and whitespace collapse; Gliese / GJ
+- Normalisation: Unicode NFKC normalization, JavaScript `toLowerCase()`, dash and
+  whitespace collapse; Gliese / GJ
   designations use the same rule as `normalize_astronomy_name` in
   `scripts/common.py` (canonical `gj <number>`, optional letter-only component
   suffix retained); HIP designations become `hip <number>`.
 - A trailing component letter is not stripped: `Gamma Leporis A` does not match
   `Gamma Leporis`.
-- A key that maps to more than one catalogue system is not a unique match and
-  does not raise this error.
+- Uniqueness is per entity: collect the union of catalogue systems matched by
+  any of the entity's keys, and raise this error only if that union is exactly
+  one system.
 
 The allowlist cannot rot: an entry whose location is now mapped, is missing, or
 is not a `star_system` is itself an error. The runtime catalogue (the generated

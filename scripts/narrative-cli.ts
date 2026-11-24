@@ -19,6 +19,9 @@ import {
   type PreparedNarrativeCorpus,
   type NarrativeRecord,
 } from "../src/narrative/model";
+import Ajv2020 from "ajv/dist/2020.js";
+import type { ErrorObject } from "ajv";
+import unmappedStarAllowlistSchema from "../data/schema/unmapped-star-allowlist.schema.json";
 import {
   JsonSourceParseError,
   locationForPointer,
@@ -210,6 +213,23 @@ async function loadUnmappedStarAllowlist(root: string): Promise<{
     return { entries: [], requireTargets: false };
   }
   const source = await readJson(filePath);
+  const ajv = new Ajv2020({ allErrors: true, strict: false, verbose: true });
+  const validate = ajv.compile(unmappedStarAllowlistSchema);
+  if (!validate(source.value)) {
+    const diagnostics = formatSchemaDiagnostics(
+      (validate.errors ?? []) as ErrorObject[],
+      source.value,
+      source.locations,
+    );
+    throw new Error(
+      diagnostics
+        .map(
+          (diagnostic) =>
+            `${displayPath(source.filePath)}:${diagnostic.location.line}:${diagnostic.location.column}: error: ${diagnostic.message}`,
+        )
+        .join("\n"),
+    );
+  }
   const record = source.value as {
     entries?: Array<{ location_id: string; reason: string }>;
   };
@@ -423,18 +443,50 @@ function sourceSchemaErrorFormatter(
 function sourceForSemanticError(
   error: Error,
   loaded: LoadedCorpus,
-): LoadedJson {
+): { source: LoadedJson; pointer: string } {
+  const unmappedStar =
+    /Unmapped star_system (location:[^ ]+) uniquely matches/.exec(
+      error.message,
+    )?.[1];
+  if (unmappedStar) {
+    for (const source of loaded.sources) {
+      const introducing = source.value.introducing;
+      if (!Array.isArray(introducing)) continue;
+      const index = introducing.findIndex(
+        (candidate) =>
+          candidate &&
+          typeof candidate === "object" &&
+          (candidate as NarrativeRecord).id === unmappedStar,
+      );
+      if (index !== -1) return { source, pointer: `/introducing/${index}` };
+    }
+  }
   const chapter = /Chapter (\d+\.\d+)/.exec(error.message)?.[1];
   if (chapter) {
     const source = loaded.sources.find(
       (candidate) => candidate.value.chapter === chapter,
     );
-    if (source) return source;
+    if (source) return { source, pointer: pointerForSemanticError(error) };
   }
-  if (error.message.includes("Species presentation")) return loaded.sources[2]!;
-  if (error.message.includes("Asset")) return loaded.sources[1]!;
-  if (error.message.includes("Book")) return loaded.sources[3]!;
-  return loaded.sources[0]!;
+  if (error.message.includes("Species presentation"))
+    return {
+      source: loaded.sources[2]!,
+      pointer: pointerForSemanticError(error),
+    };
+  if (error.message.includes("Asset"))
+    return {
+      source: loaded.sources[1]!,
+      pointer: pointerForSemanticError(error),
+    };
+  if (error.message.includes("Book"))
+    return {
+      source: loaded.sources[3]!,
+      pointer: pointerForSemanticError(error),
+    };
+  return {
+    source: loaded.sources[0]!,
+    pointer: pointerForSemanticError(error),
+  };
 }
 
 function pointerForSemanticError(error: Error): string {
@@ -469,11 +521,8 @@ async function main(): Promise<void> {
       return;
     }
     const cause = error instanceof Error ? error : new Error("Unknown failure");
-    throw errorAt(
-      sourceForSemanticError(cause, loaded),
-      pointerForSemanticError(cause),
-      cause.message,
-    );
+    const semanticSource = sourceForSemanticError(cause, loaded);
+    throw errorAt(semanticSource.source, semanticSource.pointer, cause.message);
   }
   if (command === "manifest") {
     const outputPath = path.resolve(
