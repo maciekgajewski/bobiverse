@@ -1,7 +1,7 @@
 {
   "chapter": "2.52",
   "title": "52 - Bullwinkle",
-  "summary": "At [[location:epsilon-eridani]], [[character:bill]] is touring [[location:ee-2|Ragnarök]] in [[technology:bullwinkle]], which no longer needs a drone trailing it, when [[character:garfield]] brings the report from [[location:82-eridani]] after the [[event:second-battle-at-82-eridani|second battle]]: three likely colony targets pending biocompatibility checks, wreckage that [[character:loki]] is studying for its cloaking, and unexploded fission bombs that a [[technology:suddar|SUDDAR]] pulse might scan safely. Bill still fears the sheer numbers of the [[species:others|Others]]. At the moot in the pub, [[character:monty]] reports that underwater defenses are deterring the [[species:kraken|krakens]] at [[location:eta-cassiopeiae-3|Poseidon]] and that he wants to leave once the colony can stand on its own, while Bobs quiz [[character:riker]] about Earth. Bill notes [[character:howard]]'s absence and worries that newer Bobs are tiring of humans. [[character:marvin]] and [[character:luke]] hear that [[character:bender]] is still silent and that [[character:victor]] found nothing along his vector, and they plan an expedition to follow the thinned-gas trail his ship would have left.",
+  "summary": "At [[location:epsilon-eridani]], [[character:bill]] is touring [[location:ee-2|Ragnarök]] in [[technology:bullwinkle]], which no longer needs a drone trailing it, when [[character:garfield]] brings the report from [[location:82-eridani]] after the [[event:second-battle-at-82-eridani|second battle]]: three likely colony targets pending biocompatibility checks, wreckage that [[character:loki]] is studying for its cloaking, and unexploded fission bombs that a [[technology:suddar|SUDDAR]] pulse might scan safely. Bill still fears the sheer numbers of the [[species:others|Others]]. At the moot in the pub, [[character:monty]] reports that underwater defenses are deterring the krakens at [[location:eta-cassiopeiae-3|Poseidon]] and that he wants to leave once the colony can stand on its own, while Bobs quiz [[character:riker]] about Earth. Bill notes [[character:howard]]'s absence and worries that newer Bobs are tiring of humans. [[character:marvin]] and [[character:luke]] hear that [[character:bender]] is still silent and that [[character:victor]] found nothing along his vector, and they plan an expedition to follow the thinned-gas trail his ship would have left.",
   "date": "2195-12",
   "location_id": "location:epsilon-eridani",
   "updates": [
@@ -43,7 +43,7 @@
     },
     {
       "entity_id": "location:eta-cassiopeiae-3",
-      "state": "Its first colony lives on two plant mats in the north tropical current, with colonists from Micronesia, the Maldives, Vanuatu and Saint Lucia. After bad months of [[species:kraken|kraken]] visits, new underwater defenses are deterring them; floating cities are planned."
+      "state": "Its first colony lives on two plant mats in the north tropical current, with colonists from Micronesia, the Maldives, Vanuatu and Saint Lucia. After bad months of kraken visits, new underwater defenses are deterring them; floating cities are planned."
     }
   ],
   "appearances": [
@@ -83,7 +83,6 @@
     "character:howard",
     "event:second-battle-at-82-eridani",
     "location:ee-2",
-    "species:kraken",
     "species:others",
     "technology:bullwinkle",
     "technology:suddar"

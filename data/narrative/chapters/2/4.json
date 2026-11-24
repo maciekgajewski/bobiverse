@@ -10,7 +10,7 @@
       "name": "Eta Cassiopeiae",
       "kind": "star_system",
       "astronomy_object_id": "stellar-system-003237",
-      "description": "A long-period binary 19.5 light-years from [[location:epsilon-eridani]], with no Jovian planets or significant asteroid belt, only five rocky planets and a few eccentric asteroids. Its metal content, slightly richer than Sol's, lies almost entirely in the planets; Mulder guesses that the companion star and the missing Jovian swept the system of debris.",
+      "description": "A binary system 19.5 light-years from [[location:epsilon-eridani|Epsilon Eridani]], with the Sun-like [[location:eta-cassiopeiae-a|EC-A]] and [[location:eta-cassiopeiae-b|a long-period companion]]. It has five rocky planets and no Jovians; [[character:mulder]] thinks the companion and the missing Jovian swept it clean.",
       "state": "An [[technology:autofactory]] orbits [[location:eta-cassiopeiae-4|the fourth planet]], mining drones work its second moon, and a space station that will relay Mulder's report is almost finished."
     },
     {
@@ -40,7 +40,7 @@
       "surface_gravity_g": 0.87,
       "visual_description": "A cloudy ocean world with no land or ice caps, its water dotted with green patches of floating plants.",
       "possible_colony_target": true,
-      "description": "The habitable-zone third planet of [[location:eta-cassiopeiae]], slightly smaller than Earth, with a 26-hour day, an Earth-like slightly oxygen-rich atmosphere, and a global ocean about 800 km deep. Floating symbiotic plant mats kilometers across produce its oxygen, host animal life, and are exceptionally biocompatible with humans; a rich ecosystem lives below the surface. Mulder has suggested the name Poseidon; the planet has four moons, two larger ones about half and a fifth the size of Earth's moon and two small inner rocks."
+      "description": "The habitable-zone third planet of [[location:eta-cassiopeiae]], slightly smaller than Earth, with a 26-hour day, an Earth-like slightly oxygen-rich atmosphere, and a global ocean about 800 km deep. Floating symbiotic plant mats kilometers across produce its oxygen, host animal life, and are exceptionally biocompatible with humans; a rich ecosystem lives below the surface. [[character:mulder]] has suggested the name Poseidon; the planet has four moons, two larger ones about half and a fifth the size of Earth's moon and two small inner rocks."
     },
     {
       "id": "location:eta-cassiopeiae-4",

@@ -29,7 +29,8 @@
       "parent_relation": "orbits",
       "orbital_order": 4,
       "description": "The fourth planet of [[location:delta-pavonis]] and homeworld of the [[species:pav|Pav]], an industrial civilization of many states whose lights mark the night side and whose smoke is starting to warm the planet.",
-      "state": "[[character:jacques]]'s scouts and drones are studying the Pav in secret."
+      "state": "[[character:jacques]]'s scouts and drones are studying the Pav in secret.",
+      "colony_of": ["species:pav"]
     },
     {
       "id": "species:pav",
