@@ -1,0 +1,30 @@
+{
+  "chapter": "2.75",
+  "title": "75 - Reunion",
+  "summary": "Nervous about seeing [[character:dr-sheehy|Bridget]] again, [[character:howard]] steps out of a cargo bay using [[technology:manny|Manny]] and feels the evening air and the uneven path as he approaches her porch. She takes his hands and compliments his appearance. Howard notices her gray hair and other signs of aging and finds that they do nothing to diminish his feelings for her.",
+  "date": "2216-01",
+  "location_id": "location:hip-14101",
+  "updates": [
+    {
+      "entity_id": "character:howard",
+      "current_state": "He is nervous about reuniting with Bridget through [[technology:manny|Manny]] and checks his smile in advance. Her visible aging does nothing to diminish his feelings for her."
+    },
+    {
+      "entity_id": "character:dr-sheehy",
+      "current_state": "Howard puts her physical age at 57. She has stopped coloring her hair and wears it naturally gray. She welcomes Howard on her porch and takes his hands."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:howard",
+      "role": "lead",
+      "location_id": "location:hip-14101"
+    },
+    {
+      "character_id": "character:dr-sheehy",
+      "role": "other",
+      "location_id": "location:vulcan"
+    }
+  ],
+  "mentions": ["technology:manny"]
+}

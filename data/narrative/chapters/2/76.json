@@ -1,0 +1,71 @@
+{
+  "chapter": "2.76",
+  "title": "76 - Funeral",
+  "summary": "[[character:bob-replicant|Bob]] attends [[character:diana]]'s burial through [[technology:charlie]]. She died peacefully the night before. [[character:archimedes]], [[character:buster]], [[character:rosa]], [[character:pete-deltan]] and other relatives grieve. The family leaves 31 flowers with Diana and shields the grave from scavengers with stone slabs. Overcome, Bob briefly retreats into [[technology:vr|VR]], leaving Charlie on autonomous control until he returns. He estimates that Archimedes is around seventy and slightly older than [[character:moses]] was when he died. Bob expects to attend another funeral soon and vows it will be his last.",
+  "date": "2220-11",
+  "location_id": "location:delta-eridani",
+  "introducing": [
+    {
+      "id": "character:rosa",
+      "name": "Rosa",
+      "species_id": "species:delta-eridani-natives",
+      "parent_id": "character:archimedes",
+      "description": "A Deltan of [[location:delta-eridani-4|Eden]], child of [[character:archimedes]] and sibling of [[character:buster]] and Pete. Mourns with her father and siblings at [[character:diana]]'s burial, where each of the children lays a white flower in the grave."
+    },
+    {
+      "id": "character:pete-deltan",
+      "name": "Pete",
+      "species_id": "species:delta-eridani-natives",
+      "parent_id": "character:archimedes",
+      "description": "A Deltan of [[location:delta-eridani-4|Eden]], child of [[character:archimedes]] and sibling of [[character:buster]] and [[character:rosa]]. Not the Bob clone Pete. Mourns with his father and siblings at [[character:diana]]'s burial."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "Shaken by Diana's burial, he takes a moment to compose himself. Seeing how old Archimedes has grown, he expects another funeral soon and vows it will be the last one he attends."
+    },
+    {
+      "entity_id": "character:archimedes",
+      "current_state": "He is grieving Diana's death alongside his children. Bob estimates that he is around seventy, slightly older than Moses was when he died."
+    },
+    {
+      "entity_id": "character:diana",
+      "current_state": "She died peacefully the night before her family buried her.",
+      "status_events": [
+        {
+          "kind": "died",
+          "date": "2220-11"
+        }
+      ]
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead",
+      "location_id": "location:delta-eridani"
+    },
+    {
+      "character_id": "character:archimedes",
+      "role": "other",
+      "location_id": "location:delta-eridani-4"
+    },
+    {
+      "character_id": "character:buster",
+      "role": "other",
+      "location_id": "location:delta-eridani-4"
+    },
+    {
+      "character_id": "character:rosa",
+      "role": "other",
+      "location_id": "location:delta-eridani-4"
+    },
+    {
+      "character_id": "character:pete-deltan",
+      "role": "other",
+      "location_id": "location:delta-eridani-4"
+    }
+  ],
+  "mentions": ["technology:charlie", "technology:vr", "character:moses"]
+}

@@ -1,0 +1,87 @@
+{
+  "chapter": "2.72",
+  "title": "72 - Battle",
+  "summary": "[[character:bill]] tells the defenders at a [[technology:vr|virtual moot]] that cloaking works, but [[character:jacques]] has had time to retrofit only about half his nuclear weapons. Acting on [[character:george-butterworth|Butterworth]]'s advice, Bill coordinates three passes against the [[species:others|Others]], beginning with [[character:andrew]]'s group. The enemy wipes out the second wave with [[technology:h-bomb|fusion weapons]] and exposes the cloaked bombs with a powerful [[technology:suddar|SUDDAR]] burst. Bill guides the surviving bomb into a [[vessel:death-asteroid|Death Asteroid]], but the fleet presses on toward the [[species:pav|Pav]] homeworld and threatens to harvest Sol and Epsilon Eridani afterward. Andrew reports that Jacques died and has a recent differential backup. Bill has already activated the plan to evacuate twenty thousand Pav without asking for volunteers.",
+  "date": "2217-02",
+  "location_id": "location:delta-pavonis",
+  "introducing": [
+    {
+      "id": "character:andrew",
+      "name": "Andrew",
+      "description": "A Bob who leads a squad in the defense of Delta Pavonis against the [[species:others|Others]]. His group makes the first pass through the enemy armada, losing about half its small units and eight dreadnaughts.",
+      "current_state": "He led the first pass against the enemy fleet and reports that Jacques can be restored once a replacement vessel is available."
+    },
+    {
+      "id": "vessel:death-asteroid",
+      "name": "Death Asteroid",
+      "first_mentioned": "2.39",
+      "description": "An [[species:others|Others]] warship built around a powerful gamma-ray beam that must recharge between shots. The platforms travel with harvest convoys. Their beams can destroy unshielded craft, while suitably protected vessels can survive some hits."
+    },
+    {
+      "id": "event:battle-for-delta-pavonis",
+      "name": "Battle for Delta Pavonis",
+      "date": "2217-02",
+      "location_id": "location:delta-pavonis",
+      "description": "Three Bob attack waves fail to halt the [[species:others|Others]] before they reach the Pav system. The second wave is wiped out and [[character:jacques]] dies in the fighting. The fleet continues toward the Pav homeworld with eleven powered carriers and eight powered Death Asteroids.",
+      "participant_ids": [
+        "character:bill",
+        "character:andrew",
+        "character:jacques"
+      ]
+    },
+    {
+      "id": "technology:h-bomb",
+      "name": "Fusion bomb",
+      "first_mentioned": "2.61",
+      "description": "A fusion weapon also known as an H-bomb. The Bobs have plans provided by [[character:george-butterworth|Butterworth]] and can cloak these weapons, though intense SUDDAR can expose them. The [[species:others|Others]] deploy fusion weapons on fast interceptors."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bill",
+      "current_state": "His attack failed to stop the Others. He has set Jacques's worst-case plan in motion: 20,000 Pav are to be removed from the planet ahead of the fleet, forcibly if needed. He hopes Jacques also collected samples of local life."
+    },
+    {
+      "entity_id": "character:jacques",
+      "current_state": "He died during his group's attack. His differential lacks only the final few minutes. The Bobs need another vessel to restore him.",
+      "status_events": [
+        {
+          "date": "2217-02",
+          "kind": "died"
+        }
+      ]
+    },
+    {
+      "entity_id": "location:delta-pavonis",
+      "state": "The Others' fleet is still approaching after surviving the Bobs' interception, with power remaining on eight Death Asteroids and on eleven of the carriers."
+    },
+    {
+      "entity_id": "location:delta-pavonis-4",
+      "state": "The Others are still headed for the Pav homeworld. Bill has initiated a plan to remove twenty thousand inhabitants before the fleet arrives."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bill",
+      "role": "lead",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:andrew",
+      "role": "other"
+    }
+  ],
+  "mentions": [
+    "technology:vr",
+    "technology:backup",
+    "species:others",
+    "character:george-butterworth",
+    "technology:suddar",
+    "technology:buster-drone",
+    "technology:subspace-communications",
+    "species:pav",
+    "technology:guppi-interface",
+    "location:solar-system",
+    "technology:replicant-matrix"
+  ]
+}

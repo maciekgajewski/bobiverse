@@ -1,0 +1,118 @@
+{
+  "chapter": "2.69",
+  "title": "69 - Wake",
+  "summary": "From about nineteen light-years away, [[character:howard]] pilots [[technology:manny|Manny]] via [[technology:subspace-communications|SCUT]] to attend [[character:stephane-brodeur|Stéphane]]'s memorial on [[location:vulcan]]. He hugs [[character:dr-sheehy|Bridget]], feeling her embrace through the android, and meets her children, [[character:rosie]], [[character:lianne]] and [[character:howard-brodeur|Howie]], Stéphane's son. At the debrief in [[technology:vr|VR]], Howard says the trial worked with an audience prepared for him. He finds Manny's unfiltered sensations far more real than VR, perhaps partly because he knows they are real, and thinks real contact could matter for all the Bobs. [[character:bob-replicant|Bob-1]] urges [[character:bill|Bill]] to give the [[technology:android-project|Android Project]] higher priority and considers helping.",
+  "date": "2211-01",
+  "location_id": "location:vulcan",
+  "introducing": [
+    {
+      "id": "character:rosie",
+      "name": "Rosie",
+      "species_id": "species:human",
+      "parent_id": "character:dr-sheehy",
+      "description": "One of [[character:dr-sheehy|Bridget Sheehy]]'s daughters on [[location:vulcan]]. Her siblings are Lianne and Howie."
+    },
+    {
+      "id": "character:lianne",
+      "name": "Lianne",
+      "species_id": "species:human",
+      "parent_id": "character:dr-sheehy",
+      "description": "One of [[character:dr-sheehy|Bridget Sheehy]]'s daughters on [[location:vulcan]]. Her siblings are Rosie and Howie."
+    },
+    {
+      "id": "character:howard-brodeur",
+      "name": "Howard Brodeur",
+      "aliases": ["Howie"],
+      "first_mentioned": "2.58",
+      "species_id": "species:human",
+      "parent_id": "character:stephane-brodeur",
+      "description": "The son of [[character:dr-sheehy|Bridget Sheehy]] and [[character:stephane-brodeur|Stéphane Brodeur]]. Named Howard after the replicant who befriended his parents, he goes by Howie and has two sisters, Rosie and Lianne.",
+      "current_state": "About thirteen by Earth's calendar, he is eager to ask Howard questions and hear stories about his father."
+    },
+    {
+      "id": "technology:android-project",
+      "name": "Android Project",
+      "first_mentioned": "2.67",
+      "description": "[[character:bill]]'s on-and-off effort of some 65 years, with [[character:garfield]], to give replicants humanlike bodies they can operate remotely. Its latest prototype, [[technology:manny|Manny]], can walk and relay physical sensations but has limited facial control and cannot eat."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:howard",
+      "current_state": "He can use [[technology:manny|Manny]] remotely on [[location:vulcan]] and intends to store the android between uses. He is unsure about taking it before an unprepared crowd and is grieving Stéphane."
+    },
+    {
+      "entity_id": "character:dr-sheehy",
+      "current_state": "She is grieving [[character:stephane-brodeur|Stéphane]] and has welcomed [[character:howard|Howard]] at the memorial. The two leave their earlier conversation for another time."
+    },
+    {
+      "entity_id": "character:stephane-brodeur",
+      "current_state": "He has died. His funeral mass has taken place and friends and family have gathered to remember him."
+    },
+    {
+      "entity_id": "character:bill",
+      "current_state": "He wants to make [[technology:manny|Manny]] more humanlike. He is reviewing the [[technology:android-project|Android Project]] designs with Garfield and Bob-1 after Howard's trial."
+    },
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "Encouraged by the trial on [[location:vulcan]], he wants the [[technology:android-project|Android Project]] to take higher priority and is considering using his spare time to help."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:howard",
+      "role": "lead",
+      "location_id": "location:hip-14101"
+    },
+    {
+      "character_id": "character:george-butterworth",
+      "role": "other",
+      "location_id": "location:vulcan"
+    },
+    {
+      "character_id": "character:dr-sheehy",
+      "role": "other",
+      "location_id": "location:vulcan"
+    },
+    {
+      "character_id": "character:rosie",
+      "role": "other",
+      "location_id": "location:vulcan"
+    },
+    {
+      "character_id": "character:lianne",
+      "role": "other",
+      "location_id": "location:vulcan"
+    },
+    {
+      "character_id": "character:howard-brodeur",
+      "role": "other",
+      "location_id": "location:vulcan"
+    },
+    {
+      "character_id": "character:bill",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:garfield",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:dexter",
+      "role": "other",
+      "location_id": "location:omicron2-eridani"
+    },
+    {
+      "character_id": "character:bob-replicant",
+      "role": "other",
+      "location_id": "location:delta-eridani"
+    }
+  ],
+  "mentions": [
+    "technology:manny",
+    "technology:vr",
+    "technology:subspace-communications"
+  ]
+}

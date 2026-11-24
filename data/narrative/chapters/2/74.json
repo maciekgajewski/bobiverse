@@ -1,0 +1,88 @@
+{
+  "chapter": "2.74",
+  "title": "74 - Observing the Process",
+  "summary": "[[character:bill]] uses surviving stealth drones to document the [[species:others|Others]]' attack on the [[species:pav|Pav]] homeworld. Their asteroid weapons sweep the planet, killing an estimated 500 million to one billion people. [[character:jacques]], now a passenger himself, has 20,000 Pav in stasis across two colony ships. He and Bill weigh rebuilding the homeworld's ecology against relocating the survivors. At the moot, Bill proposes waiting two days before voting on whether to wipe out the Others. Bill doubts [[character:riker|Will]] can evacuate even a significant share of [[location:earth|Earth]]'s population before the Others arrive. Watching the Bullseye impact site from orbit gives him an idea.",
+  "date": "2217-05",
+  "location_id": "location:delta-pavonis",
+  "introducing": [
+    {
+      "id": "event:devastation-of-delta-pavonis-4",
+      "name": "Devastation of Delta Pavonis 4",
+      "location_id": "location:delta-pavonis-4",
+      "description": "The [[species:others|Others]] sweep the Pav homeworld with asteroid weapons, killing an estimated 500 million to one billion inhabitants. Bill understands the attack as a way to obtain food and prepare for mining. Two colony ships shelter 20,000 [[species:pav|Pav]] in stasis."
+    },
+    {
+      "id": "character:tony",
+      "name": "Tony",
+      "description": "A Bob who attends the moot after the attack on the Pav homeworld. He distinguishes the massacre from the Others' previous atrocities because the Bobs witnessed this one."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bill",
+      "current_state": "He has monitored the attack on the Pav, proposed considering relocation for the refugees, and urged the moot to delay its vote. While orbiting Ragnarök, the sight of Bullseye gives him an idea."
+    },
+    {
+      "entity_id": "character:jacques",
+      "current_state": "Active again aboard a colony ship, he has no ship of his own. He inventories surviving Bobs and equipment and has enough seed stock to rebuild a basic ecosystem. His two colony ships carry 20,000 Pav in stasis."
+    },
+    {
+      "entity_id": "location:delta-pavonis",
+      "state": "The Others reached the Pav homeworld and left the remaining defenders alone. Bob stealth drones are monitoring the harvest."
+    },
+    {
+      "entity_id": "location:delta-pavonis-4",
+      "state": "The Others have swept the entire planet with asteroid weapons and set up large printing operations. Jacques estimates that 90 percent of its biological diversity is permanently lost."
+    },
+    {
+      "entity_id": "location:ee-2",
+      "state": "The Bullseye impact crater now contains a freshwater sea surrounding an island."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bill",
+      "role": "lead",
+      "location_id": "location:ee-2"
+    },
+    {
+      "character_id": "character:jacques",
+      "role": "other",
+      "location_id": "location:delta-pavonis"
+    },
+    {
+      "character_id": "character:howard",
+      "role": "other",
+      "location_id": "location:hip-14101"
+    },
+    {
+      "character_id": "character:tony",
+      "role": "other"
+    },
+    {
+      "character_id": "character:thor",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:garfield",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    }
+  ],
+  "mentions": [
+    "species:others",
+    "species:pav",
+    "technology:3d-printers",
+    "technology:guppi-interface",
+    "technology:replicant-matrix",
+    "technology:vr",
+    "technology:subspace-communications",
+    "character:bob-replicant",
+    "technology:android-project",
+    "character:ernesto-medeiros",
+    "location:earth",
+    "character:riker",
+    "species:human"
+  ]
+}
