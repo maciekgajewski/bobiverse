@@ -1,0 +1,82 @@
+{
+  "chapter": "2.64",
+  "title": "64 - Moot",
+  "summary": "[[character:bill]] opens a sombre [[technology:vr|VR]] moot on the [[species:others|Others]]: they have expelled [[character:mario]] from [[location:gliese-54|GL 54]] and are mining it bare, NN 4285 is the goal of a further expedition, and [[location:gamma-pavonis|Gamma]] and Delta Pavonis, one with a habitable planet and one with a civilization, look like the next targets. [[character:oliver]] has a new battle-wagon design, the [[vessel:version-5-heaven|Version 5 Heaven]], but is too far away to help. [[character:jacques]] says help could flow either way between him and [[character:claude]]: Gamma is nearer to GL 877, but Delta's much higher metallicity might tempt the Others, who have already passed Gamma by once. Bill notes that GL 877 is now watched closely enough to catch any departure. [[character:garfield]] sums up the weapons: fission bombs from [[character:ernesto-medeiros|Medeiros]], fusion-bomb plans from the [[organization:united-states-of-eurasia|USE]] and [[character:george-butterworth|Butterworth]], and [[technology:plasma-spike|plasma spikes]] that have reached their size limit and cannot seriously hurt the biggest ships; the cloaking of the [[organization:brazilian-empire|Brazilians]] is understood only in principle and must be reinvented. Without cloaking, bombs would be shot down, so the Bobs discuss carrying them inside battle-wagons, crewed by [[technology:ami|AMIs]] or run as [[technology:subspace-communications|SCUT]] remotes, as [[character:elmer]] suggests before declining a seat on the committee. Bill rejects relativistic ramming with [[technology:buster-drone|busters]]: it would need weeks of lead time and the Others would spot it by [[technology:suddar|SUDDAR]] and dodge, while slow [[technology:ship-busters|ship-busters]] would simply be zapped. The meeting ends without a plan. At Jacques's talk on the [[species:pav|Pav]], Bill stands beside [[character:bob-replicant|Bob-1]] but cannot bring himself to mention Bob's exile from the [[species:delta-eridani-natives|Deltans]]. The Pav prove much like humans: privately funded welfare, lean governments, and a cheerful lack of organization. Bill reflects that the Bobs, spread through a sphere nearly a hundred light-years across, still cannot agree how to protect one planet.",
+  "date": "2207-03",
+  "location_id": "location:epsilon-eridani",
+  "updates": [
+    {
+      "entity_id": "character:bill",
+      "current_state": "He chaired a moot on defending Gamma and Delta Pavonis that produced no plan, and he is angry with himself that the Bobs, for all their spread and resources, cannot protect a single planet."
+    },
+    {
+      "entity_id": "character:jacques",
+      "current_state": "He is ready to exchange reinforcements with Claude if needed and thinks Delta Pavonis's higher metallicity might draw the Others there first. He briefs the Bobs on Pav society."
+    },
+    {
+      "entity_id": "location:gliese-877",
+      "state": "The Others are building a Dyson sphere, and a battle group guards the inner system. Bob surveillance now covers the system's perimeter well enough to detect any departures."
+    },
+    {
+      "entity_id": "character:garfield",
+      "current_state": "He reports that plasma spikes are likely at their practical size limit and cannot seriously damage the largest enemy ships. He understands the basics of Brazilian cloaking, but the recovered hardware was insufficient to reproduce it."
+    },
+    {
+      "entity_id": "character:elmer",
+      "current_state": "At the moot he backs crewing bomb-carrying battle-wagons with AMIs or SCUT remotes, and jokingly declines a place on the committee."
+    },
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "Still cut off from the Deltan tribe he had adopted as family, he attends Jacques's talk on the Pav at the moot; Bill cannot find a way to raise it with him."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bill",
+      "role": "lead",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:jacques",
+      "role": "other",
+      "location_id": "location:delta-pavonis"
+    },
+    {
+      "character_id": "character:garfield",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:elmer",
+      "role": "other",
+      "location_id": "location:82-eridani"
+    },
+    {
+      "character_id": "character:bob-replicant",
+      "role": "other",
+      "location_id": "location:delta-eridani"
+    }
+  ],
+  "mentions": [
+    "species:others",
+    "character:mario",
+    "location:gliese-54",
+    "location:gamma-pavonis",
+    "character:oliver",
+    "vessel:version-5-heaven",
+    "character:claude",
+    "character:ernesto-medeiros",
+    "organization:united-states-of-eurasia",
+    "character:george-butterworth",
+    "technology:plasma-spike",
+    "organization:brazilian-empire",
+    "technology:ami",
+    "technology:subspace-communications",
+    "technology:buster-drone",
+    "technology:ship-busters",
+    "technology:suddar",
+    "species:pav",
+    "species:delta-eridani-natives",
+    "technology:vr"
+  ]
+}

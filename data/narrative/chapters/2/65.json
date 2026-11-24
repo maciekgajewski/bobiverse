@@ -1,0 +1,70 @@
+{
+  "chapter": "2.65",
+  "title": "65 - Grandpa",
+  "summary": "Through a [[technology:planetary-exploration-drone|surveillance drone]], [[character:bob-replicant|Bob]] watches [[character:belinda]] clean up her newborn pup while [[character:archimedes]], now a grandfather, fusses nearby and [[character:buster]] shows some irritation. Picturing his own parents as grandparents to [[character:andrea-johansson|Andrea]] and Alaina, Bob is swamped by family memories and uses a frame-jack to recover. [[character:diana]] rocks the baby; Bob longs to join in, but she would report any drone to the elders, and he dislikes her. Archimedes, in his forties, is unusually healthy, one of the first Deltans raised on the better diet that the Bawbe inventions brought, yet he seems to age slowly even so. Bob thinks of pressing [[character:bill]] about androids again; Bill, busy terraforming [[location:ee-2|Ragnarök]] among other projects, says he is close, ten or twenty years off at most, but it is not a priority. Weapons work and [[species:delta-eridani-natives|Deltan]] affairs fill Bob's time anyway. He switches to a drone over [[location:caerleon]], the newer village, now safer because gorilloids have dwindled and changed their habits through Bob's efforts. Its split from [[location:camelot]] was bloodless but bitter, its mostly adolescent settlers keep up a cold-war hostility, and Bob has rigged surveillance to warn him of any mass march on Camelot.",
+  "date": "2195-01",
+  "location_id": "location:delta-eridani",
+  "introducing": [
+    {
+      "id": "location:caerleon",
+      "name": "Caerleon",
+      "kind": "locale",
+      "parent_location_id": "location:delta-eridani-4",
+      "parent_relation": "located_on",
+      "colony_of": ["species:delta-eridani-natives"],
+      "description": "The second Deltan village on [[location:delta-eridani-4|Eden]], settled by a group that broke away from [[location:camelot]] and built on an old abandoned village site. It crowns a low rise where thin soil keeps trees off, leaving open, defensible ground.",
+      "state": "Mostly adolescent settlers keep up a cold-war hostility toward [[location:camelot]] after a bloodless but bitter split. Gorilloids are less of a threat now. [[character:bob-replicant|Bob]] watches for any large march on Camelot."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "He watches [[character:archimedes]]' family by drone and longs to share in it. Weapons work and Deltan affairs keep him busy, and he monitors [[location:caerleon]] for any mass move toward [[location:camelot]]."
+    },
+    {
+      "entity_id": "character:archimedes",
+      "current_state": "In his forties and a grandfather, he is unusually healthy; one of the first Deltans raised on the improved diet from Bob's inventions, he still seems to age slowly for a Deltan."
+    },
+    {
+      "entity_id": "character:belinda",
+      "current_state": "Daughter-in-law of [[character:archimedes]] and [[character:diana]], she has just given birth to a pup."
+    },
+    {
+      "entity_id": "character:diana",
+      "current_state": "Now a grandmother. She would report any drone to the elders, and [[character:bob-replicant|Bob]] dislikes her."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead",
+      "location_id": "location:delta-eridani"
+    },
+    {
+      "character_id": "character:archimedes",
+      "role": "other",
+      "location_id": "location:camelot"
+    },
+    {
+      "character_id": "character:belinda",
+      "role": "other",
+      "location_id": "location:camelot"
+    },
+    {
+      "character_id": "character:buster",
+      "role": "other",
+      "location_id": "location:camelot"
+    },
+    {
+      "character_id": "character:diana",
+      "role": "other",
+      "location_id": "location:camelot"
+    }
+  ],
+  "mentions": [
+    "technology:planetary-exploration-drone",
+    "character:andrea-johansson",
+    "character:bill",
+    "location:ee-2"
+  ]
+}

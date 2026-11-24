@@ -1,0 +1,64 @@
+{
+  "chapter": "2.59",
+  "title": "59 - Another One",
+  "summary": "Surveillance drones near [[location:gliese-877|GL 877]] report that the [[species:others|Others]] have launched another expedition, apparently bound for the dim M star NN 4285. [[character:bill]] fears that Gamma and Delta Pavonis, likely habitable systems no Bob has visited, will be next. [[character:mario]] says his scouts [[character:claude]] and Jacques are about one and 22 months away from them. Help is scarce: the Bobs at [[location:sol|Sol]] are tied up building colony ships, and [[location:epsilon-indi]] is short of resources while colonists settle [[location:klown-kar-planet|KKP]]. Mario doubts the Others have many fleets and suggests Bill build a group himself; Bill thinks his system is too far away and wants an inventory of where the Bobs are. Bill visits Claude in [[technology:vr|VR]] and urges him to ready Gamma Pavonis for war. Claude objects to being made the target but promises a priority system report. [[character:bart]] is between systems and out of reach, and the [[location:alpha-centauri]] station is unattended. With [[character:garfield]] looking on, Bill plans to have its [[technology:ami|AMI]] build a [[technology:replicant-matrix|replicant matrix]] and load a thoroughly checksummed copy of his backup, concluding that the Bobs face war.",
+  "date": "2205-04",
+  "location_id": "location:epsilon-eridani",
+  "introducing": [
+    {
+      "id": "character:claude",
+      "name": "Claude",
+      "description": "A Bob a generation removed from [[character:bill]], scouting Gamma Pavonis as part of [[character:mario]]'s survey program.",
+      "current_state": "He attended the moot and is at low tau, about a month from Gamma Pavonis. [[character:bill]] urges him to prepare it for war; he objects but promises a priority system report."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bill",
+      "current_state": "Fearing that the [[species:others|Others]] will strike Gamma or Delta Pavonis next, he wants an inventory of Bobs by system and plans to have the AMI at the unattended [[location:alpha-centauri]] station build a replicant matrix and load his backup; he concludes the Bobs face war."
+    },
+    {
+      "entity_id": "character:mario",
+      "current_state": "He tells [[character:bill]] that his scouts [[character:claude]] and Jacques are about one and 22 months from Gamma and Delta Pavonis. He doubts the [[species:others|Others]] have many fleets and suggests Bill build a group of his own."
+    },
+    {
+      "entity_id": "character:bart",
+      "current_state": "He is between systems at so high a tau that [[character:bill]] could not get even a reply for days."
+    },
+    {
+      "entity_id": "location:alpha-centauri",
+      "state": "Its space station is unattended now that the last group has left. Its AMI seems to be full-power, and [[character:bill]] plans to have it build a [[technology:replicant-matrix|replicant matrix]] and load his backup."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bill",
+      "role": "lead",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:mario",
+      "role": "other",
+      "location_id": "location:gliese-54"
+    },
+    {
+      "character_id": "character:claude",
+      "role": "other"
+    },
+    {
+      "character_id": "character:garfield",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    }
+  ],
+  "mentions": [
+    "location:gliese-877",
+    "species:others",
+    "location:sol",
+    "location:epsilon-indi",
+    "location:klown-kar-planet",
+    "technology:vr",
+    "technology:ami",
+    "technology:replicant-matrix"
+  ]
+}

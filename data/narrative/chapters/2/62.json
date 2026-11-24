@@ -1,0 +1,62 @@
+{
+  "chapter": "2.62",
+  "title": "62 - Departure",
+  "summary": "[[character:mulder]] finishes his last report from [[location:eta-cassiopeiae-3|Poseidon]] to [[character:bill]] and [[character:riker]]. Next day [[character:monty]] heads back to [[location:earth]] carrying only biological samples, Mulder leaves for a new system, and [[character:marcus]] stays as the resident Bob. Three mat colonies are running, two floating cities are nearly done, and there has been no [[species:kraken|kraken]] attack for three months. Marcus shows a small prototype for a city held up in the air, which he believes could keep something as large as the floating cities aloft indefinitely; testing is six months off, too late for Monty, who cannot slow a colony ship below .75c. Mulder thinks that would be a reason to travel slower and that the idea could change everything. Leaving, he is stung by goodbyes from Chief Draper and other friends, some of whom may be dead by the time he arrives, and doubts that befriending humans is wise. Riker visits in VR: Sol now runs fourteen colony ships, and settlements exist or are coming at [[location:82-eridani]], [[location:epsilon-indi]], [[location:vulcan]] and Poseidon, though the first two lie near enough to the [[species:others|Others]] to be at risk.",
+  "date": "2201-11",
+  "location_id": "location:eta-cassiopeiae",
+  "updates": [
+    {
+      "entity_id": "character:mulder",
+      "current_state": "He has departed [[location:eta-cassiopeiae-3|Poseidon]] for another star, with [[character:marcus]] staying on as resident Bob. He would like to stay below .75c to follow the airborne-city project and doubts that befriending short-lived humans is wise."
+    },
+    {
+      "entity_id": "character:monty",
+      "current_state": "He is due to return to [[location:earth]] with biological specimens and no colonists. He considers the extra travel time of keeping below 75% of light speed impractical for a colony ship."
+    },
+    {
+      "entity_id": "character:marcus",
+      "current_state": "He is staying to support the [[location:eta-cassiopeiae-3|Poseidon]] colony. He expects to test a small airborne-city prototype with triple redundancy and other fail-safes in about six months."
+    },
+    {
+      "entity_id": "location:eta-cassiopeiae-3",
+      "colony_of": ["species:human"],
+      "possible_colony_target": false,
+      "state": "Three colonies on floating plant mats are operating, and two cities on the ocean surface are almost finished. No [[species:kraken|kraken]] attacks have been reported for three months."
+    },
+    {
+      "entity_id": "character:riker",
+      "current_state": "At [[location:sol|Sol]], fourteen colony ships now operate. He knows [[location:82-eridani]] and [[location:epsilon-indi]] are close enough to the [[species:others|Others]] to be at risk and says they are working on it."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:mulder",
+      "role": "lead",
+      "location_id": "location:eta-cassiopeiae"
+    },
+    {
+      "character_id": "character:monty",
+      "role": "other",
+      "location_id": "location:eta-cassiopeiae-3"
+    },
+    {
+      "character_id": "character:marcus",
+      "role": "other",
+      "location_id": "location:eta-cassiopeiae-3"
+    },
+    {
+      "character_id": "character:riker",
+      "role": "other",
+      "location_id": "location:sol"
+    }
+  ],
+  "mentions": [
+    "location:earth",
+    "species:kraken",
+    "technology:jeeves",
+    "location:vulcan",
+    "location:82-eridani",
+    "location:epsilon-indi",
+    "species:others"
+  ]
+}

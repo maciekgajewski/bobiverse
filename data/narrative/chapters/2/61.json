@@ -1,0 +1,65 @@
+{
+  "chapter": "2.61",
+  "title": "61 - Starting Over",
+  "summary": "[[character:oliver]] wakes at [[location:alpha-centauri]] from [[character:bill]]'s backup, no longer Bill and in need of a new name; he has been a new Bob once before, at Epsilon Eridani. In [[technology:vr|VR]] he picks Oliver, after another Bloom County character, and bets Bill he will reach FTL first; Bill says he would be delighted. [[location:alpha-centauri-a|Alpha Centauri A]] and [[location:alpha-centauri-b|B]] both have decent resources, and [[character:bart]]'s group had worked mainly at A. Once his vessel is ready in six months, Oliver plans to set an [[technology:autofactory]] at A building Bobs flat out and to fly a second one to B, under four days away. Weighing weapons against the [[species:others|Others]], he finds [[technology:buster-drone|busters]] and [[technology:plasma-spike|plasma spikes]] too small for their huge ships, notes that nukes worked in the [[event:second-battle-at-82-eridani|82 Eridani mission]], and starts thinking about relativistic projectiles. Following [[character:bob-replicant|Bob-1]], he first multiplies his [[technology:3d-printers|3D printers]], which are slowest at copying themselves because of the atom-level precision needed, and only starts producing Bobs after almost two years. With Bill he designs the far larger [[vessel:version-5-heaven|Version 5 Heaven vessel]], leaving room for the [[technology:suddar|SUDDAR]] cloaking Bill is still studying, and he designs a [[technology:stealth-buster|stealth buster]] modeled on [[character:ernesto-medeiros|Medeiros]]'s stealth fission bombs. [[character:howard]] has obtained H-bomb plans from [[character:george-butterworth|Butterworth]], who apparently ranks the Others above military secrecy. Three years after waking, Oliver has his first cohort of battle cruisers.",
+  "date": "2205-09",
+  "location_id": "location:alpha-centauri",
+  "introducing": [
+    {
+      "id": "character:oliver",
+      "name": "Oliver",
+      "aliases": ["HIC71683-14"],
+      "parent_id": "character:bill",
+      "description": "A Bob started at [[location:alpha-centauri]] from [[character:bill]]'s backup, with all of Bill's memories and plans. He named himself after a Bloom County character and sets out to build Bobs and warships against the [[species:others|Others]].",
+      "current_state": "Three years after waking he has multiplied his printers, begun producing Bobs, designed the Version 5 Heaven vessel with [[character:bill]] and a stealth buster of his own, and completed his first cohort of battle cruisers."
+    },
+    {
+      "id": "vessel:version-5-heaven",
+      "name": "Version 5 Heaven",
+      "description": "A Heaven vessel design worked out by [[character:oliver]] and [[character:bill]] for the war with the [[species:others|Others]]. It is far heavier than the original Heaven-1 and is planned around [[technology:suddar|SUDDAR]] cloaking that is still being developed."
+    },
+    {
+      "id": "technology:stealth-buster",
+      "name": "stealth buster",
+      "description": "A [[technology:buster-drone|buster]] design by [[character:oliver]] with stealth features, closely following the overall structure of [[character:ernesto-medeiros|Medeiros]]'s stealth fission bombs."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bill",
+      "current_state": "He helps [[character:oliver]] design the Version 5 Heaven vessel while continuing his research into the [[technology:suddar|SUDDAR]]-based cloaking learned on the [[location:82-eridani]] expedition."
+    },
+    {
+      "entity_id": "location:alpha-centauri",
+      "state": "Both stars have reasonable resources. [[character:oliver]] now works here, multiplying printers and building Bobs and battle cruisers; [[character:bart]]'s group had worked mainly at [[location:alpha-centauri-a|A]]."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:oliver",
+      "role": "lead",
+      "location_id": "location:alpha-centauri"
+    },
+    {
+      "character_id": "character:bill",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    }
+  ],
+  "mentions": [
+    "character:bob-replicant",
+    "technology:vr",
+    "location:alpha-centauri-a",
+    "location:alpha-centauri-b",
+    "technology:autofactory",
+    "species:others",
+    "technology:buster-drone",
+    "event:second-battle-at-82-eridani",
+    "technology:plasma-spike",
+    "technology:3d-printers",
+    "technology:suddar",
+    "character:ernesto-medeiros",
+    "character:howard",
+    "character:george-butterworth"
+  ]
+}

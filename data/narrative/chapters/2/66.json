@@ -1,0 +1,87 @@
+{
+  "chapter": "2.66",
+  "title": "66 - It’s Happening",
+  "summary": "[[technology:guppi-interface|GUPPI]] detects an [[species:others|Others]] convoy twice as large as the one sent to GL 54. [[character:bill]] assumes it is bound for [[location:gamma-pavonis]], but its course leads straight to [[location:delta-pavonis]] and the [[species:pav|Pav]]. Bill emails [[character:jacques]] and [[character:claude]], messages [[character:oliver]] and [[character:mario]], and leaves the rest to the news feed. In [[technology:vr|VR]], Jacques argues that richer pickings justify the longer trip, and Bill assures Claude that the Others cannot know the Bobs are there. Jacques has twenty dreadnaughts with fission bombs and [[technology:buster-drone|busters]] but no finished fusion bombs; Claude has fifteen and six fusion bombs; Oliver is building but too distant. Bill reckons cloaking was a year or two from done. At a gloomy moot, [[character:thor]] floats shifting [[location:delta-pavonis-4|the Pav homeworld]] with Bill’s [[technology:asteroid-mover|asteroid mover]]; Bill says it cannot yet budge a planet, and [[character:ben]] notes the Pav would freeze on a sunless trip lasting a year or more. Bill expects a straight fight before they are ready, with foreknowledge their only edge. Claude sends all his new, faster dreadnaughts to Delta, due just ahead of the convoy; with Jacques’s ships that makes thirty-five, perhaps sixty by arrival. The Others field twenty death asteroids, forty cargo ships and several hundred attendants, probably [[technology:ami|AMI]]-run and ready to ram. [[character:garfield]] argues that the Others, never beaten, are arrogant and may lack a backup plan.",
+  "date": "2208-01",
+  "location_id": "location:epsilon-eridani",
+  "introducing": [
+    {
+      "id": "character:ben",
+      "name": "Ben",
+      "description": "A Bob from the newest batch of dreadnaughts. At the moot on the Delta Pavonis threat he points out that moving the Pav homeworld would leave its people freezing without a sun."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bill",
+      "current_state": "He has warned the scouts that the convoy is bound for Delta Pavonis. He reckons cloaking was a year or two away, the moot found no way to move the Pav homeworld, and he expects an early head-on fight."
+    },
+    {
+      "entity_id": "location:delta-pavonis",
+      "state": "An Others convoy is on a direct course here. Jacques is building a defense fleet, and Claude’s reinforcements are expected to arrive shortly before the convoy."
+    },
+    {
+      "entity_id": "character:claude",
+      "current_state": "He has fifteen dreadnaughts and six fusion bombs that stand in for some of his fission weapons. He sends all his new ships from Gamma Pavonis to Delta Pavonis, expecting them to arrive just ahead of the convoy."
+    },
+    {
+      "entity_id": "character:jacques",
+      "current_state": "He has twenty dreadnaughts at Delta Pavonis, each with five fission bombs and defensive busters. His fusion bombs are unfinished. Bill expects Jacques to bring the combined force to about sixty ships by the time Claude’s ships arrive."
+    },
+    {
+      "entity_id": "character:oliver",
+      "current_state": "He is building ships and plans to send what he has, but expects them to arrive too late for Delta Pavonis. He hopes they may help if the Others head for Gamma Pavonis afterward."
+    },
+    {
+      "entity_id": "character:garfield",
+      "current_state": "He thinks the Others, never seriously opposed, are arrogant and may have no fallback plan."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bill",
+      "role": "lead",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:claude",
+      "role": "other",
+      "location_id": "location:gamma-pavonis"
+    },
+    {
+      "character_id": "character:jacques",
+      "role": "other",
+      "location_id": "location:delta-pavonis"
+    },
+    {
+      "character_id": "character:oliver",
+      "role": "other",
+      "location_id": "location:alpha-centauri"
+    },
+    {
+      "character_id": "character:thor",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:ben",
+      "role": "other"
+    },
+    {
+      "character_id": "character:garfield",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    }
+  ],
+  "mentions": [
+    "species:others",
+    "technology:guppi-interface",
+    "character:mario",
+    "technology:vr",
+    "technology:buster-drone",
+    "technology:asteroid-mover",
+    "location:delta-pavonis-4",
+    "species:pav",
+    "technology:ami"
+  ]
+}

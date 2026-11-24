@@ -10,6 +10,24 @@
       "promotion": null
     },
     {
+      "id": "candidate:alaina",
+      "kind": "character",
+      "name": "Alaina",
+      "aliases": [],
+      "mentions": ["2.65"],
+      "note": "2.65: Bob pictures his parents as grandparents to Andrea and Alaina (claim 006). Canon 1.1 prose: his twin sister; first_mentioned 1.1 if promoted.",
+      "promotion": null
+    },
+    {
+      "id": "candidate:android-project",
+      "kind": "technology",
+      "name": "Android Project",
+      "aliases": [],
+      "mentions": ["2.67"],
+      "note": "2.67: Bill’s on-and-off effort of 65 years toward human-like remote bodies, with Garfield; Manny is its latest prototype (claims 025-029, 042).",
+      "promotion": null
+    },
+    {
       "id": "candidate:archimedes-son",
       "kind": "character",
       "name": "Archimedes' son",
@@ -44,8 +62,20 @@
       "kind": "event",
       "name": "Bob-moot",
       "aliases": [],
-      "mentions": ["2.32", "2.34", "2.39", "2.44", "2.52", "2.55", "2.57"],
-      "note": "Bill's Bob gatherings. 2.39: VR moot of 43 SCUT-linked Bobs (004-005). 2.44: VR baseball, pub (012). 2.52: pub moot (020). 2.55: Bill wants one (034). 2.57: moot on the Others (004-005, 035).",
+      "mentions": [
+        "2.32",
+        "2.34",
+        "2.39",
+        "2.44",
+        "2.52",
+        "2.55",
+        "2.57",
+        "2.59",
+        "2.63",
+        "2.64",
+        "2.66"
+      ],
+      "note": "Bob gatherings. 2.39 VR, 43 SCUT Bobs (004-005); 2.44 baseball (012); 2.52 pub (020); 2.55 wanted (034); 2.57 Others (035); 2.59 Claude went; 2.63 due; 2.64 no plan (021-033); 2.66 gloomy (014-016).",
       "promotion": null
     },
     {
@@ -112,21 +142,51 @@
       "promotion": null
     },
     {
+      "id": "candidate:current-events-rss-feed",
+      "kind": "technology",
+      "name": "Current Events RSS feed",
+      "aliases": [],
+      "mentions": ["2.66"],
+      "note": "2.66: the Bob news feed through which Bill expects the wider group to learn of the convoy (claim 007).",
+      "promotion": null
+    },
+    {
       "id": "candidate:death-asteroid",
       "kind": "vessel",
       "name": "Death Asteroid",
       "aliases": [],
-      "mentions": ["2.39", "2.53", "2.54", "2.55", "2.57"],
-      "note": "The Others' gamma-ray weapon platform (2.39: 011). 2.53: hit Decoy-1 (027). 2.54: drone risk (017). 2.55: GL 54 convoy (013). 2.57: self-charges in a day or via SUDDAR; living space (021-023, 026).",
+      "mentions": [
+        "2.39",
+        "2.53",
+        "2.54",
+        "2.55",
+        "2.57",
+        "2.61",
+        "2.64",
+        "2.66"
+      ],
+      "note": "Others' gamma platform (2.39: 011); 2.53 hit Decoy 1 (027); 2.54 drone risk (017); 2.55 convoy (013); 2.57 self-charging (021); 2.61 busters weak (012); 2.64 spikes too (018); 2.66 20 to Delta (019).",
       "promotion": null
+    },
+    {
+      "id": "candidate:delta-pavonis",
+      "kind": "location",
+      "name": "Delta Pavonis",
+      "aliases": [],
+      "mentions": ["2.59", "2.60"],
+      "note": "2.59: unvisited, likely habitable; Bill fears the Others will hit it next; Jacques due in ~22 months (008-010, 013-014). 2.60: 18 months; as near Gamma Pavonis as GL 877 (032-034).",
+      "promotion": {
+        "chapter": "2.63",
+        "entity_id": "location:delta-pavonis"
+      }
     },
     {
       "id": "candidate:draper",
       "kind": "character",
       "name": "Draper",
       "aliases": ["Chief Draper"],
-      "mentions": ["2.49"],
-      "note": "2.49: off-screen Poseidon colony figure, expected to take a kraken death and the six-month net delay badly, as Butterworth would (claims 038, 048). Role unstated.",
+      "mentions": ["2.49", "2.62"],
+      "note": "2.49: off-screen Poseidon colony figure, expected to take a kraken death and the net delay badly, as Butterworth would (038, 048). 2.62: Chief Draper sees Mulder off (claim 022).",
       "promotion": null
     },
     {
@@ -166,12 +226,33 @@
       "promotion": null
     },
     {
+      "id": "candidate:gamma-pavonis",
+      "kind": "location",
+      "name": "Gamma Pavonis",
+      "aliases": [],
+      "mentions": ["2.59"],
+      "note": "2.59: unvisited, likely habitable system Bill fears the Others will hit next; Claude due in about a month, promises a priority report (008-010, 013-014, 029).",
+      "promotion": {
+        "chapter": "2.60",
+        "entity_id": "location:gamma-pavonis"
+      }
+    },
+    {
+      "id": "candidate:gl-902",
+      "kind": "location",
+      "name": "GL 902",
+      "aliases": [],
+      "mentions": ["2.60"],
+      "note": "2.60: nearest star beyond Gamma Pavonis, more than two light-years farther away, so Claude doubts the Others will skip Gamma again (025-026).",
+      "promotion": null
+    },
+    {
       "id": "candidate:gorilloid",
       "kind": "species",
       "name": "Gorilloid",
       "aliases": [],
-      "mentions": ["2.56"],
-      "note": "2.56: reduced threat has cut Deltan child mortality (claim 016). Earlier: plain text in 1.35-2.19 data; first_mentioned 1.35 if promoted.",
+      "mentions": ["2.56", "2.65"],
+      "note": "2.56: reduced threat has cut Deltan child mortality (claim 016). 2.65: fewer, changed gorilloids make Caerleon safer (019). Earlier: plain text in 1.35-2.19; first_mentioned 1.35 if promoted.",
       "promotion": null
     },
     {
@@ -184,6 +265,24 @@
       "promotion": null
     },
     {
+      "id": "candidate:h-bomb",
+      "kind": "technology",
+      "name": "H-bomb",
+      "aliases": [],
+      "mentions": ["2.61", "2.64"],
+      "note": "2.61: Howard got H-bomb blueprints from Butterworth, who ranks the Others above secrecy (claim 023). 2.64: Garfield credits the USE and Butterworth for the fusion-bomb plans (017).",
+      "promotion": null
+    },
+    {
+      "id": "candidate:hawaii",
+      "kind": "location",
+      "name": "Hawaii",
+      "aliases": [],
+      "mentions": ["2.59"],
+      "note": "2.59: one of Bill's guesses for the setting of Claude's VR beach, which he decides is made up (claim 024).",
+      "promotion": null
+    },
+    {
       "id": "candidate:hippogriff",
       "kind": "species",
       "name": "Hippogriff",
@@ -193,12 +292,42 @@
       "promotion": null
     },
     {
+      "id": "candidate:howard-brodeur",
+      "kind": "character",
+      "name": "Howard Brodeur",
+      "aliases": [],
+      "mentions": ["2.58"],
+      "note": "2.58: son of Bridget and Stéphane Brodeur, named Howard; surname from the Brodeur family name. Known only from Dexter's email to Howard.",
+      "promotion": null
+    },
+    {
+      "id": "candidate:jacques",
+      "kind": "character",
+      "name": "Jacques",
+      "aliases": [],
+      "mentions": ["2.59", "2.60"],
+      "note": "2.59: Bob scout bound for Delta Pavonis in Mario's survey, ~22 months out; tau too high for a timely talk (013-014, 033). 2.60: due in 18 months; could send Claude help (032, 034).",
+      "promotion": {
+        "chapter": "2.63",
+        "entity_id": "character:jacques"
+      }
+    },
+    {
       "id": "candidate:maldives",
       "kind": "location",
       "name": "Maldives",
       "aliases": [],
       "mentions": ["2.14", "2.18", "2.26", "2.49"],
       "note": "Seeded from Maciej's 2.11-2.20 review (ADR-0032 Decided 3). 2.49: enclaves among Poseidon's first colonists (claim 030). Plain text in the 2.7 data, so first_mentioned should be 2.7 if promoted.",
+      "promotion": null
+    },
+    {
+      "id": "candidate:mexico",
+      "kind": "location",
+      "name": "Mexico",
+      "aliases": [],
+      "mentions": ["2.59"],
+      "note": "2.59: one of Bill's guesses for the setting of Claude's VR beach, which he decides is made up (claim 024).",
       "promotion": null
     },
     {
@@ -215,8 +344,8 @@
       "kind": "location",
       "name": "New Jerusalem",
       "aliases": [],
-      "mentions": ["2.45"],
-      "note": "2.45: Cranston's territory, where Howard's whiskey arrives despite Cranston's ban (claims 018, 020-021). Kind of place and host system not stated; plain text in 2.45 data.",
+      "mentions": ["2.45", "2.58"],
+      "note": "2.45: Cranston's territory, where Howard's whiskey arrives despite his ban. 2.58: a democracy with religious and civil authority separated again after Cranston resigns. Kind and host system unstated.",
       "promotion": null
     },
     {
@@ -226,6 +355,15 @@
       "aliases": [],
       "mentions": ["2.18", "2.28", "2.43"],
       "note": "2.18: delegate affiliation. 2.28: source of Homer's control signal; VEHEMENT tech centre (claims 039, 041-042). 2.43: both ship-buster strikes (claims 021, 026). Plain text in 1.41, 1.49 data.",
+      "promotion": null
+    },
+    {
+      "id": "candidate:nn-4285",
+      "kind": "location",
+      "name": "NN 4285",
+      "aliases": [],
+      "mentions": ["2.59", "2.60", "2.64"],
+      "note": "2.59: small, dim M star; the Others' new expedition from GL 877 appears bound for it (004-006). 2.60: Claude links the choice to Gamma's low metallicity (024). 2.64: Bill recaps it (006).",
       "promotion": null
     },
     {
@@ -325,6 +463,24 @@
       "aliases": [],
       "mentions": ["2.49"],
       "note": "2.49: enclaves among Poseidon's first colonists, with Micronesia, the Maldives and Saint Lucia (claim 030). Island nation on Earth below location granularity.",
+      "promotion": null
+    },
+    {
+      "id": "candidate:wikibob",
+      "kind": "technology",
+      "name": "WikiBob",
+      "aliases": [],
+      "mentions": ["2.67"],
+      "note": "2.67: the Bobs’ shared knowledge base; Howard learns from it that no gas giant has had more than a cursory survey (claim 009).",
+      "promotion": null
+    },
+    {
+      "id": "candidate:zjentfen",
+      "kind": "organization",
+      "name": "Zjentfen",
+      "aliases": [],
+      "mentions": ["2.63"],
+      "note": "2.63: self-name of the people of the early-America-like Pav country Jacques studies; their language is Tinozj (claims 024-029).",
       "promotion": null
     }
   ]
