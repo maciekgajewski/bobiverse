@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import sys
 import tempfile
 import unittest
@@ -10,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 import astronomy_pipeline as pipeline
+import validate_data
 from c20pc_census import C20PC_BIBCODE, C20PC_README_HISTORY_DATE
 
 
@@ -34,51 +36,31 @@ class VizierFallbackTest(unittest.TestCase):
     def test_asu_tsv_skips_vizier_units_row(self) -> None:
         rows = pipeline.parse_vizier_asu_tsv(
             (
-                b"#Name: J/ApJS/271/55/table4\n"
-                b"recno\tName\tIMass\n"
-                b"-----\t----\t-----\n"
-                b"\t\tMsun\n"
-                b"       1\tSun\t1.0\n"
-                b"       2\tProxima\t0.12\n"
+                b"recno\tHIP\tName\n"
+                b"-----\t---\t----\n"
+                b"\t\ttext\n"
+                b"       1\t42\tAlpha\n"
+                b"       2\t43\tBeta\n"
             ),
-            ["recno", "Name", "IMass"],
+            ["recno", "HIP", "Name"],
         )
         self.assertEqual(
             rows,
             [
-                {"recno": "1", "Name": "Sun", "IMass": "1.0"},
-                {"recno": "2", "Name": "Proxima", "IMass": "0.12"},
+                {"recno": "1", "HIP": "42", "Name": "Alpha"},
+                {"recno": "2", "HIP": "43", "Name": "Beta"},
             ],
         )
 
-    def test_sexagesimal_coordinates_match_pinned_decimals(self) -> None:
-        self.assertEqual(
-            pipeline.sexagesimal_to_degrees("00 00 13.5250625819", hours=True),
-            format(0.05635442742458334, ".17g"),
-        )
-        self.assertEqual(
-            pipeline.sexagesimal_to_degrees("+25 54 20.050166315", hours=False),
-            format(25.905569490643053, ".17g"),
-        )
-        self.assertEqual(
-            pipeline.sexagesimal_to_degrees("-68 16 54.378530845", hours=False),
-            format(-68.28177181412362, ".17g"),
-        )
-        rows = pipeline.convert_vizier_asu_coordinates(
-            [
-                {
-                    "recno": "2",
-                    "RAJ2000": "00 00 13.5250625819",
-                    "DEJ2000": "+25 54 20.050166315",
-                    "Name": "SDSS J000013.54+255418.6",
-                }
-            ]
-        )
-        self.assertEqual(float(rows[0]["RAJ2000"]), 0.05635442742458334)
-        self.assertEqual(float(rows[0]["DEJ2000"]), 25.905569490643053)
-        self.assertEqual(rows[0]["Name"], "SDSS J000013.54+255418.6")
+    def test_asu_tsv_rejects_html_error_pages(self) -> None:
+        with self.assertRaisesRegex(ValueError, "HTML, not TSV"):
+            pipeline.parse_vizier_asu_tsv(
+                b"<!DOCTYPE html>\n<html><title>502 Bad Gateway</title></html>\n",
+                ["recno"],
+            )
 
     def test_asu_tsv_requires_projected_columns_and_rejects_cap(self) -> None:
+
 
         with self.assertRaisesRegex(ValueError, "missing required columns: HIP"):
             pipeline.parse_vizier_asu_tsv(b"recno\n1\n", ["recno", "HIP"])
@@ -102,9 +84,9 @@ class VizierFallbackTest(unittest.TestCase):
         with patch.object(pipeline, "tap_csv", failed_tap), patch.object(
             pipeline, "asu_tsv", successful_asu
         ):
-            rows, endpoint, transport = pipeline.fetch_vizier_snapshot(requests)
+            rows, endpoint, transport = pipeline.fetch_classical_names_snapshot(requests[0])
         self.assertEqual(calls, ["tap", "asu"])
-        self.assertEqual(rows, [[{"recno": "1"}]])
+        self.assertEqual(rows, [{"recno": "1"}])
         self.assertEqual(endpoint, pipeline.VIZIER_ASU_URL)
         self.assertEqual(transport["kind"], "asu")
 
@@ -113,9 +95,9 @@ class VizierFallbackTest(unittest.TestCase):
         with patch.object(
             pipeline, "tap_csv", return_value=[{"recno": "1"}]
         ), patch.object(pipeline, "asu_tsv") as asu:
-            rows, endpoint, transport = pipeline.fetch_vizier_snapshot(requests)
-        self.assertEqual(rows, [[{"recno": "1"}]])
-        self.assertEqual(endpoint, pipeline.C20PC_TAP_URL)
+            rows, endpoint, transport = pipeline.fetch_classical_names_snapshot(requests[0])
+        self.assertEqual(rows, [{"recno": "1"}])
+        self.assertEqual(endpoint, pipeline.CLASSICAL_NAMES_TAP_URL)
         self.assertIsNone(transport)
         asu.assert_not_called()
 
@@ -136,6 +118,7 @@ class VizierFallbackTest(unittest.TestCase):
             self.assertEqual(readme_path.read_bytes(), pinned)
         self.assertEqual(provenance["fetch"], "failed")
         self.assertEqual(provenance["pin"], "reused")
+        self.assertIn("attempted_at", provenance)
         self.assertIn("DNS failure", provenance["reason"])
         self.assertIn(pipeline.C20PC_README_URL, provenance["reason"])
         self.assertEqual(provenance["url"], pipeline.C20PC_README_URL)
@@ -163,6 +146,98 @@ class VizierFallbackTest(unittest.TestCase):
                 pipeline.write_fetched_c20pc_readme(readme, provenance)
             self.assertEqual(readme_path.read_bytes(), fetched)
         self.assertIsNone(provenance)
+
+    def test_c20pc_tap_failure_reuses_pins_without_writing(self) -> None:
+        with patch.object(
+            pipeline, "fetch_c20pc_tap_snapshot", side_effect=OSError("TAP unavailable")
+        ), patch.object(pipeline, "validate_pinned_c20pc") as validate_pin, patch.object(
+            pipeline, "write_json"
+        ) as write_extract, patch.object(
+            pipeline, "fetch_c20pc_readme"
+        ) as fetch_readme, patch.object(pipeline, "now", return_value="2026-11-24T00:00:00+00:00"):
+            result = pipeline.refresh_c20pc_snapshot()
+        validate_pin.assert_called_once_with()
+        write_extract.assert_not_called()
+        fetch_readme.assert_not_called()
+        provenance = result["reuse_provenance"]
+        self.assertEqual(provenance["fetch"], "not_attempted")
+        self.assertEqual(provenance["pin"], "reused")
+        self.assertEqual(provenance["url"], pipeline.C20PC_TAP_URL)
+        self.assertIn("TAP unavailable", provenance["reason"])
+        self.assertEqual(provenance["attempted_at"], "2026-11-24T00:00:00+00:00")
+
+    def test_c20pc_tap_success_writes_extract(self) -> None:
+        table, notes, references = (
+            [{"recno": 1}],
+            [{"recno": 1, "continuation_recnos": []}],
+            [{"recno": 1}],
+        )
+        with patch.object(
+            pipeline, "fetch_c20pc_tap_snapshot", return_value=[[], [], []]
+        ), patch.object(
+            pipeline, "normalize_census_tables", return_value=(table, notes, references)
+        ), patch.object(
+            pipeline, "fetch_c20pc_readme", return_value=(b"pin", None)
+        ), patch.object(pipeline, "write_fetched_c20pc_readme") as write_readme, patch.object(
+            pipeline, "write_json"
+        ) as write_extract:
+            result = pipeline.refresh_c20pc_snapshot()
+        self.assertIsNone(result)
+        write_readme.assert_called_once_with(b"pin", None)
+        source = write_extract.call_args.args[1]["source"]
+        self.assertEqual(source["endpoint"], pipeline.C20PC_TAP_URL)
+        self.assertNotIn("transport", source)
+
+    def test_c20pc_readme_failure_after_tap_reuses_pin_without_writing(self) -> None:
+        reuse = {
+            "fetch": "failed",
+            "pin": "reused",
+            "url": pipeline.C20PC_README_URL,
+            "reason": "ReadMe unavailable",
+            "attempted_at": "2026-11-24T00:00:00+00:00",
+        }
+        table, notes, references = (
+            [{"recno": 1}],
+            [{"recno": 1, "continuation_recnos": []}],
+            [{"recno": 1}],
+        )
+        with patch.object(
+            pipeline, "fetch_c20pc_tap_snapshot", return_value=[[], [], []]
+        ), patch.object(
+            pipeline, "normalize_census_tables", return_value=(table, notes, references)
+        ), patch.object(
+            pipeline, "fetch_c20pc_readme", return_value=(b"pinned ReadMe", reuse)
+        ), patch.object(pipeline, "write_fetched_c20pc_readme") as write_readme, patch.object(
+            pipeline, "write_json"
+        ) as write_extract:
+            result = pipeline.refresh_c20pc_snapshot()
+        self.assertEqual(result, {"readme_provenance": reuse})
+        write_readme.assert_called_once_with(b"pinned ReadMe", reuse)
+        self.assertEqual(
+            write_extract.call_args.args[1]["source"]["readme_provenance"], reuse
+        )
+
+    def test_data_validation_accepts_optional_c20pc_reuse_provenance(self) -> None:
+        document = json.loads(pipeline.C20PC_PATH.read_text(encoding="utf-8"))
+        document["source"]["reuse_provenance"] = {
+            "fetch": "not_attempted",
+            "pin": "reused",
+            "url": pipeline.C20PC_TAP_URL,
+            "reason": "TAP unavailable",
+            "attempted_at": "2026-11-24T00:00:00+00:00",
+        }
+        document["source"]["readme_provenance"] = {
+            "fetch": "failed",
+            "pin": "reused",
+            "url": pipeline.C20PC_README_URL,
+            "reason": "ReadMe unavailable",
+            "attempted_at": "2026-11-24T00:00:00+00:00",
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            census_path = Path(directory) / "twenty-parsec-census.json"
+            census_path.write_text(json.dumps(document), encoding="utf-8")
+            with patch.object(validate_data, "C20PC_PATH", census_path):
+                validate_data.validate_c20pc()
 
 
 if __name__ == "__main__":

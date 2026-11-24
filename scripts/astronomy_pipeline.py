@@ -66,6 +66,7 @@ from c20pc_census import (
     C20PC_TABLE_QUERY,
     C20PC_TAP_URL,
     EXPECTED_EXTERNAL_REFERENCE_CODES,
+    EXPECTED_ROW_COUNTS,
     c20pc_enrichment,
     census_rows_by_key,
     exact_identifier_candidates,
@@ -79,6 +80,7 @@ from classical_names import (
     CLASSICAL_NAMES_QUERY,
     CLASSICAL_NAMES_RELEASE,
     CLASSICAL_NAMES_TABLE,
+    CLASSICAL_NAMES_TAP_URL,
     exact_classical_matches,
 )
 
@@ -89,10 +91,6 @@ WDS_FORMAT_URL = "https://www.astro.gsu.edu/wds/Webtextfiles/wdsweb_format.txt"
 LY_PER_PC = 3.261563777
 GCNS_LIMIT_PC = 100.0
 VIZIER_ASU_URL = "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv"
-VIZIER_TRANSPORTS = (
-    ("tap", C20PC_TAP_URL),
-    ("asu", VIZIER_ASU_URL),
-)
 VIZIER_TAP_CONNECT_TIMEOUT = 25
 CLASSICAL_NAMES_EXPECTED_ROW_COUNT = 3569
 
@@ -256,6 +254,9 @@ def parse_vizier_asu_tsv(
     raw: bytes, required_columns: list[str]
 ) -> list[dict[str, str]]:
     """Parse an ASU TSV response without accepting its silent row caps."""
+    leading = raw.lstrip().lower()
+    if leading.startswith(b"<html") or leading.startswith(b"<!doctype"):
+        raise ValueError("VizieR ASU response is HTML, not TSV")
     text = raw.decode("utf-8-sig", errors="replace")
     data_lines: list[str] = []
     for line in text.splitlines():
@@ -295,38 +296,6 @@ def parse_vizier_asu_tsv(
     return rows
 
 
-_SEXAGESIMAL_RE = re.compile(
-    r"^(?P<sign>[+-])?(?P<first>\d+)\s+(?P<second>\d+)\s+(?P<third>\d+(?:\.\d+)?)$"
-)
-
-
-def sexagesimal_to_degrees(text: str, *, hours: bool) -> str:
-    """Convert a VizieR h:m:s or d:m:s string to a degree string that float()-round-trips."""
-    match = _SEXAGESIMAL_RE.fullmatch(text.strip())
-    if match is None:
-        raise ValueError(f"VizieR ASU coordinate is not sexagesimal: {text!r}")
-    first, second, third = (float(match.group(name)) for name in ("first", "second", "third"))
-    degrees = first + second / 60 + third / 3600
-    if hours:
-        degrees *= 15
-    if match.group("sign") == "-":
-        degrees = -degrees
-    return format(degrees, ".17g")
-
-
-def convert_vizier_asu_coordinates(rows: list[dict[str, str]]) -> list[dict[str, str]]:
-    """Turn ASU sexagesimal RAJ2000/DEJ2000 cells into decimal degrees, matching TAP."""
-    converted: list[dict[str, str]] = []
-    for row in rows:
-        out = dict(row)
-        for key, hours in (("RAJ2000", True), ("DEJ2000", False)):
-            value = out.get(key, "").strip()
-            if value and _SEXAGESIMAL_RE.fullmatch(value):
-                out[key] = sexagesimal_to_degrees(value, hours=hours)
-        converted.append(out)
-    return converted
-
-
 def asu_tsv(table: str, columns: list[str]) -> tuple[list[dict[str, str]], dict[str, Any]]:
     request_fields = {"-source": table, "-out": ",".join(columns), "-out.max": "unlimited"}
     endpoint = f"{VIZIER_ASU_URL}?{urllib.parse.urlencode(request_fields)}"
@@ -335,7 +304,7 @@ def asu_tsv(table: str, columns: list[str]) -> tuple[list[dict[str, str]], dict[
     )
     with urllib.request.urlopen(request, timeout=180) as response:
         raw = response.read()
-    return convert_vizier_asu_coordinates(parse_vizier_asu_tsv(raw, columns)), {
+    return parse_vizier_asu_tsv(raw, columns), {
         "source": table,
         "columns": columns,
         "out_max": "unlimited",
@@ -343,28 +312,62 @@ def asu_tsv(table: str, columns: list[str]) -> tuple[list[dict[str, str]], dict[
     }
 
 
-def fetch_vizier_snapshot(
+def fetch_classical_names_snapshot(
+    request: tuple[str, list[str], str],
+) -> tuple[list[dict[str, str]], str, dict[str, Any] | None]:
+    """Use CFA ASU only when the IV/27A TAP transport cannot be reached."""
+    table, columns, query = request
+    try:
+        return (
+            tap_csv(CLASSICAL_NAMES_TAP_URL, query, connect_timeout=VIZIER_TAP_CONNECT_TIMEOUT),
+            CLASSICAL_NAMES_TAP_URL,
+            None,
+        )
+    except OSError:
+        rows, asu_request = asu_tsv(table, columns)
+        return rows, VIZIER_ASU_URL, {
+            "kind": "asu",
+            "endpoint": VIZIER_ASU_URL,
+            "requests": [asu_request],
+        }
+
+
+def fetch_c20pc_tap_snapshot(
     requests: list[tuple[str, list[str], str]],
-) -> tuple[list[list[dict[str, str]]], str, dict[str, Any] | None]:
-    """Fetch all related VizieR tables through the first complete transport."""
-    failures: list[str] = []
-    for transport, endpoint in VIZIER_TRANSPORTS:
-        try:
-            if transport == "tap":
-                return (
-                    [tap_csv(endpoint, query, connect_timeout=VIZIER_TAP_CONNECT_TIMEOUT) for _, _, query in requests],
-                    endpoint,
-                    None,
-                )
-            rows_and_requests = [asu_tsv(table, columns) for table, columns, _ in requests]
-            return (
-                [rows for rows, _ in rows_and_requests],
-                endpoint,
-                {"kind": "asu", "endpoint": endpoint, "requests": [request for _, request in rows_and_requests]},
-            )
-        except Exception as error:
-            failures.append(f"{endpoint}: {error}")
-    raise RuntimeError("All VizieR transports failed: " + "; ".join(failures))
+) -> list[list[dict[str, str]]]:
+    """Fetch the 20-pc census only from its pinned TAP endpoint."""
+    return [
+        tap_csv(C20PC_TAP_URL, query, connect_timeout=VIZIER_TAP_CONNECT_TIMEOUT)
+        for _, _, query in requests
+    ]
+
+
+def c20pc_reuse_provenance(*, fetch: str, reason: str, url: str) -> dict[str, str]:
+    return {
+        "fetch": fetch,
+        "pin": "reused",
+        "url": url,
+        "reason": reason,
+        "attempted_at": now(),
+    }
+
+
+def validate_pinned_c20pc() -> None:
+    source, table, notes, references = read_c20pc()
+    for key, rows in (("table4", table), ("notes4", notes), ("refs", references)):
+        query = source.get("queries", {}).get(key, {})
+        if (
+            query.get("row_count") != EXPECTED_ROW_COUNTS[key]
+            or len(rows) != EXPECTED_ROW_COUNTS[key]
+            or query.get("normalised_sha256") != value_sha256(rows)
+        ):
+            raise ValueError(f"20-pc pinned {key} checksum or row count is invalid")
+    readme = C20PC_README_PATH.read_bytes()
+    readme_text = readme.decode("utf-8")
+    if C20PC_README_HISTORY_DATE not in readme_text or C20PC_BIBCODE not in readme_text:
+        raise ValueError("20-pc ReadMe does not identify the pinned catalogue version")
+    if source.get("readme_sha256") != sha256_bytes(readme):
+        raise ValueError("20-pc pinned ReadMe checksum is invalid")
 
 
 def fetch_c20pc_readme() -> tuple[bytes, dict[str, str] | None]:
@@ -377,12 +380,9 @@ def fetch_c20pc_readme() -> tuple[bytes, dict[str, str] | None]:
             readme = response.read()
     except Exception as error:
         readme = C20PC_README_PATH.read_bytes()
-        provenance = {
-            "fetch": "failed",
-            "pin": "reused",
-            "url": C20PC_README_URL,
-            "reason": f"{C20PC_README_URL}: {error}",
-        }
+        provenance = c20pc_reuse_provenance(
+            fetch="failed", reason=f"{C20PC_README_URL}: {error}", url=C20PC_README_URL
+        )
     else:
         provenance = None
     readme_text = readme.decode("utf-8")
@@ -494,15 +494,21 @@ def read_c20pc() -> tuple[
     )
 
 
-def refresh_c20pc_snapshot() -> None:
-    transport_rows, endpoint, transport = fetch_vizier_snapshot([
+def refresh_c20pc_snapshot() -> dict[str, dict[str, str]] | None:
+    requests = [
         (f"{C20PC_CATALOGUE}/table4", C20PC_TABLE_COLUMNS, C20PC_TABLE_QUERY),
         (f"{C20PC_CATALOGUE}/notes4", C20PC_NOTES_COLUMNS, C20PC_NOTES_QUERY),
         (f"{C20PC_CATALOGUE}/refs", C20PC_REFS_COLUMNS, C20PC_REFS_QUERY),
-    ])
-    table, notes, references = normalize_census_tables(
-        *transport_rows,
-    )
+    ]
+    try:
+        table, notes, references = normalize_census_tables(*fetch_c20pc_tap_snapshot(requests))
+    except Exception as error:
+        validate_pinned_c20pc()
+        return {"reuse_provenance": c20pc_reuse_provenance(
+            fetch="not_attempted",
+            reason=f"{C20PC_TAP_URL}: {error}",
+            url=C20PC_TAP_URL,
+        )}
     readme, readme_provenance = fetch_c20pc_readme()
     write_fetched_c20pc_readme(readme, readme_provenance)
     queries = {
@@ -543,7 +549,7 @@ def refresh_c20pc_snapshot() -> None:
                 "catalogue_doi": C20PC_CATALOGUE_DOI,
                 "publication_doi": C20PC_PUBLICATION_DOI,
                 "publication_bibcode": C20PC_BIBCODE,
-                "endpoint": endpoint,
+                "endpoint": C20PC_TAP_URL,
                 "readme_url": C20PC_README_URL,
                 "readme_history_date": C20PC_README_HISTORY_DATE,
                 "readme_media_type": "text/plain; charset=utf-8",
@@ -552,7 +558,6 @@ def refresh_c20pc_snapshot() -> None:
                 "acknowledgement": C20PC_ACKNOWLEDGEMENT,
                 "external_reference_codes": EXPECTED_EXTERNAL_REFERENCE_CODES,
                 "queries": queries,
-                **({"transport": transport} if transport is not None else {}),
                 **(
                     {"readme_provenance": readme_provenance}
                     if readme_provenance is not None
@@ -564,14 +569,19 @@ def refresh_c20pc_snapshot() -> None:
             "references": references,
         },
     )
+    return (
+        {"readme_provenance": readme_provenance}
+        if readme_provenance is not None
+        else None
+    )
 
 
 def refresh_classical_names_snapshot() -> None:
-    transport_rows, endpoint, transport = fetch_vizier_snapshot([
-        (CLASSICAL_NAMES_TABLE, CLASSICAL_NAMES_COLUMNS, CLASSICAL_NAMES_QUERY),
-    ])
+    source_rows, endpoint, transport = fetch_classical_names_snapshot(
+        (CLASSICAL_NAMES_TABLE, CLASSICAL_NAMES_COLUMNS, CLASSICAL_NAMES_QUERY)
+    )
     source_rows = [
-        row for row in transport_rows[0]
+        row for row in source_rows
         if str(row.get("HIP") or "").strip()
     ]
     rows = normalise_rows(

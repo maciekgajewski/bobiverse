@@ -193,17 +193,20 @@ def validate_c20pc() -> tuple[dict[str, Any], list[dict[str, Any]]]:
         "external_reference_codes": EXPECTED_EXTERNAL_REFERENCE_CODES,
     }
     if (
-        source.get("endpoint")
-        not in (C20PC_TAP_URL, "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv")
+        source.get("endpoint") != C20PC_TAP_URL
         or any(source.get(key) != value for key, value in expected_source.items())
     ):
         raise ValueError("20-pc census source provenance differs from its contract")
+    readme_text = C20PC_README_PATH.read_text(encoding="utf-8") if C20PC_README_PATH.exists() else ""
     if (
         not source.get("retrieved_at")
         or not C20PC_README_PATH.exists()
-        or source.get("readme_sha256") != sha256(C20PC_README_PATH)
-        or C20PC_README_HISTORY_DATE
-        not in C20PC_README_PATH.read_text(encoding="utf-8")
+        or (
+            C20PC_README_PATH.exists()
+            and source.get("readme_sha256") != sha256(C20PC_README_PATH)
+        )
+        or C20PC_README_HISTORY_DATE not in readme_text
+        or C20PC_BIBCODE not in readme_text
     ):
         raise ValueError("20-pc census ReadMe contract is incomplete or stale")
     query_contracts = {

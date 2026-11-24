@@ -252,26 +252,25 @@ Double Star Catalog maintained at the U.S. Naval Observatory.”
 ### VizieR 20-pc census snapshot
 
 The census refresh pins the catalogue ReadMe with history date `04-Jun-2024` and the
-exact Table 4, notes, and references ADQL projections specified by BOB-026. It tries
-VizieR TAP first (`https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync`), then falls
-back only on transport failure to CFA VizieR ASU
-(`https://vizier.cfa.harvard.edu/viz-bin/asu-tsv`) with the same catalogue tables,
-projected column order, and `-out.max=unlimited`. The ADQL selection remains the
-logical contract; ASU responses are rejected when their metadata reports truncation
-or a lowered row cap. The logical baseline is 4,407 Table 4 rows, 4,407 notes, and
-688 references. VizieR TAP currently transports the long `BD+39 2376 AB` note as two
-adjacent rows, so the manifest records 4,408 transport rows and deterministic
-normalization reconstructs one logical note using continuation `recno` 1980. `recno`
-is source sequence only and never becomes an identity.
+exact Table 4, notes, and references ADQL projections specified by BOB-026. It uses
+only VizieR TAP (`https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync`). The logical
+baseline is 4,407 Table 4 rows, 4,407 notes, and 688 references. VizieR TAP currently
+transports the long `BD+39 2376 AB` note as two adjacent rows, so the manifest records
+4,408 transport rows and deterministic normalization reconstructs one logical note
+using continuation `recno` 1980. `recno` is source sequence only and never becomes an
+identity.
 
 The committed artifact records exact query bytes, projected columns, the endpoint
 actually used, catalogue and publication DOIs, publication bibcode, retrieval
-timestamp, counts, checksums, and the required VizieR acknowledgement. An ASU-backed
-manifest also records its actual source/columns/`-out.max` request in optional
-transport provenance. `data:validate` accepts either of these two VizieR endpoints
-for this source. If the official cdsarc ReadMe fetch is unavailable, refresh reuses
-the committed pin without overwriting it, still guards its date and bibcode, and
-records the failed fetch and reuse reason in optional provenance. Identity uses a
+timestamp, counts, checksums, and the required VizieR acknowledgement. If TAP is
+unreachable or does not produce a usable census, refresh does not use a mirror: it
+reuses the committed extract and ReadMe byte-for-byte without overwriting either.
+That result records optional no-fetch/pin-reused provenance with its reason and
+attempt timestamp. After a successful TAP census pull, an unavailable official
+cdsarc ReadMe likewise reuses the committed ReadMe without overwriting it and records
+ReadMe-specific reuse provenance. The date and bibcode guards still apply in either
+case. `data:validate` accepts the original TAP-only manifest and either optional
+reuse-provenance form; CFA ASU is not a 20-pc transport. Identity uses a
 content-derived `c20pc-2024:<sha256>` key. The source tables are:
 
 ```text

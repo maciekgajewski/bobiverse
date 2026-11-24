@@ -84,10 +84,7 @@
         "publication_doi": { "const": "10.3847/1538-4365/ad24e2" },
         "publication_bibcode": { "const": "2024ApJS..271...55K" },
         "endpoint": {
-          "enum": [
-            "https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync",
-            "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv"
-          ]
+          "const": "https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync"
         },
         "readme_url": {
           "const": "https://cdsarc.cds.unistra.fr/ftp/J/ApJS/271/55/ReadMe"
@@ -112,51 +109,35 @@
             "refs": { "$ref": "#/$defs/query" }
           }
         },
-        "transport": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["kind", "endpoint", "requests"],
-          "properties": {
-            "kind": { "const": "asu" },
-            "endpoint": {
-              "const": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv"
-            },
-            "requests": {
-              "type": "array",
-              "minItems": 1,
-              "items": {
-                "type": "object",
-                "additionalProperties": false,
-                "required": ["source", "columns", "out_max", "endpoint"],
-                "properties": {
-                  "source": { "type": "string", "minLength": 1 },
-                  "columns": {
-                    "type": "array",
-                    "minItems": 1,
-                    "items": { "type": "string" }
-                  },
-                  "out_max": { "const": "unlimited" },
-                  "endpoint": {
-                    "const": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv"
-                  }
-                }
-              }
-            }
-          }
-        },
+        "reuse_provenance": { "$ref": "#/$defs/reuse_provenance" },
         "readme_provenance": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["fetch", "pin", "url", "reason"],
+          "required": ["fetch", "pin", "url", "reason", "attempted_at"],
           "properties": {
             "fetch": { "const": "failed" },
             "pin": { "const": "reused" },
             "url": {
               "const": "https://cdsarc.cds.unistra.fr/ftp/J/ApJS/271/55/ReadMe"
             },
-            "reason": { "type": "string", "minLength": 1 }
+            "reason": { "type": "string", "minLength": 1 },
+            "attempted_at": { "type": "string", "minLength": 1 }
           }
         }
+      }
+    },
+    "reuse_provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fetch", "pin", "url", "reason", "attempted_at"],
+      "properties": {
+        "fetch": { "const": "not_attempted" },
+        "pin": { "const": "reused" },
+        "url": {
+          "const": "https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync"
+        },
+        "reason": { "type": "string", "minLength": 1 },
+        "attempted_at": { "type": "string", "minLength": 1 }
       }
     },
     "table4_row": {
