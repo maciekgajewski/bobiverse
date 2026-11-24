@@ -1,0 +1,61 @@
+{
+  "chapter": "2.70",
+  "title": "70 - Conversation",
+  "summary": "[[character:dr-sheehy|Bridget]] looks healthier but questions whether a replica would still be her. Her daughters were horrified and [[character:howard-brodeur|Howie]] unsure, and she declines for now. After consulting [[character:ms-benning|Benning]], [[character:howard]] explains that Bridget could record a codicil and replace it later and plans to build the equipment anyway, using stasis for preservation. With [[character:bob-replicant|Bob-1]] improving the android design so fast that Bill is embarrassed, Howard expects [[technology:manny|Manny]] to resemble [[character:robert-johansson|the original Bob]] and be able to eat, so Bridget suggests dinner. Howard sees a wartime use for replication in [[character:george-butterworth|Butterworth]]'s military experience. [[character:bill]] advises raising the idea first at a moot, now held weekly because of the [[species:others|Others]]. Howard later explains that the scan would be fatal to a living subject. Butterworth agrees in principle to eventual replication, and Howard tells him to revise his will.",
+  "date": "2211-05",
+  "location_id": "location:hip-14101",
+  "updates": [
+    {
+      "entity_id": "character:howard",
+      "current_state": "He plans to build replication equipment despite Bridget's decision to wait and has approached Butterworth as a potential wartime recruit. He looks forward to visiting Bridget through the upgraded Manny."
+    },
+    {
+      "entity_id": "character:dr-sheehy",
+      "current_state": "She still sounds tired but is taking better care of herself. She puts off replication and suggests having dinner with Howard once Manny can eat."
+    },
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "He is rapidly improving the android design used for Manny."
+    },
+    {
+      "entity_id": "character:bill",
+      "current_state": "He is open to recruiting Butterworth through replication and wants the Bobs to discuss it at a moot before Howard makes the offer."
+    },
+    {
+      "entity_id": "character:george-butterworth",
+      "current_state": "He gives Howard verbal assent to eventual replication and is told he will need to revise his will."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:howard",
+      "role": "lead",
+      "location_id": "location:hip-14101"
+    },
+    {
+      "character_id": "character:dr-sheehy",
+      "role": "other",
+      "location_id": "location:vulcan"
+    },
+    {
+      "character_id": "character:bill",
+      "role": "other",
+      "location_id": "location:epsilon-eridani"
+    },
+    {
+      "character_id": "character:george-butterworth",
+      "role": "other",
+      "location_id": "location:vulcan"
+    }
+  ],
+  "mentions": [
+    "character:robert-johansson",
+    "character:rosie",
+    "character:lianne",
+    "character:howard-brodeur",
+    "character:ms-benning",
+    "technology:manny",
+    "technology:android-project",
+    "species:others"
+  ]
+}

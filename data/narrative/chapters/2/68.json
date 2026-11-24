@@ -1,0 +1,55 @@
+{
+  "chapter": "2.68",
+  "title": "68 - Recording",
+  "summary": "[[character:jacques]] orders the drones back to full recording after [[technology:guppi-interface|GUPPI]] reports in [[technology:vr|VR]] that the new storage is online. Ahead of the [[species:others|Others]], he is documenting nature and Pav society and collecting genetic samples in separate stasis chambers. [[character:bill]] has persuaded him to avoid approaching the Pav, though Jacques reports a couple of sightings and ensuing rumors. To prepare for taking twenty thousand Pav, he identifies [[location:mheijrkva]] and Aizzilkva, each a little under ten thousand residents, with possible military bases nearby to make up the difference. Wary of becoming attached as [[character:bob-replicant|Bob-1]] did, Jacques has tiny [[technology:roamers|roamers]] bug a randomly chosen home there, keeping a record of a culture he expects to be gone within a decade. Observing the Los household, he singles out its matriarch, [[character:da-hazjiar-los]], for special handling if the plan goes ahead.",
+  "date": "2212-09",
+  "location_id": "location:delta-pavonis",
+  "introducing": [
+    {
+      "id": "location:mheijrkva",
+      "name": "Mheijrkva",
+      "kind": "locale",
+      "parent_location_id": "location:delta-pavonis-4",
+      "parent_relation": "located_on",
+      "description": "A rural Pav town on [[location:delta-pavonis-4]] with a stable population of just under ten thousand. [[character:jacques]] describes it as predominantly residential and oriented around families.",
+      "state": "Jacques has selected the town for the planned evacuation and placed one randomly selected household under covert audiovisual surveillance."
+    },
+    {
+      "id": "character:da-hazjiar-los",
+      "name": "Da Hazjiar Los",
+      "species_id": "species:pav",
+      "description": "A Pav town councillor and the matriarch of the Los household, which has six adults and nine children. [[character:jacques]] regards her as intelligent and especially level-headed by Pav standards.",
+      "current_state": "Jacques has flagged her for special handling if the planned evacuation goes ahead."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:jacques",
+      "current_state": "He covertly records Pav life and the planet's environment, collects genetic samples in dedicated stasis chambers, and has identified two towns for a planned evacuation of twenty thousand Pav. He is monitoring the Los household."
+    },
+    {
+      "entity_id": "location:delta-pavonis-4",
+      "state": "Jacques's covert survey records its life, landscapes, Pav societies and languages ahead of the [[species:others|Others]]. A couple of sightings of his equipment have fed conspiracy rumors among the Pav."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:jacques",
+      "role": "lead",
+      "location_id": "location:delta-pavonis"
+    },
+    {
+      "character_id": "character:da-hazjiar-los",
+      "role": "other",
+      "location_id": "location:mheijrkva"
+    }
+  ],
+  "mentions": [
+    "technology:guppi-interface",
+    "technology:vr",
+    "species:others",
+    "character:bill",
+    "character:bob-replicant",
+    "technology:roamers"
+  ]
+}

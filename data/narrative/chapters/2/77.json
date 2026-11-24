@@ -1,0 +1,132 @@
+{
+  "chapter": "2.77",
+  "title": "77 - Completion",
+  "summary": "After the [[species:others|Others]] leave, [[character:bill|Bill]] watches footage of the ravaged Pav homeworld. [[character:riker|Will]] tells him that the [[organization:united-nations|UN]] has offered [[location:hip-84051-2]] to the refugees. Bill and [[character:jacques|Jacques]] ask eight awakened [[species:pav|Pav]] to choose between repairing Aszjan and settling the new world. [[character:da-hazjiar-los|Hazjiar]] announces that the group wants the new planet and is wary of relying on the Bobs for everything. Bill promises a camp on arrival. The two refugee ships depart for [[location:hip-84051]]. With other Bobs assembling at [[location:gamma-pavonis]], [[character:andrew|Andrew]] argues for taking the initiative against the Others. The Bobs are building fleets, but Bill sees a shortage of weapons as a major obstacle. He is working on a long-term idea whose feasibility is still uncertain.",
+  "date": "2221-04",
+  "location_id": "location:delta-pavonis",
+  "introducing": [
+    {
+      "id": "location:hip-84051",
+      "name": "HIP 84051",
+      "kind": "star_system",
+      "map_status": "unmapped",
+      "description": "A star system in Ara, over forty light-years from [[location:sol|Sol]]. A roaming Bob identified a world there suitable for Pav resettlement."
+    },
+    {
+      "id": "location:hip-84051-2",
+      "name": "HIP 84051-2",
+      "kind": "planet",
+      "parent_location_id": "location:hip-84051",
+      "parent_relation": "orbits",
+      "orbital_order": 2,
+      "possible_colony_target": true,
+      "description": "A world with a living ecosystem suitable for the [[species:pav|Pav]]. Its surface gravity is slightly greater than Aszjan's and its atmosphere is thicker. Its life would be unfamiliar to the Pav, but the Bobs expect them to manage.",
+      "state": "The UN approved the planet for Pav resettlement, and the refugees’ representatives accepted the offer. Their ships are on the way and the Bobs have promised a temporary camp."
+    },
+    {
+      "id": "event:pav-refugees-choose-new-world",
+      "name": "Pav refugees choose a new world",
+      "location_id": "location:delta-pavonis",
+      "description": "Bill tells eight awakened refugees what happened to Aszjan, then offers them a choice of worlds on the Bobs’ behalf. After deliberation, Hazjiar speaks for the group in choosing HIP 84051-2, setting the destination for both refugee ships.",
+      "participant_ids": [
+        "character:bill",
+        "character:jacques",
+        "character:da-hazjiar-los"
+      ]
+    },
+    {
+      "id": "vessel:refuge-1",
+      "name": "REFUGE-1",
+      "description": "One of two SURGE-drive colony ships Jacques prepared and adapted for the Pav evacuation. Together they hold twenty thousand refugees in stasis.",
+      "current_state": "Has left Delta Pavonis for HIP 84051 with Pav evacuees."
+    },
+    {
+      "id": "vessel:refuge-2",
+      "name": "REFUGE-2",
+      "description": "One of two SURGE-drive colony ships Jacques prepared and adapted for the Pav evacuation. Together they hold twenty thousand refugees in stasis.",
+      "current_state": "Has left Delta Pavonis for HIP 84051 with Pav evacuees."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "location:delta-pavonis",
+      "state": "The Others departed after just over four years of extraction, stripping the belt as well as any small moons. Both refugee ships have left. Two Bobs volunteered to stay and survey the damage."
+    },
+    {
+      "entity_id": "location:delta-pavonis-4",
+      "state": "Known to the Pav as Aszjan. Its major cities lie in ruins. Once-green areas have turned brown, oceans appear blotchy gray, and the ice caps have either melted or been covered by dust and soot."
+    },
+    {
+      "entity_id": "character:bill",
+      "current_state": "Grief-stricken by the ruin of Aszjan, he helps the Pav choose their destination but intends to limit his role afterward. He is assembling a fleet at Epsilon Eridani and working on a long-term idea against the Others whose feasibility remains uncertain."
+    },
+    {
+      "entity_id": "character:jacques",
+      "current_state": "He helps resettle the Pav. He still lacks his own vessel when Bill offers to build replacement Version 3 craft from scavenged material. He agrees to the plan, which would let him escort the transports."
+    },
+    {
+      "entity_id": "character:riker",
+      "current_state": "Usually goes by Will. Still shaken by Homer's suicide, he has secured UN backing for offering HIP 84051-2 to the Pav and begun building dreadnoughts at Sol."
+    },
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "Rarely attends moots now. He has talked about setting out again after Archimedes is gone."
+    },
+    {
+      "entity_id": "character:da-hazjiar-los",
+      "aliases": ["Hazjiar"],
+      "current_state": "Speaks for the eight awakened Pav in choosing HIP 84051-2. She voices their discomfort with depending entirely on the Bobs and returns to stasis with the group."
+    },
+    {
+      "entity_id": "character:andrew",
+      "current_state": "Reports that Bobs are gathering at Gamma Pavonis. He believes defensive actions only buy time and argues for striking the Others before they can rebuild again."
+    },
+    {
+      "entity_id": "character:oliver",
+      "current_state": "Bill reports that Oliver is building a fleet in Alpha Centauri."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bill",
+      "role": "lead",
+      "location_id": "location:ee-2"
+    },
+    {
+      "character_id": "character:jacques",
+      "role": "other",
+      "location_id": "location:delta-pavonis"
+    },
+    {
+      "character_id": "character:riker",
+      "role": "other",
+      "location_id": "location:sol"
+    },
+    {
+      "character_id": "character:da-hazjiar-los",
+      "role": "other",
+      "location_id": "location:delta-pavonis"
+    },
+    {
+      "character_id": "character:andrew",
+      "role": "other"
+    }
+  ],
+  "mentions": [
+    "species:others",
+    "technology:autofactory",
+    "character:homer",
+    "organization:united-nations",
+    "species:pav",
+    "technology:vr",
+    "character:robert-johansson",
+    "character:archimedes",
+    "organization:bobnet",
+    "technology:translation-routine",
+    "location:zeta-tucanae",
+    "technology:surge-drive",
+    "location:gamma-pavonis",
+    "location:epsilon-eridani",
+    "location:alpha-centauri"
+  ]
+}

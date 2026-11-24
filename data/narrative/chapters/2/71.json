@@ -1,0 +1,72 @@
+{
+  "chapter": "2.71",
+  "title": "71 - Charlie",
+  "summary": "[[character:bob-replicant|Bob]] takes [[technology:charlie]] out onto [[location:delta-eridani-4|Eden]] and experiences the forest through the android's senses. [[character:archimedes]] recognizes him but spots three giveaways: an artificial smell, an uneven walk, and mirror-image fur markings. On the second trial, Archimedes approves of the changes and leads him into busy [[location:camelot]]. Some residents still travel between Camelot and [[location:caerleon]] despite the tension. At the family fire, Bob has the translator render his cover name as Robert. [[character:diana]] shows no sign of recognizing him, and her frailty reinforces his impression that Archimedes is aging slowly. When one of [[character:buster]]'s grandchildren runs into him, Bob answers playfully and the gathering relaxes.",
+  "date": "2213-06",
+  "location_id": "location:delta-eridani",
+  "introducing": [
+    {
+      "id": "technology:charlie",
+      "name": "Charlie",
+      "description": "A Deltan look-alike android operated by [[character:bob-replicant|Bob]] as a physical presence on [[location:delta-eridani-4|Eden]]. It relays touch and smell, translates expressions into Deltan gestures, and displays a local map. Its fur markings and scent are designed to let it blend in."
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "character:bob-replicant",
+      "current_state": "He has visited Camelot through [[technology:charlie]] under a Deltan cover name rendered as Robert. Diana showed no sign of recognizing him at the family hearth."
+    },
+    {
+      "entity_id": "character:archimedes",
+      "current_state": "He helps Bob refine his android disguise and introduces him to the family. Bob sees him as a closer friend and suspects he is aging unusually slowly."
+    },
+    {
+      "entity_id": "location:camelot",
+      "state": "The village is crowded, with residents gathered around both central and smaller fires. Some people still travel between it and [[location:caerleon]] despite the tension."
+    },
+    {
+      "entity_id": "location:caerleon",
+      "state": "The settlement is growing and remains on tense terms with [[location:camelot]], though some people continue to move between the villages."
+    },
+    {
+      "entity_id": "character:diana",
+      "current_state": "Bob finds her visibly frail with age. She shows no sign of recognizing him in his Deltan disguise."
+    },
+    {
+      "entity_id": "character:buster",
+      "current_state": "He has grandchildren and still keeps close to his father, while his siblings have established separate hearths."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:bob-replicant",
+      "role": "lead",
+      "location_id": "location:delta-eridani"
+    },
+    {
+      "character_id": "character:archimedes",
+      "role": "other",
+      "location_id": "location:camelot"
+    },
+    {
+      "character_id": "character:diana",
+      "role": "other",
+      "location_id": "location:camelot"
+    },
+    {
+      "character_id": "character:buster",
+      "role": "other",
+      "location_id": "location:camelot"
+    },
+    {
+      "character_id": "character:belinda",
+      "role": "other",
+      "location_id": "location:camelot"
+    }
+  ],
+  "mentions": [
+    "species:delta-eridani-natives",
+    "location:delta-eridani-4",
+    "technology:planetary-exploration-drone"
+  ]
+}

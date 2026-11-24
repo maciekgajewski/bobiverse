@@ -1,0 +1,58 @@
+{
+  "chapter": "2.73",
+  "title": "73 - Collection",
+  "summary": "After the [[event:battle-for-delta-pavonis|failed defense of Delta Pavonis]], Phineas and Ferb carry out [[character:jacques|Jacques]]'s plan to evacuate up to 20,000 [[species:pav|Pav]] by force ahead of the [[species:others|Others]]. Drones disperse a temporary anesthetic and then carry the unconscious residents aboard for intended placement in stasis. Phineas takes all 9,273 residents of [[location:mheijrkva|Mheijr]]. Ferb hints at trouble over [[technology:subspace-communications|SCUT]], and both towns yield fewer people than the ships can carry. Phineas raids three nearby bases, bringing his own load within 100 of capacity. Ferb signals that he appears ready to go.",
+  "date": "2217-02",
+  "location_id": "location:delta-pavonis",
+  "introducing": [
+    {
+      "id": "character:phineas",
+      "name": "Phineas",
+      "description": "A replicant who, with Ferb, came online in time to refine Jacques's plan to remove Pav by force before the [[species:others|Others]] arrive. He runs the collection at Mheijr with anesthetic-gas and retrieval drones, then raids three nearby bases to fill his ship.",
+      "current_state": "He has cleared Mheijr and taken additional evacuees from three bases. His ship is within 100 people of capacity."
+    },
+    {
+      "id": "character:ferb",
+      "name": "Ferb",
+      "description": "A replicant who came online alongside Phineas and helped refine Jacques's forced-evacuation plan for the [[species:pav|Pav]]. He handles the second chosen town, in another part of the same country, where his collection runs into difficulties and falls short of capacity.",
+      "current_state": "His collection has encountered difficulties and is coming in below capacity. He tells Phineas that he appears ready to go."
+    },
+    {
+      "id": "event:pav-evacuation-collection",
+      "name": "Forced collection of Pav evacuees",
+      "date": "2217-02",
+      "location_id": "location:delta-pavonis-4",
+      "description": "With the Others approaching, two teams remove Pav residents by force to give them a chance of surviving the attack. Phineas takes an entire town of 9,273 and collects additional people from three bases.",
+      "participant_ids": ["character:phineas", "character:ferb"]
+    }
+  ],
+  "updates": [
+    {
+      "entity_id": "location:mheijrkva",
+      "state": "Phineas has removed the town's entire population of 9,273 for evacuation."
+    },
+    {
+      "entity_id": "location:delta-pavonis-4",
+      "state": "Forced evacuation is underway ahead of the Others. Collection teams have targeted two towns, and Phineas has also taken people from three nearby bases."
+    }
+  ],
+  "appearances": [
+    {
+      "character_id": "character:phineas",
+      "role": "lead",
+      "location_id": "location:mheijrkva"
+    },
+    {
+      "character_id": "character:ferb",
+      "role": "other",
+      "location_id": "location:delta-pavonis-4"
+    }
+  ],
+  "mentions": [
+    "event:battle-for-delta-pavonis",
+    "character:jacques",
+    "species:pav",
+    "technology:subspace-communications",
+    "species:others"
+  ]
+}

@@ -10,6 +10,15 @@
       "promotion": null
     },
     {
+      "id": "candidate:aizzilkva",
+      "kind": "location",
+      "name": "Aizzilkva",
+      "aliases": [],
+      "mentions": ["2.68"],
+      "note": "2.68: Rural Pav town just below ten thousand residents, listed with Mheijrkva (claim 017).",
+      "promotion": null
+    },
+    {
       "id": "candidate:alaina",
       "kind": "character",
       "name": "Alaina",
@@ -25,7 +34,10 @@
       "aliases": [],
       "mentions": ["2.67"],
       "note": "2.67: Bill’s on-and-off effort of 65 years toward human-like remote bodies, with Garfield; Manny is its latest prototype (claims 025-029, 042).",
-      "promotion": null
+      "promotion": {
+        "chapter": "2.69",
+        "entity_id": "technology:android-project"
+      }
     },
     {
       "id": "candidate:archimedes-son",
@@ -73,9 +85,13 @@
         "2.59",
         "2.63",
         "2.64",
-        "2.66"
+        "2.66",
+        "2.70",
+        "2.72",
+        "2.74",
+        "2.77"
       ],
-      "note": "Bob gatherings. 2.39 VR, 43 SCUT Bobs (004-005); 2.44 baseball (012); 2.52 pub (020); 2.55 wanted (034); 2.57 Others (035); 2.59 Claude went; 2.63 due; 2.64 no plan (021-033); 2.66 gloomy (014-016).",
+      "note": "Bob gatherings. 2.39 VR, 43 Bobs (004); 2.44 baseball (012); 2.52 pub (020); 2.55 (034); 2.57 Others (035); 2.59 Claude; 2.63 due; 2.64 no plan; 2.66 gloomy; 2.70 weekly; 2.72 VR; 2.74; 2.77.",
       "promotion": null
     },
     {
@@ -101,8 +117,8 @@
       "kind": "location",
       "name": "Bullseye",
       "aliases": [],
-      "mentions": ["2.36"],
-      "note": "2.36: Bill's name for a new sea slowly forming on Ragnarok in a crater left by an earlier iceberg he missed (claims 020-022); natural feature below locale granularity.",
+      "mentions": ["2.36", "2.74"],
+      "note": "2.36: Bill names the sea filling the crater of an iceberg he missed on Ragnarök (020-022). 2.74: now fresh water ringing an island; the sight sparks an idea (023, 027).",
       "promotion": null
     },
     {
@@ -166,7 +182,10 @@
         "2.66"
       ],
       "note": "Others' gamma platform (2.39: 011); 2.53 hit Decoy 1 (027); 2.54 drone risk (017); 2.55 convoy (013); 2.57 self-charging (021); 2.61 busters weak (012); 2.64 spikes too (018); 2.66 20 to Delta (019).",
-      "promotion": null
+      "promotion": {
+        "chapter": "2.72",
+        "entity_id": "vessel:death-asteroid"
+      }
     },
     {
       "id": "candidate:delta-pavonis",
@@ -181,12 +200,30 @@
       }
     },
     {
+      "id": "candidate:dr-carlisle",
+      "kind": "character",
+      "name": "Dr. Carlisle",
+      "aliases": [],
+      "mentions": ["2.77"],
+      "note": "2.77: Bill thinks Carlisle’s theories are borne out by the apparent prevalence of compatible ecosystems (claim 033)",
+      "promotion": null
+    },
+    {
       "id": "candidate:draper",
       "kind": "character",
       "name": "Draper",
       "aliases": ["Chief Draper"],
       "mentions": ["2.49", "2.62"],
       "note": "2.49: off-screen Poseidon colony figure, expected to take a kraken death and the net delay badly, as Butterworth would (038, 048). 2.62: Chief Draper sees Mulder off (claim 022).",
+      "promotion": null
+    },
+    {
+      "id": "candidate:dyson-sphere",
+      "kind": "location",
+      "name": "Dyson Sphere",
+      "aliases": [],
+      "mentions": ["2.38", "2.39", "2.55", "2.57", "2.77"],
+      "note": "Others' megastructure. Plain mentions 2.38, 2.39, 2.55, 2.57. 2.77: Andrew expects the Others to keep building it despite their Sol plans (claim 058).",
       "promotion": null
     },
     {
@@ -251,8 +288,8 @@
       "kind": "species",
       "name": "Gorilloid",
       "aliases": [],
-      "mentions": ["2.56", "2.65"],
-      "note": "2.56: reduced threat has cut Deltan child mortality (claim 016). 2.65: fewer, changed gorilloids make Caerleon safer (019). Earlier: plain text in 1.35-2.19; first_mentioned 1.35 if promoted.",
+      "mentions": ["2.56", "2.65", "2.71"],
+      "note": "2.56: threat down, fewer child deaths (016). 2.65: fewer gorilloids, Caerleon safer (019). 2.71: may deter village splits (021). Plain text 1.35-2.19; first_mentioned 1.35 if promoted.",
       "promotion": null
     },
     {
@@ -271,7 +308,10 @@
       "aliases": [],
       "mentions": ["2.61", "2.64", "2.66"],
       "note": "2.61: Butterworth gave Howard H-bomb plans, putting the Others above secrecy (claim 023). 2.64: Garfield credits USE and Butterworth for the plans (017). 2.66: Jacques' fusion bombs unfinished (010).",
-      "promotion": null
+      "promotion": {
+        "chapter": "2.72",
+        "entity_id": "technology:h-bomb"
+      }
     },
     {
       "id": "candidate:hawaii",
@@ -287,8 +327,8 @@
       "kind": "species",
       "name": "Hippogriff",
       "aliases": [],
-      "mentions": ["2.22"],
-      "note": "2.22: Deltan predator; local nest gone, area unclaimed (claims 009, 014). Earlier: plain text in the 1.27 data, so first_mentioned should be 1.27 if promoted.",
+      "mentions": ["2.22", "2.71"],
+      "note": "2.22: Deltan predator; nest gone and area unclaimed (009, 014). 2.71: may deter village splits (021). Plain text in 1.27; first_mentioned 1.27 if promoted.",
       "promotion": null
     },
     {
@@ -298,7 +338,10 @@
       "aliases": [],
       "mentions": ["2.58"],
       "note": "2.58: son of Bridget and Stéphane Brodeur, named Howard; surname from the Brodeur family name. Known only from Dexter's email to Howard.",
-      "promotion": null
+      "promotion": {
+        "chapter": "2.69",
+        "entity_id": "character:howard-brodeur"
+      }
     },
     {
       "id": "candidate:jacques",
