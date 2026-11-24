@@ -92,7 +92,6 @@ LY_PER_PC = 3.261563777
 GCNS_LIMIT_PC = 100.0
 VIZIER_ASU_URL = "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv"
 VIZIER_TAP_CONNECT_TIMEOUT = 25
-CLASSICAL_NAMES_EXPECTED_ROW_COUNT = 3569
 
 GCNS_COLUMNS = [
     "source_id", "ra", "dec", "ra_error", "dec_error", "parallax",
@@ -315,21 +314,43 @@ def asu_tsv(table: str, columns: list[str]) -> tuple[list[dict[str, str]], dict[
 def fetch_classical_names_snapshot(
     request: tuple[str, list[str], str],
 ) -> tuple[list[dict[str, str]], str, dict[str, Any] | None]:
-    """Use CFA ASU only when the IV/27A TAP transport cannot be reached."""
+    """Use CFA ASU when TAP cannot produce the pinned IV/27A extract."""
     table, columns, query = request
     try:
-        return (
-            tap_csv(CLASSICAL_NAMES_TAP_URL, query, connect_timeout=VIZIER_TAP_CONNECT_TIMEOUT),
-            CLASSICAL_NAMES_TAP_URL,
-            None,
+        rows = prepare_classical_names_rows(
+            tap_csv(
+                CLASSICAL_NAMES_TAP_URL,
+                query,
+                connect_timeout=VIZIER_TAP_CONNECT_TIMEOUT,
+            )
         )
-    except OSError:
+    except (OSError, http.client.HTTPException, ValueError):
         rows, asu_request = asu_tsv(table, columns)
-        return rows, VIZIER_ASU_URL, {
+        return prepare_classical_names_rows(rows), VIZIER_ASU_URL, {
             "kind": "asu",
             "endpoint": VIZIER_ASU_URL,
             "requests": [asu_request],
         }
+    return rows, CLASSICAL_NAMES_TAP_URL, None
+
+
+def prepare_classical_names_rows(
+    source_rows: list[dict[str, str]],
+) -> list[dict[str, str]]:
+    """Normalize IV/27A and require its committed row-count and hash pin."""
+    rows = normalise_rows(
+        CLASSICAL_NAMES_COLUMNS,
+        (row for row in source_rows if str(row.get("HIP") or "").strip()),
+        "recno",
+    )
+    pinned_source, _ = read_extract("classical_names")
+    if (
+        len(rows) != pinned_source.get("row_count")
+        or sha256_bytes(csv_bytes(CLASSICAL_NAMES_COLUMNS, rows))
+        != pinned_source.get("normalised_sha256")
+    ):
+        raise ValueError("IV/27A normalised checksum or row count differs from the pinned baseline")
+    return rows
 
 
 def fetch_c20pc_tap_snapshot(
@@ -388,6 +409,10 @@ def fetch_c20pc_readme() -> tuple[bytes, dict[str, str] | None]:
     readme_text = readme.decode("utf-8")
     if C20PC_README_HISTORY_DATE not in readme_text or C20PC_BIBCODE not in readme_text:
         raise ValueError("20-pc ReadMe does not identify the pinned catalogue version")
+    if provenance is not None:
+        pinned_source, _, _, _ = read_c20pc()
+        if sha256_bytes(readme) != pinned_source.get("readme_sha256"):
+            raise ValueError("20-pc reused ReadMe checksum differs from the pinned manifest")
     return readme, provenance
 
 
@@ -504,11 +529,18 @@ def refresh_c20pc_snapshot() -> dict[str, dict[str, str]] | None:
         table, notes, references = normalize_census_tables(*fetch_c20pc_tap_snapshot(requests))
     except Exception as error:
         validate_pinned_c20pc()
-        return {"reuse_provenance": c20pc_reuse_provenance(
+        reuse_provenance = c20pc_reuse_provenance(
             fetch="not_attempted",
             reason=f"{C20PC_TAP_URL}: {error}",
             url=C20PC_TAP_URL,
-        )}
+        )
+        document = read_json(C20PC_PATH)
+        document["source"] = {
+            **document["source"],
+            "reuse_provenance": reuse_provenance,
+        }
+        write_json(C20PC_PATH, document)
+        return {"reuse_provenance": reuse_provenance}
     readme, readme_provenance = fetch_c20pc_readme()
     write_fetched_c20pc_readme(readme, readme_provenance)
     queries = {
@@ -577,20 +609,9 @@ def refresh_c20pc_snapshot() -> dict[str, dict[str, str]] | None:
 
 
 def refresh_classical_names_snapshot() -> None:
-    source_rows, endpoint, transport = fetch_classical_names_snapshot(
+    rows, endpoint, transport = fetch_classical_names_snapshot(
         (CLASSICAL_NAMES_TABLE, CLASSICAL_NAMES_COLUMNS, CLASSICAL_NAMES_QUERY)
     )
-    source_rows = [
-        row for row in source_rows
-        if str(row.get("HIP") or "").strip()
-    ]
-    rows = normalise_rows(
-        CLASSICAL_NAMES_COLUMNS,
-        source_rows,
-        "recno",
-    )
-    if len(rows) != CLASSICAL_NAMES_EXPECTED_ROW_COUNT:
-        raise ValueError("IV/27A row count differs from the pinned baseline")
     write_extract(
         "classical_names",
         CLASSICAL_NAMES_COLUMNS,
@@ -1862,7 +1883,7 @@ def refresh() -> None:
     gaia = normalise_rows(GAIA_COLUMNS, gaia_rows, "source_id")
     write_extract("gaia_dr3", GAIA_COLUMNS, gaia, manifest("gaia_dr3", endpoint=GAIA_URL, table="gaiadr3.gaia_source + pinned left joins", query="\n\n".join(queries), rows=gaia, columns=GAIA_COLUMNS, extra={"release": "Gaia DR3", "queries": query_accounting, "input_source_id_sha256": sha256_bytes("\n".join(selected_ids).encode()), "unmatched_source_ids": sorted(set(selected_ids) - {row["source_id"] for row in gaia})}))
     refresh_classical_names_snapshot()
-    refresh_c20pc_snapshot()
+    c20pc_refresh = refresh_c20pc_snapshot()
     wds_manifest = _write_wds()
     prior_candidates = (
         read_json(CANDIDATES_PATH) if CANDIDATES_PATH.exists() else None
@@ -1883,7 +1904,8 @@ def refresh() -> None:
         write_json(REVIEW_PATH, {"schema_version": "1.0.0", "accepted_candidate_sha256": None, "reviewer": None, "reviewed_at": None, "overrides": [], "unresolved_ambiguities": [{"reason": "Initial candidate snapshot requires Captain review."}]})
     if not LANDMARKS_PATH.exists():
         write_json(LANDMARKS_PATH, {"schema_version": "1.0.0", "systems": []})
-    print(f"Refreshed GCNS={len(gcns)}, CNS5={len(cns5)}, Gaia DR3={len(gaia)}; candidate checksum {candidate_checksum}")
+    c20pc_status = "reused" if c20pc_refresh and "reuse_provenance" in c20pc_refresh else "refreshed"
+    print(f"Refreshed GCNS={len(gcns)}, CNS5={len(cns5)}, Gaia DR3={len(gaia)}; 20-pc census {c20pc_status}; candidate checksum {candidate_checksum}")
 
 
 def reconcile_committed_sources() -> str:

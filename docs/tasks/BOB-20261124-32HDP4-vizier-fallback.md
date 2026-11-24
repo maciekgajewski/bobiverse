@@ -169,3 +169,14 @@ files under `data/` (or revert any accidental writes afterwards):
   CFA reproduced `64279ff8…` and 3569 rows; the 20-pc reuse path left
   the committed extract and ReadMe byte-identical. No `data/source/`
   writes.
+- Review of `98a6ed9` came back BLOCK. One fix commit addresses all five
+  points: CFA also pin-checks the committed IV/27A normalised hash; IV/27A
+  falls back to CFA on HTTPException and TAP parse/pin failure (CFA still
+  pin-checked); 20-pc reuse provenance is written into the manifest and
+  the CLI reports reused; reused ReadMe sha256 is checked against the
+  manifest pin; ASU transport provenance is required and pinned for CFA
+  IV/27A, and forbidden on TAP manifests. Current TAP-pinned
+  `data/source/` artifacts are unchanged. Fast checks after the fix
+  (Europe/Warsaw, 15:43): `data:test` 160 OK; `data:validate` 337 systems
+  and six sources; `tasks.py check` 126 tasks / 35 ADRs; prettier on
+  `data/schema/*.json` OK.

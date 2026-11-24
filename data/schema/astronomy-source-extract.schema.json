@@ -273,7 +273,70 @@
                 "SimbadName"
               ]
             }
-          }
+          },
+          "oneOf": [
+            {
+              "properties": {
+                "endpoint": {
+                  "const": "https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync"
+                }
+              },
+              "not": { "required": ["transport"] }
+            },
+            {
+              "required": ["transport"],
+              "properties": {
+                "endpoint": {
+                  "const": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv"
+                },
+                "transport": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["kind", "endpoint", "requests"],
+                  "properties": {
+                    "kind": { "const": "asu" },
+                    "endpoint": {
+                      "const": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv"
+                    },
+                    "requests": {
+                      "type": "array",
+                      "minItems": 1,
+                      "maxItems": 1,
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "source",
+                          "columns",
+                          "out_max",
+                          "endpoint"
+                        ],
+                        "properties": {
+                          "source": { "const": "IV/27A/catalog" },
+                          "columns": {
+                            "const": [
+                              "recno",
+                              "HD",
+                              "HR",
+                              "HIP",
+                              "Fl",
+                              "Bayer",
+                              "Cst",
+                              "SimbadName"
+                            ]
+                          },
+                          "out_max": { "const": "unlimited" },
+                          "endpoint": {
+                            "const": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
         }
       ]
     },

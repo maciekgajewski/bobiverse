@@ -130,6 +130,24 @@ def validate_extract(key: str, columns: list[str], id_key: str) -> tuple[dict[st
         raise ValueError(f"{key} manifest provenance is incomplete or unpinned")
     if key in {"gcns", "cns5"} and not manifest.get("upstream_updated_at"):
         raise ValueError(f"{key} manifest lacks the upstream data-update timestamp")
+    if key == "classical_names":
+        transport = manifest.get("transport")
+        if manifest.get("endpoint") == CLASSICAL_NAMES_TAP_URL:
+            if transport is not None:
+                raise ValueError("IV/27A TAP provenance must not include ASU transport")
+        else:
+            expected_request = {
+                "source": CLASSICAL_NAMES_TABLE,
+                "columns": CLASSICAL_NAMES_COLUMNS,
+                "out_max": "unlimited",
+                "endpoint": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv",
+            }
+            if transport != {
+                "kind": "asu",
+                "endpoint": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv",
+                "requests": [expected_request],
+            }:
+                raise ValueError("IV/27A ASU transport provenance differs from its pinned request")
     if manifest.get("row_count") != len(rows) or manifest.get("normalised_sha256") != csv_sha(columns, rows):
         raise ValueError(f"{key} manifest checksum or row count differs from its committed extract")
     if not path.exists() or not csv_path.exists():
@@ -197,6 +215,19 @@ def validate_c20pc() -> tuple[dict[str, Any], list[dict[str, Any]]]:
         or any(source.get(key) != value for key, value in expected_source.items())
     ):
         raise ValueError("20-pc census source provenance differs from its contract")
+    if "reuse_provenance" in source:
+        reuse = source["reuse_provenance"]
+        if (
+            not isinstance(reuse, dict)
+            or reuse.get("fetch") != "not_attempted"
+            or reuse.get("pin") != "reused"
+            or reuse.get("url") != C20PC_TAP_URL
+            or not isinstance(reuse.get("reason"), str)
+            or not reuse["reason"]
+            or not isinstance(reuse.get("attempted_at"), str)
+            or not reuse["attempted_at"]
+        ):
+            raise ValueError("20-pc reuse provenance is incomplete or invalid")
     readme_text = C20PC_README_PATH.read_text(encoding="utf-8") if C20PC_README_PATH.exists() else ""
     if (
         not source.get("retrieved_at")
