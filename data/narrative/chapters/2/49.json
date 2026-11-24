@@ -1,7 +1,7 @@
 {
   "chapter": "2.49",
   "title": "49 - Arrival",
-  "summary": "In polar orbit over [[location:eta-cassiopeiae-3|Poseidon]], an all-ocean world whose sea life includes huge tentacled [[species:kraken|krakens]], [[character:mulder]] hosts [[character:marcus]] and [[character:monty]] in his [[technology:vr]], where [[technology:jeeves]] serves coffee and [[character:spike]] gets a scratch. Monty arrives with the first colonists and wakes the setup team, who pick two huge plant mats drifting in the north tropical current, among those Mulder had tagged with beacons, and start ferrying supplies down; colonists from four island communities are to be woken in small groups as living space is built. Floating cities are the long-term plan, and with no land all industry must be in space. When krakens keep killing settlers, Marcus jokes about flying cities built from an [[technology:asteroid-mover]], then adapts plans for an electrified net that adds six months to the schedule and keeps Monty there longer.",
+  "summary": "In polar orbit over [[location:eta-cassiopeiae-3|Poseidon]], an all-ocean world whose sea life includes huge tentacled krakens, [[character:mulder]] hosts [[character:marcus]] and [[character:monty]] in his [[technology:vr]], where [[technology:jeeves]] serves coffee and [[character:spike]] gets a scratch. Monty arrives with the first colonists and wakes the setup team, who pick two huge plant mats drifting in the north tropical current, among those Mulder had tagged with beacons, and start ferrying supplies down; colonists from four island communities are to be woken in small groups as living space is built. Floating cities are the long-term plan, and with no land all industry must be in space. When krakens keep killing settlers, Marcus jokes about flying cities built from an [[technology:asteroid-mover]], then adapts plans for an electrified net that adds six months to the schedule and keeps Monty there longer.",
   "date": "2195-03",
   "location_id": "location:eta-cassiopeiae-3",
   "introducing": [
@@ -16,12 +16,6 @@
       "name": "Monty",
       "description": "The colony transport that carries the first colonists to [[location:eta-cassiopeiae-3|Poseidon]]. The setup teams work from him for a long time while the colony is built, and he is to head home once he can leave.",
       "current_state": "Arrived at Poseidon, he wakes the Setup Management team to begin decanting the colonists. Expecting to be held there about a year, he is now stuck six months longer while the kraken net is built."
-    },
-    {
-      "id": "species:kraken",
-      "name": "Kraken",
-      "homeworld_id": "location:eta-cassiopeiae-3",
-      "description": "A huge tentacled predator of [[location:eta-cassiopeiae-3|Poseidon]]'s ocean, up to about a hundred metres long, that grabs animals off the edges of the floating plant mats and can push a tentacle through a mat to seize prey further in. Noise draws it, and it grows bolder around the colony."
     },
     {
       "id": "event:poseidon-colony-arrival",
@@ -42,8 +36,14 @@
       "current_state": "In polar orbit over [[location:eta-cassiopeiae-3|Poseidon]], he supports its first colony: he had tagged the largest plant mats with beacons, and he works with [[character:marcus]] and [[character:monty]] as krakens attack the settlers and an electrified net is planned."
     },
     {
+      "entity_id": "location:eta-cassiopeiae",
+      "description": "A binary system 19.5 light-years from [[location:epsilon-eridani|Epsilon Eridani]], with the Sun-like [[location:eta-cassiopeiae-a|EC-A]] and [[location:eta-cassiopeiae-b|a long-period companion]]. It has five rocky planets and no Jovians; [[character:mulder]] thinks the companion and the missing Jovian swept it clean. Its third planet, [[location:eta-cassiopeiae-3|Poseidon]], now hosts a human colony on floating plant mats."
+    },
+    {
       "entity_id": "location:eta-cassiopeiae-3",
-      "state": "Its first colony is set up on two plant mats in the north tropical current; colonists from Micronesia, the Maldives, Vanuatu and Saint Lucia wake in small groups. Krakens have killed settlers, so a net is planned (six more months). Floating cities will follow; with no land, industry is in space."
+      "state": "Its first colony is set up on two plant mats in the north tropical current; colonists from Micronesia, the Maldives, Vanuatu and Saint Lucia wake in small groups. Krakens have killed settlers, so a net is planned (six more months). Floating cities will follow; with no land, industry is in space.",
+      "colony_of": ["species:human"],
+      "possible_colony_target": false
     }
   ],
   "appearances": [

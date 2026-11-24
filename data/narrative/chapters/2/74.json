@@ -38,7 +38,8 @@
     },
     {
       "entity_id": "location:delta-pavonis-4",
-      "state": "The Others have swept the entire planet with asteroid weapons and set up large printing operations. Jacques estimates that 90 percent of its biological diversity is permanently lost."
+      "state": "The Others have swept the entire planet with asteroid weapons and set up large printing operations. Jacques estimates that 90 percent of its biological diversity is permanently lost.",
+      "colony_of": []
     },
     {
       "entity_id": "location:ee-2",

@@ -1,7 +1,7 @@
 {
   "chapter": "2.62",
   "title": "62 - Departure",
-  "summary": "[[character:mulder]] finishes his last report from [[location:eta-cassiopeiae-3|Poseidon]] to [[character:bill]] and [[character:riker]]. Next day [[character:monty]] heads back to [[location:earth]] carrying only biological samples, Mulder leaves for a new system, and [[character:marcus]] stays as the resident Bob. Three mat colonies are running, two floating cities are nearly done, and there has been no [[species:kraken|kraken]] attack for three months. Marcus shows a small prototype for a city held up in the air, which he believes could keep something as large as the floating cities aloft indefinitely; testing is six months off, too late for Monty to learn the results before he is back at Earth. Monty would like to stay under .75c, but a colony ship cannot spare the longer transit; Mulder sees staying slower as a way to follow the project, which he thinks could change everything. Leaving, he is stung by goodbyes from Chief Draper and other friends, some of whom may be dead by the time he arrives, and doubts that befriending humans is wise. Riker visits in VR: Sol now runs fourteen colony ships, and settlements exist or are coming at [[location:82-eridani]], [[location:epsilon-indi]], [[location:vulcan]] and Poseidon, though the first two lie near enough to the [[species:others|Others]] to be at risk.",
+  "summary": "[[character:mulder]] finishes his last report from [[location:eta-cassiopeiae-3|Poseidon]] to [[character:bill]] and [[character:riker]]. Next day [[character:monty]] heads back to [[location:earth]] carrying only biological samples, Mulder leaves for a new system, and [[character:marcus]] stays as the resident Bob. Three mat colonies are running, two floating cities are nearly done, and there has been no kraken attack for three months. Marcus shows a small prototype for a city held up in the air, which he believes could keep something as large as the floating cities aloft indefinitely; testing is six months off, too late for Monty to learn the results before he is back at Earth. Monty would like to stay under .75c, but a colony ship cannot spare the longer transit; Mulder sees staying slower as a way to follow the project, which he thinks could change everything. Leaving, he is stung by goodbyes from Chief Draper and other friends, some of whom may be dead by the time he arrives, and doubts that befriending humans is wise. Riker visits in VR: Sol now runs fourteen colony ships, and settlements exist or are coming at [[location:82-eridani]], [[location:epsilon-indi]], [[location:vulcan]] and Poseidon, though the first two lie near enough to the [[species:others|Others]] to be at risk.",
   "date": "2201-11",
   "location_id": "location:eta-cassiopeiae",
   "updates": [
@@ -19,9 +19,7 @@
     },
     {
       "entity_id": "location:eta-cassiopeiae-3",
-      "colony_of": ["species:human"],
-      "possible_colony_target": false,
-      "state": "Three colonies on floating plant mats are operating, and two cities on the ocean surface are almost finished. No [[species:kraken|kraken]] attacks have been reported for three months."
+      "state": "Three colonies on floating plant mats are operating, and two cities on the ocean surface are almost finished. No kraken attacks have been reported for three months."
     },
     {
       "entity_id": "character:riker",
@@ -52,7 +50,6 @@
   ],
   "mentions": [
     "location:earth",
-    "species:kraken",
     "technology:jeeves",
     "location:vulcan",
     "location:82-eridani",
