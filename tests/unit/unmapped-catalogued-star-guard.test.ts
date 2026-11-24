@@ -193,30 +193,35 @@ describe("unmapped catalogued-star guard", () => {
     }
   });
 
-  it("validates the real corpus and reports each temporary exception when removed", () => {
+  it("validates the real corpus after the six catalogue-C mappings", () => {
     expect(narrativeCorpus).not.toBeNull();
     expect(() => validateNarrativeCorpus(narrativeCorpus!)).not.toThrow();
 
-    const temporaryIds = [
+    // These locations are now mapped in the runtime catalogue and no longer
+    // appear on, or require, the unmapped-star allowlist.
+    const nowMappedIds = [
       "location:gamma-pavonis",
       "location:delta-pavonis",
       "location:hip-14101",
       "location:gliese-54",
       "location:gliese-877",
+      "location:hip-84051",
     ];
-    for (const locationId of temporaryIds) {
+    for (const locationId of nowMappedIds) {
+      expect(
+        narrativeCorpus!.unmappedStarAllowlist.some(
+          (entry) => entry.location_id === locationId,
+        ),
+      ).toBe(false);
       const corpus = structuredClone(narrativeCorpus!);
       corpus.unmappedStarAllowlist = corpus.unmappedStarAllowlist.filter(
         (entry) => entry.location_id !== locationId,
       );
-      expect(() => validateNarrativeCorpus(corpus)).toThrow(locationId);
+      expect(() => validateNarrativeCorpus(corpus)).not.toThrow();
     }
 
-    const withoutHip84051 = structuredClone(narrativeCorpus!);
-    withoutHip84051.unmappedStarAllowlist =
-      withoutHip84051.unmappedStarAllowlist.filter(
-        (entry) => entry.location_id !== "location:hip-84051",
-      );
-    expect(() => validateNarrativeCorpus(withoutHip84051)).not.toThrow();
+    expect(
+      narrativeCorpus!.unmappedStarAllowlist.map((entry) => entry.location_id),
+    ).toEqual(["location:gamma-leporis-a"]);
   }, 60_000);
 });
