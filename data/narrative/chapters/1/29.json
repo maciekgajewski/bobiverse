@@ -24,6 +24,10 @@
     {
       "entity_id": "location:titan",
       "state": "The [[organization:united-states-of-eurasia]] space station is apparently abandoned, with no signs that it was attacked."
+    },
+    {
+      "entity_id": "location:moon",
+      "description": "Is a harsh mistress. [[location:earth]]'s natural satellite; the two Earth–Moon Lagrange points host the Bobs' large [[technology:autofactory|autofactories]], which build Bobs, drones and colony-ship equipment."
     }
   ],
   "appearances": [
@@ -45,7 +49,6 @@
     "character:bob-replicant",
     "location:earth",
     "location:mars",
-    "location:moon",
     "organization:united-states-of-eurasia",
     "technology:3d-printers",
     "technology:mining-drones",
