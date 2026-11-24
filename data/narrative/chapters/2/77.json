@@ -9,8 +9,8 @@
       "id": "location:hip-84051",
       "name": "HIP 84051",
       "kind": "star_system",
-      "map_status": "unmapped",
-      "description": "A star system in Ara, over forty light-years from [[location:sol|Sol]]. A roaming Bob identified a world there suitable for Pav resettlement."
+      "description": "A star system in Ara, over forty light-years from [[location:sol|Sol]]. A roaming Bob identified a world there suitable for Pav resettlement.",
+      "astronomy_object_id": "stellar-system-004437"
     },
     {
       "id": "location:hip-84051-2",
