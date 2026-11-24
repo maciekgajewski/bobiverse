@@ -252,17 +252,26 @@ Double Star Catalog maintained at the U.S. Naval Observatory.”
 ### VizieR 20-pc census snapshot
 
 The census refresh pins the catalogue ReadMe with history date `04-Jun-2024` and the
-exact Table 4, notes, and references ADQL projections specified by BOB-026. The
-logical baseline is 4,407 Table 4 rows, 4,407 notes, and 688 references. VizieR TAP
-currently transports the long `BD+39 2376 AB` note as two adjacent rows, so the
-manifest records 4,408 transport rows and deterministic normalization reconstructs
-one logical note using continuation `recno` 1980. `recno` is source sequence only and
-never becomes an identity.
+exact Table 4, notes, and references ADQL projections specified by BOB-026. It uses
+only VizieR TAP (`https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync`). The logical
+baseline is 4,407 Table 4 rows, 4,407 notes, and 688 references. VizieR TAP currently
+transports the long `BD+39 2376 AB` note as two adjacent rows, so the manifest records
+4,408 transport rows and deterministic normalization reconstructs one logical note
+using continuation `recno` 1980. `recno` is source sequence only and never becomes an
+identity.
 
-The committed artifact records exact query bytes, projected columns, endpoint,
-catalogue and publication DOIs, publication bibcode, retrieval timestamp, counts,
-checksums, and the required VizieR acknowledgement. Identity uses a content-derived
-`c20pc-2024:<sha256>` key. The source is:
+The committed artifact records exact query bytes, projected columns, the endpoint
+actually used, catalogue and publication DOIs, publication bibcode, retrieval
+timestamp, counts, checksums, and the required VizieR acknowledgement. If TAP is
+unreachable or does not produce a usable census, refresh does not use a mirror: it
+reuses the committed table data and ReadMe byte-for-byte without overwriting the
+ReadMe. That result updates the extract manifest with optional no-fetch/pin-reused
+provenance with its reason and attempt timestamp. After a successful TAP census pull,
+an unavailable official cdsarc ReadMe likewise reuses the committed ReadMe without overwriting it and records
+ReadMe-specific reuse provenance. The date and bibcode guards still apply in either
+case. `data:validate` accepts the original TAP-only manifest and either optional
+reuse-provenance form; CFA ASU is not a 20-pc transport. Identity uses a
+content-derived `c20pc-2024:<sha256>` key. The source tables are:
 
 ```text
 https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
@@ -278,7 +287,11 @@ the pinned references table or the exact source-documented external-code baselin
 
 ### VizieR IV/27A classical-name snapshot
 
-The name-only refresh uses the VizieR synchronous TAP endpoint and this exact ADQL:
+The name-only refresh tries the VizieR synchronous TAP endpoint first and CFA VizieR
+ASU second when TAP transport, parsing, or normalized pin verification fails. Both
+use the same `IV/27A/catalog` table
+and projected columns; ASU requests use `-out.max=unlimited`, and the existing HIP
+filter and ADQL ordering remain the logical selection contract:
 
 ```sql
 SELECT recno, HD, HR, HIP, Fl, Bayer, Cst, SimbadName
@@ -287,10 +300,15 @@ WHERE HIP IS NOT NULL
 ORDER BY recno
 ```
 
-The normalized extract and manifest record release `IV/27A (Kostjuk 2002)`, endpoint,
-query, projected columns, retrieval timestamp, row count, normalized checksum, and
-the VizieR acknowledgement. `recno` is source sequence only. The committed snapshot,
-not a later live response, is the reproducible authority.
+The normalized extract and manifest record release `IV/27A (Kostjuk 2002)`, the
+endpoint actually used, query, projected columns, retrieval timestamp, row count,
+normalized checksum, and the VizieR acknowledgement. Both transports must reproduce
+the committed normalized row count and checksum before a refresh writes. An
+ASU-backed manifest records its actual source/columns/`-out.max` request in required
+transport provenance; TAP manifests forbid it. `data:validate` accepts the TAP or
+CFA ASU endpoint for this source and pins the ASU request contract.
+`recno` is source sequence only. The committed snapshot, not a later live response,
+is the reproducible authority.
 
 ## Pinned acquisition artifacts
 
@@ -851,7 +869,8 @@ Before committing a refresh, review:
 
 Ordinary `npm run build`, `npm run test`, and browser runtime never access GCNS,
 Gaia, CNS5, WDS, or VizieR. Refresh is never implicit. For a source-only census
-refresh, `npm run data:refresh -- --c20pc-only` pins the new source bytes; a separate
+refresh, `npm run data:refresh -- --c20pc-only` pins the new source bytes or reports
+that the committed census was reused; a separate
 `npm run data:refresh -- --reconcile` emits the review-sensitive candidate diff and
 never updates its own accepted checksum. For a source-only classical-name refresh,
 `npm run data:refresh -- --classical-names-only` pins only the `IV/27A` snapshot.

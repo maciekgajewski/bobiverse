@@ -108,7 +108,36 @@
             "notes4": { "$ref": "#/$defs/query" },
             "refs": { "$ref": "#/$defs/query" }
           }
+        },
+        "reuse_provenance": { "$ref": "#/$defs/reuse_provenance" },
+        "readme_provenance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["fetch", "pin", "url", "reason", "attempted_at"],
+          "properties": {
+            "fetch": { "const": "failed" },
+            "pin": { "const": "reused" },
+            "url": {
+              "const": "https://cdsarc.cds.unistra.fr/ftp/J/ApJS/271/55/ReadMe"
+            },
+            "reason": { "type": "string", "minLength": 1 },
+            "attempted_at": { "type": "string", "minLength": 1 }
+          }
         }
+      }
+    },
+    "reuse_provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fetch", "pin", "url", "reason", "attempted_at"],
+      "properties": {
+        "fetch": { "const": "not_attempted" },
+        "pin": { "const": "reused" },
+        "url": {
+          "const": "https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync"
+        },
+        "reason": { "type": "string", "minLength": 1 },
+        "attempted_at": { "type": "string", "minLength": 1 }
       }
     },
     "table4_row": {

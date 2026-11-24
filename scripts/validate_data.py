@@ -84,7 +84,10 @@ EXPECTED_SOURCE_CONTRACTS = {
         "https://gea.esac.esa.int/tap-server/tap/sync",
         "gaiadr3.gaia_source + pinned left joins",
     ),
-    "classical_names": (CLASSICAL_NAMES_TAP_URL, CLASSICAL_NAMES_TABLE),
+    "classical_names": (
+        (CLASSICAL_NAMES_TAP_URL, "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv"),
+        CLASSICAL_NAMES_TABLE,
+    ),
 }
 
 
@@ -114,9 +117,11 @@ def validate_extract(key: str, columns: list[str], id_key: str) -> tuple[dict[st
     validate_schema(read_json(path), SOURCE_EXTRACT_SCHEMA_PATH, key)
     if manifest.get("catalogue") != key or manifest.get("columns") != columns:
         raise ValueError(f"{key} manifest does not identify the pinned source contract")
-    expected_endpoint, expected_table = EXPECTED_SOURCE_CONTRACTS[key]
+    expected_endpoints, expected_table = EXPECTED_SOURCE_CONTRACTS[key]
+    if isinstance(expected_endpoints, str):
+        expected_endpoints = (expected_endpoints,)
     if (
-        manifest.get("endpoint") != expected_endpoint
+        manifest.get("endpoint") not in expected_endpoints
         or manifest.get("table") != expected_table
         or not manifest.get("adql")
         or not manifest.get("retrieved_at")
@@ -126,6 +131,24 @@ def validate_extract(key: str, columns: list[str], id_key: str) -> tuple[dict[st
         raise ValueError(f"{key} manifest provenance is incomplete or unpinned")
     if key in {"gcns", "cns5"} and not manifest.get("upstream_updated_at"):
         raise ValueError(f"{key} manifest lacks the upstream data-update timestamp")
+    if key == "classical_names":
+        transport = manifest.get("transport")
+        if manifest.get("endpoint") == CLASSICAL_NAMES_TAP_URL:
+            if transport is not None:
+                raise ValueError("IV/27A TAP provenance must not include ASU transport")
+        else:
+            expected_request = {
+                "source": CLASSICAL_NAMES_TABLE,
+                "columns": CLASSICAL_NAMES_COLUMNS,
+                "out_max": "unlimited",
+                "endpoint": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv",
+            }
+            if transport != {
+                "kind": "asu",
+                "endpoint": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv",
+                "requests": [expected_request],
+            }:
+                raise ValueError("IV/27A ASU transport provenance differs from its pinned request")
     if manifest.get("row_count") != len(rows) or manifest.get("normalised_sha256") != csv_sha(columns, rows):
         raise ValueError(f"{key} manifest checksum or row count differs from its committed extract")
     if not path.exists() or not csv_path.exists():
@@ -178,7 +201,6 @@ def validate_c20pc() -> tuple[dict[str, Any], list[dict[str, Any]]]:
     validate_schema(document, C20PC_SCHEMA_PATH, "20-pc census")
     source = document["source"]
     expected_source = {
-        "endpoint": C20PC_TAP_URL,
         "catalogue": C20PC_CATALOGUE,
         "catalogue_doi": C20PC_CATALOGUE_DOI,
         "publication_doi": C20PC_PUBLICATION_DOI,
@@ -189,14 +211,34 @@ def validate_c20pc() -> tuple[dict[str, Any], list[dict[str, Any]]]:
         "acknowledgement": C20PC_ACKNOWLEDGEMENT,
         "external_reference_codes": EXPECTED_EXTERNAL_REFERENCE_CODES,
     }
-    if any(source.get(key) != value for key, value in expected_source.items()):
+    if (
+        source.get("endpoint") != C20PC_TAP_URL
+        or any(source.get(key) != value for key, value in expected_source.items())
+    ):
         raise ValueError("20-pc census source provenance differs from its contract")
+    if "reuse_provenance" in source:
+        reuse = source["reuse_provenance"]
+        if (
+            not isinstance(reuse, dict)
+            or reuse.get("fetch") != "not_attempted"
+            or reuse.get("pin") != "reused"
+            or reuse.get("url") != C20PC_TAP_URL
+            or not isinstance(reuse.get("reason"), str)
+            or not reuse["reason"]
+            or not isinstance(reuse.get("attempted_at"), str)
+            or not reuse["attempted_at"]
+        ):
+            raise ValueError("20-pc reuse provenance is incomplete or invalid")
+    readme_text = C20PC_README_PATH.read_text(encoding="utf-8") if C20PC_README_PATH.exists() else ""
     if (
         not source.get("retrieved_at")
         or not C20PC_README_PATH.exists()
-        or source.get("readme_sha256") != sha256(C20PC_README_PATH)
-        or C20PC_README_HISTORY_DATE
-        not in C20PC_README_PATH.read_text(encoding="utf-8")
+        or (
+            C20PC_README_PATH.exists()
+            and source.get("readme_sha256") != sha256(C20PC_README_PATH)
+        )
+        or C20PC_README_HISTORY_DATE not in readme_text
+        or C20PC_BIBCODE not in readme_text
     ):
         raise ValueError("20-pc census ReadMe contract is incomplete or stale")
     query_contracts = {

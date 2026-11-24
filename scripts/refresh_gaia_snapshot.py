@@ -39,8 +39,11 @@ def main() -> None:
     if args.reconcile:
         print(f"Reconciled committed source inputs; candidate checksum {reconcile_committed_sources()}")
     elif args.c20pc_only:
-        refresh_c20pc_snapshot()
-        print("Refreshed the pinned Kirkpatrick et al. 20-pc census snapshot")
+        result = refresh_c20pc_snapshot()
+        if result and "reuse_provenance" in result:
+            print("Reused the pinned Kirkpatrick et al. 20-pc census snapshot")
+        else:
+            print("Refreshed the pinned Kirkpatrick et al. 20-pc census snapshot")
     elif args.classical_names_only:
         refresh_classical_names_snapshot()
         print("Refreshed the pinned IV/27A classical-name snapshot")
