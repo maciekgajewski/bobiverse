@@ -456,7 +456,11 @@ class VizierFallbackTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "schema validation failed"):
                 validate(without_transport)
 
-            tap_with_transport = {**document["source"], "transport": asu_source["transport"]}
+            tap_with_transport = {
+                **document["source"],
+                "endpoint": pipeline.CLASSICAL_NAMES_TAP_URL,
+                "transport": asu_source["transport"],
+            }
             with self.assertRaisesRegex(ValueError, "schema validation failed"):
                 validate(tap_with_transport)
 
