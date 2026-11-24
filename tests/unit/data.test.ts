@@ -11,15 +11,38 @@ describe("reconciled astronomy runtime data", () => {
     // its 20 ly neighbourhood contributes six previously uncovered systems.
     // Book 2 adds the Eta Cassiopeiae (2.4) and Zeta Tucanae (2.10) anchors;
     // their neighbourhoods bring the union to 337 systems.
-    expect(nearbySystems.systems).toHaveLength(337);
+    // Catalogue C maps six further Book 2 anchors (GJ 54, GJ 877, Gamma
+    // Pavonis, Delta Pavonis, HIP 14101 / GJ 3193, and HIP 84051 / GJ 12454).
+    // All 84 added systems (none removed) lie within 20 ly of at least one of
+    // those six anchors, so the union is 421. Closest-new-anchor attribution
+    // of the 84: GJ 54 2, GJ 877 1, Gamma Pavonis 11, Delta Pavonis 1,
+    // GJ 3193 2, GJ 12454 67.
+    expect(nearbySystems.systems).toHaveLength(421);
     expect(nearbySystems.systems[0]?.id).toBe("sol");
     expect(nearbySystems.metadata.coverage).toEqual([
       {
         anchor_id: "sol",
-        anchor_position_pc: { xg: 0, yg: 0, zg: 0 },
+        anchor_position_pc: {
+          xg: 0,
+          yg: 0,
+          zg: 0,
+        },
         radius_ly: mapDisplayConfig.context_radius_ly,
         source_record_count: 118,
         system_count: 96,
+        gcns_boundary_pc: 100,
+      },
+      {
+        // Catalogue C maps GJ 54 (2.13); one of six new 20 ly anchors.
+        anchor_id: "stellar-system-000258",
+        anchor_position_pc: {
+          xg: 2.667260871049,
+          yg: -4.594977872588,
+          zg: -6.23811687559,
+        },
+        radius_ly: mapDisplayConfig.context_radius_ly,
+        source_record_count: 102,
+        system_count: 90,
         gcns_boundary_pc: 100,
       },
       {
@@ -95,6 +118,58 @@ describe("reconciled astronomy runtime data", () => {
         gcns_boundary_pc: 100,
       },
       {
+        // Catalogue C maps HIP 84051 / GJ 12454 (2.77).
+        anchor_id: "stellar-system-004437",
+        anchor_position_pc: {
+          xg: 11.634194,
+          yg: -5.009633,
+          zg: -1.6861627,
+        },
+        radius_ly: mapDisplayConfig.context_radius_ly,
+        source_record_count: 86,
+        system_count: 73,
+        gcns_boundary_pc: 100,
+      },
+      {
+        // Catalogue C maps GJ 877 (2.30).
+        anchor_id: "stellar-system-004786",
+        anchor_position_pc: {
+          xg: 4.435071,
+          yg: -4.9264345,
+          zg: -5.475878,
+        },
+        radius_ly: mapDisplayConfig.context_radius_ly,
+        source_record_count: 102,
+        system_count: 92,
+        gcns_boundary_pc: 100,
+      },
+      {
+        // Catalogue C maps Gamma Pavonis (2.60).
+        anchor_id: "stellar-system-004803",
+        anchor_position_pc: {
+          xg: 5.9989753,
+          yg: -3.7252312,
+          zg: -5.9873304,
+        },
+        radius_ly: mapDisplayConfig.context_radius_ly,
+        source_record_count: 97,
+        system_count: 85,
+        gcns_boundary_pc: 100,
+      },
+      {
+        // Catalogue C maps Delta Pavonis (2.63).
+        anchor_id: "stellar-system-004824",
+        anchor_position_pc: {
+          xg: 4.4477077,
+          yg: -2.5927052,
+          zg: -3.26985,
+        },
+        radius_ly: mapDisplayConfig.context_radius_ly,
+        source_record_count: 100,
+        system_count: 85,
+        gcns_boundary_pc: 100,
+      },
+      {
         anchor_id: "stellar-system-005413",
         anchor_position_pc: {
           xg: 0.933080756135,
@@ -119,6 +194,19 @@ describe("reconciled astronomy runtime data", () => {
         gcns_boundary_pc: 100,
       },
       {
+        // Catalogue C maps HIP 14101 / GJ 3193 (2.67).
+        anchor_id: "stellar-system-005581",
+        anchor_position_pc: {
+          xg: -3.3999336,
+          yg: -1.2703134,
+          zg: -5.8255434,
+        },
+        radius_ly: mapDisplayConfig.context_radius_ly,
+        source_record_count: 99,
+        system_count: 90,
+        gcns_boundary_pc: 100,
+      },
+      {
         anchor_id: "stellar-system-005582",
         anchor_position_pc: {
           xg: -2.0704846,
@@ -131,8 +219,7 @@ describe("reconciled astronomy runtime data", () => {
         gcns_boundary_pc: 100,
       },
       {
-        // Chapter 1.40 maps Epsilon Indi (stellar-system-005631); its 20 ly
-        // neighbourhood adds six systems absent from the prior 271-system fixture.
+        // Chapter 1.40 maps Epsilon Indi (stellar-system-005631); its 20 ly neighbourhood adds six systems absent from the prior 271-system fixture.
         anchor_id: "stellar-system-005631",
         anchor_position_pc: {
           xg: 2.2245862,

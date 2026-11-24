@@ -4,30 +4,6 @@
     {
       "location_id": "location:gamma-leporis-a",
       "reason": "Existing documented explicit unmapped exception."
-    },
-    {
-      "location_id": "location:hip-84051",
-      "reason": "Not in the runtime catalogue yet (plan C)."
-    },
-    {
-      "location_id": "location:gamma-pavonis",
-      "reason": "Temporary pending mapping; remove in data batch (B)."
-    },
-    {
-      "location_id": "location:delta-pavonis",
-      "reason": "Temporary pending mapping; remove in data batch (B)."
-    },
-    {
-      "location_id": "location:hip-14101",
-      "reason": "Temporary pending mapping; remove in data batch (B)."
-    },
-    {
-      "location_id": "location:gliese-54",
-      "reason": "Temporary pending mapping; remove in data batch (B)."
-    },
-    {
-      "location_id": "location:gliese-877",
-      "reason": "Temporary pending mapping; remove in data batch (B)."
     }
   ]
 }
