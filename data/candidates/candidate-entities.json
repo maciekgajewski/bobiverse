@@ -269,8 +269,8 @@
       "kind": "technology",
       "name": "H-bomb",
       "aliases": [],
-      "mentions": ["2.61", "2.64"],
-      "note": "2.61: Howard got H-bomb blueprints from Butterworth, who ranks the Others above secrecy (claim 023). 2.64: Garfield credits the USE and Butterworth for the fusion-bomb plans (017).",
+      "mentions": ["2.61", "2.64", "2.66"],
+      "note": "2.61: Butterworth gave Howard H-bomb plans, putting the Others above secrecy (claim 023). 2.64: Garfield credits USE and Butterworth for the plans (017). 2.66: Jacques' fusion bombs unfinished (010).",
       "promotion": null
     },
     {
