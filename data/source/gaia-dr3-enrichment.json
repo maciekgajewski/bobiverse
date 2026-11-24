@@ -104160,9 +104160,11 @@
       }
     ],
     "release": "Gaia DR3",
-    "retrieved_at": "2026-11-20T10:28:57+00:00",
+    "retrieved_at": "2026-11-24T16:27:49+00:00",
     "row_count": 5477,
     "table": "gaiadr3.gaia_source + pinned left joins",
-    "unmatched_source_ids": ["368876661388665"]
+    "unmatched_source_ids": [
+      "368876661388665"
+    ]
   }
 }

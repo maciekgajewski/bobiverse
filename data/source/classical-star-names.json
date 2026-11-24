@@ -35696,12 +35696,42 @@
     "acknowledgement": "This research has made use of the VizieR catalogue access tool, CDS, Strasbourg, France (DOI: 10.26093/cds/vizier), and the IV/27A HD-DM-GC-HR-HIP-Bayer-Flamsteed Cross Index (Kostjuk, 2002).",
     "adql": "SELECT recno, HD, HR, HIP, Fl, Bayer, Cst, SimbadName\nFROM \"IV/27A/catalog\"\nWHERE HIP IS NOT NULL\nORDER BY recno",
     "catalogue": "classical_names",
-    "columns": ["recno", "HD", "HR", "HIP", "Fl", "Bayer", "Cst", "SimbadName"],
-    "endpoint": "https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync",
+    "columns": [
+      "recno",
+      "HD",
+      "HR",
+      "HIP",
+      "Fl",
+      "Bayer",
+      "Cst",
+      "SimbadName"
+    ],
+    "endpoint": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv",
     "normalised_sha256": "64279ff81b83e607afa56b3655cad56baf1afea7c115461fb617f28c1d9f6faf",
     "release": "IV/27A (Kostjuk 2002)",
-    "retrieved_at": "2026-08-05T19:23:47+00:00",
+    "retrieved_at": "2026-11-24T16:28:15+00:00",
     "row_count": 3569,
-    "table": "IV/27A/catalog"
+    "table": "IV/27A/catalog",
+    "transport": {
+      "endpoint": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv",
+      "kind": "asu",
+      "requests": [
+        {
+          "columns": [
+            "recno",
+            "HD",
+            "HR",
+            "HIP",
+            "Fl",
+            "Bayer",
+            "Cst",
+            "SimbadName"
+          ],
+          "endpoint": "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv",
+          "out_max": "unlimited",
+          "source": "IV/27A/catalog"
+        }
+      ]
+    }
   }
 }

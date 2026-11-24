@@ -17808,7 +17808,9 @@
       "NcTR": 3,
       "Note": "'Hartkopf1994 state ''The Aa pair is a new component to the 0.7-arcsec pair HO 532''. This is interpreted here to mean that that the *Ab component* is a third member of the system based on their explanation that the AB pair is the one separated by 0.7'' and that the new component (to A) is the one newly imaged, although they mention that it was actually imaged in earlier campaigns as well. Tokovinin2019 refer to a 0.7-arcsec-separated component C which is the one referred to as B here. The delta magnitude listed in the WDS is 2.34 mag (presumably at V band) between the A (binary) and B components. Using the composite type, we estimate that the type of the A binary is M0.5 and that of the B component is somewhere between, relative to Aa, a delta mag of 1.59 mag (if A is an equal-mag double) and 2.34 mag (if the Aa component dominates the light of Ab). This places the type estimate for B at M2.5-M3, which we use for our mass estimate. As Ab had earlier been mistaken for B, we somewhat arbitarily estimate the mass of Ab to be identical to that of B.'",
       "RAJ2000": 161.33952774389752,
-      "continuation_recnos": [1980],
+      "continuation_recnos": [
+        1980
+      ],
       "recno": 1979
     },
     {
@@ -43814,7 +43816,14 @@
     "queries": {
       "notes4": {
         "adql": "SELECT \"recno\", \"Name\", \"NcTR\", \"RAJ2000\", \"DEJ2000\", \"Note\"\nFROM \"J/ApJS/271/55/notes4\"\nORDER BY \"recno\"",
-        "columns": ["recno", "Name", "NcTR", "RAJ2000", "DEJ2000", "Note"],
+        "columns": [
+          "recno",
+          "Name",
+          "NcTR",
+          "RAJ2000",
+          "DEJ2000",
+          "Note"
+        ],
         "media_type": "text/csv",
         "normalised_sha256": "f5bca249cd51f4cccb22e451926fdbe7f29748a6550f9a5397934a5b262b97f6",
         "row_count": 4407,
@@ -43823,7 +43832,12 @@
       },
       "refs": {
         "adql": "SELECT \"Ref\", \"Auth\", \"BibCode\", \"Comm\"\nFROM \"J/ApJS/271/55/refs\"\nORDER BY \"Ref\", \"BibCode\"",
-        "columns": ["Ref", "Auth", "BibCode", "Comm"],
+        "columns": [
+          "Ref",
+          "Auth",
+          "BibCode",
+          "Comm"
+        ],
         "media_type": "text/csv",
         "normalised_sha256": "41bbe0d303d5ebc58f9158005db00b33e785f0b00bf2cbe40f49b2945858060b",
         "row_count": 688,
@@ -43896,7 +43910,14 @@
     "readme_media_type": "text/plain; charset=utf-8",
     "readme_sha256": "a127504a912442dc3c6267f1a0028647a3f338d1ed9970f675ee8ffe9da89a71",
     "readme_url": "https://cdsarc.cds.unistra.fr/ftp/J/ApJS/271/55/ReadMe",
-    "retrieved_at": "2026-08-05T19:23:53+00:00"
+    "retrieved_at": "2026-08-05T19:23:53+00:00",
+    "reuse_provenance": {
+      "attempted_at": "2026-11-24T16:28:40+00:00",
+      "fetch": "not_attempted",
+      "pin": "reused",
+      "reason": "https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync: <urlopen error timed out>",
+      "url": "https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync"
+    }
   },
   "table4": [
     {
